@@ -1,0 +1,233 @@
+#!/bin/bash
+
+set -e
+
+if [[ "${CI}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+        "
+Usage: $(basename "$0") -t TERRAFORM_DIR [OPTS]
+Deploys the project infrastructure.
+
+Required:
+    -t TERRAFORM_DIR: The terraform directory. Required.
+
+Options:
+    --plan: Only run Terraform plan.
+    --skip-tf: Skips terraform apply.
+    --tf-only: Only deploy the terraform infrastructure.
+    --initial: Run an initial deploy, required for Function App.
+    --functions: Only run function publish, no terraform changes.
+
+Be sure to run deployment with '--initial' for a new deployment, or else
+terraform will fail.
+
+"
+}
+
+function require_env() {
+    v=$(eval echo \$${1})
+
+    if [[ -z ${v} ]]; then
+        echo "${1} must be set as environment variable" >&2
+        echo "Check deployment/docker-compose.yml for host environment requirements" >&2
+        exit 1
+    fi
+}
+
+require_env "ARM_SUBSCRIPTION_ID"
+require_env "ARM_TENANT_ID"
+require_env "ARM_CLIENT_ID"
+require_env "ARM_CLIENT_SECRET"
+
+require_env "AZURE_TENANT_ID"
+require_env "AZURE_CLIENT_ID"
+require_env "AZURE_CLIENT_SECRET"
+
+###################
+# Parse arguments #
+###################
+
+while [[ "$#" -gt 0 ]]; do case $1 in
+    -t)
+        TERRAFORM_DIR=${2}
+        shift
+        shift
+        ;;
+    --plan)
+        PLAN_ONLY=1
+        shift
+        ;;
+    --skip-tf)
+        SKIP_TF=1
+        shift
+        ;;
+    --tf-only)
+        TF_ONLY=1
+        shift
+        ;;
+    --initial)
+        INITIAL=1
+        shift
+        ;;
+    --functions)
+        SKIP_TF=1
+        FUNCTIONS=1
+        shift
+        ;;
+    --help)
+        usage
+        exit 0
+        shift
+        ;;
+    *)
+        usage "Unknown parameter passed: $1"
+        shift
+        shift
+        ;;
+    esac done
+
+###################################
+# Check and configure environment #
+###################################
+
+if [[ -z ${TERRAFORM_DIR} ]]; then
+    echo "Must pass in TERRAFORM_DIR with -t"
+    exit 1
+fi
+
+if [[ "${TERRAFORM_DIR}" == *"dev"* ]]; then
+    DEV_DEPLOY=1
+fi
+
+function tf_output() {
+    echo $(terraform output -json resources | jq -r .${1})
+}
+
+# ---------------------------------------------------
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+
+    #####################
+    # Deploy Terraform  #
+    #####################
+
+    pushd ${TERRAFORM_DIR}
+
+    if [ -z "${SKIP_TF}" ]; then
+
+        # Check dev deployment setup
+        VARS_OPT=""
+        AUTO_APPROVE_OPT=""
+        if [ "${DEV_DEPLOY}" ]; then
+            if [ ! -f values.tfvars ]; then
+                echo "ERROR: You must create a values.tfvars file in ${TERRAFORM_DIR} before deploying"
+                echo "Use the values.tfvars.template in that directory"
+                echo "See the README in the deployment directory for more information"
+                exit 1
+            fi
+            VARS_OPT="-var-file=values.tfvars"
+        else
+            AUTO_APPROVE_OPT="-auto-approve"
+        fi
+
+        echo "Deploying infrastructure with Terraform..."
+        terraform init --upgrade
+
+        if [ "${PLAN_ONLY}" ]; then
+            if [ "${INITIAL}" ]; then
+                echo " !!! Only showing initial Azure Function deployment plan"
+                terraform plan -target=module.resources.azurerm_function_app.rxetl "${VARS_OPT}"
+            else
+                terraform plan "${VARS_OPT}"
+            fi
+            exit 0
+        fi
+
+        if [ "${INITIAL}" ]; then
+            echo " !!! Only applying initial Azure Function deployment plan"
+            terraform apply -target=module.resources.azurerm_function_app.rxetl "${VARS_OPT}" "${AUTO_APPROVE_OPT}"
+            exit 0
+        else
+            echo " --- Deploying full infrastructure (--initial must have previously been run)"
+            terraform apply "${VARS_OPT}" "${AUTO_APPROVE_OPT}"
+        fi
+    fi
+
+    if [ "${TF_ONLY}" ]; then
+        exit 0
+    fi
+
+    ## Gather TF Output
+    function tf_output() {
+        echo $(terraform output -json resources | jq -r .${1})
+    }
+
+    ####################
+    # Migrate Database #
+    ####################
+
+    # Only migrate for dev deployments
+
+    if [ "${DEV_DEPLOY}" ]; then
+
+        if [ -z "${FUNCTIONS}" ]; then
+
+            echo "Migrating the database..."
+
+            export PGHOST=$(tf_output db_fqdn)
+            export PGPORT=5432
+            export PGUSER=$(tf_output db_username)
+            export PGDATABASE=$(tf_output db_name)
+            export PGPASSWORD=$(tf_output db_password)
+
+            pypgstac migrate
+        fi
+
+    fi
+
+    ######################
+    # Gather environment #
+    ######################
+
+    export ACR_NAME=$(tf_output acr_name)
+    export TABLES_ACCOUNT_NAME=$(tf_output tables_account_name)
+    export TABLES_ACCOUNT_KEY=$(tf_output tables_account_key)
+    export TABLES_ACCOUNT_URL=$(tf_output tables_account_url)
+    export FUNCTION_APP_NAME=$(tf_output function_app_name)
+
+    popd
+
+    #########################
+    # Setup Image Key Table #
+    #########################
+
+    if [ -z "${FUNCTIONS}" ]; then
+
+        bin/setup_storage.py \
+            "${ACR_NAME}" \
+            "${TABLES_ACCOUNT_NAME}" \
+            "${TABLES_ACCOUNT_KEY}" \
+            --url "${TABLES_ACCOUNT_URL}"
+    fi
+
+    #########################
+    # Deploy Azure Function #
+    #########################
+
+    bin/azlogin
+
+    rm -rf /opt/src/functions_deploy
+    cp -r /opt/src/pctasks_funcs /opt/src/functions_deploy
+
+    pushd /opt/src/functions_deploy
+    # Create symlink to enable function app building of pctasks
+    ln -s /opt/src/pctasks /opt/src/functions_deploy/pctasks_linked
+    cp requirements-deploy.txt requirements.txt
+    func azure functionapp publish ${FUNCTION_APP_NAME}
+    popd
+
+fi

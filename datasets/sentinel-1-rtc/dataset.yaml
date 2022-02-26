@@ -1,0 +1,12 @@
+name: sentinel-1-grd
+collections:
+  id: sentinel-1-grd
+  containers:
+    assets: sentinel1euwest/s1-grd
+    stac: sentinel1euwest/s1-grd-stac
+    etl-data: sentinel1euwest/s1-grd-etl-info
+triggers:
+  storage:
+    account: sentinel1euwest
+    container: s1-grd-stac
+    filter: "*.json"

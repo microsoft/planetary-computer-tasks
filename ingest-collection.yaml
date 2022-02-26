@@ -1,0 +1,18 @@
+name: Ingest Collection Test Workflow
+dataset: microsoft/test-collection
+target_environment: staging
+
+jobs:
+  ingest:
+    name: Ingest Collection
+    tasks:
+      - id: ingest-collection
+        image_key: ingest
+        task: pctasks.ingest_task.task:ingest_task
+        environment:
+          DB_CONNECTION_STRING: "${{ secrets.pgstac-connection-string }}"
+        args:
+          content:
+            type: Collections
+            collections:
+              - ${{ local.file(tests/data-files/collection.json) }}

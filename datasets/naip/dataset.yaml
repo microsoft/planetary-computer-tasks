@@ -1,0 +1,22 @@
+name: naip
+image: pccomponentstest.acr.io/pc-tasks-naip:latest
+collections:
+  - id: naip
+    class: naip.dataset:Naip
+    asset_storage:
+      - storage_account: naipeuwest
+        container: naip
+        chunks:
+          length: 3000
+          ext: "*.tif"
+          splits:
+            - depth: 2
+              name_starts_with: v002/
+    chunk_storage:
+      storage_account: naipeuwest
+      container: naip-etl-data
+      prefix: chunks
+    item_storage:
+      storage_account: naipeuwest
+      container: naip-etl-data
+      prefix: chunks/items

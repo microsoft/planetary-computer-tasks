@@ -1,0 +1,52 @@
+name: Ingest Archive
+
+tokens:
+  naipeuwest:
+    containers:
+      naip:
+        token: X
+
+jobs:
+  naip:
+    name: Naip archival ingest
+    tasks:
+      - id: create-chunks
+        image: pctasks-naip:latest
+        task: naip.collection:Naip.create_chunks_task
+        args:
+          src_storage_uri: X
+          dst_storage_uri: X
+          chunk_folder: X
+          chunk_length: X
+          name_starts_with: X
+          since: X
+          limit: X
+          chunk_prefix: X
+          chunk_extension: X
+          extensions: X
+          ends_with: X
+          matches: X
+      - for_each:
+        items: ${{tasks.create-chunks.output.uris}}
+        tasks:
+          - id: create-items
+            image: pctasks-naip:latest
+            task: naip.collection:Naip.create_items_task
+            args:
+              asset_storage_uri: X
+              stac_storage_uri: X
+              chunk_uri: ${{item}}
+              limit: X
+              skip_validation: X
+          - id: ingest-items
+            image_key: ingest
+            targets:
+              - production
+              - staging
+            task: pctasks.ingest.task:ingest_task
+            args:
+              content:
+                type: Ndjson
+                uris:
+                  - ${{tasks.create-items.output.uri}}
+            for_each: ${{

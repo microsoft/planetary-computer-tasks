@@ -1,0 +1,45 @@
+FROM ubuntu:20.04
+
+# Setup timezone info
+ENV TZ=UTC
+
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN apt-get update && \
+    apt-get install -y \
+    wget zip xxd unzip curl gnupg jq \
+    apt-transport-https \
+    libicu-dev \
+    python3-pip
+
+# Install Azure Function Tools
+
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg
+RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-focal-prod focal main" \
+    > /etc/apt/sources.list.d/dotnetdev.list
+
+RUN apt-get update && apt-get install -y azure-functions-core-tools-4
+
+# Install Terraform 0.14.4
+
+RUN wget -O terraform.zip https://releases.hashicorp.com/terraform/1.1.2/terraform_1.1.2_linux_amd64.zip
+RUN unzip terraform.zip
+RUN mv terraform /usr/local/bin
+
+# Install azure client
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
+# Install python dependencies
+COPY deployment/requirements.txt /opt/src/deployment/requirements.txt
+RUN pip3 install -r /opt/src/deployment/requirements.txt
+
+# Instal pctasks.core
+COPY pctasks/core /opt/src/pctasks/core
+RUN cd /opt/src/pctasks/core && \
+     pip install .
+
+
+WORKDIR /opt/deploy

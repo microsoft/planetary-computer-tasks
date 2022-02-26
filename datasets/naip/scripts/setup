@@ -1,0 +1,57 @@
+#!/bin/bash
+
+set -e
+
+if [[ "${CI}" ]]; then
+    set -x
+fi
+
+function usage() {
+    if [[ "${1}" ]]; then
+        echo "${1}"
+    fi
+    echo -n \
+        "Usage: $(basename "$0") [OPTIONS]
+Sets up this project for development.
+
+Options:
+    --azurite
+        Only run the Azurite setup.
+"
+}
+
+AZURITE_ONLY=""
+while [[ $# -gt 0 ]]; do case $1 in
+    --azurite)
+        AZURITE_ONLY=1
+        shift
+        ;;
+    --help)
+        usage
+        exit 0
+        shift
+        ;;
+    *)
+        usage "Unknown parameter passed: $1"
+        exit 1
+        ;;
+    esac done
+
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ -z "${AZURITE_ONLY}" ]; then
+        echo " -- BUILDING CONTAINERS"
+        scripts/update
+
+        echo " -- STARTING SERVERS"
+        scripts/server --detached
+    fi
+
+    echo " -- SETTING UP AZURITE"
+    docker-compose run --rm \
+        task-dev \
+        pctasks-dev setup-azurite
+
+    echo "Done."
+
+fi

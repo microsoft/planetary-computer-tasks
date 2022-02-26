@@ -1,0 +1,6 @@
+{
+    "config": {
+        "task_class": "pctasks.ingest.task:IngestTask"
+    },
+    "data": {}
+}

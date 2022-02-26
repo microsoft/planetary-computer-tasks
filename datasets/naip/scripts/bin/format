@@ -1,0 +1,43 @@
+#!/bin/bash
+
+set -e
+
+if [[ "${CI}" ]]; then
+    set -x
+fi
+
+function usage() {
+    if [[ "${1}" ]]; then
+        echo "${1}"
+    fi
+    echo -n \
+        "Usage: $(basename "$0") [OPTIONS]
+Format code. Meant to be run in the dev container.
+
+Options:
+    --help
+        Show this help
+
+"
+}
+
+# Parse args
+while [[ $# -gt 0 ]]; do case $1 in
+    --help)
+        usage
+        exit 0
+        shift
+        ;;
+    *)
+        usage "Unknown parameter passed: $1"
+        exit 1
+        ;;
+    esac done
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+
+    echo "Formatting code"
+    isort --overwrite-in-place ${PYTHON_PACKAGE_NAME} tests
+    black ${PYTHON_PACKAGE_NAME} tests
+
+fi

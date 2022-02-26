@@ -1,0 +1,25 @@
+#!/bin/bash
+
+
+PACKAGE_DIRS=(
+    "pctasks/core"
+    "pctasks/cli"
+    "pctasks/task"
+    "pctasks/submit"
+    "pctasks/ingest"
+    "pctasks/ingest_task"
+    "pctasks/dataset"
+    "pctasks/execute"
+    "pctasks/notify"
+    "pctasks/router"
+    "pctasks/operations"
+    "pctasks/records"
+    "pctasks/dev"
+)
+
+# All directories of pctasks_funcs that have an __init__.py file
+FUNCTION_DIRS=($(find pctasks_funcs -type d -exec test -e "./{}/__init__.py" \; -print))
+
+INTEGRATION_TESTS=(
+    "tests"
+)

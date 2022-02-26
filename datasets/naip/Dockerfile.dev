@@ -1,0 +1,11 @@
+ARG base
+
+FROM ${base}
+
+COPY pctasks/dev /opt/src/pctasks/dev
+RUN cd /opt/src/pctasks/dev && \
+     pip install .[server]
+
+
+COPY datasets/naip/requirements-dev.txt /opt/src/requirements-dev.txt
+RUN pip install -r requirements-dev.txt

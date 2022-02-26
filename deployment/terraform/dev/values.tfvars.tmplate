@@ -1,0 +1,18 @@
+region = "West Europe"
+
+task_acr_name = ""
+acr_sp_object_id = ""
+acr_sp_client_id = ""
+acr_sp_client_secret = ""
+
+task_sp_tenant_id = ""
+task_sp_client_id = ""
+task_sp_client_secret = ""
+
+db_username = ""
+db_password = ""
+
+batch_pool_id = "tasks_pool"
+db_storage_mb = 32768
+
+min_low_priority = 0

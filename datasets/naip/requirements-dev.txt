@@ -1,0 +1,6 @@
+flake8==4.*
+black==22.*
+mypy==0.931
+pytest==6.*
+isort==5.*
+pctasks.dev>=0.1.0

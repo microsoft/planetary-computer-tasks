@@ -1,0 +1,154 @@
+{
+  "type": "Collection",
+  "id": "sentinel-3-l2-synergy",
+  "stac_version": "1.0.0",
+  "description": "The [Sentinel-3](https://sentinel.esa.int/web/sentinel/missions/sentinel-3) mission is composed of three versatile satellites designed to provide data continuity for the ERS, ENVISAT and SPOT satellites and to support operational land and ocean observation services. Sentinel-3 satellites make use of four main instruments on board; OLCI, SLSTR, SRAL and MWR, to measure sea surface topography, sea and land surface temperature and ocean and land surface color. OLCI, in conjunction with the SLSTR instrument, provides the SYN products, providing continuity with SPOT VEGETATION. The primary objective of SYN products is the monitoring of land use. SYN also provides information relating to worldwide food security and contributes to the study of climate.",
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice"
+    },
+    {
+      "rel": "root",
+      "href": "./sentinel-3-synergy.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "self",
+      "href": "https://sentinel3euwest.blob.core.windows.net/sentinel-3-stac/SYNERGY/sentinel-3-synergy.json",
+      "type": "application/json"
+    }
+  ],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/sat/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/eo/v1.0.0/schema.json"
+  ],
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -180,
+          -85,
+          180,
+          85
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2016-04-17T11:33:13Z",
+          null
+        ]
+      ]
+    }
+  },
+  "license": "proprietary",
+  "keywords": [
+    "eu",
+    "esa",
+    "copernicus",
+    "sentinel",
+    "Surface directional reflectance",
+    "Aerosol Optical Thickness",
+    "Aerosol Angstrom Exponent",
+    "Normalised difference vegetation index",
+    "VEGETATION-Like product (~VGT-P) TOA Reflectance",
+    "VEGETATION-Like product (~VGT-S1) 1 day synthesis surface reflectance",
+    "VEGETATION-Like product (~VGT-S10) 10 day synthesis surface reflectance",
+    "Global aerosol parameters"
+  ],
+  "providers": [
+    {
+      "name": "ESA",
+      "roles": [
+        "producer",
+        "processor",
+        "licensor"
+      ],
+      "url": "https://earth.esa.int/web/guest/home"
+    },
+    {
+      "name": "Microsoft",
+      "roles": [
+        "host",
+        "processor"
+      ],
+      "url": "https://planetarycomputer.microsoft.com"
+    }
+  ],
+  "msft:container": "sentinel-3",
+  "msft:storage_account": "sentinel3euwest",
+  "msft:short_description": "The [Sentinel-3](https://sentinel.esa.int/web/sentinel/missions/sentinel-3) mission is composed of three versatile satellites designed to provide data continuity for the ERS, ENVISAT and SPOT satellites and to support operational land and ocean observation services. OLCI, in conjunction with the SLSTR instrument, provides the SYN products, providing continuity with SPOT VEGETATION.",
+  "summaries": {
+    "constellation": [
+      "Sentinel-3"
+    ],
+    "platform": [
+      "Sentinel-3A",
+      "Sentinel-3B"
+    ],
+    "instruments": [
+      "SYNERGY"
+    ],
+    "sat:platform_international_designator": [
+      "2016-011A",
+      "2018-039A"
+    ],
+    "sat:orbit_state" : [
+      "ascending",
+      "descending"
+    ],
+    "sat:absolute_orbit" : {
+      "minimum": 1
+    },
+    "sat:relative_orbi": {
+      "minimum": 1,
+      "maximum": 385
+    },
+    "eo:cloud_cover": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "s3:mode" : [
+      "EO"
+    ],
+    "s3:productType": [
+      "SY_2_AOD___",
+      "SY_2_SYN___",
+      "SY_2_V10___",
+      "SY_2_VG1___",
+      "SY_2_VGP___"
+    ],
+    "s3:salineWaterPixels_percentage": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "s3:coastalPixels_percentage": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "s3:freshInlandWaterPixels_percentage": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "s3:tidalRegionPixels_percentage": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "s3:landPixels_percentage": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "s3:snowOrIcePixels_percentage": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "s3:shape": {
+      "dimensions": "columns x rows",
+      "columns": "Number of columns in the product image",
+      "rows": "Number of rows in the product image"
+    }
+  },
+  "title": "Sentinel-3 Level-2 SYNERGY"
+}

@@ -1,0 +1,72 @@
+#!/bin/bash
+
+set -e
+
+if [[ "${CI}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo
+    if [ "${1}" ]; then
+        echo "${1}"
+    fi
+
+    echo -n \
+        "Usage: $(basename "$0") (SERVICE|--deploy)
+Runs a console. SERVICE is the name of the service
+container in the docker-compose.yml file. If --deploy is
+specified, the deployment image is run.
+"
+}
+
+DEPLOY=""
+
+if [ "$1" = "--help" ]; then
+    usage
+    exit 0
+fi
+
+
+if [ -z "$1" ]; then
+    SERVICE="dev"
+elif [ "$1" = "--deploy" ]; then
+    DEPLOY="TRUE"
+    shift;
+else
+    SERVICE="${1}"
+    echo "Running console for service '${SERVICE}'"
+    shift;
+fi
+
+# Parse args
+while [[ $# -gt 0 ]]; do case $1 in
+    --tenant) AZURE_TENANT_ID=${2}; shift; shift;;
+    --client) AZURE_CLIENT_ID=${2}; shift; shift;;
+    --secret) AZURE_CLIENT_SECRET=${2}; shift; shift;;
+    --help) usage; exit 0; shift;;
+  *) usage "Unknown parameter passed: $1"; shift; shift;;
+esac; done
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${DEPLOY}" ]; then
+        # Run deployment container
+        docker-compose \
+            -f deployment/docker-compose.yml \
+            run --rm \
+            deploy /bin/bash;
+
+    else
+
+        docker-compose \
+            -f docker-compose.console.yml \
+            run --rm \
+            -e AZURE_TENANT_ID="${AZURE_TENANT_ID}" \
+            -e AZURE_CLIENT_ID="${AZURE_CLIENT_ID}" \
+            -e AZURE_CLIENT_SECRET="${AZURE_CLIENT_SECRET}" \
+            --entrypoint /bin/bash \
+            "${SERVICE}";
+
+    fi
+
+fi

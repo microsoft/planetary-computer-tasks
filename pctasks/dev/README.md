@@ -1,0 +1,40 @@
+# Planetary Computer Tasks: Exec
+
+This component of the PCTasks framework is around executing
+tasks that are submitted to the system. The `exec` library
+contains functionality used to transform submit messages into
+Azure Batch jobs and tasks.
+
+### Setting up the development environment
+
+To assist in testing, environment variables need to be set
+with Azurite credentials for usage in test utilities
+so that Azure Storage can be mocked out. You can use the following
+environment:
+
+```
+# Queues
+export PCTASKS_EXEC__QUEUES_ACCOUNT_URL=http://azurite:10001/devstoreaccount1
+export PCTASKS_EXEC__QUEUES_ACCOUNT_NAME=devstoreaccount1
+export PCTASKS_EXEC__QUEUES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+
+# Tables
+export PCTASKS_EXEC__TABLES_ACCOUNT_URL=http://azurite:10002/devstoreaccount1
+export PCTASKS_EXEC__TABLES_ACCOUNT_NAME=devstoreaccount1
+export PCTASKS_EXEC__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+
+# Blobs
+export PCTASKS_EXEC__BLOB_ACCOUNT_URL=http://azurite:10000/devstoreaccount1
+export PCTASKS_EXEC__BLOB_ACCOUNT_NAME=devstoreaccount1
+export PCTASKS_EXEC__BLOB_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+```
+
+## Azurite setup
+
+You can run
+
+```
+pctasks-dev setup-azurite
+```
+
+To set up Azurite with the necessary queues, tables and containers for development.

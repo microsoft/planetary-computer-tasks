@@ -1,0 +1,23 @@
+name: naip
+image: pc-tasks-naip:latest
+collections:
+  - id: naip
+    class: naip.dataset:Naip
+    asset_storage:
+      - storage_account: naipeuwest
+        container: naip
+        sas_token: ${{ pc.get_token(naipeuwest, naip) }}
+        chunks:
+          length: 3000
+          ext: "*.tif"
+          splits:
+            - depth: 2
+              name_starts_with: v002
+    chunk_storage:
+      storage_account: naipeuwest
+      container: naip-etl-data
+      prefix: chunks/assets
+    item_storage:
+      storage_account: naipeuwest
+      container: naip-etl-data
+      prefix: chunks/items

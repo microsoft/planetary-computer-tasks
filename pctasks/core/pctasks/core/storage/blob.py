@@ -1,0 +1,513 @@
+import logging
+import multiprocessing
+import os
+from datetime import datetime as Datetime
+from datetime import timedelta, timezone
+from typing import (
+    Any,
+    Generator,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    cast,
+)
+from urllib.parse import urlparse
+
+from azure.identity import DefaultAzureCredential
+from azure.identity._credentials.client_secret import ClientSecretCredential
+from azure.storage.blob import (
+    BlobPrefix,
+    BlobProperties,
+    BlobServiceClient,
+    ContainerClient,
+    ContainerSasPermissions,
+    generate_container_sas,
+)
+
+from pctasks.core.storage.base import Storage, StorageFileInfo
+from pctasks.core.utils import map_opt
+from pctasks.core.utils.backoff import with_backoff
+
+logger = logging.getLogger(__name__)
+
+
+class BlobStorageError(Exception):
+    pass
+
+
+class SasTokenError(Exception):
+    pass
+
+
+class BlobUri:
+    """Represents a blob uri Azure Blob Storage.
+
+    A blob URI can be to a specific blob, a prefix that represents
+    many blobs, or only a storage account and container.
+
+    The URIs are structured like this:
+        blob://{storage_account_name}/{container_name}/{prefix}/blob.txt}
+
+    Attributes:
+        storage_account_name: The name of the storage account for this path.
+        container_name: The name of the container for this path
+        blob_name: the blob name or prefix, if exists. If not, None.
+    """
+
+    def __init__(self, uri: str) -> None:
+        self.uri = uri
+        parsed = urlparse(self.uri)
+        self.storage_account_name: str = parsed.netloc
+        self.container_name: str = parsed.path.split("/")[1]
+        if not self.container_name:
+            raise ValueError(
+                f"BlobPath requires container name; {self.uri} is invalid."
+            )
+        self.blob_name: Optional[str] = "/".join(parsed.path.split("/")[2:]) or None
+
+    @property
+    def url(self) -> str:
+        """Gets the HTTPS URL for this blob path.
+
+        Returns:
+            str: The public URL of the blob.
+        """
+        result = (
+            f"https://{self.storage_account_name}.blob.core.windows.net"
+            f"/{self.container_name}"
+        )
+        if self.blob_name:
+            result = f"{result}/{self.blob_name}"
+        return result
+
+    def __str__(self) -> str:
+        result = f"blob://{self.storage_account_name}/{self.container_name}"
+        if self.blob_name:
+            result = f"{result}/{self.blob_name}"
+        return result
+
+    @property
+    def base_uri(self) -> "BlobUri":
+        """Returns the BlobUri for the storage account and container"""
+        return BlobUri(f"blob://{self.storage_account_name}/{self.container_name}")
+
+    @staticmethod
+    def matches(uri: str) -> bool:
+        """Checks to see if a uri is a blob uri"""
+        try:
+            parsed = urlparse(uri)
+            return parsed.scheme == "blob"
+        except Exception:
+            return False
+
+
+class ContainerClientWrapper:
+    """Wrapper class that ensures closing of clients"""
+
+    def __init__(
+        self, account_client: BlobServiceClient, container_client: ContainerClient
+    ) -> None:
+        self._account_client = account_client
+        self.container = container_client
+
+    def __enter__(self) -> "ContainerClientWrapper":
+        return self
+
+    def __exit__(self, *args: Any) -> None:
+        self.container.close()
+        self._account_client.close()
+
+
+class BlobStorage(Storage):
+    """Utility class for blob storage access.
+    Represents access to a single blob container, with an optional prefix.
+
+    If a prefix is applied, then paths will be relative to that prefix.
+    E.g. if BlobStorage for a BlobUri 'blob://somesa/some-container/some/folder'
+    is used, then doing an operation like open_file on the file_path 'file.txt'
+    will open the blob at 'blob://somesa/some-container/some/folder/file.txt'.
+
+    Args:
+        storage_account_name: The storage account name,
+            e.g. 'modissa'
+        container_name: The container name to access.
+        prefix: Optional prefix to base all paths off of.
+        sas_token: Optional  SAS token.
+            If not supplied, uses DefaultAzureCredentials, in which you
+            need to make sure the environment variables
+            AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and
+            AZURE_TENANT_ID are set.
+        account_url: Optional account URL. If not supplied, uses
+            the defualt Azure blob URL for a storage account.
+
+    Note:
+
+    If a service principle is used, make sure
+    an appropriate IAM role (e.g. Storage Blob Data Contributor) on
+    the storage account is assigned.
+
+    See Storage for method docstrings.
+    """
+
+    _blob_creds: Union[ClientSecretCredential, DefaultAzureCredential, str]
+
+    def __init__(
+        self,
+        storage_account_name: str,
+        container_name: str,
+        prefix: Optional[str] = None,
+        sas_token: Optional[str] = None,
+        account_url: Optional[str] = None,
+    ) -> None:
+        self.sas_token = sas_token
+
+        # Check if there's a service principle in the environment.
+        # If so, use that. Otherwise check for a SAS token.
+        if sas_token is not None:
+            self._blob_creds = sas_token
+        elif os.environ.get("AZURE_CLIENT_ID"):
+            self._blob_creds = DefaultAzureCredential()
+        elif os.environ.get("AZURE_STORAGE_SAS_TOKEN"):
+            self._blob_creds = os.environ["AZURE_STORAGE_SAS_TOKEN"]
+        else:
+            # Base case, let Azure SDK handle any other
+            # possibility or error out.
+            self._blob_creds = DefaultAzureCredential()
+
+        self.account_url = (
+            account_url or f"https://{storage_account_name}.blob.core.windows.net"
+        )
+        self.storage_account_name = storage_account_name
+        self.container_name = container_name
+        self.prefix = prefix.strip("/") if prefix is not None else prefix
+
+    def _get_client(self) -> ContainerClientWrapper:
+        account_client = BlobServiceClient(
+            account_url=self.account_url,
+            credential=self._blob_creds,
+        )
+
+        container_client = account_client.get_container_client(self.container_name)
+
+        return ContainerClientWrapper(account_client, container_client)
+
+    def _get_name_starts_with(
+        self, additional_prefix: Optional[str] = None
+    ) -> Optional[str]:
+        if self.prefix is not None:
+            return os.path.join(self.prefix, additional_prefix or "")
+        else:
+            return additional_prefix
+
+    def _add_prefix(self, path: str) -> str:
+        if self.prefix is not None:
+            return os.path.join(self.prefix, path)
+        else:
+            return path
+
+    def _strip_prefix(self, path: str) -> str:
+        if self.prefix is None:
+            return path
+        else:
+            relpath = os.path.relpath(path.lstrip("/"), self.prefix)
+            if relpath == ".":
+                return ""
+            return relpath
+
+    @property
+    def root_uri(self) -> str:
+        container_uri = f"blob://{self.storage_account_name}/{self.container_name}"
+        if self.prefix is None:
+            return container_uri
+        else:
+            return os.path.join(container_uri, self.prefix)
+
+    def list_files(
+        self,
+        name_starts_with: Optional[str] = None,
+        since_date: Optional[Datetime] = None,
+    ) -> Iterable[str]:
+        # Ensure UTC set
+        since_date = map_opt(lambda d: d.replace(tzinfo=timezone.utc), since_date)
+
+        def log_page(page: Iterator[BlobProperties]) -> Iterator[BlobProperties]:
+            print(".", end="", flush=True)
+            return page
+
+        def filter_page(page: Iterator[BlobProperties]) -> Iterator[BlobProperties]:
+            return filter(
+                lambda b: since_date is None
+                or cast(Datetime, b.last_modified) >= since_date,
+                page,
+            )
+
+        def transform_page(page: Iterator[BlobProperties]) -> Iterator[str]:
+            return map(lambda b: self._strip_prefix(b["name"]), page)
+
+        def fetch_blobs() -> Iterable[str]:
+            pages = client.container.list_blobs(
+                name_starts_with=self._get_name_starts_with(name_starts_with)
+            ).by_page()
+            filtered_pages = map(filter_page, pages)
+            logged_pages = map(log_page, filtered_pages)
+            transformed_page = map(transform_page, logged_pages)
+
+            for page in transformed_page:
+                for blob_name in page:
+                    yield blob_name
+
+        with self._get_client() as client:
+            return with_backoff(fetch_blobs)
+
+    def walk(
+        self,
+        max_depth: Optional[int] = None,
+        min_depth: Optional[int] = None,
+        name_starts_with: Optional[str] = None,
+        walk_limit: Optional[int] = None,
+        file_limit: Optional[int] = None,
+    ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
+        def _get_depth(path: Optional[str]) -> int:
+            if not path:
+                return 0
+            path = path.strip("/")
+            if self.prefix is not None:
+                relpath = os.path.relpath(path, self.prefix)
+                if relpath == ".":
+                    return 0
+            else:
+                relpath = path
+            if not relpath:
+                return 0
+            return len(relpath.split("/"))
+
+        def _get_prefix_content(
+            full_prefix: Optional[str],
+        ) -> Tuple[List[str], List[str]]:
+            folders = []
+            files = []
+            for item in client.container.walk_blobs(name_starts_with=full_prefix):
+                if isinstance(item, BlobPrefix):
+                    name = os.path.relpath(item.name, full_prefix)
+                    folders.append(name.strip("/"))
+                else:
+                    files.append(os.path.relpath(item.name, full_prefix))
+            return folders, files
+
+        walk_count = 0
+        file_count = 0
+        limit_break = False
+
+        full_prefixes: List[str] = [self._get_name_starts_with(name_starts_with) or ""]
+        with self._get_client() as client:
+            while full_prefixes:
+                if walk_limit and walk_count >= walk_limit:
+                    break
+
+                if limit_break:
+                    break
+
+                next_level_prefixes: List[str] = []
+                for full_prefix in full_prefixes:
+                    if walk_limit and walk_count >= walk_limit:
+                        limit_break = True
+                        break
+                    if limit_break:
+                        break
+
+                    prefix_depth = _get_depth(full_prefix)
+                    if max_depth and prefix_depth > max_depth:
+                        break
+
+                    folders, files = _get_prefix_content(full_prefix)
+
+                    if file_limit and file_count + len(files) > file_limit:
+                        files = files[: file_limit - file_count]
+                        limit_break = True
+                        if not files:
+                            break
+
+                    root = self._strip_prefix(full_prefix or "") or "."
+                    walk_count += 1
+
+                    next_level_prefixes.extend(
+                        map(
+                            lambda f: f"{os.path.join(full_prefix, f)}/",
+                            folders,
+                        )
+                    )
+                    file_count += len(files)
+                    if not min_depth or prefix_depth >= min_depth:
+                        yield root, folders, files
+
+                full_prefixes = next_level_prefixes
+
+    def download_file(
+        self,
+        file_path: str,
+        output_path: str,
+        is_binary: bool = True,
+    ) -> None:
+        with self._get_client() as client:
+            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
+                with open(output_path, "wb" if is_binary else "w") as f:
+                    with_backoff(lambda: blob.download_blob().readinto(f))
+
+    def file_exists(self, file_path: str) -> bool:
+        with self._get_client() as client:
+            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
+                return with_backoff(lambda: blob.exists())
+
+    def get_file_info(self, file_path: str) -> StorageFileInfo:
+        with self._get_client() as client:
+            with client.container.get_blob_client(file_path) as blob:
+                props = with_backoff(lambda: blob.get_blob_properties())
+                return StorageFileInfo(size=cast(int, props.size))
+
+    def upload_file(
+        self,
+        input_path: str,
+        target_path: str,
+        overwrite: bool = True,
+    ) -> None:
+        with self._get_client() as client:
+            with client.container.get_blob_client(
+                self._add_prefix(target_path)
+            ) as blob:
+
+                def _upload() -> None:
+                    with open(input_path, "rb") as f:
+                        blob.upload_blob(f, overwrite=overwrite)
+
+                with_backoff(_upload)
+
+    def get_url(self, file_path: str) -> str:
+        return f"{self.account_url}/{self.container_name}/{self._add_prefix(file_path)}"
+
+    def get_uri(self, file_path: Optional[str] = None) -> str:
+        if file_path is None:
+            return self.root_uri
+        else:
+            return os.path.join(self.root_uri, file_path)
+
+    def get_authenticated_url(self, file_path: str) -> str:
+        if self.sas_token is None:
+            raise SasTokenError(f"SAS Token required but not defined on {self}")
+        base_url = self.get_url(file_path)
+        return f"{base_url}?{self.sas_token}"
+
+    def get_path(self, uri: str) -> str:
+        blob_uri = BlobUri(uri)
+        if blob_uri.storage_account_name != self.storage_account_name:
+            raise ValueError(f"URI {uri} does not share storage account with {self}")
+        if blob_uri.container_name != self.container_name:
+            raise ValueError(f"URI {uri} does not share container with {self}")
+        if self.prefix:
+            if not blob_uri.blob_name or self.prefix not in blob_uri.blob_name:
+                raise ValueError(f"URI {uri} does not share prefix with {self}")
+            return self._strip_prefix(blob_uri.blob_name)
+        else:
+            return blob_uri.blob_name or ""
+
+    def get_substorage(self, path: str) -> "Storage":
+        if self.prefix is None:
+            subprefix = path
+        else:
+            subprefix = os.path.join(self.prefix, path)
+        return BlobStorage(
+            storage_account_name=self.storage_account_name,
+            container_name=self.container_name,
+            prefix=subprefix,
+            sas_token=self.sas_token,
+            account_url=self.account_url,
+        )
+
+    def read_bytes(self, file_path: str) -> bytes:
+        try:
+            blob_path = self._add_prefix(file_path)
+            with self._get_client() as client:
+                with client.container.get_blob_client(blob_path) as blob:
+                    blob_data = with_backoff(
+                        lambda: blob.download_blob(
+                            max_concurrency=multiprocessing.cpu_count() or 1
+                        )
+                    )
+                    return cast(
+                        bytes,
+                        blob_data.readall(),
+                    )
+        except Exception as e:
+            raise BlobStorageError(
+                f"Could not read text from {self.get_uri(file_path)}"
+            ) from e
+
+    def delete_folder(self, folder_path: Optional[str] = None) -> None:
+        for file_path in self.list_files(name_starts_with=folder_path):
+            self.delete_file(file_path)
+
+    def delete_file(self, file_path: str) -> None:
+        with self._get_client() as client:
+            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
+                with_backoff(lambda: blob.delete_blob())
+
+    def write_bytes(self, file_path: str, data: bytes, overwrite: bool = True) -> None:
+        full_path = self._add_prefix(file_path)
+        with self._get_client() as client:
+            with client.container.get_blob_client(full_path) as blob:
+                with_backoff(lambda: blob.upload_blob(data, overwrite=overwrite))
+
+    def __repr__(self) -> str:
+        prefix_part = "" if self.prefix is None else f"/{self.prefix}"
+        return (
+            f"BlobStorage(blob://{self.storage_account_name}"
+            f"/{self.container_name}{prefix_part})"
+        )
+
+    @classmethod
+    def from_uri(
+        cls,
+        blob_uri: Union[BlobUri, str],
+        sas_token: Optional[str] = None,
+        account_url: Optional[str] = None,
+    ) -> "BlobStorage":
+        if isinstance(blob_uri, str):
+            blob_uri = BlobUri(blob_uri)
+
+        return BlobStorage(
+            storage_account_name=blob_uri.storage_account_name,
+            container_name=blob_uri.container_name,
+            prefix=blob_uri.blob_name,
+            sas_token=sas_token,
+            account_url=account_url,
+        )
+
+    @classmethod
+    def from_account_key(
+        cls,
+        blob_uri: Union[BlobUri, str],
+        account_key: str,
+        account_url: Optional[str] = None,
+    ) -> "BlobStorage":
+        if isinstance(blob_uri, str):
+            blob_uri = BlobUri(blob_uri)
+
+        sas_token = generate_container_sas(
+            account_name=blob_uri.storage_account_name,
+            container_name=blob_uri.container_name,
+            account_key=account_key,
+            start=Datetime.utcnow() - timedelta(hours=10),
+            expiry=Datetime.utcnow() + timedelta(hours=24 * 7),
+            permission=ContainerSasPermissions(
+                read=True,
+                write=True,
+                delete=True,
+                list=True,
+            ),
+        )
+
+        return cls.from_uri(
+            blob_uri=blob_uri, sas_token=sas_token, account_url=account_url
+        )

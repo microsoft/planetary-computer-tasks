@@ -1,0 +1,36 @@
+name: Ingest streaming
+
+tokens:
+  naipeuwest:
+    containers:
+      naip:
+        token: X
+
+on:
+  blob_created:
+    storage_account: naipeuwest
+    container: naip
+    extensions:
+      - .tif
+
+jobs:
+  naip:
+    name: Naip streaming ingest
+    tasks:
+      - id: create-item
+        image: pctasks-naip:latest
+        task: naip.collection:Naip.create_item_task
+        args:
+          asset_storage_uri: X
+          stac_storage_uri: X
+          asset_uri: ${{on.blob-created.output.uri}}
+          limit: X
+          skip_validation: X
+      - id: ingest-item
+        image_key: ingest
+        targets:
+          - production
+          - staging
+        task: pctasks.ingest.task:ingest_task
+        args:
+          content: ${{tasks.create-item.output[0]}}

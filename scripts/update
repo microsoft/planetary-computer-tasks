@@ -1,0 +1,85 @@
+#!/bin/bash
+
+set -e
+
+if [[ "${CI}" ]]; then
+    set -x
+fi
+
+function usage() {
+    if [[ "${1}" ]]; then
+        echo "${1}"
+    fi
+
+    echo -n \
+        "Usage: $(basename "$0") [OPTIONS]
+Builds project docker images
+
+Options:
+    --deploy
+        Only build the deploy image
+    --servers
+        Only build the servers images (functions, local-executor)
+    --dev
+        Only build the dev image
+    --task
+        Only build the task image
+"
+}
+
+BUILD_DEPLOY=1
+BUILD_SERVERS="-f docker-compose.yml"
+BUILD_DEV="-f docker-compose.console.yml"
+BUILD_TASK="-f docker-compose.tasks.yml"
+while [[ $# -gt 0 ]]; do case $1 in
+    --deploy)
+        DEPLOY_ONLY=1
+        BUILD_SERVERS=""
+        BUILD_DEV=""
+        BUILD_TASK=""
+        shift
+        ;;
+    --servers)
+        BUILD_DEPLOY=""
+        BUILD_DEV=""
+        BUILD_TASK=""
+        shift
+        ;;
+    --dev)
+        BUILD_SERVERS=""
+        BUILD_DEPLOY=""
+        BUILD_TASK=""
+        shift
+        ;;
+    --task)
+        BUILD_SERVERS=""
+        BUILD_DEV=""
+        BUILD_DEPLOY=""
+        shift
+        ;;
+    --help)
+        usage
+        exit 0
+        shift
+        ;;
+    *)
+        usage "Unknown parameter passed: $1"
+        exit 1
+        ;;
+    esac done
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    # Build deployment image
+    if [ "${BUILD_DEPLOY}" ]; then
+        docker-compose \
+            -f deployment/docker-compose.yml \
+            build
+    fi
+
+    # Build project images
+    if [ -z "${DEPLOY_ONLY}" ]; then
+        docker-compose ${BUILD_SERVERS} ${BUILD_TASK} ${BUILD_DEV} \
+            build
+    fi
+
+fi

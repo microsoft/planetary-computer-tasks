@@ -1,0 +1,47 @@
+name: Test foreach workflow
+dataset: microsoft/test-foreach
+target_environment: staging
+
+args:
+  - output_dir
+
+jobs:
+  list-prefix:
+    name: List prefixes
+    tasks:
+      - id: prefixes
+        image: mock:latest
+        task: tests.tasks:list_prefixes_task
+        args:
+          uri: ${{ local.path(../data-files/simple-assets) }}
+          depth: 1
+
+  list-files:
+    name: List Files
+    needs: list-prefix
+    foreach:
+      items: ${{ jobs.list-prefix.tasks.prefixes.output.uris }}
+    tasks:
+      - id: paths
+        image: mock:latest
+        task: tests.tasks:list_files_task
+        args:
+          uri: ${{ item }}
+
+  process:
+    name: Read and write file
+    needs: list-files
+    foreach:
+      items: ${{ jobs.list-files.tasks.paths.output.uris }}
+    tasks:
+      - id: read-file
+        image: mock:latest
+        task: tests.tasks:read_file_task
+        args:
+          uri: ${{ item }}
+      - id: write-text
+        image: mock:latest
+        task: tests.tasks:write_file_task
+        args:
+          uri: ${{ args.output_dir}}/${{ tasks.read-file.output.name }}
+          content: ${{ tasks.read-file.output.content }}

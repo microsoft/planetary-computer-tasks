@@ -1,0 +1,55 @@
+name: ETL Test Workflow
+dataset: microsoft/test-collection
+target_environment: staging
+
+jobs:
+  list-prefixes:
+    name: List Prefixes
+    tasks:
+      - id: list-prefixes
+        task: pctasks.azurecr.io/naip:latest
+        args:
+          src_uri: blob://naipeuwest/naip
+          splits:
+            - depth: 2
+              name_starts_with: v002/
+  chunk:
+    name: Create Chunks
+    needs: list-prefixes
+    foreach:
+      items: ${{ jobs.list-prefixes.tasks.list-prefixes.output.prefixes }}
+    tasks:
+      - id: create-chunks
+        image: pctasks.azurecr.io/naip:latest
+        task: naip:collection.create_chunks
+        args:
+          src_uri: blob://naipeuwest/naip/${{ item }}
+          dst_uri: blob://naipeuwest/naip-etl-data/chunks/assets/2022-03_12_full/all/${{ item }}
+  etl:
+    name: Create and Ingest STAC items
+    needs: chunk
+    foreach:
+      items: ${{ jobs.chunks.tasks.create-chunks.output.uris }}
+    tasks:
+      - id: create-stac
+        image: pctasks.azurecr.io/naip:latest
+        task: naip:collection.create_stac
+        args:
+          chunk: ${{ item }}
+      - id: ingest-items
+        image_key: ingest
+        task: pctasks.ingest_task.task:ingest_task
+        environment:
+          DB_CONNECTION_STRING: "${{ secrets.pgstac-connection-string }}"
+        args:
+          content:
+            type: Ndjson
+            uris: ${{ tasks.create-stac.output.uris }}
+    notifications:
+      - type: Item
+        foreach:
+          items: ${{ tasks.ingest-items.output.items }}
+        collection_id: ${{ item.collection_id}}
+        item_id: ${{ item.item_id }}
+        geometry: ${{ item.geometry }}
+        event_type: ${{ item.event_type }}

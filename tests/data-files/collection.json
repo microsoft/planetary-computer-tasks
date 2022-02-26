@@ -1,0 +1,122 @@
+{
+    "id": "test-collection",
+    "type": "Collection",
+    "links": [],
+    "title": "PCTasks Test Collection",
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/todo.png",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "Thumbnail"
+        }
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -124.784,
+                    24.744,
+                    -66.951,
+                    49.346
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2010-01-01T00:00:00Z",
+                    "2019-12-31T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "PDDL-1.0",
+    "keywords": [
+        "test"
+    ],
+    "providers": [
+        {
+            "url": "https://planetarycomputer.microsoft.com",
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ]
+        }
+    ],
+    "summaries": {
+        "gsd": [
+            0.6,
+            1.0
+        ],
+        "eo:bands": [
+            {
+                "name": "Red",
+                "common_name": "red",
+                "description": "visible red"
+            },
+            {
+                "name": "Green",
+                "common_name": "green",
+                "description": "visible green"
+            },
+            {
+                "name": "Blue",
+                "common_name": "blue",
+                "description": "visible blue"
+            },
+            {
+                "name": "NIR",
+                "common_name": "nir",
+                "description": "near-infrared"
+            }
+        ]
+    },
+    "description": "A test collection.",
+    "item_assets": {
+        "image": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "RGBIR COG tile",
+            "eo:bands": [
+                {
+                    "name": "Red",
+                    "common_name": "red"
+                },
+                {
+                    "name": "Green",
+                    "common_name": "green"
+                },
+                {
+                    "name": "Blue",
+                    "common_name": "blue"
+                },
+                {
+                    "name": "NIR",
+                    "common_name": "nir",
+                    "description": "near-infrared"
+                }
+            ]
+        },
+        "thumbnail": {
+            "type": "image/jpeg",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "Thumbnail"
+        }
+    },
+    "stac_version": "1.0.0",
+    "msft:container": "test",
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/eo/v1.0.0/schema.json"
+    ],
+    "msft:storage_account": "test",
+    "msft:short_description": "A test collection."
+}

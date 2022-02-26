@@ -1,0 +1,49 @@
+#!/bin/bash
+
+set -e
+
+if [[ "${CI}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+        "Usage: $(basename "$0") [down]
+Runs the development servers
+
+--detached
+    Run the servers in detached mode
+down
+    Stop the servers
+"
+}
+
+DETACHED_ARG=""
+STOP_SERVERS=""
+
+while [[ "$#" -gt 0 ]]; do case $1 in
+    down)
+        STOP_SERVERS="TRUE"
+        shift
+        ;;
+    --detached)
+        DETACHED_ARG="--detach"
+        shift
+        ;;
+    --help)
+        usage
+        exit 0
+        shift
+        ;;
+    *) break ;;
+    esac done
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${STOP_SERVERS}" ]; then
+        echo "Stopping servers"
+        docker-compose down
+    else
+        echo "Starting servers"
+        docker-compose up ${DETACHED_ARG} "$@"
+    fi
+fi

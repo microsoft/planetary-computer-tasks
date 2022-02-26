@@ -1,0 +1,22 @@
+flake8==4.*
+black==22.*
+mypy==0.931
+pytest==6.*
+isort==5.*
+
+planetary-computer
+pystac[validation]==1.*
+
+azure-functions
+azure-functions-durable
+
+# Mypy stubs
+
+types-cachetools
+types-chardet
+types-requests
+types-six
+types-urllib3<1.27
+types-python-dateutil
+types-ujson
+types-PyYAML

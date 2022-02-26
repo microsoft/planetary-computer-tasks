@@ -1,0 +1,60 @@
+#!/bin/bash
+
+set -e
+
+source scripts/env
+
+if [[ "${CI}" ]]; then
+    set -x
+fi
+
+function usage() {
+    if [[ "${1}" ]]; then
+        echo "${1}"
+    fi
+    echo -n \
+        "Usage: $(basename "$0") [OPTIONS]
+Format code. Meant to be run in the dev container.
+
+Options:
+    --help
+        Show this help
+
+"
+}
+
+# Parse args
+while [[ $# -gt 0 ]]; do case $1 in
+    --help)
+        usage
+        exit 0
+        shift
+        ;;
+    *)
+        usage "Unknown parameter passed: $1"
+        exit 1
+        ;;
+    esac done
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+
+    for PACKAGE in "${PACKAGE_DIRS[@]}"; do
+        if [ -d "${PACKAGE}/tests" ]; then
+            TEST_DIR="${PACKAGE}/tests"
+        else
+            TEST_DIR=""
+        fi
+        isort --overwrite-in-place ${PACKAGE}/pctasks ${TEST_DIR}
+        black ${PACKAGE}/pctasks ${TEST_DIR}
+
+    done
+
+    isort --overwrite-in-place pctasks_funcs
+    black pctasks_funcs
+
+    for TEST in "${INTEGRATION_TESTS[@]}"; do
+        isort --overwrite-in-place ${TEST}
+        black ${TEST}
+    done
+
+fi

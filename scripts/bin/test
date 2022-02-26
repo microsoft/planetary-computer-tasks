@@ -1,0 +1,172 @@
+#!/bin/bash
+
+set -e
+
+source scripts/env
+
+if [[ "${CI}" ]]; then
+    set -x
+fi
+
+function usage() {
+    if [[ "${1}" ]]; then
+        echo "${1}"
+    fi
+    echo -n \
+        "Usage: $(basename "$0") [OPTIONS]
+Runs tests. Meant to be run in the dev container.
+
+Options:
+    --subpackage <subpackage>
+        Run tests only for a subpackage.
+    --functions
+        Run tests only for Azure Functions.
+    --test-only
+        Only run tests, don't lint
+    --no-integration
+        Skip running integration tests
+    --integration-only
+        Only run integration tests
+    --lint-only
+        Only run linting
+    --no-init
+        Don't initialize mypy, which is for installing stubs, but takes extra time if already run.
+    --help
+        Show this help
+
+"
+}
+
+# Parse args
+SUBPACKAGE=""
+FUNCTIONS=""
+TEST_ONLY=""
+LINT_ONLY=""
+NO_INTEGRATION=""
+INTEGRATION_ONLY=""
+INIT_MYPY="--install-types --non-interactive"
+while [[ $# -gt 0 ]]; do case $1 in
+    --subpackage)
+        SUBPACKAGE="${2}"
+        shift
+        shift
+        ;;
+    --functions)
+        FUNCTIONS="1"
+        shift
+        ;;
+    --test-only)
+        TEST_ONLY="1"
+        shift
+        ;;
+    --lint-only)
+        LINT_ONLY="1"
+        shift
+        ;;
+    --no-integration)
+        NO_INTEGRATION="1"
+        shift
+        ;;
+    --integration-only)
+        INTEGRATION_ONLY="1"
+        shift
+        ;;
+    --no-init)
+        INIT_MYPY=""
+        shift
+        ;;
+    --help)
+        usage
+        exit 0
+        shift
+        ;;
+    *)
+        usage "Unknown parameter passed: $1"
+        exit 1
+        ;;
+    esac done
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+
+    if [ -z "${FUNCTIONS}${INTEGRATION_ONLY}" ]; then
+        PACKAGES=("${PACKAGE_DIRS[@]}")
+        if [ "${SUBPACKAGE}" ]; then
+            PACKAGES=("pctasks/${SUBPACKAGE}")
+        fi
+
+        for PACKAGE in "${PACKAGES[@]}"; do
+            if [ -d "${PACKAGE}/tests" ]; then
+                TEST_DIR="${PACKAGE}/tests"
+            else
+                TEST_DIR=""
+            fi
+
+            echo " === Running tests for package '${PACKAGE}' ==="
+            if [ -z "${TEST_ONLY}" ]; then
+
+                echo "Running mypy..."
+                pushd "${PACKAGE}"
+                mypy ${INIT_MYPY} --config-file ../../mypy.ini pctasks
+                popd
+
+                echo "Running black..."
+                black --check ${PACKAGE}/pctasks ${TEST_DIR}
+
+                echo "Running isort..."
+                isort --check ${PACKAGE}/pctasks ${TEST_DIR}
+
+                echo "Running flake8..."
+                flake8 ${PACKAGE}/pctasks ${TEST_DIR}
+            fi
+
+            if [ -z "${LINT_ONLY}" ]; then
+                if [ -n "${TEST_DIR}" ]; then
+                    echo "Running unit tests..."
+                    pytest ${PACKAGE}/tests
+                fi
+            fi
+        done
+    fi
+
+    if [ -z "${TEST_ONLY}${SUBPACKAGE}${INTEGRATION_ONLY}" ]; then
+        echo " === Running function linting... ==="
+
+        for FUNC in "${FUNCTION_DIRS[@]}"; do
+            echo "Running mypy..."
+            mypy ${INIT_MYPY} ${FUNC}
+
+            echo "Running black..."
+            black --check ${FUNC}
+
+            echo "Running isort..."
+            isort --check ${FUNC}
+
+            echo "Running flake8..."
+            flake8 ${FUNC}
+        done
+    fi
+
+    if [ -z "${FUNCTIONS}${NO_INTEGRATION}${SUBPACKAGE}" ]; then
+        echo " == Running integration tests... == "
+
+        for TEST in "${INTEGRATION_TESTS[@]}"; do
+
+            if [ -z "${TEST_ONLY}" ]; then
+
+                echo "Running black..."
+                black --check ${TEST}
+
+                echo "Running isort..."
+                isort --check ${TEST}
+
+                echo "Running flake8..."
+                flake8 ${TEST}
+            fi
+
+            if [ -z "${LINT_ONLY}" ]; then
+                echo "Running tests..."
+                pytest ${TEST}
+            fi
+        done
+    fi
+fi

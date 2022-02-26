@@ -1,0 +1,134 @@
+{
+    "id": "item1",
+    "bbox": [
+        -80.627296,
+        27.997976,
+        -80.560208,
+        28.064522
+    ],
+    "type": "Feature",
+    "links": [],
+    "assets": {
+        "image": {
+            "href": "https://naipeuwest.blob.core.windows.net/naip/v002/fl/2019/fl_60cm_2019/28080/m_2808060_sw_17_060_20191215.tif",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "RGBIR COG tile",
+            "eo:bands": [
+                {
+                    "name": "Red",
+                    "common_name": "red"
+                },
+                {
+                    "name": "Green",
+                    "common_name": "green"
+                },
+                {
+                    "name": "Blue",
+                    "common_name": "blue"
+                },
+                {
+                    "name": "NIR",
+                    "common_name": "nir",
+                    "description": "near-infrared"
+                }
+            ]
+        },
+        "metadata": {
+            "href": "https://naipeuwest.blob.core.windows.net/naip/v002/fl/2019/fl_fgdc_2019/28080/m_2808060_sw_17_060_20191215.txt",
+            "type": "text/plain",
+            "roles": [
+                "metadata"
+            ],
+            "title": "FGDC Metdata"
+        },
+        "thumbnail": {
+            "href": "https://naipeuwest.blob.core.windows.net/naip/v002/fl/2019/fl_60cm_2019/28080/m_2808060_sw_17_060_20191215.200.jpg",
+            "type": "image/jpeg",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "Thumbnail"
+        },
+        "tilejson": {
+            "title": "TileJSON with default rendering",
+            "href": "https://planetarycomputer.microsoft.com/api/data/v1/item/tilejson.json?collection=naip&items=fl_m_2808060_sw_17_060_20191215_20200114&assets=image&bidx=1,2,3",
+            "type": "application/json",
+            "roles": [
+                "tiles"
+            ]
+        },
+        "rendered_preview": {
+            "title": "Rendered preview",
+            "rel": "preview",
+            "href": "https://planetarycomputer.microsoft.com/api/data/v1/item/preview.png?collection=naip&items=fl_m_2808060_sw_17_060_20191215_20200114&assets=image&bidx=1,2,3",
+            "roles": [
+                "overview"
+            ],
+            "type": "image/png"
+        }
+    },
+    "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+            [
+                [
+                    -80.560478,
+                    27.997976
+                ],
+                [
+                    -80.560208,
+                    28.064325
+                ],
+                [
+                    -80.627067,
+                    28.064522
+                ],
+                [
+                    -80.627296,
+                    27.998174
+                ],
+                [
+                    -80.560478,
+                    27.997976
+                ]
+            ]
+        ]
+    },
+    "collection": "test-collection",
+    "properties": {
+        "gsd": 0.6,
+        "datetime": "2019-12-15T00:00:00Z",
+        "naip:year": "2019",
+        "proj:bbox": [
+            536646,
+            3097056,
+            543216,
+            3104406
+        ],
+        "proj:epsg": 26917,
+        "naip:state": "fl",
+        "proj:shape": [
+            12250,
+            10950
+        ],
+        "proj:transform": [
+            0.6,
+            0,
+            536646,
+            0,
+            -0.6,
+            3104406,
+            0,
+            0,
+            1
+        ]
+    },
+    "stac_version": "1.0.0",
+    "stac_extensions": [
+        "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/projection/v1.0.0/schema.json"
+    ]
+}

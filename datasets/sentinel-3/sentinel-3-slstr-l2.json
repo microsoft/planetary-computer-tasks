@@ -1,0 +1,159 @@
+{
+  "type": "Collection",
+  "id": "sentinel-3-l2-slstr",
+  "stac_version": "1.0.0",
+  "description": "The [Sentinel-3](https://sentinel.esa.int/web/sentinel/missions/sentinel-3) mission is composed of three versatile satellites designed to provide data continuity for the ERS, ENVISAT and SPOT satellites and to support operational land and ocean observation services. Sentinel-3 satellites make use of four main instruments on board; OLCI, SLSTR, SRAL and MWR, to measure sea surface topography, sea and land surface temperature and ocean and land surface color. The SLSTR (Sea and Land Surface Temperature Radiometer) continues the timeline of Sea Surface Temperature measurements from the ATSR instrument series. The principal objective of SLSTR products is to provide global and regional Sea and Land Surface Temperature (SST, LST) to a very high level of accuracy (better than 0.3 K for SST) for both climatological and meteorological applications. The SLSTR Level-2 processing includes five types of products: WCT products providing the sea surface temperature for single and dual view, for two or three channels, WST products providing L2P sea surface temperature, following the GHRSST specifications, LST products providing land surface temperature, FRP products providing global (over land and water) fire radiative power, and AOD products providing global (over land and water) aerosol optical depth.",
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice"
+    },
+    {
+      "rel": "root",
+      "href": "./sentinel-3-slstr.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "self",
+      "href": "https://sentinel3euwest.blob.core.windows.net/sentinel-3-stac/SLSTR/sentinel-3-slstr.json",
+      "type": "application/json"
+    }
+  ],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/sat/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/eo/v1.0.0/schema.json"
+  ],
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -180,
+          -85,
+          180,
+          85
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2016-04-17T11:33:13Z",
+          null
+        ]
+      ]
+    }
+  },
+  "license": "proprietary",
+  "keywords": [
+    "eu",
+    "esa",
+    "copernicus",
+    "sentinel",
+    "Fire Radiative Power",
+    "Land Surface Temperature (LST)",
+    "Group for High Resolution Sea Surface Temperature (GHRSST)"
+  ],
+  "providers": [
+    {
+      "name": "ESA",
+      "roles": [
+        "producer",
+        "processor",
+        "licensor"
+      ],
+      "url": "https://earth.esa.int/web/guest/home"
+    },
+    {
+      "name": "Microsoft",
+      "roles": [
+        "host",
+        "processor"
+      ],
+      "url": "https://planetarycomputer.microsoft.com"
+    }
+  ],
+  "msft:container": "sentinel-3",
+  "msft:storage_account": "sentinel3euwest",
+  "msft:short_description": "The [Sentinel-3](https://sentinel.esa.int/web/sentinel/missions/sentinel-3) mission is composed of three versatile satellites designed to provide data continuity for the ERS, ENVISAT and SPOT satellites and to support operational land and ocean observation services. The SLSTR Level-2 processing includes five types of products: WCT products providing the sea surface temperature for single and dual view, for two or three channels, WST products providing L2P sea surface temperature, following the GHRSST specifications, LST products providing land surface temperature, FRP products providing global (over land and water) fire radiative power, and AOD products providing global (over land and water) aerosol optical depth.",
+  "summaries": {
+    "constellation": [
+      "Sentinel-3"
+    ],
+    "platform": [
+      "Sentinel-3A",
+      "Sentinel-3B"
+    ],
+    "instruments": [
+      "SLSTR"
+    ],
+    "sat:platform_international_designator": [
+      "2016-011A",
+      "2018-039A"
+    ],
+    "sat:orbit_state" : [
+      "ascending",
+      "descending"
+    ],
+    "sat:absolute_orbit" : {
+      "minimum": 1
+    },
+    "sat:relative_orbi": {
+      "minimum": 1,
+      "maximum": 385
+    },
+    "eo:cloud_cover": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "s3:mode" : [
+      "EO"
+    ],
+    "s3:productType": [
+      "SL_2_FRP___",
+      "SL_2_LST___",
+      "SL_2_WST___"
+    ],
+    "s3:salineWaterPixels_percentage": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "s3:landPixels_percentage": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "s3:coastalPixels_percentage": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "s3:freshInlandWaterPixels_percentage": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "s3:tidalRegionPixels_percentage": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "s3:cosmeticPixels_percentage": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "s3:duplicatedPixels_percentage": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "s3:saturatedPixels_percentage": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "s3:outOfRangePixels_percentage": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "s3:shape": {
+      "dimensions": "columns x rows",
+      "columns": "Number of columns in the product image",
+      "rows": "Number of rows in the product image"
+    }
+  },
+  "title": "Sentinel-3 Level-2 SLSTR"
+}
