@@ -14,6 +14,7 @@ from pctasks.core.models.task import (
 from pctasks.core.queues import QueueService
 from pctasks.core.storage.blob import BlobStorage, BlobUri
 from pctasks.core.tables.record import TaskRunRecordTable
+from pctasks.core.utils import environment
 from pctasks.task.context import TaskContext
 from pctasks.task.task import Task
 
@@ -54,6 +55,7 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
                     ),
                 )
                 signal_client.send_message(signal.json().encode())
+                logger.info("...signal sent")
 
         logger.info(" === PCTasks ===")
         logger.info(f"  == {task_config.get_run_record_id()} ")
@@ -112,23 +114,27 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
 
                     # Set environment variables
                     if task_config.environment:
-                        for k, v in task_config.environment.items():
-                            os.environ[k] = v
-
-                    missing_env = []
-                    for env_var in task.get_required_environment_variables():
-                        if env_var not in os.environ:
-                            missing_env.append(env_var)
-                    if missing_env:
-                        missing_env_str = ", ".join(f'"{e}"' for e in missing_env)
-                        raise MissingEnvironmentError(
-                            "The task cannot run due to the following "
-                            f"missing environment variables: {missing_env_str}"
+                        logger.info(
+                            "  Using the following environment variables "
+                            "from task configuration:"
                         )
+                        logger.info("    " + ",".join(task_config.environment.keys()))
 
-                    update_status(TaskRunStatus.RUNNING)
-                    logger.info("  -- PCTasks: Running task...")
-                    result = task.parse_and_run(task_data, task_context)
+                    with environment(**(task_config.environment or {})):
+                        missing_env = []
+                        for env_var in task.get_required_environment_variables():
+                            if env_var not in os.environ:
+                                missing_env.append(env_var)
+                        if missing_env:
+                            missing_env_str = ", ".join(f'"{e}"' for e in missing_env)
+                            raise MissingEnvironmentError(
+                                "The task cannot run due to the following "
+                                f"missing environment variables: {missing_env_str}"
+                            )
+
+                        update_status(TaskRunStatus.RUNNING)
+                        logger.info("  -- PCTasks: Running task...")
+                        result = task.parse_and_run(task_data, task_context)
 
                     logger.info("  -- PCTasks: Handling task result...")
 

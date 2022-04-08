@@ -53,39 +53,47 @@ class IngestTask(Task[IngestTaskInput, IngestTaskOutput]):
 
         pgstac = PgSTAC(conn_str)
 
-        item_id: Optional[str] = None
+        with pgstac.db:
 
-        if isinstance(content, IngestNdjsonInput):
-            ingest_ndjsons(
-                pgstac, content.uris, storage_factory=context.storage_factory
-            )
-            result = IngestTaskOutput(bulk_load=True)
+            item_id: Optional[str] = None
 
-        elif isinstance(content, IngestCollectionsInput):
-            collections_to_status = ingest_collections(pgstac, content.collections)
-            result = IngestTaskOutput(
-                collections=[
-                    CollectionIngestTaskOutput(
-                        collection_id=collection_id,
-                        event_type=STACCollectionEventType.CREATED
-                        if inserted
-                        else STACCollectionEventType.UPDATED,
+            if isinstance(content, IngestNdjsonInput):
+                ndjson_uris: List[str]
+                uris = content.uris
+                if uris:
+                    if isinstance(uris, str):
+                        ndjson_uris = [uris]
+                    else:
+                        ndjson_uris = uris
+                else:
+                    folder_config = content.ndjson_folder
+                    if not folder_config:
+                        # Should be caught by the validator
+                        raise IngestError(
+                            "Either ndjson_folder or uris must be provided."
+                        )
+                    ndjson_storage = context.storage_factory.get_storage(
+                        folder_config.uri
                     )
-                    for collection_id, inserted in collections_to_status.items()
-                ]
-            )
-        else:
-            assert isinstance(content, dict)
-            ingest_type = content.get("type")
-            if not ingest_type:
-                raise Exception("Ingest task data must contain a type")
+                    ndjson_uris = [
+                        ndjson_storage.get_uri(path)
+                        for path in ndjson_storage.list_files(
+                            name_starts_with=folder_config.name_starts_with,
+                            extensions=folder_config.extensions,
+                            ends_with=folder_config.ends_with,
+                            matches=folder_config.matches,
+                        )
+                    ]
+                    if folder_config.limit:
+                        ndjson_uris = ndjson_uris[: folder_config.limit]
 
-            if ingest_type == "Collection":
-                collection_id = content.get("id")
-                if not collection_id:
-                    raise IngestError("Collection must contain an id")
-                inserted = ingest_collection(pgstac, content)
+                ingest_ndjsons(
+                    pgstac, ndjson_uris, storage_factory=context.storage_factory
+                )
+                result = IngestTaskOutput(bulk_load=True)
 
+            elif isinstance(content, IngestCollectionsInput):
+                collections_to_status = ingest_collections(pgstac, content.collections)
                 result = IngestTaskOutput(
                     collections=[
                         CollectionIngestTaskOutput(
@@ -94,48 +102,73 @@ class IngestTask(Task[IngestTaskInput, IngestTaskOutput]):
                             if inserted
                             else STACCollectionEventType.UPDATED,
                         )
-                    ]
-                )
-
-            elif ingest_type == "Feature":
-                item_id = content.get("id")
-                if not item_id:
-                    raise IngestError("Item must contain an id")
-                geometry = content.get("geometry")
-                if not geometry:
-                    raise IngestError("Item must contain a geometry")
-                collection_id = content.get("collection")
-                if not collection_id:
-                    raise IngestError("Item must contain a collection")
-
-                inserted = item_id not in pgstac.existing_items({item_id or ""})
-
-                # Ingest item
-                ingest_item(pgstac, content)
-
-                result = IngestTaskOutput(
-                    items=[
-                        ItemIngestTaskOutput(
-                            collection_id=collection_id,
-                            item_id=item_id,
-                            geometry=geometry,
-                            event_type=STACItemEventType.CREATED
-                            if not inserted
-                            else STACItemEventType.UPDATED,
-                        )
+                        for collection_id, inserted in collections_to_status.items()
                     ]
                 )
             else:
-                # Check for message validation errors that
-                # caused fallback to Dict[str, Any]
-                if ingest_type == COLLECTIONS_MESSAGE_TYPE:
-                    IngestCollectionsInput(**content)
-                if ingest_type == NDJSON_MESSAGE_TYPE:
-                    IngestNdjsonInput(**content)
+                assert isinstance(content, dict)
+                ingest_type = content.get("type")
+                if not ingest_type:
+                    raise Exception("Ingest task data must contain a type")
 
-                raise ValueError(f"Unknown type {ingest_type}")
+                if ingest_type == "Collection":
+                    collection_id = content.get("id")
+                    if not collection_id:
+                        raise IngestError("Collection must contain an id")
+                    inserted = ingest_collection(pgstac, content)
 
-        return result
+                    result = IngestTaskOutput(
+                        collections=[
+                            CollectionIngestTaskOutput(
+                                collection_id=collection_id,
+                                event_type=STACCollectionEventType.CREATED
+                                if inserted
+                                else STACCollectionEventType.UPDATED,
+                            )
+                        ]
+                    )
+
+                elif ingest_type == "Feature":
+                    item_id = content.get("id")
+                    if not item_id:
+                        raise IngestError("Item must contain an id")
+                    geometry = content.get("geometry")
+                    if not geometry:
+                        raise IngestError("Item must contain a geometry")
+                    collection_id = content.get("collection")
+                    if not collection_id:
+                        raise IngestError("Item must contain a collection")
+
+                    inserted = item_id not in pgstac.existing_items(
+                        collection_id, {item_id or ""}
+                    )
+
+                    # Ingest item
+                    ingest_item(pgstac, content)
+
+                    result = IngestTaskOutput(
+                        items=[
+                            ItemIngestTaskOutput(
+                                collection_id=collection_id,
+                                item_id=item_id,
+                                geometry=geometry,
+                                event_type=STACItemEventType.CREATED
+                                if not inserted
+                                else STACItemEventType.UPDATED,
+                            )
+                        ]
+                    )
+                else:
+                    # Check for message validation errors that
+                    # caused fallback to Dict[str, Any]
+                    if ingest_type == COLLECTIONS_MESSAGE_TYPE:
+                        IngestCollectionsInput(**content)
+                    if ingest_type == NDJSON_MESSAGE_TYPE:
+                        IngestNdjsonInput(**content)
+
+                    raise ValueError(f"Unknown type {ingest_type}")
+
+            return result
 
 
 ingest_task = IngestTask()

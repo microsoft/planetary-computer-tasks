@@ -2,6 +2,8 @@ TEST_DATA_CONTAINER = "test-data"
 
 AZURITE_HOST_ENV_VAR = "AZURITE_HOST"
 
+AZURITE_ACCOUNT_NAME = "devstoreaccount1"
+
 AZURITE_CONNECT_STRING = (
     "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;"
     "AccountKey="

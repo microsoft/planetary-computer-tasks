@@ -44,12 +44,12 @@ resource "azurerm_key_vault_secret" "task-tenant-id" {
 
 resource "azurerm_key_vault_secret" "task-client-id" {
   name         = "task-client-id"
-  value        = var.task_sp_tenant_id
+  value        = var.task_sp_client_id
   key_vault_id = azurerm_key_vault.rxetl.id
 }
 
 resource "azurerm_key_vault_secret" "task-client-secret" {
   name         = "task-client-secret"
-  value        = var.task_sp_tenant_id
+  value        = var.task_sp_client_secret
   key_vault_id = azurerm_key_vault.rxetl.id
 }

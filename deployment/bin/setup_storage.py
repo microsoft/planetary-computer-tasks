@@ -7,7 +7,6 @@ from azure.data.tables import generate_table_sas, TableSasPermissions
 from azure.core.credentials import AzureNamedKeyCredential
 
 from pctasks.core.constants import DEFAULT_IMAGE_KEY_TABLE_NAME
-from pctasks.core.models.base import TargetEnvironment
 from pctasks.core.models.config import ImageConfig
 from pctasks.core.tables.config import ImageKeyEntryTable
 
@@ -41,8 +40,7 @@ def setup_storage(
                 environment=[
                     "DB_CONNECTION_STRING=${{ secrets.pgstac-connection-string }}",
                 ],
-            ),
-            target_environment=TargetEnvironment.STAGING,
+            )
         )
 
 

@@ -3,6 +3,7 @@ import multiprocessing
 import os
 from datetime import datetime as Datetime
 from datetime import timedelta, timezone
+import sys
 from typing import (
     Any,
     Generator,
@@ -27,7 +28,13 @@ from azure.storage.blob import (
     generate_container_sas,
 )
 
+from pctasks.core.constants import (
+    AZURITE_HOST_ENV_VAR,
+    AZURITE_PORT_ENV_VAR,
+    AZURITE_STORAGE_ACCOUNT_ENV_VAR,
+)
 from pctasks.core.storage.base import Storage, StorageFileInfo
+from pctasks.core.storage.path_filter import PathFilter
 from pctasks.core.utils import map_opt
 from pctasks.core.utils.backoff import with_backoff
 
@@ -164,6 +171,20 @@ class BlobStorage(Storage):
     ) -> None:
         self.sas_token = sas_token
 
+        # If this is the Azurite storage account, set
+        # the account_url appropriately
+        if not account_url:
+            azurite_sa = os.getenv(AZURITE_STORAGE_ACCOUNT_ENV_VAR)
+            if azurite_sa and azurite_sa == storage_account_name:
+                host = os.getenv(AZURITE_HOST_ENV_VAR)
+                port = os.getenv(AZURITE_PORT_ENV_VAR)
+                if not host or not port:
+                    raise BlobStorageError(
+                        "Azurite environment incorrectly configured. "
+                        f"{AZURITE_HOST_ENV_VAR} and "
+                        f"{AZURITE_PORT_ENV_VAR} must be set."
+                    )
+
         # Check if there's a service principle in the environment.
         # If so, use that. Otherwise check for a SAS token.
         if sas_token is not None:
@@ -229,18 +250,32 @@ class BlobStorage(Storage):
         self,
         name_starts_with: Optional[str] = None,
         since_date: Optional[Datetime] = None,
+        extensions: Optional[List[str]] = None,
+        ends_with: Optional[str] = None,
+        matches: Optional[str] = None,
     ) -> Iterable[str]:
         # Ensure UTC set
         since_date = map_opt(lambda d: d.replace(tzinfo=timezone.utc), since_date)
+        path_filter = PathFilter(
+            extensions=extensions, ends_with=ends_with, matches=matches
+        )
 
         def log_page(page: Iterator[BlobProperties]) -> Iterator[BlobProperties]:
-            print(".", end="", flush=True)
+            print(".", end="", flush=True, file=sys.stderr)
             return page
 
         def filter_page(page: Iterator[BlobProperties]) -> Iterator[BlobProperties]:
+            def _f(b: BlobProperties) -> bool:
+                if b.size == 0:
+                    # ADLS Gen 2 creates empty files as directory placeholders.
+                    return False
+                if since_date:
+                    if cast(Datetime, b.last_modified) >= since_date:
+                        return False
+                return path_filter(b.name)
+
             return filter(
-                lambda b: since_date is None
-                or cast(Datetime, b.last_modified) >= since_date,
+                _f,
                 page,
             )
 
@@ -290,11 +325,12 @@ class BlobStorage(Storage):
             folders = []
             files = []
             for item in client.container.walk_blobs(name_starts_with=full_prefix):
+                item_name: str = cast(str, item.name)
                 if isinstance(item, BlobPrefix):
-                    name = os.path.relpath(item.name, full_prefix)
+                    name = os.path.relpath(item_name, full_prefix)
                     folders.append(name.strip("/"))
                 else:
-                    files.append(os.path.relpath(item.name, full_prefix))
+                    files.append(os.path.relpath(item_name, full_prefix))
             return folders, files
 
         walk_count = 0

@@ -36,6 +36,9 @@ class Storage(ABC):
         self,
         name_starts_with: Optional[str] = None,
         since_date: Optional[Datetime] = None,
+        extensions: Optional[List[str]] = None,
+        ends_with: Optional[str] = None,
+        matches: Optional[str] = None,
     ) -> Iterable[str]:
         """List file names.
 
@@ -45,6 +48,9 @@ class Storage(ABC):
             since_date: Optional datetime to filter files by;
                 only files with a modified time after this date
                 will be included.
+            extensions: Optional list of extensions that path must have.
+            ends_with: Optional string that path must end with
+            matches: Optional regex that path must match
 
         Returns:
             Iterator of file paths.

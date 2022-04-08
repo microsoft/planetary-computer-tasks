@@ -1,9 +1,8 @@
 import logging
 import os
-import re
 from itertools import islice
 from tempfile import TemporaryDirectory
-from typing import List, Optional, Set, Union
+from typing import List, Union
 
 from pctasks.core.models.task import FailedTaskResult, WaitTaskResult
 from pctasks.core.utils import grouped
@@ -24,36 +23,13 @@ class CreateChunksTask(Task[CreateChunksInput, CreateChunksOutput]):
         dst_storage = input.get_dst_storage()
 
         files = src_storage.list_files(
-            name_starts_with=input.name_starts_with, since_date=input.since
+            name_starts_with=input.name_starts_with,
+            since_date=input.since,
+            extensions=input.extensions,
+            ends_with=input.ends_with,
+            matches=input.matches,
         )
-        compiled_regex: Optional[re.Pattern]
-        if input.matches is not None:
-            compiled_regex = re.compile(input.matches)
-        else:
-            compiled_regex = None
 
-        extensions: Optional[Set[str]] = None
-        if input.extensions:
-            extensions = set()
-            for ext in input.extensions:
-                if not ext.startswith("."):
-                    ext = f".{ext}"
-                extensions.add(ext.lower())
-
-        def file_filter(blob: str) -> bool:
-            ext = os.path.splitext(blob)[1]
-            result = ext != ""
-            if extensions:
-                result &= ext in extensions
-            if input.ends_with is not None:
-                result &= blob.endswith(input.ends_with)
-            if compiled_regex is not None:
-                result &= compiled_regex.search(blob) is not None
-            if result:
-                logger.debug(f" ~ Found {blob}")
-            return result
-
-        files = filter(file_filter, files)
         files = map(lambda path: src_storage.get_uri(path), files)
 
         if input.limit is not None:

@@ -27,11 +27,14 @@ To build docker images and set up test data. You can run `scripts/update` to bui
 
 ### Bring up development servers
 
-To run the development servers like Azurite, the database, and the Azure Functions, use:
+To run the development servers:
 
 ```
 > scripts/server
 ```
+
+This will start Azurite, a PgSTAC database, the Azure Functions server, a local executor for testing, and a stac-fastapi
+to inspect ingest results. You can access the STAC API at http://localhost:8089/
 
 ### Testing
 

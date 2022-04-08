@@ -16,6 +16,9 @@ services:
       - PCTASKS_EXEC__LOCAL_EXECUTOR_URL=http://local-executor:8000
       - PCTASKS_EXEC__LOCAL_SECRETS=true
 
+      # Dev storage settings
+      - AZURITE_HOST=azurite
+
       # Local secrets provider secrets
       - SECRETS_DB_CONNECTION_STRING=postgresql://username:password@database:5432/postgis
 

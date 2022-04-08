@@ -3,7 +3,10 @@ from typing import Any, Dict, Optional
 from pydantic import validator
 
 from pctasks.core.models.base import PCBaseModel
+from pctasks.core.models.task import TaskConfig
 from pctasks.core.models.tokens import StorageAccountTokens
+from pctasks.dataset.constants import CREATE_ITEMS_TASK_ID
+from pctasks.dataset.models import CollectionConfig, DatasetConfig
 
 
 class CreateItemsInput(PCBaseModel):
@@ -73,3 +76,52 @@ class CreateItemsOutput(PCBaseModel):
             if values.get("item"):
                 raise ValueError("Must specify either ndjson_uri or item")
         return v
+
+
+class CreateItemsTaskConfig(TaskConfig):
+    @classmethod
+    def create(
+        cls,
+        image: str,
+        collection_class: str,
+        args: CreateItemsInput,
+        environment: Optional[Dict[str, str]] = None,
+        tags: Optional[Dict[str, str]] = None,
+    ) -> "CreateItemsTaskConfig":
+        return CreateItemsTaskConfig(
+            id=CREATE_ITEMS_TASK_ID,
+            image=image,
+            task=f"{collection_class}.create_items",
+            args=args.dict(),
+            environment=environment,
+            tags=tags,
+        )
+
+    @classmethod
+    def from_collection(
+        cls,
+        ds: DatasetConfig,
+        collection: CollectionConfig,
+        asset_chunk_uri: str,
+        item_chunk_uri: str,
+        tokens: Optional[Dict[str, StorageAccountTokens]] = None,
+        storage_account_url: Optional[str] = None,
+        limit: Optional[int] = None,
+        skip_validation: bool = False,
+        environment: Optional[Dict[str, str]] = None,
+        tags: Optional[Dict[str, str]] = None,
+    ) -> "CreateItemsTaskConfig":
+        return cls.create(
+            image=ds.image,
+            collection_class=collection.collection_class,
+            args=CreateItemsInput(
+                chunk_uri=asset_chunk_uri,
+                output_uri=item_chunk_uri,
+                tokens=tokens,
+                storage_endpoint_url=storage_account_url,
+                limit=limit,
+                skip_validation=skip_validation,
+            ),
+            environment=environment,
+            tags=tags,
+        )

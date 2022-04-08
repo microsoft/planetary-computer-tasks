@@ -5,12 +5,7 @@ from uuid import uuid4
 from pydantic import BaseModel, Field
 
 from pctasks.core.constants import MICROSOFT_OWNER
-from pctasks.core.models.base import (
-    ForeachConfig,
-    PCBaseModel,
-    RunRecordId,
-    TargetEnvironment,
-)
+from pctasks.core.models.base import ForeachConfig, PCBaseModel, RunRecordId
 from pctasks.core.utils import StrEnum
 
 
@@ -94,7 +89,7 @@ class NotificationMessage(PCBaseModel):
 
 class NotificationSubmitMessage(PCBaseModel):
     notification: NotificationMessage
-    target_environment: TargetEnvironment
+    target_environment: Optional[str]
     type: str = Field(default="Notification", const=True)
     processing_id: RunRecordId
 

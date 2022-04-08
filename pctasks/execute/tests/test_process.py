@@ -1,7 +1,6 @@
 from unittest.mock import Mock
 from uuid import uuid4
 
-from pctasks.core.models.base import TargetEnvironment
 from pctasks.core.models.config import BlobConfig
 from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.task import TaskConfig, TaskRunMessage
@@ -23,7 +22,6 @@ def test_process_submit_message():
         instance_id="test_instance_id",
         job_id="job-id",
         run_id=run_id,
-        target_environment=TargetEnvironment.PRODUCTION,
         config=TaskConfig(
             id="submit_unit_test",
             image="pctasks-ingest:latest",

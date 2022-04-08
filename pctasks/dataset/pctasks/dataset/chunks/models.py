@@ -80,29 +80,3 @@ class CreateChunksTaskConfig(TaskConfig):
             environment=environment,
             tags=tags,
         )
-
-
-class CreateChunksWorkflowConfig(WorkflowConfig):
-    @classmethod
-    def create(
-        cls,
-        image: str,
-        dataset: DatasetIdentifier,
-        collection_id: str,
-        args: CreateChunksInput,
-        group_id: Optional[str] = None,
-        tokens: Optional[Dict[str, StorageAccountTokens]] = None,
-        environment: Optional[Dict[str, str]] = None,
-        tags: Optional[Dict[str, str]] = None,
-    ) -> "CreateChunksWorkflowConfig":
-        task = CreateChunksTaskConfig.create(
-            image=image, args=args, environment=environment, tags=tags
-        )
-
-        return CreateChunksWorkflowConfig(
-            dataset=dataset,
-            group_id=group_id,
-            name=f"Create Chunks for {collection_id}",
-            tokens=tokens,
-            jobs={"chunks": JobConfig(tasks=[task])},
-        )

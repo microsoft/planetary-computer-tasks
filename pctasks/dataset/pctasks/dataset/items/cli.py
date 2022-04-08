@@ -1,19 +1,26 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import click
 from strictyaml.exceptions import MarkedYAMLError
 
-from pctasks.cli.cli import PCTasksCommandContext
+from pctasks.cli.cli import PCTasksCommandContext, cli_output, cli_print
+from pctasks.core.models.base import ForeachConfig
+from pctasks.core.models.workflow import (
+    JobConfig,
+    WorkflowConfig,
+    WorkflowSubmitMessage,
+)
 from pctasks.core.yaml import YamlValidationError
-from pctasks.dataset.chunks.chunkset import (
+from pctasks.dataset.chunks.constants import (
     ALL_CHUNK_PREFIX,
     ASSET_CHUNKS_PREFIX,
     ITEM_CHUNKS_PREFIX,
 )
 from pctasks.dataset.constants import DEFAULT_DATASET_YAML_PATH
-from pctasks.dataset.items.messages import ProcessItemsWorkflow
+from pctasks.dataset.items.models import CreateItemsTaskConfig
 from pctasks.dataset.template import template_dataset_file
-from pctasks.dataset.utils import opt_collection, opt_dry_run, opt_ds_config
+from pctasks.dataset.utils import opt_collection, opt_ds_config, opt_submit
+from pctasks.ingest.models import IngestNdjsonInput, IngestTaskConfig
 from pctasks.submit.client import SubmitClient
 from pctasks.submit.settings import SubmitSettings
 
@@ -22,18 +29,22 @@ from pctasks.submit.settings import SubmitSettings
 @click.argument("chunkset_id")
 @opt_ds_config
 @opt_collection
-@click.option("--local", is_flag=True, help="Run locally, do not submit as a task")
+@click.option(
+    "-t",
+    "--target",
+    help="The target environment to process the items in.",
+)
 @click.option("--limit", type=int, help="Limit, used for testing")
-@opt_dry_run
+@opt_submit
 @click.pass_context
 def process_items_cmd(
     ctx: click.Context,
     chunkset_id: str,
-    dataset: Optional[str] = None,
-    collection: Optional[str] = None,
-    local: bool = False,
+    dataset: Optional[str],
+    collection: Optional[str],
+    target: str,
     limit: Optional[int] = None,
-    dry_run: bool = False,
+    submit: bool = False,
 ) -> None:
     """Create and ingest items.
 
@@ -63,24 +74,57 @@ def process_items_cmd(
     item_storage_config = collection_config.item_storage
     item_storage = item_storage_config.get_storage()
 
-    workflows: List[ProcessItemsWorkflow] = []
+    chunk_uris: List[Tuple[str, str]] = []
 
     for chunk_path in chunk_storage.list_files():
         ndjson_path = (
             f"{chunkset_id}/{ITEM_CHUNKS_PREFIX}/{ALL_CHUNK_PREFIX}/{chunk_path}"
         )
 
-        workflows.append(
-            ProcessItemsWorkflow.create(
-                collection_id=collection_config.id,
-                image=ds_config.image,
-                collection_class=collection_config.collection_class,
-                asset_chunk_uri=chunk_storage.get_uri(chunk_path),
-                item_chunk_uri=item_storage.get_uri(ndjson_path),
-                limit=limit,
-            )
-        )
+        asset_chunk_uri = chunk_storage.get_uri(chunk_path)
+        item_chunk_uri = item_storage.get_uri(ndjson_path)
 
-    for workflow in workflows:
+        chunk_uris.append((asset_chunk_uri, item_chunk_uri))
+
+    create_items_task = CreateItemsTaskConfig.from_collection(
+        ds_config,
+        collection_config,
+        limit=limit,
+        asset_chunk_uri="${{ item[0] }}",
+        item_chunk_uri="${{ item[1] }}",
+    )
+
+    ingest_items_task = IngestTaskConfig.from_ndjson(
+        ndjson_data=IngestNdjsonInput(
+            uris="${{" + f"tasks.{create_items_task.id}.output.ndjson_uri " + " }}",
+        ),
+        target=target,
+    )
+
+    process_items_job: JobConfig = JobConfig(
+        tasks=[create_items_task, ingest_items_task],
+        foreach=ForeachConfig(items=chunk_uris),
+    )
+
+    workflow = WorkflowConfig(
+        name=f"Process items for {collection_config.id} - {chunkset_id}",
+        dataset=ds_config.get_identifier(),
+        collection_id=collection_config.id,
+        image=ds_config.image,
+        tokens=collection_config.get_tokens(),
+        jobs={
+            "process-items": process_items_job,
+        },
+    )
+
+    submit_message = WorkflowSubmitMessage(workflow=workflow)
+
+    if not submit:
+        cli_output(submit_message.to_yaml())
+    else:
         settings = SubmitSettings.get(context.profile, context.settings_file)
-        SubmitClient(settings).submit_workflow(workflow)
+        with SubmitClient(settings) as client:
+            cli_print(
+                click.style(f"  Submitting {submit_message.run_id}...", fg="green")
+            )
+            client.submit_workflow(submit_message)

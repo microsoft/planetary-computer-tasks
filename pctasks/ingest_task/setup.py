@@ -8,7 +8,19 @@ with open("README.md") as f:
 install_requires = [
     "pctasks.task>=0.1.0",
     "pctasks.ingest>=0.1.0",
-    "pypgstac==0.4.*"
+    #"pypgstac==0.4.*",
+    "pypgstac @ git+https://github.com/stac-utils/pgstac/@2fef188bfee3c5933619c4d6777a234afbf82028#egg=pypgstac&subdirectory=pypgstac",
+
+    # From pypgstac. Remove when using a release.
+    "smart-open==4.2.0",
+    "orjson>=3.5.2",
+    "python-dateutil==2.8.2",
+    "fire==0.4.0",
+    "psycopg[binary]==3.*",
+    "psycopg-pool==3.*",
+    "plpygis==0.2.0",
+    "pydantic==1.9.0",
+    "tenacity== 8.0.1",
 ]
 
 extra_reqs = {

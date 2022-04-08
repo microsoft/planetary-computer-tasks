@@ -15,8 +15,26 @@ logger = logging.getLogger(__name__)
 PCTASKS_COMMAND_ENTRY_POINT_GROUP = "pctasks.commands"
 
 
+def cli_print(msg: str = "", nl: bool = True) -> None:
+    """Print messages to the console.
+
+    Uses stderr, avoiding stdout which should only
+    be used for data output that can be piped to other
+    commands.
+    """
+    click.echo(msg, err=True, nl=nl)
+
+
+def cli_output(output: str) -> None:
+    """Send output to stdout.
+
+    Use for CLI output that can be piped into other commands.
+    """
+    print(output)
+
+
 def print_header() -> None:
-    print(
+    cli_print(
         r"""
  ___   ___  _____            _
 | _ \ / __||_   _| __ _  ___| |__ ___
@@ -52,7 +70,7 @@ def _setup_logging(level: Union[str, int], log_libraries: bool = False) -> None:
     else:
         formatter = logging.Formatter("[%(levelname)s]:%(asctime)s: %(message)s")
 
-    ch = logging.StreamHandler(sys.stdout)
+    ch = logging.StreamHandler(sys.stderr)
     ch.setLevel(level)
     ch.setFormatter(formatter)
     _logger.addHandler(ch)
@@ -65,7 +83,11 @@ def _setup_logging(level: Union[str, int], log_libraries: bool = False) -> None:
 @click.option(
     "-p",
     "--profile",
-    help=("Settings profile. Determines which settings file is read."),
+    help=(
+        "Settings profile. Determines which settings file is read. "
+        "You can also set the PCTASKS_PROFILE environment variable to "
+        "control the default profile."
+    ),
 )
 @click.option(
     "--settings-file",
@@ -101,19 +123,19 @@ def cli() -> None:
     try:
         pctasks_cmd(prog_name="pctasks")
     except SettingsError as e:
-        print(f"ERROR: {e}")
+        cli_print(f"ERROR: {e}")
         if e.validation_error:
-            print(
+            cli_print(
                 """
 Validation errors occurred.
 Settings can be from the YAML configuration or the environment.
 Hope this helps to debug:"""
             )
-            print()
+            cli_print()
             msg = str(e.validation_error)
             msg = msg.replace("_Settings", "settings")
-            print(msg)
-            print()
+            cli_print(msg)
+            cli_print()
 
 
 if __name__ == "__main__":

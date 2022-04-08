@@ -1,7 +1,8 @@
 import logging
 from typing import Any, Dict, List
 
-from pypgstac.pypgstac import loadopt
+# from pypgstac.pypgstac import loadopt
+from pypgstac.load import Methods
 
 from pctasks.ingest_task.pgstac import PgSTAC
 
@@ -19,8 +20,11 @@ def ingest_collection(
     collection_id = collection["id"]
     logger.info(f"Ingesting collection {collection_id}")
     insert = not pgstac.collection_exists(collection_id)
+    # pgstac.ingest_collections(
+    #     [collection], mode=loadopt.insert if insert else loadopt.upsert
+    # )
     pgstac.ingest_collections(
-        [collection], mode=loadopt.insert if insert else loadopt.upsert
+        [collection], mode=Methods.insert if insert else Methods.upsert
     )
     return insert
 

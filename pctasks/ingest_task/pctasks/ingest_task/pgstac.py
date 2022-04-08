@@ -1,106 +1,79 @@
-import asyncio
+import json
 import logging
 import os
-from typing import Iterable, Optional, Set
+from tempfile import TemporaryDirectory
+from typing import Any, Dict, Iterable, Optional, Set
 
-from pypgstac.load import T  # TypeVar for ingestable Iterables
-from pypgstac.load import DB, load_iterator, loadopt, tables
+from pypgstac.db import PgstacDB
+from pypgstac.load import Loader, Methods
 
 from pctasks.core.utils import grouped
 
 logger = logging.getLogger(__name__)
 
 
-class PgSTAC(DB):
-    def __init__(self, pg_connection_string: str = None):
-        self.pg_connection_string = pg_connection_string
+class PgSTAC:
+    def __init__(self, pg_connection_string: str) -> None:
+        self.db = PgstacDB(pg_connection_string, debug=True)
+        # self.db.connect()
+        self.loader = Loader(self.db)
 
-    async def ingest_items_async(
+    def ingest_items(
         self,
         items: Iterable[bytes],
-        mode: loadopt = loadopt("upsert"),
+        mode: Methods = Methods.upsert,
         insert_group_size: Optional[int] = None,
     ) -> None:
         if insert_group_size:
             groups = grouped(items, insert_group_size)
         else:
             groups = [items]
-        conn = await self.create_connection()
-        try:
+
+        with TemporaryDirectory() as tmpdir:
             for i, group in enumerate(groups):
+                fname = f"{i}.ndjson"
+                path = os.path.join(tmpdir, fname)
                 logger.info(f"  ...Loading group {i+1}")
-                async with conn.transaction():
-                    await load_iterator(group, tables("items"), conn, mode)
-        finally:
-            await conn.close()
+                with open(path, "wb") as f:
+                    f.write(b"\n".join([x.strip() for x in group]))
 
-    def ingest_items(
-        self,
-        items: Iterable[bytes],
-        mode: loadopt = loadopt("upsert"),
-        insert_group_size: Optional[int] = None,
-    ) -> None:
-        asyncio.run(self.ingest_items_async(items, mode, insert_group_size))
-
-    async def ingest_collections_async(
-        self,
-        collections: T,
-        mode: loadopt = loadopt("upsert"),
-    ) -> None:
-        conn = await self.create_connection()
-        try:
-            async with conn.transaction():
-                logger.debug(f"collections: {collections}")
-                await load_iterator(collections, tables("collections"), conn, mode)
-        finally:
-            await conn.close()
+                self.loader.load_items(path, insert_mode=mode)
 
     def ingest_collections(
         self,
-        collections: T,
-        mode: loadopt = loadopt("upsert"),
+        collections: Iterable[Dict[str, Any]],
+        mode: Methods = Methods.upsert,
     ) -> None:
-        asyncio.run(self.ingest_collections_async(collections, mode))
-
-    async def existing_items_async(self, item_ids: Set[str]) -> Set[str]:
-        """The IDs of Items that already exist in the database."""
-        conn = await self.create_connection()
-        try:
-            async with conn.transaction():
-                rows = await conn.fetch(
-                    """
-                   SELECT id from items where id = ANY($1::text[])
-                """,
-                    item_ids,
+        # TODO: Remove when we don't have to use files.
+        with TemporaryDirectory() as tmpdir:
+            path = "collections.ndjson"
+            with open(os.path.join(tmpdir, path), "wb") as f:
+                f.write(
+                    b"\n".join([json.dumps(c).encode("utf-8") for c in collections])
                 )
+            self.loader.load_collections(
+                os.path.join(tmpdir, path), insert_mode=mode
+            )
 
-                return set([row["id"] for row in rows])
-
-        finally:
-            await conn.close()
-
-    def existing_items(self, item_ids: Set[str]) -> Set[str]:
+    def existing_items(self, collection_id: str, item_ids: Set[str]) -> Set[str]:
         """The IDs of Items that already exist in the database."""
-        return asyncio.run(self.existing_items_async(item_ids))
-
-    async def collection_exists_async(self, collection_id: str) -> bool:
-        conn = await self.create_connection()
-        try:
-            async with conn.transaction():
-                rows = await conn.fetch(
-                    """
-                   SELECT id from collections where id = $1
-                """,
-                    collection_id,
-                )
-
-                return any(rows)
-
-        finally:
-            await conn.close()
+        rows = self.db.query(
+            """
+                SELECT id from items where id = ANY(%s) and collection = %s
+            """,
+            args=[list(item_ids), collection_id],
+        )
+        return set([row[0] for row in rows])
 
     def collection_exists(self, collection_id: str) -> bool:
-        return asyncio.run(self.collection_exists_async(collection_id))
+        rows = self.db.query(
+            """
+                SELECT id from collections where id = %s
+            """,
+            args=[collection_id],
+        )
+
+        return any(rows)
 
     @classmethod
     def from_env(cls) -> "PgSTAC":

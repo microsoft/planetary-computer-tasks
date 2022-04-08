@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from pctasks.core.models.base import TargetEnvironment
+from pctasks.core.constants import DEFAULT_TARGET_ENVIRONMENT
 from pctasks.core.models.config import ImageConfig
 from pctasks.core.tables.base import StrTableService
 from pctasks.core.utils import map_opt
@@ -16,9 +16,12 @@ class ImageKeyEntryTable(StrTableService):
         return " || ".join(env)
 
     def get_image(
-        self, key: str, target_environment: TargetEnvironment
+        self, key: str, target_environment: Optional[str]
     ) -> Optional[ImageConfig]:
-        result = self.get(partition_key=key, row_key=str(target_environment))
+
+        row_key = target_environment or DEFAULT_TARGET_ENVIRONMENT
+
+        result = self.get(partition_key=key, row_key=row_key)
         if not result:
             return None
         image = result.get("image")
@@ -34,11 +37,10 @@ class ImageKeyEntryTable(StrTableService):
         self,
         image_key: str,
         image_config: ImageConfig,
-        target_environment: TargetEnvironment,
+        target_environment: Optional[str] = None,
     ) -> None:
+        row_key = target_environment or DEFAULT_TARGET_ENVIRONMENT
         values = image_config.dict()
         if "environment" in values:
             values["environment"] = self._encode_env(values["environment"])
-        self.upsert(
-            partition_key=image_key, row_key=str(target_environment), values=values
-        )
+        self.upsert(partition_key=image_key, row_key=row_key, values=values)

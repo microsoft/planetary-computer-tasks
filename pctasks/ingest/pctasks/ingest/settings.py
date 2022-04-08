@@ -4,11 +4,10 @@ from pydantic import Field
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.settings import PCTasksSettings
+from pctasks.ingest.constants import DEFAULT_INSERT_GROUP_SIZE
 
 SECTION_NAME = "ingest"
 DEFAULT_IMAGE_KEY = "ingest"
-
-DEFAULT_INSERT_GROUP_SIZE = 30000
 
 
 class IngestConfig(PCBaseModel):

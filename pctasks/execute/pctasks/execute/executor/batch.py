@@ -85,7 +85,8 @@ class BatchExecutor(Executor):
                     batch_client.add_task(batch_job_id, batch_task)
                     task_submitted = True
                 except batchmodels.BatchErrorException as e:
-                    if e.error.code == "JobCompleted":
+                    error: Any = e.error  # Avoid type hinting error
+                    if error.code == "JobCompleted":
                         if retry_count > 1:
                             raise
                         retry_count += 1

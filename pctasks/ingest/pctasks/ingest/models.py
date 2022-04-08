@@ -20,10 +20,28 @@ class InvalidSTACException(Exception):
     pass
 
 
+class NdjsonFolder(PCBaseModel):
+    uri: str
+    name_starts_with: Optional[str] = None
+    extensions: Optional[List[str]] = None
+    ends_with: Optional[str] = None
+    matches: Optional[str] = None
+    limit: Optional[int] = None
+
+
 class IngestNdjsonInput(PCBaseModel):
     type: str = Field(default=NDJSON_MESSAGE_TYPE, const=True)
-    collection: str
-    uris: List[str]
+    uris: Optional[Union[str, List[str]]] = None
+    ndjson_folder: Optional[NdjsonFolder] = None
+
+    @validator("ndjson_folder")
+    def _validate_ndjson_folder(
+        cls, v: Optional[NdjsonFolder], values: Dict[str, Any]
+    ) -> Optional[NdjsonFolder]:
+        if v is None:
+            if values['uris'] is None:
+                raise ValueError("Either ndjson_folder or uris must be provided.")
+        return v
 
 
 class IngestCollectionsInput(PCBaseModel):

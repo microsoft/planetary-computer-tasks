@@ -4,12 +4,7 @@ from uuid import uuid4
 from pydantic import Field, validator
 
 from pctasks.core.constants import WORKFLOW_SCHEMA_VERSION, WORKFLOW_SUBMIT_MESSAGE_TYPE
-from pctasks.core.models.base import (
-    ForeachConfig,
-    PCBaseModel,
-    RunRecordId,
-    TargetEnvironment,
-)
+from pctasks.core.models.base import ForeachConfig, PCBaseModel, RunRecordId
 from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.event import CloudEvent, ItemNotificationConfig
 from pctasks.core.models.task import TaskConfig
@@ -88,7 +83,7 @@ class WorkflowConfig(PCBaseModel):
     dataset: Union[DatasetIdentifier, str]
     group_id: Optional[str] = None
     tokens: Optional[Dict[str, StorageAccountTokens]] = None
-    target_environment: TargetEnvironment = Field(default=TargetEnvironment.STAGING)
+    target_environment: Optional[str] = None
     args: Optional[List[str]] = None
     jobs: Dict[str, JobConfig]
     on: Optional[TriggerConfig] = None
@@ -121,6 +116,9 @@ class WorkflowConfig(PCBaseModel):
             return DatasetIdentifier.from_string(self.dataset)
         return self.dataset
 
+    def template_args(self, args: Dict[str, Any]) -> "WorkflowConfig":
+        return DictTemplater({"args": args}, strict=False).template_model(self)
+
 
 class WorkflowSubmitMessage(PCBaseModel):
     workflow: WorkflowConfig
@@ -135,9 +133,7 @@ class WorkflowSubmitMessage(PCBaseModel):
     def get_workflow_with_templated_args(self) -> WorkflowConfig:
         if self.args is None:
             return self.workflow
-        return DictTemplater({"args": self.args}, strict=False).template_model(
-            self.workflow
-        )
+        return self.workflow.template_args(self.args)
 
     @validator("args", always=True)
     def _validate_args(

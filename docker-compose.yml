@@ -2,7 +2,7 @@ version: "2.1"
 services:
   azurite:
     container_name: pctasks-azurite
-    image: mcr.microsoft.com/azure-storage/azurite
+    image: mcr.microsoft.com/azure-storage/azurite:3.16.0
     hostname: azurite
     command: "azurite --silent --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost
       0.0.0.0 -l /workspace"
@@ -32,6 +32,11 @@ services:
       - PCTASKS_EXEC__DEV=TRUE
       - PCTASKS_EXEC__LOCAL_EXECUTOR_URL=http://local-executor:8000
       - PCTASKS_EXEC__LOCAL_SECRETS=true
+
+      # Dev storage settings
+      - AZURITE_HOST=azurite
+      - AZURITE_PORT=10000
+      - AZURITE_STORAGE_ACCOUNT=devstoreaccount1
 
       # Local secrets provider secrets
       - SECRETS_DB_CONNECTION_STRING=postgresql://username:password@database:5432/postgis
@@ -99,7 +104,8 @@ services:
 
   database:
     container_name: pctasks-database
-    image: ghcr.io/stac-utils/pgstac:v0.4.0
+    #image: ghcr.io/stac-utils/pgstac:v0.4.3
+    image: pgstac-db
     environment:
       - POSTGRES_USER=username
       - POSTGRES_PASSWORD=password
@@ -132,6 +138,34 @@ services:
         "--host",
         "0.0.0.0"
       ]
+
+  stac-api:
+    container_name: pctasks-stac-api
+    image: pctasks-stacapi
+    build:
+      context: .
+      dockerfile: Dockerfile.stacapi
+    environment:
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8089
+      - RELOAD=false
+      - ENVIRONMENT=local
+      - POSTGRES_USER=username
+      - POSTGRES_PASS=password
+      - POSTGRES_DBNAME=postgis
+      - POSTGRES_HOST_READER=database
+      - POSTGRES_HOST_WRITER=database
+      - POSTGRES_PORT=5432
+      - WEB_CONCURRENCY=10
+      - VSI_CACHE=TRUE
+      - DB_MIN_CONN_SIZE=1
+      - DB_MAX_CONN_SIZE=1
+    ports:
+      - "8089:8089"
+    depends_on:
+      - database
+    command:
+      bash -c "python -m stac_fastapi.pgstac.app"
 
 networks:
   default:

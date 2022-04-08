@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from pydantic import Field
 
 from pctasks.core.constants import TASK_SUBMIT_MESSAGE_TYPE
-from pctasks.core.models.base import PCBaseModel, RunRecordId, TargetEnvironment
+from pctasks.core.models.base import PCBaseModel, RunRecordId
 from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.record import (
     JobRunRecord,
@@ -39,7 +39,7 @@ class TaskSubmitMessage(PCBaseModel):
     job_id: str
     config: TaskConfig
     tags: Optional[Dict[str, str]] = None
-    target_environment: TargetEnvironment
+    target_environment: Optional[str] = None
     related_tasks: Optional[List[Tuple[str, str]]] = None
     tokens: Optional[Dict[str, StorageAccountTokens]] = None
     wait_retries: int = 0
@@ -93,7 +93,7 @@ class HandleTaskResultMessage(PCBaseModel):
     run_record_id: RunRecordId
     task_result_type: TaskResultType
     submit_result: SuccessfulSubmitResult
-    target_environment: TargetEnvironment
+    target_environment: Optional[str] = None
     errors: Optional[List[str]] = None
     log_uri: str
     """The URI of the task log file."""
@@ -105,7 +105,7 @@ class JobSubmitMessage(PCBaseModel):
     run_id: str
     job_id: str
     tokens: Optional[Dict[str, StorageAccountTokens]] = None
-    target_environment: TargetEnvironment
+    target_environment: Optional[str] = None
     job_outputs: Dict[str, Any]
     trigger_event: Optional[Dict[str, Any]] = None
 

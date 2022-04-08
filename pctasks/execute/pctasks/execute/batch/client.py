@@ -106,7 +106,7 @@ class BatchClient:
         job_id: str,
         pool_id: Optional[str] = None,
         make_unique: bool = False,
-        max_retry_count: int = 1,
+        max_retry_count: int = 0,
     ) -> str:
 
         pool_id = pool_id or self.settings.default_pool_id
@@ -333,12 +333,13 @@ class BatchClient:
                 self._client.task.get(job_id=job_id, task_id=task_id),
             )
         except batchmodels.BatchErrorException as e:
-            if e.error.code == "TaskNotFound":
+            error: Any = e.error  # Avoid type hinting error
+            if error.code == "TaskNotFound":
                 return None
-            if e.error.code == "JobNotFound":
+            if error.code == "JobNotFound":
                 return None
             else:
-                raise BatchClientError(e.error.message.value)
+                raise BatchClientError(error.message.value)
 
         logger.info(f"BATCH STATUS: {task.state}")
 
@@ -369,7 +370,8 @@ class BatchClient:
         try:
             return cast(batchmodels.PoolInformation, self._client.pool.get(pool_id))
         except batchmodels.BatchErrorException as e:
-            if e.error.code == "PoolNotFound":
+            error: Any = e.error  # Avoid type hinting error
+            if error.code == "PoolNotFound":
                 return None
             else:
-                raise BatchClientError(e.error.message.value)
+                raise BatchClientError(error.message.value)

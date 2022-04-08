@@ -1,4 +1,3 @@
-from pctasks.core.models.base import TargetEnvironment
 from pctasks.core.models.config import ImageConfig
 from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.task import TaskConfig
@@ -13,6 +12,7 @@ from pctasks.execute.task.run_message import submit_msg_to_task_run_msg
 def test_image_key_environment_merged():
     secret_name = "SECRET_VAR"
     secret_value = "SECRET_VALUE"
+    target_environment = "test-image-key-env"
 
     exec_settings = ExecutorSettings.get()
     tmp_table = TempTable()
@@ -26,7 +26,7 @@ def test_image_key_environment_merged():
             with ImageKeyEntryTable(lambda: (None, table_client)) as entry_table:
                 entry_table.set_image(
                     "test-image-key",
-                    target_environment=TargetEnvironment.PRODUCTION,
+                    target_environment=target_environment,
                     image_config=ImageConfig(
                         image="test-image:latest",
                         environment=[
@@ -37,9 +37,7 @@ def test_image_key_environment_merged():
 
             with ImageKeyEntryTable(lambda: (None, table_client)) as entry_table:
                 assert (
-                    entry_table.get_image(
-                        "test-image-key", TargetEnvironment.PRODUCTION
-                    )
+                    entry_table.get_image("test-image-key", target_environment)
                     is not None
                 )
 
@@ -50,7 +48,7 @@ def test_image_key_environment_merged():
                 instance_id="test_instance_id",
                 job_id="job-id",
                 run_id=run_id,
-                target_environment=TargetEnvironment.PRODUCTION,
+                target_environment=target_environment,
                 config=TaskConfig(
                     id="messages_unit_test",
                     image_key="test-image-key",

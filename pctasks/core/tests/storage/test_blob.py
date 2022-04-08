@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-from pctasks.dev.test_utils import files_in_azurite
+from pctasks.dev.blob import files_in_azurite
 
 HERE = Path(__file__).parent
 

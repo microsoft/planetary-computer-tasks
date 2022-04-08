@@ -35,8 +35,8 @@ from pctasks.submit.settings import SubmitSettings
 from pctasks.submit.template import template_workflow_file
 
 HERE = Path(__file__).parent
-WORKFLOWS = HERE / "workflows"
-TEST_DATA = HERE / "data-files"
+WORKFLOWS = HERE / ".." / "workflows"
+TEST_DATA = HERE / ".." / "data-files"
 
 TIMEOUT_SECONDS = 10
 
@@ -80,7 +80,10 @@ def test_local():
             time.sleep(1)
             tok = time.perf_counter()
 
-    if workflow_run_record and workflow_run_record.status == TaskRunStatus.COMPLETED:
+    if (
+        workflow_run_record
+        and workflow_run_record.status == WorkflowRunStatus.COMPLETED
+    ):
         with get_job_run_record_table() as job_run_record_table:
             job_run_record = job_run_record_table.get_record(
                 RunRecordId(job_id=job_id, run_id=run_id)

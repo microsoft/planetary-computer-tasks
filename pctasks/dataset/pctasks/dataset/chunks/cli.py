@@ -6,16 +6,20 @@ import click
 from pystac.utils import str_to_datetime
 from strictyaml.exceptions import MarkedYAMLError
 
-from pctasks.cli.cli import PCTasksCommandContext
-from pctasks.core.models.workflow import WorkflowSubmitMessage
+from pctasks.cli.cli import PCTasksCommandContext, cli_output, cli_print
+from pctasks.core.models.workflow import (
+    JobConfig,
+    WorkflowConfig,
+    WorkflowSubmitMessage,
+)
 from pctasks.core.utils import map_opt
 from pctasks.core.yaml import YamlValidationError
-from pctasks.dataset.chunks.chunkset import ALL_CHUNK_PREFIX, ASSET_CHUNKS_PREFIX
-from pctasks.dataset.chunks.models import CreateChunksWorkflowConfig
-from pctasks.dataset.chunks.task import CreateChunksInput, CreateChunksTask
+from pctasks.dataset.chunks.constants import ALL_CHUNK_PREFIX, ASSET_CHUNKS_PREFIX
+from pctasks.dataset.chunks.models import CreateChunksTaskConfig
+from pctasks.dataset.chunks.task import CreateChunksInput
 from pctasks.dataset.constants import DEFAULT_DATASET_YAML_PATH
 from pctasks.dataset.template import template_dataset_file
-from pctasks.dataset.utils import opt_collection, opt_dry_run, opt_ds_config
+from pctasks.dataset.utils import opt_collection, opt_ds_config, opt_submit
 from pctasks.submit.client import SubmitClient
 from pctasks.submit.settings import SubmitSettings
 
@@ -33,17 +37,17 @@ logger = logging.getLogger(__name__)
 )
 @click.option("--local", is_flag=True, help="Run locally, do not submit as a task")
 @click.option("--limit", type=int, help="Limit prefix linking, used for testing")
-@opt_dry_run
+@opt_submit
 @click.pass_context
 def create_chunks_cmd(
     ctx: click.Context,
+    src_uri: str,
     chunkset_id: str,
     dataset: Optional[str] = None,
     collection: Optional[str] = None,
     since: Optional[str] = None,
-    local: bool = False,
     limit: Optional[int] = None,
-    dry_run: bool = False,
+    submit: bool = False,
 ) -> None:
     """Creates a chunkset for bulk processing."""
     context: PCTasksCommandContext = ctx.obj
@@ -76,7 +80,7 @@ def create_chunks_cmd(
             splits = asset_storage_config.chunks.splits
             asset_storage = asset_storage_config.get_storage()
 
-            click.echo(click.style(f"Walking prefixes in {assets_uri}...", fg="green"))
+            cli_print(click.style(f"Walking prefixes in {assets_uri}...", fg="green"))
             prefixes: List[str] = []
             split_prefixes = [
                 s.prefix + "/" if s.prefix and not s.prefix.endswith("/") else s.prefix
@@ -93,7 +97,7 @@ def create_chunks_cmd(
                     walk_limit=limit,
                     file_limit=limit,
                 ):
-                    print(".", end="", flush=True)
+                    cli_print(".", nl=False)
                     # Avoid walking through the same prefix twice
                     if split_prefixes:
                         for other_prefix in split_prefixes:
@@ -102,7 +106,7 @@ def create_chunks_cmd(
 
                     prefixes.append(f"{root}/")
 
-            print()
+            cli_print()
 
             for prefix in prefixes:
                 prefix_chunk_folder = f"{chunk_folder}/{prefix}"
@@ -129,40 +133,25 @@ def create_chunks_cmd(
 
     group_id = uuid4().hex
 
-    def get_submit_message(args: CreateChunksInput) -> WorkflowSubmitMessage:
-        return WorkflowSubmitMessage(
-            workflow=CreateChunksWorkflowConfig.create(
-                dataset=ds_config.get_identifier(),
-                group_id=group_id,
-                collection_id=collection_config.id,
-                image=ds_config.image,
-                tokens=collection_config.get_tokens(),
-                args=args,
-            )
-        )
+    task_config = CreateChunksTaskConfig()
 
-    if dry_run:
-        click.echo(
-            click.style(
-                f"Would create {len(create_chunks_args)} chunks. "
-                "Workflow for first chunk:",
-                fg="yellow",
-            )
-        )
-        if local:
-            print(create_chunks_args[0].to_yaml())
-        else:
-            msg = get_submit_message(create_chunks_args[0])
-            print(msg.to_yaml())
+    workflow = WorkflowConfig(
+        name=f"Create chunks for {collection_config.id}",
+        dataset=ds_config.get_identifier(),
+        collection_id=collection_config.id,
+        image=ds_config.image,
+        tokens=collection_config.get_tokens(),
+        jobs={"splits": JobConfig(tasks=[task_config])},
+    )
 
+    submit_message = WorkflowSubmitMessage(workflow=workflow)
+
+    if not submit:
+        cli_output(submit_message.to_yaml())
     else:
-        if local:
-            for args in create_chunks_args:
-                CreateChunksTask.create_chunks(args)
-        else:
-            settings = SubmitSettings.get(context.profile, context.settings_file)
-            with SubmitClient(settings) as client:
-                for args in create_chunks_args:
-                    msg = get_submit_message(args)
-                    click.echo(click.style(f"  Submitting {msg.run_id}...", fg="green"))
-                    client.submit_workflow(msg)
+        settings = SubmitSettings.get(context.profile, context.settings_file)
+        with SubmitClient(settings) as client:
+            cli_print(
+                click.style(f"  Submitting {submit_message.run_id}...", fg="green")
+            )
+            client.submit_workflow(submit_message)

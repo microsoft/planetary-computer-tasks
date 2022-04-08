@@ -23,7 +23,6 @@ from pctasks.core.constants import (
     DEFAULT_WORKFLOW_RUN_GROUP_RECORD_TABLE_NAME,
     DEFAULT_WORKFLOW_RUN_RECORD_TABLE_NAME,
 )
-from pctasks.core.models.base import TargetEnvironment
 from pctasks.core.models.config import ImageConfig
 from pctasks.core.tables.config import ImageKeyEntryTable
 from pctasks.dev.constants import AZURITE_CONNECT_STRING, TEST_DATA_CONTAINER
@@ -77,7 +76,6 @@ def setup_azurite() -> None:
     ) as image_key_table:
         image_key_table.set_image(
             "ingest",
-            target_environment=TargetEnvironment.PRODUCTION,
             image_config=ImageConfig(
                 image="pc-ingest:latest",
                 environment=[
@@ -90,7 +88,7 @@ def setup_azurite() -> None:
 
     print("~ Setting up blob storage...")
 
-    blob_service_client = BlobServiceClient.from_connection_string(
+    blob_service_client: BlobServiceClient = BlobServiceClient.from_connection_string(
         AZURITE_CONNECT_STRING
     )
     containers = [c.name for c in blob_service_client.list_containers()]

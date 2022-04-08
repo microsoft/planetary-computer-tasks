@@ -29,22 +29,23 @@ class MultipleCollections(Exception):
     pass
 
 
-class ChunkSplitConfig(PCBaseModel):
+class SplitConfig(PCBaseModel):
+    """Configuration for a split task for a single URI."""
+
     prefix: Optional[str] = None
     depth: int
-    echo_depth: int = 2
 
 
 class ChunksConfig(PCBaseModel):
     length: int = DEFAULT_CHUNK_LENGTH
     ext: Optional[str] = None
     name_starts_with: Optional[str] = None
-    splits: Optional[List[ChunkSplitConfig]] = None
+    splits: Optional[List[SplitConfig]] = None
 
     @validator("splits")
     def _validate_splits(
-        cls, v: Optional[List[ChunkSplitConfig]]
-    ) -> Optional[List[ChunkSplitConfig]]:
+        cls, v: Optional[List[SplitConfig]]
+    ) -> Optional[List[SplitConfig]]:
         if v is None:
             return v
         paths = set()

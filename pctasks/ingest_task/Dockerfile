@@ -30,6 +30,9 @@ RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 # Copy and install packages
 #
 
+# TODO: remove this
+RUN apt-get install -y git
+
 COPY core /opt/src/core
 RUN cd /opt/src/core && \
      pip install .
