@@ -1,11 +1,12 @@
 import logging
 import multiprocessing
 import os
+import sys
 from datetime import datetime as Datetime
 from datetime import timedelta, timezone
-import sys
 from typing import (
     Any,
+    Dict,
     Generator,
     Iterable,
     Iterator,
@@ -39,6 +40,12 @@ from pctasks.core.utils import map_opt
 from pctasks.core.utils.backoff import with_backoff
 
 logger = logging.getLogger(__name__)
+
+
+_AZURITE_ACCOUNT_KEY = (
+    "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6I"
+    "FsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+)
 
 
 class BlobStorageError(Exception):
@@ -159,7 +166,9 @@ class BlobStorage(Storage):
     See Storage for method docstrings.
     """
 
-    _blob_creds: Union[ClientSecretCredential, DefaultAzureCredential, str]
+    _blob_creds: Union[
+        ClientSecretCredential, DefaultAzureCredential, Dict[str, str], str
+    ]
 
     def __init__(
         self,
@@ -172,7 +181,11 @@ class BlobStorage(Storage):
         self.sas_token = sas_token
 
         # If this is the Azurite storage account, set
-        # the account_url appropriately
+        # the account_url appropriately, and use
+        # an account key. This is a workaround for
+        # the SDK not handling Azurite well if it's not
+        # at localhost or 127.0.0.1 (e.g. in a Docker container).
+        is_azurite = False
         if not account_url:
             azurite_sa = os.getenv(AZURITE_STORAGE_ACCOUNT_ENV_VAR)
             if azurite_sa and azurite_sa == storage_account_name:
@@ -184,23 +197,31 @@ class BlobStorage(Storage):
                         f"{AZURITE_HOST_ENV_VAR} and "
                         f"{AZURITE_PORT_ENV_VAR} must be set."
                     )
+                self.account_url = f"http://{host}:{port}/devstoreaccount1"
+                self._blob_creds = {
+                    "account_name": storage_account_name,
+                    "account_key": _AZURITE_ACCOUNT_KEY,
+                }
+                is_azurite = True
 
-        # Check if there's a service principle in the environment.
-        # If so, use that. Otherwise check for a SAS token.
-        if sas_token is not None:
-            self._blob_creds = sas_token
-        elif os.environ.get("AZURE_CLIENT_ID"):
-            self._blob_creds = DefaultAzureCredential()
-        elif os.environ.get("AZURE_STORAGE_SAS_TOKEN"):
-            self._blob_creds = os.environ["AZURE_STORAGE_SAS_TOKEN"]
-        else:
-            # Base case, let Azure SDK handle any other
-            # possibility or error out.
-            self._blob_creds = DefaultAzureCredential()
+        if not is_azurite:
+            # Check if there's a service principle in the environment.
+            # If so, use that. Otherwise check for a SAS token.
+            if sas_token is not None:
+                self._blob_creds = sas_token
+            elif os.environ.get("AZURE_CLIENT_ID"):
+                self._blob_creds = DefaultAzureCredential()
+            elif os.environ.get("AZURE_STORAGE_SAS_TOKEN"):
+                self._blob_creds = os.environ["AZURE_STORAGE_SAS_TOKEN"]
+            else:
+                # Base case, let Azure SDK handle any other
+                # possibility or error out.
+                self._blob_creds = DefaultAzureCredential()
 
-        self.account_url = (
-            account_url or f"https://{storage_account_name}.blob.core.windows.net"
-        )
+            self.account_url = (
+                account_url or f"https://{storage_account_name}.blob.core.windows.net"
+            )
+
         self.storage_account_name = storage_account_name
         self.container_name = container_name
         self.prefix = prefix.strip("/") if prefix is not None else prefix
@@ -302,9 +323,19 @@ class BlobStorage(Storage):
         max_depth: Optional[int] = None,
         min_depth: Optional[int] = None,
         name_starts_with: Optional[str] = None,
+        since_date: Optional[Datetime] = None,
+        extensions: Optional[List[str]] = None,
+        ends_with: Optional[str] = None,
+        matches: Optional[str] = None,
         walk_limit: Optional[int] = None,
         file_limit: Optional[int] = None,
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
+        # Ensure UTC set
+        since_date = map_opt(lambda d: d.replace(tzinfo=timezone.utc), since_date)
+
+        if name_starts_with and not name_starts_with.endswith("/"):
+            name_starts_with = name_starts_with + "/"
+
         def _get_depth(path: Optional[str]) -> int:
             if not path:
                 return 0
@@ -326,12 +357,22 @@ class BlobStorage(Storage):
             files = []
             for item in client.container.walk_blobs(name_starts_with=full_prefix):
                 item_name: str = cast(str, item.name)
+                name = os.path.relpath(item_name, full_prefix)
                 if isinstance(item, BlobPrefix):
-                    name = os.path.relpath(item_name, full_prefix)
                     folders.append(name.strip("/"))
                 else:
-                    files.append(os.path.relpath(item_name, full_prefix))
+                    if item.size == 0:
+                        # ADLS Gen 2 creates empty files as directory placeholders.
+                        continue
+                    if since_date:
+                        if cast(Datetime, item.last_modified) < since_date:
+                            continue
+                    files.append(name)
             return folders, files
+
+        path_filter = PathFilter(
+            extensions=extensions, ends_with=ends_with, matches=matches
+        )
 
         walk_count = 0
         file_count = 0
@@ -359,6 +400,8 @@ class BlobStorage(Storage):
                         break
 
                     folders, files = _get_prefix_content(full_prefix)
+
+                    files = [file for file in files if path_filter(file)]
 
                     if file_limit and file_count + len(files) > file_limit:
                         files = files[: file_limit - file_count]

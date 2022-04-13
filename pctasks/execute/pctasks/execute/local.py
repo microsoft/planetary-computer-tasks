@@ -42,18 +42,25 @@ class LocalRunner:
         """
         logger.info(" === PCTasks (local) ===")
 
+        logger.debug(task_config.to_yaml())
+
         try:
 
             task_path = task_config.task
 
             entrypoint = EntryPoint("", task_path, "")
             try:
-                task: Task[Any, Any] = entrypoint.load()
+                task = entrypoint.load()
+                if callable(task):
+                    task = task()
             except Exception as e:
                 raise TaskLoadError(f"Failed to load task: {task_path}") from e
 
             if not isinstance(task, Task):
-                raise TaskLoadError(f"{task_path} is not an instance of {Task}")
+                raise TaskLoadError(
+                    f"{task_path} of type {type(task)} {task} "
+                    f"is not an instance of {Task}"
+                )
 
             # Substitute local secrets and set environment variables.
             env = task_config.environment or {}
@@ -118,7 +125,7 @@ class LocalRunner:
             )
 
             if isinstance(task_result, CompletedTaskResult):
-                task_outputs[task_config.id] = task_result.output
+                task_outputs[task_config.id] = {"output": task_result.output}
             elif isinstance(task_result, FailedTaskResult):
                 raise TaskFailedError(
                     f"Task failed: {','.join(task_result.errors or ['Task errored.'])}"
@@ -140,13 +147,19 @@ class LocalRunner:
         args: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """Runs a workflow and returns the final task result."""
-
         # Keep in sync with the Azure Functions execution workflow.
 
         job_outputs: Dict[str, Union[Dict[str, Any], List[Dict[str, Any]]]] = {}
 
+        errors = workflow.get_argument_errors(args)
+        if errors:
+            raise ValueError(f"Argument errors: {';'.join(errors)}")
+
         if args:
             workflow = workflow.template_args(args)
+        else:
+            if workflow.args:
+                pass
 
         if not context:
             context = TaskContext(storage_factory=StorageFactory())

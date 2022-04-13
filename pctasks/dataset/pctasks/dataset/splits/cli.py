@@ -12,7 +12,7 @@ from pctasks.core.models.workflow import (
 )
 from pctasks.core.yaml import YamlValidationError
 from pctasks.dataset.constants import DEFAULT_DATASET_YAML_PATH
-from pctasks.dataset.splits.models import CreateSplitsTaskConfig
+from pctasks.dataset.splits.models import CreateSplitsOptions, CreateSplitsTaskConfig
 from pctasks.dataset.template import template_dataset_file
 from pctasks.dataset.utils import opt_collection, opt_ds_config, opt_submit
 from pctasks.submit.client import SubmitClient
@@ -52,7 +52,7 @@ def create_splits_cmd(
     collection_config = ds_config.get_collection(collection)
 
     task_config = CreateSplitsTaskConfig.from_collection(
-        ds_config, collection_config, limit=limit
+        ds_config, collection_config, options=CreateSplitsOptions(limit=limit)
     )
 
     workflow = WorkflowConfig(

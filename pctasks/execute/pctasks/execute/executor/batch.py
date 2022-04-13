@@ -1,5 +1,6 @@
 import logging
-from typing import Any, Dict, Optional
+import re
+from typing import Any, Dict, Optional, Tuple
 
 import azure.batch.models as batchmodels
 
@@ -14,13 +15,36 @@ from pctasks.execute.batch.utils import make_unique_job_id, make_valid_batch_id
 from pctasks.execute.constants import MAX_MISSING_POLLS
 from pctasks.execute.executor.base import Executor
 from pctasks.execute.models import TaskPollResult, TaskSubmitMessage
-from pctasks.execute.settings import ExecutorSettings
+from pctasks.execute.settings import BatchSettings, ExecutorSettings
 
 logger = logging.getLogger(__name__)
+
+BATCH_POOL_ID_TAG = "batch_pool_id"
 
 
 class BatchExecutorError(Exception):
     pass
+
+
+def get_pool_id(tags: Optional[Dict[str, str]], batch_settings: BatchSettings) -> str:
+    return (tags or {}).get(BATCH_POOL_ID_TAG, batch_settings.default_pool_id)
+
+
+def transfer_index(job_id: str, task_id: str) -> Tuple[str, str]:
+    """Transfer an index from a job id to the task id.
+
+    Job IDs can have indexes when created from a
+    list through foreach. We want to submit tasks
+    for these types of jobs to the same Azure Batch
+    job, so remove the index when creating the Azure Batch
+    job name, and transfer it to the task id.
+    """
+    m = re.search(r"\[(\d+)\]", job_id)
+    if m:
+        result_job_id = re.sub(r"\[\d+\]", "", job_id)
+        result_task_id = f"{task_id}_{m.group(1)}"
+        return (result_job_id, result_task_id)
+    return (job_id, task_id)
 
 
 class BatchExecutor(Executor):
@@ -28,14 +52,16 @@ class BatchExecutor(Executor):
         self,
         submit_msg: TaskSubmitMessage,
         run_msg: TaskRunMessage,
+        task_tags: Optional[Dict[str, str]],
         task_input_blob_config: BlobConfig,
         settings: ExecutorSettings,
     ) -> Dict[str, Any]:
-        job_id, task_id, run_id = (
+        job_id, task_id = (
             submit_msg.job_id,
             submit_msg.config.id,
-            submit_msg.run_id,
         )
+
+        job_id_for_batch, task_id_for_batch = transfer_index(job_id, task_id)
 
         command = [
             "pctasks",
@@ -50,9 +76,9 @@ class BatchExecutor(Executor):
             command.extend(["--account-url", task_input_blob_config.account_url])
 
         batch_job_prefix = make_valid_batch_id(
-            f"{submit_msg.dataset}_{job_id}_{task_id}"
+            f"{submit_msg.dataset}_{job_id_for_batch}_{task_id}"
         )
-        batch_task_id = run_id
+        batch_task_id = make_valid_batch_id(task_id_for_batch)
 
         batch_task = BatchTask(
             task_id=batch_task_id,
@@ -70,7 +96,7 @@ class BatchExecutor(Executor):
                     batch_job_id = batch_client.find_active_job(batch_job_prefix)
 
                     if not batch_job_id:
-                        pool_id = settings.batch_settings.default_pool_id
+                        pool_id = get_pool_id(task_tags, settings.batch_settings)
                         if not batch_client.get_pool(pool_id):
                             raise BatchExecutorError(f"Batch pool {pool_id} not found.")
 

@@ -1,5 +1,10 @@
 name: naip
-image: pccomponentstest.acr.io/pc-tasks-naip:latest
+image: pcttaskrob.azurecr.io/pctasks-naip:latest
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
 collections:
   - id: naip
     class: naip.dataset:Naip
@@ -7,8 +12,10 @@ collections:
       - storage_account: naipeuwest
         container: naip
         chunks:
-          length: 3000
-          ext: "*.tif"
+          options:
+            chunk_length: 3000
+            extensions:
+              - ".tif"
           splits:
             - depth: 2
               name_starts_with: v002/
@@ -16,7 +23,3 @@ collections:
       storage_account: naipeuwest
       container: naip-etl-data
       prefix: chunks
-    item_storage:
-      storage_account: naipeuwest
-      container: naip-etl-data
-      prefix: chunks/items

@@ -14,6 +14,10 @@ from pctasks.task.context import TaskContext
 logger = logging.getLogger(__name__)
 
 
+class CreateItemsError(Exception):
+    pass
+
+
 CreateItemFunc = Callable[
     [str, StorageFactory], Union[List[pystac.Item], WaitTaskResult]
 ]
@@ -37,25 +41,44 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
     def create_items(
         self, args: CreateItemsInput
     ) -> Union[List[pystac.Item], WaitTaskResult]:
-        storage_factory = StorageFactory(
-            tokens=Tokens(args.tokens), account_url=args.storage_endpoint_url
-        )
+        storage_factory = StorageFactory(tokens=Tokens(args.tokens))
         results: List[pystac.Item] = []
+
+        def _validate(items: List[pystac.Item]):
+            if not args.options.skip_validation:
+                for item in items:
+                    item.validate()
+
         if args.asset_uri:
-            result = self._create_item(args.asset_uri, storage_factory)
+            try:
+                result = self._create_item(args.asset_uri, storage_factory)
+            except Exception as e:
+                raise CreateItemsError(
+                    f"Failed to create item from {args.asset_uri}"
+                ) from e
             if isinstance(result, WaitTaskResult):
                 return result
             else:
+                _validate(result)
                 results.extend(result)
         elif args.chunk_uri:
             chunk_storage, chunk_path = storage_factory.get_storage_for_file(
                 args.chunk_uri
             )
-            for asset_uri in chunk_storage.read_text(chunk_path).splitlines():
-                result = self._create_item(asset_uri, storage_factory)
+            chunk_lines = chunk_storage.read_text(chunk_path).splitlines()
+            if args.options.limit:
+                chunk_lines = chunk_lines[: args.options.limit]
+            for asset_uri in chunk_lines:
+                try:
+                    result = self._create_item(asset_uri, storage_factory)
+                except Exception as e:
+                    raise CreateItemsError(
+                        f"Failed to create item from {asset_uri}"
+                    ) from e
                 if isinstance(result, WaitTaskResult):
                     return result
                 else:
+                    _validate(result)
                     results.extend(result)
         else:
             # Should be prevented by validator
@@ -77,17 +100,21 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                 output = CreateItemsOutput(item=results[0].to_dict())
             else:
                 # Save ndjson
-                if not input.output_uri:
-                    raise OutputNDJSONRequired("output_uri must be specified")
 
-                storage, path = context.storage_factory.get_storage_for_file(
-                    input.output_uri
-                )
+                if not input.item_chunkset_uri:
+                    raise OutputNDJSONRequired("item_chunkset_uri must be specified")
+
+                if not input.chunk_id:
+                    raise OutputNDJSONRequired("chunkset_id must be specified")
+
+                storage = context.storage_factory.get_storage(input.item_chunkset_uri)
+                ndjson_path = f"{input.chunk_id}/items.ndjson"
 
                 storage.write_text(
-                    path, "\n".join([json.dumps(item.to_dict()) for item in results])
+                    ndjson_path,
+                    "\n".join([json.dumps(item.to_dict()) for item in results]),
                 )
 
-                output = CreateItemsOutput(ndjson_uri=input.output_uri)
+                output = CreateItemsOutput(ndjson_uri=storage.get_uri(ndjson_path))
 
             return output

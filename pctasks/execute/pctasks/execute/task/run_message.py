@@ -1,7 +1,7 @@
 import logging
 import os
 from datetime import datetime, timedelta
-from typing import Union
+from typing import Dict, Optional, Tuple, Union
 from uuid import uuid1
 
 from azure.core.credentials import AzureNamedKeyCredential
@@ -33,9 +33,12 @@ def submit_msg_to_task_run_msg(
     submit_msg: TaskSubmitMessage,
     run_id: str,
     settings: ExecutorSettings,
-) -> TaskRunMessage:
+) -> Tuple[TaskRunMessage, Optional[Dict[str, str]]]:
     """
-    Convert a submit message to an exec message.
+    Convert a submit message to a task run message
+
+    Returns the TaskRunMessage and optional set of tags
+    that come from the task and the image key table.
     """
     if not submit_msg.instance_id:
         raise ValueError("submit_msg.instance_id is required")
@@ -48,6 +51,7 @@ def submit_msg_to_task_run_msg(
     event_logger_app_insights_key = os.environ.get(ENV_VAR_TASK_APPINSIGHTS_KEY)
 
     environment = submit_msg.config.environment
+    task_tags = submit_msg.config.tags
 
     # --Handle image key--
 
@@ -84,6 +88,21 @@ def submit_msg_to_task_run_msg(
         else:
             logger.info("Setting image key environment as task environment.")
             environment = image_config.get_environment()
+
+        # Merge the tags from the image-key table into
+        # the message tags. Explicit tags takes precedence.
+        if task_tags:
+            if image_config.environment:
+                logger.info(
+                    "Merging tags from image key table " "into submit msg tags."
+                )
+                task_tags = {
+                    **(image_config.get_tags() or {}),
+                    **task_tags,
+                }
+        else:
+            logger.info("Setting image key tags as task tags.")
+            task_tags = image_config.get_tags()
     else:
         image_config = ImageConfig(image=task_config.image)
 
@@ -211,4 +230,4 @@ def submit_msg_to_task_run_msg(
         event_logger_app_insights_key=event_logger_app_insights_key,
     )
 
-    return TaskRunMessage(args=task_config.args, config=config)
+    return (TaskRunMessage(args=task_config.args, config=config), task_tags)

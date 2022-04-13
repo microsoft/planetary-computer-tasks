@@ -130,7 +130,7 @@ def submit_task(
                 f"run_id {run_id}"
             )
             try:
-                run_msg = submit_msg_to_task_run_msg(
+                run_msg, task_tags = submit_msg_to_task_run_msg(
                     submit_msg=submit_msg,
                     run_id=run_id,
                     settings=settings,
@@ -142,6 +142,7 @@ def submit_task(
                 executor_id = executor.submit(
                     submit_msg=submit_msg,
                     run_msg=run_msg,
+                    task_tags=task_tags,
                     task_input_blob_config=task_input_blob_config,
                     settings=settings,
                 )

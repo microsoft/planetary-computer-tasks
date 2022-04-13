@@ -18,6 +18,8 @@ services:
 
       # Dev storage settings
       - AZURITE_HOST=azurite
+      - AZURITE_PORT=10000
+      - AZURITE_STORAGE_ACCOUNT=devstoreaccount1
 
       # Local secrets provider secrets
       - SECRETS_DB_CONNECTION_STRING=postgresql://username:password@database:5432/postgis

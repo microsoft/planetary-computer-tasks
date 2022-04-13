@@ -76,6 +76,10 @@ class LocalStorage(Storage):
         max_depth: Optional[int] = None,
         min_depth: Optional[int] = None,
         name_starts_with: Optional[str] = None,
+        since_date: Optional[Datetime] = None,
+        extensions: Optional[List[str]] = None,
+        ends_with: Optional[str] = None,
+        matches: Optional[str] = None,
         walk_limit: Optional[int] = None,
         file_limit: Optional[int] = None,
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
@@ -89,7 +93,21 @@ class LocalStorage(Storage):
         file_count = 0
         limit_break = False
 
+        path_filter = PathFilter(
+            extensions=extensions, ends_with=ends_with, matches=matches
+        )
+
+        def _filter_file(root: str, p: str) -> bool:
+            full_path = os.path.join(root, p)
+            if since_date:
+                if since_date > Datetime.fromtimestamp(os.path.getmtime(full_path)):
+                    return False
+            return path_filter(p)
+
         for root, folders, files in os.walk(self.base_dir):
+
+            files = [f for f in files if _filter_file(root, f)]
+
             rel_root = os.path.relpath(root, self.base_dir)
 
             if name_starts_with and not rel_root.startswith(name_starts_with):

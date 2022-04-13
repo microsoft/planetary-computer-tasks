@@ -19,6 +19,7 @@ def test_collection():
 
         with open(TEST_COLLECTION, "r") as f:
             collection = json.load(f)
+            print(json.dumps(collection, indent=2))
 
             result = ingest_task.run(
                 input=IngestTaskInput(content=collection), context=task_context

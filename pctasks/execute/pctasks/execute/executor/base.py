@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from pctasks.core.models.config import BlobConfig
 from pctasks.core.models.task import TaskRunMessage
@@ -13,6 +13,7 @@ class Executor(ABC):
         self,
         submit_msg: TaskSubmitMessage,
         run_msg: TaskRunMessage,
+        task_tags: Optional[Dict[str, str]],
         task_input_blob_config: BlobConfig,
         settings: ExecutorSettings,
     ) -> Dict[str, Any]:

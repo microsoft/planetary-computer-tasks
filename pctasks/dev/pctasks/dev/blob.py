@@ -2,7 +2,8 @@ import os
 from contextlib import contextmanager
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Generator, List, Optional, Union
+from typing import Generator, Optional, Union
+from uuid import uuid1
 
 from azure.storage.blob import ContainerSasPermissions, generate_container_sas
 
@@ -51,22 +52,30 @@ def get_azurite_sas_token() -> str:
     )
 
 
-@contextmanager
-def files_in_azurite(directory: Union[str, Path]) -> Generator[Storage, None, None]:
-    storage = get_azurite_test_storage()
-    for x in storage.list_files():
-        print(x)
-    sub_storage = storage.get_substorage("test")
-    d = Path(directory)
-    paths_to_delete: List[str] = []
-    for root, _, files in os.walk(d):
+def copy_dir_to_azurite(
+    storage: Storage, directory: Union[str, Path], prefix: Optional[str] = None
+) -> None:
+    if prefix:
+        storage = storage.get_substorage(prefix)
+
+    for root, _, files in os.walk(directory):
         for f in files:
             file_path = os.path.join(root, f)
-            rel_path = os.path.relpath(file_path, d)
-            sub_storage.upload_file(file_path, rel_path)
-            paths_to_delete.append(rel_path)
+            rel_path = os.path.relpath(file_path, directory)
+            storage.upload_file(file_path, rel_path)
+
+
+@contextmanager
+def temp_azurite_blob_storage(
+    test_files: Optional[Union[str, Path]] = None,
+) -> Generator[Storage, None, None]:
+    storage = get_azurite_test_storage()
+    sub_storage = storage.get_substorage(f"test-{uuid1().hex}")
+    if test_files:
+        copy_dir_to_azurite(sub_storage, test_files)
     try:
         yield sub_storage
     finally:
-        for path in paths_to_delete:
-            sub_storage.delete_file(path)
+        # for path in sub_storage.list_files():
+        #     sub_storage.delete_file(path)
+        pass

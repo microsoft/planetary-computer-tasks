@@ -30,32 +30,35 @@ RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 # Copy and install packages
 #
 
-COPY pctasks/core /opt/src/pctasks/core
-RUN cd /opt/src/pctasks/core && \
-     pip install .
+# TODO: Remove after pgstac release
+RUN apt-get install -y git
 
-COPY pctasks/cli /opt/src/pctasks/cli
-RUN cd /opt/src/pctasks/cli && \
-     pip install .
+COPY pctasks/core /opt/lib/pctasks/core
+RUN cd /opt/lib/pctasks/core && \
+     pip install -e .
 
-COPY pctasks/task /opt/src/pctasks/task
-RUN cd /opt/src/pctasks/task && \
-     pip install .
+COPY pctasks/cli /opt/lib/pctasks/cli
+RUN cd /opt/lib/pctasks/cli && \
+     pip install -e .
 
-COPY pctasks/submit /opt/src/pctasks/submit
-RUN cd /opt/src/pctasks/submit && \
-     pip install .
+COPY pctasks/task /opt/lib/pctasks/task
+RUN cd /opt/lib/pctasks/task && \
+     pip install -e .
 
-COPY pctasks/ingest /opt/src/pctasks/ingest
-RUN cd /opt/src/pctasks/ingest && \
-     pip install .
+COPY pctasks/submit /opt/lib/pctasks/submit
+RUN cd /opt/lib/pctasks/submit && \
+     pip install -e .
 
-COPY pctasks/dataset /opt/src/pctasks/dataset
-RUN cd /opt/src/pctasks/dataset && \
-     pip install .
+COPY pctasks/ingest /opt/lib/pctasks/ingest
+RUN cd /opt/lib/pctasks/ingest && \
+     pip install -e .
+
+COPY pctasks/dataset /opt/lib/pctasks/dataset
+RUN cd /opt/lib/pctasks/dataset && \
+     pip install -e .
 
 COPY datasets/naip /opt/src/naip
 RUN cd /opt/src/naip && \
-     pip install .
+     pip install -e .
 
 WORKDIR /opt/src

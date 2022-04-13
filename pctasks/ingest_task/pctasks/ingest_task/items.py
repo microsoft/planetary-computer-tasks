@@ -13,7 +13,7 @@ from pypgstac.load import Methods
 
 from pctasks.core.storage import StorageFactory
 from pctasks.core.storage.local import LocalStorage
-from pctasks.ingest.models import IngestConfig
+from pctasks.ingest.models import IngestOptions
 from pctasks.ingest_task.pgstac import PgSTAC
 
 logger = logging.getLogger(__name__)
@@ -111,9 +111,9 @@ def ingest_ndjsons(
     pgstac: PgSTAC,
     ndjsons: List[str],
     storage_factory: StorageFactory,
-    ingest_config: Optional[IngestConfig] = None,
+    ingest_config: Optional[IngestOptions] = None,
 ) -> None:
-    ingest_config = ingest_config or IngestConfig()
+    ingest_config = ingest_config or IngestOptions()
 
     # Pool that executes the chunk download and preperation steps
     pool = futures.ProcessPoolExecutor()

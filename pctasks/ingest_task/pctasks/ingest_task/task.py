@@ -4,7 +4,11 @@ from typing import List, Optional, Union
 
 from pctasks.core.models.event import STACCollectionEventType, STACItemEventType
 from pctasks.core.models.task import FailedTaskResult, WaitTaskResult
-from pctasks.ingest.constants import COLLECTIONS_MESSAGE_TYPE, NDJSON_MESSAGE_TYPE
+from pctasks.ingest.constants import (
+    COLLECTIONS_MESSAGE_TYPE,
+    DB_CONNECTION_STRING_ENV_VALUE,
+    NDJSON_MESSAGE_TYPE,
+)
 from pctasks.ingest.models import (
     CollectionIngestTaskOutput,
     IngestCollectionsInput,
@@ -14,7 +18,6 @@ from pctasks.ingest.models import (
     ItemIngestTaskOutput,
 )
 from pctasks.ingest_task.collection import ingest_collection, ingest_collections
-from pctasks.ingest_task.constants import DB_CONNECTION_STRING_ENV_VALUE
 from pctasks.ingest_task.items import ingest_item, ingest_ndjsons
 from pctasks.ingest_task.pgstac import PgSTAC
 from pctasks.task.context import TaskContext

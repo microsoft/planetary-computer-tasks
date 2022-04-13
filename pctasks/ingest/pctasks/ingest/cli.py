@@ -1,10 +1,11 @@
 import json
+from pathlib import Path
 from typing import List, Optional
 
 import click
 
 from pctasks.cli.cli import PCTasksCommandContext, cli_output, cli_print
-from pctasks.core.constants import MICROSOFT_OWNER
+from pctasks.core.constants import DEFAULT_TARGET_ENVIRONMENT, MICROSOFT_OWNER
 from pctasks.core.models.workflow import (
     JobConfig,
     WorkflowConfig,
@@ -12,7 +13,8 @@ from pctasks.core.models.workflow import (
 )
 from pctasks.ingest.constants import DEFAULT_INSERT_GROUP_SIZE
 from pctasks.ingest.models import IngestNdjsonInput, IngestTaskConfig, NdjsonFolder
-from pctasks.ingest.settings import IngestConfig, IngestSettings
+from pctasks.ingest.settings import IngestOptions, IngestSettings
+from pctasks.ingest.utils import generate_collection_json
 from pctasks.submit.client import SubmitClient
 from pctasks.submit.settings import SubmitSettings
 
@@ -20,7 +22,7 @@ from pctasks.submit.settings import SubmitSettings
 @click.command("ndjsons")
 @click.argument("collection_id")
 @click.argument("ndjson_folder_uri")
-@click.option("--target", help="Target environment to ingest into.")
+@click.option("-t", "--target", help="Target environment to ingest into.")
 @click.option(
     "--insert-group-size",
     type=int,
@@ -82,7 +84,9 @@ def ingest_ndjson_cmd(
     context: PCTasksCommandContext = ctx.obj
     ingest_settings = IngestSettings.get(context.profile, context.settings_file)
 
-    ingest_config = IngestConfig(
+    image_key = ingest_settings.image_keys.get_key(target)
+
+    ingest_config = IngestOptions(
         insert_group_size=insert_group_size,
         insert_only=insert_only,
         num_workers=num_workers,
@@ -101,7 +105,7 @@ def ingest_ndjson_cmd(
             )
         ),
         target=target,
-        ingest_config=ingest_config,
+        option=ingest_config,
     )
 
     job = JobConfig(tasks=[task])
@@ -110,7 +114,7 @@ def ingest_ndjson_cmd(
         name=f"Ingest NDJsons from {ndjson_folder_uri}",
         dataset=f"{owner}/{collection_id}",
         collection_id=collection_id,
-        image_key=ingest_settings.image_keys.get_key(target),
+        image_key=image_key,
         target_environment=target,
         jobs={
             "ingest-items": job,
@@ -135,7 +139,7 @@ def ingest_ndjson_cmd(
 
 @click.command("collection")
 @click.argument("path", type=click.Path(exists=True))
-@click.option("--target", help="Target environment to ingest into.")
+@click.option("-t", "--target", help="Target environment to ingest into.")
 @click.option("--owner", help="The owner of the collection.", default=MICROSOFT_OWNER)
 @click.option("-s", "--submit", is_flag=True, help="Submit the workflow.")
 @click.pass_context
@@ -147,12 +151,22 @@ def ingest_collection_cmd(
     submit: bool,
 ) -> None:
     """Ingest collection at PATH.
+
+    If PATH is a directory, will read collection template information
+    from the directory. Otherwise PATH must bea complete STAC Collection JSON.
     """
     context: PCTasksCommandContext = ctx.obj
     ingest_settings = IngestSettings.get(context.profile, context.settings_file)
 
-    with open(path, "r") as f:
-        collection = json.load(f)
+    collection_path = Path(path)
+
+    target = target or DEFAULT_TARGET_ENVIRONMENT
+
+    if collection_path.is_dir():
+        collection = generate_collection_json(collection_path)
+    else:
+        with open(collection_path, "r") as f:
+            collection = json.load(f)
 
     collection_id = collection.get("id")
     if not collection_id:

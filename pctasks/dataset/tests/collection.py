@@ -10,8 +10,9 @@ from pctasks.dataset.collection import Collection
 
 
 class TestCollection(Collection):
+    @classmethod
     def create_item(
-        self, asset_uri: str, storage_factory: StorageFactory
+        cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
         storage, path = storage_factory.get_storage_for_file(asset_uri)
         asset_json = storage.read_json(path)

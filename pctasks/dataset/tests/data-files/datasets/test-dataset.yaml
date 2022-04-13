@@ -2,7 +2,7 @@ name: dataset-test
 image: mock:latest
 
 args:
-  - test_dir
+  - test_prefix
   - sas_token
 
 collections:
@@ -11,19 +11,16 @@ collections:
     asset_storage:
       - storage_account: devstoreaccount1
         container: test-data
-        prefix: ${{ args.test_prefix }}
+        prefix: ${{ args.test_prefix }}/assets
         sas_token: ${{ args.sas_token }}
         chunks:
-          length: 3000
-          ext: "*.tif"
+          options:
+            chunk_length: 2
+            extensions:
+              - .json
           splits:
-            - depth: 2
-              name_starts_with: v002
+            - depth: 1
     chunk_storage:
       storage_account: devstoreaccount1
       container: test-data
-      prefix: ${{ args.test_prefix }}/chunks/assets
-    item_storage:
-      storage_account: devstoreaccount1
-      container: naip-etl-data
-      prefix: ${{ args.test_prefix }}/chunks/items
+      prefix: ${{ args.test_prefix }}/chunks

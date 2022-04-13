@@ -3,7 +3,9 @@ from datetime import datetime
 
 
 def make_unique_job_id(job_id: str) -> str:
-    return f"{job_id}-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}"
+    return make_valid_batch_id(
+        f"{job_id}-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}"
+    )
 
 
 def make_valid_batch_id(job_id: str) -> str:
@@ -16,4 +18,7 @@ def make_valid_batch_id(job_id: str) -> str:
         and underscore (_).
         The name must be from 1 through 64 characters long
     """
-    return re.sub("[^a-zA-Z0-9_-]", "-", job_id)[-64:]
+    id = re.sub("[^a-zA-Z0-9_-]", "-", job_id)
+    if len(id) > 64:
+        id = id[:32] + "-" + id[-31:]
+    return id

@@ -71,7 +71,7 @@ def test_create_multiple_items():
 
         args = CreateItemsInput(
             chunk_uri=chunk_storage.get_uri(chunk_path),
-            output_uri=items_storage.get_uri(ndjson_path),
+            item_chunkset_uri=items_storage.get_uri(ndjson_path),
         )
 
         task_result = run_test_task(args.dict(), TASK_PATH)

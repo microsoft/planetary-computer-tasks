@@ -325,9 +325,12 @@ class BatchClient:
         If the task isn't found, returns None.
         If the is errored, will try to return the error message in
         the second tuple element.
+        If the job is completed but the task is still running, will
+        consider the task failed.
         Otherwise, returns the status as the first tuple element.
         """
         try:
+            job = cast(batchmodels.CloudJob, self._client.job.get(job_id=job_id))
             task = cast(
                 batchmodels.CloudTask,
                 self._client.task.get(job_id=job_id, task_id=task_id),
@@ -341,17 +344,13 @@ class BatchClient:
             else:
                 raise BatchClientError(error.message.value)
 
-        logger.info(f"BATCH STATUS: {task.state}")
+        logger.info(f"BATCH JOB STATUS: {job.state}")
+        logger.info(f"BATCH TASK STATUS: {task.state}")
 
-        state = cast(batchmodels.TaskState, task.state)
+        job_state = cast(batchmodels.JobState, job.state)
+        task_state = cast(batchmodels.TaskState, task.state)
         execution_info = cast(batchmodels.TaskExecutionInformation, task.execution_info)
-        if state == batchmodels.TaskState.active:
-            return (TaskRunStatus.PENDING, None)
-        if state == batchmodels.TaskState.preparing:
-            return (TaskRunStatus.STARTING, None)
-        if state == batchmodels.TaskState.running:
-            return (TaskRunStatus.RUNNING, None)
-        if state == batchmodels.TaskState.completed:
+        if task_state == batchmodels.TaskState.completed:
             if execution_info.exit_code != 0:
                 return (
                     TaskRunStatus.FAILED,
@@ -361,7 +360,16 @@ class BatchClient:
                 )
             else:
                 return (TaskRunStatus.COMPLETED, None)
-        if state == batchmodels.TaskState.running:
+        if job_state == batchmodels.JobState.completed:
+            return (TaskRunStatus.FAILED, "Job completed before task completed")
+        if task_state == batchmodels.TaskState.active:
+            return (TaskRunStatus.PENDING, None)
+        if task_state == batchmodels.TaskState.preparing:
+            return (TaskRunStatus.STARTING, None)
+        if task_state == batchmodels.TaskState.running:
+            return (TaskRunStatus.RUNNING, None)
+
+        if task_state == batchmodels.TaskState.running:
             return (TaskRunStatus.RUNNING, None)
         else:
             return (TaskRunStatus.SUBMITTED, None)

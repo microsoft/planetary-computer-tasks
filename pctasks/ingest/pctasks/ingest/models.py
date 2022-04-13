@@ -8,12 +8,13 @@ from pctasks.core.models.task import TaskConfig
 from pctasks.ingest.constants import (
     COLLECTION_TASK_ID,
     COLLECTIONS_MESSAGE_TYPE,
+    DB_CONNECTION_STRING_ENV_VALUE,
     INGEST_TASK,
     ITEM_TASK_ID,
     NDJSON_MESSAGE_TYPE,
     NDJSON_TASK_ID,
 )
-from pctasks.ingest.settings import IngestConfig, IngestSettings
+from pctasks.ingest.settings import IngestOptions, IngestSettings
 
 
 class InvalidSTACException(Exception):
@@ -39,7 +40,7 @@ class IngestNdjsonInput(PCBaseModel):
         cls, v: Optional[NdjsonFolder], values: Dict[str, Any]
     ) -> Optional[NdjsonFolder]:
         if v is None:
-            if values['uris'] is None:
+            if values["uris"] is None:
                 raise ValueError("Either ndjson_folder or uris must be provided.")
         return v
 
@@ -56,7 +57,7 @@ class IngestTaskInput(PCBaseModel):
     Can be a STAC Collection or Item JSON dict, or a NdjsonMessageData object.
     """
 
-    config: IngestConfig = Field(default_factory=IngestConfig)
+    options: IngestOptions = Field(default_factory=IngestOptions)
 
 
 class CollectionIngestTaskOutput(PCBaseModel):
@@ -92,20 +93,30 @@ class IngestTaskConfig(TaskConfig):
         cls,
         task_id: str,
         content: Union[IngestNdjsonInput, IngestCollectionsInput, Dict[str, Any]],
+        image_key: Optional[str] = None,
         target: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         environment: Optional[Dict[str, str]] = None,
-        ingest_config: Optional[IngestConfig] = None,
+        options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
     ) -> TaskConfig:
         data = IngestTaskInput(
             content=content,
-            config=ingest_config or IngestConfig(),
+            options=options or IngestOptions(),
         )
 
         settings = ingest_settings or IngestSettings.get()
 
-        image_key = settings.image_keys.get_key(target)
+        if not image_key:
+            image_key = settings.image_keys.get_key(target)
+
+        if not image_key and (
+            not environment or DB_CONNECTION_STRING_ENV_VALUE not in environment
+        ):
+            raise ValueError(
+                "Must supply image_key or "
+                f"environment[{DB_CONNECTION_STRING_ENV_VALUE}]"
+            )
 
         return TaskConfig(
             id=task_id,
@@ -124,7 +135,7 @@ class IngestTaskConfig(TaskConfig):
         target: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         environment: Optional[Dict[str, str]] = None,
-        ingest_config: Optional[IngestConfig] = None,
+        options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
     ) -> TaskConfig:
         if "collection" not in item:
@@ -136,7 +147,7 @@ class IngestTaskConfig(TaskConfig):
             target=target,
             tags=tags,
             environment=environment,
-            ingest_config=ingest_config,
+            options=options,
             ingest_settings=ingest_settings,
         )
 
@@ -147,7 +158,7 @@ class IngestTaskConfig(TaskConfig):
         target: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         environment: Optional[Dict[str, str]] = None,
-        ingest_config: Optional[IngestConfig] = None,
+        options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
     ) -> TaskConfig:
         if "id" not in collection:
@@ -159,7 +170,7 @@ class IngestTaskConfig(TaskConfig):
             target=target,
             tags=tags,
             environment=environment,
-            ingest_config=ingest_config,
+            options=options,
             ingest_settings=ingest_settings,
         )
 
@@ -170,7 +181,7 @@ class IngestTaskConfig(TaskConfig):
         target: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         environment: Optional[Dict[str, str]] = None,
-        ingest_config: Optional[IngestConfig] = None,
+        options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
     ) -> TaskConfig:
 
@@ -180,7 +191,7 @@ class IngestTaskConfig(TaskConfig):
             target=target,
             tags=tags,
             environment=environment,
-            ingest_config=ingest_config,
+            options=options,
             ingest_settings=ingest_settings,
         )
 
@@ -191,7 +202,7 @@ class IngestTaskConfig(TaskConfig):
         target: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         environment: Optional[Dict[str, str]] = None,
-        ingest_config: Optional[IngestConfig] = None,
+        option: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
     ) -> TaskConfig:
         return cls.create(
@@ -200,6 +211,6 @@ class IngestTaskConfig(TaskConfig):
             target=target,
             tags=tags,
             environment=environment,
-            ingest_config=ingest_config,
+            options=option,
             ingest_settings=ingest_settings,
         )

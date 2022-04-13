@@ -57,7 +57,7 @@ def test_image_key_environment_merged():
                 ),
             )
 
-            run_msg = submit_msg_to_task_run_msg(
+            run_msg, task_tags = submit_msg_to_task_run_msg(
                 submit_msg=submit_msg,
                 run_id=run_id,
                 settings=exec_settings,

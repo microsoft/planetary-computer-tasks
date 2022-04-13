@@ -1,11 +1,12 @@
 import logging
 import re
+from typing import List, Union
 
 import pystac
-from stactools.naip import stac
-
+from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
+from stactools.naip import stac
 
 logger = logging.getLogger(__name__)
 
@@ -16,9 +17,10 @@ naip_regex = re.compile(
 
 
 class Naip(Collection):
+    @classmethod
     def create_item(
-        self, asset_uri: str, storage_factory: StorageFactory
-    ) -> pystac.Item:
+        cls, asset_uri: str, storage_factory: StorageFactory
+    ) -> Union[List[pystac.Item], WaitTaskResult]:
         """Creates a STAC Item for NAIP.
 
         Args:
@@ -82,4 +84,4 @@ class Naip(Collection):
                 thumbnail_href=thumbnail_href,
             )
 
-        return item
+        return [item]

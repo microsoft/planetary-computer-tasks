@@ -116,8 +116,32 @@ class WorkflowConfig(PCBaseModel):
             return DatasetIdentifier.from_string(self.dataset)
         return self.dataset
 
-    def template_args(self, args: Dict[str, Any]) -> "WorkflowConfig":
+    def template_args(self, args: Optional[Dict[str, Any]]) -> "WorkflowConfig":
         return DictTemplater({"args": args}, strict=False).template_model(self)
+
+    def get_argument_errors(
+        self, args: Optional[Dict[str, Any]]
+    ) -> Optional[List[str]]:
+        """Checks if there are errors with provided arguments.
+
+        Returns a list of error messages or None if there no errors.
+        """
+        args_keys: Set[str] = set(args.keys() if args else [])
+        workflow_args: Set[str] = set(self.args or [])
+
+        missing_args = workflow_args - args_keys
+        unexpected_args = args_keys - workflow_args
+
+        errors: List[str] = []
+        if missing_args:
+            errors.append(f"Args expected and not provided: {','.join(missing_args)}")
+        if unexpected_args:
+            errors.append(f"Unexpected args provided: {','.join(unexpected_args)}")
+
+        if errors:
+            return errors
+        else:
+            return None
 
 
 class WorkflowSubmitMessage(PCBaseModel):
@@ -140,17 +164,7 @@ class WorkflowSubmitMessage(PCBaseModel):
         cls, v: Optional[Dict[str, Any]], values: Dict[str, Any]
     ) -> Optional[Dict[str, Any]]:
         """Check that args match the workflow args."""
-        submit_args_keys: Set[str] = set(v.keys() if v else [])
-        workflow_args: Set[str] = set(values["workflow"].args or [])
-
-        missing_args = workflow_args - submit_args_keys
-        unexpected_args = submit_args_keys - workflow_args
-
-        errors: List[str] = []
-        if missing_args:
-            errors.append(f"Args expected and not provided: {','.join(missing_args)}")
-        if unexpected_args:
-            errors.append(f"Unexpected args provided: {','.join(unexpected_args)}")
+        errors = values["workflow"].get_argument_errors(v)
 
         if errors:
             raise ValueError(f"Argument errors: {';'.join(errors)}")

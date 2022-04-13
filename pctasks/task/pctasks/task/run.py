@@ -106,11 +106,16 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
                     entrypoint = EntryPoint("", task_path, "")
                     try:
                         task = entrypoint.load()
+                        if callable(task):
+                            task = task()
                     except Exception as e:
                         raise TaskLoadError(f"Failed to load task: {task_path}") from e
 
                     if not isinstance(task, Task):
-                        raise TaskLoadError(f"{task_path} is not an instance of {Task}")
+                        raise TaskLoadError(
+                            f"{task_path} of type {type(task)} {task} "
+                            f"is not an instance of {Task}"
+                        )
 
                     # Set environment variables
                     if task_config.environment:

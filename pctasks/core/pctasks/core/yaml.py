@@ -1,9 +1,15 @@
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, OrderedDict, Type, TypeVar, cast
+from typing import Any, Dict, List, Optional, Type, TypeVar, cast
 
 import strictyaml
+import yaml
 from pydantic import BaseModel, ValidationError
 from pydantic.error_wrappers import ErrorList
+
+try:
+    from yaml import CLoader as Loader
+except ImportError:
+    from yaml import Loader
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -78,8 +84,8 @@ def model_from_yaml(
     Raises:
         YamlValidationError: If the YAML is invalid.
     """
-    yml: strictyaml.YAML = strictyaml.load(yaml_txt)
-    data = cast(OrderedDict[str, Any], yml.data)
+    strict_yml: strictyaml.YAML = strictyaml.load(yaml_txt)
+    data: Dict[str, Any] = yaml.load(yaml_txt, Loader=Loader)
     if section:
         if section not in data:
             raise SectionDoesNotExist(f"Section {section} does not exist.")
@@ -90,7 +96,7 @@ def model_from_yaml(
     except ValidationError as e:
         errors = []
         for error in e.errors():
-            _yml_section: Optional[strictyaml.YAML] = yml
+            _yml_section: Optional[strictyaml.YAML] = strict_yml
             for loc in error["loc"]:
                 if _yml_section is not None:
                     if loc not in _yml_section:

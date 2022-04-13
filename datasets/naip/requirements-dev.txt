@@ -3,4 +3,16 @@ black==22.*
 mypy==0.931
 pytest==6.*
 isort==5.*
+
+planetary_computer>=0.1.0
+
 pctasks.dev>=0.1.0
+pctasks.execute>=0.1.0 # Dependency of dev, can be removed on release.
+
+# mypy stubs
+types-PyYAML
+types-cachetools
+types-chardet
+types-python-dateutil
+types-requests
+types-six

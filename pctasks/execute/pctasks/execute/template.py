@@ -53,11 +53,11 @@ def template_foreach(
 
     def _get_value(path: List[str]) -> Optional[TemplateValue]:
         if path[0] == JOBS_TEMPLATE_PATH:
-            return find_value(job_outputs, path[1:])
+            return find_value(job_outputs, path[1:], strict=True)
         if path[0] == TRIGGER_TEMPLATE_PATH:
             if not trigger_event:
                 raise TemplateError("No trigger event found")
-            return find_value(trigger_event, path[1:])
+            return find_value(trigger_event, path[1:], strict=True)
         raise TemplateError(
             f"Foreach items invalid: '{'.'.join(path)}'"
             "must be a list, or templated from "
@@ -67,8 +67,8 @@ def template_foreach(
     items = template_str(foreach.items, _get_value)
 
     if not isinstance(items, list):
-        raise TemplateError(f"Expected list of items, got {items}")
-    print(f"items: {items}")
+        raise TemplateError(f"foreach expected list of items, got {items}")
+
     return list(completely_flatten(items))
 
 
@@ -86,7 +86,7 @@ def template_job_with_item(
     job: JobConfig, item: TemplateValue, index: int
 ) -> JobConfig:
     if isinstance(item, dict):
-        result = DictTemplater(item).template_model(job)
+        result = DictTemplater({"item": item}).template_model(job)
     else:
         result = ItemTemplater(item).template_model(job)
     result.id = f"{job.id}[{index}]"

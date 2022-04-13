@@ -2,7 +2,11 @@ import logging
 from typing import List, Union
 
 from pctasks.core.models.task import FailedTaskResult, WaitTaskResult
-from pctasks.dataset.splits.models import CreateSplitsInput, CreateSplitsOutput
+from pctasks.dataset.splits.models import (
+    CreateSplitsInput,
+    CreateSplitsOutput,
+    SplitTarget,
+)
 from pctasks.task import Task
 from pctasks.task.context import TaskContext
 
@@ -16,8 +20,12 @@ class CreateSplitsTask(Task[CreateSplitsInput, CreateSplitsOutput]):
     def run(
         self, input: CreateSplitsInput, context: TaskContext
     ) -> Union[CreateSplitsOutput, WaitTaskResult, FailedTaskResult]:
-        uris: List[str] = []
+        split_targets: List[SplitTarget] = []
+        split_limit_hit = False
         for splits_input in input.inputs:
+            if split_limit_hit:
+                break
+
             assets_uri = splits_input.uri
             storage = context.storage_factory.get_storage(assets_uri)
             logger.debug(f"Processing {assets_uri}...")
@@ -40,8 +48,6 @@ class CreateSplitsTask(Task[CreateSplitsInput, CreateSplitsOutput]):
                         max_depth=split_config.depth,
                         min_depth=split_config.depth,
                         name_starts_with=split_prefix,
-                        walk_limit=input.limit,
-                        file_limit=input.limit,
                     ):
                         print(".", end="", flush=True)
                         # Avoid walking through the same prefix twice
@@ -50,14 +56,30 @@ class CreateSplitsTask(Task[CreateSplitsInput, CreateSplitsOutput]):
                                 if other_prefix in folders:
                                     folders.remove(other_prefix)
 
-                        uris.append(storage.get_uri(root))
+                        split_targets.append(
+                            SplitTarget(
+                                uri=storage.get_uri(root),
+                                chunk_options=splits_input.chunk_options,
+                            )
+                        )
+
+                        if (
+                            input.options.limit
+                            and len(split_targets) >= input.options.limit
+                        ):
+                            split_limit_hit = True
+                            break
 
                 print()
 
             else:
-                uris.append(assets_uri)
+                split_targets.append(
+                    SplitTarget(
+                        uri=assets_uri, chunk_options=splits_input.chunk_options
+                    )
+                )
 
-        return CreateSplitsOutput(uris=uris)
+        return CreateSplitsOutput(splits=split_targets)
 
 
 create_splits_task = CreateSplitsTask()

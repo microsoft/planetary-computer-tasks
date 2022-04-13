@@ -1,6 +1,8 @@
+from datetime import datetime
 import os
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
+from pctasks.core.storage.blob import BlobUri
 
 from pydantic import Field, validator
 
@@ -36,10 +38,50 @@ class SplitConfig(PCBaseModel):
     depth: int
 
 
-class ChunksConfig(PCBaseModel):
-    length: int = DEFAULT_CHUNK_LENGTH
-    ext: Optional[str] = None
+class ChunkOptions(PCBaseModel):
+    chunk_length: Union[int, str] = DEFAULT_CHUNK_LENGTH
+    """Length of each chunk. Each chunk file will contain at most this many uris."""
+
     name_starts_with: Optional[str] = None
+    """Only include asset URIs that start with this string."""
+
+    since: Optional[datetime] = None
+    """Only include assets that have been modified since this time."""
+
+    extensions: Optional[List[str]] = None
+    """Only include asset URIs with an extension in this list."""
+
+    ends_with: Optional[str] = None
+    """Only include asset URIs that end with this string."""
+
+    matches: Optional[str] = None
+    """Only include asset URIs that match this regex."""
+
+    limit: Optional[int] = None
+    """Limit the number of URIs to process. """
+
+    chunk_file_name: str = "uris-list"
+    """Chunk file name."""
+
+    chunk_extension: str = ".csv"
+    """Extensions of the chunk file names."""
+
+    @validator("chunk_length")
+    def _validate_chunk_length(cls, v):
+        if isinstance(v, int):
+            return v
+        elif isinstance(v, str):
+            try:
+                return int(v)
+            except:
+                raise ValueError(f"chunk_length must be a valid integer: {v}")
+
+    def get_chunk_length(self) -> int:
+        return int(self.chunk_length)
+
+
+class ChunksConfig(PCBaseModel):
+    options: ChunkOptions = ChunkOptions()
     splits: Optional[List[SplitConfig]] = None
 
     @validator("splits")
@@ -67,6 +109,11 @@ class StorageConfig(PCBaseModel, ABC):
     def get_storage(self) -> Storage:
         pass
 
+    @abstractmethod
+    def matches(self, uri: str) -> bool:
+        """Returns True if the uri is a valid uri for this storage config."""
+        pass
+
 
 class BlobStorageConfig(StorageConfig):
     storage_account: str
@@ -85,6 +132,20 @@ class BlobStorageConfig(StorageConfig):
     def get_storage(self) -> Storage:
         return get_storage(self.get_uri(), sas_token=self.sas_token)
 
+    def matches(self, uri: str) -> bool:
+        if BlobUri.matches(uri):
+            blob_uri = BlobUri(uri)
+            if blob_uri.storage_account_name == self.storage_account:
+                if blob_uri.container_name == self.container:
+                    if self.prefix:
+                        return (
+                            blob_uri.blob_name is not None
+                            and blob_uri.blob_name.startswith(self.prefix)
+                        )
+                    else:
+                        return True
+        return False
+
 
 class LocalStorageConfig(StorageConfig):
     path: str
@@ -97,20 +158,20 @@ class LocalStorageConfig(StorageConfig):
     def get_storage(self) -> Storage:
         return get_storage(self.path)
 
+    def matches(self, uri: str) -> bool:
+        return uri.startswith(self.path)
+
 
 class CollectionConfig(PCBaseModel):
     id: str
     collection_class: str = Field(alias="class")
     asset_storage: List[Union[BlobStorageConfig, LocalStorageConfig]]
     chunk_storage: Union[BlobStorageConfig, LocalStorageConfig]
-    item_storage: Union[BlobStorageConfig, LocalStorageConfig]
 
     def get_tokens(self) -> Dict[str, StorageAccountTokens]:
         """Collects SAS tokens from any container configs."""
         tokens: Dict[str, StorageAccountTokens] = {}
         containers = self.asset_storage + [self.chunk_storage]
-        if self.item_storage:
-            containers.append(self.item_storage)
         for container in containers:
             if isinstance(container, BlobStorageConfig):
                 if container.sas_token:
@@ -125,6 +186,14 @@ class CollectionConfig(PCBaseModel):
                     )
         return tokens
 
+    def get_storage_config(
+        self, uri: str
+    ) -> Union[BlobStorageConfig, LocalStorageConfig]:
+        for storage in self.asset_storage:
+            if storage.matches(uri):
+                return storage
+        raise ValueError(f"No storage config found that matches {uri}")
+
     class Config:
         allow_population_by_field_name = True
 
@@ -134,6 +203,8 @@ class DatasetConfig(DatasetIdentifier):
     name: str
     image: str
     collections: List[CollectionConfig]
+    args: Optional[List[str]] = None
+    environment: Optional[Dict[str, Any]] = None
 
     def get_collection(self, collection_id: Optional[str] = None) -> CollectionConfig:
         if collection_id is None:

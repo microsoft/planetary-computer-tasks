@@ -4,6 +4,7 @@ from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.task import TaskConfig
 from pctasks.dataset.models import (
     BlobStorageConfig,
+    ChunkOptions,
     CollectionConfig,
     DatasetConfig,
     SplitConfig,
@@ -14,23 +15,39 @@ from pctasks.dataset.splits.constants import (
 )
 
 
+class CreateSplitsOptions(PCBaseModel):
+    limit: Optional[int] = None
+
+
 class SplitInput(PCBaseModel):
     """Configuration for a split task for a single URI."""
 
     uri: str
     splits: Optional[List[SplitConfig]] = None
     sas_token: Optional[str] = None
+    chunk_options: ChunkOptions
+    """Chunk options for the split."""
 
 
 class CreateSplitsInput(PCBaseModel):
     """Input for a split task."""
 
     inputs: List[SplitInput]
-    limit: Optional[int] = None
+    options: CreateSplitsOptions = CreateSplitsOptions()
+
+
+class SplitTarget(PCBaseModel):
+    """Target for a split task."""
+
+    uri: str
+    """URI of the split."""
+
+    chunk_options: ChunkOptions
+    """Chunk options for the split."""
 
 
 class CreateSplitsOutput(PCBaseModel):
-    uris: List[str]
+    splits: List[SplitTarget]
 
 
 class CreateSplitsTaskConfig(TaskConfig):
@@ -56,7 +73,7 @@ class CreateSplitsTaskConfig(TaskConfig):
         cls,
         ds: DatasetConfig,
         collection: CollectionConfig,
-        limit: Optional[int] = None,
+        options: Optional[CreateSplitsOptions] = None,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> "CreateSplitsTaskConfig":
@@ -70,12 +87,15 @@ class CreateSplitsTaskConfig(TaskConfig):
                     uri=asset_storage_config.get_uri(),
                     splits=asset_storage_config.chunks.splits,
                     sas_token=sas_token,
+                    chunk_options=asset_storage_config.chunks.options,
                 )
             )
 
         return cls.create(
             image=ds.image,
-            args=CreateSplitsInput(inputs=split_inputs, limit=limit),
+            args=CreateSplitsInput(
+                inputs=split_inputs, options=options or CreateSplitsOptions()
+            ),
             environment=environment,
             tags=tags,
         )

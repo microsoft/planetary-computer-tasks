@@ -9,6 +9,7 @@ install_requires = [
     "pctasks.task>=0.1.0",
     "pctasks.submit>=0.1.0",
     "pctasks.ingest>=0.1.0",
+    "pctasks.execute>=0.1.0",
     "pctasks.cli>=0.1.0",
 ]
 

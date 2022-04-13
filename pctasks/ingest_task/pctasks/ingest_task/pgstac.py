@@ -1,9 +1,8 @@
-import json
 import logging
 import os
-from tempfile import TemporaryDirectory
 from typing import Any, Dict, Iterable, Optional, Set
 
+import orjson
 from pypgstac.db import PgstacDB
 from pypgstac.load import Loader, Methods
 
@@ -29,31 +28,18 @@ class PgSTAC:
         else:
             groups = [items]
 
-        with TemporaryDirectory() as tmpdir:
-            for i, group in enumerate(groups):
-                fname = f"{i}.ndjson"
-                path = os.path.join(tmpdir, fname)
-                logger.info(f"  ...Loading group {i+1}")
-                with open(path, "wb") as f:
-                    f.write(b"\n".join([x.strip() for x in group]))
-
-                self.loader.load_items(path, insert_mode=mode)
+        for i, group in enumerate(groups):
+            logger.info(f"  ...Loading group {i+1}")
+            self.loader.load_items(iter(group), insert_mode=mode)
 
     def ingest_collections(
         self,
         collections: Iterable[Dict[str, Any]],
         mode: Methods = Methods.upsert,
     ) -> None:
-        # TODO: Remove when we don't have to use files.
-        with TemporaryDirectory() as tmpdir:
-            path = "collections.ndjson"
-            with open(os.path.join(tmpdir, path), "wb") as f:
-                f.write(
-                    b"\n".join([json.dumps(c).encode("utf-8") for c in collections])
-                )
-            self.loader.load_collections(
-                os.path.join(tmpdir, path), insert_mode=mode
-            )
+        self.loader.load_collections(
+            iter([orjson.dumps(c) for c in collections]), insert_mode=mode
+        )
 
     def existing_items(self, collection_id: str, item_ids: Set[str]) -> Set[str]:
         """The IDs of Items that already exist in the database."""

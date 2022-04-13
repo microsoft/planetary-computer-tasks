@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import requests
 
@@ -28,6 +28,7 @@ class LocalExecutor(Executor):
         self,
         submit_msg: TaskSubmitMessage,
         run_msg: TaskRunMessage,
+        task_tags: Optional[Dict[str, str]],
         task_input_blob_config: BlobConfig,
         settings: ExecutorSettings,
     ) -> Dict[str, Any]:

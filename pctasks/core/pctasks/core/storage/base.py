@@ -63,6 +63,10 @@ class Storage(ABC):
         max_depth: Optional[int] = None,
         min_depth: Optional[int] = None,
         name_starts_with: Optional[str] = None,
+        since_date: Optional[Datetime] = None,
+        extensions: Optional[List[str]] = None,
+        ends_with: Optional[str] = None,
+        matches: Optional[str] = None,
         walk_limit: Optional[int] = None,
         file_limit: Optional[int] = None,
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
@@ -75,6 +79,9 @@ class Storage(ABC):
                 None will store records at all depths up to max_depth if specified.
             name_starts_with: Only walk folders and files matching this prefix.
             since_date: Only walk files that have been modified at or after this datetime.
+            extensions: Optional list of extensions that file path must have.
+            ends_with: Optional string that files must end with
+            matches: Optional regex that path must match
             walk_limit: Limit the number of times to yield
             file_limit: Limit the number of files returned
 

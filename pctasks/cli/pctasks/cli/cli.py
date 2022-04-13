@@ -60,7 +60,7 @@ class PCTasksCommandContext:
 
 
 @lru_cache(maxsize=1)
-def _setup_logging(level: Union[str, int], log_libraries: bool = False) -> None:
+def setup_logging(level: Union[str, int], log_libraries: bool = False) -> None:
     _logger = logging.root if log_libraries else logging.getLogger("pctasks")
 
     _logger.setLevel(level)
@@ -110,7 +110,7 @@ def pctasks_cmd(
 
     ctx.obj = PCTasksCommandContext(profile=profile, settings_file=settings_file)
 
-    _setup_logging(logging_level)
+    setup_logging(logging_level)
 
 
 for subcommand in get_plugin_subcommands(

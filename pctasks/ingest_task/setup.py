@@ -8,9 +8,12 @@ with open("README.md") as f:
 install_requires = [
     "pctasks.task>=0.1.0",
     "pctasks.ingest>=0.1.0",
-    #"pypgstac==0.4.*",
-    "pypgstac @ git+https://github.com/stac-utils/pgstac/@2fef188bfee3c5933619c4d6777a234afbf82028#egg=pypgstac&subdirectory=pypgstac",
-
+    # TODO: use release
+    (
+        "pypgstac @ git+https://github.com/stac-utils/pgstac/@"
+        "56198b1d58ac8ec8e188a0e63f43803d8f46dd57"
+        "#egg=pypgstac&subdirectory=pypgstac"
+    ),
     # From pypgstac. Remove when using a release.
     "smart-open==4.2.0",
     "orjson>=3.5.2",
@@ -24,11 +27,7 @@ install_requires = [
 ]
 
 extra_reqs = {
-    "dev": [
-        "pytest",
-        "pytest-cov",
-        "pre-commit"
-    ],
+    "dev": ["pytest", "pytest-cov", "pre-commit"],
     "docs": ["mkdocs", "mkdocs-material", "pdocs"],
 }
 
@@ -47,7 +46,7 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     keywords="Planetary, STAC",
-    author=u"Microsoft",
+    author="Microsoft",
     author_email="planetarycomputer@microsoft.com",
     url="https://github.com/Microsoft/planetary-computer-tasks",
     license="MIT",
