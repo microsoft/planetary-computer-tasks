@@ -1,5 +1,5 @@
 import logging
-from typing import Callable, Type, TypeVar
+from typing import Callable, Optional, Type, TypeVar
 
 import orjson
 from pydantic import BaseModel, ValidationError
@@ -16,13 +16,16 @@ logger = logging.getLogger(__name__)
 
 
 class ActivityStatus(StrEnum):
-    MESSAGE_RECEIVED = "message_received"
-    MESSAGE_SENT = "message_received"
+    ACTIVITY_STARTED = "activity_started"
+    ACTIVITY_ENDED = "activity_ended"
     FAILED = "failed"
 
 
 def wrap_activity(
-    activity: Callable[[T, RunLogger], U], model_class: Type[T], activity_name: str
+    activity: Callable[[T, RunLogger], U],
+    model_class: Type[T],
+    activity_name: str,
+    event_tag: Optional[Callable[[T], str]] = None,
 ) -> Callable[[str], str]:
     """Wraps a function to be used as an Azure Durable Function activity."""
 
@@ -31,16 +34,24 @@ def wrap_activity(
         if "msg" not in msg_dict:
             raise ValueError(f"Missing 'msg' in message: {msg_dict}")
 
+        msg_model = model_class.parse_obj(msg_dict["msg"])
+        event_tag_msg: Optional[str] = None
+        if event_tag:
+            event_tag_msg = event_tag(msg_model)
+
         activity_msg: ActivityMessage[T] = ActivityMessage(
             run_record_id=RunRecordId.parse_obj(msg_dict.get("run_record_id")),
-            msg=model_class.parse_obj(msg_dict["msg"]),
+            msg=msg_model,
         )
 
         event_logger = RunLogger(activity_msg.run_record_id, logger_id=activity_name)
-        event_logger.log_event(ActivityStatus.MESSAGE_RECEIVED)
+        event_logger.log(f" = {activity_name} - {activity_msg.run_record_id} =")
+        if event_tag:
+            event_logger.log(f" - {event_tag}")
+        event_logger.log_event(ActivityStatus.ACTIVITY_STARTED, message=event_tag_msg)
         try:
             result = activity(activity_msg.msg, event_logger)
-            event_logger.log_event(ActivityStatus.MESSAGE_SENT)
+            event_logger.log_event(ActivityStatus.ACTIVITY_ENDED, message=event_tag_msg)
             return result.json()
         except ValidationError as e:
             logger.exception(e)

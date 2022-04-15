@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Union
+from pctasks.dataset.chunks.models import ChunkInfo
 
 import pystac
 from pystac.utils import str_to_datetime
@@ -70,7 +71,9 @@ def test_create_multiple_items():
         chunk_storage.write_text(file_path=chunk_path, text="\n".join(TEST_ASSET_URIS))
 
         args = CreateItemsInput(
-            chunk_uri=chunk_storage.get_uri(chunk_path),
+            asset_chunk_info=ChunkInfo(
+                uri=chunk_storage.get_uri(chunk_path), chunk_id=chunk_path
+            ),
             item_chunkset_uri=items_storage.get_uri(ndjson_path),
         )
 
@@ -81,12 +84,12 @@ def test_create_multiple_items():
         ndjson_uri = result.ndjson_uri
         assert ndjson_uri
         assert Path(ndjson_uri).exists()
-        items = [
-            pystac.Item.from_dict(json.loads(item_str))
-            for item_str in items_storage.read_text(
-                file_path=items_storage.get_path(ndjson_uri)
-            ).split("\n")
-        ]
+
+        items = []
+
+        for item_json in items_storage.read_text(ndjson_uri).split("\n"):
+            items.append(pystac.Item.from_dict(json.loads(item_json)))
+
         assert len(items) == len(TEST_ASSET_URIS)
         for item in items:
             item.validate()

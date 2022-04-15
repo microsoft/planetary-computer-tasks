@@ -74,6 +74,7 @@ class CreateSplitsTaskConfig(TaskConfig):
         ds: DatasetConfig,
         collection: CollectionConfig,
         options: Optional[CreateSplitsOptions] = None,
+        chunk_options: Optional[ChunkOptions] = None,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> "CreateSplitsTaskConfig":
@@ -82,12 +83,18 @@ class CreateSplitsTaskConfig(TaskConfig):
             sas_token: Optional[str] = None
             if isinstance(asset_storage_config, BlobStorageConfig):
                 sas_token = asset_storage_config.sas_token
+
+            storage_chunk_options = asset_storage_config.chunks.options
+            if chunk_options:
+                storage_chunk_options = storage_chunk_options.copy(
+                    update=chunk_options.dict(exclude_defaults=True)
+                )
             split_inputs.append(
                 SplitInput(
                     uri=asset_storage_config.get_uri(),
                     splits=asset_storage_config.chunks.splits,
                     sas_token=sas_token,
-                    chunk_options=asset_storage_config.chunks.options,
+                    chunk_options=storage_chunk_options,
                 )
             )
 

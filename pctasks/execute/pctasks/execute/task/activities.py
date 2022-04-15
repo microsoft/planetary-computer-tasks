@@ -43,6 +43,7 @@ logger = logging.getLogger(__name__)
 
 
 def submit(msg: TaskSubmitMessage, event_logger: RunLogger) -> TaskSubmitResult:
+    event_logger.log(msg.json(indent=2))
     settings = ExecutorSettings.get()
     try:
         return submit_task(

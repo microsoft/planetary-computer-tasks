@@ -9,9 +9,8 @@ from pctasks.cli.cli import setup_logging
 from pctasks.core.storage import StorageFactory
 from pctasks.core.storage.blob import BlobUri
 from pctasks.core.tokens import Tokens
-from pctasks.dataset.chunks.models import CreateChunksInput
-from pctasks.dataset.template import template_dataset, template_dataset_file
-from pctasks.dataset.workflow import ProcessItemsWorkflowConfig
+from pctasks.dataset.template import template_dataset_file
+from pctasks.dataset.workflow import create_process_items_workflow
 from pctasks.dev.blob import (
     copy_dir_to_azurite,
     get_azurite_sas_token,
@@ -25,51 +24,13 @@ HERE = Path(__file__).parent
 DATASET_PATH = HERE / "data-files/datasets/test-dataset.yaml"
 
 
-def test_chunk_options() -> None:
-    ds = """
-name: naip
-image: mock:latest
-
-collections:
-  - id: naip
-    class: naip.dataset:Naip
-    asset_storage:
-      - storage_account: naipeuwest
-        container: naip
-        chunks:
-          options:
-            chunk_length: 3
-            extensions:
-              - ".tif"
-          splits:
-            - depth: 2
-              name_starts_with: v002/
-    chunk_storage:
-      storage_account: devstoreaccount1
-      container: test-data
-      prefix: mock/chunks
-    """
-
-    ds_config = template_dataset(ds)
-    collection_config = ds_config.collections[0]
-
-    workflow = ProcessItemsWorkflowConfig.from_collection(
-        ds_config, collection_config, chunkset_id="test-chunkset", ingest=False
-    )
-
-    create_chunks_task = workflow.jobs['create-chunks'].tasks[0]
-    create_chunks_input = CreateChunksInput.parse_obj(create_chunks_task.args)
-
-    assert create_chunks_input.options.extensions == ['.tif']
-
-
 def test_process_items() -> None:
     setup_logging(logging.DEBUG)
 
     ds_config = template_dataset_file(DATASET_PATH)
     collection_config = ds_config.collections[0]
 
-    workflow = ProcessItemsWorkflowConfig.from_collection(
+    workflow = create_process_items_workflow(
         ds_config, collection_config, chunkset_id="test-chunkset", ingest=False
     )
 

@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 async def main(msg: func.QueueMessage, starter: str) -> None:
+    logger.info(json.dumps(json.loads(starter), indent=2))
     client = df.DurableOrchestrationClient(starter)
 
     event_logger: Optional[RunLogger] = None
@@ -45,6 +46,7 @@ async def main(msg: func.QueueMessage, starter: str) -> None:
         logger.info(f"Workflow: {submit_message.workflow.name}")
         logger.info(f"Run Id: {submit_message.run_id}")
         logger.info("***********************************")
+        logger.info(submit_message.json(indent=2))
 
         instance_id = await client.start_new(
             OrchestratorNames.WORKFLOW, client_input=submit_message.dict()

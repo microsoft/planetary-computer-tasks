@@ -13,7 +13,7 @@ collections:
         sas_token: ${{ pc.get_token(naipeuwest, naip) }}
         chunks:
           options:
-            chunk_length: 3
+            chunk_length: 2
             extensions:
               - ".tif"
           splits:

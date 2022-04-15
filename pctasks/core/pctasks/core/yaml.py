@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from email.policy import strict
+import logging
 from typing import Any, Dict, List, Optional, Type, TypeVar, cast
 
 import strictyaml
@@ -12,6 +14,9 @@ except ImportError:
     from yaml import Loader
 
 T = TypeVar("T", bound=BaseModel)
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -84,31 +89,41 @@ def model_from_yaml(
     Raises:
         YamlValidationError: If the YAML is invalid.
     """
-    strict_yml: strictyaml.YAML = strictyaml.load(yaml_txt)
     data: Dict[str, Any] = yaml.load(yaml_txt, Loader=Loader)
     if section:
         if section not in data:
             raise SectionDoesNotExist(f"Section {section} does not exist.")
-
         data = data[section]
+
     try:
         return model(**data)
     except ValidationError as e:
         errors = []
+        strict_yaml: Optional[strictyaml.YAML] = None
+        try:
+            # Try to use strictyaml to get line numbers.
+            # Don't let strictness fail.
+            strict_yaml = strictyaml.load(yaml_txt)
+        except strictyaml.StrictYAMLError:
+            logger.debug(f"StrictYAML error: {e}")
+            pass
         for error in e.errors():
-            _yml_section: Optional[strictyaml.YAML] = strict_yml
-            for loc in error["loc"]:
-                if _yml_section is not None:
-                    if loc not in _yml_section:
-                        _yml_section = None
-                        break
-                    else:
-                        _yml_section = _yml_section[loc]
             start_line: Optional[int] = None
             end_line: Optional[int] = None
-            if _yml_section is not None:
-                start_line = _yml_section.start_line
-                end_line = _yml_section.end_line
+
+            if strict_yaml:
+                _yml_section: Optional[strictyaml.YAML] = strict_yaml
+                for loc in error["loc"]:
+                    if _yml_section is not None:
+                        if loc not in _yml_section:
+                            _yml_section = None
+                            break
+                        else:
+                            _yml_section = _yml_section[loc]
+
+                if _yml_section is not None:
+                    start_line = _yml_section.start_line
+                    end_line = _yml_section.end_line
 
             errors.append(
                 YamlValidationErrorInfo(

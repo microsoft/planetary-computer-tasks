@@ -1,5 +1,6 @@
 """Terminates a running orchestration."""
 
+import json
 import logging
 
 import azure.durable_functions as df
@@ -7,7 +8,7 @@ import azure.durable_functions as df
 logger = logging.getLogger(__name__)
 
 
-async def main(id: str, starter: str) -> bool:
+async def main(id: str, starter: str) -> str:
     client = df.DurableOrchestrationClient(starter)
     try:
         status = await client.get_status(id)
@@ -17,7 +18,10 @@ async def main(id: str, starter: str) -> bool:
             df.OrchestrationRuntimeStatus.ContinuedAsNew,
         ]:
             await client.terminate(id, "Cancel action.")
+            return json.dumps({"status": f"{status}", "terminated": True, "id": id})
+        else:
+            return json.dumps({"status": f"{status}", "terminated": False, "id": id})
     except Exception as e:
         logger.exception(e)
-        return False
-    return True
+        return json.dumps({"error": f"{e}", "terminated": False, "id": id})
+

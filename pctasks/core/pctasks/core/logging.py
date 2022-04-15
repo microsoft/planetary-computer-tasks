@@ -113,6 +113,8 @@ class RunLogger:
         properties = properties or {}
         message = message or f"Status: {status}"
         event_message = f"new status: {status}"
+        if message:
+            event_message += f" - {message}"
         if self.logger_id:
             event_message = f"[{self.logger_id}]: {event_message}"
         self.event_logger.info(
@@ -125,7 +127,7 @@ class RunLogger:
             },
         )
         self.log(
-            message,
+            event_message,
             {**properties, **{"status": str(status)}},
         )
 

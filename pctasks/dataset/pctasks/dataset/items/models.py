@@ -1,11 +1,11 @@
 from typing import Any, Dict, Optional
-from pctasks.dataset.chunks.constants import ALL_CHUNK_PREFIX, ITEM_CHUNKS_PREFIX
+from pctasks.dataset.chunks.constants import ITEM_CHUNKS_PREFIX
+from pctasks.dataset.chunks.models import ChunkInfo
 
 from pydantic import validator
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.task import TaskConfig
-from pctasks.core.models.tokens import StorageAccountTokens
 from pctasks.dataset.constants import CREATE_ITEMS_TASK_ID
 from pctasks.dataset.models import CollectionConfig, DatasetConfig
 
@@ -25,11 +25,7 @@ class CreateItemsInput(PCBaseModel):
     Must be specified if chunk_uri is not specified
     """
 
-    chunk_uri: Optional[str] = None
-    """Chunk to be processed containing token assets for this item.
-
-    Must be specified if asset_path is not specified
-    """
+    asset_chunk_info: Optional[ChunkInfo] = None
 
     item_chunkset_uri: Optional[str] = None
     """URI to the NDJSON chunkset.
@@ -37,42 +33,23 @@ class CreateItemsInput(PCBaseModel):
     Required if processing results in more than one item.
     """
 
-    chunk_id: Optional[str] = None
-    """Chunkset ID for ndjson chunkset.
-
-    Required if processing results in more than one item.
-    """
-
-    tokens: Optional[Dict[str, StorageAccountTokens]] = None
-    """Optional tokens to use for accessing blob storage."""
-
     options: CreateItemsOptions = CreateItemsOptions()
 
-    @validator("chunk_uri")
+    @validator("asset_chunk_info")
     def _validate_chunk_uri(
         cls, v: Optional[str], values: Dict[str, Any]
     ) -> Optional[str]:
         if v is None and values.get("asset_uri") is None:
-            raise ValueError("Either chunk_uri or asset_uri must be specified")
+            raise ValueError("Either asset_chunk_info or asset_uri must be specified")
         return v
 
     @validator("item_chunkset_uri")
     def _validate_output_uri(
         cls, v: Optional[str], values: Dict[str, Any]
     ) -> Optional[str]:
-        if v is None and values.get("chunk_uri") is None:
+        if v is None and values.get("asset_chunk_info") is None:
             raise ValueError(
-                "item_chunkset_uri must be specified " "if not processing a chunk_uri"
-            )
-        return v
-
-    @validator("chunk_id")
-    def _validate_chunk_id(
-        cls, v: Optional[str], values: Dict[str, Any]
-    ) -> Optional[str]:
-        if v is None and values.get("chunk_id") is None:
-            raise ValueError(
-                "chunk_id must be specified " "if not processing a chunk_uri"
+                "item_chunkset_uri must be specified if not processing asset_chunk_info"
             )
         return v
 
@@ -120,24 +97,20 @@ class CreateItemsTaskConfig(TaskConfig):
         ds: DatasetConfig,
         collection: CollectionConfig,
         chunkset_id: str,
-        asset_chunk_uri: str,
-        chunk_id: str,
-        tokens: Optional[Dict[str, StorageAccountTokens]] = None,
+        asset_chunk_info: ChunkInfo,
         options: Optional[CreateItemsOptions] = None,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> "CreateItemsTaskConfig":
         chunk_storage_config = collection.chunk_storage
-        items_chunk_folder = f"{chunkset_id}/{ITEM_CHUNKS_PREFIX}/{ALL_CHUNK_PREFIX}"
+        items_chunk_folder = f"{chunkset_id}/{ITEM_CHUNKS_PREFIX}"
 
         return cls.create(
             image=ds.image,
             collection_class=collection.collection_class,
             args=CreateItemsInput(
-                chunk_uri=asset_chunk_uri,
+                asset_chunk_info=asset_chunk_info,
                 item_chunkset_uri=chunk_storage_config.get_uri(items_chunk_folder),
-                chunk_id=chunk_id,
-                tokens=tokens,
                 options=options or CreateItemsOptions(),
             ),
             environment=environment,

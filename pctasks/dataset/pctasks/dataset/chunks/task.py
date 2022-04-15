@@ -1,15 +1,17 @@
 import logging
 import os
-from tempfile import TemporaryDirectory
 from typing import List, Union
 from urllib.parse import urlparse
 
 from pctasks.core.models.task import FailedTaskResult, WaitTaskResult
+from pctasks.core.storage import StorageFactory
 from pctasks.core.utils import grouped
+from pctasks.dataset.chunks.chunkset import ChunkSet
 from pctasks.dataset.chunks.models import (
     ChunkInfo,
     CreateChunksInput,
-    CreateChunksOutput,
+    ChunksOutput,
+    ListChunksInput,
 )
 from pctasks.task import Task
 from pctasks.task.context import TaskContext
@@ -17,29 +19,33 @@ from pctasks.task.context import TaskContext
 logger = logging.getLogger(__name__)
 
 
-def uri_to_chunk_id(uri: str, num: int) -> str:
+def uri_to_chunk_id(uri: str, num: int, file_name: str, extension: str) -> str:
     parsed = urlparse(uri)
     if parsed.netloc:
         result = f"{parsed.netloc}{parsed.path}"
     else:
         result = parsed.path
-    return f"{result.strip('/')}/{num}"
+    return f"{result.strip('/')}/{num}/{file_name}{extension}"
 
 
-class CreateChunksTask(Task[CreateChunksInput, CreateChunksOutput]):
+class CreateChunksTask(Task[CreateChunksInput, ChunksOutput]):
     _input_model = CreateChunksInput
-    _output_model = CreateChunksOutput
+    _output_model = ChunksOutput
 
     @classmethod
-    def create_chunks(cls, input: CreateChunksInput) -> CreateChunksOutput:
+    def create_chunks(
+        cls, input: CreateChunksInput, storage_factory: StorageFactory
+    ) -> ChunksOutput:
         # Ensure options have been templated.
         if isinstance(input.options, str):
             raise ValueError(
                 f"Options are string, did templating fail?: {input.options}"
             )
 
-        src_storage = input.get_src_storage()
-        dst_storage = input.get_dst_storage()
+        src_storage = storage_factory.get_storage(input.src_uri)
+        dst_storage = storage_factory.get_storage(input.dst_uri)
+
+        chunkset = ChunkSet(dst_storage)
 
         asset_uris: List[str] = []
         for root, _, files in src_storage.walk(
@@ -59,29 +65,57 @@ class CreateChunksTask(Task[CreateChunksInput, CreateChunksOutput]):
         for i, chunk_lines in enumerate(
             grouped(asset_uris, input.options.get_chunk_length())
         ):
-            chunk_id = uri_to_chunk_id(input.src_storage_uri, i)
+            chunk_id = uri_to_chunk_id(
+                input.src_uri,
+                i,
+                input.options.chunk_file_name,
+                input.options.chunk_extension,
+            )
             logger.info(f" -- Processing chunk {chunk_id}...")
-            txt = "\n".join(chunk_lines)
-            with TemporaryDirectory() as tmp_dir:
-                tmp_path = os.path.join(tmp_dir, "list.csv")
-                with open(tmp_path, "w") as f:
-                    f.write(txt)
-                dst_blob = (
-                    f"{chunk_id}/{input.options.chunk_file_name}"
-                    f"{input.options.chunk_extension}"
-                )
-                logger.info(f"Writing {dst_blob}...")
-                dst_storage.upload_file(tmp_path, dst_blob)
-                chunks.append(
-                    ChunkInfo(uri=dst_storage.get_uri(dst_blob), chunk_id=chunk_id)
-                )
+            chunkset.write_chunk(chunk_id, list(chunk_lines))
+            chunks.append(
+                ChunkInfo(uri=chunkset.get_chunk_uri(chunk_id), chunk_id=chunk_id)
+            )
 
-        return CreateChunksOutput(chunks=chunks)
+        return ChunksOutput(chunks=chunks)
 
     def run(
         self, input: CreateChunksInput, context: TaskContext
-    ) -> Union[CreateChunksOutput, WaitTaskResult, FailedTaskResult]:
-        return self.create_chunks(input)
+    ) -> Union[ChunksOutput, WaitTaskResult, FailedTaskResult]:
+        return self.create_chunks(input, context.storage_factory)
 
 
 create_chunks_task = CreateChunksTask()
+
+
+class ListChunksTask(Task[ListChunksInput, ChunksOutput]):
+    _input_model = ListChunksInput
+    _output_model = ChunksOutput
+
+    @classmethod
+    def create_chunks(
+        cls, input: ListChunksInput, storage_factory: StorageFactory
+    ) -> ChunksOutput:
+        chunk_storage = storage_factory.get_storage(input.chunkset_uri)
+
+        chunkset = ChunkSet(chunk_storage)
+
+        if input.all:
+            chunk_ids = chunkset.all_chunks
+        else:
+            chunk_ids = chunkset.unprocessed_chunks
+
+        chunks: List[ChunkInfo] = [
+            ChunkInfo(uri=chunkset.get_chunk_uri(chunk_id), chunk_id=chunk_id)
+            for chunk_id in chunk_ids
+        ]
+
+        return ChunksOutput(chunks=chunks)
+
+    def run(
+        self, input: ListChunksInput, context: TaskContext
+    ) -> Union[ChunksOutput, WaitTaskResult, FailedTaskResult]:
+        return self.create_chunks(input, context.storage_factory)
+
+
+list_chunks_task = ListChunksTask()

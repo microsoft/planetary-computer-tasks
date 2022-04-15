@@ -78,7 +78,6 @@ class LocalRunner:
                         "The task cannot run due to the following "
                         f"missing environment variables: {missing_env_str}"
                     )
-
                 logger.info("  -- PCTasks: Running task...")
                 result = task.parse_and_run(task_config.args, context)
 

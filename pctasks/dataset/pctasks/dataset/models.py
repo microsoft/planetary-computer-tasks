@@ -66,18 +66,13 @@ class ChunkOptions(PCBaseModel):
     chunk_extension: str = ".csv"
     """Extensions of the chunk file names."""
 
-    @validator("chunk_length")
-    def _validate_chunk_length(cls, v):
-        if isinstance(v, int):
-            return v
-        elif isinstance(v, str):
-            try:
-                return int(v)
-            except:
-                raise ValueError(f"chunk_length must be a valid integer: {v}")
-
     def get_chunk_length(self) -> int:
-        return int(self.chunk_length)
+        try:
+            return int(self.chunk_length)
+        except ValueError:
+            raise ValueError(
+                f"chunk_length must be an integer. Got {self.chunk_length}."
+            )
 
 
 class ChunksConfig(PCBaseModel):

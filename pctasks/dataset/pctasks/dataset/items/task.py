@@ -1,12 +1,13 @@
-import json
 import logging
+import os
 from typing import Callable, List, Union
+from pctasks.dataset.chunks.chunkset import ChunkSet
 
+import orjson
 import pystac
 
 from pctasks.core.models.task import FailedTaskResult, WaitTaskResult
 from pctasks.core.storage import StorageFactory
-from pctasks.core.tokens import Tokens
 from pctasks.dataset.items.models import CreateItemsInput, CreateItemsOutput
 from pctasks.task import Task
 from pctasks.task.context import TaskContext
@@ -27,6 +28,11 @@ class OutputNDJSONRequired(Exception):
     pass
 
 
+def asset_chunk_id_to_ndjson_chunk_id(asset_chunk_id: str) -> str:
+    folder_name = os.path.dirname(asset_chunk_id)
+    return os.path.join(folder_name, "items.ndjson")
+
+
 class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
     _input_model = CreateItemsInput
     _output_model = CreateItemsOutput
@@ -39,9 +45,9 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
         self._create_item = create_item
 
     def create_items(
-        self, args: CreateItemsInput
+        self, args: CreateItemsInput, context: TaskContext
     ) -> Union[List[pystac.Item], WaitTaskResult]:
-        storage_factory = StorageFactory(tokens=Tokens(args.tokens))
+        storage_factory = context.storage_factory
         results: List[pystac.Item] = []
 
         def _validate(items: List[pystac.Item]):
@@ -61,9 +67,9 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
             else:
                 _validate(result)
                 results.extend(result)
-        elif args.chunk_uri:
+        elif args.asset_chunk_info:
             chunk_storage, chunk_path = storage_factory.get_storage_for_file(
-                args.chunk_uri
+                args.asset_chunk_info.uri
             )
             chunk_lines = chunk_storage.read_text(chunk_path).splitlines()
             if args.options.limit:
@@ -89,7 +95,8 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
     def run(
         self, input: CreateItemsInput, context: TaskContext
     ) -> Union[CreateItemsOutput, WaitTaskResult, FailedTaskResult]:
-        results = self.create_items(input)
+        results = self.create_items(input, context)
+
         if isinstance(results, WaitTaskResult):
             return results
         elif isinstance(results, FailedTaskResult):
@@ -104,17 +111,22 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                 if not input.item_chunkset_uri:
                     raise OutputNDJSONRequired("item_chunkset_uri must be specified")
 
-                if not input.chunk_id:
+                if not input.asset_chunk_info:
                     raise OutputNDJSONRequired("chunkset_id must be specified")
 
                 storage = context.storage_factory.get_storage(input.item_chunkset_uri)
-                ndjson_path = f"{input.chunk_id}/items.ndjson"
+                chunkset = ChunkSet(storage)
 
-                storage.write_text(
-                    ndjson_path,
-                    "\n".join([json.dumps(item.to_dict()) for item in results]),
+                items_chunk_id = asset_chunk_id_to_ndjson_chunk_id(
+                    input.asset_chunk_info.chunk_id
+                )
+                chunkset.write_chunk(
+                    items_chunk_id,
+                    [orjson.dumps(item.to_dict()) for item in results],
                 )
 
-                output = CreateItemsOutput(ndjson_uri=storage.get_uri(ndjson_path))
+                output = CreateItemsOutput(
+                    ndjson_uri=chunkset.get_chunk_uri(items_chunk_id)
+                )
 
             return output

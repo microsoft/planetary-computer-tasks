@@ -202,7 +202,7 @@ def template_dict(
                         elif isinstance(item, str):
                             new_list.append(template_str(item, get_value))
                         else:
-                            new_list.append(v)
+                            new_list.append(item)
                     result[k] = new_list
                 elif isinstance(v, str):
                     result[k] = template_str(v, get_value)

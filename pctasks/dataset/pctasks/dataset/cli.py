@@ -6,22 +6,18 @@ from pystac.utils import str_to_datetime
 from strictyaml.exceptions import MarkedYAMLError
 
 from pctasks.cli.cli import PCTasksCommandContext, cli_output, cli_print
-from pctasks.core.models.base import ForeachConfig
-from pctasks.core.models.workflow import (
-    JobConfig,
-    WorkflowConfig,
-    WorkflowSubmitMessage,
-)
+from pctasks.core.models.workflow import WorkflowSubmitMessage
 from pctasks.core.utils import map_opt
 from pctasks.core.yaml import YamlValidationError
-from pctasks.dataset.chunks.constants import ALL_CHUNK_PREFIX, ASSET_CHUNKS_PREFIX
-from pctasks.dataset.chunks.models import ChunkOptions, CreateChunksTaskConfig
-from pctasks.dataset.chunks.task import CreateChunksInput
+from pctasks.dataset.chunks.models import ChunkOptions
 from pctasks.dataset.constants import DEFAULT_DATASET_YAML_PATH
-from pctasks.dataset.splits.models import CreateSplitsOptions, CreateSplitsTaskConfig
+from pctasks.dataset.splits.models import CreateSplitsOptions
 from pctasks.dataset.template import template_dataset_file
 from pctasks.dataset.utils import opt_collection, opt_ds_config, opt_submit
-from pctasks.dataset.workflow import ProcessItemsWorkflowConfig
+from pctasks.dataset.workflow import (
+    create_chunks_workflow,
+    create_process_items_workflow,
+)
 from pctasks.submit.client import SubmitClient
 from pctasks.submit.settings import SubmitSettings
 
@@ -37,7 +33,6 @@ def dataset_cmd(ctx: click.Context) -> None:
 
 @click.command("create-chunks")
 @click.argument("chunkset_id")
-@click.argument("assets_uri")
 @opt_ds_config
 @opt_collection
 @click.option(
@@ -45,17 +40,14 @@ def dataset_cmd(ctx: click.Context) -> None:
     "--since",
     help=("Only process files that have been modified at or after this datetime."),
 )
-@click.option("--local", is_flag=True, help="Run locally, do not submit as a task")
-@click.option("--limit", type=int, help="Limit prefix linking, used for testing")
+@click.option("--limit", type=int, help="Limit prefix listing, used for testing")
 @opt_submit
 @click.pass_context
 def create_chunks_cmd(
     ctx: click.Context,
     chunkset_id: str,
-    assets_uri: str,
     dataset: Optional[str] = None,
     collection: Optional[str] = None,
-    prefix: Optional[str] = None,
     since: Optional[str] = None,
     limit: Optional[int] = None,
     submit: bool = False,
@@ -76,48 +68,13 @@ def create_chunks_cmd(
         raise click.ClickException("No dataset config found.")
 
     collection_config = ds_config.get_collection(collection)
-    chunk_storage_config = collection_config.chunk_storage
 
-    splits_task_config = CreateSplitsTaskConfig.from_collection(
-        ds_config, collection_config, options=CreateSplitsOptions(limit=limit)
-    )
-
-    splits_job_config = JobConfig(id="create-splits", tasks=[splits_task_config])
-
-    chunk_folder = f"{chunkset_id}/{ASSET_CHUNKS_PREFIX}/{ALL_CHUNK_PREFIX}"
-
-    chunks_task_config = CreateChunksTaskConfig.create(
-        image=ds_config.image,
-        args=CreateChunksInput(
-            src_storage_uri="${{ item.uri }}",
-            dst_storage_uri=chunk_storage_config.get_uri(chunk_folder),
-            options=ChunkOptions(
-                chunk_length="${{ item.chunk_length }}",
-                since=map_opt(str_to_datetime, since),
-            ),
-        ),
-    )
-
-    chunks_job_config = JobConfig(
-        id="create-chunks",
-        tasks=[chunks_task_config],
-        foreach=ForeachConfig(
-            items="${{ "
-            + f"jobs.{splits_job_config.id}.tasks.{splits_task_config.id}.output"
-            + " }}"
-        ),
-    )
-
-    workflow = WorkflowConfig(
-        name=f"Create chunks for {collection_config.id}",
-        dataset=ds_config.get_identifier(),
-        collection_id=collection_config.id,
-        image=ds_config.image,
-        tokens=collection_config.get_tokens(),
-        jobs={
-            splits_job_config.id: splits_job_config,
-            chunks_job_config.id: chunks_job_config,
-        },
+    workflow = create_chunks_workflow(
+        dataset=ds_config,
+        collection=collection_config,
+        chunkset_id=chunkset_id,
+        create_splits_options=CreateSplitsOptions(limit=limit),
+        chunk_options=ChunkOptions(since=map_opt(str_to_datetime, since)),
     )
 
     submit_message = WorkflowSubmitMessage(workflow=workflow)
@@ -143,6 +100,18 @@ def create_chunks_cmd(
     help="The target environment to process the items in.",
 )
 @click.option("--limit", type=int, help="Limit, used for testing")
+@click.option("--no-ingest", is_flag=True, help="Create ndjsons, but don't ingest.")
+@click.option(
+    "-e",
+    "--use-existing-chunks",
+    is_flag=True,
+    help="Process existing chunkset, do not recreate.",
+)
+@click.option(
+    "-s",
+    "--since",
+    help=("Only process files that have been modified at or after this datetime."),
+)
 @opt_submit
 @click.pass_context
 def process_items_cmd(
@@ -151,6 +120,9 @@ def process_items_cmd(
     dataset: Optional[str],
     collection: Optional[str],
     target: str,
+    no_ingest: bool = False,
+    use_existing_chunks: bool = False,
+    since: Optional[str] = None,
     limit: Optional[int] = None,
     submit: bool = False,
 ) -> None:
@@ -175,11 +147,14 @@ def process_items_cmd(
 
     collection_config = ds_config.get_collection(collection)
 
-    workflow = ProcessItemsWorkflowConfig.from_collection(
+    workflow = create_process_items_workflow(
         dataset=ds_config,
         collection=collection_config,
         chunkset_id=chunkset_id,
-        ingest=True,
+        use_existing_chunks=use_existing_chunks,
+        ingest=not no_ingest,
+        create_splits_options=CreateSplitsOptions(limit=limit),
+        chunk_options=ChunkOptions(since=map_opt(str_to_datetime, since), limit=limit),
         create_items_options=None,
         ingest_options=None,
         target=target,

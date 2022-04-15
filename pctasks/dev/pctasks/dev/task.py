@@ -1,4 +1,4 @@
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
 from pctasks.core.constants import (
     DEFAULT_LOG_CONTAINER,
@@ -14,13 +14,16 @@ from pctasks.core.models.task import (
     TaskRunMessage,
     WaitTaskResult,
 )
+from pctasks.core.models.tokens import StorageAccountTokens
 from pctasks.dev.config import get_blob_config, get_queue_config, get_table_config
 from pctasks.dev.tables import get_task_run_record_table
 from pctasks.task.run import run_task
 
 
 def run_test_task(
-    args: Dict[str, Any], task: str
+    args: Dict[str, Any],
+    task: str,
+    tokens: Optional[Dict[str, StorageAccountTokens]] = None,
 ) -> Union[CompletedTaskResult, WaitTaskResult]:
     job_id = "unit-test-job"
     task_id = "task-unit-test"
@@ -54,6 +57,7 @@ def run_test_task(
                 signal_key="signal-key",
                 signal_target_id="target-id",
                 image="TESTIMAGE:latest",
+                tokens=tokens,
                 task=task,
                 signal_queue=get_queue_config(DEFAULT_SIGNAL_QUEUE_NAME),
                 task_runs_table_config=get_table_config(

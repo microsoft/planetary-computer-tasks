@@ -161,9 +161,6 @@ def orchestrator(context: df.DurableOrchestrationContext) -> Generator[Any, Any,
             # Handle result
             #
 
-            # if not context.is_replaying:
-            #     event_logger.info(f"Task result: {handled_task_result}.")
-
             if not is_errored and handled_task_result:
 
                 if isinstance(handled_task_result.result, CompletedTaskResult):

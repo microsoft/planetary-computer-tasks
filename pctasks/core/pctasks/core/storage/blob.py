@@ -186,23 +186,22 @@ class BlobStorage(Storage):
         # the SDK not handling Azurite well if it's not
         # at localhost or 127.0.0.1 (e.g. in a Docker container).
         is_azurite = False
-        if not account_url:
-            azurite_sa = os.getenv(AZURITE_STORAGE_ACCOUNT_ENV_VAR)
-            if azurite_sa and azurite_sa == storage_account_name:
-                host = os.getenv(AZURITE_HOST_ENV_VAR)
-                port = os.getenv(AZURITE_PORT_ENV_VAR)
-                if not host or not port:
-                    raise BlobStorageError(
-                        "Azurite environment incorrectly configured. "
-                        f"{AZURITE_HOST_ENV_VAR} and "
-                        f"{AZURITE_PORT_ENV_VAR} must be set."
-                    )
-                self.account_url = f"http://{host}:{port}/devstoreaccount1"
-                self._blob_creds = {
-                    "account_name": storage_account_name,
-                    "account_key": _AZURITE_ACCOUNT_KEY,
-                }
-                is_azurite = True
+        azurite_sa = os.getenv(AZURITE_STORAGE_ACCOUNT_ENV_VAR)
+        if azurite_sa and azurite_sa == storage_account_name:
+            host = os.getenv(AZURITE_HOST_ENV_VAR)
+            port = os.getenv(AZURITE_PORT_ENV_VAR)
+            if not host or not port:
+                raise BlobStorageError(
+                    "Azurite environment incorrectly configured. "
+                    f"{AZURITE_HOST_ENV_VAR} and "
+                    f"{AZURITE_PORT_ENV_VAR} must be set."
+                )
+            self.account_url = f"http://{host}:{port}/{azurite_sa}"
+            self._blob_creds = {
+                "account_name": storage_account_name,
+                "account_key": _AZURITE_ACCOUNT_KEY,
+            }
+            is_azurite = True
 
         if not is_azurite:
             # Check if there's a service principle in the environment.

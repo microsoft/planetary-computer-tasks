@@ -77,205 +77,205 @@ def orchestrator(
     poll_orch_id: Optional[str] = None
 
     try:
-        # Loop in case of retry.
-        submitting_task = True
-        while submitting_task:
 
-            # Submit the task.
-            task_submit_msg.instance_id = instance_id
+        # Submit the task.
+        task_submit_msg.instance_id = instance_id
 
-            try:
-                submit_result_str = yield call_activity(
-                    context,
-                    name=ActivityNames.TASK_SUBMIT,
-                    msg=task_submit_msg,
-                    run_record_id=run_record_id,
-                )
-                submit_result = TaskSubmitResult.parse_raw(submit_result_str).result
-            except Exception as e:
-                logger.exception(e)
-                parsed_error = parse_activity_exception(e)
-                raise TaskFailedError(parsed_error)
-
-            # if not context.is_replaying:
-            #     logger.warn(
-            #         "\n\nINSTANCE ID FOR  "
-            #         f"{task_submit_msg.job_id}/{task_submit_msg.config.id} "
-            #         f"ORCHESTRATOR: {instance_id}\n\n"
-            #     )
-
-            if isinstance(submit_result, FailedSubmitResult):
-                errors = (errors or []) + submit_result.errors
-
-                raise TaskFailedError(f"Failed to sumbit task {task_id}")
-            else:
-                if not context.is_replaying:
-                    event_logger.info("Submitted task!")
-
-                try:
-                    result = yield update_record_flow.create_task(
-                        update=TaskRunRecordUpdate(
-                            run_id=run_id,
-                            job_id=job_id,
-                            task_id=task_id,
-                            status=TaskRunStatus.SUBMITTED,
-                        ),
-                    )
-                    update_record_result = update_record_flow.handle_result(
-                        result, run_record_id
-                    )
-                    if update_record_result.error:
-                        raise TaskFailedError(update_record_result.error)
-                except Exception as e:
-                    update_record_flow.handle_error(e)
-                    errors = (errors or []) + [str(e)]
-                    raise TaskFailedError(f"Failed to update record {run_record_id}")
-
-            # The signal event is pushed by the task
-            signal_event = context.wait_for_external_event(EventNames.TASK_SIGNAL)
-
-            # Also poll the executor for the task status in case
-            # of early failure.
-            poll_orch_id = context.new_guid().hex
-            poll_orch = context.call_sub_orchestrator(
-                OrchestratorNames.TASK_POLL,
-                input_=TaskPollMessage(
-                    executor_id=submit_result.executor_id,
-                    run_record_id=run_record_id,
-                    parent_instance_id=instance_id,
-                ).json(),
-                instance_id=poll_orch_id,
-            )
-
-            try:
-                winner = yield context.task_any([signal_event, poll_orch])
-            except Exception as e:
-                logger.exception(e)
-                errors = (errors or []) + [parse_activity_exception(e)]
-                raise TaskFailedError("Failed while wait for task signal or poll")
-
-            task_result_type: TaskResultType
-
-            if winner == signal_event:
-                if not context.is_replaying:
-                    event_logger.info("Signal event raised!")
-
-                # Cancel polling immediately
-                if poll_orch_id:
-                    yield context.call_activity(
-                        ActivityNames.ORCH_CANCEL, input_=poll_orch_id
-                    )
-                    poll_orch_id = None
-
-                # The task has signaled its completion or failure.
-                signal_msg = TaskRunSignal.parse_raw(signal_event.result)
-
-                # Ensure the signal key from the submit result matches,
-                # to ensure the signal origin is known.
-                if signal_msg.signal_key != submit_result.signal_key:
-                    raise TaskFailedError(
-                        f"Signal key mismatch: {signal_msg.signal_key} "
-                        f"vs submitted: {submit_result.signal_key}"
-                    )
-
-                task_result_type = signal_msg.task_result_type
-
-            else:
-                # Don't need to clean up the poll orchestrator.
-                poll_orch_id = None
-                # The task has completed or failed before a signal
-                # was received. This normally means an early failure.
-                if not context.is_replaying:
-                    event_logger.info("Task completed before signal!")
-                poll_result = TaskPollResult.parse_raw(poll_orch.result)
-
-                if poll_result.poll_errors:
-                    errors = (errors or []) + poll_result.poll_errors
-
-                if poll_result.task_status == TaskRunStatus.COMPLETED:
-                    task_result_type = TaskResultType.COMPLETED
-                else:
-                    task_result_type = TaskResultType.FAILED
-
-            # Handle the task result and pass back any output.
-
-            handled_task_result_str = yield call_activity(
+        try:
+            submit_result_str = yield call_activity(
                 context,
-                name=ActivityNames.TASK_HANDLE_RESULT,
-                msg=HandleTaskResultMessage(
-                    task_result_type=task_result_type,
-                    submit_result=submit_result,
-                    run_record_id=run_record_id,
-                    target_environment=task_submit_msg.target_environment,
-                    log_uri=submit_result.log_uri,
-                    errors=errors,
-                ),
+                name=ActivityNames.TASK_SUBMIT,
+                msg=task_submit_msg,
                 run_record_id=run_record_id,
             )
-            handled_result = HandledTaskResult.parse_raw(handled_task_result_str)
+            submit_result = TaskSubmitResult.parse_raw(submit_result_str).result
+        except Exception as e:
+            logger.exception(e)
+            parsed_error = parse_activity_exception(e)
+            raise TaskFailedError(parsed_error)
 
-            if isinstance(handled_result, WaitTaskResult):
-                task_submit_msg.wait_retries += 1
-                if task_submit_msg.wait_retries > MAX_WAIT_RETRIES:
-                    # TODO: Handle max tries exceeded
-                    raise WaitTimeoutError(
-                        f"Task timed out after {MAX_WAIT_RETRIES} tries."
-                    )
+        # if not context.is_replaying:
+        #     logger.warn(
+        #         "\n\nINSTANCE ID FOR  "
+        #         f"{task_submit_msg.job_id}/{task_submit_msg.config.id} "
+        #         f"ORCHESTRATOR: {instance_id}\n\n"
+        #     )
 
-                delta = timedelta(
-                    seconds=(handled_result.wait_seconds or DEFAULT_WAIT_SECONDS)
+        if isinstance(submit_result, FailedSubmitResult):
+            errors = (errors or []) + submit_result.errors
+
+            raise TaskFailedError(f"Failed to sumbit task {task_id}")
+        else:
+            if not context.is_replaying:
+                event_logger.info("Submitted task!")
+
+            try:
+                result = yield update_record_flow.create_task(
+                    update=TaskRunRecordUpdate(
+                        run_id=run_id,
+                        job_id=job_id,
+                        task_id=task_id,
+                        status=TaskRunStatus.SUBMITTED,
+                    ),
+                )
+                update_record_result = update_record_flow.handle_result(
+                    result, run_record_id
+                )
+                if update_record_result.error:
+                    raise TaskFailedError(update_record_result.error)
+            except Exception as e:
+                update_record_flow.handle_error(e)
+                errors = (errors or []) + [str(e)]
+                raise TaskFailedError(f"Failed to update record {run_record_id}")
+
+        # The signal event is pushed by the task
+        signal_event = context.wait_for_external_event(EventNames.TASK_SIGNAL)
+
+        # Also poll the executor for the task status in case
+        # of early failure.
+        poll_orch_id = context.new_guid().hex
+        poll_orch = context.call_sub_orchestrator(
+            OrchestratorNames.TASK_POLL,
+            input_=TaskPollMessage(
+                executor_id=submit_result.executor_id,
+                run_record_id=run_record_id,
+                parent_instance_id=instance_id,
+            ).json(),
+            instance_id=poll_orch_id,
+        )
+
+        try:
+            winner = yield context.task_any([signal_event, poll_orch])
+        except Exception as e:
+            logger.exception(e)
+            errors = (errors or []) + [parse_activity_exception(e)]
+            raise TaskFailedError("Failed while wait for task signal or poll")
+
+        task_result_type: TaskResultType
+
+        if winner == signal_event:
+            if not context.is_replaying:
+                event_logger.info("Signal event raised!")
+
+            # Cancel polling immediately
+            if poll_orch_id:
+                yield context.call_activity(
+                    ActivityNames.ORCH_CANCEL, input_=poll_orch_id
+                )
+                poll_orch_id = None
+
+            # The task has signaled its completion or failure.
+            signal_msg = TaskRunSignal.parse_raw(signal_event.result)
+
+            # Ensure the signal key from the submit result matches,
+            # to ensure the signal origin is known.
+            if signal_msg.signal_key != submit_result.signal_key:
+                raise TaskFailedError(
+                    f"Signal key mismatch: {signal_msg.signal_key} "
+                    f"vs submitted: {submit_result.signal_key}"
                 )
 
-                try:
-                    result = yield update_record_flow.create_task(
-                        update=TaskRunRecordUpdate(
-                            run_id=run_id,
-                            job_id=job_id,
-                            task_id=task_id,
-                            status=TaskRunStatus.WAITING,
-                            log_uris=handled_result.log_uris,
-                        ),
-                    )
-                    update_record_result = update_record_flow.handle_result(
-                        result, run_record_id
-                    )
-                    if update_record_result.error:
-                        raise TaskFailedError(update_record_result.error)
-                except Exception as e:
-                    update_record_flow.handle_error(e)
-                    errors = (errors or []) + [str(e)]
-                    raise TaskFailedError(f"Failed to update record {run_record_id}")
+            task_result_type = signal_msg.task_result_type
 
-                # Wait
-                yield context.create_timer(context.current_utc_datetime + delta)
+        else:
+            # Don't need to clean up the poll orchestrator.
+            poll_orch_id = None
 
-                try:
-                    result = yield update_record_flow.create_task(
-                        update=TaskRunRecordUpdate(
-                            run_id=run_id,
-                            job_id=job_id,
-                            task_id=task_id,
-                            status=TaskRunStatus.SUBMITTING,
-                            log_uris=handled_result.log_uris,
-                        ),
-                    )
-                    update_record_result = update_record_flow.handle_result(
-                        result, run_record_id
-                    )
-                    if update_record_result.error:
-                        raise TaskFailedError(update_record_result.error)
-                except Exception as e:
-                    update_record_flow.handle_error(e)
-                    errors = (errors or []) + [str(e)]
-                    raise TaskFailedError(f"Failed to update record {run_record_id}")
+            # The task has completed or failed before a signal
+            # was received. This normally means an early failure.
+            if not context.is_replaying:
+                event_logger.info("Task completed before signal!")
+            poll_result = TaskPollResult.parse_raw(poll_orch.result)
 
-                context.continue_as_new(task_submit_msg.json())
+            if poll_result.poll_errors:
+                errors = (errors or []) + poll_result.poll_errors
+
+            if poll_result.task_status == TaskRunStatus.COMPLETED:
+                task_result_type = TaskResultType.COMPLETED
             else:
-                submitting_task = False
+                task_result_type = TaskResultType.FAILED
 
-                # logger.info("\n\n\n\n\n")
-                # logger.warn(handled_result.json(indent=2))
-                # logger.info("\n\n\n\n\n")
+        # Handle the task result and pass back any output.
+
+        handled_task_result_str = yield call_activity(
+            context,
+            name=ActivityNames.TASK_HANDLE_RESULT,
+            msg=HandleTaskResultMessage(
+                task_result_type=task_result_type,
+                submit_result=submit_result,
+                run_record_id=run_record_id,
+                target_environment=task_submit_msg.target_environment,
+                log_uri=submit_result.log_uri,
+                errors=errors,
+            ),
+            run_record_id=run_record_id,
+        )
+        handled_result = HandledTaskResult.parse_raw(handled_task_result_str)
+
+        if isinstance(handled_result, WaitTaskResult):
+            # If this is a WaitTaskResult, and it's not exceeding
+            # the max retries, we wait for the given time and then
+            # replay the orchestrator as a new flow.
+
+            task_submit_msg.wait_retries += 1
+            if task_submit_msg.wait_retries > MAX_WAIT_RETRIES:
+                # TODO: Handle max tries exceeded
+                raise WaitTimeoutError(
+                    f"Task timed out after {MAX_WAIT_RETRIES} tries."
+                )
+
+            delta = timedelta(
+                seconds=(handled_result.wait_seconds or DEFAULT_WAIT_SECONDS)
+            )
+
+            # Update task record to WAITING
+            try:
+                result = yield update_record_flow.create_task(
+                    update=TaskRunRecordUpdate(
+                        run_id=run_id,
+                        job_id=job_id,
+                        task_id=task_id,
+                        status=TaskRunStatus.WAITING,
+                        log_uris=handled_result.log_uris,
+                    ),
+                )
+                update_record_result = update_record_flow.handle_result(
+                    result, run_record_id
+                )
+                if update_record_result.error:
+                    raise TaskFailedError(update_record_result.error)
+            except Exception as e:
+                update_record_flow.handle_error(e)
+                errors = (errors or []) + [str(e)]
+                raise TaskFailedError(f"Failed to update record {run_record_id}")
+
+            # Wait
+            yield context.create_timer(context.current_utc_datetime + delta)
+
+            # Update task record to SUBMITTING
+            try:
+                result = yield update_record_flow.create_task(
+                    update=TaskRunRecordUpdate(
+                        run_id=run_id,
+                        job_id=job_id,
+                        task_id=task_id,
+                        status=TaskRunStatus.SUBMITTING,
+                        log_uris=handled_result.log_uris,
+                    ),
+                )
+                update_record_result = update_record_flow.handle_result(
+                    result, run_record_id
+                )
+                if update_record_result.error:
+                    raise TaskFailedError(update_record_result.error)
+
+            except Exception as e:
+                update_record_flow.handle_error(e)
+                errors = (errors or []) + [str(e)]
+                raise TaskFailedError(f"Failed to update record {run_record_id}")
+
+            context.continue_as_new(task_submit_msg.json())
+
     except Exception as e:
         logger.exception(e)
         event_logger.log_event(TaskRunStatus.FAILED, message=str(e))

@@ -11,7 +11,7 @@ from pctasks.core.storage.blob import BlobUri
 from pctasks.core.tokens import Tokens
 from pctasks.dataset.splits.models import CreateSplitsOptions
 from pctasks.dataset.template import template_dataset_file
-from pctasks.dataset.workflow import ProcessItemsWorkflowConfig
+from pctasks.dataset.workflow import create_process_items_workflow
 from pctasks.dev.blob import temp_azurite_blob_storage
 from pctasks.execute.local import LocalRunner
 from pctasks.task.context import TaskContext
@@ -28,16 +28,14 @@ def test_process_items() -> None:
 
     asset_storage = collection_config.asset_storage[0]
     chunk_options = asset_storage.chunks.options
-    assert chunk_options.chunk_length == 3
-    chunk_options = chunk_options.copy(update={"limit": 6})
+    assert chunk_options.chunk_length == 2
 
-    workflow = ProcessItemsWorkflowConfig.from_collection(
+    workflow = create_process_items_workflow(
         ds_config,
         collection_config,
         chunkset_id="test-chunkset",
         ingest=False,
-        create_splits_options=CreateSplitsOptions(limit=2),
-        create_chunks_options=chunk_options,
+        create_splits_options=CreateSplitsOptions(limit=4),
     )
 
     print(workflow.to_yaml())
@@ -64,16 +62,17 @@ def test_process_items() -> None:
                 )
             )
 
-            # Two splits, 2 chunks per split, 3 items per chunk
-            assert len(ndjson_paths) == 4
+            # 4 splits, 4 items per split,
+            # 2 items per chunk, 2 chunks per split, 8 chunks
+            assert len(ndjson_paths) == 8
 
             ids: Set[str] = set()
             for path in ndjson_paths:
                 ndjson = storage.read_text(path)
                 lines = ndjson.splitlines()
-                assert len(lines) == 3
+                assert len(lines) == 2
                 for line in lines:
                     item = orjson.loads(line)
                     pystac.Item.from_dict(item).validate()
                     ids.add(item["id"])
-            assert len(ids) == 12
+            assert len(ids) == 16

@@ -1,13 +1,15 @@
 from datetime import date, datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from pctasks.core.models.tokens import ContainerTokens, StorageAccountTokens
+from pctasks.dataset.chunks.constants import ALL_CHUNK_PREFIX
 from pctasks.dataset.models import ChunkOptions
 from pctasks.dev.blob import copy_dir_to_azurite, temp_azurite_blob_storage
 
 from planetary_computer.sas import get_token
 
 from pctasks.core.models.task import CompletedTaskResult
-from pctasks.dataset.chunks.models import CreateChunksOutput
+from pctasks.dataset.chunks.models import ChunksOutput
 from pctasks.dataset.chunks.task import CreateChunksInput, create_chunks_task
 from pctasks.dev.task import run_test_task
 from pctasks.task.utils import get_task_path
@@ -24,8 +26,8 @@ def test_task():
 
     with TemporaryDirectory() as tmp_dir:
         args = CreateChunksInput(
-            src_storage_uri=src_storage_uri,
-            dst_storage_uri=tmp_dir,
+            src_uri=src_storage_uri,
+            dst_uri=tmp_dir,
             options=ChunkOptions(
                 chunk_length=2,
                 name_starts_with=None,
@@ -43,15 +45,27 @@ def test_task():
         task_result = run_test_task(args.dict(), task_path)
         assert isinstance(task_result, CompletedTaskResult)
 
-        result = CreateChunksOutput.parse_obj(task_result.output)
+        result = ChunksOutput.parse_obj(task_result.output)
 
         test_asset_folder = str(TEST_ASSETS_PATH).strip("/")
 
         assert len(result.chunks) == 2
         assert set([c.uri for c in result.chunks]) == set(
             [
-                str(Path(tmp_dir) / test_asset_folder / "0" / "test-chunk.csv"),
-                str(Path(tmp_dir) / test_asset_folder / "1" / "test-chunk.csv"),
+                str(
+                    Path(tmp_dir)
+                    / ALL_CHUNK_PREFIX
+                    / test_asset_folder
+                    / "0"
+                    / "test-chunk.csv"
+                ),
+                str(
+                    Path(tmp_dir)
+                    / ALL_CHUNK_PREFIX
+                    / test_asset_folder
+                    / "1"
+                    / "test-chunk.csv"
+                ),
             ]
         )
 
@@ -78,9 +92,8 @@ def test_naip_since_date():
 
     with TemporaryDirectory() as tmp_dir:
         args = CreateChunksInput(
-            src_storage_uri=src_storage_uri,
-            src_sas=get_token("naipeuwest", "naip").token,
-            dst_storage_uri=tmp_dir,
+            src_uri=src_storage_uri,
+            dst_uri=tmp_dir,
             options=ChunkOptions(
                 chunk_length=1,
                 since=datetime.combine(since_date, datetime.min.time()),
@@ -89,10 +102,22 @@ def test_naip_since_date():
 
         task_path = get_task_path(create_chunks_task, "create_chunks_task")
 
-        task_result = run_test_task(args.dict(), task_path)
+        task_result = run_test_task(
+            args.dict(),
+            task_path,
+            tokens={
+                "naipeuwest": StorageAccountTokens(
+                    containers={
+                        "naip": ContainerTokens(
+                            token=get_token("naipeuwest", "naip").token
+                        )
+                    }
+                )
+            },
+        )
         assert isinstance(task_result, CompletedTaskResult)
 
-        result = CreateChunksOutput.parse_obj(task_result.output)
+        result = ChunksOutput.parse_obj(task_result.output)
 
         assert len(result.chunks) == 12
         for chunk in result.chunks:
@@ -110,8 +135,8 @@ def test_task_simple_assets() -> None:
         )
 
         args = CreateChunksInput(
-            src_storage_uri=storage.get_uri("assets/b"),
-            dst_storage_uri=storage.get_uri("chunks"),
+            src_uri=storage.get_uri("assets/b"),
+            dst_uri=storage.get_uri("chunks"),
             options=ChunkOptions(
                 chunk_length=1,
             ),
@@ -123,7 +148,7 @@ def test_task_simple_assets() -> None:
 
         assert isinstance(task_result, CompletedTaskResult)
 
-        result = CreateChunksOutput.parse_obj(task_result.output)
+        result = ChunksOutput.parse_obj(task_result.output)
         print(result.to_json(indent=2))
         for chunk in result.chunks:
             print(chunk.uri)

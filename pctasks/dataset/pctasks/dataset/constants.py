@@ -1,6 +1,7 @@
 DEFAULT_CHUNK_LENGTH = 30000
 
-LIST_FILES_TASK_ID = "create-chunks"
+CREATE_CHUNKS_TASK_ID = "create-chunks"
+LIST_CHUNKS_TASK_ID = "list-chunks"
 CREATE_ITEMS_TASK_ID = "create-items"
 
 CHUNK_FOLDER = "chunks"

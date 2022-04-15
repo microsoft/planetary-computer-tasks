@@ -11,7 +11,10 @@ install_requires = [
     "pctasks.ingest>=0.1.0",
     "pctasks.cli>=0.1.0",
     "pctasks.dataset>=0.1.0",
-    "stactools-naip @ git+https://github.com/stactools-packages/naip.git#egg=stactools-naip",
+    (
+        "stactools-naip @ git+https://github.com/stactools-packages/"
+        "naip.git#egg=stactools-naip"
+    ),
 ]
 
 setup(

@@ -1,6 +1,5 @@
 import logging
 from pathlib import Path
-from typing import Optional
 
 from pctasks.cli.cli import setup_logging
 from pctasks.core.models.task import CompletedTaskResult
@@ -8,8 +7,7 @@ from pctasks.core.storage import StorageFactory
 from pctasks.core.storage.blob import BlobUri
 from pctasks.core.tokens import Tokens
 from pctasks.core.utils.template import DictTemplater
-from pctasks.dataset.chunks.models import CreateChunksOutput, CreateChunksTaskConfig
-from pctasks.dataset.models import BlobStorageConfig
+from pctasks.dataset.chunks.models import ChunksOutput, CreateChunksTaskConfig
 from pctasks.dataset.splits.models import (
     CreateSplitsOptions,
     CreateSplitsOutput,
@@ -55,9 +53,6 @@ def test_create_chunks() -> None:
         assert path
 
         asset_storage = collection_config.asset_storage[0]
-        src_sas: Optional[str] = None
-        if isinstance(asset_storage, BlobStorageConfig):
-            src_sas = asset_storage.sas_token
         chunk_options = asset_storage.chunks.options
 
         assert chunk_options.extensions == [".tif"]
@@ -69,7 +64,6 @@ def test_create_chunks() -> None:
             collection_config,
             "test-chunkset",
             "blob://naipeuwest/naip/v002/al/",
-            src_sas=src_sas,
             options=chunk_options,
         )
 
@@ -82,7 +76,7 @@ def test_create_chunks() -> None:
         )
         print(result.to_yaml())
         assert isinstance(result, CompletedTaskResult)
-        output = CreateChunksOutput.parse_obj(result.output)
+        output = ChunksOutput.parse_obj(result.output)
 
         for chunk in output.chunks:
             path = storage.get_path(chunk.uri)
@@ -94,4 +88,3 @@ def test_create_chunks() -> None:
             for line in storage.read_text(storage.get_path(chunk.uri)).splitlines():
                 print(line)
                 assert line.endswith(".tif")
-                
