@@ -1,6 +1,7 @@
 import logging
 import re
-from typing import List, Union
+from typing import List, Optional, Union
+from pctasks.cli.cli import setup_logging_for_module
 
 import pystac
 from pctasks.core.models.task import WaitTaskResult
@@ -58,8 +59,9 @@ class Naip(Collection):
         else:
             fgdc_exists = True
 
-        if not asset_storage.file_exists(thumbnail_path):
-            raise Exception(f"{thumbnail_path} does not exist in {asset_storage}")
+        thumbnail_href: Optional[str] = None
+        if asset_storage.file_exists(thumbnail_path):
+            thumbnail_href = asset_storage.get_url(thumbnail_path)
 
         fgdc_href = asset_storage.get_url(fgdc_path)
         cog_href = asset_storage.get_url(path)
@@ -85,3 +87,6 @@ class Naip(Collection):
             )
 
         return [item]
+
+
+setup_logging_for_module(Naip.__module__, logging.INFO)

@@ -24,3 +24,5 @@ async def main(msg: func.QueueMessage, starter: str) -> None:
             event_name=EventNames.TASK_SIGNAL,
             event_data=signal_msg.data.dict(),
         )
+    else:
+        logger.warning(f"Orchestration {instance_id} is not running.")

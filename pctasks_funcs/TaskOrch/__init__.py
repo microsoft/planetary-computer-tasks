@@ -1,11 +1,13 @@
 import logging
 from datetime import timedelta
 from typing import Any, Generator, List, Optional
+from pydantic import ValidationError
 
 import azure.durable_functions as df
 from azure.durable_functions.models.Task import TaskBase
 from func_lib.activities import call_activity, parse_activity_exception
 from func_lib.flows.update_record import UpdateRecordOrchFlow
+from func_lib.models import OrchSignal
 
 from pctasks.core.logging import RunLogger
 from pctasks.core.models.record import TaskRunStatus
@@ -79,7 +81,9 @@ def orchestrator(
     try:
 
         # Submit the task.
-        task_submit_msg.instance_id = instance_id
+
+        poll_orch_id = context.new_guid().hex
+        task_submit_msg.instance_id = poll_orch_id
 
         try:
             submit_result_str = yield call_activity(
@@ -92,7 +96,7 @@ def orchestrator(
         except Exception as e:
             logger.exception(e)
             parsed_error = parse_activity_exception(e)
-            raise TaskFailedError(parsed_error)
+            raise TaskFailedError(parsed_error) from e
 
         # if not context.is_replaying:
         #     logger.warn(
@@ -126,74 +130,108 @@ def orchestrator(
             except Exception as e:
                 update_record_flow.handle_error(e)
                 errors = (errors or []) + [str(e)]
-                raise TaskFailedError(f"Failed to update record {run_record_id}")
+                raise TaskFailedError(f"Failed to update record {run_record_id}") from e
 
-        # The signal event is pushed by the task
-        signal_event = context.wait_for_external_event(EventNames.TASK_SIGNAL)
+        # # The signal event is pushed by the task
+        # signal_event = context.wait_for_external_event(EventNames.TASK_SIGNAL)
 
         # Also poll the executor for the task status in case
         # of early failure.
-        poll_orch_id = context.new_guid().hex
-        poll_orch = context.call_sub_orchestrator(
+        # poll_orch_id = context.new_guid().hex
+
+        if not context.is_replaying:
+            logger.info(f"Creating poll orchestrator {poll_orch_id}")
+        poll_orch_result = yield context.call_sub_orchestrator(
             OrchestratorNames.TASK_POLL,
             input_=TaskPollMessage(
                 executor_id=submit_result.executor_id,
                 run_record_id=run_record_id,
                 parent_instance_id=instance_id,
+                signal_key=submit_result.signal_key,
             ).json(),
             instance_id=poll_orch_id,
         )
+        # poll_orch = context.call_sub_orchestrator(
+        #     OrchestratorNames.TASK_POLL,
+        #     input_=TaskPollMessage(
+        #         executor_id=submit_result.executor_id,
+        #         run_record_id=run_record_id,
+        #         parent_instance_id=instance_id,
+        #         signal_key=submit_result.signal_key,
+        #     ).json(),
+        #     instance_id=poll_orch_id,
+        # )
 
+        # try:
+        #     winner = yield context.task_any([signal_event, poll_orch])
+        # except Exception as e:
+        #     logger.exception(e)
+        #     errors = (errors or []) + [parse_activity_exception(e)]
+        #     raise TaskFailedError("Failed while wait for task signal or poll") from e
+
+        # task_result_type: TaskResultType
+
+        # if winner == signal_event:
+        #     if not context.is_replaying:
+        #         event_logger.info("Signal event raised!")
+
+        #     # Cancel polling immediately
+        #     # if poll_orch_id:
+
+        #     #     # SIGNAL METHOD
+
+        #     #     yield context.call_activity(
+        #     #         ActivityNames.ORCH_CANCEL,
+        #     #         input_=poll_orch_id
+        #     #     )
+        #     #     poll_orch_id = None
+
+        #         # # SIGNAL METHOD
+
+        #         # yield context.call_activity(
+        #         #     ActivityNames.ORCH_SIGNAL,
+        #         #     input_=OrchSignal(
+        #         #         instance_id=poll_orch_id, event_name=EventNames.POLL_QUIT
+        #         #     ).json(),
+        #         # )
+        #         # poll_orch_id = None
+
+        #     # The task has signaled its completion or failure.
+        #     signal_msg = TaskRunSignal.parse_raw(signal_event.result)
+
+        #     # Ensure the signal key from the submit result matches,
+        #     # to ensure the signal origin is known.
+        #     if signal_msg.signal_key != submit_result.signal_key:
+        #         raise TaskFailedError(
+        #             f"Signal key mismatch: {signal_msg.signal_key} "
+        #         )
+
+        #     task_result_type = signal_msg.task_result_type
+
+        # else:
+        #     # Don't need to clean up the poll orchestrator.
+        #     poll_orch_id = None
+
+        #     # The task has completed or failed before a signal
+        #     # was received. This normally means an early failure.
+        #     if not context.is_replaying:
+        #         event_logger.info("Task completed before signal!")
         try:
-            winner = yield context.task_any([signal_event, poll_orch])
-        except Exception as e:
+            poll_result = TaskPollResult.parse_raw(poll_orch_result)
+        except ValidationError as e:
             logger.exception(e)
-            errors = (errors or []) + [parse_activity_exception(e)]
-            raise TaskFailedError("Failed while wait for task signal or poll")
+            event_logger.error(f"poll_orch_result: {poll_orch_result}")
+            raise TaskFailedError(
+                f"Failed to parse poll result: {poll_orch_result}\n{e}"
+            ) from e
 
-        task_result_type: TaskResultType
+        if poll_result.poll_errors:
+            errors = (errors or []) + poll_result.poll_errors
 
-        if winner == signal_event:
-            if not context.is_replaying:
-                event_logger.info("Signal event raised!")
-
-            # Cancel polling immediately
-            if poll_orch_id:
-                yield context.call_activity(
-                    ActivityNames.ORCH_CANCEL, input_=poll_orch_id
-                )
-                poll_orch_id = None
-
-            # The task has signaled its completion or failure.
-            signal_msg = TaskRunSignal.parse_raw(signal_event.result)
-
-            # Ensure the signal key from the submit result matches,
-            # to ensure the signal origin is known.
-            if signal_msg.signal_key != submit_result.signal_key:
-                raise TaskFailedError(
-                    f"Signal key mismatch: {signal_msg.signal_key} "
-                    f"vs submitted: {submit_result.signal_key}"
-                )
-
-            task_result_type = signal_msg.task_result_type
-
+        if poll_result.task_status == TaskRunStatus.COMPLETED:
+            task_result_type = TaskResultType.COMPLETED
         else:
-            # Don't need to clean up the poll orchestrator.
-            poll_orch_id = None
-
-            # The task has completed or failed before a signal
-            # was received. This normally means an early failure.
-            if not context.is_replaying:
-                event_logger.info("Task completed before signal!")
-            poll_result = TaskPollResult.parse_raw(poll_orch.result)
-
-            if poll_result.poll_errors:
-                errors = (errors or []) + poll_result.poll_errors
-
-            if poll_result.task_status == TaskRunStatus.COMPLETED:
-                task_result_type = TaskResultType.COMPLETED
-            else:
-                task_result_type = TaskResultType.FAILED
+            task_result_type = TaskResultType.FAILED
 
         # Handle the task result and pass back any output.
 
@@ -247,7 +285,7 @@ def orchestrator(
             except Exception as e:
                 update_record_flow.handle_error(e)
                 errors = (errors or []) + [str(e)]
-                raise TaskFailedError(f"Failed to update record {run_record_id}")
+                raise TaskFailedError(f"Failed to update record {run_record_id}") from e
 
             # Wait
             yield context.create_timer(context.current_utc_datetime + delta)
@@ -279,9 +317,10 @@ def orchestrator(
     except Exception as e:
         logger.exception(e)
         event_logger.log_event(TaskRunStatus.FAILED, message=str(e))
+        errors = (errors or []) + [str(e)]
 
-    if poll_orch_id:
-        yield context.call_activity(ActivityNames.ORCH_CANCEL, input_=poll_orch_id)
+    # if poll_orch_id:
+    #     yield context.call_activity(ActivityNames.ORCH_CANCEL, input_=poll_orch_id)
 
     if errors:
         return HandledTaskResult(result=FailedTaskResult(errors=errors)).json()

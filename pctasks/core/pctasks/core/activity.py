@@ -46,8 +46,8 @@ def wrap_activity(
 
         event_logger = RunLogger(activity_msg.run_record_id, logger_id=activity_name)
         event_logger.log(f" = {activity_name} - {activity_msg.run_record_id} =")
-        if event_tag:
-            event_logger.log(f" - {event_tag}")
+        if event_tag_msg:
+            event_logger.log(f" - {event_tag_msg}")
         event_logger.log_event(ActivityStatus.ACTIVITY_STARTED, message=event_tag_msg)
         try:
             result = activity(activity_msg.msg, event_logger)

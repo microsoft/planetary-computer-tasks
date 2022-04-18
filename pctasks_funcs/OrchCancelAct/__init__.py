@@ -18,10 +18,13 @@ async def main(id: str, starter: str) -> str:
             df.OrchestrationRuntimeStatus.ContinuedAsNew,
         ]:
             await client.terminate(id, "Cancel action.")
-            return json.dumps({"status": f"{status}", "terminated": True, "id": id})
+            return json.dumps(
+                {"status": f"{status.runtime_status}", "terminated": True, "id": id}
+            )
         else:
-            return json.dumps({"status": f"{status}", "terminated": False, "id": id})
+            return json.dumps(
+                {"status": f"{status.runtime_status}", "terminated": False, "id": id}
+            )
     except Exception as e:
         logger.exception(e)
         return json.dumps({"error": f"{e}", "terminated": False, "id": id})
-

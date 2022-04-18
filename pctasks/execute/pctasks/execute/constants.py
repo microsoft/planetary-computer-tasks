@@ -7,6 +7,7 @@ class OrchestratorNames:
 
 
 class ActivityNames:
+    ORCH_SIGNAL = "OrchSignalAct"
     ORCH_CANCEL = "OrchCancelAct"
     ORCH_FETCH_STATUS = "OrchFetchStatusAct"
     JOB_SEND_NOTIFICATION = "JobSendNotificationAct"
@@ -31,6 +32,7 @@ class FunctionNames:
 
 class EventNames:
     TASK_SIGNAL = "TaskSignal"
+    POLL_QUIT = "PollQuit"
     CANCEL = "Cancel"
 
 

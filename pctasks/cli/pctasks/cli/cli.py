@@ -76,6 +76,25 @@ def setup_logging(level: Union[str, int], log_libraries: bool = False) -> None:
     _logger.addHandler(ch)
 
 
+@lru_cache()
+def setup_logging_for_module(
+    package: str, level: Union[str, int], log_libraries: bool = False
+) -> None:
+    _logger = logging.getLogger(package)
+
+    _logger.setLevel(level)
+
+    if log_libraries:
+        formatter = logging.Formatter("[%(levelname)s]:%(name)s: %(message)s")
+    else:
+        formatter = logging.Formatter("[%(levelname)s]:%(asctime)s: %(message)s")
+
+    ch = logging.StreamHandler(sys.stderr)
+    ch.setLevel(level)
+    ch.setFormatter(formatter)
+    _logger.addHandler(ch)
+
+
 @click.group(name="pctasks", cls=PCTasksGroup)
 @click.version_option(__version__)
 @click.option("-v", "--verbose", help=("Use verbose mode"), is_flag=True)

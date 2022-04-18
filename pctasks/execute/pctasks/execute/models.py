@@ -76,6 +76,7 @@ class TaskPollMessage(PCBaseModel):
     executor_id: Dict[str, Any]
     run_record_id: RunRecordId
     parent_instance_id: Optional[str]
+    signal_key: str
     previous_poll_count: int = 0
 
 

@@ -9,6 +9,7 @@ install_requires = [
     "pctasks.task>=0.1.0",
     "pctasks.submit>=0.1.0",
     "pctasks.ingest>=0.1.0",
+    "planetary-computer>=0.4.0"
 ]
 
 extra_reqs = {

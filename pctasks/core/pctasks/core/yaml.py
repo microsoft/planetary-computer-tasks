@@ -107,11 +107,12 @@ def model_from_yaml(
         except strictyaml.StrictYAMLError:
             logger.debug(f"StrictYAML error: {e}")
             pass
+
         for error in e.errors():
             start_line: Optional[int] = None
             end_line: Optional[int] = None
 
-            if strict_yaml:
+            if strict_yaml is not None:
                 _yml_section: Optional[strictyaml.YAML] = strict_yaml
                 for loc in error["loc"]:
                     if _yml_section is not None:

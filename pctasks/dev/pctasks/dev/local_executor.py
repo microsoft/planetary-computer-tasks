@@ -3,6 +3,8 @@ Executes pctasks inside the dev container.
 Used to mimic executing a task in Azure Batch locally.
 """
 
+import logging
+import time
 from typing import Any, Callable, Dict, List
 from uuid import uuid1
 
@@ -17,17 +19,24 @@ from pctasks.execute.models import TaskPollResult
 app = FastAPI()
 
 
+logger = logging.getLogger(__name__)
+
+
 def submit_task(args: List[str], callback: Callable[[TaskRunStatus], None]) -> None:
     """
     Submit a task to the local executor.
     """
+    time.sleep(1)
     try:
-        result = pctasks_cmd.main(args, standalone_mode=False)
-        if result.exit_code != 0:
+        pctasks_cmd.main(args)
+    except SystemExit as e:
+        if e.code != 0:
+            logger.error(f"Task ran but returned non-zero code {e.code}")
             callback(TaskRunStatus.FAILED)
         else:
             callback(TaskRunStatus.COMPLETED)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         callback(TaskRunStatus.FAILED)
 
 
@@ -49,9 +58,9 @@ def execute(
 @app.get("/poll/{id}")
 def poll(id: str, request: Request) -> Response:
     try:
-        return JSONResponse(
-            TaskPollResult(task_status=request.app.state._cache.get(id)).dict()
-        )
+        result = TaskPollResult(task_status=request.app.state._cache.get(id))
+        logger.info(f"Polling task {id}: {result.json(indent=2)}")
+        return JSONResponse(result.dict())
     except KeyError:
         return Response(status_code=404)
 
