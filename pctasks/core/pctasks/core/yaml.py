@@ -8,10 +8,10 @@ import yaml
 from pydantic import BaseModel, ValidationError
 from pydantic.error_wrappers import ErrorList
 
-try:
-    from yaml import CLoader as Loader
-except ImportError:
-    from yaml import Loader
+# try:
+    # from yaml import CLoader as Loader
+# except ImportError:
+from yaml import Loader
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -111,7 +111,7 @@ def model_from_yaml(
             start_line: Optional[int] = None
             end_line: Optional[int] = None
 
-            if strict_yaml:
+            if strict_yaml is not None:
                 _yml_section: Optional[strictyaml.YAML] = strict_yaml
                 for loc in error["loc"]:
                     if _yml_section is not None:
