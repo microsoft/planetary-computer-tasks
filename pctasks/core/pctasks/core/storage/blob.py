@@ -135,37 +135,8 @@ class ContainerClientWrapper:
         self._account_client.close()
 
 
-class BlobStorage(Storage):
-    """Utility class for blob storage access.
-    Represents access to a single blob container, with an optional prefix.
 
-    If a prefix is applied, then paths will be relative to that prefix.
-    E.g. if BlobStorage for a BlobUri 'blob://somesa/some-container/some/folder'
-    is used, then doing an operation like open_file on the file_path 'file.txt'
-    will open the blob at 'blob://somesa/some-container/some/folder/file.txt'.
-
-    Args:
-        storage_account_name: The storage account name,
-            e.g. 'modissa'
-        container_name: The container name to access.
-        prefix: Optional prefix to base all paths off of.
-        sas_token: Optional  SAS token.
-            If not supplied, uses DefaultAzureCredentials, in which you
-            need to make sure the environment variables
-            AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and
-            AZURE_TENANT_ID are set.
-        account_url: Optional account URL. If not supplied, uses
-            the defualt Azure blob URL for a storage account.
-
-    Note:
-
-    If a service principle is used, make sure
-    an appropriate IAM role (e.g. Storage Blob Data Contributor) on
-    the storage account is assigned.
-
-    See Storage for method docstrings.
-    """
-
+class BlobStorageMixin:
     _blob_creds: Union[
         ClientSecretCredential, DefaultAzureCredential, Dict[str, str], str
     ]
@@ -225,15 +196,12 @@ class BlobStorage(Storage):
         self.container_name = container_name
         self.prefix = prefix.strip("/") if prefix is not None else prefix
 
-    def _get_client(self) -> ContainerClientWrapper:
-        account_client = BlobServiceClient(
-            account_url=self.account_url,
-            credential=self._blob_creds,
+    def __repr__(self) -> str:
+        prefix_part = "" if self.prefix is None else f"/{self.prefix}"
+        return (
+            f"{self.__class__.__name__}(blob://{self.storage_account_name}"
+            f"/{self.container_name}{prefix_part})"
         )
-
-        container_client = account_client.get_container_client(self.container_name)
-
-        return ContainerClientWrapper(account_client, container_client)
 
     def _get_name_starts_with(
         self, additional_prefix: Optional[str] = None
@@ -265,6 +233,95 @@ class BlobStorage(Storage):
             return container_uri
         else:
             return os.path.join(container_uri, self.prefix)
+
+    @classmethod
+    def from_uri(
+        cls,
+        blob_uri: Union[BlobUri, str],
+        sas_token: Optional[str] = None,
+        account_url: Optional[str] = None,
+    ) -> "BlobStorage":
+        # TODO: Fix this type to be Type[cls] or something.
+        if isinstance(blob_uri, str):
+            blob_uri = BlobUri(blob_uri)
+
+        return cls(
+            storage_account_name=blob_uri.storage_account_name,
+            container_name=blob_uri.container_name,
+            prefix=blob_uri.blob_name,
+            sas_token=sas_token,
+            account_url=account_url,
+        )
+
+    def get_url(self, file_path: str) -> str:
+        return f"{self.account_url}/{self.container_name}/{self._add_prefix(file_path)}"
+
+    def get_uri(self, file_path: Optional[str] = None) -> str:
+        if file_path is None:
+            return self.root_uri
+        else:
+            return os.path.join(self.root_uri, file_path)
+
+    def get_authenticated_url(self, file_path: str) -> str:
+        if self.sas_token is None:
+            raise SasTokenError(f"SAS Token required but not defined on {self}")
+        base_url = self.get_url(file_path)
+        return f"{base_url}?{self.sas_token}"
+
+    def get_path(self, uri: str) -> str:
+        blob_uri = BlobUri(uri)
+        if blob_uri.storage_account_name != self.storage_account_name:
+            raise ValueError(f"URI {uri} does not share storage account with {self}")
+        if blob_uri.container_name != self.container_name:
+            raise ValueError(f"URI {uri} does not share container with {self}")
+        if self.prefix:
+            if not blob_uri.blob_name or self.prefix not in blob_uri.blob_name:
+                raise ValueError(f"URI {uri} does not share prefix with {self}")
+            return self._strip_prefix(blob_uri.blob_name)
+        else:
+            return blob_uri.blob_name or ""
+
+
+class BlobStorage(BlobStorageMixin, Storage):
+    """Utility class for blob storage access.
+    Represents access to a single blob container, with an optional prefix.
+
+    If a prefix is applied, then paths will be relative to that prefix.
+    E.g. if BlobStorage for a BlobUri 'blob://somesa/some-container/some/folder'
+    is used, then doing an operation like open_file on the file_path 'file.txt'
+    will open the blob at 'blob://somesa/some-container/some/folder/file.txt'.
+
+    Args:
+        storage_account_name: The storage account name,
+            e.g. 'modissa'
+        container_name: The container name to access.
+        prefix: Optional prefix to base all paths off of.
+        sas_token: Optional  SAS token.
+            If not supplied, uses DefaultAzureCredentials, in which you
+            need to make sure the environment variables
+            AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and
+            AZURE_TENANT_ID are set.
+        account_url: Optional account URL. If not supplied, uses
+            the defualt Azure blob URL for a storage account.
+
+    Note:
+
+    If a service principle is used, make sure
+    an appropriate IAM role (e.g. Storage Blob Data Contributor) on
+    the storage account is assigned.
+
+    See Storage for method docstrings.
+    """
+
+    def _get_client(self) -> ContainerClientWrapper:
+        account_client = BlobServiceClient(
+            account_url=self.account_url,
+            credential=self._blob_creds,
+        )
+
+        container_client = account_client.get_container_client(self.container_name)
+
+        return ContainerClientWrapper(account_client, container_client)
 
     def list_files(
         self,
@@ -354,6 +411,7 @@ class BlobStorage(Storage):
         ) -> Tuple[List[str], List[str]]:
             folders = []
             files = []
+            breakpoint()
             for item in client.container.walk_blobs(name_starts_with=full_prefix):
                 item_name: str = cast(str, item.name)
                 name = os.path.relpath(item_name, full_prefix)
@@ -388,6 +446,7 @@ class BlobStorage(Storage):
 
                 next_level_prefixes: List[str] = []
                 for full_prefix in full_prefixes:
+                    breakpoint()
                     if walk_limit and walk_count >= walk_limit:
                         limit_break = True
                         break
@@ -462,34 +521,6 @@ class BlobStorage(Storage):
 
                 with_backoff(_upload)
 
-    def get_url(self, file_path: str) -> str:
-        return f"{self.account_url}/{self.container_name}/{self._add_prefix(file_path)}"
-
-    def get_uri(self, file_path: Optional[str] = None) -> str:
-        if file_path is None:
-            return self.root_uri
-        else:
-            return os.path.join(self.root_uri, file_path)
-
-    def get_authenticated_url(self, file_path: str) -> str:
-        if self.sas_token is None:
-            raise SasTokenError(f"SAS Token required but not defined on {self}")
-        base_url = self.get_url(file_path)
-        return f"{base_url}?{self.sas_token}"
-
-    def get_path(self, uri: str) -> str:
-        blob_uri = BlobUri(uri)
-        if blob_uri.storage_account_name != self.storage_account_name:
-            raise ValueError(f"URI {uri} does not share storage account with {self}")
-        if blob_uri.container_name != self.container_name:
-            raise ValueError(f"URI {uri} does not share container with {self}")
-        if self.prefix:
-            if not blob_uri.blob_name or self.prefix not in blob_uri.blob_name:
-                raise ValueError(f"URI {uri} does not share prefix with {self}")
-            return self._strip_prefix(blob_uri.blob_name)
-        else:
-            return blob_uri.blob_name or ""
-
     def get_substorage(self, path: str) -> "Storage":
         if self.prefix is None:
             subprefix = path
@@ -536,31 +567,6 @@ class BlobStorage(Storage):
         with self._get_client() as client:
             with client.container.get_blob_client(full_path) as blob:
                 with_backoff(lambda: blob.upload_blob(data, overwrite=overwrite))
-
-    def __repr__(self) -> str:
-        prefix_part = "" if self.prefix is None else f"/{self.prefix}"
-        return (
-            f"BlobStorage(blob://{self.storage_account_name}"
-            f"/{self.container_name}{prefix_part})"
-        )
-
-    @classmethod
-    def from_uri(
-        cls,
-        blob_uri: Union[BlobUri, str],
-        sas_token: Optional[str] = None,
-        account_url: Optional[str] = None,
-    ) -> "BlobStorage":
-        if isinstance(blob_uri, str):
-            blob_uri = BlobUri(blob_uri)
-
-        return BlobStorage(
-            storage_account_name=blob_uri.storage_account_name,
-            container_name=blob_uri.container_name,
-            prefix=blob_uri.blob_name,
-            sas_token=sas_token,
-            account_url=account_url,
-        )
 
     @classmethod
     def from_account_key(

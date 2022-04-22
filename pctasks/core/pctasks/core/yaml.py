@@ -8,10 +8,10 @@ import yaml
 from pydantic import BaseModel, ValidationError
 from pydantic.error_wrappers import ErrorList
 
-try:
-    from yaml import CLoader as Loader
-except ImportError:
-    from yaml import Loader
+# try:
+    # from yaml import CLoader as Loader
+# except ImportError:
+from yaml import Loader
 
 T = TypeVar("T", bound=BaseModel)
 
