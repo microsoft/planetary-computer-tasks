@@ -16,7 +16,7 @@ from pctasks.dev.blob import (
     get_azurite_sas_token,
     temp_azurite_blob_storage,
 )
-from pctasks.execute.local import LocalRunner
+from pctasks.execute.runner.local import LocalRunner
 from pctasks.task.context import TaskContext
 import pystac
 
