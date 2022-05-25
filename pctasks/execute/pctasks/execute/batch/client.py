@@ -9,6 +9,7 @@ import msrest.exceptions
 import requests.exceptions
 import urllib3.exceptions
 from azure.batch import BatchServiceClient
+from azure.batch.custom.custom_errors import CreateTasksErrorException
 from dateutil.tz import tzutc
 from requests import Response
 
@@ -138,11 +139,30 @@ class BatchClient:
 
     def add_collection(self, job_id: str, tasks: Iterable[BatchTask]) -> int:
         params = [task.to_params() for task in tasks]
-        self._client.task.add_collection(
-            job_id=job_id,
-            value=params,
-            threads=self.settings.submit_threads,
-        )
+        try:
+            self._client.task.add_collection(
+                job_id=job_id,
+                value=params,
+                threads=self.settings.submit_threads,
+            )
+        except CreateTasksErrorException as e:
+            logger.warn("Failed to add tasks...")
+            for exc in e.errors:
+                logger.warn(" -- RETURNED EXCEPTION --")
+                logger.exception(exc)
+            for failure_task in e.failure_tasks:
+                task_add_result = cast(batchmodels.TaskAddResult, failure_task)
+                error = cast(batchmodels.BatchError, task_add_result.error)
+                if error:
+                    logger.error(
+                        f"Task {task_add_result.task_id} failed with error: "
+                        f"{error.message}"
+                    )
+                    error_details = cast(batchmodels.BatchError, error).values
+                    if error_details:
+                        for detail in error_details:
+                            logger.error(f"  - {detail.key}: {detail.value}")
+            raise
         return len(params)
 
     def get_job_info(self, job_id: str) -> JobInfo:
