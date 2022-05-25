@@ -500,7 +500,7 @@ class BlobStorage(BlobStorageMixin, Storage):
 
     def get_file_info(self, file_path: str) -> StorageFileInfo:
         with self._get_client() as client:
-            with client.container.get_blob_client(file_path) as blob:
+            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 props = with_backoff(lambda: blob.get_blob_properties())
                 return StorageFileInfo(size=cast(int, props.size))
 
