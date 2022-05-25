@@ -86,7 +86,6 @@ def orchestrator(context: df.DurableOrchestrationContext) -> Any:
                     )
 
                 if signal_msg.task_result_type == TaskResultType.COMPLETED:
-                    logger.warn("DONEEEEEEEX")
                     return TaskPollResult(task_status=TaskRunStatus.COMPLETED).json()
                 else:
                     return TaskPollResult(task_status=TaskRunStatus.FAILED).json()
