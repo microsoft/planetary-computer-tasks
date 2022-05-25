@@ -509,7 +509,7 @@ class BlobStorage(BlobStorageMixin, Storage):
         input_path: str,
         target_path: str,
         overwrite: bool = True,
-    ) -> None:
+    ) -> None:  
         with self._get_client() as client:
             with client.container.get_blob_client(
                 self._add_prefix(target_path)
