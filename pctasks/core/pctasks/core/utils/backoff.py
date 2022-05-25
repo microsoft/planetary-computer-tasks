@@ -35,6 +35,17 @@ def is_common_throttle_exception(e: Exception) -> bool:
                 pass
             except ValueError:
                 pass
+    elif hasattr(e, "response"):
+        # e.g. requests.exceptions.HTTPError
+        response = getattr(e, "response")
+        if hasattr(response, "status_code"):
+            status = getattr(response, "status_code")
+            try:
+                status_code = int(status)
+            except TypeError:
+                pass
+            except ValueError:
+                pass
 
     return status_code is not None and (status_code == 503 or status_code == 429)
 
