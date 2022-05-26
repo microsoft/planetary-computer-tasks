@@ -79,6 +79,12 @@ resource "azurerm_storage_container" "tasklogs" {
   container_access_type = "private"
 }
 
+resource "azurerm_storage_container" "taskio" {
+  name                  = "taskio"
+  storage_account_name  = azurerm_storage_account.rxetl.name
+  container_access_type = "private"
+}
+
 # Access Policies
 
 resource "azurerm_role_assignment" "function-app-blob-access" {
