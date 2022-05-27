@@ -8,7 +8,7 @@ from pctasks.core.storage import read_text
 from pctasks.dev.queues import TempQueue
 from pctasks.execute.models import TaskSubmitMessage
 from pctasks.execute.settings import ExecutorSettings
-from pctasks.execute.task.submit import submit_task
+from pctasks.execute.task.submit import submit_tasks
 
 
 def test_process_submit_message():
@@ -37,8 +37,8 @@ def test_process_submit_message():
     tmp_queue = TempQueue()
     settings.signal_queue_account_name = tmp_queue.queue_config.queue_name
     with tmp_queue:
-        _ = submit_task(
-            submit_msg=submit_msg,
+        _ = submit_tasks(
+            submit_msgs=[submit_msg],
             settings=settings,
             executor=executor,
         )

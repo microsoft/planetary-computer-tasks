@@ -36,7 +36,7 @@ from pctasks.execute.models import (
     WorkflowRunRecordUpdate,
 )
 from pctasks.execute.settings import ExecutorSettings
-from pctasks.execute.task.submit import submit_task
+from pctasks.execute.task.submit import submit_tasks
 from pctasks.submit.client import SubmitClient
 
 logger = logging.getLogger(__name__)
@@ -46,8 +46,8 @@ def submit(msg: TaskSubmitMessage, event_logger: RunLogger) -> TaskSubmitResult:
     event_logger.log(msg.json(indent=2))
     settings = ExecutorSettings.get()
     try:
-        return submit_task(
-            msg,
+        return submit_tasks(
+            [msg],
             event_logger=event_logger,
             settings=settings,
         )
@@ -82,13 +82,13 @@ def poll(msg: TaskPollMessage, event_logger: RunLogger) -> TaskPollResult:
 
 
 def handle_result(
-    msg: HandleTaskResultMessage, event_logger: RunLogger
+    msg: HandleTaskResultMessage, run_logger: RunLogger
 ) -> HandledTaskResult:
     settings = ExecutorSettings.get()
     output_uri = msg.submit_result.output_uri
     output: Dict[str, Any] = {}
 
-    event_logger.log_event(msg.task_result_type, message="Handling task result.")
+    run_logger.log_event(msg.task_result_type, message="Handling task result.")
 
     storage, path = get_storage_for_file(
         msg.log_uri,
@@ -134,7 +134,7 @@ def handle_result(
 
 
 def update_record(
-    msg: UpdateRecordMessage, event_logger: RunLogger
+    msg: UpdateRecordMessage, run_logger: RunLogger
 ) -> UpdateRecordResult:
     settings = ExecutorSettings.get()
     update = msg.update
@@ -144,11 +144,11 @@ def update_record(
         # Workflow Run Group
 
         if isinstance(update, CreateWorkflowRunGroupRecordUpdate):
-            event_logger.info("Createing workflow run group...")
+            run_logger.info("Createing workflow run group...")
             with settings.get_workflow_run_group_record_table() as wrg_table:
                 wrg_table.insert_record(update.record)
         elif isinstance(update, WorkflowRunGroupRecordUpdate):
-            event_logger.info(
+            run_logger.info(
                 f"Updating workflow run group record status to {update.status}."
             )
             with settings.get_workflow_run_group_record_table() as wrg_table:
@@ -166,11 +166,11 @@ def update_record(
         # Workflow Run
 
         elif isinstance(update, CreateWorkflowRunRecordUpdate):
-            event_logger.info("Creating workflow run ...")
+            run_logger.info("Creating workflow run ...")
             with settings.get_workflow_run_record_table() as wr_table:
                 wr_table.insert_record(update.record)
         elif isinstance(update, WorkflowRunRecordUpdate):
-            event_logger.info(
+            run_logger.info(
                 f"Updating workflow run record status to {update.status}."
             )
             with settings.get_workflow_run_record_table() as wr_table:
@@ -184,11 +184,11 @@ def update_record(
         # Job Run
 
         elif isinstance(update, CreateJobRunRecordUpdate):
-            event_logger.info("Creating job run ...")
+            run_logger.info("Creating job run ...")
             with settings.get_job_run_record_table() as jr_table:
                 jr_table.insert_record(update.record)
         elif isinstance(update, JobRunRecordUpdate):
-            event_logger.info(f"Updating job run record status to {update.status}.")
+            run_logger.info(f"Updating job run record status to {update.status}.")
             with settings.get_job_run_record_table() as jr_table:
                 jr_record = jr_table.get_record(update.get_run_record_id())
                 if not jr_record:
@@ -200,12 +200,12 @@ def update_record(
         # Task Run
 
         elif isinstance(update, CreateTaskRunRecordUpdate):
-            event_logger.info("Creating task run ...")
+            run_logger.info("Creating task run ...")
             with settings.get_task_run_record_table() as tr_table:
                 tr_table.insert_record(update.record)
         else:
             with settings.get_task_run_record_table() as tr_table:
-                event_logger.info(
+                run_logger.info(
                     f"Updating task run record status to {update.status}."
                 )
                 tr_record = tr_table.get_record(update.get_run_record_id())

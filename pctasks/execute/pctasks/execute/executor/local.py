@@ -7,14 +7,14 @@ import requests
 from pctasks.core.models.config import BlobConfig
 from pctasks.core.models.record import TaskRunStatus
 from pctasks.core.models.task import TaskRunMessage
-from pctasks.execute.executor.base import Executor
+from pctasks.execute.executor.base import TaskExecutor
 from pctasks.execute.models import TaskPollResult, TaskSubmitMessage
 from pctasks.execute.settings import ExecutorSettings
 
 logger = logging.getLogger(__name__)
 
 
-class LocalExecutor(Executor):
+class LocalTaskExecutor(TaskExecutor):
     """A local development executor.
 
     This submits the run arguments to a local executor.

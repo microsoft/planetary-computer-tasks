@@ -133,7 +133,7 @@ class AsyncStorage(ABC):
         pass
 
     @abstractmethod
-    async def get_url(self, file_path: str) -> str:
+    def get_url(self, file_path: str) -> str:
         """Gets the http url of a file path.
 
         Args:
@@ -203,7 +203,7 @@ class AsyncStorage(ABC):
         Returns:
             str: The contents of the file.
         """
-        return self.read_bytes(file_path).decode("utf-8")
+        return (await self.read_bytes(file_path)).decode("utf-8")
 
     async def read_json(self, file_path: str) -> Dict[str, Any]:
         """Reads a dict from a JSON file in storage.
@@ -213,10 +213,12 @@ class AsyncStorage(ABC):
         Returns:
             The Dict[str, Any] that is read from e.g. json.load
         """
-        return orjson.loads(self.read_bytes(file_path))
+        return orjson.loads(await self.read_bytes(file_path))
 
     @abstractmethod
-    async def write_bytes(self, file_path: str, data: bytes, overwrite: bool = True) -> None:
+    async def write_bytes(
+        self, file_path: str, data: bytes, overwrite: bool = True
+    ) -> None:
         """Writes bytes to a file.
 
         Args:
@@ -226,7 +228,9 @@ class AsyncStorage(ABC):
         """
         pass
 
-    async def write_text(self, file_path: str, text: str, overwrite: bool = True) -> None:
+    async def write_text(
+        self, file_path: str, text: str, overwrite: bool = True
+    ) -> None:
         """Writes a text file
 
         Args:
@@ -234,7 +238,9 @@ class AsyncStorage(ABC):
             text: The text to write.
             overwrite: Overwrite if file is already present.
         """
-        self.write_bytes(file_path, text.encode("utf-8"), overwrite=overwrite)
+        return await self.write_bytes(
+            file_path, text.encode("utf-8"), overwrite=overwrite
+        )
 
     async def write_dict(
         self, file_path: str, d: Dict[str, Any], overwrite: bool = True
@@ -246,7 +252,7 @@ class AsyncStorage(ABC):
             text: The text to write.
             overwrite: Overwrite if file is already present.
         """
-        self.write_bytes(file_path, orjson.dumps(d), overwrite=overwrite)
+        return await self.write_bytes(file_path, orjson.dumps(d), overwrite=overwrite)
 
     @abstractmethod
     async def delete_folder(self, folder_path: str) -> None:
@@ -274,4 +280,3 @@ class AsyncStorage(ABC):
         """
         path = self.get_path_from_url(href)
         return await self.get_authenticated_url(path)
-

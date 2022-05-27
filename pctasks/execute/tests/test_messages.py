@@ -6,7 +6,7 @@ from pctasks.dev.secrets import TempSecrets
 from pctasks.dev.tables import TempTable
 from pctasks.execute.models import TaskSubmitMessage
 from pctasks.execute.settings import ExecutorSettings
-from pctasks.execute.task.run_message import submit_msg_to_task_run_msg
+from pctasks.execute.task.run_message import prepare_task
 
 
 def test_image_key_environment_merged():
@@ -57,7 +57,7 @@ def test_image_key_environment_merged():
                 ),
             )
 
-            run_msg, task_tags = submit_msg_to_task_run_msg(
+            run_msg, task_tags = prepare_task(
                 submit_msg=submit_msg,
                 run_id=run_id,
                 settings=exec_settings,

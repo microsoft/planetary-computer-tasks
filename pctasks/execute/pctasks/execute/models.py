@@ -1,5 +1,6 @@
 import logging
 from typing import Any, Dict, List, Optional, Tuple, Union
+from pctasks.core.models.config import BlobConfig
 
 from pydantic import Field
 
@@ -22,6 +23,7 @@ from pctasks.core.models.task import (
     FailedTaskResult,
     TaskConfig,
     TaskResultType,
+    TaskRunMessage,
     WaitTaskResult,
 )
 from pctasks.core.models.tokens import StorageAccountTokens
@@ -54,6 +56,13 @@ class TaskSubmitMessage(PCBaseModel):
         )
 
 
+class PreparedTaskSubmitMessage(PCBaseModel):
+    task_submit_message: TaskSubmitMessage
+    task_run_message: TaskRunMessage
+    task_input_blob_config: BlobConfig
+    task_tags: Optional[Dict[str, str]] = None
+
+
 class SuccessfulSubmitResult(PCBaseModel):
     success: bool = True
     executor_id: Dict[str, Any]
@@ -83,6 +92,13 @@ class TaskPollMessage(PCBaseModel):
 class TaskPollResult(PCBaseModel):
     task_status: TaskRunStatus
     poll_errors: Optional[List[str]] = None
+
+    @property
+    def is_finished(self) -> bool:
+        return (
+            self.task_status == TaskRunStatus.COMPLETED
+            or self.task_status == TaskRunStatus.FAILED
+        )
 
 
 class HandledTaskResult(PCBaseModel):

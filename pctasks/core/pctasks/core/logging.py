@@ -42,7 +42,7 @@ def _get_az_loggers(
     )
 
     if instrumentation_key:
-        # Set up traces loggin.
+        # Set up traces logging.
         traces_logger.setLevel(logging.INFO)
         traces_handler = AzureLogHandler(
             connection_string=f"InstrumentationKey={instrumentation_key}"
@@ -93,15 +93,22 @@ class RunLogger:
         )
         self.logger_id = logger_id
 
-    @property
-    def custom_dimensions(self) -> Dict[str, str]:
+    def _get_custom_dimensions(
+        self,
+        dataset_id: Optional[str] = None,
+        job_id: Optional[str] = None,
+        task_id: Optional[str] = None,
+    ) -> Dict[str, str]:
         result = {"run_id": self.run_record_id.run_id}
-        if self.run_record_id.dataset_id:
-            result["dataset_id"] = self.run_record_id.dataset_id
-        if self.run_record_id.job_id:
-            result["job_id"] = self.run_record_id.job_id
-        if self.run_record_id.task_id:
-            result["task_id"] = self.run_record_id.task_id
+        dataset_id = dataset_id or self.run_record_id.dataset_id
+        if dataset_id:
+            result["dataset_id"] = dataset_id
+        job_id = job_id or self.run_record_id.job_id
+        if job_id:
+            result["job_id"] = job_id
+        task_id = task_id or self.run_record_id.task_id
+        if task_id:
+            result["task_id"] = task_id
         return result
 
     def log_event(
@@ -122,7 +129,7 @@ class RunLogger:
             extra={
                 "custom_dimensions": {
                     **properties,
-                    **self.custom_dimensions,
+                    **self._get_custom_dimensions(),
                 }
             },
         )
@@ -135,6 +142,9 @@ class RunLogger:
         self,
         message: str,
         properties: Optional[Dict[str, str]] = None,
+        dataset_id: Optional[str] = None,
+        job_id: Optional[str] = None,
+        task_id: Optional[str] = None,
         level: LogLevel = LogLevel.INFO,
     ) -> None:
         if self.logger_id:
@@ -144,22 +154,64 @@ class RunLogger:
             extra={
                 "custom_dimensions": {
                     **(properties or {}),
-                    **self.custom_dimensions,
+                    **self._get_custom_dimensions(
+                        dataset_id=dataset_id, job_id=job_id, task_id=task_id
+                    ),
                 }
             },
             level=level.value,
         )
 
-    def info(self, message: str, properties: Optional[Dict[str, str]] = None) -> None:
-        self.log(message, properties, LogLevel.INFO)
+    def info(
+        self,
+        message: str,
+        properties: Optional[Dict[str, str]] = None,
+        dataset_id: Optional[str] = None,
+        job_id: Optional[str] = None,
+        task_id: Optional[str] = None,
+    ) -> None:
+        self.log(
+            message,
+            properties=properties,
+            dataset_id=dataset_id,
+            job_id=job_id,
+            task_id=task_id,
+            level=LogLevel.INFO,
+        )
 
     def warning(
-        self, message: str, properties: Optional[Dict[str, str]] = None
+        self,
+        message: str,
+        properties: Optional[Dict[str, str]] = None,
+        dataset_id: Optional[str] = None,
+        job_id: Optional[str] = None,
+        task_id: Optional[str] = None,
     ) -> None:
-        self.log(message, properties, LogLevel.WARNING)
+        self.log(
+            message,
+            properties=properties,
+            dataset_id=dataset_id,
+            job_id=job_id,
+            task_id=task_id,
+            level=LogLevel.WARNING,
+        )
 
-    def error(self, message: str, properties: Optional[Dict[str, str]] = None) -> None:
-        self.log(message, properties, LogLevel.ERROR)
+    def error(
+        self,
+        message: str,
+        properties: Optional[Dict[str, str]] = None,
+        dataset_id: Optional[str] = None,
+        job_id: Optional[str] = None,
+        task_id: Optional[str] = None,
+    ) -> None:
+        self.log(
+            message,
+            properties=properties,
+            dataset_id=dataset_id,
+            job_id=job_id,
+            task_id=task_id,
+            level=LogLevel.ERROR,
+        )
 
 
 class TaskLogger:

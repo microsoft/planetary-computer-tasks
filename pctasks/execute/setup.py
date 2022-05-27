@@ -10,7 +10,7 @@ install_requires = [
     "pctasks-submit>=0.1.0",
     "azure-batch==11.*",
     "azure-keyvault-secrets==4.*",
-    "networkx==2.*",
+    "networkx==2.*"
 ]
 
 extra_reqs = {

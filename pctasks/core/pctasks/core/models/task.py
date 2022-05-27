@@ -139,6 +139,19 @@ class TaskResult(PCBaseModel):
     ) -> "FailedTaskResult":
         return FailedTaskResult(errors=errors)
 
+    @classmethod
+    def parse_subclass(
+        cls, obj: Dict[str, Any]
+    ) -> Union["CompletedTaskResult", "WaitTaskResult", "FailedTaskResult"]:
+        if obj["status"] == TaskResultType.COMPLETED:
+            return CompletedTaskResult.parse_obj(obj)
+        elif obj["status"] == TaskResultType.WAIT:
+            return WaitTaskResult.parse_obj(obj)
+        elif obj["status"] == TaskResultType.FAILED:
+            return FailedTaskResult.parse_obj(obj)
+        else:
+            raise ValueError(f"Unknown task result status: {obj['status']}")
+
 
 class CompletedTaskResult(TaskResult):
     status: TaskResultType = Field(default=TaskResultType.COMPLETED, const=True)

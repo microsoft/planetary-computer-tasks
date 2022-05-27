@@ -1,13 +1,12 @@
 import logging
 import sys
-from dataclasses import dataclass
 from functools import lru_cache
 from typing import Any, Optional, Union
 
 import click
 
 from pctasks.cli.version import __version__
-from pctasks.core.cli import get_plugin_subcommands
+from pctasks.core.cli import get_plugin_subcommands, PCTasksCommandContext
 from pctasks.core.settings import SettingsError
 
 logger = logging.getLogger(__name__)
@@ -48,15 +47,6 @@ class PCTasksGroup(click.Group):
     def format_help(self, ctx: Any, formatter: Any) -> Any:
         print_header()
         super().format_help(ctx, formatter)
-
-
-@dataclass
-class PCTasksCommandContext:
-    profile: Optional[str] = None
-    """Settings profile. Determines which settings file is read."""
-
-    settings_file: Optional[str] = None
-    """Full path to the settings file. If present, overrides the profile."""
 
 
 @lru_cache(maxsize=1)

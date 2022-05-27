@@ -364,8 +364,8 @@ class BatchClient:
             else:
                 raise BatchClientError(error.message.value)
 
-        logger.info(f"BATCH JOB STATUS: {job.state}")
-        logger.info(f"BATCH TASK STATUS: {task.state}")
+        logger.debug(f"BATCH JOB STATUS: {job.state}")
+        logger.debug(f"BATCH TASK STATUS: {task.state}")
 
         job_state = cast(batchmodels.JobState, job.state)
         task_state = cast(batchmodels.TaskState, task.state)

@@ -139,7 +139,7 @@ def process_items_cmd(
         raise click.ClickException(f"Invalid dataset config.\n{e}")
     except FileNotFoundError:
         raise click.ClickException(
-            "No dataset config found. Use --config to specify "
+            "No dataset config found. Use --dataset to specify "
             f"or name your config {DEFAULT_DATASET_YAML_PATH}."
         )
     if not ds_config:

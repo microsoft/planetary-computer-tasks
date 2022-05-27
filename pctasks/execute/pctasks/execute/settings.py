@@ -1,5 +1,6 @@
 from typing import Any, Dict, Optional
 from urllib.parse import urlparse
+from pctasks.core.storage.blob import BlobStorage
 
 from pydantic import validator
 
@@ -216,4 +217,18 @@ class ExecutorSettings(PCTasksSettings):
             account_name=self.tables_account_name,
             account_key=self.tables_account_key,
             table_name=self.workflow_run_group_record_table_name,
+        )
+
+    def get_task_io_storage(self) -> BlobStorage:
+        return BlobStorage.from_account_key(
+            f"blob://{self.blob_account_name}/{self.task_io_blob_container}",
+            account_key=self.blob_account_key,
+            account_url=self.blob_account_url,
+        )
+
+    def get_log_storage(self) -> BlobStorage:
+        return BlobStorage.from_account_key(
+            f"blob://{self.blob_account_name}/{self.log_blob_container}",
+            account_key=self.blob_account_key,
+            account_url=self.blob_account_url,
         )

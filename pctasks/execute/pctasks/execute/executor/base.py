@@ -1,22 +1,22 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Union
 
-from pctasks.core.models.config import BlobConfig
-from pctasks.core.models.task import TaskRunMessage
-from pctasks.execute.models import TaskPollResult, TaskSubmitMessage
+from pctasks.execute.models import (
+    FailedSubmitResult,
+    PreparedTaskSubmitMessage,
+    SuccessfulSubmitResult,
+    TaskPollResult,
+)
 from pctasks.execute.settings import ExecutorSettings
 
 
-class Executor(ABC):
+class TaskExecutor(ABC):
     @abstractmethod
     def submit(
         self,
-        submit_msg: TaskSubmitMessage,
-        run_msg: TaskRunMessage,
-        task_tags: Optional[Dict[str, str]],
-        task_input_blob_config: BlobConfig,
+        prepared_tasks: List[PreparedTaskSubmitMessage],
         settings: ExecutorSettings,
-    ) -> Dict[str, Any]:
+    ) -> List[Union[SuccessfulSubmitResult, FailedSubmitResult]]:
         pass
 
     @abstractmethod

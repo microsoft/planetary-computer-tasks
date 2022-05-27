@@ -1,7 +1,7 @@
 import logging
 import os
 from datetime import datetime, timedelta
-from typing import Dict, Optional, Tuple, Union
+from typing import Union
 from uuid import uuid1
 
 from azure.core.credentials import AzureNamedKeyCredential
@@ -19,21 +19,73 @@ from pctasks.core.models.config import (
 )
 from pctasks.core.models.task import TaskRunConfig, TaskRunMessage
 from pctasks.core.models.tokens import StorageAccountTokens
-from pctasks.execute.models import TaskSubmitMessage
+from pctasks.core.storage.blob import BlobStorage, BlobUri
+from pctasks.execute.models import PreparedTaskSubmitMessage, TaskSubmitMessage
 from pctasks.execute.secrets.base import SecretsProvider
 from pctasks.execute.secrets.keyvault import KeyvaultSecretsProvider
 from pctasks.execute.secrets.local import LocalSecretsProvider
 from pctasks.execute.settings import ExecutorSettings
-from pctasks.execute.utils import get_run_log_path, get_task_output_path
+from pctasks.execute.utils import (
+    get_run_log_path,
+    get_task_input_path,
+    get_task_output_path,
+)
 
 logger = logging.getLogger(__name__)
 
 
-def submit_msg_to_task_run_msg(
+def write_task_run_msg(
+    run_msg: TaskRunMessage, settings: ExecutorSettings
+) -> BlobConfig:
+    """
+    Write the task run message to the Task IO input file
+
+    Returns a SAS token that can be used to read the table.
+    """
+    task_input_path = get_task_input_path(
+        job_id=run_msg.config.job_id,
+        task_id=run_msg.config.task_id,
+        run_id=run_msg.config.run_id,
+    )
+    task_input_uri = BlobUri(
+        f"blob://{settings.blob_account_name}/"
+        f"{settings.task_io_blob_container}/"
+        f"{task_input_path}"
+    )
+
+    task_io_storage = BlobStorage.from_account_key(
+        f"blob://{task_input_uri.storage_account_name}/{task_input_uri.container_name}",
+        account_key=settings.blob_account_key,
+        account_url=settings.blob_account_url,
+    )
+
+    task_io_storage.write_text(
+        task_input_path,
+        run_msg.encoded(),
+    )
+
+    input_blob_sas_token = generate_blob_sas(
+        account_name=settings.blob_account_name,
+        account_key=settings.blob_account_key,
+        container_name=settings.task_io_blob_container,
+        blob_name=task_input_path,
+        start=datetime.now(),
+        expiry=datetime.utcnow() + timedelta(hours=24 * 7),
+        permission=BlobSasPermissions(read=True),
+    )
+
+    return BlobConfig(
+        uri=str(task_input_uri),
+        sas_token=input_blob_sas_token,
+        account_url=settings.blob_account_url,
+    )
+
+
+def prepare_task(
     submit_msg: TaskSubmitMessage,
     run_id: str,
     settings: ExecutorSettings,
-) -> Tuple[TaskRunMessage, Optional[Dict[str, str]]]:
+) -> PreparedTaskSubmitMessage:
     """
     Convert a submit message to a task run message
 
@@ -196,12 +248,12 @@ def submit_msg_to_task_run_msg(
     output_path = get_task_output_path(job_id, task_id, run_id)
     output_uri = (
         f"blob://{settings.blob_account_name}/"
-        f"{settings.log_blob_container}/{output_path}"
+        f"{settings.task_io_blob_container}/{output_path}"
     )
     output_blob_sas_token = generate_blob_sas(
         account_name=settings.blob_account_name,
         account_key=settings.blob_account_key,
-        container_name=settings.log_blob_container,
+        container_name=settings.task_io_blob_container,
         blob_name=output_path,
         start=datetime.now(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),
@@ -230,4 +282,13 @@ def submit_msg_to_task_run_msg(
         event_logger_app_insights_key=event_logger_app_insights_key,
     )
 
-    return (TaskRunMessage(args=task_config.args, config=config), task_tags)
+    run_msg = TaskRunMessage(args=task_config.args, config=config)
+
+    task_input_blob_config = write_task_run_msg(run_msg, settings)
+
+    return PreparedTaskSubmitMessage(
+        task_submit_message=submit_msg,
+        task_run_message=run_msg,
+        task_input_blob_config=task_input_blob_config,
+        task_tags=task_tags,
+    )
