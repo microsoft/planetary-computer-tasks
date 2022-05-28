@@ -68,6 +68,10 @@ class ExecutorSettings(PCTasksSettings):
     def section_name(cls) -> str:
         return "exec"
 
+    remote_runner_threads: int = 50
+    default_task_wait_seconds: int = 60
+    max_wait_retries: int = 10
+
     # Dev
     dev: bool = False
     local_executor_url: Optional[str] = None

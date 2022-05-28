@@ -6,14 +6,14 @@ from pctasks.core.models.base import RunRecordId
 from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.record import (
     JobRunRecord,
-    Record,
+    RunRecord,
     TaskRunRecord,
     WorkflowRunGroupRecord,
     WorkflowRunRecord,
 )
 from pctasks.core.tables.base import ModelTableService
 
-R = TypeVar("R", bound=Record)
+R = TypeVar("R", bound=RunRecord)
 
 logger = logging.getLogger(__name__)
 

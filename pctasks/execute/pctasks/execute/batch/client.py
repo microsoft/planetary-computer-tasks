@@ -6,6 +6,7 @@ import azure.batch.batch_auth as batchauth
 import azure.batch.models as batchmodels
 import dateutil.parser
 import msrest.exceptions
+from pctasks.core.utils.backoff import with_backoff
 import requests.exceptions
 import urllib3.exceptions
 from azure.batch import BatchServiceClient
@@ -15,7 +16,7 @@ from requests import Response
 
 from pctasks.core.models.record import TaskRunStatus
 from pctasks.core.utils import map_opt
-from pctasks.execute.batch.model import JobInfo
+from pctasks.execute.batch.model import BatchJobInfo
 from pctasks.execute.batch.task import BatchTask
 from pctasks.execute.batch.utils import make_unique_job_id
 from pctasks.execute.settings import BatchSettings
@@ -128,23 +129,33 @@ class BatchClient:
                 max_task_retry_count=max_retry_count
             ),
         )
-        logger.info(f"Adding BatchJob {job_id}")
-        self._client.job.add(job_param)
+        logger.info(f"(BATCH CLIENT) Adding BatchJob {job_id}")
+        with_backoff(lambda: self._client.job.add(job_param))
         return job_id
 
     def add_task(self, job_id: str, task: BatchTask) -> None:
         task_params = task.to_params()
         logger.info(f"Adding BatchTask {task.task_id}")
-        self._client.task.add(job_id=job_id, task=task_params)
+        with_backoff(lambda: self._client.task.add(job_id=job_id, task=task_params))
 
-    def add_collection(self, job_id: str, tasks: Iterable[BatchTask]) -> int:
+    def add_collection(
+        self, job_id: str, tasks: Iterable[BatchTask]
+    ) -> List[Optional[batchmodels.BatchError]]:
+        """Adds a collection of BatchTasks to the Batch job.
+
+        Returns an optional list of errors corresponding to each task.
+        If no error occurred for a task, the list entry will be None.
+        """
         params = [task.to_params() for task in tasks]
         try:
-            self._client.task.add_collection(
-                job_id=job_id,
-                value=params,
-                threads=self.settings.submit_threads,
+            result: batchmodels.TaskAddCollectionResult = with_backoff(
+                lambda: self._client.task.add_collection(
+                    job_id=job_id,
+                    value=params,
+                    threads=self.settings.submit_threads,
+                )
             )
+            task_results: List[batchmodels.TaskAddResult] = result.value  # type: ignore
         except CreateTasksErrorException as e:
             logger.warn("Failed to add tasks...")
             for exc in e.errors:
@@ -163,12 +174,14 @@ class BatchClient:
                         for detail in error_details:
                             logger.error(f"  - {detail.key}: {detail.value}")
             raise
-        return len(params)
+        return [r.error for r in task_results]
 
-    def get_job_info(self, job_id: str) -> JobInfo:
-        cloud_job = cast(batchmodels.CloudJob, self._client.job.get(job_id=job_id))
+    def get_job_info(self, job_id: str) -> BatchJobInfo:
+        cloud_job = with_backoff(
+            lambda: cast(batchmodels.CloudJob, self._client.job.get(job_id=job_id))
+        )
         tasks: List[batchmodels.CloudTask] = list(self._client.task.list(job_id))
-        return JobInfo.from_batch(cloud_job=cloud_job, tasks=tasks)
+        return BatchJobInfo.from_batch(cloud_job=cloud_job, tasks=tasks)
 
     def resubmit_failed_tasks(
         self,
@@ -350,7 +363,10 @@ class BatchClient:
         Otherwise, returns the status as the first tuple element.
         """
         try:
-            job = cast(batchmodels.CloudJob, self._client.job.get(job_id=job_id))
+            job = cast(
+                batchmodels.CloudJob,
+                with_backoff(lambda: self._client.job.get(job_id=job_id)),
+            )
             task = cast(
                 batchmodels.CloudTask,
                 self._client.task.get(job_id=job_id, task_id=task_id),
@@ -396,7 +412,10 @@ class BatchClient:
 
     def get_pool(self, pool_id: str) -> Optional[batchmodels.PoolInformation]:
         try:
-            return cast(batchmodels.PoolInformation, self._client.pool.get(pool_id))
+            return cast(
+                batchmodels.PoolInformation,
+                with_backoff(lambda: self._client.pool.get(pool_id)),
+            )
         except batchmodels.BatchErrorException as e:
             error: Any = e.error  # Avoid type hinting error
             if error.code == "PoolNotFound":

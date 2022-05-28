@@ -80,7 +80,8 @@ def remote_cmd(ctx: click.Context, workflow: str, arg: List[str]) -> None:
     runner = RemoteRunner(settings)
 
     submit_message.run_id = uuid4().hex
-    # submit_message = WorkflowSubmitMessage(workflow=workflow_config, args=workflow_args)
+    # submit_message = WorkflowSubmitMessage(
+    # workflow=workflow_config, args=workflow_args)
 
     runner.run_workflow(submit_message)
 

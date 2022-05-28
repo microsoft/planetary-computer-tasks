@@ -9,7 +9,6 @@ from pctasks.core.models.record import TaskRunStatus
 from pctasks.core.models.task import TaskRunMessage
 from pctasks.execute.executor.base import TaskExecutor
 from pctasks.execute.models import TaskPollResult, TaskSubmitMessage
-from pctasks.execute.settings import ExecutorSettings
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +29,6 @@ class LocalTaskExecutor(TaskExecutor):
         run_msg: TaskRunMessage,
         task_tags: Optional[Dict[str, str]],
         task_input_blob_config: BlobConfig,
-        settings: ExecutorSettings,
     ) -> Dict[str, Any]:
         args = [
             "task",
@@ -51,7 +49,6 @@ class LocalTaskExecutor(TaskExecutor):
         self,
         executor_id: Dict[str, Any],
         previous_poll_count: int,
-        settings: ExecutorSettings,
     ) -> TaskPollResult:
         try:
             resp = requests.get(self.local_executor_url + f"/poll/{executor_id['id']}")

@@ -11,7 +11,7 @@ from pctasks.cli.cli import cli_output
 from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.record import (
     JobRunRecord,
-    Record,
+    RunRecord,
     TaskRunRecord,
     WorkflowRunRecord,
 )
@@ -24,7 +24,7 @@ from pctasks.records.context import RecordsCommandContext
 from pctasks.records.query import query_logs
 from pctasks.records.settings import RecordsSettings
 
-T = TypeVar("T", bound=Record)
+T = TypeVar("T", bound=RunRecord)
 
 
 def fetch_record(

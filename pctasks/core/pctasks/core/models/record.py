@@ -78,7 +78,7 @@ class WorkflowRunGroupStatus(StrEnum):
     FAILED = "failed"
 
 
-class Record(PCBaseModel):
+class RunRecord(PCBaseModel):
     type: str
     created: datetime = Field(default_factory=datetime.utcnow)
     updated: datetime = Field(default_factory=datetime.utcnow)
@@ -93,7 +93,7 @@ class Record(PCBaseModel):
         self.updated = datetime.utcnow()
 
 
-class TaskRunRecord(Record):
+class TaskRunRecord(RunRecord):
     type: str = Field(default=RecordType.TASK, const=True)
 
     run_id: str
@@ -113,7 +113,7 @@ class TaskRunRecord(Record):
         self.set_update_time()
 
 
-class JobRunRecord(Record):
+class JobRunRecord(RunRecord):
     type: str = Field(default=RecordType.JOB, const=True)
 
     run_id: str
@@ -131,7 +131,7 @@ class JobRunRecord(Record):
         return v
 
 
-class WorkflowRunRecord(Record):
+class WorkflowRunRecord(RunRecord):
     type: str = Field(default=RecordType.WORKFLOW, const=True)
 
     dataset: DatasetIdentifier
@@ -147,7 +147,7 @@ class WorkflowRunRecord(Record):
     updated: datetime = Field(default_factory=datetime.utcnow)
 
 
-class WorkflowRunGroupRecord(Record):
+class WorkflowRunGroupRecord(RunRecord):
     type: str = Field(default=RecordType.WORKFLOW_GROUP, const=True)
 
     dataset: DatasetIdentifier

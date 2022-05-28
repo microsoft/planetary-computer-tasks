@@ -42,18 +42,18 @@ from pctasks.submit.client import SubmitClient
 logger = logging.getLogger(__name__)
 
 
-def submit(msg: TaskSubmitMessage, event_logger: RunLogger) -> TaskSubmitResult:
-    event_logger.log(msg.json(indent=2))
-    settings = ExecutorSettings.get()
-    try:
-        return submit_tasks(
-            [msg],
-            event_logger=event_logger,
-            settings=settings,
-        )
-    except Exception as e:
-        event_logger.error(f"Failed to submit task: {e}")
-        return TaskSubmitResult(result=FailedSubmitResult(errors=[str(e)]))
+# def submit(msg: TaskSubmitMessage, event_logger: RunLogger) -> TaskSubmitResult:
+#     event_logger.log(msg.json(indent=2))
+#     settings = ExecutorSettings.get()
+#     try:
+#         return submit_tasks(
+#             [msg],
+#             event_logger=event_logger,
+#             settings=settings,
+#         )
+#     except Exception as e:
+#         event_logger.error(f"Failed to submit task: {e}")
+#         return TaskSubmitResult(result=FailedSubmitResult(errors=[str(e)]))
 
 
 def poll(msg: TaskPollMessage, event_logger: RunLogger) -> TaskPollResult:
@@ -220,20 +220,4 @@ def update_record(
         return UpdateRecordResult(error=str(e))
 
 
-def send_notification(
-    message: NotificationSubmitMessage, event_logger: RunLogger
-) -> NotificationSubmitResult:
-    event_logger.info(
-        f"Sending notification of type {message.notification.event.type}..."
-    )
-    settings = ExecutorSettings.get()
-    try:
-        with QueueService.from_connection_string(
-            connection_string=settings.notification_queue.connection_string,
-            queue_name=settings.notification_queue.queue_name,
-        ) as queue:
-            msg_id = queue.send_message(message.dict())
-            event_logger.info(f"Notification sent, queue id {msg_id}")
-    except Exception as e:
-        return NotificationSubmitResult(error=str(e))
-    return NotificationSubmitResult()
+

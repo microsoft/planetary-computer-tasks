@@ -15,7 +15,7 @@ class BatchTaskId(PCBaseModel):
 # Azure Batch models
 
 
-class JobState(Enum):
+class BatchJobState(Enum):
     ACTIVE = "active"
     COMPLETED = "completed"
     FAILED = "failed"
@@ -23,15 +23,15 @@ class JobState(Enum):
     @classmethod
     def from_batch(
         cls, job_state: batchmodels.JobState, failed_tasks: bool
-    ) -> "JobState":
+    ) -> "BatchJobState":
         if (
             job_state == batchmodels.JobState.completed
             or job_state == batchmodels.JobState.terminating
         ):
             if failed_tasks:
-                return JobState.FAILED
+                return BatchJobState.FAILED
             else:
-                return JobState.COMPLETED
+                return BatchJobState.COMPLETED
 
         active_states = [
             batchmodels.JobState.active,
@@ -42,19 +42,19 @@ class JobState(Enum):
         ]
 
         if job_state in active_states:
-            return JobState.ACTIVE
+            return BatchJobState.ACTIVE
 
         raise ValueError(f"Unknown JobState {job_state}")
 
 
 @dataclass
-class JobInfo:
-    state: JobState
+class BatchJobInfo:
+    state: BatchJobState
 
     @classmethod
     def from_batch(
         cls, cloud_job: batchmodels.CloudJob, tasks: List[batchmodels.CloudTask]
-    ) -> "JobInfo":
+    ) -> "BatchJobInfo":
         failed_tasks = [
             cast(batchmodels.CloudTask, task)
             for task in tasks
@@ -62,8 +62,8 @@ class JobInfo:
             == "failure"
         ]
 
-        state = JobState.from_batch(
+        state = BatchJobState.from_batch(
             cast(batchmodels.JobState, cloud_job.state), failed_tasks=any(failed_tasks)
         )
 
-        return JobInfo(state=state)
+        return BatchJobInfo(state=state)

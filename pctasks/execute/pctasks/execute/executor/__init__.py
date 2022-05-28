@@ -12,4 +12,4 @@ def get_executor(settings: Optional[ExecutorSettings] = None) -> TaskExecutor:
     if settings.local_executor_url:
         return LocalTaskExecutor(settings.local_executor_url)
     else:
-        return BatchTaskExecutor()
+        return BatchTaskExecutor(settings)

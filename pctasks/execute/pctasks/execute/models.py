@@ -66,10 +66,6 @@ class PreparedTaskSubmitMessage(PCBaseModel):
 class SuccessfulSubmitResult(PCBaseModel):
     success: bool = True
     executor_id: Dict[str, Any]
-    signal_key: str
-    output_uri: str
-    log_uri: str
-    output_account_url: Optional[str] = None
 
 
 class FailedSubmitResult(PCBaseModel):
@@ -98,6 +94,7 @@ class TaskPollResult(PCBaseModel):
         return (
             self.task_status == TaskRunStatus.COMPLETED
             or self.task_status == TaskRunStatus.FAILED
+            or self.task_status == TaskRunStatus.CANCELLED
         )
 
 
