@@ -1,8 +1,9 @@
 import logging
 import os
-from typing import Any, Dict, Iterable, Optional, Set
+from typing import Any, Callable, Dict, Iterable, Optional, Set, TypeVar
 
 import orjson
+import psycopg
 from pypgstac.db import PgstacDB
 from pypgstac.load import Loader, Methods
 
@@ -10,12 +11,30 @@ from pctasks.core.utils import grouped
 
 logger = logging.getLogger(__name__)
 
+T = TypeVar("T")
+
 
 class PgSTAC:
     def __init__(self, pg_connection_string: str) -> None:
         self.db = PgstacDB(pg_connection_string, debug=True)
         # self.db.connect()
         self.loader = Loader(self.db)
+
+    def _with_connection_retry(self, func: Callable[[], T], retries: int = 0) -> T:
+        """Tries a function against the DB, retires on connection timout."""
+        MAX_RETRIES = 1
+        try:
+            return func()
+        except psycopg.OperationalError as e:
+            if "connection" in str(e).lower():
+                logger.warning(f"  ...Connection broken; retrying connection: {e}")
+                if retries >= MAX_RETRIES:
+                    raise
+                self.db.disconnect()
+                self.db.connect()
+                return self._with_connection_retry(func, retries + 1)
+            else:
+                raise
 
     def ingest_items(
         self,
@@ -30,33 +49,41 @@ class PgSTAC:
 
         for i, group in enumerate(groups):
             logger.info(f"  ...Loading group {i+1}")
-            self.loader.load_items(iter(group), insert_mode=mode)
+            self._with_connection_retry(
+                lambda: self.loader.load_items(iter(group), insert_mode=mode)
+            )
 
     def ingest_collections(
         self,
         collections: Iterable[Dict[str, Any]],
         mode: Methods = Methods.upsert,
     ) -> None:
-        self.loader.load_collections(
-            iter([orjson.dumps(c) for c in collections]), insert_mode=mode
+        self._with_connection_retry(
+            lambda: self.loader.load_collections(
+                iter([orjson.dumps(c) for c in collections]), insert_mode=mode
+            )
         )
 
     def existing_items(self, collection_id: str, item_ids: Set[str]) -> Set[str]:
         """The IDs of Items that already exist in the database."""
-        rows = self.db.query(
-            """
+        rows = self._with_connection_retry(
+            lambda: self.db.query(
+                """
                 SELECT id from items where id = ANY(%s) and collection = %s
             """,
-            args=[list(item_ids), collection_id],
+                args=[list(item_ids), collection_id],
+            )
         )
         return set([row[0] for row in rows])
 
     def collection_exists(self, collection_id: str) -> bool:
-        rows = self.db.query(
-            """
+        rows = self._with_connection_retry(
+            lambda: self.db.query(
+                """
                 SELECT id from collections where id = %s
             """,
-            args=[collection_id],
+                args=[collection_id],
+            )
         )
 
         return any(rows)
