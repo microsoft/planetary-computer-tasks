@@ -135,7 +135,37 @@ class ContainerClientWrapper:
         self._account_client.close()
 
 
-class BlobStorageMixin:
+class BlobStorage(Storage):
+    """Utility class for blob storage access.
+    Represents access to a single blob container, with an optional prefix.
+
+    If a prefix is applied, then paths will be relative to that prefix.
+    E.g. if BlobStorage for a BlobUri 'blob://somesa/some-container/some/folder'
+    is used, then doing an operation like open_file on the file_path 'file.txt'
+    will open the blob at 'blob://somesa/some-container/some/folder/file.txt'.
+
+    Args:
+        storage_account_name: The storage account name,
+            e.g. 'modissa'
+        container_name: The container name to access.
+        prefix: Optional prefix to base all paths off of.
+        sas_token: Optional  SAS token.
+            If not supplied, uses DefaultAzureCredentials, in which you
+            need to make sure the environment variables
+            AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and
+            AZURE_TENANT_ID are set.
+        account_url: Optional account URL. If not supplied, uses
+            the defualt Azure blob URL for a storage account.
+
+    Note:
+
+    If a service principle is used, make sure
+    an appropriate IAM role (e.g. Storage Blob Data Contributor) on
+    the storage account is assigned.
+
+    See Storage for method docstrings.
+    """
+
     _blob_creds: Union[
         ClientSecretCredential, DefaultAzureCredential, Dict[str, str], str
     ]
@@ -202,6 +232,16 @@ class BlobStorageMixin:
             f"/{self.container_name}{prefix_part})"
         )
 
+    def _get_client(self) -> ContainerClientWrapper:
+        account_client = BlobServiceClient(
+            account_url=self.account_url,
+            credential=self._blob_creds,
+        )
+
+        container_client = account_client.get_container_client(self.container_name)
+
+        return ContainerClientWrapper(account_client, container_client)
+
     def _get_name_starts_with(
         self, additional_prefix: Optional[str] = None
     ) -> Optional[str]:
@@ -233,23 +273,17 @@ class BlobStorageMixin:
         else:
             return os.path.join(container_uri, self.prefix)
 
-    @classmethod
-    def from_uri(
-        cls,
-        blob_uri: Union[BlobUri, str],
-        sas_token: Optional[str] = None,
-        account_url: Optional[str] = None,
-    ) -> "BlobStorage":
-        # TODO: Fix this type to be Type[cls] or something.
-        if isinstance(blob_uri, str):
-            blob_uri = BlobUri(blob_uri)
-
-        return cls(
-            storage_account_name=blob_uri.storage_account_name,
-            container_name=blob_uri.container_name,
-            prefix=blob_uri.blob_name,
-            sas_token=sas_token,
-            account_url=account_url,
+    def get_substorage(self, path: str) -> "Storage":
+        if self.prefix is None:
+            subprefix = path
+        else:
+            subprefix = os.path.join(self.prefix, path)
+        return BlobStorage(
+            storage_account_name=self.storage_account_name,
+            container_name=self.container_name,
+            prefix=subprefix,
+            sas_token=self.sas_token,
+            account_url=self.account_url,
         )
 
     def get_url(self, file_path: str) -> str:
@@ -280,47 +314,16 @@ class BlobStorageMixin:
         else:
             return blob_uri.blob_name or ""
 
+    def get_file_info(self, file_path: str) -> StorageFileInfo:
+        with self._get_client() as client:
+            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
+                props = with_backoff(lambda: blob.get_blob_properties())
+                return StorageFileInfo(size=cast(int, props.size))
 
-class BlobStorage(BlobStorageMixin, Storage):
-    """Utility class for blob storage access.
-    Represents access to a single blob container, with an optional prefix.
-
-    If a prefix is applied, then paths will be relative to that prefix.
-    E.g. if BlobStorage for a BlobUri 'blob://somesa/some-container/some/folder'
-    is used, then doing an operation like open_file on the file_path 'file.txt'
-    will open the blob at 'blob://somesa/some-container/some/folder/file.txt'.
-
-    Args:
-        storage_account_name: The storage account name,
-            e.g. 'modissa'
-        container_name: The container name to access.
-        prefix: Optional prefix to base all paths off of.
-        sas_token: Optional  SAS token.
-            If not supplied, uses DefaultAzureCredentials, in which you
-            need to make sure the environment variables
-            AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and
-            AZURE_TENANT_ID are set.
-        account_url: Optional account URL. If not supplied, uses
-            the defualt Azure blob URL for a storage account.
-
-    Note:
-
-    If a service principle is used, make sure
-    an appropriate IAM role (e.g. Storage Blob Data Contributor) on
-    the storage account is assigned.
-
-    See Storage for method docstrings.
-    """
-
-    def _get_client(self) -> ContainerClientWrapper:
-        account_client = BlobServiceClient(
-            account_url=self.account_url,
-            credential=self._blob_creds,
-        )
-
-        container_client = account_client.get_container_client(self.container_name)
-
-        return ContainerClientWrapper(account_client, container_client)
+    def file_exists(self, file_path: str) -> bool:
+        with self._get_client() as client:
+            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
+                return with_backoff(lambda: blob.exists())
 
     def list_files(
         self,
@@ -410,7 +413,6 @@ class BlobStorage(BlobStorageMixin, Storage):
         ) -> Tuple[List[str], List[str]]:
             folders = []
             files = []
-            breakpoint()
             for item in client.container.walk_blobs(name_starts_with=full_prefix):
                 item_name: str = cast(str, item.name)
                 name = os.path.relpath(item_name, full_prefix)
@@ -445,7 +447,6 @@ class BlobStorage(BlobStorageMixin, Storage):
 
                 next_level_prefixes: List[str] = []
                 for full_prefix in full_prefixes:
-                    breakpoint()
                     if walk_limit and walk_count >= walk_limit:
                         limit_break = True
                         break
@@ -492,17 +493,6 @@ class BlobStorage(BlobStorageMixin, Storage):
                 with open(output_path, "wb" if is_binary else "w") as f:
                     with_backoff(lambda: blob.download_blob().readinto(f))
 
-    def file_exists(self, file_path: str) -> bool:
-        with self._get_client() as client:
-            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
-                return with_backoff(lambda: blob.exists())
-
-    def get_file_info(self, file_path: str) -> StorageFileInfo:
-        with self._get_client() as client:
-            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
-                props = with_backoff(lambda: blob.get_blob_properties())
-                return StorageFileInfo(size=cast(int, props.size))
-
     def upload_file(
         self,
         input_path: str,
@@ -519,19 +509,6 @@ class BlobStorage(BlobStorageMixin, Storage):
                         blob.upload_blob(f, overwrite=overwrite)
 
                 with_backoff(_upload)
-
-    def get_substorage(self, path: str) -> "Storage":
-        if self.prefix is None:
-            subprefix = path
-        else:
-            subprefix = os.path.join(self.prefix, path)
-        return BlobStorage(
-            storage_account_name=self.storage_account_name,
-            container_name=self.container_name,
-            prefix=subprefix,
-            sas_token=self.sas_token,
-            account_url=self.account_url,
-        )
 
     def read_bytes(self, file_path: str) -> bytes:
         try:
@@ -552,6 +529,12 @@ class BlobStorage(BlobStorageMixin, Storage):
                 f"Could not read text from {self.get_uri(file_path)}"
             ) from e
 
+    def write_bytes(self, file_path: str, data: bytes, overwrite: bool = True) -> None:
+        full_path = self._add_prefix(file_path)
+        with self._get_client() as client:
+            with client.container.get_blob_client(full_path) as blob:
+                with_backoff(lambda: blob.upload_blob(data, overwrite=overwrite))
+
     def delete_folder(self, folder_path: Optional[str] = None) -> None:
         for file_path in self.list_files(name_starts_with=folder_path):
             self.delete_file(file_path)
@@ -561,11 +544,23 @@ class BlobStorage(BlobStorageMixin, Storage):
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 with_backoff(lambda: blob.delete_blob())
 
-    def write_bytes(self, file_path: str, data: bytes, overwrite: bool = True) -> None:
-        full_path = self._add_prefix(file_path)
-        with self._get_client() as client:
-            with client.container.get_blob_client(full_path) as blob:
-                with_backoff(lambda: blob.upload_blob(data, overwrite=overwrite))
+    @classmethod
+    def from_uri(
+        cls,
+        blob_uri: Union[BlobUri, str],
+        sas_token: Optional[str] = None,
+        account_url: Optional[str] = None,
+    ) -> "BlobStorage":
+        if isinstance(blob_uri, str):
+            blob_uri = BlobUri(blob_uri)
+
+        return cls(
+            storage_account_name=blob_uri.storage_account_name,
+            container_name=blob_uri.container_name,
+            prefix=blob_uri.blob_name,
+            sas_token=sas_token,
+            account_url=account_url,
+        )
 
     @classmethod
     def from_account_key(
