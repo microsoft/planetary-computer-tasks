@@ -6,7 +6,7 @@ from pctasks.dev.secrets import TempSecrets
 from pctasks.dev.tables import TempTable
 from pctasks.execute.models import TaskSubmitMessage
 from pctasks.execute.settings import ExecutorSettings
-from pctasks.execute.task.run_message import prepare_task
+from pctasks.execute.task.prepare import prepare_task
 
 
 def test_image_key_environment_merged():
@@ -57,12 +57,13 @@ def test_image_key_environment_merged():
                 ),
             )
 
-            run_msg, task_tags = prepare_task(
+            prepared_task = prepare_task(
                 submit_msg=submit_msg,
                 run_id=run_id,
                 settings=exec_settings,
             )
 
+            run_msg = prepared_task.task_run_message
             assert run_msg.config.environment
             assert "TEST_ENV_VAR" in run_msg.config.environment
             assert run_msg.config.environment["TEST_ENV_VAR"] == secret_value

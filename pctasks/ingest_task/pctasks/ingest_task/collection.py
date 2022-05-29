@@ -18,6 +18,7 @@ def ingest_collection(
     Returns True if the collection was inserted, False if it was updated.
     """
     import json
+
     logger.info(json.dumps(collection, indent=2))
     collection_id = collection["id"]
     logger.info(f"Ingesting collection {collection_id}")

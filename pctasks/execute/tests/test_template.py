@@ -1,9 +1,10 @@
 from typing import Any, Dict, List, Union
 
+import pytest
+
 from pctasks.core.models.base import ForeachConfig
 from pctasks.core.utils.template import TemplateError
 from pctasks.execute.template import template_foreach
-import pytest
 
 
 def test_template_foreach():

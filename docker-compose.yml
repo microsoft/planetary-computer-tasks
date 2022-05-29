@@ -129,6 +129,11 @@ services:
       - "8899:8000"
     volumes:
       - .:/opt/src
+    environment:
+      # Dev storage settings
+      - AZURITE_HOST=azurite
+      - AZURITE_PORT=10000
+      - AZURITE_STORAGE_ACCOUNT=devstoreaccount1
     command:
       [
         "uvicorn",

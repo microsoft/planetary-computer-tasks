@@ -1,8 +1,7 @@
-from datetime import datetime
 import os
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
-from pctasks.core.storage.blob import BlobUri
 
 from pydantic import Field, validator
 
@@ -12,6 +11,7 @@ from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.tokens import ContainerTokens, StorageAccountTokens
 from pctasks.core.storage import get_storage
 from pctasks.core.storage.base import Storage
+from pctasks.core.storage.blob import BlobUri
 from pctasks.core.tables.base import InvalidTableKeyError, validate_table_key
 from pctasks.dataset.constants import DEFAULT_CHUNK_LENGTH
 

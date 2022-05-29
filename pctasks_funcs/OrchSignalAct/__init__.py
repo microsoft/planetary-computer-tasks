@@ -3,7 +3,6 @@
 import logging
 
 import azure.durable_functions as df
-
 from func_lib.models import OrchSignal
 
 logger = logging.getLogger(__name__)

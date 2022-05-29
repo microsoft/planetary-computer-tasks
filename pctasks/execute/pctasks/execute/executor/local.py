@@ -1,14 +1,17 @@
 import json
 import logging
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Union
 
 import requests
 
-from pctasks.core.models.config import BlobConfig
 from pctasks.core.models.record import TaskRunStatus
-from pctasks.core.models.task import TaskRunMessage
 from pctasks.execute.executor.base import TaskExecutor
-from pctasks.execute.models import TaskPollResult, TaskSubmitMessage
+from pctasks.execute.models import (
+    FailedSubmitResult,
+    PreparedTaskSubmitMessage,
+    SuccessfulSubmitResult,
+    TaskPollResult,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -24,26 +27,33 @@ class LocalTaskExecutor(TaskExecutor):
         self.local_executor_url = local_executor_url
 
     def submit(
-        self,
-        submit_msg: TaskSubmitMessage,
-        run_msg: TaskRunMessage,
-        task_tags: Optional[Dict[str, str]],
-        task_input_blob_config: BlobConfig,
-    ) -> Dict[str, Any]:
-        args = [
-            "task",
-            "run",
-            task_input_blob_config.uri,
-            "--sas-token",
-            task_input_blob_config.sas_token,
-        ]
+        self, prepared_tasks: List[PreparedTaskSubmitMessage]
+    ) -> List[Union[SuccessfulSubmitResult, FailedSubmitResult]]:
+        results: List[Union[SuccessfulSubmitResult, FailedSubmitResult]] = []
+        for prepared_task in prepared_tasks:
+            task_input_blob_config = prepared_task.task_input_blob_config
+            task_tags = prepared_task.task_tags
+            args = [
+                "task",
+                "run",
+                task_input_blob_config.uri,
+                "--sas-token",
+                task_input_blob_config.sas_token,
+            ]
 
-        if task_input_blob_config.account_url:
-            args.extend(["--account-url", task_input_blob_config.account_url])
+            if task_input_blob_config.account_url:
+                args.extend(["--account-url", task_input_blob_config.account_url])
 
-        data = json.dumps({"args": args}).encode("utf-8")
-        resp = requests.post(self.local_executor_url + "/execute", data=data)
-        return resp.json()
+            data = json.dumps({"args": args, "tags": task_tags or {}}).encode("utf-8")
+            resp = requests.post(self.local_executor_url + "/execute", data=data)
+            if resp.status_code == 200:
+                results.append(SuccessfulSubmitResult(executor_id=resp.json()))
+            else:
+                results.append(
+                    FailedSubmitResult(errors=[f"{resp.status_code}: {resp.text}"])
+                )
+
+        return results
 
     def poll_task(
         self,
@@ -54,8 +64,11 @@ class LocalTaskExecutor(TaskExecutor):
             resp = requests.get(self.local_executor_url + f"/poll/{executor_id['id']}")
             if resp.status_code == 200:
                 return TaskPollResult.parse_obj(resp.json())
-            else:
+            elif resp.status_code == 404:
                 return TaskPollResult(task_status=TaskRunStatus.PENDING)
+            else:
+                resp.raise_for_status()
+                raise Exception(f"Unexpected status code: {resp.status_code}")
         except Exception as e:
             logger.exception(e)
             return TaskPollResult(task_status=TaskRunStatus.FAILED)

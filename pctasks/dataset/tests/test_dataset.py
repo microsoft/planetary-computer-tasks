@@ -3,9 +3,11 @@ import logging
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Set
-import orjson
-from pctasks.cli.cli import setup_logging
 
+import orjson
+import pystac
+
+from pctasks.cli.cli import setup_logging
 from pctasks.core.storage import StorageFactory
 from pctasks.core.storage.blob import BlobUri
 from pctasks.core.tokens import Tokens
@@ -18,7 +20,6 @@ from pctasks.dev.blob import (
 )
 from pctasks.execute.runner.local import LocalRunner
 from pctasks.task.context import TaskContext
-import pystac
 
 HERE = Path(__file__).parent
 DATASET_PATH = HERE / "data-files/datasets/test-dataset.yaml"

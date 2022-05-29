@@ -6,7 +6,6 @@ import azure.batch.batch_auth as batchauth
 import azure.batch.models as batchmodels
 import dateutil.parser
 import msrest.exceptions
-from pctasks.core.utils.backoff import with_backoff
 import requests.exceptions
 import urllib3.exceptions
 from azure.batch import BatchServiceClient
@@ -16,6 +15,7 @@ from requests import Response
 
 from pctasks.core.models.record import TaskRunStatus
 from pctasks.core.utils import map_opt
+from pctasks.core.utils.backoff import with_backoff
 from pctasks.execute.batch.model import BatchJobInfo
 from pctasks.execute.batch.task import BatchTask
 from pctasks.execute.batch.utils import make_unique_job_id

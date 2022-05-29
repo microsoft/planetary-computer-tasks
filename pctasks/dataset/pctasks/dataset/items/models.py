@@ -1,11 +1,11 @@
 from typing import Any, Dict, Optional
-from pctasks.dataset.chunks.constants import ITEM_CHUNKS_PREFIX
-from pctasks.dataset.chunks.models import ChunkInfo
 
 from pydantic import validator
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.task import TaskConfig
+from pctasks.dataset.chunks.constants import ITEM_CHUNKS_PREFIX
+from pctasks.dataset.chunks.models import ChunkInfo
 from pctasks.dataset.constants import CREATE_ITEMS_TASK_ID
 from pctasks.dataset.models import CollectionConfig, DatasetConfig
 

@@ -108,9 +108,7 @@ class ChunkSet:
 
         return ChunkSet(LocalStorage(path))
 
-    def write_chunk(
-        self, chunk_id: str, lines: Union[List[str], List[bytes]]
-    ) -> None:
+    def write_chunk(self, chunk_id: str, lines: Union[List[str], List[bytes]]) -> None:
         if len(lines) > 0:
             if type(lines[0]) is str:
                 self._all_storage.write_text(

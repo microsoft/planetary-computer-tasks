@@ -3,7 +3,7 @@ import math
 import random
 import time
 from concurrent import futures
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Set, Union
 
 from pctasks.core.logging import RunLogger
 from pctasks.core.models.event import NotificationSubmitMessage
@@ -48,15 +48,11 @@ from pctasks.execute.template import (
 logger = logging.getLogger(__name__)
 
 
-MAX_POLLS = 10000
-DEFAULT_WAIT_SECONDS = 10
-MAX_WAIT_RETRIES = 10
-MAX_TASK_TIME = 60 * 60 * 24 * 7  # 1 week
-POLL_INTERVAL = 60  # seconds
-CHECK_OUTPUT_INTERVAL = 5  # seconds
-
-
 class RemoteRunnerError(Exception):
+    pass
+
+
+class WorkflowFailedError(Exception):
     pass
 
 
@@ -64,13 +60,13 @@ class RemoteRunner:
     """Runs a workflow through executing tasks remotely via a task executor."""
 
     def __init__(self, executor_settings: Optional[ExecutorSettings] = None) -> None:
-        self.executor_settings = executor_settings or ExecutorSettings.get()
-        self.executor = get_executor(self.executor_settings)
-        self.record_updater = RecordUpdater(self.executor_settings)
+        self.settings = executor_settings or ExecutorSettings.get()
+        self.executor = get_executor(self.settings)
+        self.record_updater = RecordUpdater(self.settings)
 
     def create_job_state(self, job_submit_message: JobSubmitMessage) -> JobState:
         """Create a job state from a job submit message."""
-        job_state = JobState.create(job_submit_message, self.executor_settings)
+        job_state = JobState.create(job_submit_message, self.settings)
         self.record_updater.upsert_record(
             record=JobRunRecord(
                 run_id=job_state.job_submit_message.run_id,
@@ -126,7 +122,7 @@ class RemoteRunner:
         self, notification_submit_message: NotificationSubmitMessage
     ) -> None:
         """Send a notification to the notification queue."""
-        queue_settings = self.executor_settings.notification_queue
+        queue_settings = self.settings.notification_queue
         with QueueService.from_connection_string(
             connection_string=queue_settings.connection_string,
             queue_name=queue_settings.queue_name,
@@ -171,8 +167,8 @@ class RemoteRunner:
 
         This is a blocking loop that is meant to be called on it's own thread.
         """
-        task_io_storage = self.executor_settings.get_task_io_storage()
-        task_log_storage = self.executor_settings.get_log_storage()
+        task_io_storage = self.settings.get_task_io_storage()
+        task_log_storage = self.settings.get_log_storage()
 
         completed_job_count = 0
         failed_job_count = 0
@@ -210,18 +206,18 @@ class RemoteRunner:
                     # wait time expired, sets status to NEW
                     task_state.update_if_waiting()
 
-                    if task_state.should_check_output(CHECK_OUTPUT_INTERVAL):
+                    if task_state.should_check_output(
+                        self.settings.check_output_seconds
+                    ):
                         task_state.process_output_if_available(
-                            task_io_storage, self.executor_settings
+                            task_io_storage, self.settings
                         )
 
                     # If not completed through output, poll
                     # the executor in case of other failure.
-                    if task_state.should_poll(POLL_INTERVAL):
+                    if task_state.should_poll(self.settings.task_poll_seconds):
                         print(f" ~ Polling {job_state.job_id}:{task_state.task_id}")
-                        task_state.poll(
-                            self.executor, task_io_storage, self.executor_settings
-                        )
+                        task_state.poll(self.executor, task_io_storage, self.settings)
 
                     #
                     # Act on task state
@@ -271,7 +267,7 @@ class RemoteRunner:
 
                     elif task_state.status == TaskStateStatus.FAILED:
 
-                        logger.info(
+                        logger.warning(
                             f"Task failed: {job_state.job_id} - {task_state.task_id}"
                         )
 
@@ -317,6 +313,8 @@ class RemoteRunner:
                             )
                         )
 
+                        logger.warning(f"Job failed: {job_state.job_id}")
+
                         _report_status()
 
                     elif task_state.status == TaskStateStatus.COMPLETED:
@@ -328,7 +326,6 @@ class RemoteRunner:
                         job_state.task_outputs[task_state.task_id] = {
                             "output": task_state.task_result.output
                         }
-                        completed_job_count += 1
 
                         self.record_updater.update_record(
                             TaskRunRecordUpdate(
@@ -343,15 +340,17 @@ class RemoteRunner:
                             )
                         )
 
-                        job_state.prepare_next_task(self.executor_settings)
+                        job_state.prepare_next_task(self.settings)
 
                         # Handle job completion
                         if job_state.current_task is None:
                             try:
                                 self.succeed_job(job_state)
+                                completed_job_count += 1
+                                logger.info(f"Job completed: {job_state.job_id}")
                             except Exception as e:
                                 job_state.status = JobStateStatus.FAILED
-
+                                failed_job_count += 1
                                 self.record_updater.update_record(
                                     JobRunRecordUpdate(
                                         status=JobRunStatus.FAILED,
@@ -393,7 +392,7 @@ class RemoteRunner:
         run_id = submit_message.run_id
 
         pool = futures.ThreadPoolExecutor(
-            max_workers=self.executor_settings.remote_runner_threads
+            max_workers=self.settings.remote_runner_threads
         )
 
         logger.info("***********************************")
@@ -414,12 +413,16 @@ class RemoteRunner:
             ),
         )
 
+        workflow_errors: List[str] = []
         job_outputs: Dict[str, Union[Dict[str, Any], List[Dict[str, Any]]]] = {}
 
         workflow_jobs = list(workflow.jobs.values())
         sorted_jobs = sort_jobs(workflow_jobs)
         logger.info(f"Running jobs: {[j.id for j in sorted_jobs]}")
         for base_job in sorted_jobs:
+            if workflow_errors:
+                break
+
             msg = f"Running job: {base_job.id}"
             logger.info(msg)
             run_logger.info(msg)
@@ -505,8 +508,7 @@ class RemoteRunner:
                         job_states,
                         int(
                             math.ceil(
-                                len(job_states)
-                                / self.executor_settings.remote_runner_threads
+                                len(job_states) / self.settings.remote_runner_threads
                             )
                         ),
                     )
@@ -537,6 +539,7 @@ class RemoteRunner:
             job_results: List[Dict[str, Any]] = []
 
             job_done_count = 0
+            failed_jobs: Set[str] = set()
             for job_future in futures.as_completed(job_futures.keys()):
                 job_states = job_futures[job_future]
 
@@ -568,26 +571,47 @@ class RemoteRunner:
 
                 job_done_count += len(job_states)
                 for job_state in job_states:
-                    logger.info(
-                        f" -- Job {job_state.job_submit_message.job_id} completed. "
-                    )
-                    job_results.append(job_state.task_outputs)
+                    if job_state.status == JobStateStatus.FAILED:
+                        failed_jobs.add(job_state.job_id)
+                    else:
+                        job_results.append(job_state.task_outputs)
 
                 logger.info(f"Jobs progress: ({job_done_count}/{total_job_count})")
 
-            if len(job_results) == 1:
-                job_outputs[base_job.get_id()] = {TASKS_TEMPLATE_PATH: job_results[0]}
+            if failed_jobs:
+                workflow_errors.extend(
+                    [f"Job failed: {job_id}" for job_id in failed_jobs]
+                )
             else:
-                job_output_entry: List[Dict[str, Any]] = []
-                for job_result in job_results:
-                    job_output_entry.append({TASKS_TEMPLATE_PATH: job_result})
-                job_outputs[base_job.get_id()] = job_output_entry
+                if len(job_results) == 1:
+                    job_outputs[base_job.get_id()] = {
+                        TASKS_TEMPLATE_PATH: job_results[0]
+                    }
+                else:
+                    job_output_entry: List[Dict[str, Any]] = []
+                    for job_result in job_results:
+                        job_output_entry.append({TASKS_TEMPLATE_PATH: job_result})
+                    job_outputs[base_job.get_id()] = job_output_entry
 
-            run_logger.log_event(
-                status=JobRunStatus.COMPLETED,
-                message=f"Job group {base_job.id} completed.",
+        if workflow_errors:
+            logger.info("Workflow failed!")
+            self.record_updater.update_record(
+                WorkflowRunRecordUpdate(
+                    dataset=workflow.get_dataset_id(),
+                    run_id=run_id,
+                    status=WorkflowRunStatus.FAILED,
+                    errors=workflow_errors,
+                )
             )
-
-        logger.info("Workflow completed.")
+            raise WorkflowFailedError(f"Workflow '{workflow.name}' failed.")
+        else:
+            logger.info("Workflow completed!")
+            self.record_updater.update_record(
+                WorkflowRunRecordUpdate(
+                    dataset=workflow.get_dataset_id(),
+                    run_id=run_id,
+                    status=WorkflowRunStatus.COMPLETED,
+                )
+            )
 
         return job_outputs

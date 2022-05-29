@@ -3,16 +3,16 @@ import os
 import pathlib
 from typing import Any, Dict, cast
 
+import pystac
+from pypgstac.db import PgstacDB
+
 from pctasks.core.models.task import FailedTaskResult
 from pctasks.dev.mocks import MockTaskContext
 from pctasks.ingest.constants import DB_CONNECTION_STRING_ENV_VALUE
 from pctasks.ingest.models import IngestTaskInput
 from pctasks.ingest.utils import generate_collection_json
 from pctasks.ingest_task.task import ingest_task
-import pystac
 from tests.conftest import ingest_test_environment
-
-from pypgstac.db import PgstacDB
 
 HERE = pathlib.Path(__file__).parent
 TEST_COLLECTION = HERE / "data-files/test_collection.json"
@@ -58,9 +58,9 @@ def test_collection_template():
         print(input_model_yaml)
         input_model = IngestTaskInput.from_yaml(input_model_yaml)
 
-        from pctasks.execute.models import TaskSubmitMessage
-        from pctasks.core.models.task import TaskConfig
         from pctasks.core.models.dataset import DatasetIdentifier
+        from pctasks.core.models.task import TaskConfig
+        from pctasks.execute.models import TaskSubmitMessage
 
         submit_msg = TaskSubmitMessage(
             instance_id="instance_id",
@@ -71,16 +71,14 @@ def test_collection_template():
                 id="task_id",
                 image="mock-image",
                 task="whatever.task",
-                args=input_model.dict()
-            )
+                args=input_model.dict(),
+            ),
         )
 
         print(submit_msg.json())
         raise Exception()
 
-        result = ingest_task.run(
-            input=input_model, context=task_context
-        )
+        result = ingest_task.run(input=input_model, context=task_context)
 
         assert not isinstance(result, FailedTaskResult)
 

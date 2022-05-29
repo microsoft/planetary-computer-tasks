@@ -1,20 +1,39 @@
+import multiprocessing
 import os
 import sys
-import multiprocessing
-from typing import Any, Optional, AsyncIterable, AsyncIterator, Iterator, AsyncGenerator, Tuple, List, cast, Union
 from datetime import datetime as Datetime
 from datetime import timedelta, timezone
+from typing import (
+    Any,
+    AsyncGenerator,
+    AsyncIterable,
+    AsyncIterator,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    cast,
+)
 
 from azure.storage.blob import BlobProperties
 from azure.storage.blob.aio import BlobServiceClient, ContainerClient
-from azure.storage.blob.aio._list_blobs_helper import BlobPrefix  # TODO: use a public API
+from azure.storage.blob.aio._list_blobs_helper import (
+    BlobPrefix,  # TODO: use a public API
+)
 
-from pctasks.core.storage.base import StorageFileInfo
 from pctasks.core.storage.async_base import AsyncStorage
-from pctasks.core.storage.blob import BlobStorageMixin, BlobStorageError, BlobUri, generate_container_sas, ContainerSasPermissions
+from pctasks.core.storage.base import StorageFileInfo
+from pctasks.core.storage.blob import (
+    BlobStorageError,
+    BlobStorageMixin,
+    BlobUri,
+    ContainerSasPermissions,
+    generate_container_sas,
+)
+from pctasks.core.storage.path_filter import PathFilter
 from pctasks.core.utils import map_opt
 from pctasks.core.utils.backoff import async_with_backoff
-from pctasks.core.storage.path_filter import PathFilter
 
 
 class ContainerClientWrapper:
@@ -34,7 +53,6 @@ class ContainerClientWrapper:
         await self._account_client.close()
 
 
-
 class AsyncBlobStorage(BlobStorageMixin, AsyncStorage):
     # TODO: deduplicate. Put a ContainerClientWrapper type on cls
     def _get_client(self) -> ContainerClientWrapper:
@@ -47,8 +65,15 @@ class AsyncBlobStorage(BlobStorageMixin, AsyncStorage):
 
         return ContainerClientWrapper(account_client, container_client)
 
-    async def list_files(self, name_starts_with: Optional[str] = None, since_date: Optional[Datetime] = None, extensions: Optional[List[str]] = None, ends_with: Optional[str] = None, matches: Optional[str] = None) -> AsyncIterable[str]:
-       # Ensure UTC set
+    async def list_files(
+        self,
+        name_starts_with: Optional[str] = None,
+        since_date: Optional[Datetime] = None,
+        extensions: Optional[List[str]] = None,
+        ends_with: Optional[str] = None,
+        matches: Optional[str] = None,
+    ) -> AsyncIterable[str]:
+        # Ensure UTC set
         since_date = map_opt(lambda d: d.replace(tzinfo=timezone.utc), since_date)
         path_filter = PathFilter(
             extensions=extensions, ends_with=ends_with, matches=matches
@@ -189,26 +214,33 @@ class AsyncBlobStorage(BlobStorageMixin, AsyncStorage):
         is_binary: bool = True,
     ) -> None:
         async with self._get_client() as client:
-            async with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
+            async with client.container.get_blob_client(
+                self._add_prefix(file_path)
+            ) as blob:
                 with open(output_path, "wb" if is_binary else "w") as f:
+
                     async def fn():
                         stream = await blob.download_blob()
                         await stream.readinto(f)
-                        
+
                     await async_with_backoff(fn)
 
     async def file_exists(self, file_path: str) -> bool:
         with self._get_client() as client:
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
+
                 async def fn():
                     return await blob.exists()
+
                 return await async_with_backoff(fn)
 
     async def get_file_info(self, file_path: str) -> StorageFileInfo:
         with self._get_client() as client:
             with client.container.get_blob_client(file_path) as blob:
+
                 async def fn():
                     return await blob.get_blob_properties()
+
                 props = await async_with_backoff(fn)
                 return StorageFileInfo(size=cast(int, props.size))
 
@@ -247,16 +279,16 @@ class AsyncBlobStorage(BlobStorageMixin, AsyncStorage):
             blob_path = self._add_prefix(file_path)
             with self._get_client() as client:
                 with client.container.get_blob_client(blob_path) as blob:
+
                     async def fn():
-                        stream = await blob.download_blob(max_concurrency=multiprocessing.cpu_count() or 1)
+                        stream = await blob.download_blob(
+                            max_concurrency=multiprocessing.cpu_count() or 1
+                        )
                         return await stream.readall()
 
                     blob_data = await async_with_backoff(fn)
 
-                    return cast(
-                        bytes,
-                        blob_data
-                    )
+                    return cast(bytes, blob_data)
         except Exception as e:
             raise BlobStorageError(
                 f"Could not read text from {self.get_uri(file_path)}"
@@ -271,12 +303,16 @@ class AsyncBlobStorage(BlobStorageMixin, AsyncStorage):
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 await blob.delete_blob()
 
-    async def write_bytes(self, file_path: str, data: bytes, overwrite: bool = True) -> None:
+    async def write_bytes(
+        self, file_path: str, data: bytes, overwrite: bool = True
+    ) -> None:
         full_path = self._add_prefix(file_path)
         async with self._get_client() as client:
             async with client.container.get_blob_client(full_path) as blob:
+
                 async def fn():
                     await blob.upload_blob(data, overwrite=overwrite)
+
                 await async_with_backoff(fn)
 
     def __repr__(self) -> str:
@@ -314,5 +350,3 @@ class AsyncBlobStorage(BlobStorageMixin, AsyncStorage):
         return cls.from_uri(
             blob_uri=blob_uri, sas_token=sas_token, account_url=account_url
         )
-
-

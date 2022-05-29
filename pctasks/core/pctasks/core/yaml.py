@@ -1,6 +1,6 @@
+import logging
 from dataclasses import dataclass
 from email.policy import strict
-import logging
 from typing import Any, Dict, List, Optional, Type, TypeVar, cast
 
 import strictyaml
@@ -8,10 +8,11 @@ import yaml
 from pydantic import BaseModel, ValidationError
 from pydantic.error_wrappers import ErrorList
 
-# try:
-    # from yaml import CLoader as Loader
 # except ImportError:
 from yaml import Loader
+
+# try:
+# from yaml import CLoader as Loader
 
 T = TypeVar("T", bound=BaseModel)
 

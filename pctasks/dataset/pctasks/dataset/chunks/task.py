@@ -9,8 +9,8 @@ from pctasks.core.utils import grouped
 from pctasks.dataset.chunks.chunkset import ChunkSet
 from pctasks.dataset.chunks.models import (
     ChunkInfo,
-    CreateChunksInput,
     ChunksOutput,
+    CreateChunksInput,
     ListChunksInput,
 )
 from pctasks.task import Task

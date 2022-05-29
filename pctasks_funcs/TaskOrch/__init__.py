@@ -1,13 +1,13 @@
 import logging
 from datetime import timedelta
 from typing import Any, Generator, List, Optional
-from pydantic import ValidationError
 
 import azure.durable_functions as df
 from azure.durable_functions.models.Task import TaskBase
 from func_lib.activities import call_activity, parse_activity_exception
 from func_lib.flows.update_record import UpdateRecordOrchFlow
 from func_lib.models import OrchSignal
+from pydantic import ValidationError
 
 from pctasks.core.logging import RunLogger
 from pctasks.core.models.record import TaskRunStatus

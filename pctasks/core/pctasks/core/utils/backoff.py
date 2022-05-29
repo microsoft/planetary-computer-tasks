@@ -2,7 +2,7 @@ import logging
 import random
 import time
 from dataclasses import dataclass, field
-from typing import Callable, List, Optional, TypeVar, Awaitable
+from typing import Awaitable, Callable, List, Optional, TypeVar
 
 T = TypeVar("T")
 

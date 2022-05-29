@@ -1,15 +1,16 @@
 import os
-from contextlib import contextmanager, asynccontextmanager
+from contextlib import asynccontextmanager, contextmanager
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Generator, Optional, Union
+from typing import AsyncGenerator, Generator, Optional, Union
 from uuid import uuid1
 
 from azure.storage.blob import ContainerSasPermissions, generate_container_sas
 
 from pctasks.core.storage.base import Storage
 from pctasks.core.storage.blob import BlobStorage
-from pctasks.core.storage.async_blob import AsyncBlobStorage
+
+# from pctasks.core.storage.async_blob import AsyncBlobStorage
 from pctasks.dev.constants import (
     AZURITE_ACCOUNT_KEY,
     AZURITE_ACCOUNT_NAME,
@@ -33,7 +34,7 @@ def get_azurite_test_storage(sync=True) -> BlobStorage:
         hostname = os.getenv(AZURITE_HOST_ENV_VAR, "localhost")
         account_url = f"http://{hostname}:10000/devstoreaccount1"
 
-    cls = BlobStorage if sync else AsyncBlobStorage
+    cls = BlobStorage  # if sync else AsyncBlobStorage TODO
 
     return cls.from_account_key(
         account_key=AZURITE_ACCOUNT_KEY,
@@ -67,6 +68,7 @@ def copy_dir_to_azurite(
             rel_path = os.path.relpath(file_path, directory)
             storage.upload_file(file_path, rel_path)
 
+
 async def async_copy_dir_to_azurite(
     storage: Storage, directory: Union[str, Path], prefix: Optional[str] = None
 ) -> None:
@@ -77,7 +79,7 @@ async def async_copy_dir_to_azurite(
         for f in files:
             file_path = os.path.join(root, f)
             rel_path = os.path.relpath(file_path, directory)
-            await storage.upload_file(file_path, rel_path)
+            storage.upload_file(file_path, rel_path)  # TODO: async?
 
 
 @contextmanager
@@ -91,15 +93,14 @@ def temp_azurite_blob_storage(
     try:
         yield sub_storage
     finally:
-        # for path in sub_storage.list_files():
-        #     sub_storage.delete_file(path)
-        pass
+        for path in sub_storage.list_files():
+            sub_storage.delete_file(path)
 
 
 @asynccontextmanager
 async def async_temp_azurite_blob_storage(
     test_files: Optional[Union[str, Path]] = None,
-) -> Generator[Storage, None, None]:
+) -> AsyncGenerator[Storage, None]:
     storage = get_azurite_test_storage(sync=False)
     sub_storage = storage.get_substorage(f"test-{uuid1().hex}")
     if test_files:

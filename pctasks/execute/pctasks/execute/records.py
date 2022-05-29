@@ -1,4 +1,5 @@
 import logging
+
 from pctasks.core.models.record import (
     JobRunRecord,
     RunRecord,
@@ -6,7 +7,6 @@ from pctasks.core.models.record import (
     WorkflowRunGroupRecord,
     WorkflowRunRecord,
 )
-
 from pctasks.core.utils.backoff import with_backoff
 from pctasks.execute.models import (
     JobRunRecordUpdate,

@@ -2,8 +2,8 @@ from typing import Any, Dict, List, Optional
 from uuid import uuid4
 
 import click
-from pctasks.core.cli import PCTasksCommandContext
 
+from pctasks.core.cli import PCTasksCommandContext
 from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
 from pctasks.core.storage import StorageFactory, get_storage_for_file
 from pctasks.execute.runner.local import LocalRunner

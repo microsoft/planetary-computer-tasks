@@ -4,8 +4,8 @@ import time
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
-from pctasks.core.models.record import TaskRunStatus
 
+from pctasks.core.models.record import TaskRunStatus
 from pctasks.core.models.task import (
     CompletedTaskResult,
     FailedTaskResult,
@@ -55,19 +55,34 @@ class WaitInfo:
 @dataclass
 class TaskState:
     prepared_task: PreparedTaskSubmitMessage
-    status: TaskStateStatus = TaskStateStatus.NEW
-    submit_result: Optional[Union[SuccessfulSubmitResult, FailedSubmitResult]] = None
-    task_result: Optional[TaskResult] = None
+    """The prepared task. Remains fixed"""
+    _status: TaskStateStatus = TaskStateStatus.NEW
+    _submit_result: Optional[Union[SuccessfulSubmitResult, FailedSubmitResult]] = None
+    _task_result: Optional[TaskResult] = None
 
     status_updated: bool = False
     """True if task record has been updated to current status"""
 
-    poll_count = 0
+    _poll_count = 0
     _last_poll_time: Optional[float] = None
     _last_check_output_time: Optional[float] = None
 
     _wait_retries: int = 0
     _wait_info: Optional[WaitInfo] = None
+
+    @property
+    def status(self) -> TaskStateStatus:
+        return self._status
+
+    @property
+    def submit_result(
+        self,
+    ) -> Optional[Union[SuccessfulSubmitResult, FailedSubmitResult]]:
+        return self._submit_result
+
+    @property
+    def task_result(self) -> Optional[TaskResult]:
+        return self._task_result
 
     @property
     def run_id(self) -> str:
@@ -83,7 +98,7 @@ class TaskState:
 
     def change_status(self, status: TaskStateStatus) -> None:
         if not self.status == status:
-            self.status = status
+            self._status = status
             self.status_updated = False
 
     def should_poll(self, wait_duration: float) -> bool:
@@ -114,15 +129,15 @@ class TaskState:
                     time.monotonic() - self._wait_info.start_time
                     > self._wait_info.duration
                 ):
-                    self.status = TaskStateStatus.NEW
-                    self.submit_result = None
+                    self.change_status(TaskStateStatus.NEW)
+                    self._submit_result = None
                     self._wait_info = None
 
     def set_waiting(self, wait_duration: float) -> None:
         self._wait_retries += 1
         self.change_status(TaskStateStatus.WAITING)
         self._wait_info = WaitInfo(start_time=time.monotonic(), duration=wait_duration)
-        self.submit_result = None
+        self._submit_result = None
 
     def submit(self, executor: TaskExecutor) -> None:
         self._wait_info = None
@@ -136,14 +151,14 @@ class TaskState:
 
     def set_failed(self, errors: List[str]) -> None:
         self.change_status(TaskStateStatus.FAILED)
-        self.task_result = TaskResult.failed(
+        self._task_result = TaskResult.failed(
             errors=errors,
         )
 
     def set_submitted(
         self, submit_result: Union[SuccessfulSubmitResult, FailedSubmitResult]
     ) -> None:
-        self.submit_result = submit_result
+        self._submit_result = submit_result
 
         if isinstance(submit_result, SuccessfulSubmitResult):
             self.change_status(TaskStateStatus.SUBMITTED)
@@ -167,13 +182,13 @@ class TaskState:
         try:
             result = executor.poll_task(
                 self.submit_result.executor_id,
-                previous_poll_count=self.poll_count,
+                previous_poll_count=self._poll_count,
             )
             logger.debug(
                 f"Polled task {json.dumps(self.submit_result.executor_id)}"
                 f": {result}"
             )
-            self.poll_count += 1
+            self._poll_count += 1
 
             if result.task_status == TaskRunStatus.FAILED:
                 self.set_failed(result.poll_errors or ["Poll showed task as failed."])
@@ -215,7 +230,7 @@ class TaskState:
         )
 
         if storage.file_exists(path):
-            self.task_result = TaskResult.parse_subclass(storage.read_json(path))
+            self._task_result = TaskResult.parse_subclass(storage.read_json(path))
 
             if isinstance(self.task_result, CompletedTaskResult):
                 self.change_status(TaskStateStatus.COMPLETED)

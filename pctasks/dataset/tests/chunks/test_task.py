@@ -1,17 +1,17 @@
 from datetime import date, datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from pctasks.core.models.tokens import ContainerTokens, StorageAccountTokens
-from pctasks.dataset.chunks.constants import ALL_CHUNK_PREFIX
-from pctasks.dataset.models import ChunkOptions
-from pctasks.dev.blob import copy_dir_to_azurite, temp_azurite_blob_storage
 
 from planetary_computer.sas import get_token
 
 from pctasks.core.models.task import CompletedTaskResult
+from pctasks.core.models.tokens import ContainerTokens, StorageAccountTokens
+from pctasks.dataset.chunks.constants import ALL_CHUNK_PREFIX
 from pctasks.dataset.chunks.models import ChunksOutput
 from pctasks.dataset.chunks.task import CreateChunksInput, create_chunks_task
-from pctasks.dev.task import run_test_task
+from pctasks.dataset.models import ChunkOptions
+from pctasks.dev.blob import copy_dir_to_azurite, temp_azurite_blob_storage
+from pctasks.dev.test_utils import run_test_task
 from pctasks.task.utils import get_task_path
 
 HERE = Path(__file__)

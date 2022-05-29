@@ -3,7 +3,7 @@ from pathlib import Path
 
 from pctasks.core.models.task import CompletedTaskResult
 from pctasks.dev.blob import temp_azurite_blob_storage
-from pctasks.dev.task import run_test_task
+from pctasks.dev.test_utils import run_test_task
 from pctasks.task.common.list_files import TASK_PATH, ListFilesInput, ListFilesOutput
 
 HERE = Path(__file__).parent

@@ -4,14 +4,7 @@ from importlib.metadata import EntryPoint
 
 from pctasks.core.logging import RunLogger, TaskLogger
 from pctasks.core.models.record import TaskRunStatus
-from pctasks.core.models.task import (
-    TaskResult,
-    TaskResultType,
-    TaskRunMessage,
-    TaskRunSignal,
-    TaskRunSignalMessage,
-)
-from pctasks.core.queues import QueueService
+from pctasks.core.models.task import TaskResult, TaskResultType, TaskRunMessage
 from pctasks.core.storage.blob import BlobStorage, BlobUri
 from pctasks.core.tables.record import TaskRunRecordTable
 from pctasks.core.utils import environment
@@ -41,21 +34,26 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
     with TaskLogger.from_task_run_config(task_config):
 
         def signal_result(result_type: TaskResultType) -> None:
-            with QueueService.from_config(task_config.signal_queue) as signal_client:
-                logger.info(
-                    f"Signaling to {task_config.signal_target_id} "
-                    f"via queue {task_config.signal_queue} "
-                    f"with {result_type}..."
-                )
-                signal = TaskRunSignalMessage(
-                    signal_target_id=task_config.signal_target_id,
-                    data=TaskRunSignal(
-                        signal_key=task_config.signal_key,
-                        task_result_type=result_type,
-                    ),
-                )
-                signal_client.send_message(signal.json().encode())
-                logger.info("...signal sent")
+            # TODO: Remove signaling. With move to remote runner,
+            # output is polled, which serves the same purpose as this
+            # signal.
+            pass
+
+            # with QueueService.from_config(task_config.signal_queue) as signal_client:
+            #     logger.info(
+            #         f"Signaling to {task_config.signal_target_id} "
+            #         f"via queue {task_config.signal_queue} "
+            #         f"with {result_type}..."
+            #     )
+            #     signal = TaskRunSignalMessage(
+            #         signal_target_id=task_config.signal_target_id,
+            #         data=TaskRunSignal(
+            #             signal_key=task_config.signal_key,
+            #             task_result_type=result_type,
+            #         ),
+            #     )
+            #     signal_client.send_message(signal.json().encode())
+            #     logger.info("...signal sent")
 
         logger.info(" === PCTasks ===")
         logger.info(f"  == {task_config.get_run_record_id()} ")

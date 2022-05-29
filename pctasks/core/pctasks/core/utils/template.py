@@ -94,9 +94,7 @@ def find_value(
                             f"Expected list of dicts at key {head}, got {type(v)} "
                             f"for template {'.'.join(path)}"
                         )
-                    values = [
-                        _fetch(x, tail, fail_if_not_found=True) for x in v
-                    ]
+                    values = [_fetch(x, tail, fail_if_not_found=True) for x in v]
                     if all([x is None for x in values]):
                         return None
                     if any([x is None for x in values]):

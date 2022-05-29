@@ -16,15 +16,12 @@ class TaskExecutor(ABC):
 
     @abstractmethod
     def submit(
-        self,
-        prepared_tasks: List[PreparedTaskSubmitMessage]
+        self, prepared_tasks: List[PreparedTaskSubmitMessage]
     ) -> List[Union[SuccessfulSubmitResult, FailedSubmitResult]]:
         pass
 
     @abstractmethod
     def poll_task(
-        self,
-        executor_id: Dict[str, Any],
-        previous_poll_count: int
+        self, executor_id: Dict[str, Any], previous_poll_count: int
     ) -> TaskPollResult:
         pass

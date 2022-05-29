@@ -6,8 +6,8 @@ with open("README.md") as f:
     desc = f.read()
 
 install_requires = [
-    "pctasks-core>=0.1.0",
-    "pctasks-submit>=0.1.0",
+    "pctasks.core>=0.1.0",
+    "pctasks.submit>=0.1.0",
     "azure-batch==11.*",
     "azure-keyvault-secrets==4.*",
     "networkx==2.*"

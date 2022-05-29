@@ -1,11 +1,17 @@
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from click.testing import CliRunner, Result
 
 from pctasks.cli.cli import pctasks_cmd
-from pctasks.core.constants import DEFAULT_LOG_CONTAINER
+from pctasks.core.constants import (
+    DEFAULT_LOG_CONTAINER,
+    DEFAULT_SIGNAL_QUEUE_NAME,
+    DEFAULT_TASK_IO_CONTAINER,
+    DEFAULT_TASK_RUN_RECORD_TABLE_NAME,
+)
+from pctasks.core.models.base import RunRecordId
 from pctasks.core.models.record import (
     JobRunRecord,
     JobRunStatus,
@@ -14,14 +20,24 @@ from pctasks.core.models.record import (
     WorkflowRunRecord,
     WorkflowRunStatus,
 )
+from pctasks.core.models.task import (
+    CompletedTaskResult,
+    TaskRunConfig,
+    TaskRunMessage,
+    WaitTaskResult,
+)
+from pctasks.core.models.tokens import StorageAccountTokens
 from pctasks.core.storage.blob import BlobStorage
+from pctasks.dev.config import get_blob_config, get_queue_config, get_table_config
 from pctasks.dev.env import (
     PCTASKS_BLOB_ACCOUNT_KEY_ENV_VAR,
     PCTASKS_BLOB_ACCOUNT_NAME_ENV_VAR,
     PCTASKS_BLOB_ACCOUNT_URL_ENV_VAR,
     get_dev_env,
 )
-from pctasks.execute.utils import get_exec_log_path, get_run_log_path
+from pctasks.dev.tables import get_task_run_record_table
+from pctasks.execute.utils import get_run_log_path
+from pctasks.task.run import run_task
 
 
 class CliTestError(Exception):
@@ -147,7 +163,7 @@ def assert_workflow_is_successful(
     for job_id, job_records in workflow_run_records.jobs.items():
         job_failed = job_records.job_record.status != JobRunStatus.COMPLETED
         if job_failed:
-            print(f"Job {job_id} failed")
+            print(f"Job {job_id} failed. Status: {job_records.job_record.status}")
         failed |= job_failed
         for task_id, task_record in job_records.tasks.items():
             task_failed = task_record.status != TaskRunStatus.COMPLETED
@@ -155,9 +171,6 @@ def assert_workflow_is_successful(
                 print(f"Task {task_id} failed")
             failed |= task_failed
             if task_failed:
-                exec_log_path = get_exec_log_path(
-                    job_id=job_id, task_id=task_id, run_id=run_id
-                )
                 run_log_path = get_run_log_path(
                     job_id=job_id, task_id=task_id, run_id=run_id
                 )
@@ -169,21 +182,78 @@ def assert_workflow_is_successful(
                     account_url=get_dev_env(PCTASKS_BLOB_ACCOUNT_URL_ENV_VAR),
                 )
 
-                if log_storage.file_exists(exec_log_path):
-                    print(" -- Exec log: --")
-                    print(log_storage.read_text(exec_log_path))
-                    print(" -- End exec log: --")
-
-                    if log_storage.file_exists(run_log_path):
-                        print(" -- Run log: --")
-                        print(log_storage.read_text(run_log_path))
-                        print(" -- End run log: --")
-                    else:
-                        print(f"No run log found at {run_log_path}")
+                if log_storage.file_exists(run_log_path):
+                    print(" -- Run log: --")
+                    print(log_storage.read_text(run_log_path))
+                    print(" -- End run log: --")
                 else:
-                    print(f"No exec log found at {log_storage.get_uri(exec_log_path)}")
+                    print(f"No run log found at {run_log_path}")
 
     if failed:
         raise Exception("Workflow failed")
 
     return workflow_run_records
+
+
+def run_test_task(
+    args: Dict[str, Any],
+    task: str,
+    tokens: Optional[Dict[str, StorageAccountTokens]] = None,
+) -> Union[CompletedTaskResult, WaitTaskResult]:
+    job_id = "unit-test-job"
+    task_id = "task-unit-test"
+    run_id = "test_task_func"
+
+    run_record_id = RunRecordId(
+        job_id=job_id,
+        task_id=task_id,
+        run_id=run_id,
+    )
+
+    with get_task_run_record_table() as task_run_table:
+        task_run_table.upsert_record(
+            TaskRunRecord(
+                run_id=run_record_id.run_id,
+                job_id=job_id,
+                task_id=task_id,
+                status=TaskRunStatus.SUBMITTED,
+            )
+        )
+
+        log_path = f"{job_id}/{task_id}/{run_id}.log"
+        output_path = f"{job_id}/{task_id}/{run_id}-output.json"
+
+        msg = TaskRunMessage(
+            args=args,
+            config=TaskRunConfig(
+                run_id=run_id,
+                job_id=job_id,
+                task_id=task_id,
+                signal_key="signal-key",
+                signal_target_id="target-id",
+                image="TESTIMAGE:latest",
+                tokens=tokens,
+                task=task,
+                signal_queue=get_queue_config(DEFAULT_SIGNAL_QUEUE_NAME),
+                task_runs_table_config=get_table_config(
+                    DEFAULT_TASK_RUN_RECORD_TABLE_NAME
+                ),
+                log_blob_config=get_blob_config(DEFAULT_LOG_CONTAINER, log_path),
+                output_blob_config=get_blob_config(
+                    DEFAULT_TASK_IO_CONTAINER, output_path
+                ),
+            ),
+        )
+
+        result = run_task(msg)
+        if isinstance(result, CompletedTaskResult):
+            record = task_run_table.get_record(
+                run_record_id=run_record_id,
+            )
+            assert record
+            assert record.status == TaskRunStatus.COMPLETED
+
+            return result
+        else:
+            assert isinstance(result, WaitTaskResult)
+            return result

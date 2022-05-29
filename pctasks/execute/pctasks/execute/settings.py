@@ -1,6 +1,5 @@
 from typing import Any, Dict, Optional
 from urllib.parse import urlparse
-from pctasks.core.storage.blob import BlobStorage
 
 from pydantic import validator
 
@@ -20,6 +19,7 @@ from pctasks.core.constants import (
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.config import QueueConnStrConfig, QueueSasConfig
 from pctasks.core.settings import PCTasksSettings
+from pctasks.core.storage.blob import BlobStorage
 from pctasks.core.tables.config import ImageKeyEntryTable
 from pctasks.core.tables.dataset import DatasetIdentifierTable
 from pctasks.core.tables.record import (
@@ -71,6 +71,8 @@ class ExecutorSettings(PCTasksSettings):
     remote_runner_threads: int = 50
     default_task_wait_seconds: int = 60
     max_wait_retries: int = 10
+    task_poll_seconds: int = 30
+    check_output_seconds: int = 3
 
     # Dev
     dev: bool = False

@@ -1,84 +1,81 @@
-from typing import Any, Dict, Optional, Union
+import os
+from typing import List, Optional, Union
 
-from pctasks.core.constants import (
-    DEFAULT_LOG_CONTAINER,
-    DEFAULT_SIGNAL_QUEUE_NAME,
-    DEFAULT_TASK_IO_CONTAINER,
-    DEFAULT_TASK_RUN_RECORD_TABLE_NAME,
-)
-from pctasks.core.models.base import RunRecordId
-from pctasks.core.models.record import TaskRunRecord, TaskRunStatus
-from pctasks.core.models.task import (
-    CompletedTaskResult,
-    TaskRunConfig,
-    TaskRunMessage,
-    WaitTaskResult,
-)
-from pctasks.core.models.tokens import StorageAccountTokens
-from pctasks.dev.config import get_blob_config, get_queue_config, get_table_config
-from pctasks.dev.tables import get_task_run_record_table
-from pctasks.task.run import run_task
+from pctasks.core.models.base import PCBaseModel
+from pctasks.core.models.task import FailedTaskResult, WaitTaskResult
+from pctasks.task.context import TaskContext
+from pctasks.task.task import Task
 
 
-def run_test_task(
-    args: Dict[str, Any],
-    task: str,
-    tokens: Optional[Dict[str, StorageAccountTokens]] = None,
-) -> Union[CompletedTaskResult, WaitTaskResult]:
-    job_id = "unit-test-job"
-    task_id = "task-unit-test"
-    run_id = "test_task_func"
+class TestTaskError(Exception):
+    pass
 
-    run_record_id = RunRecordId(
-        job_id=job_id,
-        task_id=task_id,
-        run_id=run_id,
-    )
 
-    with get_task_run_record_table() as task_run_table:
-        task_run_table.upsert_record(
-            TaskRunRecord(
-                run_id=run_record_id.run_id,
-                job_id=job_id,
-                task_id=task_id,
-                status=TaskRunStatus.SUBMITTED,
+class TestTaskOptions(PCBaseModel):
+    num_outputs: int = 1
+    fail_with: Optional[str] = None
+
+
+class TestTaskInput(PCBaseModel):
+    uri: Optional[str] = None
+    output_dir: str
+    options = TestTaskOptions()
+
+
+class TestTaskOutput(PCBaseModel):
+    uri: str
+    uris: List[str]
+
+
+class TaskRunHistory(PCBaseModel):
+    input: TestTaskInput
+    output_index: int
+
+
+class TestTaskAsset(PCBaseModel):
+    history: List[TaskRunHistory]
+
+
+class TestTask(Task[TestTaskInput, TestTaskOutput]):
+    _input_model = TestTaskInput
+    _output_model = TestTaskOutput
+
+    def run(
+        self, input: TestTaskInput, context: TaskContext
+    ) -> Union[TestTaskOutput, WaitTaskResult, FailedTaskResult]:
+        history: List[TaskRunHistory] = []
+        if input.uri:
+            output_base_name = os.path.basename(input.uri)
+            input_storage, input_path = context.storage_factory.get_storage_for_file(
+                input.uri
             )
-        )
 
-        log_path = f"{job_id}/{task_id}/{run_id}.log"
-        output_path = f"{job_id}/{task_id}/{run_id}-output.json"
+            if not input_storage.file_exists(input_path):
+                raise TestTaskError(f"Input file {input.uri} does not exist.")
 
-        msg = TaskRunMessage(
-            args=args,
-            config=TaskRunConfig(
-                run_id=run_id,
-                job_id=job_id,
-                task_id=task_id,
-                signal_key="signal-key",
-                signal_target_id="target-id",
-                image="TESTIMAGE:latest",
-                tokens=tokens,
-                task=task,
-                signal_queue=get_queue_config(DEFAULT_SIGNAL_QUEUE_NAME),
-                task_runs_table_config=get_table_config(
-                    DEFAULT_TASK_RUN_RECORD_TABLE_NAME
-                ),
-                log_blob_config=get_blob_config(DEFAULT_LOG_CONTAINER, log_path),
-                output_blob_config=get_blob_config(
-                    DEFAULT_TASK_IO_CONTAINER, output_path
-                ),
-            ),
-        )
-
-        result = run_task(msg)
-        if isinstance(result, CompletedTaskResult):
-            record = task_run_table.get_record(
-                run_record_id=run_record_id,
-            )
-            assert record
-            assert record.status == TaskRunStatus.COMPLETED
-
-            return result
+            try:
+                history = TestTaskAsset.parse_obj(
+                    input_storage.read_json(input_path)
+                ).history
+            except:
+                # Assuming file is not a TestTaskAsset
+                pass
         else:
-            assert isinstance(result, WaitTaskResult)
-            return result
+            output_base_name = "test-output"
+
+        outputs: List[str] = []
+        output_storage = context.storage_factory.get_storage(input.output_dir)
+        for i in range(0, max(input.options.num_outputs, 1)):
+            output_path = f"{output_base_name}-{i}"
+            output_storage.write_dict(
+                output_path,
+                TestTaskAsset(
+                    history=history + [TaskRunHistory(input=input, output_index=i)]
+                ).dict(),
+            )
+            outputs.append(output_storage.get_uri(output_path))
+
+        return TestTaskOutput(uri=outputs[0], uris=outputs)
+
+
+test_task = TestTask()

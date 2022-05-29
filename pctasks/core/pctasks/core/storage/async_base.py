@@ -1,12 +1,11 @@
 import logging
 from abc import ABC, abstractmethod
 from datetime import datetime as Datetime
-from typing import Any, Dict, AsyncGenerator, AsyncIterable, List, Optional, Tuple
+from typing import Any, AsyncGenerator, AsyncIterable, Dict, List, Optional, Tuple
 
 import orjson
 
 from pctasks.core.storage.base import StorageFileInfo
-
 
 logger = logging.getLogger(__name__)
 

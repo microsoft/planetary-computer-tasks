@@ -1,13 +1,13 @@
 import logging
 import os
 from typing import Callable, List, Union
-from pctasks.dataset.chunks.chunkset import ChunkSet
 
 import orjson
 import pystac
 
 from pctasks.core.models.task import FailedTaskResult, WaitTaskResult
 from pctasks.core.storage import StorageFactory
+from pctasks.dataset.chunks.chunkset import ChunkSet
 from pctasks.dataset.items.models import CreateItemsInput, CreateItemsOutput
 from pctasks.task import Task
 from pctasks.task.context import TaskContext

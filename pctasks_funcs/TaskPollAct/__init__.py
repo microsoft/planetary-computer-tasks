@@ -1,6 +1,7 @@
 """Polls the executor for task status."""
 
 import json
+
 from pctasks.core.activity import wrap_activity
 from pctasks.execute.constants import ActivityNames
 from pctasks.execute.models import TaskPollMessage

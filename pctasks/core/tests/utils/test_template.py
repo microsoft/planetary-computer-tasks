@@ -2,8 +2,9 @@ import json
 import pathlib
 from typing import List, Optional
 
-from pctasks.core.utils.template import find_value, split_path, template_dict
 import pystac
+
+from pctasks.core.utils.template import find_value, split_path, template_dict
 
 HERE = pathlib.Path(__file__).parent
 TEST_COLLECTION = HERE / "../data-files/planet-nicfi-analytic.json"

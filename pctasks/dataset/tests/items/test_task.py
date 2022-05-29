@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Union
-from pctasks.dataset.chunks.models import ChunkInfo
 
 import pystac
 from pystac.utils import str_to_datetime
@@ -10,9 +9,10 @@ from pystac.utils import str_to_datetime
 from pctasks.core.models.task import CompletedTaskResult, WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.core.storage.local import LocalStorage
+from pctasks.dataset.chunks.models import ChunkInfo
 from pctasks.dataset.items.models import CreateItemsOutput
 from pctasks.dataset.items.task import CreateItemsInput, CreateItemsTask
-from pctasks.dev.task import run_test_task
+from pctasks.dev.test_utils import run_test_task
 from pctasks.task.utils import get_task_path
 
 HERE = Path(__file__)

@@ -1,11 +1,11 @@
 import logging
 from typing import Any, Dict, List, Optional, Tuple, Union
-from pctasks.core.models.config import BlobConfig
 
 from pydantic import Field
 
 from pctasks.core.constants import TASK_SUBMIT_MESSAGE_TYPE
 from pctasks.core.models.base import PCBaseModel, RunRecordId
+from pctasks.core.models.config import BlobConfig
 from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.record import (
     JobRunRecord,

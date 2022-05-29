@@ -135,7 +135,6 @@ class ContainerClientWrapper:
         self._account_client.close()
 
 
-
 class BlobStorageMixin:
     _blob_creds: Union[
         ClientSecretCredential, DefaultAzureCredential, Dict[str, str], str
