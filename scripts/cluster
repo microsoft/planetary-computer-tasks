@@ -1,0 +1,104 @@
+#!/bin/bash
+
+set -e
+
+if [[ "${CI}" ]]; then
+    set -x
+fi
+
+function usage() {
+    if [[ "${1}" ]]; then
+        echo "${1}"
+    fi
+
+    echo -n \
+        "Usage: $(basename "$0") [OPTIONS]
+Script for managing dev cluster
+
+Subcommands:
+    create
+        Create the dev cluster if it doesn't exist,
+        and install Argo.
+    update
+        Updates helm charts on the dev cluster
+"
+}
+
+CREATE=""
+UPDATE=""
+while [[ $# -gt 0 ]]; do case $1 in
+    create)
+        CREATE="--create"
+        shift
+        ;;
+    update)
+        UPDATE="--update"
+        shift
+        ;;
+    --help)
+        usage
+        exit 0
+        shift
+        ;;
+    *)
+        usage "Unknown parameter passed: $1"
+        exit 1
+        ;;
+    esac done
+
+if [ -z "${CREATE}${UPDATE}" ]; then
+    usage "No subcommand option specified"
+    exit 1
+fi
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${CREATE}" ]; then
+        if ! kind get clusters | grep -q ${KIND_CLUSTER_NAME}; then
+            echo " -- CREATING KIND CLUSTER"
+            KIND_EXPERIMENTAL_DOCKER_NETWORK=${DOCKER_NETWORK_NAME} kind \
+                create cluster --name ${KIND_CLUSTER_NAME} \
+                --config cluster/kind-config.yaml
+        fi
+
+        if ! kubectl get namespace | grep -q argo; then
+            echo " -- CREATING ARGO NAMESPACE"
+            kubectl create ns argo
+        fi
+
+        echo " -- SETTING UP ARGO"
+        kubectl apply -n argo \
+            -f https://raw.githubusercontent.com/argoproj/argo-workflows/v3.3.6/manifests/quick-start-postgres.yaml
+    fi
+
+    # Build deployment image
+    if [ "${UPDATE}" ]; then
+        echo "Loading pctasks-server image into cluster..."
+        kind load docker-image --name kind-pctasks pctasks-server pctasks-server
+
+        echo "Installing pctasks-server helm chart..."
+        # Set pctasks.deploy.podAnnotations.updated to force a new deployment
+        helm upgrade --install \
+            pctasks-server \
+            pctasks/server/helm/pctasks-server/ \
+            -n pc \
+            -f cluster/dev-values.yaml \
+            --create-namespace \
+            --set pctasks.deploy.podAnnotations.updated="$(date)"
+
+        echo "Installing ingress component..."
+        helm upgrade --install \
+            pcingress \
+            cluster/pcingress \
+            -n pc \
+            -f cluster/dev-values.yaml \
+            --create-namespace
+
+        echo "Installing ingress-nginx..."
+        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.0/deploy/static/provider/kind/deploy.yaml
+        kubectl wait --namespace ingress-nginx \
+            --for=condition=ready pod \
+            --selector=app.kubernetes.io/component=controller \
+            --timeout=90s
+    fi
+
+fi

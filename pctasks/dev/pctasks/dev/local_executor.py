@@ -77,13 +77,14 @@ def execute(
 
 @app.get("/poll/{id}")
 def poll(id: str, request: Request) -> Response:
-    try:
-        with cache_lock:
-            result = TaskPollResult(task_status=request.app.state._cache.get(id))
-        logger.info(f"Polling task {id}: {result.json(indent=2)}")
-        return JSONResponse(result.dict())
-    except KeyError:
+
+    with cache_lock:
+        task_status = request.app.state._cache.get(id)
+    if task_status is None:
         return Response(status_code=404)
+    result = TaskPollResult(task_status=task_status)
+    logger.info(f"Polling task {id}: {result.json(indent=2)}")
+    return JSONResponse(result.dict())
 
 
 @app.on_event("startup")

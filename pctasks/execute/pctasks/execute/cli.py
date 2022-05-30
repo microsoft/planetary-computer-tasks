@@ -8,7 +8,7 @@ from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
 from pctasks.core.storage import StorageFactory, get_storage_for_file
 from pctasks.execute.runner.local import LocalRunner
 from pctasks.execute.runner.remote import RemoteRunner
-from pctasks.execute.settings import ExecutorSettings
+from pctasks.execute.settings import ExecuteSettings
 from pctasks.task.context import TaskContext
 
 
@@ -76,7 +76,7 @@ def remote_cmd(ctx: click.Context, workflow: str, arg: List[str]) -> None:
     submit_message = WorkflowSubmitMessage.from_yaml(workflow_yaml)
 
     context: PCTasksCommandContext = ctx.obj
-    settings = ExecutorSettings.get(context.profile, context.settings_file)
+    settings = ExecuteSettings.get(context.profile, context.settings_file)
     runner = RemoteRunner(settings)
 
     submit_message.run_id = uuid4().hex

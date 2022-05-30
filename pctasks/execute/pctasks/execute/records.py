@@ -15,7 +15,7 @@ from pctasks.execute.models import (
     WorkflowRunGroupRecordUpdate,
     WorkflowRunRecordUpdate,
 )
-from pctasks.execute.settings import ExecutorSettings
+from pctasks.execute.settings import ExecuteSettings
 
 logger = logging.getLogger(__name__)
 
@@ -25,11 +25,11 @@ class RecordUpdateError(Exception):
 
 
 class RecordUpdater:
-    def __init__(self, settings: ExecutorSettings):
+    def __init__(self, settings: ExecuteSettings):
         self.settings = settings
 
     def upsert_record(self, record: RunRecord) -> None:
-        def _do_upsert():
+        def _do_upsert() -> None:
             # Workflow Group
             if isinstance(record, WorkflowRunGroupRecord):
                 with self.settings.get_workflow_run_group_record_table() as wrg_table:
@@ -37,18 +37,18 @@ class RecordUpdater:
 
             # Workflow
             if isinstance(record, WorkflowRunRecord):
-                with self.settings.get_workflow_run_record_table() as wrg_table:
-                    wrg_table.upsert_record(record)
+                with self.settings.get_workflow_run_record_table() as wr_table:
+                    wr_table.upsert_record(record)
 
             # Workflow Run Group
             if isinstance(record, JobRunRecord):
-                with self.settings.get_job_run_record_table() as wrg_table:
-                    wrg_table.upsert_record(record)
+                with self.settings.get_job_run_record_table() as jr_table:
+                    jr_table.upsert_record(record)
 
             # Workflow Run Group
             if isinstance(record, TaskRunRecord):
-                with self.settings.get_task_run_record_table() as wrg_table:
-                    wrg_table.upsert_record(record)
+                with self.settings.get_task_run_record_table() as tr_table:
+                    tr_table.upsert_record(record)
 
         with_backoff(_do_upsert)
 

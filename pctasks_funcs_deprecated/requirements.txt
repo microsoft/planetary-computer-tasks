@@ -1,0 +1,12 @@
+# Do not include azure-functions-worker as it may conflict with the Azure Functions platform
+azure-functions
+azure-functions-durable
+
+# Keep in sync with requirements-deploy.txt
+-e ../pctasks/core
+-e ../pctasks/cli
+-e ../pctasks/submit
+-e ../pctasks/execute
+-e ../pctasks/notify
+-e ../pctasks/operations
+-e ../pctasks/router

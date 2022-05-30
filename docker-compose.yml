@@ -28,6 +28,8 @@ services:
       - AzureWebJobsStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
       - WEBSITE_HOSTNAME=functions:7071
 
+      - PCTASKS_EXEC__PCTASKS_SERVER_ENDPOINT=http://host.docker.internal:8500/tasks
+
       # Dev executor settings
       - PCTASKS_EXEC__DEV=TRUE
       - PCTASKS_EXEC__LOCAL_EXECUTOR_URL=http://local-executor:8000
@@ -119,6 +121,21 @@ services:
       - pctasks-pgdata:/var/lib/postgresql/data
     command: postgres -N 500
 
+  server:
+    container_name: pctasks-server
+    image: pctasks-server
+    build:
+      context: pctasks
+      dockerfile: server/Dockerfile
+      args:
+        - DEVELOPMENT=TRUE
+    volumes:
+      - ./pctasks:/opt/src
+    ports:
+      - "8580:8580"
+    command: >
+      bash -c "uvicorn pctasks.server.main:app --host 0.0.0.0 --port 8580 --reload --proxy-headers"
+
   local-executor:
     container_name: pctasks-local-executor
     image: pctasks-dev
@@ -173,7 +190,9 @@ services:
 
 networks:
   default:
-    name: pctasks-network
+    # Network created during scripts/setup
+    external:
+      name: pctasks-network
 
 volumes:
   pctasks-azurite-data: null

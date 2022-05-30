@@ -127,7 +127,7 @@ class DataFrameRender:
 
     def _change_width(self) -> None:
         original_width = Measurement.get(
-            self.console, self.table
+            self.console, self.console.options
         ).maximum  # type: ignore
         width_ranges = [
             [original_width, self.console.width, 2],

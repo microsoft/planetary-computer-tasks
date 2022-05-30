@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Union
 import requests
 
 from pctasks.core.models.record import TaskRunStatus
-from pctasks.execute.executor.base import TaskExecutor
+from pctasks.execute.executor.base import Executor
 from pctasks.execute.models import (
     FailedSubmitResult,
     PreparedTaskSubmitMessage,
@@ -16,7 +16,7 @@ from pctasks.execute.models import (
 logger = logging.getLogger(__name__)
 
 
-class LocalTaskExecutor(TaskExecutor):
+class LocalTaskExecutor(Executor):
     """A local development executor.
 
     This submits the run arguments to a local executor.
@@ -26,7 +26,7 @@ class LocalTaskExecutor(TaskExecutor):
     def __init__(self, local_executor_url: str):
         self.local_executor_url = local_executor_url
 
-    def submit(
+    def submit_tasks(
         self, prepared_tasks: List[PreparedTaskSubmitMessage]
     ) -> List[Union[SuccessfulSubmitResult, FailedSubmitResult]]:
         results: List[Union[SuccessfulSubmitResult, FailedSubmitResult]] = []

@@ -55,28 +55,7 @@ def test_collection_template():
 
         input_model = IngestTaskInput(content=collection)
         input_model_yaml = input_model.to_yaml()
-        print(input_model_yaml)
         input_model = IngestTaskInput.from_yaml(input_model_yaml)
-
-        from pctasks.core.models.dataset import DatasetIdentifier
-        from pctasks.core.models.task import TaskConfig
-        from pctasks.execute.models import TaskSubmitMessage
-
-        submit_msg = TaskSubmitMessage(
-            instance_id="instance_id",
-            dataset=DatasetIdentifier(name="test_dataset"),
-            run_id="run_id",
-            job_id="job",
-            config=TaskConfig(
-                id="task_id",
-                image="mock-image",
-                task="whatever.task",
-                args=input_model.dict(),
-            ),
-        )
-
-        print(submit_msg.json())
-        raise Exception()
 
         result = ingest_task.run(input=input_model, context=task_context)
 

@@ -15,19 +15,19 @@ from pctasks.dev.constants import (
     AZURITE_HOST_ENV_VAR,
     TEST_DATA_CONTAINER,
 )
-from pctasks.execute.settings import ExecutorSettings
+from pctasks.execute.settings import ExecuteSettings
 
 
 def get_azurite_test_storage() -> BlobStorage:
     account_name = AZURITE_ACCOUNT_NAME
-    executor_settings: Optional[ExecutorSettings] = None
+    execute_settings: Optional[ExecuteSettings] = None
     try:
-        executor_settings = ExecutorSettings.get()
+        execute_settings = ExecuteSettings.get()
     except Exception:
         # Don't fail for environments that don't have executor settings set
         pass
-    if executor_settings and executor_settings.blob_account_name == account_name:
-        account_url = executor_settings.blob_account_url
+    if execute_settings and execute_settings.blob_account_name == account_name:
+        account_url = execute_settings.blob_account_url
     else:
         hostname = os.getenv(AZURITE_HOST_ENV_VAR, "localhost")
         account_url = f"http://{hostname}:10000/devstoreaccount1"

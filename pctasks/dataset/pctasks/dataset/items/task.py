@@ -50,7 +50,7 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
         storage_factory = context.storage_factory
         results: List[pystac.Item] = []
 
-        def _validate(items: List[pystac.Item]):
+        def _validate(items: List[pystac.Item]) -> None:
             if not args.options.skip_validation:
                 for item in items:
                     item.validate()

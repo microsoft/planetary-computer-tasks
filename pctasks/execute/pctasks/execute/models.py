@@ -27,7 +27,7 @@ from pctasks.core.models.task import (
     WaitTaskResult,
 )
 from pctasks.core.models.tokens import StorageAccountTokens
-from pctasks.core.models.workflow import JobConfig
+from pctasks.core.models.workflow import JobConfig, WorkflowSubmitMessage
 from pctasks.core.utils import StrEnum
 
 logger = logging.getLogger(__name__)
@@ -61,6 +61,11 @@ class PreparedTaskSubmitMessage(PCBaseModel):
     task_run_message: TaskRunMessage
     task_input_blob_config: BlobConfig
     task_tags: Optional[Dict[str, str]] = None
+
+
+class PreparedWorkflowSubmitMessage(PCBaseModel):
+    workflow_submit_message: WorkflowSubmitMessage
+    # runner_settings:
 
 
 class SuccessfulSubmitResult(PCBaseModel):

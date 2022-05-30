@@ -38,7 +38,7 @@ from pctasks.execute.runner.models import (
     TaskState,
     TaskStateStatus,
 )
-from pctasks.execute.settings import ExecutorSettings
+from pctasks.execute.settings import ExecuteSettings
 from pctasks.execute.template import (
     template_foreach,
     template_job_with_item,
@@ -59,8 +59,8 @@ class WorkflowFailedError(Exception):
 class RemoteRunner:
     """Runs a workflow through executing tasks remotely via a task executor."""
 
-    def __init__(self, executor_settings: Optional[ExecutorSettings] = None) -> None:
-        self.settings = executor_settings or ExecutorSettings.get()
+    def __init__(self, settings: Optional[ExecuteSettings] = None) -> None:
+        self.settings = settings or ExecuteSettings.get()
         self.executor = get_executor(self.settings)
         self.record_updater = RecordUpdater(self.settings)
 
@@ -478,7 +478,7 @@ class RemoteRunner:
             # First tasks in a job are submitted in bulk to minimize
             # the number of concurrent API calls.
             logger.info(" - Submitting initial tasks...")
-            submit_results = self.executor.submit(initial_tasks)
+            submit_results = self.executor.submit_tasks(initial_tasks)
             logger.info(" -  Initial tasks submitted.")
             submit_failed = False
             for job_state, submit_result in zip(job_states, submit_results):

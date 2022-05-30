@@ -2,6 +2,9 @@
 
 set -e
 
+DOCKER_NETWORK_NAME="pctasks-network"
+KIND_CLUSTER_NAME="kind-pctasks"
+
 if [[ "${CI}" ]]; then
     set -x
 fi
@@ -40,6 +43,14 @@ while [[ $# -gt 0 ]]; do case $1 in
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ -z "${AZURITE_ONLY}" ]; then
+        if ! docker network ls | grep -q ${DOCKER_NETWORK_NAME}; then
+            echo " -- CREATING DOCKER NETWORK"
+
+            docker network create \
+                --driver=bridge \
+                pctasks-network
+        fi
+
         echo " -- BUILDING CONTAINERS"
         scripts/update
 

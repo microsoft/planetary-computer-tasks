@@ -1,0 +1,13 @@
+# Do not include azure-functions-worker as it may conflict with the Azure Functions platform
+azure-functions
+azure-functions-durable
+
+# Docker deploy process needs symlinks to bring in
+# pctasks libraries. Symlink is created in deploy script
+pctasks_linked/core
+pctasks_linked/cli
+pctasks_linked/submit
+pctasks_linked/execute
+pctasks_linked/notify
+pctasks_linked/operations
+pctasks_linked/router

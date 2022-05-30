@@ -1,5 +1,5 @@
-from pctasks.execute.settings import ExecutorSettings
+from pctasks.execute.settings import ExecuteSettings
 
 
 def test_settings():
-    _ = ExecutorSettings.get()
+    _ = ExecuteSettings.get()

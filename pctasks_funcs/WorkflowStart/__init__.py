@@ -1,23 +1,24 @@
 import json
 import logging
+import os
 from typing import Optional
 
-import azure.durable_functions as df
 import azure.functions as func
+import requests
 
 from pctasks.core.logging import RunLogger
 from pctasks.core.models.base import RunRecordId
 from pctasks.core.models.record import WorkflowRunStatus
 from pctasks.core.models.workflow import WorkflowSubmitMessage
-from pctasks.execute.constants import OrchestratorNames, StarterNames
+from pctasks.execute.constants import StarterNames
 from pctasks.execute.models import MessageEvent
+from pctasks.execute.settings import ExecuteSettings
 
 logger = logging.getLogger(__name__)
 
 
 async def main(msg: func.QueueMessage, starter: str) -> None:
     logger.info(json.dumps(json.loads(starter), indent=2))
-    client = df.DurableOrchestrationClient(starter)
 
     event_logger: Optional[RunLogger] = None
 
@@ -46,17 +47,19 @@ async def main(msg: func.QueueMessage, starter: str) -> None:
         logger.info(f"Workflow: {submit_message.workflow.name}")
         logger.info(f"Run Id: {submit_message.run_id}")
         logger.info("***********************************")
-        logger.info(submit_message.json(indent=2))
 
-        instance_id = await client.start_new(
-            OrchestratorNames.WORKFLOW, client_input=submit_message.dict()
+        settings = ExecuteSettings.get()
+        assert settings.pctasks_server_endpoint
+        req = requests.post(
+            os.path.join(settings.pctasks_server_endpoint, "run"),
+            json=submit_message.dict(),
         )
+        req.raise_for_status()
 
-        logger.info(f"Started orchestration with ID = '{instance_id}'.")
+        logger.info(json.dumps(req.json(), indent=2))
 
         event_logger.log_event(
             MessageEvent.MESSAGE_SENT,
-            properties={"orchestartor_id": instance_id},
         )
 
     except Exception as e:

@@ -148,6 +148,8 @@ class WorkflowRunRecord(RunRecord):
 
 
 class WorkflowRunGroupRecord(RunRecord):
+    # Record for "workflow groups"
+    # These are not currently used and the concept may be dropped.
     type: str = Field(default=RecordType.WORKFLOW_GROUP, const=True)
 
     dataset: DatasetIdentifier

@@ -5,8 +5,8 @@ from pctasks.core.tables.config import ImageKeyEntryTable
 from pctasks.dev.secrets import TempSecrets
 from pctasks.dev.tables import TempTable
 from pctasks.execute.models import TaskSubmitMessage
-from pctasks.execute.settings import ExecutorSettings
-from pctasks.execute.task.prepare import prepare_task
+from pctasks.execute.runner.prepare import prepare_task
+from pctasks.execute.settings import ExecuteSettings
 
 
 def test_image_key_environment_merged():
@@ -14,12 +14,12 @@ def test_image_key_environment_merged():
     secret_value = "SECRET_VALUE"
     target_environment = "test-image-key-env"
 
-    exec_settings = ExecutorSettings.get()
+    exec_settings = ExecuteSettings.get()
     tmp_table = TempTable()
     exec_settings.image_key_table_name = tmp_table.table_config.table_name
 
     print(exec_settings.image_key_table_name)
-    print(ExecutorSettings.get().image_key_table_name)
+    print(ExecuteSettings.get().image_key_table_name)
 
     with TempSecrets({secret_name: secret_value}):
         with tmp_table as table_client:

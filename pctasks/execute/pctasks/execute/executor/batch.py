@@ -14,7 +14,7 @@ from pctasks.execute.batch.model import BatchTaskId
 from pctasks.execute.batch.task import BatchTask
 from pctasks.execute.batch.utils import make_unique_job_id, make_valid_batch_id
 from pctasks.execute.constants import MAX_MISSING_POLLS
-from pctasks.execute.executor.base import TaskExecutor
+from pctasks.execute.executor.base import Executor
 from pctasks.execute.models import (
     FailedSubmitResult,
     PreparedTaskSubmitMessage,
@@ -68,8 +68,8 @@ class BatchTaskInfo:
     index: int
 
 
-class BatchTaskExecutor(TaskExecutor):
-    def submit(
+class BatchTaskExecutor(Executor):
+    def submit_tasks(
         self, prepared_tasks: List[PreparedTaskSubmitMessage]
     ) -> List[Union[SuccessfulSubmitResult, FailedSubmitResult]]:
 
@@ -78,7 +78,8 @@ class BatchTaskExecutor(TaskExecutor):
         with BatchClient(self.settings.batch_settings) as batch_client:
 
             # Transform the tasks into BatchTasks,
-            # grouped by the job the will be submitted to
+            # grouped by the Azure Batch Job they
+            # will be submitted to
 
             for i, prepared_task in enumerate(prepared_tasks):
                 submit_msg = prepared_task.task_submit_message

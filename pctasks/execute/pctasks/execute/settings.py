@@ -63,7 +63,7 @@ class NotificationQueueConnStrConfig(QueueConnStrConfig):
     queue_name: str = DEFAULT_NOTIFICATIONS_QUEUE_NAME
 
 
-class ExecutorSettings(PCTasksSettings):
+class ExecuteSettings(PCTasksSettings):
     @classmethod
     def section_name(cls) -> str:
         return "exec"
@@ -78,6 +78,9 @@ class ExecutorSettings(PCTasksSettings):
     dev: bool = False
     local_executor_url: Optional[str] = None
     local_secrets: bool = False
+
+    # PCTasks server
+    pctasks_server_endpoint: Optional[str] = None
 
     # Queues
     signal_queue: SignalQueueConnStrConfig

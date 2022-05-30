@@ -3,7 +3,6 @@ import pathlib
 from typing import Any, Dict
 
 import pystac
-import strictyaml
 
 from pctasks.core.models.workflow import WorkflowConfig
 from pctasks.ingest.models import IngestTaskConfig, IngestTaskInput
@@ -32,6 +31,6 @@ def test_goes_coll_deser() -> None:
     input = IngestTaskInput.parse_obj(task.args)
     assert isinstance(input.content, dict)
     collection_dict: Dict[str, Any] = input.content
-    print(json.dumps(collection_dict["extent"], indent=2))
     collection = pystac.Collection.from_dict(collection_dict)
+    collection.set_self_href("https://example.com/collection.json")
     collection.validate()

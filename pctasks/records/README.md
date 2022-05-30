@@ -1,3 +1,3 @@
-# Planetary Computer Tasks: Operations
+# Planetary Computer Tasks: Records
 
-This component of the PCTasks framework is around handling operations in Azure Functions.
+Work with run records from PCTasks.

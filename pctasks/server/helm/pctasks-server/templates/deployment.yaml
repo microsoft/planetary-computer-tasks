@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "pctasks.fullname" . }}
+  labels:
+    {{- include "pctasks.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.pctasks.deploy.autoscaling.enabled }}
+  replicas: {{ .Values.pctasks.deploy.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "pctasks.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.pctasks.deploy.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "pctasks.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.pctasks.deploy.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "pctasks.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.pctasks.deploy.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.pctasks.deploy.securityContext | nindent 12 }}
+          image: "{{ .Values.pctasks.image.repository }}:{{ .Values.pctasks.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.pctasks.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          env:
+            - name: APP_ROOT_PATH
+              value: "{{ .Values.pctasks.appRootPath }}"
+            - name: APP_HOST
+              value: "{{ .Values.pctasks.host }}"
+            - name: APP_PORT
+              value: "{{ .Values.pctasks.port }}"
+            - name: FORWARDED_ALLOW_IPS
+              value: "*"
+            - name: "WEB_CONCURRENCY"
+              value: "{{ .Values.pctasks.server.webConcurrency }}"
+            - name: ENVIRONMENT
+              value: "{{ .Values.pctasks.environment }}"
+
+          livenessProbe:
+            httpGet:
+              path: "/_mgmt/ping"
+              port: http
+          readinessProbe:
+            httpGet:
+              path: "/_mgmt/ping"
+              port: http
+          resources:
+            {{- toYaml .Values.pctasks.deploy.resources | nindent 12 }}
+      {{- with .Values.pctasks.deploy.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.pctasks.deploy.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.pctasks.deploy.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

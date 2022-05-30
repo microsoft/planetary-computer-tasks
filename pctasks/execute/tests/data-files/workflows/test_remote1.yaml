@@ -1,0 +1,52 @@
+args:
+- base_output_dir
+
+name: Test workflow for remote runner 1
+dataset:
+  owner: microsoft
+  name: test-remote-1
+jobs:
+  job-1:
+    tasks:
+    - id: job-1-task-1
+      image: mock:latest
+      task: pctasks.dev.task:test_task
+      args:
+        output_dir: "{{ args.base_output_dir }}/job-1-task-1"
+        options:
+          num_outputs: 2
+      schema_version: 1.0.0
+  job-2:
+    tasks:
+    - id: job-2-task-1
+      image: mock:latest
+      task: pctasks.dev.task:test_task
+      args:
+        uri: ${{ item.uri }}
+        output_dir: "{{ args.base_output_dir }}/job-2-task-1"
+        options:
+          num_outputs: 2
+      schema_version: 1.0.0
+    foreach:
+      items: ${{ jobs.job-1.tasks.task-1.output.uris }}
+    needs: job-1
+  job-3:
+    tasks:
+    - id: job-3-task-1
+      image: mock:latest
+      task: pctasks.dev.task:test_task
+      args:
+        uri: ${{ item.uri }}
+        output_dir: "{{ args.base_output_dir }}/job-3-task-1"
+      schema_version: 1.0.0
+    - id: job-3-task-2
+      image: mock:latest
+      task: pctasks.dev.task:test_task
+      args:
+        uri: ${{ item.uri }}
+        output_dir: "{{ args.base_output_dir }}/job-3-task-2"
+      schema_version: 1.0.0
+    foreach:
+      items: ${{ jobs.create-chunks.tasks.create-chunks.output.chunks }}
+    needs: create-chunks
+schema_version: 1.0.0

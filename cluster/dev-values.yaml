@@ -1,0 +1,44 @@
+# Development values for the helm chart
+
+environment: "dev"
+
+pctasks:
+  image:
+    repository: "pctasks-server"
+    pullPolicy: IfNotPresent
+    tag: "latest"
+
+  service:
+    type: ClusterIP
+    port: 80
+    annotations: {}
+
+  deploy:
+    replicaCount: 1
+    podAnnotations:
+      "updated": "unknown"  # Value generated on helm upgrade
+
+  host: "0.0.0.0"
+  port: "80"
+  appRootPath: "/tasks"
+  debug: "FALSE"
+
+pcingress:
+  services:
+    pctasks:
+      path: "/tasks(/|$)(.*)"
+      name: "pctasks-server"
+      port: "80"
+
+  ingress:
+    enabled: true
+    hosts:
+      - "localhost"
+      - "host.docker.internal"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+      nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
+

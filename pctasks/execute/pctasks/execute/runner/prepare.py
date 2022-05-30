@@ -24,7 +24,7 @@ from pctasks.execute.models import PreparedTaskSubmitMessage, TaskSubmitMessage
 from pctasks.execute.secrets.base import SecretsProvider
 from pctasks.execute.secrets.keyvault import KeyvaultSecretsProvider
 from pctasks.execute.secrets.local import LocalSecretsProvider
-from pctasks.execute.settings import ExecutorSettings
+from pctasks.execute.settings import ExecuteSettings
 from pctasks.execute.utils import (
     get_run_log_path,
     get_task_input_path,
@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 
 
 def write_task_run_msg(
-    run_msg: TaskRunMessage, settings: ExecutorSettings
+    run_msg: TaskRunMessage, settings: ExecuteSettings
 ) -> BlobConfig:
     """
     Write the task run message to the Task IO input file
@@ -84,13 +84,16 @@ def write_task_run_msg(
 def prepare_task(
     submit_msg: TaskSubmitMessage,
     run_id: str,
-    settings: ExecutorSettings,
+    settings: ExecuteSettings,
 ) -> PreparedTaskSubmitMessage:
     """
-    Convert a submit message to a task run message
+    Prepare a task to be run by an Executor.
 
-    Returns the TaskRunMessage and optional set of tags
-    that come from the task and the image key table.
+    This includes:
+    - translate image-key to image and configured environment, tags
+    - inject secrets
+    - configure task IO, logging, and records access
+    - write task run message to task IO input file
     """
     if not submit_msg.instance_id:
         raise ValueError("submit_msg.instance_id is required")

@@ -14,7 +14,7 @@ from pctasks.core.models.task import (
     WaitTaskResult,
 )
 from pctasks.core.storage.base import Storage
-from pctasks.execute.executor.base import TaskExecutor
+from pctasks.execute.executor.base import Executor
 from pctasks.execute.models import (
     FailedSubmitResult,
     JobSubmitMessage,
@@ -22,8 +22,8 @@ from pctasks.execute.models import (
     SuccessfulSubmitResult,
     TaskSubmitMessage,
 )
-from pctasks.execute.settings import ExecutorSettings
-from pctasks.execute.task.prepare import prepare_task
+from pctasks.execute.runner.prepare import prepare_task
+from pctasks.execute.settings import ExecuteSettings
 from pctasks.execute.template import template_args
 
 logger = logging.getLogger(__name__)
@@ -139,7 +139,7 @@ class TaskState:
         self._wait_info = WaitInfo(start_time=time.monotonic(), duration=wait_duration)
         self._submit_result = None
 
-    def submit(self, executor: TaskExecutor) -> None:
+    def submit(self, executor: Executor) -> None:
         self._wait_info = None
         if self.submit_result:
             raise Exception(
@@ -147,7 +147,7 @@ class TaskState:
                 "already submitted "
                 f"for job {self.job_id}"
             )
-        self.set_submitted(executor.submit([self.prepared_task])[0])
+        self.set_submitted(executor.submit_tasks([self.prepared_task])[0])
 
     def set_failed(self, errors: List[str]) -> None:
         self.change_status(TaskStateStatus.FAILED)
@@ -166,7 +166,7 @@ class TaskState:
             self.set_failed(submit_result.errors)
 
     def poll(
-        self, executor: TaskExecutor, storage: Storage, settings: ExecutorSettings
+        self, executor: Executor, storage: Storage, settings: ExecuteSettings
     ) -> None:
         """Poll the task and modify the state accordingly."""
         if not self.status == TaskStateStatus.SUBMITTED:
@@ -218,7 +218,7 @@ class TaskState:
             )
 
     def process_output_if_available(
-        self, storage: Storage, settings: ExecutorSettings
+        self, storage: Storage, settings: ExecuteSettings
     ) -> bool:
         """Checks for task output, indicating completion. Updates state accordingly.
 
@@ -261,6 +261,7 @@ class TaskState:
         path = storage.get_path(log_uri)
         if storage.file_exists(path):
             return log_uri
+        return None
 
 
 @dataclass
@@ -281,7 +282,7 @@ class JobState:
     def job_id(self) -> str:
         return self.job_submit_message.job_id
 
-    def prepare_next_task(self, settings: ExecutorSettings) -> None:
+    def prepare_next_task(self, settings: ExecuteSettings) -> None:
         next_task_config = next(iter(self.task_queue), None)
         if next_task_config:
             copied_task = next_task_config.__class__.parse_obj(next_task_config.dict())
@@ -314,7 +315,7 @@ class JobState:
 
     @classmethod
     def create(
-        cls, job_submit_message: JobSubmitMessage, settings: ExecutorSettings
+        cls, job_submit_message: JobSubmitMessage, settings: ExecuteSettings
     ) -> "JobState":
         """Creates a JobState from a JobSubmitMessage.
 

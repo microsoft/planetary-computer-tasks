@@ -7,15 +7,15 @@ from pctasks.execute.models import (
     SuccessfulSubmitResult,
     TaskPollResult,
 )
-from pctasks.execute.settings import ExecutorSettings
+from pctasks.execute.settings import ExecuteSettings
 
 
-class TaskExecutor(ABC):
-    def __init__(self, settings: ExecutorSettings):
+class Executor(ABC):
+    def __init__(self, settings: ExecuteSettings):
         self.settings = settings
 
     @abstractmethod
-    def submit(
+    def submit_tasks(
         self, prepared_tasks: List[PreparedTaskSubmitMessage]
     ) -> List[Union[SuccessfulSubmitResult, FailedSubmitResult]]:
         pass
@@ -25,3 +25,5 @@ class TaskExecutor(ABC):
         self, executor_id: Dict[str, Any], previous_poll_count: int
     ) -> TaskPollResult:
         pass
+
+    # def submit_runner(self, )
