@@ -25,7 +25,7 @@ from pctasks.core.constants import (
 )
 from pctasks.core.models.config import ImageConfig
 from pctasks.core.tables.config import ImageKeyEntryTable
-from pctasks.dev.constants import AZURITE_CONNECT_STRING, TEST_DATA_CONTAINER
+from pctasks.dev.constants import TEST_DATA_CONTAINER, get_azurite_connection_string
 
 
 def setup_azurite() -> None:
@@ -34,7 +34,9 @@ def setup_azurite() -> None:
 
     print("~ Setting up queues...")
 
-    queue_client = QueueServiceClient.from_connection_string(AZURITE_CONNECT_STRING)
+    queue_client = QueueServiceClient.from_connection_string(
+        get_azurite_connection_string()
+    )
     existing_queues = [q.name for q in queue_client.list_queues()]
     for queue_name in [
         DEFAULT_WORKFLOW_QUEUE_NAME,
@@ -52,7 +54,7 @@ def setup_azurite() -> None:
     print("~ Setting up tables...")
 
     table_service_client = TableServiceClient.from_connection_string(
-        AZURITE_CONNECT_STRING
+        get_azurite_connection_string()
     )
     tables = [t.name for t in table_service_client.list_tables()]
     for table in [
@@ -89,7 +91,7 @@ def setup_azurite() -> None:
     print("~ Setting up blob storage...")
 
     blob_service_client: BlobServiceClient = BlobServiceClient.from_connection_string(
-        AZURITE_CONNECT_STRING
+        get_azurite_connection_string()
     )
     containers = [c.name for c in blob_service_client.list_containers()]
     for container in [

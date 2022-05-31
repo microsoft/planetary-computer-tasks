@@ -18,7 +18,7 @@ from pctasks.dev.blob import (
     get_azurite_sas_token,
     temp_azurite_blob_storage,
 )
-from pctasks.execute.runner.local import LocalRunner
+from pctasks.run.workflow.simple import SimpleWorkflowRunner
 from pctasks.task.context import TaskContext
 
 HERE = Path(__file__).parent
@@ -46,7 +46,7 @@ def test_process_items() -> None:
             )
             path = BlobUri(storage.get_uri()).blob_name
             assert path
-            outputs = LocalRunner().run_workflow(
+            outputs = SimpleWorkflowRunner().run_workflow(
                 workflow,
                 output_uri=tmp_dir,
                 args={"test_prefix": path, "sas_token": get_azurite_sas_token()},

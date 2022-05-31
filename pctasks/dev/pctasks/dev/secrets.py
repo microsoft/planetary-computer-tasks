@@ -1,7 +1,7 @@
 import os
 from typing import Any, Dict, Optional
 
-from pctasks.execute.secrets.local import LOCAL_SECRETS_PREFIX
+from pctasks.run.secrets.local import LOCAL_SECRETS_PREFIX
 
 
 class TempSecrets:

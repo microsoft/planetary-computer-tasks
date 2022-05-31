@@ -164,6 +164,8 @@ class WorkflowSubmitMessage(PCBaseModel):
         cls, v: Optional[Dict[str, Any]], values: Dict[str, Any]
     ) -> Optional[Dict[str, Any]]:
         """Check that args match the workflow args."""
+        if "workflow" not in values:
+            raise ValueError("'workflow' is a required field.")
         errors = values["workflow"].get_argument_errors(v)
 
         if errors:

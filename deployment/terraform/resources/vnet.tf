@@ -31,6 +31,20 @@ resource "azurerm_network_security_group" "rxetl" {
   }
 }
 
+
+resource "azurerm_subnet" "k8snode_subnet" {
+  name                 = "${local.prefix}-node-subnet"
+  virtual_network_name = azurerm_virtual_network.rxetl.name
+  resource_group_name  = azurerm_resource_group.rxetl.name
+  address_prefixes     = ["10.1.0.0/16"]
+  service_endpoints = [
+    "Microsoft.Sql",
+    "Microsoft.Storage",
+    "Microsoft.KeyVault",
+    "Microsoft.ContainerRegistry",
+  ]
+}
+
 resource "azurerm_subnet_network_security_group_association" "rxetl" {
   subnet_id                 = azurerm_subnet.nodepool_subnet.id
   network_security_group_id = azurerm_network_security_group.rxetl.id

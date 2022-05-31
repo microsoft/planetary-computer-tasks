@@ -7,7 +7,9 @@ with open("README.md") as f:
 
 install_requires = [
     "pctasks.core>=0.1.0",
+    "pctasks.run>=0.1.0",
     "fastapi==0.78.*",
+    "argo-workflows==6.3.*",
 ]
 
 extra_reqs = {
@@ -20,9 +22,7 @@ extra_reqs = {
 
 setup(
     name="pctasks.server",
-    description=(
-        "Planetary Computer Tasks framework: Server."
-    ),
+    description=("Planetary Computer Tasks framework: Server."),
     long_description=desc,
     long_description_content_type="text/markdown",
     python_requires=">=3.8",
@@ -34,7 +34,7 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     keywords="Planetary, STAC",
-    author=u"Microsoft",
+    author="Microsoft",
     author_email="planetarycomputer@microsoft.com",
     url="https://github.com/Microsoft/planetary-computer-tasks",
     license="MIT",

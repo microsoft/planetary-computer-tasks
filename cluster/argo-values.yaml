@@ -1,0 +1,5 @@
+server:
+  baseHref: /argo/
+  secure: false
+  extraArgs:
+  - --auth-mode=server

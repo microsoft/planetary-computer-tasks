@@ -47,30 +47,30 @@ resource "azurerm_function_app" "rxetl" {
     ## Azure Storage
 
     ### Queues
-    "PCTASKS_EXEC__NOTIFICATION_QUEUE__CONNECTION_STRING" = azurerm_storage_account.rxetl.primary_connection_string,
-    "PCTASKS_EXEC__INBOX_QUEUE__CONNECTION_STRING"        = azurerm_storage_account.rxetl.primary_connection_string,
-    "PCTASKS_EXEC__SIGNAL_QUEUE__CONNECTION_STRING"       = azurerm_storage_account.rxetl.primary_connection_string,
-    "PCTASKS_EXEC__SIGNAL_QUEUE_ACCOUNT_NAME"             = azurerm_storage_account.rxetl.name,
-    "PCTASKS_EXEC__SIGNAL_QUEUE_ACCOUNT_KEY"              = azurerm_storage_account.rxetl.primary_access_key,
+    "PCTASKS_RUN__NOTIFICATION_QUEUE__CONNECTION_STRING" = azurerm_storage_account.rxetl.primary_connection_string,
+    "PCTASKS_RUN__INBOX_QUEUE__CONNECTION_STRING"        = azurerm_storage_account.rxetl.primary_connection_string,
+    "PCTASKS_RUN__SIGNAL_QUEUE__CONNECTION_STRING"       = azurerm_storage_account.rxetl.primary_connection_string,
+    "PCTASKS_RUN__SIGNAL_QUEUE_ACCOUNT_NAME"             = azurerm_storage_account.rxetl.name,
+    "PCTASKS_RUN__SIGNAL_QUEUE_ACCOUNT_KEY"              = azurerm_storage_account.rxetl.primary_access_key,
 
     ### Tables
-    "PCTASKS_EXEC__TABLES_ACCOUNT_URL"  = azurerm_storage_account.rxetl.primary_table_endpoint,
-    "PCTASKS_EXEC__TABLES_ACCOUNT_NAME" = azurerm_storage_account.rxetl.name,
-    "PCTASKS_EXEC__TABLES_ACCOUNT_KEY"  = azurerm_storage_account.rxetl.primary_access_key,
+    "PCTASKS_RUN__TABLES_ACCOUNT_URL"  = azurerm_storage_account.rxetl.primary_table_endpoint,
+    "PCTASKS_RUN__TABLES_ACCOUNT_NAME" = azurerm_storage_account.rxetl.name,
+    "PCTASKS_RUN__TABLES_ACCOUNT_KEY"  = azurerm_storage_account.rxetl.primary_access_key,
 
     ### Blobs
-    "PCTASKS_EXEC__BLOB_ACCOUNT_URL"  = azurerm_storage_account.rxetl.primary_blob_endpoint,
-    "PCTASKS_EXEC__BLOB_ACCOUNT_NAME" = azurerm_storage_account.rxetl.name,
-    "PCTASKS_EXEC__BLOB_ACCOUNT_KEY"  = azurerm_storage_account.rxetl.primary_access_key,
+    "PCTASKS_RUN__BLOB_ACCOUNT_URL"  = azurerm_storage_account.rxetl.primary_blob_endpoint,
+    "PCTASKS_RUN__BLOB_ACCOUNT_NAME" = azurerm_storage_account.rxetl.name,
+    "PCTASKS_RUN__BLOB_ACCOUNT_KEY"  = azurerm_storage_account.rxetl.primary_access_key,
 
     ## Azure Batch
-    "PCTASKS_EXEC__BATCH_URL"             = "https://${azurerm_batch_account.rxetl.account_endpoint}",
-    "PCTASKS_EXEC__BATCH_NAME"            = azurerm_batch_account.rxetl.name,
-    "PCTASKS_EXEC__BATCH_KEY"             = azurerm_batch_account.rxetl.primary_access_key,
-    "PCTASKS_EXEC__BATCH_DEFAULT_POOL_ID" = var.batch_pool_id,
+    "PCTASKS_RUN__BATCH_URL"             = "https://${azurerm_batch_account.rxetl.account_endpoint}",
+    "PCTASKS_RUN__BATCH_NAME"            = azurerm_batch_account.rxetl.name,
+    "PCTASKS_RUN__BATCH_KEY"             = azurerm_batch_account.rxetl.primary_access_key,
+    "PCTASKS_RUN__BATCH_DEFAULT_POOL_ID" = var.batch_pool_id,
 
     ##  KeyVault
-    "PCTASKS_EXEC__KEYVAULT_URL" = azurerm_key_vault.rxetl.vault_uri,
+    "PCTASKS_RUN__KEYVAULT_URL" = azurerm_key_vault.rxetl.vault_uri,
 
     # Router settings ##############################################################
 

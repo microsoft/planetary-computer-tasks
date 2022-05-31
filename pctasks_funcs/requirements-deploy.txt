@@ -7,7 +7,7 @@ azure-functions-durable
 pctasks_linked/core
 pctasks_linked/cli
 pctasks_linked/submit
-pctasks_linked/execute
+pctasks_linked/run
 pctasks_linked/notify
 pctasks_linked/operations
 pctasks_linked/router

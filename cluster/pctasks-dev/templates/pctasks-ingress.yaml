@@ -1,0 +1,31 @@
+{{- if .Values.pcdev.pctasks_ingress.enabled -}}
+{{- $fullName := include "pcdev.fullname" . -}}
+{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-pctasks-server
+  labels:
+    {{- include "pcdev.labels" . | nindent 4 }}
+  {{- with .Values.pcdev.pctasks_ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  rules:
+  {{- range .Values.pcdev.pctasks_ingress.hosts }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: {{ $.Values.pcdev.services.pctasks.path }}
+            pathType: Exact
+            backend:
+              service:
+                name: {{ $.Values.pcdev.services.pctasks.name }}
+                port:
+                  number: {{ $.Values.pcdev.services.pctasks.port }}
+  {{- end }}
+{{- end }}

@@ -2,8 +2,8 @@ ARG base
 
 FROM ${base}
 
-COPY pctasks/execute /opt/lib/pctasks/execute
-RUN cd /opt/lib/pctasks/execute && \
+COPY pctasks/run /opt/lib/pctasks/run
+RUN cd /opt/lib/pctasks/run && \
      pip install -e .
 
 COPY pctasks/dev /opt/lib/pctasks/dev

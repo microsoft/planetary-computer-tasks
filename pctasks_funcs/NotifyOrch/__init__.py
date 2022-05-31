@@ -4,13 +4,13 @@ from typing import Any, Optional
 import azure.durable_functions as df
 
 from pctasks.core.models.event import NotificationSubmitMessage
-from pctasks.execute.constants import ActivityNames
 from pctasks.notify.models import (
     NotifyEventGridChannelMessage,
     NotifyFetchMessage,
     NotifyFetchResult,
     NotifyWebhookMessage,
 )
+from pctasks.run.constants import ActivityNames
 
 logger = logging.getLogger(__name__)
 

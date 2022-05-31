@@ -7,7 +7,6 @@ from click.testing import CliRunner, Result
 from pctasks.cli.cli import pctasks_cmd
 from pctasks.core.constants import (
     DEFAULT_LOG_CONTAINER,
-    DEFAULT_SIGNAL_QUEUE_NAME,
     DEFAULT_TASK_IO_CONTAINER,
     DEFAULT_TASK_RUN_RECORD_TABLE_NAME,
 )
@@ -28,7 +27,7 @@ from pctasks.core.models.task import (
 )
 from pctasks.core.models.tokens import StorageAccountTokens
 from pctasks.core.storage.blob import BlobStorage
-from pctasks.dev.config import get_blob_config, get_queue_config, get_table_config
+from pctasks.dev.config import get_blob_config, get_table_config
 from pctasks.dev.env import (
     PCTASKS_BLOB_ACCOUNT_KEY_ENV_VAR,
     PCTASKS_BLOB_ACCOUNT_NAME_ENV_VAR,
@@ -36,7 +35,7 @@ from pctasks.dev.env import (
     get_dev_env,
 )
 from pctasks.dev.tables import get_task_run_record_table
-from pctasks.execute.utils import get_run_log_path
+from pctasks.run.utils import get_run_log_path
 from pctasks.task.run import run_task
 
 
@@ -229,12 +228,9 @@ def run_test_task(
                 run_id=run_id,
                 job_id=job_id,
                 task_id=task_id,
-                signal_key="signal-key",
-                signal_target_id="target-id",
                 image="TESTIMAGE:latest",
                 tokens=tokens,
                 task=task,
-                signal_queue=get_queue_config(DEFAULT_SIGNAL_QUEUE_NAME),
                 task_runs_table_config=get_table_config(
                     DEFAULT_TASK_RUN_RECORD_TABLE_NAME
                 ),

@@ -4,13 +4,13 @@ metadata:
   name: {{ include "pctasks.fullname" . }}
   labels:
     {{- include "pctasks.labels" . | nindent 4 }}
-  {{- with .Values.pctasks.service.annotations }}
+  {{- with .Values.pctasks.server.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  type: {{ .Values.pctasks.service.type }}
+  type: {{ .Values.pctasks.server.service.type }}
   ports:
-    - port: {{ .Values.pctasks.service.port }}
+    - port: {{ .Values.pctasks.server.service.port }}
   selector:
     {{- include "pctasks.selectorLabels" . | nindent 4 }}

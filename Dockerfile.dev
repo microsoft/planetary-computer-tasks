@@ -62,8 +62,12 @@ COPY pctasks/ingest_task /opt/src/pctasks/ingest_task
 RUN cd /opt/src/pctasks/ingest_task && \
      pip install -e .
 
-COPY pctasks/execute /opt/src/pctasks/execute
-RUN cd /opt/src/pctasks/execute && \
+COPY pctasks/run /opt/src/pctasks/run
+RUN cd /opt/src/pctasks/run && \
+     pip install -e .
+
+COPY pctasks/server /opt/src/pctasks/server
+RUN cd /opt/src/pctasks/server && \
      pip install -e .
 
 COPY pctasks/dataset /opt/src/pctasks/dataset

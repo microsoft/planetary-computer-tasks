@@ -15,14 +15,14 @@ from pctasks.dev.constants import (
     AZURITE_HOST_ENV_VAR,
     TEST_DATA_CONTAINER,
 )
-from pctasks.execute.settings import ExecuteSettings
+from pctasks.run.settings import RunSettings
 
 
 def get_azurite_test_storage() -> BlobStorage:
     account_name = AZURITE_ACCOUNT_NAME
-    execute_settings: Optional[ExecuteSettings] = None
+    execute_settings: Optional[RunSettings] = None
     try:
-        execute_settings = ExecuteSettings.get()
+        execute_settings = RunSettings.get()
     except Exception:
         # Don't fail for environments that don't have executor settings set
         pass

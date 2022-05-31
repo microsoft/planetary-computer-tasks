@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DOCKER_NETWORK_NAME="pctasks-network"
+KIND_CLUSTER_NAME="kind-pctasks"
 
 PACKAGE_DIRS=(
     "pctasks/core"
@@ -9,7 +11,7 @@ PACKAGE_DIRS=(
     "pctasks/ingest"
     "pctasks/ingest_task"
     "pctasks/dataset"
-    "pctasks/execute"
+    "pctasks/run"
     "pctasks/notify"
     "pctasks/router"
     "pctasks/operations"

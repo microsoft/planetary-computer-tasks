@@ -28,49 +28,15 @@ services:
       - AzureWebJobsStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
       - WEBSITE_HOSTNAME=functions:7071
 
-      - PCTASKS_EXEC__PCTASKS_SERVER_ENDPOINT=http://host.docker.internal:8500/tasks
+      # See .env for swithcing between docker-compose and kind cluster
+      - PCTASKS_SERVER_URL=${PCTASKS_SERVER_URL}
 
-      # Dev executor settings
-      - PCTASKS_EXEC__DEV=TRUE
-      - PCTASKS_EXEC__LOCAL_EXECUTOR_URL=http://local-executor:8000
-      - PCTASKS_EXEC__LOCAL_SECRETS=true
-
-      # Dev storage settings
-      - AZURITE_HOST=azurite
-      - AZURITE_PORT=10000
-      - AZURITE_STORAGE_ACCOUNT=devstoreaccount1
-
-      # Local secrets provider secrets
-      - SECRETS_DB_CONNECTION_STRING=postgresql://username:password@database:5432/postgis
+      - PCTASKS_SERVER_ACCOUNT_KEY=hunter2
 
       # Function queue trigger bindings ##
       - FUNC_NOTIFY_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
       - FUNC_ROUTER_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
       - FUNC_WORKFLOW_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-      - FUNC_TASKS_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-      - FUNC_TASK_SIGNAL_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-      - FUNC_OPERATIONS_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-
-      # Executor settings #######################################################
-
-      ## Azure Storage
-
-      ### Queues
-      - PCTASKS_EXEC__NOTIFICATION_QUEUE__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-      - PCTASKS_EXEC__INBOX_QUEUE__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-      - PCTASKS_EXEC__SIGNAL_QUEUE__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-      - PCTASKS_EXEC__SIGNAL_QUEUE_ACCOUNT_NAME=devstoreaccount1
-      - PCTASKS_EXEC__SIGNAL_QUEUE_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
-
-      ### Tables
-      - PCTASKS_EXEC__TABLES_ACCOUNT_URL=http://azurite:10002/devstoreaccount1
-      - PCTASKS_EXEC__TABLES_ACCOUNT_NAME=devstoreaccount1
-      - PCTASKS_EXEC__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
-
-      ### Blobs
-      - PCTASKS_EXEC__BLOB_ACCOUNT_URL=http://azurite:10000/devstoreaccount1
-      - PCTASKS_EXEC__BLOB_ACCOUNT_NAME=devstoreaccount1
-      - PCTASKS_EXEC__BLOB_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
 
       # Router settings ##############################################################
 
@@ -94,15 +60,6 @@ services:
       - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_NAME=devstoreaccount1
       - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
 
-      # Operations settings #######################################################
-
-      ## Azure Storage
-
-      ### Tables
-
-      - PCTASKS_OPS__TABLES_ACCOUNT_URL=http://azurite:10002/devstoreaccount1
-      - PCTASKS_OPS__TABLES_ACCOUNT_NAME=devstoreaccount1
-      - PCTASKS_OPS__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
 
   database:
     container_name: pctasks-database
@@ -129,6 +86,49 @@ services:
       dockerfile: server/Dockerfile
       args:
         - DEVELOPMENT=TRUE
+    environment:
+      - APP_PORT=8580
+      - WEB_CONCURRENCY=1
+
+      - PCTASKS_SERVER__ARGO__HOST=host.docker.internal:8500/argo
+      - PCTASKS_SERVER__ARGO__TOKEN=${ARGO_TOKEN}
+
+      - PCTASKS_SERVER__RUNNER_IMAGE=localhost:5001/pctasks-run:latest
+      - PCTASKS_SERVER__SERVER_ACCOUNT_KEY=hunter2
+
+      # Dev storage settings
+      - AZURITE_HOST=azurite
+      - AZURITE_PORT=10000
+      - AZURITE_STORAGE_ACCOUNT=devstoreaccount1
+
+      # Local secrets provider secrets
+      - SECRETS_DB_CONNECTION_STRING=postgresql://username:password@database:5432/postgis
+
+      # Run settings #######################################################
+
+      # Dev executor settings
+      - PCTASKS_RUN__LOCAL_EXECUTOR_URL=http://local-executor:8000
+      - PCTASKS_RUN__LOCAL_SECRETS=true
+
+      ## Azure Storage
+
+      ### Queues
+      - PCTASKS_RUN__NOTIFICATION_QUEUE__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
+      - PCTASKS_RUN__INBOX_QUEUE__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
+      - PCTASKS_RUN__SIGNAL_QUEUE__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
+      - PCTASKS_RUN__SIGNAL_QUEUE_ACCOUNT_NAME=devstoreaccount1
+      - PCTASKS_RUN__SIGNAL_QUEUE_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+
+      ### Tables
+      - PCTASKS_RUN__TABLES_ACCOUNT_URL=http://azurite:10002/devstoreaccount1
+      - PCTASKS_RUN__TABLES_ACCOUNT_NAME=devstoreaccount1
+      - PCTASKS_RUN__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+
+      ### Blobs
+      - PCTASKS_RUN__BLOB_ACCOUNT_URL=http://azurite:10000/devstoreaccount1
+      - PCTASKS_RUN__BLOB_ACCOUNT_NAME=devstoreaccount1
+      - PCTASKS_RUN__BLOB_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+
     volumes:
       - ./pctasks:/opt/src
     ports:
@@ -187,6 +187,14 @@ services:
       - database
     command:
       bash -c "python -m stac_fastapi.pgstac.app"
+
+  # Used to let kind cluster pull local docker images
+  # See https://kind.sigs.k8s.io/docs/user/local-registry/
+  local-docker-registry:
+    container_name: pctasks-local-docker-reg
+    image: registry:2
+    ports:
+      - 5001:5000
 
 networks:
   default:

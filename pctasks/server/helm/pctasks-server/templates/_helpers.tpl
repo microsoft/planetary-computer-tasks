@@ -2,7 +2,7 @@
 Expand the name of the chart.
 */}}
 {{- define "pctasks.name" -}}
-{{- default .Chart.Name .Values.pctasks.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default .Chart.Name .Values.pctasks.server.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
@@ -11,10 +11,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 If release name contains chart name it will be used as a full name.
 */}}
 {{- define "pctasks.fullname" -}}
-{{- if .Values.pctasks.fullnameOverride }}
-{{- .Values.pctasks.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- if .Values.pctasks.server.fullnameOverride }}
+{{- .Values.pctasks.server.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default .Chart.Name .Values.pctasks.nameOverride }}
+{{- $name := default .Chart.Name .Values.pctasks.server.nameOverride }}
 {{- if contains $name .Release.Name }}
 {{- .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -54,9 +54,9 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Create the name of the service account to use
 */}}
 {{- define "pctasks.serviceAccountName" -}}
-{{- if .Values.pctasks.serviceAccount.create }}
-{{- default (include "pctasks.fullname" .) .Values.pctasks.serviceAccount.name }}
+{{- if .Values.pctasks.server.serviceAccount.create }}
+{{- default (include "pctasks.fullname" .) .Values.pctasks.server.serviceAccount.name }}
 {{- else }}
-{{- default "default" .Values.pctasks.serviceAccount.name }}
+{{- default "default" .Values.pctasks.server.serviceAccount.name }}
 {{- end }}
 {{- end }}

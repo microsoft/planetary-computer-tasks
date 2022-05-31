@@ -15,7 +15,7 @@ from pctasks.dataset.splits.models import (
 )
 from pctasks.dataset.template import template_dataset_file
 from pctasks.dev.blob import temp_azurite_blob_storage
-from pctasks.execute.runner.local import LocalRunner
+from pctasks.run.runner.local import LocalRunner
 from pctasks.task.context import TaskContext
 
 HERE = Path(__file__).parent

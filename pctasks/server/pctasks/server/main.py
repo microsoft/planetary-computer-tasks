@@ -1,6 +1,7 @@
 """FastAPI application using PGStac."""
 import logging
 import os
+from typing import Any, Dict
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError, StarletteHTTPException
@@ -9,7 +10,6 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import PlainTextResponse
 
 from pctasks.server.routes import run
-
 
 DEBUG: bool = os.getenv("DEBUG") == "TRUE" or False
 
@@ -54,7 +54,7 @@ async def validation_exception_handler(
 
 
 @app.get("/_mgmt/ping")
-async def ping():
+async def ping() -> Dict[str, Any]:
     """Liveliness/readiness probe."""
     return {"message": "PONG"}
 

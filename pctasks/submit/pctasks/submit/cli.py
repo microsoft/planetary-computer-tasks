@@ -31,6 +31,12 @@ def file_cmd(ctx: click.Context, workflow_path: str) -> None:
     with SubmitClient(settings) as submit_client:
         submit_client.submit_workflow(msg)
 
+    with open("test_workflow_argo.json", "w") as f:
+        f.write(msg.json(indent=2))
+
+    with open("test_workflow_argo.yaml", "w") as f:
+        f.write(msg.to_yaml())
+
     click.echo(click.style(f"Submitted workflow with run ID: {msg.run_id}", fg="green"))
 
 

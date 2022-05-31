@@ -1,0 +1,4 @@
+Application information:
+{{ include "pcdev.selectorLabels" . }}
+Ingress host: {{ .Values.pcdev.pctasks_ingress.host }}
+Service Fullname: {{ include "pcdev.fullname" . }}

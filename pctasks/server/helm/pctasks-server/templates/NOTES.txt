@@ -1,4 +1,4 @@
 Application information:
 {{ include "pctasks.selectorLabels" . }}
-Ingress host: {{ .Values.pctasks.ingress.host }}
+Ingress host: {{ .Values.pctasks.server.ingress.host }}
 Service Fullname: {{ include "pctasks.fullname" . }}

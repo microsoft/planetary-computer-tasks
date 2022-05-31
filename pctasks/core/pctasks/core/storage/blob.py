@@ -13,6 +13,8 @@ from typing import (
     List,
     Optional,
     Tuple,
+    Type,
+    TypeVar,
     Union,
     cast,
 )
@@ -40,6 +42,8 @@ from pctasks.core.utils import map_opt
 from pctasks.core.utils.backoff import with_backoff
 
 logger = logging.getLogger(__name__)
+
+T = TypeVar("T", bound="BlobStorage")
 
 
 _AZURITE_ACCOUNT_KEY = (
@@ -546,11 +550,11 @@ class BlobStorage(Storage):
 
     @classmethod
     def from_uri(
-        cls,
+        cls: Type[T],
         blob_uri: Union[BlobUri, str],
         sas_token: Optional[str] = None,
         account_url: Optional[str] = None,
-    ) -> "BlobStorage":
+    ) -> T:
         if isinstance(blob_uri, str):
             blob_uri = BlobUri(blob_uri)
 
@@ -564,11 +568,11 @@ class BlobStorage(Storage):
 
     @classmethod
     def from_account_key(
-        cls,
+        cls: Type[T],
         blob_uri: Union[BlobUri, str],
         account_key: str,
         account_url: Optional[str] = None,
-    ) -> "BlobStorage":
+    ) -> T:
         if isinstance(blob_uri, str):
             blob_uri = BlobUri(blob_uri)
 

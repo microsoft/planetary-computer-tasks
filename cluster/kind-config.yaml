@@ -18,3 +18,10 @@ nodes:
     # optional: set the protocol to one of TCP, UDP, SCTP.
     # TCP is the default
     # protocol: TCP
+
+# Enables use of local docker registry, which runs as part of docker-compose.yml
+# See https://kind.sigs.k8s.io/docs/user/local-registry/
+containerdConfigPatches:
+- |-
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5001"]
+    endpoint = ["http://local-docker-registry:5000"]

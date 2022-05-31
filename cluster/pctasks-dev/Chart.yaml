@@ -1,0 +1,6 @@
+apiVersion: v2
+name: pctasks-dev-ingress
+description: A Helm chart for setting up the development cluster
+type: application
+version: 0.1.0
+appVersion: 0.1.0

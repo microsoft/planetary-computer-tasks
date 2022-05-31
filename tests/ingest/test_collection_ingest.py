@@ -29,7 +29,7 @@ from pctasks.dev.tables import (
     get_task_run_record_table,
     get_workflow_run_record_table,
 )
-from pctasks.execute.utils import get_exec_log_path, get_run_log_path
+from pctasks.run.utils import get_exec_log_path, get_run_log_path
 from pctasks.submit.client import SubmitClient
 from pctasks.submit.settings import SubmitSettings
 from pctasks.submit.template import template_workflow_file
@@ -38,7 +38,7 @@ HERE = Path(__file__).parent
 WORKFLOWS = HERE / ".." / "workflows"
 TEST_DATA = HERE / ".." / "data-files"
 
-TIMEOUT_SECONDS = 10
+TIMEOUT_SECONDS = 60
 
 
 def test_local():

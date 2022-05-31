@@ -6,7 +6,7 @@ azure-functions-durable
 -e ../pctasks/core
 -e ../pctasks/cli
 -e ../pctasks/submit
--e ../pctasks/execute
+-e ../pctasks/run
 -e ../pctasks/notify
 -e ../pctasks/operations
 -e ../pctasks/router

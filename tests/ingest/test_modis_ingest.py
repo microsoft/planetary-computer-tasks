@@ -6,7 +6,7 @@ HERE = Path(__file__).parent
 COLLECTION_PATH = HERE / ".." / "data-files/modis/collection.json"
 NDJSON_FOLDER_PATH = HERE / ".." / "data-files/modis"
 
-TIMEOUT_SECONDS = 20
+TIMEOUT_SECONDS = 60
 
 
 def test_modis_ingest() -> None:
@@ -17,7 +17,7 @@ def test_modis_ingest() -> None:
     assert collection_ingest_result.exit_code == 0
     run_id = collection_ingest_result.output.strip()
 
-    assert_workflow_is_successful(run_id)
+    assert_workflow_is_successful(run_id, timeout_seconds=TIMEOUT_SECONDS)
 
     item_ingest_result = run_pctasks(
         [
@@ -31,6 +31,8 @@ def test_modis_ingest() -> None:
         ]
     )
     assert item_ingest_result.exit_code == 0
+    print("ingest ndjsons output:", item_ingest_result.output)
+    print(item_ingest_result.output)
     run_id = item_ingest_result.output.strip()
 
-    assert_workflow_is_successful(run_id, timeout_seconds=20)
+    assert_workflow_is_successful(run_id, timeout_seconds=TIMEOUT_SECONDS)
