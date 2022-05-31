@@ -6,6 +6,7 @@ azure-functions-durable
 # pctasks libraries. Symlink is created in deploy script
 pctasks_linked/core
 pctasks_linked/cli
+pctasks_linked/task
 pctasks_linked/submit
 pctasks_linked/run
 pctasks_linked/notify
