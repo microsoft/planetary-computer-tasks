@@ -20,7 +20,7 @@ jobs:
           python-version: '3.8'
 
       - name: Install Kind
-        uses: helm/kind-action@v1.2.0
+        uses: helm/kind-action@deab45fc8df9de5090a604e8ec11778eea7170bd
         with:
           install_only: true
 
