@@ -278,3 +278,16 @@ class Storage(ABC):
         """
         path = self.get_path_from_url(href)
         return self.get_authenticated_url(path)
+
+    @property
+    def fsspec_storage_options(self) -> Dict[str, str]:
+        """
+        Return the fsspec storage options for this storage.
+        """
+        return {}
+
+    def fsspec_path(self, path: str) -> str:
+        """
+        Return the fsspec-style URL.
+        """
+        raise NotImplementedError

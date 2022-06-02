@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 from pctasks.dev.blob import temp_azurite_blob_storage
+from pctasks.dev.constants import AZURITE_ACCOUNT_NAME, TEST_DATA_CONTAINER
 
 HERE = Path(__file__).parent
 
@@ -67,3 +68,14 @@ def test_walk_files():
         for root, _, files in storage.walk(name_starts_with="b"):
             result.extend(files)
         assert set(result) == set(["asset-b-1.json", "asset-b-2.json"])
+
+
+def test_fsspec_components():
+    with temp_azurite_blob_storage(
+        HERE / ".." / "data-files" / "simple-assets"
+    ) as storage:
+        assert storage.fsspec_storage_options == {"account_name": AZURITE_ACCOUNT_NAME}
+        assert (
+            storage.fsspec_path("foo/bar.csv")
+            == f"abfs://{TEST_DATA_CONTAINER}/foo/bar.csv"
+        )

@@ -63,12 +63,20 @@ Run
 
 to test. You can also run `scripts/format` to format code. Use `--help` to see options on any script.
 
+### Kubernetes config
+
+You can export a kubeconfig for `kubectl` 
+
+```
+> kind export kubeconfig --name kind-pctasks
+```
+
 ### Argo UI
 
 You can view the argo UI by running
 
 ```
-> kubectl -n argo port-forward deployment/argo-server 2746:2746
+> kubectl -n argo port-forward deployment/argo-workflows-server 2746:2746
 ```
 
 and visiting https://localhost:2746

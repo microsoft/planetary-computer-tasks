@@ -13,6 +13,19 @@ from pctasks.run.workflow.simple import SimpleWorkflowRunner
 from pctasks.task.context import TaskContext
 
 
+def parse_workflow_args(arg: List[str]) -> Optional[Dict[str, Any]]:
+    # TODO: Do we need to pass in args at run time vs workflow submit msg?
+    workflow_args: Optional[Dict[str, Any]] = None
+    if arg:
+        workflow_args = {}
+        for a in arg:
+            split_args = a.split("=")
+            if not len(split_args) == 2:
+                raise click.UsageError(f"Invalid argument: {arg}")
+            workflow_args[split_args[0]] = split_args[1]
+    return workflow_args
+
+
 @click.command("local")
 @click.argument("workflow")
 @click.option(
@@ -22,24 +35,16 @@ from pctasks.task.context import TaskContext
     help="Arguments to pass to the workflow. Formatted as 'key=value'",
 )
 @click.option("-o", "--output", help="URI of folder to write the task result to")
-def local_cmd(workflow: str, args: List[str], output: Optional[str] = None) -> None:
+def local_cmd(workflow: str, arg: List[str], output: Optional[str] = None) -> None:
     """Execute a workflow using a local runner.
 
     This executes a workflow sequentially and runs tasks
     in the local environment. Useful for testing.
     """
-    workflow_args: Optional[Dict[str, Any]] = None
-    if args:
-        workflow_args = {}
-        for arg in args:
-            split_args = arg.split("=")
-            if not len(split_args) == 2:
-                raise click.UsageError(f"Invalid argument: {arg}")
-            workflow_args[split_args[0]] = split_args[1]
-
     storage, path = get_storage_for_file(workflow)
     workflow_yaml = storage.read_text(path)
     workflow_config = WorkflowConfig.from_yaml(workflow_yaml)
+    workflow_args = parse_workflow_args(arg)
 
     runner = SimpleWorkflowRunner()
     runner.run_workflow(
@@ -85,15 +90,8 @@ def remote_cmd(
         run_settings = RunSettings.get(context.profile, context.settings_file)
 
     # TODO: Do we need to pass in args at run time vs workflow submit msg?
-    workflow_args: Optional[Dict[str, Any]] = None
-    if arg:
-        workflow_args = {}
-        for a in arg:
-            split_args = a.split("=")
-            if not len(split_args) == 2:
-                raise click.UsageError(f"Invalid argument: {arg}")
-            workflow_args[split_args[0]] = split_args[1]
-        submit_message.args = {**(submit_message.args or {}), **workflow_args}
+    workflow_args = parse_workflow_args(arg, submit_message)
+    submit_message.args = {**(submit_message.args or {}), **workflow_args}
 
     runner = RemoteWorkflowRunner(run_settings)
 

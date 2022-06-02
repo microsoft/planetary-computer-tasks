@@ -593,3 +593,13 @@ class BlobStorage(Storage):
         return cls.from_uri(
             blob_uri=blob_uri, sas_token=sas_token, account_url=account_url
         )
+
+    @property
+    def fsspec_storage_options(self) -> Dict[str, str]:
+        return {"account_name": self.storage_account_name}
+
+    def fsspec_path(self, path: str) -> str:
+        """
+        Return the fsspec-style path.
+        """
+        return f"abfs://{self.container_name}/{path}"
