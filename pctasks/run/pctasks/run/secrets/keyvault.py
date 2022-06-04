@@ -1,4 +1,5 @@
 from functools import lru_cache
+import threading
 from typing import Any, Optional, Union
 
 from azure.identity import ClientSecretCredential, DefaultAzureCredential
@@ -7,6 +8,8 @@ from cachetools import Cache, TTLCache, cachedmethod
 
 from pctasks.core.utils.backoff import with_backoff
 from pctasks.run.secrets.base import SecretsProvider
+
+secret_lock = threading.Lock()
 
 
 class KeyvaultSecretsProvider(SecretsProvider):
@@ -40,13 +43,17 @@ class KeyvaultSecretsProvider(SecretsProvider):
             self._client.close()
 
     @cachedmethod(lambda self: self._cache)
+    def _fetch_secret(self, name: str) -> str:
+        return with_backoff(
+            lambda: self._client.get_secret(name).value  # type:ignore
+        )
+
     def get_secret(self, name: str) -> str:
         if not self._client:
             raise ValueError("Must be used as a context manager")
 
-        return with_backoff(
-            lambda: self._client.get_secret(name).value  # type:ignore
-        )
+        with secret_lock:
+            return self._fetch_secret(name)
 
     @classmethod
     @lru_cache(maxsize=10)
