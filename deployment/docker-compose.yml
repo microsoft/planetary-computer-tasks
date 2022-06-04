@@ -17,6 +17,7 @@ services:
       - AZURE_TENANT_ID=${tenantId}
       - AZURE_CLIENT_ID=${servicePrincipalId}
       - AZURE_CLIENT_SECRET=${servicePrincipalKey}
+
     working_dir: /opt/src/deployment
     volumes:
       - ../deployment:/opt/src/deployment

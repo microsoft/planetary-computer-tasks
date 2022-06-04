@@ -9,6 +9,11 @@ resource "azurerm_kubernetes_cluster" "rxetl" {
     kube_dashboard {
       enabled = false
     }
+
+    oms_agent {
+      enabled                    = true
+      log_analytics_workspace_id = azurerm_log_analytics_workspace.rxetl.id
+    }
   }
 
   default_node_pool {
@@ -16,6 +21,7 @@ resource "azurerm_kubernetes_cluster" "rxetl" {
     vm_size        = "Standard_DS2_v2"
     node_count     = var.aks_node_count
     vnet_subnet_id = azurerm_subnet.k8snode_subnet.id
+    orchestrator_version = var.k8s_orchestrator_version
   }
 
   identity {

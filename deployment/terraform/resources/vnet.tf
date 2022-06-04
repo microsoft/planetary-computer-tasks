@@ -5,14 +5,6 @@ resource "azurerm_virtual_network" "rxetl" {
   address_space       = ["10.0.0.0/8"]
 }
 
-resource "azurerm_subnet" "nodepool_subnet" {
-  name                 = "${local.prefix}-pool-subnet"
-  virtual_network_name = azurerm_virtual_network.rxetl.name
-  resource_group_name  = azurerm_resource_group.rxetl.name
-  address_prefixes     = ["10.1.0.0/16"]
-  service_endpoints = ["Microsoft.Sql", "Microsoft.KeyVault", "Microsoft.ContainerRegistry", "Microsoft.AzureCosmosDB"]
-}
-
 resource "azurerm_network_security_group" "rxetl" {
   name                = "${local.prefix}-security-group"
   location            = azurerm_resource_group.rxetl.location
@@ -31,12 +23,28 @@ resource "azurerm_network_security_group" "rxetl" {
   }
 }
 
+# Batch pool subnet
+
+resource "azurerm_subnet" "nodepool_subnet" {
+  name                 = "${local.prefix}-pool-subnet"
+  virtual_network_name = azurerm_virtual_network.rxetl.name
+  resource_group_name  = azurerm_resource_group.rxetl.name
+  address_prefixes     = ["10.1.0.0/16"]
+  service_endpoints = ["Microsoft.Sql", "Microsoft.KeyVault", "Microsoft.ContainerRegistry", "Microsoft.AzureCosmosDB"]
+}
+
+resource "azurerm_subnet_network_security_group_association" "nodepool_subnet" {
+  subnet_id                 = azurerm_subnet.nodepool_subnet.id
+  network_security_group_id = azurerm_network_security_group.rxetl.id
+}
+
+# AKS node subnet
 
 resource "azurerm_subnet" "k8snode_subnet" {
   name                 = "${local.prefix}-node-subnet"
   virtual_network_name = azurerm_virtual_network.rxetl.name
   resource_group_name  = azurerm_resource_group.rxetl.name
-  address_prefixes     = ["10.1.0.0/16"]
+  address_prefixes     = ["10.2.0.0/16"]
   service_endpoints = [
     "Microsoft.Sql",
     "Microsoft.Storage",
@@ -45,7 +53,9 @@ resource "azurerm_subnet" "k8snode_subnet" {
   ]
 }
 
-resource "azurerm_subnet_network_security_group_association" "rxetl" {
-  subnet_id                 = azurerm_subnet.nodepool_subnet.id
+
+
+resource "azurerm_subnet_network_security_group_association" "k8snode_subnet" {
+  subnet_id                 = azurerm_subnet.k8snode_subnet.id
   network_security_group_id = azurerm_network_security_group.rxetl.id
 }

@@ -61,6 +61,14 @@ spec:
             - name: PCTASKS_SERVER__SERVER_ACCOUNT_KEY
               value: "{{ .Values.pctasks.server.account_key }}"
 
+            ## Azure service principal
+            - name: AZURE_TENANT_ID
+              value: "{{ .Values.pctasks.server.azure.tenant_id }}"
+            - name: AZURE_CLIENT_ID
+              value: "{{ .Values.pctasks.server.azure.client_id }}"
+            - name: AZURE_CLIENT_SECRET
+              value: "{{ .Values.pctasks.server.azure.client_secret }}"
+
             ## Run settings ##
 
             # Dev executor settings

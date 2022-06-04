@@ -19,6 +19,11 @@ pctasks:
       port: 80
       annotations: {}
 
+    azure:
+      tenant_id: ""
+      client_id: ""
+      client_secret: ""
+
     argo:
       host: ""
       token: ""

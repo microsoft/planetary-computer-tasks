@@ -39,6 +39,9 @@ and set up test data.
 
 You can run `scripts/update` to build the docker images at any time.
 
+
+http://localhost:8500
+
 ### Bring up development servers
 
 To run the development servers:

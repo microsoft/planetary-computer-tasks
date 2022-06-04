@@ -77,11 +77,10 @@ def create_chunks_cmd(
         chunk_options=ChunkOptions(since=map_opt(str_to_datetime, since)),
     )
 
-    submit_message = WorkflowSubmitMessage(workflow=workflow)
-
     if not submit:
-        cli_output(submit_message.to_yaml())
+        cli_output(workflow.to_yaml())
     else:
+        submit_message = WorkflowSubmitMessage(workflow=workflow)
         settings = SubmitSettings.get(context.profile, context.settings_file)
         with SubmitClient(settings) as client:
             cli_print(
@@ -161,11 +160,10 @@ def process_items_cmd(
         tags=None,
     )
 
-    submit_message = WorkflowSubmitMessage(workflow=workflow)
-
     if not submit:
-        cli_output(submit_message.to_yaml())
+        cli_output(workflow.to_yaml())
     else:
+        submit_message = WorkflowSubmitMessage(workflow=workflow)
         settings = SubmitSettings.get(context.profile, context.settings_file)
         with SubmitClient(settings) as client:
             cli_print(

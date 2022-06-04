@@ -20,7 +20,7 @@ pctasks:
 
     argo:
       host: "http://argo-workflows-server.argo.svc.cluster.local:2746"
-      # agro token set during helm install
+      # argo token set during helm install
 
     # Image used to run workflows.
     runner_image: "localhost:5001/pctasks-run:latest"

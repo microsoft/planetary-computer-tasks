@@ -1,0 +1,100 @@
+environment: "test"
+
+pctasks:
+  server:
+    host: "0.0.0.0"
+    port: "80"
+    appRootPath: "/tasks"
+    debug: "FALSE"
+
+    image:
+      repository: "{{ tf.component_acr_name }}.azurecr.io/pctasks-server"
+      tag: "{{ tf.pctasks_server_image_tag }}"
+
+    service:
+      type: ClusterIP
+      port: 80
+      annotations: {}
+
+    azure:
+      tenant_id: "{{ tf.pctasks_server_sp_tenant_id }}"
+      client_id: "{{ tf.pctasks_server_sp_client_id }}"
+      client_secret: "{{ tf.pctasks_server_sp_client_secret }}"
+
+    argo:
+      namespace: pc
+      host: "http://argo-workflows-server.pc.svc.cluster.local:2746"
+      # argo token set during helm install
+
+    # Image used to run workflows.
+    runner_image: "{{ tf.component_acr_name }}.azurecr.io/pctasks-run:{{ tf.pctasks_run_image_tag }}"
+    account_key: "{{ tf.pctasks_server_account_key }}"
+
+    deploy:
+      replicaCount: 1
+      podAnnotations:
+        "deployed": "{{ env.DATE }}"
+
+  run:
+    notifications:
+      queue_name: "notifications"
+      connection_string: {{ tf.sa_connection_string }}
+
+    tables:
+      account_url: {{ tf.sa_tables_account_url }}
+      account_name: {{ tf.sa_account_name }}
+      account_key: {{ tf.sa_account_key }}
+
+    blob:
+      account_url: {{ tf.sa_blob_account_url }}
+      account_name: {{ tf.sa_account_name }}
+      account_key: {{ tf.sa_account_key }}
+      log_blob_container: tasklogs
+      task_io_blob_container: taskio
+
+    batch:
+      url: "{{ tf.batch_url }}"
+      key: "{{ tf.batch_key }}"
+      default_pool_id: "{{ tf.batch_default_pool_id }}"
+      submit_threads: 0
+
+    keyvault:
+      url: "{{ tf.keyvault_url }}"
+      sp_tenant_id: "{{ tf.kv_sp_tenant_id }}"
+      sp_client_id: "{{ tf.kv_sp_client_id }}"
+      sp_client_secret: "{{ tf.kv_sp_client_secret }}"
+
+pcingress:
+  services:
+    pctasks:
+      path: "/tasks(/|$)(.*)"
+      name: "pctasks-server"
+      port: "80"
+    argo:
+      path: "/argo(/|$)(.*)"
+      name: "argo-workflows-server"
+      port: "2746"
+
+  cert:
+    secretName: "pctasks-tls-secret"
+
+  certIssuer:
+    enabled: true
+    privateKeySecretRef: "{{ tf.cluster_cert_issuer }}"
+    server: "{{ tf.cluster_cert_server }}"
+    issuerEmail: "planetarycomputer@microsoft.com"
+    secretName: "pctasks-tls-secret"
+
+  ingress:
+    enabled: true
+    tlsHost: "{{ tf.dns_label }}.{{ tf.location }}.cloudapp.azure.com"
+    hosts:
+      - "{{ tf.dns_label }}.{{ tf.location }}.cloudapp.azure.com"
+      - "planetarycomputer-test.microsoft.com"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: "{{ tf.cluster_cert_issuer }}-pcingress"
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+      nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
