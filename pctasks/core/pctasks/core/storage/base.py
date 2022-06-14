@@ -120,6 +120,12 @@ class Storage(ABC):
         """Returns information for a file at the given path"""
         pass
 
+
+    @abstractmethod
+    def upload_bytes(self, data: bytes, target_path: str, overwrite: bool = True) -> None:
+        """Upload bytes to a storage file.
+        """
+
     @abstractmethod
     def upload_file(
         self,

@@ -497,6 +497,22 @@ class BlobStorage(Storage):
                 with open(output_path, "wb" if is_binary else "w") as f:
                     with_backoff(lambda: blob.download_blob().readinto(f))
 
+    def upload_bytes(
+        self,
+        data: bytes,
+        target_path: str,
+        overwrite: bool = True,
+    ) -> None:
+        with self._get_client() as client:
+            with client.container.get_blob_client(
+                self._add_prefix(target_path)
+            ) as blob:
+
+                def _upload() -> None:
+                    blob.upload_blob(data, overwrite=overwrite)
+
+                with_backoff(_upload)
+
     def upload_file(
         self,
         input_path: str,

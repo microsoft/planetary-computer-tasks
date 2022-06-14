@@ -100,6 +100,9 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
 
                 try:
                     task_path = task_config.task
+                    code_storage, code_path = context.storage_factory.get_storage_for_file(output_uri)
+                    ensure_module(code_path, code_storage)
+
 
                     entrypoint = EntryPoint("", task_path, "")
                     try:
