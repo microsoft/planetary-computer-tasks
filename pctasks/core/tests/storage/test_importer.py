@@ -3,7 +3,7 @@ import textwrap
 from pathlib import Path
 
 from pctasks.dev.blob import temp_azurite_blob_storage
-from pctasks.core.importer import ensure_module
+from pctasks.core.importer import ensure_code
 
 TESTS = Path(__file__).parent.parent
 
@@ -18,7 +18,7 @@ def test_import_module():
     with temp_azurite_blob_storage() as storage:
         storage.upload_bytes(src.encode(), "mymodule.py")
 
-        ensure_module("mymodule.py", storage)
+        ensure_code("mymodule.py", storage)
 
         cls = importlib.metadata.EntryPoint("", "mymodule:Foo", "").load()
         instance = cls()
@@ -38,7 +38,7 @@ def test_import_package():
         with temp_azurite_blob_storage() as storage:
             storage.upload_file(path, "mymodule.zip")
 
-            ensure_module("mymodule.zip", storage)
+            ensure_code("mymodule.zip", storage)
 
             cls = importlib.metadata.EntryPoint("", "example_module:B", "").load()
             instance = cls()

@@ -18,7 +18,7 @@ import pctasks.core.storage
 logger = logging.getLogger(__name__)
 
 
-def ensure_module(
+def ensure_code(
     file_path: str,
     storage: pctasks.core.storage.Storage,
     is_package: bool | None = None,
@@ -53,7 +53,6 @@ def ensure_module(
     output_path = pathlib.Path(site.getsitepackages()[0]) / pathlib.Path(file_path).name
     if output_path.exists():
         logger.debug("Module destination %s already exists", output_path)
-        return output_path
 
     storage.download_file(file_path, output_path)
 

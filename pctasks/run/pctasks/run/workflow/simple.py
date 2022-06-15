@@ -12,7 +12,7 @@ from pctasks.core.models.task import (
 )
 from pctasks.core.models.workflow import JobConfig, WorkflowConfig
 from pctasks.core.storage import StorageFactory
-from pctasks.core.importer import ensure_module
+from pctasks.core.importer import ensure_code
 from pctasks.core.utils import environment, map_opt
 from pctasks.run.constants import TASKS_TEMPLATE_PATH
 from pctasks.run.dag import sort_jobs
@@ -28,10 +28,11 @@ logger = logging.getLogger(__name__)
 
 class SimpleWorkflowRunner:
     def ensure_code(self, task_config: TaskConfig, context: TaskContext) -> None:
-        code_storage, code_path = context.storage_factory.get_storage_for_file(
-            task_config.code
-        )
-        ensure_module(code_path, code_storage)
+        if task_config.code_path:
+            code_storage, code_path = context.storage_factory.get_storage_for_file(
+                task_config.code_path
+            )
+            ensure_code(code_path, code_storage)
 
     def run_task(
         self,
@@ -48,6 +49,7 @@ class SimpleWorkflowRunner:
         logger.debug(task_config.to_yaml())
 
         try:
+            self.ensure_code(task_config, context)
             task_path = task_config.task
 
             entrypoint = EntryPoint("", task_path, "")
