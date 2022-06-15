@@ -2,18 +2,20 @@ import importlib.metadata
 import textwrap
 from pathlib import Path
 
-from pctasks.dev.blob import temp_azurite_blob_storage
 from pctasks.core.importer import ensure_code
+from pctasks.dev.blob import temp_azurite_blob_storage
 
 TESTS = Path(__file__).parent.parent
 
 
 def test_import_module():
-    src = textwrap.dedent("""\
+    src = textwrap.dedent(
+        """\
     class Foo:
         def f(self, x):
             return x
-    """)
+    """
+    )
 
     with temp_azurite_blob_storage() as storage:
         storage.upload_bytes(src.encode(), "mymodule.py")
@@ -27,8 +29,8 @@ def test_import_module():
 
 
 def test_import_package():
-    import zipfile
     import tempfile
+    import zipfile
 
     with tempfile.TemporaryDirectory() as td:
         path = f"{td}/package.zip"
