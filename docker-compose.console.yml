@@ -13,9 +13,6 @@ services:
 
       # Server
 
-      - PCTASKS_SERVER__ARGO__HOST=host.docker.internal:8500/argo
-      - PCTASKS_SERVER__ARGO__TOKEN=${ARGO_TOKEN}
-
       - PCTASKS_SERVER__RUNNER_IMAGE=localhost:5001/pctasks-run:latest
       - PCTASKS_SERVER__SERVER_ACCOUNT_KEY=hunter2
 
@@ -34,7 +31,11 @@ services:
       ## Records
       - PCTASKS_RECORDS__TABLES__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://azurite:10002/devstoreaccount1;
 
-      # Executor settings #######################################################
+      # Run settings #######################################################
+
+      # Argo
+      - PCTASKS_RUN__ARGO_HOST=host.docker.internal:8500/argo
+      - PCTASKS_RUN__ARGO_TOKEN=${ARGO_TOKEN}
 
       ## Azure Storage
 

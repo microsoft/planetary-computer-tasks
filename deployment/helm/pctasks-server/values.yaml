@@ -24,11 +24,6 @@ pctasks:
       client_id: ""
       client_secret: ""
 
-    argo:
-      host: ""
-      token: ""
-      namespace: "argo"
-
     # Image used to run workflows.
     runner_image: ""
 
@@ -115,6 +110,11 @@ pctasks:
       key: ""
       default_pool_id: ""
       submit_threads: 0
+
+    argo:
+      host: ""
+      token: ""
+      namespace: "argo"
 
     keyvault:
       enabled: true

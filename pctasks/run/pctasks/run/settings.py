@@ -85,6 +85,11 @@ class RunSettings(PCTasksSettings):
     batch_default_pool_id: Optional[str] = None
     batch_submit_threads: int = 0
 
+    # Argo
+    argo_host: Optional[str] = None
+    argo_token: Optional[str] = None
+    argo_namespace: str = "argo"
+
     # KeyVault
     keyvault_url: Optional[str] = None
     keyvault_sp_tenant_id: Optional[str] = None

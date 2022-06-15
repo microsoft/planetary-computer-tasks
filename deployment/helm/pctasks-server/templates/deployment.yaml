@@ -50,12 +50,6 @@ spec:
               value: "{{ .Values.pctasks.server.webConcurrency }}"
             - name: ENVIRONMENT
               value: "{{ .Values.pctasks.server.environment }}"
-            - name: PCTASKS_SERVER__ARGO__HOST
-              value: "{{ .Values.pctasks.server.argo.host }}"
-            - name: PCTASKS_SERVER__ARGO__TOKEN
-              value: "{{ .Values.pctasks.server.argo.token }}"
-            - name: PCTASKS_SERVER__ARGO__NAMESPACE
-              value: "{{ .Values.pctasks.server.argo.namespace }}"
             - name: PCTASKS_SERVER__RUNNER_IMAGE
               value: "{{ .Values.pctasks.server.runner_image }}"
             - name: PCTASKS_SERVER__SERVER_ACCOUNT_KEY
@@ -74,6 +68,14 @@ spec:
             # Dev executor settings
             - name: PCTASKS_RUN__LOCAL_EXECUTOR_URL
               value: "{{ .Values.pctasks.run.dev.local_executor_url }}"
+
+            # Argo
+            - name: PCTASKS_RUN__ARGO_HOST
+              value: "{{ .Values.pctasks.run.argo.host }}"
+            - name: PCTASKS_RUN__ARGO_TOKEN
+              value: "{{ .Values.pctasks.run.argo.token }}"
+            - name: PCTASKS_RUN__ARGO_NAMESPACE
+              value: "{{ .Values.pctasks.run.argo.namespace }}"
 
             # Azurite storage settings
             {{- if .Values.pctasks.run.dev.azurite.enabled }}

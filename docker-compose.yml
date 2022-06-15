@@ -89,9 +89,6 @@ services:
       - APP_PORT=8580
       - WEB_CONCURRENCY=1
 
-      - PCTASKS_SERVER__ARGO__HOST=host.docker.internal:8500/argo
-      - PCTASKS_SERVER__ARGO__TOKEN=${ARGO_TOKEN}
-
       - PCTASKS_SERVER__RUNNER_IMAGE=localhost:5001/pctasks-run:latest
       - PCTASKS_SERVER__SERVER_ACCOUNT_KEY=hunter2
 
@@ -108,6 +105,10 @@ services:
       # Dev executor settings
       - PCTASKS_RUN__LOCAL_EXECUTOR_URL=http://local-executor:8000
       - PCTASKS_RUN__LOCAL_SECRETS=true
+
+      # Argo
+      - PCTASKS_RUN__ARGO_HOST=host.docker.internal:8500/argo
+      - PCTASKS_RUN__ARGO_TOKEN=${ARGO_TOKEN}
 
       ## Azure Storage
 

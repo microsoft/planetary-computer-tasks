@@ -37,12 +37,13 @@ from pctasks.server.settings import ServerSettings
 
 
 class ArgoClient:
-    def __init__(self, host: str, token: str) -> None:
+    def __init__(self, host: str, token: str, namespace: str) -> None:
         self.host = host
         self.token = token
         self.configuration = argo_workflows.Configuration(
             host=host, api_key={"BearerToken": token}
         )
+        self.namespace = namespace
 
     def submit_workflow(
         self,
@@ -133,11 +134,13 @@ class ArgoClient:
         )
         api_client = argo_workflows.ApiClient(self.configuration)
         api_instance = workflow_service_api.WorkflowServiceApi(api_client=api_client)
-        import ssl
 
+        # TODO: Remove
+        import ssl
         ssl._create_default_https_context = ssl._create_unverified_context
+
         api_response = api_instance.create_workflow(
-            namespace="argo",
+            namespace=self.namespace,
             body=IoArgoprojWorkflowV1alpha1WorkflowCreateRequest(workflow=manifest),
             _check_return_type=False,
         )

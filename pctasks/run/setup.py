@@ -11,6 +11,7 @@ install_requires = [
     "pctasks.submit>=0.1.0",
     "azure-batch==11.*",
     "azure-keyvault-secrets==4.*",
+    "argo-workflows==6.3.*",
     "networkx==2.*"
 ]
 
