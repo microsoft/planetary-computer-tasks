@@ -1,0 +1,37 @@
+﻿pctasks.core.models.base.PCBaseModel
+====================================
+
+.. currentmodule:: pctasks.core.models.base
+
+.. autoclass:: PCBaseModel
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PCBaseModel.__init__
+      ~PCBaseModel.construct
+      ~PCBaseModel.copy
+      ~PCBaseModel.dict
+      ~PCBaseModel.from_orm
+      ~PCBaseModel.from_yaml
+      ~PCBaseModel.json
+      ~PCBaseModel.parse_file
+      ~PCBaseModel.parse_obj
+      ~PCBaseModel.parse_raw
+      ~PCBaseModel.schema
+      ~PCBaseModel.schema_json
+      ~PCBaseModel.to_json
+      ~PCBaseModel.to_yaml
+      ~PCBaseModel.update_forward_refs
+      ~PCBaseModel.validate
+   
+   
+
+   
+   
+   

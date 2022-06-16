@@ -1,0 +1,52 @@
+﻿pctasks.core.models.task.TaskConfig
+===================================
+
+.. currentmodule:: pctasks.core.models.task
+
+.. autoclass:: TaskConfig
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~TaskConfig.__init__
+      ~TaskConfig.construct
+      ~TaskConfig.copy
+      ~TaskConfig.dict
+      ~TaskConfig.from_orm
+      ~TaskConfig.from_yaml
+      ~TaskConfig.image_key_or_image_validator
+      ~TaskConfig.json
+      ~TaskConfig.parse_file
+      ~TaskConfig.parse_obj
+      ~TaskConfig.parse_raw
+      ~TaskConfig.schema
+      ~TaskConfig.schema_json
+      ~TaskConfig.to_json
+      ~TaskConfig.to_yaml
+      ~TaskConfig.update_forward_refs
+      ~TaskConfig.validate
+      ~TaskConfig.validate_jobs
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~TaskConfig.id
+      ~TaskConfig.image
+      ~TaskConfig.image_key
+      ~TaskConfig.task
+      ~TaskConfig.args
+      ~TaskConfig.tags
+      ~TaskConfig.environment
+      ~TaskConfig.schema_version
+   
+   
