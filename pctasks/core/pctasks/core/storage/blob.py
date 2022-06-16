@@ -86,6 +86,9 @@ class BlobUri:
             )
         self.blob_name: Optional[str] = "/".join(parsed.path.split("/")[2:]) or None
 
+    def __repr__(self):
+        return f"BlobUri({self.uri})"
+
     @property
     def url(self) -> str:
         """Gets the HTTPS URL for this blob path.
@@ -303,7 +306,7 @@ class BlobStorage(Storage):
         if self.sas_token is None:
             raise SasTokenError(f"SAS Token required but not defined on {self}")
         base_url = self.get_url(file_path)
-        return f"{base_url}?{self.sas_token}"
+        return f"{base_url}?{self.sas_token.lstrip('?')}"
 
     def get_path(self, uri: str) -> str:
         blob_uri = BlobUri(uri)
