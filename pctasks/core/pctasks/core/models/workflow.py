@@ -4,12 +4,7 @@ from uuid import uuid4
 from pydantic import Field, validator
 
 from pctasks.core.constants import WORKFLOW_SCHEMA_VERSION, WORKFLOW_SUBMIT_MESSAGE_TYPE
-from pctasks.core.models.base import (
-    ForeachConfig,
-    PCBaseModel,
-    RunRecordId,
-    TargetEnvironment,
-)
+from pctasks.core.models.base import ForeachConfig, PCBaseModel, RunRecordId
 from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.event import CloudEvent, ItemNotificationConfig
 from pctasks.core.models.task import TaskConfig
@@ -88,7 +83,7 @@ class WorkflowConfig(PCBaseModel):
     dataset: Union[DatasetIdentifier, str]
     group_id: Optional[str] = None
     tokens: Optional[Dict[str, StorageAccountTokens]] = None
-    target_environment: TargetEnvironment = Field(default=TargetEnvironment.STAGING)
+    target_environment: Optional[str] = None
     args: Optional[List[str]] = None
     jobs: Dict[str, JobConfig]
     on: Optional[TriggerConfig] = None
@@ -121,6 +116,33 @@ class WorkflowConfig(PCBaseModel):
             return DatasetIdentifier.from_string(self.dataset)
         return self.dataset
 
+    def template_args(self, args: Optional[Dict[str, Any]]) -> "WorkflowConfig":
+        return DictTemplater({"args": args}, strict=False).template_model(self)
+
+    def get_argument_errors(
+        self, args: Optional[Dict[str, Any]]
+    ) -> Optional[List[str]]:
+        """Checks if there are errors with provided arguments.
+
+        Returns a list of error messages or None if there no errors.
+        """
+        args_keys: Set[str] = set(args.keys() if args else [])
+        workflow_args: Set[str] = set(self.args or [])
+
+        missing_args = workflow_args - args_keys
+        unexpected_args = args_keys - workflow_args
+
+        errors: List[str] = []
+        if missing_args:
+            errors.append(f"Args expected and not provided: {','.join(missing_args)}")
+        if unexpected_args:
+            errors.append(f"Unexpected args provided: {','.join(unexpected_args)}")
+
+        if errors:
+            return errors
+        else:
+            return None
+
 
 class WorkflowSubmitMessage(PCBaseModel):
     workflow: WorkflowConfig
@@ -135,26 +157,16 @@ class WorkflowSubmitMessage(PCBaseModel):
     def get_workflow_with_templated_args(self) -> WorkflowConfig:
         if self.args is None:
             return self.workflow
-        return DictTemplater({"args": self.args}, strict=False).template_model(
-            self.workflow
-        )
+        return self.workflow.template_args(self.args)
 
     @validator("args", always=True)
     def _validate_args(
         cls, v: Optional[Dict[str, Any]], values: Dict[str, Any]
     ) -> Optional[Dict[str, Any]]:
         """Check that args match the workflow args."""
-        submit_args_keys: Set[str] = set(v.keys() if v else [])
-        workflow_args: Set[str] = set(values["workflow"].args or [])
-
-        missing_args = workflow_args - submit_args_keys
-        unexpected_args = submit_args_keys - workflow_args
-
-        errors: List[str] = []
-        if missing_args:
-            errors.append(f"Args expected and not provided: {','.join(missing_args)}")
-        if unexpected_args:
-            errors.append(f"Unexpected args provided: {','.join(unexpected_args)}")
+        if "workflow" not in values:
+            raise ValueError("'workflow' is a required field.")
+        errors = values["workflow"].get_argument_errors(v)
 
         if errors:
             raise ValueError(f"Argument errors: {';'.join(errors)}")

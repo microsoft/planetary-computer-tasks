@@ -6,9 +6,10 @@ with open("README.md") as f:
     desc = f.read()
 
 install_requires = [
-    "pctasks-core>=0.1.0",
+    "pctasks.core>=0.1.0",
     "azure-monitor-query==1.0.*",
-    "rich==11.2.0"
+    "rich==11.2.0",
+    "pandas==1.4.*"
 ]
 
 extra_reqs = {

@@ -2,6 +2,8 @@
 
 set -e
 
+source bin/lib
+
 if [[ "${CI}" ]]; then
     set -x
 fi
@@ -21,6 +23,9 @@ Options:
     --tf-only: Only deploy the terraform infrastructure.
     --initial: Run an initial deploy, required for Function App.
     --functions: Only run function publish, no terraform changes.
+    --skip-tf-init: Skip running terrform init.
+    --skip-functions: Don't run function publish.
+    --skip-fetch-tf-vars: Skip fetching terraform variables.
 
 Be sure to run deployment with '--initial' for a new deployment, or else
 terraform will fail.
@@ -65,6 +70,10 @@ while [[ "$#" -gt 0 ]]; do case $1 in
         SKIP_TF=1
         shift
         ;;
+    --skip-functions)
+        SKIP_FUNCTIONS=1
+        shift
+        ;;
     --tf-only)
         TF_ONLY=1
         shift
@@ -76,6 +85,14 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     --functions)
         SKIP_TF=1
         FUNCTIONS=1
+        shift
+        ;;
+    --skip-tf-init)
+        SKIP_TF_INIT=1
+        shift
+        ;;
+    --skip-fetch-tf-vars)
+        SKIP_FETCH_TF_VARS=1
         shift
         ;;
     --help)
@@ -103,9 +120,7 @@ if [[ "${TERRAFORM_DIR}" == *"dev"* ]]; then
     DEV_DEPLOY=1
 fi
 
-function tf_output() {
-    echo $(terraform output -json resources | jq -r .${1})
-}
+setup_env
 
 # ---------------------------------------------------
 
@@ -114,6 +129,21 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     #####################
     # Deploy Terraform  #
     #####################
+
+    bin/azlogin
+
+    source ${TERRAFORM_DIR}/env.sh
+
+    require_env "DEPLOY_SECRETS_KV"
+    require_env "DEPLOY_SECRETS_KV_SECRET"
+
+    if [ -z "${SKIP_FETCH_TF_VARS}${SKIP_TF}" ]; then
+
+        if [ -f "${TERRAFORM_DIR}/values.tfvars" ]; then
+            mv ${TERRAFORM_DIR}/values.tfvars ${TERRAFORM_DIR}/values.bak.tfvars
+        fi
+        bin/get_tfvars ${DEPLOY_SECRETS_KV} ${DEPLOY_SECRETS_KV_SECRET} -o ${TERRAFORM_DIR}/values.tfvars
+    fi
 
     pushd ${TERRAFORM_DIR}
 
@@ -131,11 +161,15 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
             fi
             VARS_OPT="-var-file=values.tfvars"
         else
+            # TODO: Download {terraform_dir}.tfvars from container
+
             AUTO_APPROVE_OPT="-auto-approve"
         fi
 
         echo "Deploying infrastructure with Terraform..."
-        terraform init --upgrade
+        if [ -z "${SKIP_TF_INIT}" ]; then
+            terraform init --upgrade
+        fi
 
         if [ "${PLAN_ONLY}" ]; then
             if [ "${INITIAL}" ]; then
@@ -162,9 +196,91 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     fi
 
     ## Gather TF Output
-    function tf_output() {
-        echo $(terraform output -json resources | jq -r .${1})
-    }
+    gather_tf_output
+
+    popd
+
+    ############################
+    # Render Helm chart values #
+    ############################
+
+    render_values
+
+    ########################
+    # Login to the cluster #
+    ########################
+
+    cluster_login
+
+    ######################
+    # Deploy Helm charts #
+    ######################
+
+    echo "Deploying helm charts..."
+
+    setup_helm
+
+    # Install cert-manager
+
+    echo "Installing cert-manager..."
+
+    helm upgrade --install \
+        cert-manager \
+        --namespace pcaux \
+        --create-namespace \
+        --version v1.6.0 \
+        --set installCRDs=true jetstack/cert-manager
+
+    echo "=================="
+    echo "===== Argo ======="
+    echo "=================="
+
+    helm upgrade --install argo-workflows argo/argo-workflows \
+        -n pc \
+        --create-namespace \
+        -f "helm/argo-values.yaml" \
+        --wait \
+        --timeout 2m0s
+
+    echo "==================="
+    echo "= PCTasks Server =="
+    echo "==================="
+
+    ARGO_TOKEN="$(get_argo_token)"
+
+    echo "Deploying PCTasks Server helm chart..."
+    helm upgrade --install pctasks-server helm/pctasks-server \
+        -n pc \
+        --create-namespace \
+        --kube-context "${KUBE_CONTEXT}" \
+        --wait \
+        --timeout 2m0s \
+        -f ${DEPLOY_VALUES_FILE} \
+        --set pctasks.server.argo.token="${ARGO_TOKEN}"
+
+    echo "=================="
+    echo "==== Ingress ====="
+    echo "=================="
+
+    echo "Deploying ingress component..."
+    helm upgrade --install pc-tasks-ingress helm/pc-tasks-ingress \
+        -n pc \
+        --create-namespace \
+        --kube-context "${KUBE_CONTEXT}" \
+        --wait \
+        --timeout 2m0s \
+        -f ${DEPLOY_VALUES_FILE}
+
+    echo "Installing ingress-nginx..."
+    helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx \
+        -n pcaux \
+        --create-namespace \
+        --set controller.replicaCount=1 \
+        --set controller.service.externalTrafficPolicy="Local" \
+        --set controller.service.loadBalancerIP="${INGRESS_IP}" \
+        --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-dns-label-name"="${DNS_LABEL}" \
+        --wait \
+        --timeout 2m0s
 
     ####################
     # Migrate Database #
@@ -178,11 +294,13 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
             echo "Migrating the database..."
 
+            pushd ${TERRAFORM_DIR}
             export PGHOST=$(tf_output db_fqdn)
             export PGPORT=5432
             export PGUSER=$(tf_output db_username)
             export PGDATABASE=$(tf_output db_name)
             export PGPASSWORD=$(tf_output db_password)
+            popd
 
             pypgstac migrate
         fi
@@ -193,12 +311,12 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     # Gather environment #
     ######################
 
+    pushd ${TERRAFORM_DIR}
     export ACR_NAME=$(tf_output acr_name)
-    export TABLES_ACCOUNT_NAME=$(tf_output tables_account_name)
-    export TABLES_ACCOUNT_KEY=$(tf_output tables_account_key)
-    export TABLES_ACCOUNT_URL=$(tf_output tables_account_url)
+    export SA_ACCOUNT_NAME=$(tf_output sa_account_name)
+    export SA_ACCOUNT_KEY=$(tf_output sa_account_key)
+    export SA_ACCOUNT_URL=$(tf_output sa_tables_account_url)
     export FUNCTION_APP_NAME=$(tf_output function_app_name)
-
     popd
 
     #########################
@@ -209,25 +327,29 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
         bin/setup_storage.py \
             "${ACR_NAME}" \
-            "${TABLES_ACCOUNT_NAME}" \
-            "${TABLES_ACCOUNT_KEY}" \
-            --url "${TABLES_ACCOUNT_URL}"
+            "${SA_ACCOUNT_NAME}" \
+            "${SA_ACCOUNT_KEY}" \
+            --url "${SA_ACCOUNT_URL}"
     fi
 
     #########################
     # Deploy Azure Function #
     #########################
 
-    bin/azlogin
+    if [ -z "${SKIP_FUNCTIONS}" ]; then
 
-    rm -rf /opt/src/functions_deploy
-    cp -r /opt/src/pctasks_funcs /opt/src/functions_deploy
+        echo "Deploying Azure Functions..."
 
-    pushd /opt/src/functions_deploy
-    # Create symlink to enable function app building of pctasks
-    ln -s /opt/src/pctasks /opt/src/functions_deploy/pctasks_linked
-    cp requirements-deploy.txt requirements.txt
-    func azure functionapp publish ${FUNCTION_APP_NAME}
-    popd
+        rm -rf /opt/src/functions_deploy
+        cp -r /opt/src/pctasks_funcs /opt/src/functions_deploy
+
+        pushd /opt/src/functions_deploy
+        # Create symlink to enable function app building of pctasks
+        ln -s /opt/src/pctasks /opt/src/functions_deploy/pctasks_linked
+        cp requirements-deploy.txt requirements.txt
+        func azure functionapp publish ${FUNCTION_APP_NAME}
+        popd
+
+    fi
 
 fi

@@ -7,7 +7,6 @@ import pytest
 from pctasks.cli.cli import pctasks_cmd
 from pctasks.core.constants import (
     DEFAULT_LOG_CONTAINER,
-    DEFAULT_SIGNAL_QUEUE_NAME,
     DEFAULT_TASK_IO_CONTAINER,
     DEFAULT_TASK_RUN_RECORD_TABLE_NAME,
 )
@@ -19,7 +18,7 @@ from pctasks.core.models.task import (
     TaskRunMessage,
     WaitTaskResult,
 )
-from pctasks.dev.config import get_blob_config, get_queue_config, get_table_config
+from pctasks.dev.config import get_blob_config, get_table_config
 from pctasks.dev.logs import get_log_storage
 from pctasks.dev.tables import get_task_run_record_table
 from pctasks.task.context import TaskContext
@@ -103,11 +102,8 @@ def test_task_func():
                     run_id=run_id,
                     job_id=job_id,
                     task_id=task_id,
-                    signal_key="signal-key",
-                    signal_target_id="target-id",
                     image="pctasks-task:latest",
                     task="tests.test_cli:mock_tasks.mock_task",
-                    signal_queue=get_queue_config(DEFAULT_SIGNAL_QUEUE_NAME),
                     task_runs_table_config=get_table_config(
                         DEFAULT_TASK_RUN_RECORD_TABLE_NAME
                     ),
@@ -168,11 +164,8 @@ def test_task_func_fails_missing_env():
                     job_id=job_id,
                     task_id=task_id,
                     environment={},
-                    signal_key="signal-key",
-                    signal_target_id="target-id",
                     image="pctasks-task:latest",
                     task="tests.test_cli:mock_tasks.mock_task_require_env",
-                    signal_queue=get_queue_config(DEFAULT_SIGNAL_QUEUE_NAME),
                     task_runs_table_config=get_table_config(
                         DEFAULT_TASK_RUN_RECORD_TABLE_NAME
                     ),
@@ -229,12 +222,9 @@ def test_task_func_succeeds_env():
                     run_id=run_id,
                     job_id=job_id,
                     task_id=task_id,
-                    signal_key="signal-key",
-                    signal_target_id="target-id",
                     image="pctasks-task:latest",
                     task="tests.test_cli:mock_tasks.mock_task_require_env",
                     environment={"TEST_ENV_VAR": "yes"},
-                    signal_queue=get_queue_config(DEFAULT_SIGNAL_QUEUE_NAME),
                     task_runs_table_config=get_table_config(
                         DEFAULT_TASK_RUN_RECORD_TABLE_NAME
                     ),

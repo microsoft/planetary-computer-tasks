@@ -1,106 +1,92 @@
-import asyncio
 import logging
 import os
-from typing import Iterable, Optional, Set
+from typing import Any, Callable, Dict, Iterable, Optional, Set, TypeVar
 
-from pypgstac.load import T  # TypeVar for ingestable Iterables
-from pypgstac.load import DB, load_iterator, loadopt, tables
+import orjson
+import psycopg
+from pypgstac.db import PgstacDB
+from pypgstac.load import Loader, Methods
 
 from pctasks.core.utils import grouped
 
 logger = logging.getLogger(__name__)
 
+T = TypeVar("T")
 
-class PgSTAC(DB):
-    def __init__(self, pg_connection_string: str = None):
-        self.pg_connection_string = pg_connection_string
 
-    async def ingest_items_async(
+class PgSTAC:
+    def __init__(self, pg_connection_string: str) -> None:
+        self.db = PgstacDB(pg_connection_string, debug=True)
+        # self.db.connect()
+        self.loader = Loader(self.db)
+
+    def _with_connection_retry(self, func: Callable[[], T], retries: int = 0) -> T:
+        """Tries a function against the DB, retires on connection timout."""
+        MAX_RETRIES = 1
+        try:
+            return func()
+        except psycopg.OperationalError as e:
+            if "connection" in str(e).lower():
+                logger.warning(f"  ...Connection broken; retrying connection: {e}")
+                if retries >= MAX_RETRIES:
+                    raise
+                self.db.disconnect()
+                self.db.connect()
+                return self._with_connection_retry(func, retries + 1)
+            else:
+                raise
+
+    def ingest_items(
         self,
         items: Iterable[bytes],
-        mode: loadopt = loadopt("upsert"),
+        mode: Methods = Methods.upsert,
         insert_group_size: Optional[int] = None,
     ) -> None:
         if insert_group_size:
             groups = grouped(items, insert_group_size)
         else:
             groups = [items]
-        conn = await self.create_connection()
-        try:
-            for i, group in enumerate(groups):
-                logger.info(f"  ...Loading group {i+1}")
-                async with conn.transaction():
-                    await load_iterator(group, tables("items"), conn, mode)
-        finally:
-            await conn.close()
 
-    def ingest_items(
-        self,
-        items: Iterable[bytes],
-        mode: loadopt = loadopt("upsert"),
-        insert_group_size: Optional[int] = None,
-    ) -> None:
-        asyncio.run(self.ingest_items_async(items, mode, insert_group_size))
-
-    async def ingest_collections_async(
-        self,
-        collections: T,
-        mode: loadopt = loadopt("upsert"),
-    ) -> None:
-        conn = await self.create_connection()
-        try:
-            async with conn.transaction():
-                logger.debug(f"collections: {collections}")
-                await load_iterator(collections, tables("collections"), conn, mode)
-        finally:
-            await conn.close()
+        for i, group in enumerate(groups):
+            logger.info(f"  ...Loading group {i+1}")
+            self._with_connection_retry(
+                lambda: self.loader.load_items(iter(group), insert_mode=mode)
+            )
 
     def ingest_collections(
         self,
-        collections: T,
-        mode: loadopt = loadopt("upsert"),
+        collections: Iterable[Dict[str, Any]],
+        mode: Methods = Methods.upsert,
     ) -> None:
-        asyncio.run(self.ingest_collections_async(collections, mode))
+        self._with_connection_retry(
+            lambda: self.loader.load_collections(
+                iter([orjson.dumps(c) for c in collections]), insert_mode=mode
+            )
+        )
 
-    async def existing_items_async(self, item_ids: Set[str]) -> Set[str]:
+    def existing_items(self, collection_id: str, item_ids: Set[str]) -> Set[str]:
         """The IDs of Items that already exist in the database."""
-        conn = await self.create_connection()
-        try:
-            async with conn.transaction():
-                rows = await conn.fetch(
-                    """
-                   SELECT id from items where id = ANY($1::text[])
-                """,
-                    item_ids,
-                )
-
-                return set([row["id"] for row in rows])
-
-        finally:
-            await conn.close()
-
-    def existing_items(self, item_ids: Set[str]) -> Set[str]:
-        """The IDs of Items that already exist in the database."""
-        return asyncio.run(self.existing_items_async(item_ids))
-
-    async def collection_exists_async(self, collection_id: str) -> bool:
-        conn = await self.create_connection()
-        try:
-            async with conn.transaction():
-                rows = await conn.fetch(
-                    """
-                   SELECT id from collections where id = $1
-                """,
-                    collection_id,
-                )
-
-                return any(rows)
-
-        finally:
-            await conn.close()
+        rows = self._with_connection_retry(
+            lambda: self.db.query(
+                """
+                SELECT id from items where id = ANY(%s) and collection = %s
+            """,
+                args=[list(item_ids), collection_id],
+            )
+        )
+        return set([row[0] for row in rows])
 
     def collection_exists(self, collection_id: str) -> bool:
-        return asyncio.run(self.collection_exists_async(collection_id))
+        rows = self._with_connection_retry(
+            lambda: self.db.query(
+                """
+                SELECT id from collections where id = %s
+            """,
+                args=[collection_id],
+            )
+        )
+
+        return any(rows)
 
     @classmethod
     def from_env(cls) -> "PgSTAC":

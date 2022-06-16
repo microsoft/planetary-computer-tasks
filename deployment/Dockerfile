@@ -13,7 +13,8 @@ RUN apt-get update && \
     wget zip xxd unzip curl gnupg jq \
     apt-transport-https \
     libicu-dev \
-    python3-pip
+    python3-pip \
+    git
 
 # Install Azure Function Tools
 
@@ -28,6 +29,21 @@ RUN apt-get update && apt-get install -y azure-functions-core-tools-4
 RUN wget -O terraform.zip https://releases.hashicorp.com/terraform/1.1.2/terraform_1.1.2_linux_amd64.zip
 RUN unzip terraform.zip
 RUN mv terraform /usr/local/bin
+
+# Install kubectl
+
+RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+RUN echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
+RUN apt-get update
+RUN apt-get install -y kubectl
+
+# Install Helm
+
+RUN curl https://baltocdn.com/helm/signing.asc |  apt-key add -
+RUN echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
+RUN apt-get update
+RUN apt-get install helm
+
 
 # Install azure client
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash

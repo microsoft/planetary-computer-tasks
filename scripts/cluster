@@ -1,0 +1,152 @@
+#!/bin/bash
+
+set -e
+
+if [[ "${CI}" ]]; then
+    set -x
+fi
+
+function usage() {
+    if [[ "${1}" ]]; then
+        echo "${1}"
+    fi
+
+    echo -n \
+        "Usage: $(basename "$0") [OPTIONS]
+Script for managing dev cluster
+
+Subcommands:
+    create
+        Create the dev cluster if it doesn't exist,
+        and install Argo.
+    update
+        Updates helm charts on the dev cluster
+    argo-token
+        Print the argo token as an export statement
+"
+}
+
+source scripts/env
+
+CREATE=""
+UPDATE=""
+GET_ARGO_TOKEN=""
+while [[ $# -gt 0 ]]; do case $1 in
+    create)
+        CREATE="--create"
+        shift
+        ;;
+    update)
+        UPDATE="--update"
+        shift
+        ;;
+    argo-token)
+        GET_ARGO_TOKEN="--argo-token"
+        shift
+        ;;
+    --help)
+        usage
+        exit 0
+        shift
+        ;;
+    *)
+        usage "Unknown parameter passed: $1"
+        exit 1
+        ;;
+    esac done
+
+if [ -z "${CREATE}${UPDATE}${GET_ARGO_TOKEN}" ]; then
+    usage "No subcommand option specified"
+    exit 1
+fi
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${CREATE}" ]; then
+        if ! kind get clusters | grep -q ${KIND_CLUSTER_NAME}; then
+            echo " -- CREATING KIND CLUSTER"
+            KIND_EXPERIMENTAL_DOCKER_NETWORK=${DOCKER_NETWORK_NAME} kind \
+                create cluster --name ${KIND_CLUSTER_NAME} \
+                --config cluster/kind-config.yaml
+        fi
+
+        echo " -- REGISTERING LOCAL IMAGE REGISTRY"
+        cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: local-registry-hosting
+  namespace: kube-public
+data:
+  localRegistryHosting.v1: |
+    host: "localhost:5001"
+    help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
+EOF
+
+        if ! kubectl get namespace | grep -q argo; then
+            echo " -- CREATING ARGO NAMESPACE"
+            kubectl create ns argo
+        fi
+
+        helm repo add argo https://argoproj.github.io/argo-helm
+        echo "Installing argo..."
+        helm upgrade --install argo-workflows argo/argo-workflows \
+            -n argo \
+            --create-namespace \
+            -f cluster/argo-values.yaml \
+            --wait \
+            --timeout 2m0s
+
+    fi
+
+    # Build deployment image
+    if [ "${UPDATE}" ]; then
+        echo "Adding pctasks-server to local registry..."
+        # kind load docker-image --name kind-pctasks pctasks-server pctasks-server
+        docker tag pctasks-server localhost:5001/pctasks-server && \
+            docker push localhost:5001/pctasks-server
+
+        echo "Adding pctasks-run to local registry..."
+        # kind load docker-image --name kind-pctasks pctasks-run pctasks-run
+        docker tag pctasks-run localhost:5001/pctasks-run && \
+            docker push localhost:5001/pctasks-run
+
+        echo "Installing dev chart..."
+        helm upgrade --install \
+            pctasks-dev \
+            cluster/pctasks-dev \
+            -n pc \
+            -f cluster/dev-values.yaml \
+            --create-namespace
+
+        # Get ARGO_TOKEN
+        ARGO_TOKEN="Bearer $(kubectl get secret -n pc pctasks-sa-token -o jsonpath='{.data.token}' | base64 --decode)"
+
+        echo "Installing pctasks-server helm chart..."
+        # Set pctasks.deploy.podAnnotations.updated to force a new deployment
+        helm upgrade --install \
+            pctasks-server \
+            pctasks/server/helm/pctasks-server/ \
+            -n pc \
+            -f cluster/dev-values.yaml \
+            --create-namespace \
+            --set pctasks.server.deploy.podAnnotations.updated="$(date)" \
+            --set pctasks.server.argo.token="${ARGO_TOKEN}"
+
+        echo "Installing ingress-nginx..."
+        # TODO: Move to helm chart
+        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.0/deploy/static/provider/kind/deploy.yaml
+        kubectl wait --namespace ingress-nginx \
+            --for=condition=ready pod \
+            --selector=app.kubernetes.io/component=controller \
+            --timeout=90s
+    fi
+
+    if [ "${GET_ARGO_TOKEN}" ]; then
+        echo "Use the following token for connecting to argo..."
+        echo
+        ARGO_TOKEN="Bearer $(kubectl get secret -n pc pctasks-sa-token -o jsonpath='{.data.token}' | base64 --decode)"
+        echo "export ARGO_TOKEN=\"${ARGO_TOKEN}\""
+        echo
+    fi
+
+fi

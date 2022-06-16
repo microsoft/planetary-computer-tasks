@@ -11,10 +11,22 @@ services:
       - PCTASKS_SUBMIT__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
       - PCTASKS_SUBMIT__QUEUE_NAME=inbox
 
+      # Server
+
+      - PCTASKS_SERVER__ARGO__HOST=host.docker.internal:8500/argo
+      - PCTASKS_SERVER__ARGO__TOKEN=${ARGO_TOKEN}
+
+      - PCTASKS_SERVER__RUNNER_IMAGE=localhost:5001/pctasks-run:latest
+      - PCTASKS_SERVER__SERVER_ACCOUNT_KEY=hunter2
+
       # Dev executor settings
-      - PCTASKS_EXEC__DEV=TRUE
-      - PCTASKS_EXEC__LOCAL_EXECUTOR_URL=http://local-executor:8000
-      - PCTASKS_EXEC__LOCAL_SECRETS=true
+      - PCTASKS_RUN__LOCAL_EXECUTOR_URL=http://local-executor:8000
+      - PCTASKS_RUN__LOCAL_SECRETS=true
+
+      # Dev storage settings
+      - AZURITE_HOST=azurite
+      - AZURITE_PORT=10000
+      - AZURITE_STORAGE_ACCOUNT=devstoreaccount1
 
       # Local secrets provider secrets
       - SECRETS_DB_CONNECTION_STRING=postgresql://username:password@database:5432/postgis
@@ -27,21 +39,17 @@ services:
       ## Azure Storage
 
       ### Queues
-      - PCTASKS_EXEC__NOTIFICATION_QUEUE__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-      - PCTASKS_EXEC__INBOX_QUEUE__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-      - PCTASKS_EXEC__SIGNAL_QUEUE__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-      - PCTASKS_EXEC__SIGNAL_QUEUE_ACCOUNT_NAME=devstoreaccount1
-      - PCTASKS_EXEC__SIGNAL_QUEUE_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
-
+      - PCTASKS_RUN__NOTIFICATION_QUEUE__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
+      - PCTASKS_RUN__INBOX_QUEUE__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
       ### Tables
-      - PCTASKS_EXEC__TABLES_ACCOUNT_URL=http://azurite:10002/devstoreaccount1
-      - PCTASKS_EXEC__TABLES_ACCOUNT_NAME=devstoreaccount1
-      - PCTASKS_EXEC__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+      - PCTASKS_RUN__TABLES_ACCOUNT_URL=http://azurite:10002/devstoreaccount1
+      - PCTASKS_RUN__TABLES_ACCOUNT_NAME=devstoreaccount1
+      - PCTASKS_RUN__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
 
       ### Blobs
-      - PCTASKS_EXEC__BLOB_ACCOUNT_URL=http://azurite:10000/devstoreaccount1
-      - PCTASKS_EXEC__BLOB_ACCOUNT_NAME=devstoreaccount1
-      - PCTASKS_EXEC__BLOB_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+      - PCTASKS_RUN__BLOB_ACCOUNT_URL=http://azurite:10000/devstoreaccount1
+      - PCTASKS_RUN__BLOB_ACCOUNT_NAME=devstoreaccount1
+      - PCTASKS_RUN__BLOB_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
 
       # Router settings ##############################################################
 

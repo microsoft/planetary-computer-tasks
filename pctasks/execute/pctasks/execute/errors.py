@@ -1,2 +1,0 @@
-class WorkflowFailedError(Exception):
-    pass

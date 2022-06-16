@@ -1,11 +1,17 @@
+import logging
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, OrderedDict, Type, TypeVar, cast
+from typing import Any, Dict, List, Optional, Type, TypeVar, cast
 
 import strictyaml
+import yaml
 from pydantic import BaseModel, ValidationError
 from pydantic.error_wrappers import ErrorList
+from yaml import Loader
 
 T = TypeVar("T", bound=BaseModel)
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -78,31 +84,42 @@ def model_from_yaml(
     Raises:
         YamlValidationError: If the YAML is invalid.
     """
-    yml: strictyaml.YAML = strictyaml.load(yaml_txt)
-    data = cast(OrderedDict[str, Any], yml.data)
+    data: Dict[str, Any] = yaml.load(yaml_txt, Loader=Loader)
     if section:
         if section not in data:
             raise SectionDoesNotExist(f"Section {section} does not exist.")
-
         data = data[section]
+
     try:
         return model(**data)
     except ValidationError as e:
         errors = []
+        strict_yaml: Optional[strictyaml.YAML] = None
+        try:
+            # Try to use strictyaml to get line numbers.
+            # Don't let strictness fail.
+            strict_yaml = strictyaml.load(yaml_txt)
+        except strictyaml.StrictYAMLError:
+            logger.debug(f"StrictYAML error: {e}")
+            pass
+
         for error in e.errors():
-            _yml_section: Optional[strictyaml.YAML] = yml
-            for loc in error["loc"]:
-                if _yml_section is not None:
-                    if loc not in _yml_section:
-                        _yml_section = None
-                        break
-                    else:
-                        _yml_section = _yml_section[loc]
             start_line: Optional[int] = None
             end_line: Optional[int] = None
-            if _yml_section is not None:
-                start_line = _yml_section.start_line
-                end_line = _yml_section.end_line
+
+            if strict_yaml is not None:
+                _yml_section: Optional[strictyaml.YAML] = strict_yaml
+                for loc in error["loc"]:
+                    if _yml_section is not None:
+                        if loc not in _yml_section:
+                            _yml_section = None
+                            break
+                        else:
+                            _yml_section = _yml_section[loc]
+
+                if _yml_section is not None:
+                    start_line = _yml_section.start_line
+                    end_line = _yml_section.end_line
 
             errors.append(
                 YamlValidationErrorInfo(

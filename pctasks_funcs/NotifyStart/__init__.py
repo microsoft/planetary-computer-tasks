@@ -8,7 +8,7 @@ from pydantic import ValidationError
 
 from pctasks.core.logging import RunLogger
 from pctasks.core.models.event import NotificationSubmitMessage
-from pctasks.execute.constants import OrchestratorNames
+from pctasks.run.constants import OrchestratorNames
 
 
 async def main(msg: func.QueueMessage, starter: str) -> None:

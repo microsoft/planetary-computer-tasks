@@ -26,7 +26,6 @@ from pctasks.core.constants import (
     ENV_VAR_PCTASKS_PROFILE,
     SETTINGS_ENV_DIR,
 )
-from pctasks.core.logging import RunLogger
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.utils import map_opt
 
@@ -143,7 +142,6 @@ def settings_hash_key(
     cls: Type[T],
     profile: Optional[str] = None,
     settings_file: Optional[str] = None,
-    event_logger: Optional[RunLogger] = None,
 ) -> Tuple[Hashable, ...]:
     return hashkey((cls.section_name(), profile, settings_file))
 
@@ -162,7 +160,6 @@ class PCTasksSettings(PCBaseModel):
         cls: Type[T],
         profile: Optional[str] = None,
         settings_file: Optional[str] = None,
-        event_logger: Optional[RunLogger] = None,
     ) -> T:
         try:
             return get_settings(

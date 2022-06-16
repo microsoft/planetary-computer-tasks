@@ -4,14 +4,13 @@ from pydantic import Field
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.settings import PCTasksSettings
+from pctasks.ingest.constants import DEFAULT_INSERT_GROUP_SIZE
 
 SECTION_NAME = "ingest"
 DEFAULT_IMAGE_KEY = "ingest"
 
-DEFAULT_INSERT_GROUP_SIZE = 30000
 
-
-class IngestConfig(PCBaseModel):
+class IngestOptions(PCBaseModel):
     insert_group_size: int = DEFAULT_INSERT_GROUP_SIZE
     """Number of items to insert into the database per bulk load."""
     insert_only: bool = False
@@ -26,7 +25,7 @@ class ImageKeys(PCBaseModel):
     default: str = Field(default=DEFAULT_IMAGE_KEY)
     targets: Optional[Dict[str, str]] = None
 
-    def get_key(self, target: Optional[str] = None) -> str:
+    def get_key(self, target: Optional[str] = None) -> Optional[str]:
         if target and self.targets:
             return self.targets.get(target, self.default)
         return self.default
@@ -37,5 +36,5 @@ class IngestSettings(PCTasksSettings):
     def section_name(cls) -> str:
         return SECTION_NAME
 
-    config: IngestConfig = Field(default_factory=IngestConfig)
+    config: IngestOptions = Field(default_factory=IngestOptions)
     image_keys: ImageKeys = Field(default_factory=ImageKeys)

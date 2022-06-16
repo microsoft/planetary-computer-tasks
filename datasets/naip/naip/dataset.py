@@ -1,11 +1,13 @@
 import logging
 import re
+from typing import List, Optional, Union
+from pctasks.cli.cli import setup_logging_for_module
 
 import pystac
-from stactools.naip import stac
-
+from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
+from stactools.naip import stac
 
 logger = logging.getLogger(__name__)
 
@@ -16,9 +18,10 @@ naip_regex = re.compile(
 
 
 class Naip(Collection):
+    @classmethod
     def create_item(
-        self, asset_uri: str, storage_factory: StorageFactory
-    ) -> pystac.Item:
+        cls, asset_uri: str, storage_factory: StorageFactory
+    ) -> Union[List[pystac.Item], WaitTaskResult]:
         """Creates a STAC Item for NAIP.
 
         Args:
@@ -56,8 +59,9 @@ class Naip(Collection):
         else:
             fgdc_exists = True
 
-        if not asset_storage.file_exists(thumbnail_path):
-            raise Exception(f"{thumbnail_path} does not exist in {asset_storage}")
+        thumbnail_href: Optional[str] = None
+        if asset_storage.file_exists(thumbnail_path):
+            thumbnail_href = asset_storage.get_url(thumbnail_path)
 
         fgdc_href = asset_storage.get_url(fgdc_path)
         cog_href = asset_storage.get_url(path)
@@ -82,4 +86,7 @@ class Naip(Collection):
                 thumbnail_href=thumbnail_href,
             )
 
-        return item
+        return [item]
+
+
+setup_logging_for_module(Naip.__module__, logging.INFO)

@@ -21,7 +21,7 @@ class Task(ABC, Generic[T, U]):
             )
         if not getattr(self, "_output_model", None):
             raise NotImplementedError(
-                "_input_model must be defined. "
+                "_output_model must be defined. "
                 "Define on Task child class as a class attribute."
             )
 

@@ -23,9 +23,9 @@ from pctasks.core.tables.record import (
     WorkflowRunRecordTable,
 )
 from pctasks.dev.config import get_table_config
-from pctasks.execute.settings import ExecutorSettings
+from pctasks.run.settings import RunSettings
 
-exec_settings = ExecutorSettings.get()
+exec_settings = RunSettings.get()
 
 
 def get_task_run_record_table() -> TaskRunRecordTable:

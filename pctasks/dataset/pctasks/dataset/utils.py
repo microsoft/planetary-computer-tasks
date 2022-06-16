@@ -32,9 +32,7 @@ def opt_collection(fn: Callable[..., Any]) -> Callable[..., Any]:
     return fn
 
 
-def opt_dry_run(fn: Callable[..., Any]) -> Callable[..., Any]:
-    _opt = click.option(
-        "-n", "--dry-run", is_flag=True, help="Don't submit, just print the workflow."
-    )
+def opt_submit(fn: Callable[..., Any]) -> Callable[..., Any]:
+    _opt = click.option("-s", "--submit", is_flag=True, help="Submit the workflow.")
     _opt(fn)
     return fn

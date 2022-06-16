@@ -1,16 +1,20 @@
 import logging
 import multiprocessing
 import os
+import sys
 from datetime import datetime as Datetime
 from datetime import timedelta, timezone
 from typing import (
     Any,
+    Dict,
     Generator,
     Iterable,
     Iterator,
     List,
     Optional,
     Tuple,
+    Type,
+    TypeVar,
     Union,
     cast,
 )
@@ -27,11 +31,25 @@ from azure.storage.blob import (
     generate_container_sas,
 )
 
+from pctasks.core.constants import (
+    AZURITE_HOST_ENV_VAR,
+    AZURITE_PORT_ENV_VAR,
+    AZURITE_STORAGE_ACCOUNT_ENV_VAR,
+)
 from pctasks.core.storage.base import Storage, StorageFileInfo
+from pctasks.core.storage.path_filter import PathFilter
 from pctasks.core.utils import map_opt
 from pctasks.core.utils.backoff import with_backoff
 
 logger = logging.getLogger(__name__)
+
+T = TypeVar("T", bound="BlobStorage")
+
+
+_AZURITE_ACCOUNT_KEY = (
+    "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6I"
+    "FsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+)
 
 
 class BlobStorageError(Exception):
@@ -152,7 +170,9 @@ class BlobStorage(Storage):
     See Storage for method docstrings.
     """
 
-    _blob_creds: Union[ClientSecretCredential, DefaultAzureCredential, str]
+    _blob_creds: Union[
+        ClientSecretCredential, DefaultAzureCredential, Dict[str, str], str
+    ]
 
     def __init__(
         self,
@@ -164,25 +184,57 @@ class BlobStorage(Storage):
     ) -> None:
         self.sas_token = sas_token
 
-        # Check if there's a service principle in the environment.
-        # If so, use that. Otherwise check for a SAS token.
-        if sas_token is not None:
-            self._blob_creds = sas_token
-        elif os.environ.get("AZURE_CLIENT_ID"):
-            self._blob_creds = DefaultAzureCredential()
-        elif os.environ.get("AZURE_STORAGE_SAS_TOKEN"):
-            self._blob_creds = os.environ["AZURE_STORAGE_SAS_TOKEN"]
-        else:
-            # Base case, let Azure SDK handle any other
-            # possibility or error out.
-            self._blob_creds = DefaultAzureCredential()
+        # If this is the Azurite storage account, set
+        # the account_url appropriately, and use
+        # an account key. This is a workaround for
+        # the SDK not handling Azurite well if it's not
+        # at localhost or 127.0.0.1 (e.g. in a Docker container).
+        is_azurite = False
+        azurite_sa = os.getenv(AZURITE_STORAGE_ACCOUNT_ENV_VAR)
+        if azurite_sa and azurite_sa == storage_account_name:
+            host = os.getenv(AZURITE_HOST_ENV_VAR)
+            port = os.getenv(AZURITE_PORT_ENV_VAR)
+            if not host or not port:
+                raise BlobStorageError(
+                    "Azurite environment incorrectly configured. "
+                    f"{AZURITE_HOST_ENV_VAR} and "
+                    f"{AZURITE_PORT_ENV_VAR} must be set."
+                )
+            self.account_url = f"http://{host}:{port}/{azurite_sa}"
+            self._blob_creds = {
+                "account_name": storage_account_name,
+                "account_key": _AZURITE_ACCOUNT_KEY,
+            }
+            is_azurite = True
 
-        self.account_url = (
-            account_url or f"https://{storage_account_name}.blob.core.windows.net"
-        )
+        if not is_azurite:
+            # Check if there's a service principle in the environment.
+            # If so, use that. Otherwise check for a SAS token.
+            if sas_token is not None:
+                self._blob_creds = sas_token
+            elif os.environ.get("AZURE_CLIENT_ID"):
+                self._blob_creds = DefaultAzureCredential()
+            elif os.environ.get("AZURE_STORAGE_SAS_TOKEN"):
+                self._blob_creds = os.environ["AZURE_STORAGE_SAS_TOKEN"]
+            else:
+                # Base case, let Azure SDK handle any other
+                # possibility or error out.
+                self._blob_creds = DefaultAzureCredential()
+
+            self.account_url = (
+                account_url or f"https://{storage_account_name}.blob.core.windows.net"
+            )
+
         self.storage_account_name = storage_account_name
         self.container_name = container_name
         self.prefix = prefix.strip("/") if prefix is not None else prefix
+
+    def __repr__(self) -> str:
+        prefix_part = "" if self.prefix is None else f"/{self.prefix}"
+        return (
+            f"{self.__class__.__name__}(blob://{self.storage_account_name}"
+            f"/{self.container_name}{prefix_part})"
+        )
 
     def _get_client(self) -> ContainerClientWrapper:
         account_client = BlobServiceClient(
@@ -225,22 +277,88 @@ class BlobStorage(Storage):
         else:
             return os.path.join(container_uri, self.prefix)
 
+    def get_substorage(self, path: str) -> "Storage":
+        if self.prefix is None:
+            subprefix = path
+        else:
+            subprefix = os.path.join(self.prefix, path)
+        return BlobStorage(
+            storage_account_name=self.storage_account_name,
+            container_name=self.container_name,
+            prefix=subprefix,
+            sas_token=self.sas_token,
+            account_url=self.account_url,
+        )
+
+    def get_url(self, file_path: str) -> str:
+        return f"{self.account_url}/{self.container_name}/{self._add_prefix(file_path)}"
+
+    def get_uri(self, file_path: Optional[str] = None) -> str:
+        if file_path is None:
+            return self.root_uri
+        else:
+            return os.path.join(self.root_uri, file_path)
+
+    def get_authenticated_url(self, file_path: str) -> str:
+        if self.sas_token is None:
+            raise SasTokenError(f"SAS Token required but not defined on {self}")
+        base_url = self.get_url(file_path)
+        return f"{base_url}?{self.sas_token}"
+
+    def get_path(self, uri: str) -> str:
+        blob_uri = BlobUri(uri)
+        if blob_uri.storage_account_name != self.storage_account_name:
+            raise ValueError(f"URI {uri} does not share storage account with {self}")
+        if blob_uri.container_name != self.container_name:
+            raise ValueError(f"URI {uri} does not share container with {self}")
+        if self.prefix:
+            if not blob_uri.blob_name or self.prefix not in blob_uri.blob_name:
+                raise ValueError(f"URI {uri} does not share prefix with {self}")
+            return self._strip_prefix(blob_uri.blob_name)
+        else:
+            return blob_uri.blob_name or ""
+
+    def get_file_info(self, file_path: str) -> StorageFileInfo:
+        with self._get_client() as client:
+            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
+                props = with_backoff(lambda: blob.get_blob_properties())
+                return StorageFileInfo(size=cast(int, props.size))
+
+    def file_exists(self, file_path: str) -> bool:
+        with self._get_client() as client:
+            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
+                return with_backoff(lambda: blob.exists())
+
     def list_files(
         self,
         name_starts_with: Optional[str] = None,
         since_date: Optional[Datetime] = None,
+        extensions: Optional[List[str]] = None,
+        ends_with: Optional[str] = None,
+        matches: Optional[str] = None,
     ) -> Iterable[str]:
         # Ensure UTC set
         since_date = map_opt(lambda d: d.replace(tzinfo=timezone.utc), since_date)
+        path_filter = PathFilter(
+            extensions=extensions, ends_with=ends_with, matches=matches
+        )
 
         def log_page(page: Iterator[BlobProperties]) -> Iterator[BlobProperties]:
-            print(".", end="", flush=True)
+            print(".", end="", flush=True, file=sys.stderr)
             return page
 
         def filter_page(page: Iterator[BlobProperties]) -> Iterator[BlobProperties]:
+            def _f(b: BlobProperties) -> bool:
+                if b.size == 0:
+                    # ADLS Gen 2 creates empty files as directory placeholders.
+                    return False
+                if since_date:
+                    if cast(Datetime, b.last_modified) >= since_date:
+                        return False
+                return path_filter(b.name)
+
             return filter(
-                lambda b: since_date is None
-                or cast(Datetime, b.last_modified) >= since_date,
+                _f,
                 page,
             )
 
@@ -267,9 +385,19 @@ class BlobStorage(Storage):
         max_depth: Optional[int] = None,
         min_depth: Optional[int] = None,
         name_starts_with: Optional[str] = None,
+        since_date: Optional[Datetime] = None,
+        extensions: Optional[List[str]] = None,
+        ends_with: Optional[str] = None,
+        matches: Optional[str] = None,
         walk_limit: Optional[int] = None,
         file_limit: Optional[int] = None,
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
+        # Ensure UTC set
+        since_date = map_opt(lambda d: d.replace(tzinfo=timezone.utc), since_date)
+
+        if name_starts_with and not name_starts_with.endswith("/"):
+            name_starts_with = name_starts_with + "/"
+
         def _get_depth(path: Optional[str]) -> int:
             if not path:
                 return 0
@@ -290,12 +418,23 @@ class BlobStorage(Storage):
             folders = []
             files = []
             for item in client.container.walk_blobs(name_starts_with=full_prefix):
+                item_name: str = cast(str, item.name)
+                name = os.path.relpath(item_name, full_prefix)
                 if isinstance(item, BlobPrefix):
-                    name = os.path.relpath(item.name, full_prefix)
                     folders.append(name.strip("/"))
                 else:
-                    files.append(os.path.relpath(item.name, full_prefix))
+                    if item.size == 0:
+                        # ADLS Gen 2 creates empty files as directory placeholders.
+                        continue
+                    if since_date:
+                        if cast(Datetime, item.last_modified) < since_date:
+                            continue
+                    files.append(name)
             return folders, files
+
+        path_filter = PathFilter(
+            extensions=extensions, ends_with=ends_with, matches=matches
+        )
 
         walk_count = 0
         file_count = 0
@@ -323,6 +462,8 @@ class BlobStorage(Storage):
                         break
 
                     folders, files = _get_prefix_content(full_prefix)
+
+                    files = [file for file in files if path_filter(file)]
 
                     if file_limit and file_count + len(files) > file_limit:
                         files = files[: file_limit - file_count]
@@ -356,17 +497,6 @@ class BlobStorage(Storage):
                 with open(output_path, "wb" if is_binary else "w") as f:
                     with_backoff(lambda: blob.download_blob().readinto(f))
 
-    def file_exists(self, file_path: str) -> bool:
-        with self._get_client() as client:
-            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
-                return with_backoff(lambda: blob.exists())
-
-    def get_file_info(self, file_path: str) -> StorageFileInfo:
-        with self._get_client() as client:
-            with client.container.get_blob_client(file_path) as blob:
-                props = with_backoff(lambda: blob.get_blob_properties())
-                return StorageFileInfo(size=cast(int, props.size))
-
     def upload_file(
         self,
         input_path: str,
@@ -383,47 +513,6 @@ class BlobStorage(Storage):
                         blob.upload_blob(f, overwrite=overwrite)
 
                 with_backoff(_upload)
-
-    def get_url(self, file_path: str) -> str:
-        return f"{self.account_url}/{self.container_name}/{self._add_prefix(file_path)}"
-
-    def get_uri(self, file_path: Optional[str] = None) -> str:
-        if file_path is None:
-            return self.root_uri
-        else:
-            return os.path.join(self.root_uri, file_path)
-
-    def get_authenticated_url(self, file_path: str) -> str:
-        if self.sas_token is None:
-            raise SasTokenError(f"SAS Token required but not defined on {self}")
-        base_url = self.get_url(file_path)
-        return f"{base_url}?{self.sas_token}"
-
-    def get_path(self, uri: str) -> str:
-        blob_uri = BlobUri(uri)
-        if blob_uri.storage_account_name != self.storage_account_name:
-            raise ValueError(f"URI {uri} does not share storage account with {self}")
-        if blob_uri.container_name != self.container_name:
-            raise ValueError(f"URI {uri} does not share container with {self}")
-        if self.prefix:
-            if not blob_uri.blob_name or self.prefix not in blob_uri.blob_name:
-                raise ValueError(f"URI {uri} does not share prefix with {self}")
-            return self._strip_prefix(blob_uri.blob_name)
-        else:
-            return blob_uri.blob_name or ""
-
-    def get_substorage(self, path: str) -> "Storage":
-        if self.prefix is None:
-            subprefix = path
-        else:
-            subprefix = os.path.join(self.prefix, path)
-        return BlobStorage(
-            storage_account_name=self.storage_account_name,
-            container_name=self.container_name,
-            prefix=subprefix,
-            sas_token=self.sas_token,
-            account_url=self.account_url,
-        )
 
     def read_bytes(self, file_path: str) -> bytes:
         try:
@@ -444,6 +533,12 @@ class BlobStorage(Storage):
                 f"Could not read text from {self.get_uri(file_path)}"
             ) from e
 
+    def write_bytes(self, file_path: str, data: bytes, overwrite: bool = True) -> None:
+        full_path = self._add_prefix(file_path)
+        with self._get_client() as client:
+            with client.container.get_blob_client(full_path) as blob:
+                with_backoff(lambda: blob.upload_blob(data, overwrite=overwrite))
+
     def delete_folder(self, folder_path: Optional[str] = None) -> None:
         for file_path in self.list_files(name_starts_with=folder_path):
             self.delete_file(file_path)
@@ -453,30 +548,17 @@ class BlobStorage(Storage):
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 with_backoff(lambda: blob.delete_blob())
 
-    def write_bytes(self, file_path: str, data: bytes, overwrite: bool = True) -> None:
-        full_path = self._add_prefix(file_path)
-        with self._get_client() as client:
-            with client.container.get_blob_client(full_path) as blob:
-                with_backoff(lambda: blob.upload_blob(data, overwrite=overwrite))
-
-    def __repr__(self) -> str:
-        prefix_part = "" if self.prefix is None else f"/{self.prefix}"
-        return (
-            f"BlobStorage(blob://{self.storage_account_name}"
-            f"/{self.container_name}{prefix_part})"
-        )
-
     @classmethod
     def from_uri(
-        cls,
+        cls: Type[T],
         blob_uri: Union[BlobUri, str],
         sas_token: Optional[str] = None,
         account_url: Optional[str] = None,
-    ) -> "BlobStorage":
+    ) -> T:
         if isinstance(blob_uri, str):
             blob_uri = BlobUri(blob_uri)
 
-        return BlobStorage(
+        return cls(
             storage_account_name=blob_uri.storage_account_name,
             container_name=blob_uri.container_name,
             prefix=blob_uri.blob_name,
@@ -486,11 +568,11 @@ class BlobStorage(Storage):
 
     @classmethod
     def from_account_key(
-        cls,
+        cls: Type[T],
         blob_uri: Union[BlobUri, str],
         account_key: str,
         account_url: Optional[str] = None,
-    ) -> "BlobStorage":
+    ) -> T:
         if isinstance(blob_uri, str):
             blob_uri = BlobUri(blob_uri)
 

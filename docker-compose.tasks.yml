@@ -11,3 +11,15 @@ services:
       - AZURE_CLIENT_SECRET=${servicePrincipalKey}
     volumes:
       - ./pctasks:/opt/src
+  run:
+    container_name: pctasks-run
+    image: pctasks-run
+    build:
+      context: pctasks
+      dockerfile: run/Dockerfile
+    environment:
+      - AZURE_TENANT_ID=${tenantId}
+      - AZURE_CLIENT_ID=${servicePrincipalId}
+      - AZURE_CLIENT_SECRET=${servicePrincipalKey}
+    volumes:
+      - ./pctasks:/opt/src

@@ -5,8 +5,9 @@ azure-functions-durable
 # Keep in sync with requirements-deploy.txt
 -e ../pctasks/core
 -e ../pctasks/cli
+-e ../pctasks/task
 -e ../pctasks/submit
--e ../pctasks/execute
+-e ../pctasks/run
 -e ../pctasks/notify
 -e ../pctasks/operations
 -e ../pctasks/router

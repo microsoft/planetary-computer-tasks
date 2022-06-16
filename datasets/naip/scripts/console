@@ -22,6 +22,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
     docker-compose \
         run --rm \
-        --entrypoint /bin/bash
+        --entrypoint /bin/bash \
+        task-dev
 
 fi

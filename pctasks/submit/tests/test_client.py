@@ -16,6 +16,7 @@ from pctasks.submit.settings import SubmitSettings
 
 
 def test_client_submit():
+
     test_queue = TempQueue()
     settings = SubmitSettings(
         connection_string=test_queue.queue_config.connection_string,

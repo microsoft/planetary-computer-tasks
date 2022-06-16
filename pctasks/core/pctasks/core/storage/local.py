@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import IO, Any, Generator, Iterable, List, Optional, Tuple, Union
 
 from pctasks.core.storage.base import Storage, StorageFileInfo
+from pctasks.core.storage.path_filter import PathFilter
 
 logger = logging.getLogger(__name__)
 
@@ -45,22 +46,29 @@ class LocalStorage(Storage):
         self,
         name_starts_with: Optional[str] = None,
         since_date: Optional[Datetime] = None,
+        extensions: Optional[List[str]] = None,
+        ends_with: Optional[str] = None,
+        matches: Optional[str] = None,
     ) -> Iterable[str]:
         logger.debug(f"Walking {self.base_dir}")
         result: List[str] = []
+        path_filter = PathFilter(
+            extensions=extensions, ends_with=ends_with, matches=matches
+        )
         for root, _, files in self.walk(
             name_starts_with=name_starts_with,
         ):
             for f in files:
-                full_path = os.path.join(root, f)
-                full_path = full_path.strip("./")
-                if since_date:
-                    if since_date <= Datetime.fromtimestamp(
-                        os.path.getmtime(full_path)
-                    ):
+                if path_filter(f):
+                    full_path = os.path.join(root, f)
+                    full_path = full_path.strip("./")
+                    if since_date:
+                        if since_date <= Datetime.fromtimestamp(
+                            os.path.getmtime(full_path)
+                        ):
+                            result.append(full_path)
+                    else:
                         result.append(full_path)
-                else:
-                    result.append(full_path)
         return result
 
     def walk(
@@ -68,6 +76,10 @@ class LocalStorage(Storage):
         max_depth: Optional[int] = None,
         min_depth: Optional[int] = None,
         name_starts_with: Optional[str] = None,
+        since_date: Optional[Datetime] = None,
+        extensions: Optional[List[str]] = None,
+        ends_with: Optional[str] = None,
+        matches: Optional[str] = None,
         walk_limit: Optional[int] = None,
         file_limit: Optional[int] = None,
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
@@ -81,7 +93,21 @@ class LocalStorage(Storage):
         file_count = 0
         limit_break = False
 
+        path_filter = PathFilter(
+            extensions=extensions, ends_with=ends_with, matches=matches
+        )
+
+        def _filter_file(root: str, p: str) -> bool:
+            full_path = os.path.join(root, p)
+            if since_date:
+                if since_date > Datetime.fromtimestamp(os.path.getmtime(full_path)):
+                    return False
+            return path_filter(p)
+
         for root, folders, files in os.walk(self.base_dir):
+
+            files = [f for f in files if _filter_file(root, f)]
+
             rel_root = os.path.relpath(root, self.base_dir)
 
             if name_starts_with and not rel_root.startswith(name_starts_with):

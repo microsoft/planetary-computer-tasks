@@ -1,66 +1,43 @@
-from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from pctasks.core.models.base import PCBaseModel
-from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.task import TaskConfig
-from pctasks.core.models.tokens import StorageAccountTokens
-from pctasks.core.models.workflow import JobConfig, WorkflowConfig
-from pctasks.core.storage import get_storage
-from pctasks.core.storage.base import Storage
-from pctasks.dataset.chunks.constants import CREATE_CHUNKS_TASK_PATH
-from pctasks.dataset.constants import LIST_FILES_TASK_ID
+from pctasks.dataset.chunks.constants import (
+    ASSET_CHUNKS_PREFIX,
+    CREATE_CHUNKS_TASK_PATH,
+)
+from pctasks.dataset.constants import CREATE_CHUNKS_TASK_ID, LIST_CHUNKS_TASK_ID
+from pctasks.dataset.models import ChunkOptions, CollectionConfig, DatasetConfig
 
 
 class CreateChunksInput(PCBaseModel):
-    src_storage_uri: str
+    src_uri: str
     """Storage URI for the source assets to be chunked."""
-    src_sas: Optional[str] = None
-    """SAS Token to access the source container, if URI is to blob storage."""
 
-    dst_storage_uri: str
-    """Storage URI for where the chunks should be saved."""
+    dst_uri: str
+    """URI where the chunks should be saved."""
 
-    dst_sas: Optional[str] = None
-    """SAS Token to access the source container, if URI is to blob storage."""
-
-    chunk_length: int
-    """Length of each chunk. Each chunk file will contain at most this many uris."""
-
-    name_starts_with: Optional[str] = None
-    """Only include asset URIs that start with this string."""
-
-    since: Optional[datetime] = None
-    """Only include assets that have been modified since this time."""
-
-    extensions: Optional[List[str]] = None
-    """Only include asset URIs with an extension in this list."""
-
-    ends_with: Optional[str] = None
-    """Only include asset URIs that end with this string."""
-
-    matches: Optional[str] = None
-    """Only include asset URIs that match this regex."""
-
-    limit: Optional[int] = None
-    """Limit the number of URIs to process. """
-
-    chunk_prefix: str = "uris-list-"
-    """Prefix for the chunk file names."""
-
-    chunk_extension: str = ".csv"
-    """Extensions of the chunk file names."""
-
-    def get_src_storage(self) -> Storage:
-        return get_storage(self.src_storage_uri, sas_token=self.src_sas)
-
-    def get_dst_storage(self) -> Storage:
-        return get_storage(self.dst_storage_uri, sas_token=self.dst_sas)
+    options: Union[str, ChunkOptions] = ChunkOptions()
 
 
-class CreateChunksOutput(PCBaseModel):
-    chunk_uris: List[str]
-    """List of URIs to chunk files that each contain a lists of asset URIs."""
+class ListChunksInput(PCBaseModel):
+    chunkset_uri: str
+    """URI to the chunkset."""
+
+    all: bool = False
+    """If True, list all chunks. Otherwise only list new or failed chunks."""
+
+
+class ChunkInfo(PCBaseModel):
+    uri: str
+    """URI of the chunk."""
+    chunk_id: str
+    """ID of the chunk."""
+
+
+class ChunksOutput(PCBaseModel):
+    chunks: List[ChunkInfo]
+    """List of chunks. Each chunk contain a lists of asset URIs."""
 
 
 class CreateChunksTaskConfig(TaskConfig):
@@ -73,7 +50,7 @@ class CreateChunksTaskConfig(TaskConfig):
         tags: Optional[Dict[str, str]] = None,
     ) -> "CreateChunksTaskConfig":
         return CreateChunksTaskConfig(
-            id=LIST_FILES_TASK_ID,
+            id=CREATE_CHUNKS_TASK_ID,
             image=image,
             args=args.dict(),
             task=CREATE_CHUNKS_TASK_PATH,
@@ -81,28 +58,68 @@ class CreateChunksTaskConfig(TaskConfig):
             tags=tags,
         )
 
+    @classmethod
+    def from_collection(
+        cls,
+        ds: DatasetConfig,
+        collection: CollectionConfig,
+        chunkset_id: str,
+        src_uri: str,
+        options: Optional[Union[str, ChunkOptions]] = None,
+        environment: Optional[Dict[str, str]] = None,
+        tags: Optional[Dict[str, str]] = None,
+    ) -> "CreateChunksTaskConfig":
+        chunk_storage_config = collection.chunk_storage
+        dst_uri = chunk_storage_config.get_uri(f"{chunkset_id}/{ASSET_CHUNKS_PREFIX}")
 
-class CreateChunksWorkflowConfig(WorkflowConfig):
+        return cls.create(
+            image=ds.image,
+            args=CreateChunksInput(
+                src_uri=src_uri,
+                dst_uri=dst_uri,
+                options=options or ChunkOptions(),
+            ),
+            environment=environment,
+            tags=tags,
+        )
+
+
+class ListChunksTaskConfig(TaskConfig):
     @classmethod
     def create(
         cls,
         image: str,
-        dataset: DatasetIdentifier,
-        collection_id: str,
-        args: CreateChunksInput,
-        group_id: Optional[str] = None,
-        tokens: Optional[Dict[str, StorageAccountTokens]] = None,
+        args: ListChunksInput,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
-    ) -> "CreateChunksWorkflowConfig":
-        task = CreateChunksTaskConfig.create(
-            image=image, args=args, environment=environment, tags=tags
+    ) -> "ListChunksTaskConfig":
+        return ListChunksTaskConfig(
+            id=LIST_CHUNKS_TASK_ID,
+            image=image,
+            args=args.dict(),
+            task=CREATE_CHUNKS_TASK_PATH,
+            environment=environment,
+            tags=tags,
         )
 
-        return CreateChunksWorkflowConfig(
-            dataset=dataset,
-            group_id=group_id,
-            name=f"Create Chunks for {collection_id}",
-            tokens=tokens,
-            jobs={"chunks": JobConfig(tasks=[task])},
+    @classmethod
+    def from_collection(
+        cls,
+        ds: DatasetConfig,
+        collection: CollectionConfig,
+        chunkset_id: str,
+        all: bool = False,
+        environment: Optional[Dict[str, str]] = None,
+        tags: Optional[Dict[str, str]] = None,
+    ) -> "ListChunksTaskConfig":
+        chunk_storage_config = collection.chunk_storage
+        chunkset_uri = chunk_storage_config.get_uri(
+            f"{chunkset_id}/{ASSET_CHUNKS_PREFIX}"
+        )
+
+        return cls.create(
+            image=ds.image,
+            args=ListChunksInput(chunkset_uri=chunkset_uri, all=all),
+            environment=environment,
+            tags=tags,
         )

@@ -50,13 +50,18 @@ def _get_queue_client(
 class SubmitClient:
     def __init__(self, settings: SubmitSettings) -> None:
         self.settings = settings
-        self.queue_client = None
-        self.service_client = None
+        self.service_client: Optional[QueueServiceClient] = None
+        self.queue_client: Optional[QueueClient] = None
 
     def __enter__(self) -> "SubmitClient":
         self.service_client, self.queue_client = _get_queue_client(self.settings)
 
         return self
+
+    def get_queue_name(self) -> str:
+        if not self.service_client:
+            raise RuntimeError("SubmitClient is not opened. Use as a context manager.")
+        return f"{self.service_client.account_name}/{self.settings.queue_name}"
 
     def __exit__(self, *args: Any) -> None:
         if self.queue_client:

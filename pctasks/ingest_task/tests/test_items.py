@@ -55,9 +55,7 @@ def test_ndjson_ingest():
 
         # Ingest Ndjson
         message_data = IngestTaskInput(
-            content=IngestNdjsonInput(
-                collection="test-collection", uris=[str(TEST_NDJSON.absolute())]
-            )
+            content=IngestNdjsonInput(uris=[str(TEST_NDJSON.absolute())])
         )
 
         result = ingest_task.run(input=message_data, context=task_context)

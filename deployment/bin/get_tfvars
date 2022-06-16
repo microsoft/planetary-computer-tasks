@@ -1,0 +1,57 @@
+#!/usr/bin/python3
+
+import argparse
+from subprocess import check_output
+
+from jinja2 import StrictUndefined, Template
+
+description = (
+    "Apply a terrform output JSON file " "and the environment to a Jinja template."
+)
+
+epilog = (
+    'The template will be applied with an "env" object '
+    'with the the values in os.environ, and a "tf" object that '
+    "contains the contents of the terraform output JSON"
+)
+
+parser = argparse.ArgumentParser(description=description)
+parser.add_argument("keyvault_name", help="The name of the KeyVault holding the tfvars")
+parser.add_argument("secret_name", help="The name of the secret in the KeyVault")
+parser.add_argument("-o", "--output", help="Path to the resulting tfvars file")
+
+
+def template(values, template_text):
+    template = Template(template_text, undefined=StrictUndefined)
+    return template.render(**values)
+
+
+if __name__ == "__main__":
+    args = parser.parse_args()
+
+    raw_bytes = check_output(
+        [
+            "az",
+            "keyvault",
+            "secret",
+            "show",
+            "--name",
+            args.secret_name,
+            "--vault-name",
+            args.keyvault_name,
+            "--query",
+            "value",
+        ]
+    )
+
+    raw_text = raw_bytes.decode("utf-8")
+    # print('\n'.join(raw_text.split(r"\n")))
+    # raise Exception()
+    dequoted = raw_text[1:-1].replace(r'\"', r'"').replace('""', '"').strip()
+    processed_text = '\n'.join(dequoted.split(r"\n"))
+
+    if args.output:
+        with open(args.output, "w") as f:
+            f.write(processed_text)
+    else:
+        print(processed_text)

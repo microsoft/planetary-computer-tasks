@@ -122,5 +122,9 @@ class StorageFactory:
             path = os.path.basename(file_uri)
             return (self.get_storage(parent), path)
 
+    def clear_cache(self) -> None:
+        """Clears the cache."""
+        self._cache.clear()
+
 
 __all__ = ["Storage", "StorageFactory", "read_text"]

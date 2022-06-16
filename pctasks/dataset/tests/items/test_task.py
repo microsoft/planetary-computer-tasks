@@ -9,9 +9,10 @@ from pystac.utils import str_to_datetime
 from pctasks.core.models.task import CompletedTaskResult, WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.core.storage.local import LocalStorage
+from pctasks.dataset.chunks.models import ChunkInfo
 from pctasks.dataset.items.models import CreateItemsOutput
 from pctasks.dataset.items.task import CreateItemsInput, CreateItemsTask
-from pctasks.dev.task import run_test_task
+from pctasks.dev.test_utils import run_test_task
 from pctasks.task.utils import get_task_path
 
 HERE = Path(__file__)
@@ -70,8 +71,10 @@ def test_create_multiple_items():
         chunk_storage.write_text(file_path=chunk_path, text="\n".join(TEST_ASSET_URIS))
 
         args = CreateItemsInput(
-            chunk_uri=chunk_storage.get_uri(chunk_path),
-            output_uri=items_storage.get_uri(ndjson_path),
+            asset_chunk_info=ChunkInfo(
+                uri=chunk_storage.get_uri(chunk_path), chunk_id=chunk_path
+            ),
+            item_chunkset_uri=items_storage.get_uri(ndjson_path),
         )
 
         task_result = run_test_task(args.dict(), TASK_PATH)
@@ -81,12 +84,12 @@ def test_create_multiple_items():
         ndjson_uri = result.ndjson_uri
         assert ndjson_uri
         assert Path(ndjson_uri).exists()
-        items = [
-            pystac.Item.from_dict(json.loads(item_str))
-            for item_str in items_storage.read_text(
-                file_path=items_storage.get_path(ndjson_uri)
-            ).split("\n")
-        ]
+
+        items = []
+
+        for item_json in items_storage.read_text(ndjson_uri).split("\n"):
+            items.append(pystac.Item.from_dict(json.loads(item_json)))
+
         assert len(items) == len(TEST_ASSET_URIS)
         for item in items:
             item.validate()

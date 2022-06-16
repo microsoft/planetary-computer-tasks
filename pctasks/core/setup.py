@@ -7,8 +7,8 @@ with open("README.md") as f:
 
 install_requires = [
     "azure-identity==1.*",
-    "azure-storage-blob==12.*",
-    "azure-storage-queue>=12.0",
+    "azure-storage-blob==12.9",  # Issues with 12.11 generating sas from account keys
+    "azure-storage-queue>=12.*",
     "azure-data-tables==12.*",
     "pydantic>=1.9,<2.0.0",
     "orjson==3.*",

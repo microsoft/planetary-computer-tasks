@@ -11,12 +11,7 @@ from pctasks.core.constants import (
     TASK_RUN_SIGNAL_SCHEMA_VERSION,
 )
 from pctasks.core.models.base import PCBaseModel, RunRecordId
-from pctasks.core.models.config import (
-    BlobConfig,
-    QueueConnStrConfig,
-    QueueSasConfig,
-    TableSasConfig,
-)
+from pctasks.core.models.config import BlobConfig, TableSasConfig
 from pctasks.core.models.event import NotificationMessage
 from pctasks.core.models.tokens import StorageAccountTokens
 from pctasks.core.tables.base import InvalidTableKeyError, validate_table_key
@@ -61,12 +56,9 @@ class TaskRunConfig(PCBaseModel):
     run_id: str
     job_id: str
     task_id: str
-    signal_key: str
-    signal_target_id: str
     task: str
     environment: Optional[Dict[str, str]] = None
     tokens: Optional[Dict[str, StorageAccountTokens]] = None
-    signal_queue: Union[QueueSasConfig, QueueConnStrConfig]
     # TODO: Update task status through signals
     task_runs_table_config: TableSasConfig
     output_blob_config: BlobConfig
@@ -138,6 +130,19 @@ class TaskResult(PCBaseModel):
         errors: Optional[List[str]] = None,
     ) -> "FailedTaskResult":
         return FailedTaskResult(errors=errors)
+
+    @classmethod
+    def parse_subclass(
+        cls, obj: Dict[str, Any]
+    ) -> Union["CompletedTaskResult", "WaitTaskResult", "FailedTaskResult"]:
+        if obj["status"] == TaskResultType.COMPLETED:
+            return CompletedTaskResult.parse_obj(obj)
+        elif obj["status"] == TaskResultType.WAIT:
+            return WaitTaskResult.parse_obj(obj)
+        elif obj["status"] == TaskResultType.FAILED:
+            return FailedTaskResult.parse_obj(obj)
+        else:
+            raise ValueError(f"Unknown task result status: {obj['status']}")
 
 
 class CompletedTaskResult(TaskResult):

@@ -1,27 +1,15 @@
 from datetime import datetime, timedelta
-from typing import Optional
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.data.tables import TableSasPermissions, generate_table_sas
 from azure.storage.blob import BlobSasPermissions, generate_blob_sas
 
-from pctasks.core.models.config import BlobConfig, QueueConnStrConfig, TableSasConfig
-from pctasks.execute.settings import ExecutorSettings
-
-
-def get_queue_config(
-    name: str, permissions: Optional[str] = None
-) -> QueueConnStrConfig:
-    exec_settings = ExecutorSettings.get()
-
-    return QueueConnStrConfig(
-        connection_string=exec_settings.signal_queue.connection_string,
-        queue_name=name,
-    )
+from pctasks.core.models.config import BlobConfig, TableSasConfig
+from pctasks.run.settings import RunSettings
 
 
 def get_table_config(name: str, permissions: str = "rwuadl") -> TableSasConfig:
-    exec_settings = ExecutorSettings.get()
+    exec_settings = RunSettings.get()
 
     tables_cred = AzureNamedKeyCredential(
         name=exec_settings.tables_account_name,
@@ -51,7 +39,7 @@ def get_table_config(name: str, permissions: str = "rwuadl") -> TableSasConfig:
 
 
 def get_blob_config(container: str, path: str) -> BlobConfig:
-    exec_settings = ExecutorSettings.get()
+    exec_settings = RunSettings.get()
 
     blob_uri = f"blob://{exec_settings.blob_account_name}" f"/{container}/{path}"
 

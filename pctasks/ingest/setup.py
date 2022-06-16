@@ -7,6 +7,8 @@ with open("README.md") as f:
 
 install_requires = [
     "pctasks.submit>=0.1.0",
+    "jinja2==3.0.3",
+    "marko==1.0.1",
 ]
 
 extra_reqs = {

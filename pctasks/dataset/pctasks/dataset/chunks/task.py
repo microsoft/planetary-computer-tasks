@@ -1,84 +1,121 @@
 import logging
 import os
-import re
-from itertools import islice
-from tempfile import TemporaryDirectory
-from typing import List, Optional, Set, Union
+from typing import List, Union
+from urllib.parse import urlparse
 
 from pctasks.core.models.task import FailedTaskResult, WaitTaskResult
+from pctasks.core.storage import StorageFactory
 from pctasks.core.utils import grouped
-from pctasks.dataset.chunks.models import CreateChunksInput, CreateChunksOutput
+from pctasks.dataset.chunks.chunkset import ChunkSet
+from pctasks.dataset.chunks.models import (
+    ChunkInfo,
+    ChunksOutput,
+    CreateChunksInput,
+    ListChunksInput,
+)
 from pctasks.task import Task
 from pctasks.task.context import TaskContext
 
 logger = logging.getLogger(__name__)
 
 
-class CreateChunksTask(Task[CreateChunksInput, CreateChunksOutput]):
+def uri_to_chunk_id(uri: str, num: int, file_name: str, extension: str) -> str:
+    parsed = urlparse(uri)
+    if parsed.netloc:
+        result = f"{parsed.netloc}{parsed.path}"
+    else:
+        result = parsed.path
+    return f"{result.strip('/')}/{num}/{file_name}{extension}"
+
+
+class CreateChunksTask(Task[CreateChunksInput, ChunksOutput]):
     _input_model = CreateChunksInput
-    _output_model = CreateChunksOutput
+    _output_model = ChunksOutput
 
     @classmethod
-    def create_chunks(cls, input: CreateChunksInput) -> CreateChunksOutput:
-        src_storage = input.get_src_storage()
-        dst_storage = input.get_dst_storage()
+    def create_chunks(
+        cls, input: CreateChunksInput, storage_factory: StorageFactory
+    ) -> ChunksOutput:
+        # Ensure options have been templated.
+        if isinstance(input.options, str):
+            raise ValueError(
+                f"Options are string, did templating fail?: {input.options}"
+            )
 
-        files = src_storage.list_files(
-            name_starts_with=input.name_starts_with, since_date=input.since
-        )
-        compiled_regex: Optional[re.Pattern]
-        if input.matches is not None:
-            compiled_regex = re.compile(input.matches)
-        else:
-            compiled_regex = None
+        src_storage = storage_factory.get_storage(input.src_uri)
+        dst_storage = storage_factory.get_storage(input.dst_uri)
 
-        extensions: Optional[Set[str]] = None
-        if input.extensions:
-            extensions = set()
-            for ext in input.extensions:
-                if not ext.startswith("."):
-                    ext = f".{ext}"
-                extensions.add(ext.lower())
+        chunkset = ChunkSet(dst_storage)
 
-        def file_filter(blob: str) -> bool:
-            ext = os.path.splitext(blob)[1]
-            result = ext != ""
-            if extensions:
-                result &= ext in extensions
-            if input.ends_with is not None:
-                result &= blob.endswith(input.ends_with)
-            if compiled_regex is not None:
-                result &= compiled_regex.search(blob) is not None
-            if result:
-                logger.debug(f" ~ Found {blob}")
-            return result
+        asset_uris: List[str] = []
+        for root, _, files in src_storage.walk(
+            name_starts_with=input.options.name_starts_with,
+            since_date=input.options.since,
+            extensions=input.options.extensions,
+            ends_with=input.options.ends_with,
+            matches=input.options.matches,
+            file_limit=input.options.limit,
+        ):
+            for f in files:
+                asset_path = os.path.join(root, f).strip("./")
+                asset_uris.append(src_storage.get_uri(asset_path))
 
-        files = filter(file_filter, files)
-        files = map(lambda path: src_storage.get_uri(path), files)
+        chunks: List[ChunkInfo] = []
 
-        if input.limit is not None:
-            files = islice(files, input.limit)
+        for i, chunk_lines in enumerate(
+            grouped(asset_uris, input.options.get_chunk_length())
+        ):
+            chunk_id = uri_to_chunk_id(
+                input.src_uri,
+                i,
+                input.options.chunk_file_name,
+                input.options.chunk_extension,
+            )
+            logger.info(f" -- Processing chunk {chunk_id}...")
+            chunkset.write_chunk(chunk_id, list(chunk_lines))
+            chunks.append(
+                ChunkInfo(uri=chunkset.get_chunk_uri(chunk_id), chunk_id=chunk_id)
+            )
 
-        chunk_uris: List[str] = []
-
-        for i, chunk in enumerate(grouped(files, input.chunk_length)):
-            logger.info(f" -- Processing chunk {i}...")
-            txt = "\n".join(chunk)
-            with TemporaryDirectory() as tmp_dir:
-                tmp_path = os.path.join(tmp_dir, "list.csv")
-                with open(tmp_path, "w") as f:
-                    f.write(txt)
-                dst_blob = f"{input.chunk_prefix}{i}{input.chunk_extension}"
-                logger.info(f"Writing {dst_blob}...")
-                dst_storage.upload_file(tmp_path, dst_blob)
-                chunk_uris.append(dst_storage.get_uri(dst_blob))
-
-        return CreateChunksOutput(chunk_uris=chunk_uris)
+        return ChunksOutput(chunks=chunks)
 
     def run(
         self, input: CreateChunksInput, context: TaskContext
-    ) -> Union[CreateChunksOutput, WaitTaskResult, FailedTaskResult]:
-        return self.create_chunks(input)
+    ) -> Union[ChunksOutput, WaitTaskResult, FailedTaskResult]:
+        return self.create_chunks(input, context.storage_factory)
 
 
 create_chunks_task = CreateChunksTask()
+
+
+class ListChunksTask(Task[ListChunksInput, ChunksOutput]):
+    _input_model = ListChunksInput
+    _output_model = ChunksOutput
+
+    @classmethod
+    def create_chunks(
+        cls, input: ListChunksInput, storage_factory: StorageFactory
+    ) -> ChunksOutput:
+        chunk_storage = storage_factory.get_storage(input.chunkset_uri)
+
+        chunkset = ChunkSet(chunk_storage)
+
+        if input.all:
+            chunk_ids = chunkset.all_chunks
+        else:
+            chunk_ids = chunkset.unprocessed_chunks
+
+        chunks: List[ChunkInfo] = [
+            ChunkInfo(uri=chunkset.get_chunk_uri(chunk_id), chunk_id=chunk_id)
+            for chunk_id in chunk_ids
+        ]
+
+        return ChunksOutput(chunks=chunks)
+
+    def run(
+        self, input: ListChunksInput, context: TaskContext
+    ) -> Union[ChunksOutput, WaitTaskResult, FailedTaskResult]:
+        return self.create_chunks(input, context.storage_factory)
+
+
+list_chunks_task = ListChunksTask()

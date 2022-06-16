@@ -1,0 +1,32 @@
+{{- if .Values.pcdev.argo_ingress.enabled -}}
+{{- $fullName := include "pcdev.fullname" . -}}
+{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-argo
+  namespace: argo
+  labels:
+    {{- include "pcdev.labels" . | nindent 4 }}
+  {{- with .Values.pcdev.argo_ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  rules:
+  {{- range .Values.pcdev.argo_ingress.hosts }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: {{ $.Values.pcdev.services.argo.path }}
+            pathType: Exact
+            backend:
+              service:
+                name: {{ $.Values.pcdev.services.argo.name }}
+                port:
+                  number: {{ $.Values.pcdev.services.argo.port }}
+  {{- end }}
+{{- end }}

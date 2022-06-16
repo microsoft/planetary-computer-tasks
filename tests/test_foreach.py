@@ -21,7 +21,7 @@ HERE = Path(__file__).parent
 WORKFLOWS = HERE / "workflows"
 ASSETS_DIR = HERE / "data-files" / "simple-assets"
 
-TIMEOUT_SECONDS = 20
+TIMEOUT_SECONDS = 60
 
 
 def test_foreach_simple_workflow():

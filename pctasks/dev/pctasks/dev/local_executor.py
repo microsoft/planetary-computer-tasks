@@ -3,6 +3,9 @@ Executes pctasks inside the dev container.
 Used to mimic executing a task in Azure Batch locally.
 """
 
+import logging
+import time
+from threading import Lock
 from typing import Any, Callable, Dict, List
 from uuid import uuid1
 
@@ -12,23 +15,44 @@ from fastapi.responses import JSONResponse
 
 from pctasks.cli.cli import pctasks_cmd
 from pctasks.core.models.record import TaskRunStatus
-from pctasks.execute.models import TaskPollResult
+from pctasks.run.models import TaskPollResult
 
 app = FastAPI()
 
 
-def submit_task(args: List[str], callback: Callable[[TaskRunStatus], None]) -> None:
+logger = logging.getLogger(__name__)
+
+cache_lock = Lock()
+
+FAIL_SUBMIT_TAG = "fail_submit"
+WAIT_AND_FAIL_TAG = "wait_and_fail"
+
+
+def submit_task(
+    args: List[str], tags: Dict[str, str], callback: Callable[[TaskRunStatus], None]
+) -> None:
     """
     Submit a task to the local executor.
     """
-    try:
-        result = pctasks_cmd.main(args, standalone_mode=False)
-        if result.exit_code != 0:
-            callback(TaskRunStatus.FAILED)
-        else:
-            callback(TaskRunStatus.COMPLETED)
-    except Exception:
+    if WAIT_AND_FAIL_TAG in tags:
+        sleep_seconds = WAIT_AND_FAIL_TAG
+        callback(TaskRunStatus.RUNNING)
+        time.sleep(int(sleep_seconds))
         callback(TaskRunStatus.FAILED)
+    else:
+        callback(TaskRunStatus.RUNNING)
+        time.sleep(1)
+        try:
+            pctasks_cmd.main(args)
+        except SystemExit as e:
+            if e.code != 0:
+                logger.error(f"Task ran but returned non-zero code {e.code}")
+                callback(TaskRunStatus.FAILED)
+            else:
+                callback(TaskRunStatus.COMPLETED)
+        except Exception as e:
+            logger.exception(e)
+            callback(TaskRunStatus.FAILED)
 
 
 @app.post("/execute")
@@ -39,21 +63,28 @@ def execute(
     request.app.state._cache[id] = TaskRunStatus.PENDING
 
     def _update(status: TaskRunStatus) -> None:
-        request.app.state._cache[id] = status
+        with cache_lock:
+            request.app.state._cache[id] = status
 
-    background_tasks.add_task(submit_task, data["args"], _update)
+    tags = data.get("tags", {})
+    if FAIL_SUBMIT_TAG in tags:
+        _update(TaskRunStatus.FAILED)
+    else:
+        background_tasks.add_task(submit_task, data["args"], tags, _update)
 
     return {"id": id}
 
 
 @app.get("/poll/{id}")
 def poll(id: str, request: Request) -> Response:
-    try:
-        return JSONResponse(
-            TaskPollResult(task_status=request.app.state._cache.get(id)).dict()
-        )
-    except KeyError:
+
+    with cache_lock:
+        task_status = request.app.state._cache.get(id)
+    if task_status is None:
         return Response(status_code=404)
+    result = TaskPollResult(task_status=task_status)
+    logger.info(f"Polling task {id}: {result.json(indent=2)}")
+    return JSONResponse(result.dict())
 
 
 @app.on_event("startup")

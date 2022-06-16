@@ -1,0 +1,26 @@
+name: dataset-test
+image: mock:latest
+
+args:
+  - test_prefix
+  - sas_token
+
+collections:
+  - id: test-dataset
+    class: tests.collection:TestCollection
+    asset_storage:
+      - storage_account: devstoreaccount1
+        container: test-data
+        prefix: ${{ args.test_prefix }}/assets
+        sas_token: ${{ args.sas_token }}
+        chunks:
+          options:
+            chunk_length: 2
+            extensions:
+              - .json
+          splits:
+            - depth: 1
+    chunk_storage:
+      storage_account: devstoreaccount1
+      container: test-data
+      prefix: ${{ args.test_prefix }}/chunks

@@ -7,11 +7,13 @@ from tempfile import TemporaryDirectory
 from typing import Any, Dict, Iterator, List, Optional
 
 import orjson
-from pypgstac.pypgstac import loadopt
+
+# from pypgstac.pypgstac import loadopt
+from pypgstac.load import Methods
 
 from pctasks.core.storage import StorageFactory
 from pctasks.core.storage.local import LocalStorage
-from pctasks.ingest.models import IngestConfig
+from pctasks.ingest.models import IngestOptions
 from pctasks.ingest_task.pgstac import PgSTAC
 
 logger = logging.getLogger(__name__)
@@ -39,10 +41,15 @@ def ingest_item_paths(
     upsert: bool = True,
 ) -> None:
     logger.info("=== Ingesting into the database...")
+    # if upsert:
+    #     mode = loadopt("upsert")
+    # else:
+    #     mode = loadopt("insert")
+
     if upsert:
-        mode = loadopt("upsert")
+        mode = Methods.upsert
     else:
-        mode = loadopt("insert")
+        mode = Methods.insert
 
     tic_ingest = time.perf_counter()
 
@@ -104,9 +111,9 @@ def ingest_ndjsons(
     pgstac: PgSTAC,
     ndjsons: List[str],
     storage_factory: StorageFactory,
-    ingest_config: Optional[IngestConfig] = None,
+    ingest_config: Optional[IngestOptions] = None,
 ) -> None:
-    ingest_config = ingest_config or IngestConfig()
+    ingest_config = ingest_config or IngestOptions()
 
     # Pool that executes the chunk download and preperation steps
     pool = futures.ProcessPoolExecutor()
@@ -135,6 +142,9 @@ def ingest_ndjsons(
                 local_prepared_dir = os.path.join(tmp_dir, "prepared")
 
                 logger.info(" -- Preparing chunkset...")
+
+                # Clear the storage factory cache to avoid pickle errors.
+                storage_factory.clear_cache()
 
                 prepared_ndjsons = [
                     pool.submit(
@@ -188,37 +198,43 @@ def ingest_ndjsons(
                     return insert_group_cleanup_files
 
                 for local_path_future in futures.as_completed(prepared_ndjsons):
-                    prepared_chunk = local_path_future.result()
+                    if not local_path_future.cancelled():
+                        prepared_chunk = local_path_future.result()
 
-                    insert_group.append(prepared_chunk)
-                    insert_group_line_count += prepared_chunk.line_count
+                        insert_group.append(prepared_chunk)
+                        insert_group_line_count += prepared_chunk.line_count
 
-                    logger.info(
-                        f"Queued {prepared_chunk.uri} "
-                        f"({insert_group_line_count} lines queued)"
-                    )
+                        logger.info(
+                            f"Queued {prepared_chunk.uri} "
+                            f"({insert_group_line_count} lines queued)"
+                        )
 
-                    if insert_group_line_count >= target_insert_group_size:
-                        cleanup_files = flush()
-                        insert_group = []
-                        insert_group_line_count = 0
-                        for local_path in cleanup_files:
-                            os.unlink(local_path)
+                        if insert_group_line_count >= target_insert_group_size:
+                            cleanup_files = flush()
+                            insert_group = []
+                            insert_group_line_count = 0
+                            for local_path in cleanup_files:
+                                os.unlink(local_path)
 
                 if len(insert_group) > 0:
                     flush()
 
+        except Exception as e:
+            logger.error(e)
+            raise
         finally:
             logger.info(" -- Finished Ingest.")
 
             logger.info("Checking for hanging processes...")
             if prepared_ndjsons is not None:
                 for f in prepared_ndjsons:
-                    if not f.done:
+                    if not f.done():
                         logger.warning("Canceling dangling prepare tasks...")
                         f.cancel()
-            logger.info(" - Shutting down pool...")
-            pool.shutdown()
+
+            logger.info("Shutting down pool...")
+            pool.shutdown(wait=True)
+            logger.info("...pool shut down.")
 
             if any(failed_ndjsons):
                 raise IngestFailedException(

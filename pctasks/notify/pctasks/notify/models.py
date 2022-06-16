@@ -1,6 +1,6 @@
-from typing import List
+from typing import List, Optional
 
-from pctasks.core.models.base import PCBaseModel, TargetEnvironment
+from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.event import CloudEvent, NotificationMessage
 from pctasks.core.models.registration import (
     EventGridChannelInfo,
@@ -10,7 +10,7 @@ from pctasks.core.models.registration import (
 
 class NotifyFetchMessage(PCBaseModel):
     notification: NotificationMessage
-    target_environment: TargetEnvironment
+    target_environment: Optional[str] = None
 
 
 class NotifyFetchResult(PCBaseModel):

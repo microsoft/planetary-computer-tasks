@@ -3,14 +3,17 @@ from uuid import uuid1
 
 from azure.storage.queue import QueueClient, QueueServiceClient
 
+from pctasks.core.models.config import QueueConnStrConfig
 from pctasks.core.queues import QueueService
-from pctasks.dev.config import get_queue_config
+from pctasks.dev.constants import get_azurite_connection_string
 
 
 class TempQueue:
-    def __init__(self, permissions: str = "raup") -> None:
-        self.queue_config = get_queue_config(
-            name=f"testqueue-{uuid1().hex}", permissions=permissions
+    def __init__(self) -> None:
+        suffix = uuid1().hex[:5]
+        self.queue_config = QueueConnStrConfig(
+            queue_name=f"test-queue-{suffix}",
+            connection_string=get_azurite_connection_string(),
         )
 
         self._service_client: Optional[QueueServiceClient] = None

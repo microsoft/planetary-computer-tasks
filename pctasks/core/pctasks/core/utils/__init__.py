@@ -1,6 +1,8 @@
+import os
+from contextlib import contextmanager
 from enum import Enum
 from itertools import islice
-from typing import Any, Callable, Iterable, Iterator, List, Optional, TypeVar
+from typing import Any, Callable, Generator, Iterable, Iterator, List, Optional, TypeVar
 
 T = TypeVar("T")
 U = TypeVar("U")
@@ -33,7 +35,7 @@ def completely_flatten(it: List[Any]) -> Iterable[Any]:
         yield item
 
 
-def grouped(it: Iterable[Any], size: int) -> Iterable[Iterable[Any]]:
+def grouped(it: Iterable[T], size: int) -> Iterable[Iterable[T]]:
     """Group items in an Iterable into groups of the given size."""
     it = iter(it)
     return iter(lambda: tuple(islice(it, size)), ())
@@ -72,3 +74,20 @@ class StrEnum(str, Enum):
 
     def __repr__(self) -> str:
         return self.value
+
+
+@contextmanager
+def environment(**kwargs: str) -> Generator[None, None, None]:
+    """Temporarily set environment variables inside the context manager and
+    fully restore previous environment afterwards
+    """
+    original_env = {key: os.getenv(key) for key in kwargs}
+    os.environ.update(kwargs)
+    try:
+        yield
+    finally:
+        for key, value in original_env.items():
+            if value is None:
+                del os.environ[key]
+            else:
+                os.environ[key] = value

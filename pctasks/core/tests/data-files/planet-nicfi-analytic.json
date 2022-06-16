@@ -1,0 +1,149 @@
+{
+    "type": "Collection",
+    "id": "planet-nicfi-analytic",
+    "stac_version": "1.0.0",
+    "description": "*Note: Assets in this collection are only available to winners of the [GEO-Microsoft Planetary Computer RFP](https://www.earthobservations.org/geo_blog_obs.php?id=528). Others wishing to use the data can sign up and access it from Planet at [https://www.planet.com/nicfi/](https://www.planet.com/nicfi/) and email [planetarycomputer@microsoft.com](mailto:planetarycomputer@microsoft.com).*\n\nThrough Norway\u2019s International Climate & Forests Initiative (NICFI), users can access Planet\u2019s high-resolution, analysis-ready mosaics of the world\u2019s tropics in order to help reduce and reverse the loss of tropical forests, combat climate change, conserve biodiversity, and facilitate sustainable development.\n\nIn support of NICFI\u2019s mission, you can use this data for a number of projects including, but not limited to:\n\n* Advance scientific research about the world\u2019s tropical forests and the critical services they provide.\n* Implement and improve policies for sustainable forest management and land use in developing tropical forest countries and jurisdictions.\n* Increase transparency and accountability in the tropics.\n* Protect and improve the rights of indigenous peoples and local communities in tropical forest countries.\n* Innovate solutions towards reducing pressure on forests from global commodities and financial markets.\n* In short, the primary purpose of the NICFI Program is to support reducing and reversing the loss of tropical forests, contributing to combating climate change, conserving biodiversity, contributing to forest regrowth, restoration, and enhancement, and facilitating sustainable development, all of which must be Non-Commercial Use.\n\nTo learn how more about the NICFI program, streaming and downloading basemaps please read the [NICFI Data Program User Guide](https://assets.planet.com/docs/NICFI_UserGuidesFAQ.pdf).\n\nThis collection contains both monthly and biannual mosaics. Biannual mosaics are available from December 2015 - August 2020. Monthly mosaics are available from September 2020. The STAC items include a `planet-nicfi:cadence` field indicating the type of mosaic.",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://assets.planet.com/docs/Planet_ParticipantLicenseAgreement_NICFI.pdf",
+            "type": "application/pdf",
+            "title": "Participant License Agreement."
+        },
+        {
+            "rel": "documentation",
+            "href": "https://assets.planet.com/docs/NICFI_UserGuidesFAQ.pdf",
+            "type": "application/pdf",
+            "title": "Participant License Agreement."
+        },
+        {
+            "rel": "documentation",
+            "href": "https://www.planet.com/nicfi/",
+            "type": "text/html",
+            "title": "NICFI Program - Satellite Imagery and Monitoring | Planet"
+        },
+        {
+            "rel": "documentation",
+            "href": "https://developers.planet.com/nicfi/",
+            "type": "text/html",
+            "title": "NICFI Program Resource Center"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+    ],
+    "item_assets": {
+        "thumbnail": {
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "Thumbnail"
+        },
+        "data": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Data",
+            "description": "a 'ground truth' representation of spatially accurate data with minimized effects of atmosphere and sensor characteristics"
+        }
+    },
+    "msft:short_description": "Planet's high-resolution, analysis-ready mosaics of the world's tropics",
+    "msft:storage_account": "planet",
+    "msft:container": "nicfi",
+    "msft:group_id": "planet-nicfi",
+    "title": "Planet-NICFI Basemaps (Analytic)",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180.0,
+                    -34.161818157002,
+                    180.0,
+                    30.145127179625
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2015-12-01T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "Planet",
+        "NICFI",
+        "Satellite",
+        "Tropics",
+        "Imagery"
+    ],
+    "providers": [
+        {
+            "name": "Planet",
+            "description": "Contact Planet at [planet.com/contact-sales](https://www.planet.com/contact-sales/)",
+            "roles": [
+                "processor",
+                "producer",
+                "licensor"
+            ],
+            "url": "http://planet.com"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com/"
+        }
+    ],
+    "summaries": {
+        "gsd": [
+            4.77
+        ],
+        "eo:bands": [
+            {
+                "name": "Blue",
+                "common_name": "blue",
+                "description": "visible blue"
+            },
+            {
+                "name": "Green",
+                "common_name": "green",
+                "description": "visible green"
+            },
+            {
+                "name": "Red",
+                "common_name": "red",
+                "description": "visible red"
+            },
+            {
+                "name": "NIR",
+                "common_name": "nir",
+                "description": "near-infrared"
+            }
+        ],
+        "planet-nicfi:cadence": [
+            "biannual",
+            "monthly"
+        ],
+        "planet-nicfi:percent_covered": {
+            "minimum": 0,
+            "maximum": 100
+        }
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/planet-nicfi-analytic-thumbnail.png",
+            "type": "image/png",
+            "title": "thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        }
+    }
+}

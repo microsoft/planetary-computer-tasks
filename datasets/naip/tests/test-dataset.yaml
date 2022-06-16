@@ -1,0 +1,25 @@
+name: naip
+image: mock:latest
+
+args:
+  - test_prefix
+
+collections:
+  - id: naip
+    class: naip.dataset:Naip
+    asset_storage:
+      - storage_account: naipeuwest
+        container: naip
+        sas_token: ${{ pc.get_token(naipeuwest, naip) }}
+        chunks:
+          options:
+            chunk_length: 2
+            extensions:
+              - ".tif"
+          splits:
+            - depth: 2
+              name_starts_with: v002/
+    chunk_storage:
+      storage_account: devstoreaccount1
+      container: test-data
+      prefix: ${{ args.test_prefix }}/chunks

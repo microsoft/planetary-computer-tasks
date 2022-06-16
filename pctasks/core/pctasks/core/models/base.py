@@ -3,7 +3,6 @@ from typing import Any, Dict, List, Optional, Type, TypeVar, Union
 import yaml
 from pydantic import BaseModel
 
-from pctasks.core.utils import StrEnum
 from pctasks.core.yaml import model_from_yaml
 
 T = TypeVar("T", bound=BaseModel)
@@ -96,10 +95,5 @@ class RunRecordId(PCBaseModel):
         )
 
 
-class TargetEnvironment(StrEnum):
-    PRODUCTION = "production"
-    STAGING = "staging"
-
-
 class ForeachConfig(PCBaseModel):
-    items: Union[str, List[str]]
+    items: Union[str, List[Any]]

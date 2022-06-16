@@ -2,7 +2,7 @@ import re
 from abc import ABC, abstractmethod
 from typing import Generic, List, Optional, TypeVar
 
-from pctasks.core.models.base import TargetEnvironment
+from pctasks.core.constants import DEFAULT_TARGET_ENVIRONMENT
 from pctasks.core.models.event import CloudEvent, NotificationMessage
 from pctasks.core.models.registration import (
     BlobTriggerEventRegistration,
@@ -64,13 +64,13 @@ class CloudEventRegistrationTableService(Generic[T], ModelTableService[T], ABC):
 class NotificationRegistrationTableService(Generic[T], ModelTableService[T], ABC):
     @abstractmethod
     def _get_partition_key_from_registration(
-        self, registration: T, target_environment: TargetEnvironment
+        self, registration: T, target_environment: Optional[str]
     ) -> str:
         pass
 
     @abstractmethod
     def get_registration_key(
-        self, notification: NotificationMessage, target_environment: TargetEnvironment
+        self, notification: NotificationMessage, target_environment: Optional[str]
     ) -> Optional[str]:
         """Gets a registration key from the given notification message.
 
@@ -80,9 +80,7 @@ class NotificationRegistrationTableService(Generic[T], ModelTableService[T], ABC
         """
         pass
 
-    def insert_record(
-        self, registration: T, target_environment: TargetEnvironment
-    ) -> None:
+    def insert_record(self, registration: T, target_environment: Optional[str]) -> None:
         self.insert(
             partition_key=self._get_partition_key_from_registration(
                 registration, target_environment
@@ -91,9 +89,7 @@ class NotificationRegistrationTableService(Generic[T], ModelTableService[T], ABC
             entity=registration,
         )
 
-    def upsert_record(
-        self, registration: T, target_environment: TargetEnvironment
-    ) -> None:
+    def upsert_record(self, registration: T, target_environment: Optional[str]) -> None:
         self.upsert(
             partition_key=self._get_partition_key_from_registration(
                 registration, target_environment
@@ -102,9 +98,7 @@ class NotificationRegistrationTableService(Generic[T], ModelTableService[T], ABC
             entity=registration,
         )
 
-    def update_record(
-        self, registration: T, target_environment: TargetEnvironment
-    ) -> None:
+    def update_record(self, registration: T, target_environment: Optional[str]) -> None:
         self.update(
             partition_key=self._get_partition_key_from_registration(
                 registration, target_environment
@@ -129,12 +123,13 @@ class STACWebHookEventRegistrationTable(
     def _get_partition_key_from_registration(
         self,
         registration: STACItemEventRegistration,
-        target_environment: TargetEnvironment,
+        target_environment: Optional[str],
     ) -> str:
+        target_environment = target_environment or DEFAULT_TARGET_ENVIRONMENT
         return f"{registration.collection_id}|||{target_environment}"
 
     def get_registration_key(
-        self, notification: NotificationMessage, target_environment: TargetEnvironment
+        self, notification: NotificationMessage, target_environment: Optional[str]
     ) -> Optional[str]:
         return super().get_registration_key(notification, target_environment)
 

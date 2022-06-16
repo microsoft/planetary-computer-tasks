@@ -14,7 +14,7 @@ class BackoffError(Exception):
     pass
 
 
-def is_common_throttle_exception(e: Exception) -> bool:
+def get_exception_status_code(e: Exception) -> Optional[int]:
     status_code: Optional[int] = None
     if hasattr(e, "status_code"):
         # e.g. azure.core.exceptions.HttpResponseError
@@ -35,8 +35,37 @@ def is_common_throttle_exception(e: Exception) -> bool:
                 pass
             except ValueError:
                 pass
+    elif hasattr(e, "response"):
+        # e.g. requests.exceptions.HTTPError
+        response = getattr(e, "response")
+        if hasattr(response, "status_code"):
+            status = getattr(response, "status_code")
+            try:
+                status_code = int(status)
+            except TypeError:
+                pass
+            except ValueError:
+                pass
+    elif isinstance(e, FileNotFoundError):
+        # fsspec will raise a FileNotFoundError
+        # if a request is throttled; check inner exception.
+        if e.__cause__ and isinstance(e.__cause__, Exception):
+            status_code = get_exception_status_code(e.__cause__)
 
-    return status_code is not None and (status_code == 503 or status_code == 429)
+    return status_code
+
+
+def is_common_throttle_exception(e: Exception) -> bool:
+    status_code = get_exception_status_code(e)
+    if status_code is not None and (status_code == 503 or status_code == 429):
+        return True
+
+    if "connection reset by peer" in str(e).lower():
+        # If the connection was reset by peer, this could be throttling or
+        # an intermittent issue.
+        return True
+
+    return False
 
 
 @dataclass

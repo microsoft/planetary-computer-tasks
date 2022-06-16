@@ -4,16 +4,10 @@ from importlib.metadata import EntryPoint
 
 from pctasks.core.logging import RunLogger, TaskLogger
 from pctasks.core.models.record import TaskRunStatus
-from pctasks.core.models.task import (
-    TaskResult,
-    TaskResultType,
-    TaskRunMessage,
-    TaskRunSignal,
-    TaskRunSignalMessage,
-)
-from pctasks.core.queues import QueueService
+from pctasks.core.models.task import TaskResult, TaskResultType, TaskRunMessage
 from pctasks.core.storage.blob import BlobStorage, BlobUri
 from pctasks.core.tables.record import TaskRunRecordTable
+from pctasks.core.utils import environment
 from pctasks.task.context import TaskContext
 from pctasks.task.task import Task
 
@@ -40,20 +34,26 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
     with TaskLogger.from_task_run_config(task_config):
 
         def signal_result(result_type: TaskResultType) -> None:
-            with QueueService.from_config(task_config.signal_queue) as signal_client:
-                logger.info(
-                    f"Signaling to {task_config.signal_target_id} "
-                    f"via queue {task_config.signal_queue} "
-                    f"with {result_type}..."
-                )
-                signal = TaskRunSignalMessage(
-                    signal_target_id=task_config.signal_target_id,
-                    data=TaskRunSignal(
-                        signal_key=task_config.signal_key,
-                        task_result_type=result_type,
-                    ),
-                )
-                signal_client.send_message(signal.json().encode())
+            # TODO: Remove signaling. With move to remote runner,
+            # output is polled, which serves the same purpose as this
+            # signal.
+            pass
+
+            # with QueueService.from_config(task_config.signal_queue) as signal_client:
+            #     logger.info(
+            #         f"Signaling to {task_config.signal_target_id} "
+            #         f"via queue {task_config.signal_queue} "
+            #         f"with {result_type}..."
+            #     )
+            #     signal = TaskRunSignalMessage(
+            #         signal_target_id=task_config.signal_target_id,
+            #         data=TaskRunSignal(
+            #             signal_key=task_config.signal_key,
+            #             task_result_type=result_type,
+            #         ),
+            #     )
+            #     signal_client.send_message(signal.json().encode())
+            #     logger.info("...signal sent")
 
         logger.info(" === PCTasks ===")
         logger.info(f"  == {task_config.get_run_record_id()} ")
@@ -104,31 +104,40 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
                     entrypoint = EntryPoint("", task_path, "")
                     try:
                         task = entrypoint.load()
+                        if callable(task):
+                            task = task()
                     except Exception as e:
                         raise TaskLoadError(f"Failed to load task: {task_path}") from e
 
                     if not isinstance(task, Task):
-                        raise TaskLoadError(f"{task_path} is not an instance of {Task}")
+                        raise TaskLoadError(
+                            f"{task_path} of type {type(task)} {task} "
+                            f"is not an instance of {Task}"
+                        )
 
                     # Set environment variables
                     if task_config.environment:
-                        for k, v in task_config.environment.items():
-                            os.environ[k] = v
-
-                    missing_env = []
-                    for env_var in task.get_required_environment_variables():
-                        if env_var not in os.environ:
-                            missing_env.append(env_var)
-                    if missing_env:
-                        missing_env_str = ", ".join(f'"{e}"' for e in missing_env)
-                        raise MissingEnvironmentError(
-                            "The task cannot run due to the following "
-                            f"missing environment variables: {missing_env_str}"
+                        logger.info(
+                            "  Using the following environment variables "
+                            "from task configuration:"
                         )
+                        logger.info("    " + ",".join(task_config.environment.keys()))
 
-                    update_status(TaskRunStatus.RUNNING)
-                    logger.info("  -- PCTasks: Running task...")
-                    result = task.parse_and_run(task_data, task_context)
+                    with environment(**(task_config.environment or {})):
+                        missing_env = []
+                        for env_var in task.get_required_environment_variables():
+                            if env_var not in os.environ:
+                                missing_env.append(env_var)
+                        if missing_env:
+                            missing_env_str = ", ".join(f'"{e}"' for e in missing_env)
+                            raise MissingEnvironmentError(
+                                "The task cannot run due to the following "
+                                f"missing environment variables: {missing_env_str}"
+                            )
+
+                        update_status(TaskRunStatus.RUNNING)
+                        logger.info("  -- PCTasks: Running task...")
+                        result = task.parse_and_run(task_data, task_context)
 
                     logger.info("  -- PCTasks: Handling task result...")
 

@@ -19,11 +19,13 @@ Options:
     --deploy
         Only build the deploy image
     --servers
-        Only build the servers images (functions, local-executor)
+        Only build the pctasks-sever image
+    --servers
+        Only build all the servers images (e.g functions, local-executor)
     --dev
         Only build the dev image
     --task
-        Only build the task image
+        Only build the task images (including pctasks-run)
 "
 }
 
@@ -31,12 +33,20 @@ BUILD_DEPLOY=1
 BUILD_SERVERS="-f docker-compose.yml"
 BUILD_DEV="-f docker-compose.console.yml"
 BUILD_TASK="-f docker-compose.tasks.yml"
+BUILD_ONLY=""
 while [[ $# -gt 0 ]]; do case $1 in
     --deploy)
         DEPLOY_ONLY=1
         BUILD_SERVERS=""
         BUILD_DEV=""
         BUILD_TASK=""
+        shift
+        ;;
+    --server)
+        BUILD_DEPLOY=""
+        BUILD_DEV=""
+        BUILD_TASK=""
+        BUILD_ONLY="server"
         shift
         ;;
     --servers)
@@ -79,7 +89,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     # Build project images
     if [ -z "${DEPLOY_ONLY}" ]; then
         docker-compose ${BUILD_SERVERS} ${BUILD_TASK} ${BUILD_DEV} \
-            build
+            build ${BUILD_ONLY};
     fi
 
 fi

@@ -1,0 +1,17 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pctasks
+rules:
+  - verbs:
+      - get
+      - list
+      - watch
+      - update
+      - create
+      - patch
+      - delete
+    apiGroups:
+      - argoproj.io
+    resources:
+      - workflows

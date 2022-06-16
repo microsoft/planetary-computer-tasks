@@ -44,9 +44,8 @@ def find_value(
     """
 
     def _fetch(
-        d: Dict[str, Any], path: List[str], fail_if_not_found: bool = True
+        d: Dict[str, Any], path: List[str], fail_if_not_found: bool = False
     ) -> Optional[TemplateValue]:
-        print(f"Fetching {path} from {d}")
         head, tail = path[0], path[1:]
         index: Optional[int] = None
         list_m = re.match(LIST_PATH_REGEX, head)
@@ -65,7 +64,10 @@ def find_value(
         else:
             if index:
                 if not isinstance(v, list):
-                    raise ValueError(f"Expected list at key {head}, got {type(v)}")
+                    raise TemplateError(
+                        f"Expected list at key {head}, got {type(v)} "
+                        f"for template {'.'.join(path)}"
+                    )
                 else:
                     if (index >= 0 and len(v) <= index) or (
                         index < 0 and len(v) >= -index
@@ -77,8 +79,14 @@ def find_value(
                     v = v[index]
             if tail:
                 if isinstance(v, dict):
-                    return _fetch(v, tail)
+                    return _fetch(v, tail, fail_if_not_found=True)
                 elif isinstance(v, list):
+                    if len(v) == 0:
+                        raise TemplateError(
+                            f"Expected elements in at {head} "
+                            "but found empty list "
+                            f"for template {'.'.join(path)}"
+                        )
                     # Ensure the list is of dicts, and then recurse into
                     # each of the dict values.
                     if not all(isinstance(x, dict) for x in v):
@@ -86,7 +94,7 @@ def find_value(
                             f"Expected list of dicts at key {head}, got {type(v)} "
                             f"for template {'.'.join(path)}"
                         )
-                    values = [_fetch(x, tail) for x in v]
+                    values = [_fetch(x, tail, fail_if_not_found=True) for x in v]
                     if all([x is None for x in values]):
                         return None
                     if any([x is None for x in values]):
@@ -192,7 +200,7 @@ def template_dict(
                         elif isinstance(item, str):
                             new_list.append(template_str(item, get_value))
                         else:
-                            new_list.append(v)
+                            new_list.append(item)
                     result[k] = new_list
                 elif isinstance(v, str):
                     result[k] = template_str(v, get_value)
@@ -235,7 +243,7 @@ class MultiTemplater(Templater):
 
 
 class DictTemplater(Templater):
-    def __init__(self, data: Dict[str, Any], strict: bool = True):
+    def __init__(self, data: Dict[str, Any], strict: bool = False):
         self.data = data
         self.strict = strict
 

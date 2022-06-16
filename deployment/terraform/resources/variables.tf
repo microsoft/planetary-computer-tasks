@@ -6,26 +6,92 @@ variable "region" {
   type = string
 }
 
-variable "batch_pool_id" {
+## AKS
+
+variable "cluster_cert_issuer" {
   type = string
 }
 
-variable "acr_sp_object_id" {
+variable "cluster_cert_server" {
   type = string
 }
 
-variable "acr_sp_client_id" {
+variable "k8s_version" {
   type = string
 }
 
-variable "acr_sp_client_secret" {
+variable "k8s_orchestrator_version" {
   type = string
+}
+
+variable "aks_node_count" {
+  type = number
+  default = 1
+}
+
+variable "pctasks_server_replica_count" {
+  type    = number
+  default = 1
+}
+
+## Batch
+
+variable "batch_default_pool_id" {
+  type = string
+}
+
+## ACR
+
+variable "task_acr_resource_group" {
+  type    = string
+  default = "pc-test-manual-resources"
 }
 
 variable "task_acr_name" {
   type    = string
   default = "pccomponentstest"
 }
+
+variable "task_acr_sp_object_id" {
+  type = string
+}
+
+variable "component_acr_resource_group" {
+  type    = string
+  default = "pc-test-manual-resources"
+}
+
+variable "component_acr_name" {
+  type    = string
+  default = "pccomponentstest"
+}
+
+variable "pctasks_server_image_tag" {
+  type    = string
+  default = "latest"
+}
+
+variable "pctasks_run_image_tag" {
+  type    = string
+  default = "latest"
+}
+
+## Database
+
+variable "db_username" {
+  type = string
+}
+
+variable "db_password" {
+  type = string
+}
+
+variable "db_storage_mb" {
+  type    = number
+  default = 32768
+}
+
+## Keyvault
 
 variable "task_sp_tenant_id" {
   type = string
@@ -39,17 +105,39 @@ variable "task_sp_client_secret" {
   type = string
 }
 
-variable "db_username" {
-  type = string
+variable "kv_sp_tenant_id" {
+  type    = string
 }
 
-variable "db_password" {
-  type = string
+variable "kv_sp_client_id" {
+  type    = string
 }
 
-variable "db_storage_mb" {
-  type    = number
-  default = 32768
+variable "kv_sp_client_secret" {
+  type    = string
+}
+
+## PCTasks Server
+
+variable "pctasks_server_account_key" {
+  type = string
+  sensitive = true
+}
+
+variable "pctasks_server_sp_tenant_id" {
+  type    = string
+}
+
+variable "pctasks_server_sp_client_id" {
+  type    = string
+}
+
+variable "pctasks_server_sp_client_secret" {
+  type    = string
+}
+
+variable "pctasks_server_sp_object_id" {
+  type    = string
 }
 
 # ---------------

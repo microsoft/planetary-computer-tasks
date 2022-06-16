@@ -44,13 +44,22 @@ class BlobConfig(PCBaseModel):
 class ImageConfig(PCBaseModel):
     image: str
     environment: Optional[List[str]] = None
+    tags: Optional[List[str]] = None
 
     @validator("environment")
-    def environment_validator(cls, v: Optional[List[str]]) -> Optional[List[str]]:
+    def _environment_validator(cls, v: Optional[List[str]]) -> Optional[List[str]]:
         if v:
             for env in v:
                 if not len(env.split("=")) == 2:
                     raise ValueError(f"Environment entry {env} is invalid.")
+        return v
+
+    @validator("tags")
+    def _tags_validator(cls, v: Optional[List[str]]) -> Optional[List[str]]:
+        if v:
+            for tag in v:
+                if not len(tag.split("=")) == 2:
+                    raise ValueError(f"Tags entry {tag} is invalid.")
         return v
 
     def get_environment(self) -> Optional[Dict[str, str]]:
@@ -68,3 +77,8 @@ class ImageConfig(PCBaseModel):
             return new_env
         else:
             return env
+
+    def get_tags(self) -> Optional[Dict[str, str]]:
+        if not self.tags:
+            return None
+        return {k: v.strip() for k, v in [e.split("=") for e in self.tags]}

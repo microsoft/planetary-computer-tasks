@@ -38,17 +38,29 @@ while [[ $# -gt 0 ]]; do case $1 in
     esac done
 
 
+source scripts/env
+
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ -z "${AZURITE_ONLY}" ]; then
+        if ! docker network ls | grep -q ${DOCKER_NETWORK_NAME}; then
+            echo " -- CREATING DOCKER NETWORK"
+
+            docker network create \
+                --driver=bridge \
+                pctasks-network
+        fi
+
+        echo " -- SETTING UP CLUSTER"
+        scripts/cluster create
+
         echo " -- BUILDING CONTAINERS"
         scripts/update
 
         echo " -- STARTING SERVERS"
         scripts/server --detached
 
-        # TODO: Migrate the dev PgSTAC database
-        # echo " -- MIGRATING THE DB"
-        # scripts/migrate
+        echo " -- UPDATING CLUSTER"
+        scripts/cluster update
     fi
 
     echo " -- SETTING UP AZURITE"

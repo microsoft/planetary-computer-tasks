@@ -1,0 +1,49 @@
+name: Test workflow for Argo
+dataset:
+  owner: microsoft
+  name: test-remote-1
+jobs:
+  job-1:
+    tasks:
+    - id: task-1
+      image: mock:latest
+      task: pctasks.dev.task:test_task
+      args:
+        output_dir: "blob://devstoreaccount1/taskio/scratch/arg-test/job-1-task-1"
+        options:
+          num_outputs: 2
+      schema_version: 1.0.0
+  job-2:
+    tasks:
+    - id: task-1
+      image: mock:latest
+      task: pctasks.dev.task:test_task
+      args:
+        uri: ${{ item.uri }}
+        output_dir: "blob://devstoreaccount1/taskio/scratch/arg-test/job-2-task-1"
+        options:
+          num_outputs: 2
+      schema_version: 1.0.0
+    foreach:
+      items: ${{ jobs.job-1.tasks.task-1.output.uris }}
+    needs: job-1
+  job-3:
+    tasks:
+    - id: task-1
+      image: mock:latest
+      task: pctasks.dev.task:test_task
+      args:
+        uri: ${{ item.uri }}
+        output_dir: "blob://devstoreaccount1/taskio/scratch/arg-test/job-3-task-1"
+      schema_version: 1.0.0
+    - id: task-2
+      image: mock:latest
+      task: pctasks.dev.task:test_task
+      args:
+        uri: ${{ tasks.task-1.output.uri }}
+        output_dir: "blob://devstoreaccount1/taskio/scratch/arg-test/job-3-task-2"
+      schema_version: 1.0.0
+    foreach:
+      items: ${{ jobs.job-2.tasks.task-1.output.uris }}
+    needs: create-chunks
+schema_version: 1.0.0

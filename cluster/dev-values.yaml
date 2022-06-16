@@ -1,0 +1,106 @@
+# Development values for the helm chart
+
+environment: "dev"
+
+pctasks:
+  server:
+    host: "0.0.0.0"
+    port: "80"
+    appRootPath: "/tasks"
+    debug: "FALSE"
+
+    image:
+      repository: "localhost:5001/pctasks-server"
+      tag: "latest"
+
+    service:
+      type: ClusterIP
+      port: 80
+      annotations: {}
+
+    argo:
+      host: "http://argo-workflows-server.argo.svc.cluster.local:2746"
+      # argo token set during helm install
+
+    # Image used to run workflows.
+    runner_image: "localhost:5001/pctasks-run:latest"
+    account_key: hunter2
+
+    deploy:
+      replicaCount: 1
+      podAnnotations:
+        "updated": "unknown"  # Value generated on helm upgrade
+
+  run:
+    dev:
+      local_executor_url: "http://local-executor:8000"
+
+      azurite:
+        enabled: true
+        host: "azurite"
+        port: 10000
+        storage_account: "devstoreaccount1"
+
+      secrets:
+        enabled: true
+        values:
+        - name: DB_CONNECTION_STRING
+          value: "postgresql://username:password@database:5432/postgis"
+
+    notifications:
+      queue_name: "notifications"
+      connection_string: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;"
+
+    tables:
+      account_url: "http://azurite:10002/devstoreaccount1"
+      account_name: "devstoreaccount1"
+      account_key: "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+
+    blob:
+      account_url: "http://azurite:10000/devstoreaccount1"
+      account_name: "devstoreaccount1"
+      account_key: "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+      log_blob_container: tasklogs
+      task_io_blob_container: taskio
+
+    batch:
+      enabled: false
+
+    keyvault:
+      enabled: false
+
+pcdev:
+  services:
+    pctasks:
+      path: "/tasks(/|$)(.*)"
+      name: "pctasks-server"
+      port: "80"
+    argo:
+      path: "/argo(/|$)(.*)"
+      name: "argo-workflows-server"
+      port: "2746"
+
+  pctasks_ingress:
+    enabled: true
+    hosts:
+      - "localhost"
+      - "host.docker.internal"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+      nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
+
+  argo_ingress:
+    enabled: true
+    hosts:
+      - "localhost"
+      - "host.docker.internal"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+      nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
+

@@ -5,13 +5,11 @@ from typing import Iterable, List, Optional, Set, Union, cast
 
 from pctasks.core.storage import Storage
 from pctasks.core.storage.local import LocalStorage
-
-ASSET_CHUNKS_PREFIX = "assets"
-ITEM_CHUNKS_PREFIX = "items"
-
-ALL_CHUNK_PREFIX = "all"
-SUCCESS_CHUNK_PREFIX = "success"
-FAILURE_CHUNK_PREFIX = "failed"
+from pctasks.dataset.chunks.constants import (
+    ALL_CHUNK_PREFIX,
+    FAILURE_CHUNK_PREFIX,
+    SUCCESS_CHUNK_PREFIX,
+)
 
 
 class ChunkSet:

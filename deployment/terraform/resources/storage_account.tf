@@ -79,6 +79,12 @@ resource "azurerm_storage_container" "tasklogs" {
   container_access_type = "private"
 }
 
+resource "azurerm_storage_container" "taskio" {
+  name                  = "taskio"
+  storage_account_name  = azurerm_storage_account.rxetl.name
+  container_access_type = "private"
+}
+
 # Access Policies
 
 resource "azurerm_role_assignment" "function-app-blob-access" {
@@ -97,4 +103,22 @@ resource "azurerm_role_assignment" "function-app-table-access" {
   scope                = azurerm_storage_account.rxetl.id
   role_definition_name = "Storage Table Data Contributor"
   principal_id         = azurerm_function_app.rxetl.identity[0].principal_id
+}
+
+resource "azurerm_role_assignment" "pctasks-server-blob-access" {
+  scope                = azurerm_storage_account.rxetl.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = var.pctasks_server_sp_object_id
+}
+
+resource "azurerm_role_assignment" "pctasks-server-queue-access" {
+  scope                = azurerm_storage_account.rxetl.id
+  role_definition_name = "Storage Queue Data Contributor"
+  principal_id         = var.pctasks_server_sp_object_id
+}
+
+resource "azurerm_role_assignment" "pctasks-server-table-access" {
+  scope                = azurerm_storage_account.rxetl.id
+  role_definition_name = "Storage Table Data Contributor"
+  principal_id         = var.pctasks_server_sp_object_id
 }

@@ -2,9 +2,13 @@ ARG base
 
 FROM ${base}
 
-COPY pctasks/dev /opt/src/pctasks/dev
-RUN cd /opt/src/pctasks/dev && \
-     pip install .[server]
+COPY pctasks/run /opt/lib/pctasks/run
+RUN cd /opt/lib/pctasks/run && \
+     pip install -e .
+
+COPY pctasks/dev /opt/lib/pctasks/dev
+RUN cd /opt/lib/pctasks/dev && \
+     pip install -e .[server]
 
 
 COPY datasets/naip/requirements-dev.txt /opt/src/requirements-dev.txt

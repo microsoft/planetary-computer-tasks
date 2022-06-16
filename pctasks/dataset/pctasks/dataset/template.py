@@ -32,6 +32,16 @@ class PCTemplater(Templater):
         return None
 
 
+def template_dataset(
+    yaml_str: str, parent_dir: Optional[Union[str, Path]] = None
+) -> DatasetConfig:
+    workflow_dict = yaml.safe_load(yaml_str)
+    templater = MultiTemplater(LocalTemplater(parent_dir or Path.cwd()), PCTemplater())
+    workflow_dict = templater.template_dict(workflow_dict)
+
+    return DatasetConfig.parse_obj(workflow_dict)
+
+
 def template_dataset_file(
     path: Optional[Union[str, Path]],
 ) -> DatasetConfig:
@@ -50,8 +60,4 @@ def template_dataset_file(
     if not p.exists():
         raise FileNotFoundError(f"Dataset YAML file not found at '{p}'")
 
-    workflow_dict = yaml.safe_load(p.read_text())
-    templater = MultiTemplater(LocalTemplater(p.parent), PCTemplater())
-    workflow_dict = templater.template_dict(workflow_dict)
-
-    return DatasetConfig.parse_obj(workflow_dict)
+    return template_dataset(p.read_text(), p.parent)

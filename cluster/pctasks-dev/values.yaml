@@ -1,0 +1,12 @@
+environment: "staging"
+namespace: "default"
+
+pcingress:
+  services:
+    pctasks:
+      path: ""
+      name: ""
+      port: ""
+
+nameOverride: ""
+fullnameOverride: ""
