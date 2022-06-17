@@ -32,6 +32,11 @@ class CreateItemsInput(PCBaseModel):
 
     Required if processing results in more than one item.
     """
+    collection_id: Optional[str] = None
+    """The ID of this STAC collection.
+
+    If set, this will be set as each created item's ``collection``.
+    """
 
     options: CreateItemsOptions = CreateItemsOptions()
 
@@ -111,6 +116,7 @@ class CreateItemsTaskConfig(TaskConfig):
             args=CreateItemsInput(
                 asset_chunk_info=asset_chunk_info,
                 item_chunkset_uri=chunk_storage_config.get_uri(items_chunk_folder),
+                collection_id=collection.id,
                 options=options or CreateItemsOptions(),
             ),
             environment=environment,

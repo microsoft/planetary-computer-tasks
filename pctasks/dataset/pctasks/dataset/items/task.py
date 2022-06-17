@@ -86,6 +86,11 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                 else:
                     _validate(result)
                     results.extend(result)
+
+                if args.collection_id:
+                    for item in results:
+                        item.collection_id = args.collection_id
+
         else:
             # Should be prevented by validator
             raise ValueError("Neither asset_uri nor chunk_uri specified")
