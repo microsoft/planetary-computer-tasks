@@ -7,7 +7,7 @@ environment:
   AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
 
 collections:
-  - id: deltaresfloods
+  - id: deltares-floods
     class: pctasks.dataset.collection:PremadeItemCollection
     asset_storage:
       # the STAC items

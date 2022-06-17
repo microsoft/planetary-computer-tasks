@@ -1,8 +1,15 @@
+import json
 import logging
 from pathlib import Path
 
 from pctasks.cli.cli import setup_logging
-from pctasks.dataset.models import BlobStorageConfig, CollectionConfig, DatasetConfig
+from pctasks.dataset.items.models import CreateItemsOptions
+from pctasks.dataset.models import (
+    BlobStorageConfig,
+    ChunkOptions,
+    CollectionConfig,
+    DatasetConfig,
+)
 from pctasks.core.storage import StorageFactory
 from pctasks.core.tokens import Tokens
 from pctasks.dataset.splits.models import (
@@ -11,7 +18,10 @@ from pctasks.dataset.splits.models import (
 from pctasks.dataset.template import template_dataset_file
 from pctasks.task.context import TaskContext
 from pctasks.run.workflow.simple import SimpleWorkflowRunner
-from pctasks.dataset.workflow import create_chunks_workflow, create_process_items_workflow
+from pctasks.dataset.workflow import (
+    create_chunks_workflow,
+    create_process_items_workflow,
+)
 import pytest
 
 
@@ -38,8 +48,6 @@ def dataset_config() -> DatasetConfig:
 
 
 def test_create_chunks(dataset_config) -> None:
-    setup_logging(logging.DEBUG)
-
     collection_config: CollectionConfig = dataset_config.collections[0]
     workflow = create_chunks_workflow(
         dataset=dataset_config,
@@ -64,3 +72,32 @@ def test_create_chunks(dataset_config) -> None:
         chunklines[0]
         == "blob://deltaresfloodssa/floods-stac/floods/LIDAR-5km-2018-0000.json"
     )
+
+
+def test_create_items(dataset_config) -> None:
+    setup_logging(logging.DEBUG)
+
+    collection_config: CollectionConfig = dataset_config.collections[0]
+    tokens = Tokens(collection_config.get_tokens())
+    context = TaskContext(StorageFactory(tokens=tokens))
+
+    runner = SimpleWorkflowRunner()
+
+    workflow = create_process_items_workflow(
+        dataset=dataset_config,
+        collection=collection_config,
+        chunkset_id="test",
+        ingest=False,
+        create_splits_options=CreateSplitsOptions(limit=1),
+        chunk_options=ChunkOptions(limit=2, chunk_length=2),
+        create_items_options=CreateItemsOptions(limit=2),
+    )
+
+    result = runner.run_workflow(
+        workflow, context=context, args={"test_prefix": "test"}
+    )
+    chunk_uri = result["process-chunk"]["tasks"]["create-items"]["output"]["ndjson_uri"]
+    storage, blob = context.storage_factory.get_storage_for_file(chunk_uri)
+    ndjson_lines = storage.read_text(blob).split("\n")
+    items = [json.loads(text) for text in ndjson_lines]
+    assert items[0]["collection"] == "deltares-floods"
