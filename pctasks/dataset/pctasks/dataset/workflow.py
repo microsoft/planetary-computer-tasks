@@ -163,7 +163,7 @@ def create_process_items_workflow(
             "ingest-items",
             content=IngestNdjsonInput(
                 uris=[
-                    "${{ " + f"tasks.{create_items_task.id}.output.ndjson_uri" + "}} "
+                    "${{ " + f"tasks.{create_items_task.id}.output.ndjson_uri" + "}}"
                 ],
             ),
             target=target,
