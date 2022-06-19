@@ -68,10 +68,6 @@ You can export a kubeconfig for `kubectl`
 
 ## Argo UI
 
-You can view the argo UI by running
-
-```
-> kubectl -n argo port-forward deployment/argo-workflow-server 2746:2746
-```
-
-and visiting https://localhost:2746
+Once the kind cluster is up, you can view the Argo UI by visiting http://localhost:8500/argo.
+You'll need to use your ARGO_TOKEN to log in, which you can
+find using `scripts/cluster argo-token`
