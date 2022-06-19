@@ -45,7 +45,9 @@ async def run_workflow(
     )
 
     argo_result = argo_client.submit_workflow(
-        workflow, run_settings=run_settings, runner_image=server_settings.runner_image
+        workflow,
+        run_settings=run_settings,
+        runner_image=server_settings.runner_image,
     )
 
     return {"run_id": workflow.run_id, "argo": argo_result.get("metadata")}

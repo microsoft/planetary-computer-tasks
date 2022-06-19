@@ -23,3 +23,8 @@ services:
       - AZURE_CLIENT_SECRET=${servicePrincipalKey}
     volumes:
       - ./pctasks:/opt/src
+
+networks:
+  default:
+    name: pctasks-network
+

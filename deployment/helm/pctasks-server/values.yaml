@@ -66,6 +66,11 @@ pctasks:
     fullnameOverride: ""
 
   run:
+    # Task runner type, one of:
+    #  batch: Run tasks in Azure Batch
+    #  argo: Run tasks in Argo Workflows
+    #  local: Run tasks with local executor (dev)
+    task_runner_type: "batch"
 
     dev:
       local_executor_url: ""

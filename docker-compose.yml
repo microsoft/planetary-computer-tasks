@@ -103,6 +103,7 @@ services:
       # Run settings #######################################################
 
       # Dev executor settings
+      - PCTASKS_RUN__TASK_RUNNER_TYPE=local
       - PCTASKS_RUN__LOCAL_EXECUTOR_URL=http://local-executor:8000
       - PCTASKS_RUN__LOCAL_SECRETS=true
 

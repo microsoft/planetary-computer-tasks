@@ -5,10 +5,10 @@ from typing import Any, Dict
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError, StarletteHTTPException
 from fastapi.responses import ORJSONResponse
-from pctasks.run.settings import RunSettings
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import PlainTextResponse
 
+from pctasks.run.settings import RunSettings
 from pctasks.server.routes import run
 
 DEBUG: bool = os.getenv("DEBUG") == "TRUE" or False

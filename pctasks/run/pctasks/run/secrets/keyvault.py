@@ -1,5 +1,5 @@
-from functools import lru_cache
 import threading
+from functools import lru_cache
 from typing import Any, Optional, Union
 
 from azure.identity import ClientSecretCredential, DefaultAzureCredential

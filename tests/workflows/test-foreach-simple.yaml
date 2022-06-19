@@ -10,7 +10,7 @@ jobs:
     name: List Files
     tasks:
       - id: paths
-        image: mock:latest
+        image: localhost:5001/pctasks-task-base:latest
         task: tests.tasks:list_files_task
         args:
           uri: ${{ local.path(../data-files/simple-assets/a) }}
@@ -22,12 +22,12 @@ jobs:
       items: ${{ jobs.list-files.tasks.paths.output.uris }}
     tasks:
       - id: read-file
-        image: mock:latest
+        image: localhost:5001/pctasks-task-base:latest
         task: tests.tasks:read_file_task
         args:
           uri: ${{ item }}
       - id: write-text
-        image: mock:latest
+        image: localhost:5001/pctasks-task-base:latest
         task: tests.tasks:write_file_task
         args:
           uri: ${{ args.output_dir}}/${{ tasks.read-file.output.name }}

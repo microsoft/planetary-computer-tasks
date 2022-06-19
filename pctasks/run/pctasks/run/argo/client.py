@@ -1,11 +1,14 @@
+import json
+import logging
 import os
 import re
 from base64 import b64encode
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import argo_workflows
 from argo_workflows.api import workflow_service_api
+from argo_workflows.exceptions import NotFoundException
 from argo_workflows.model.container import Container
 from argo_workflows.model.env_var import EnvVar
 from argo_workflows.model.io_argoproj_workflow_v1alpha1_template import (
@@ -28,12 +31,15 @@ from pctasks.core.constants import (
     AZURITE_PORT_ENV_VAR,
     AZURITE_STORAGE_ACCOUNT_ENV_VAR,
 )
+from pctasks.core.models.record import TaskRunStatus
 from pctasks.core.models.workflow import WorkflowSubmitMessage
 from pctasks.core.storage.blob import BlobStorage, BlobUri
+from pctasks.run.models import PreparedTaskSubmitMessage
 from pctasks.run.secrets.local import LOCAL_SECRETS_PREFIX
 from pctasks.run.settings import RunSettings
 from pctasks.run.utils import get_workflow_path
-from pctasks.server.settings import ServerSettings
+
+logger = logging.getLogger(__name__)
 
 
 class ArgoClient:
@@ -42,6 +48,10 @@ class ArgoClient:
         self.token = token
         self.configuration = argo_workflows.Configuration(
             host=host, api_key={"BearerToken": token}
+        )
+        api_client = argo_workflows.ApiClient(self.configuration)
+        self.api_instance = workflow_service_api.WorkflowServiceApi(
+            api_client=api_client
         )
         self.namespace = namespace
 
@@ -55,7 +65,7 @@ class ArgoClient:
             "utf-8"
         )
 
-        runner_image = runner_image or ServerSettings.get().runner_image
+        runner_image = runner_image
 
         workflow_path = get_workflow_path(workflow.run_id)
         workflow_uri = BlobUri(
@@ -86,7 +96,8 @@ class ArgoClient:
         )
 
         env: List[EnvVar] = []
-        # Transfer some env vars from server
+
+        # Transfer some env vars from caller for dev environments
 
         for env_var in [
             AZURITE_HOST_ENV_VAR,
@@ -103,7 +114,7 @@ class ArgoClient:
             ]:
                 env.append(EnvVar(name=env_var, value=os.environ[env_var]))
 
-        argo_wf_name = "pc-wf-" + re.sub(
+        argo_wf_name = "wkflw-" + re.sub(
             "[^a-z0-9]", "-", workflow.workflow.name.lower()
         ).strip("-")
 
@@ -119,6 +130,7 @@ class ArgoClient:
                             command=["pctasks"],
                             env=env,
                             args=[
+                                "-v",
                                 "run",
                                 "remote",
                                 str(workflow_uri),
@@ -135,13 +147,110 @@ class ArgoClient:
         api_client = argo_workflows.ApiClient(self.configuration)
         api_instance = workflow_service_api.WorkflowServiceApi(api_client=api_client)
 
-        # TODO: Remove
-        import ssl
-        ssl._create_default_https_context = ssl._create_unverified_context
-
         api_response = api_instance.create_workflow(
             namespace=self.namespace,
             body=IoArgoprojWorkflowV1alpha1WorkflowCreateRequest(workflow=manifest),
             _check_return_type=False,
         )
         return api_response.to_dict()
+
+    def submit_task(self, prepared_task: PreparedTaskSubmitMessage) -> Dict[str, Any]:
+
+        submit_msg = prepared_task.task_submit_message
+        job_id = submit_msg.job_id
+        task_id = submit_msg.config.id
+        run_msg = prepared_task.task_run_message
+        task_input_blob_config = prepared_task.task_input_blob_config
+        task_image = run_msg.config.image
+
+        argo_wf_name = "task-" + re.sub(
+            "[^a-z0-9]", "-", f"{job_id}--{task_id}".lower()
+        ).strip("-")
+
+        command_args = [
+            "task",
+            "run",
+            task_input_blob_config.uri,
+            "--sas-token",
+            task_input_blob_config.sas_token,
+        ]
+
+        env: List[EnvVar] = []
+
+        # Transfer some env vars from caller for dev environments
+
+        for env_var in [
+            AZURITE_HOST_ENV_VAR,
+            AZURITE_PORT_ENV_VAR,
+            AZURITE_STORAGE_ACCOUNT_ENV_VAR,
+        ]:
+            if env_var in os.environ:
+                env.append(EnvVar(name=env_var, value=os.environ[env_var]))
+
+        manifest = IoArgoprojWorkflowV1alpha1Workflow(
+            metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
+            spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
+                entrypoint="run-workflow",
+                templates=[
+                    IoArgoprojWorkflowV1alpha1Template(
+                        name="run-workflow",
+                        container=Container(
+                            image=task_image,
+                            command=["pctasks"],
+                            env=env,
+                            args=command_args,
+                        ),
+                    )
+                ],
+            ),
+        )
+
+        api_response = self.api_instance.create_workflow(
+            namespace=self.namespace,
+            body=IoArgoprojWorkflowV1alpha1WorkflowCreateRequest(workflow=manifest),
+            _check_return_type=False,
+        )
+
+        final_wf_name: str = api_response["metadata"]["name"]
+        return {"namespace": self.namespace, "name": final_wf_name}
+
+    def get_task_status(
+        self, namespace: str, argo_workflow_name: str
+    ) -> Optional[Tuple[TaskRunStatus, Optional[str]]]:
+        """Returns the status of a task.
+
+        If the task isn't found, returns None.
+        If the is errored, will try to return the error message in
+        the second tuple element.
+        If the job is completed but the task is still running, will
+        consider the task failed.
+        Otherwise, returns the status as the first tuple element.
+        """
+        try:
+            argo_workflow = self.api_instance.get_workflow(
+                namespace=namespace,
+                name=argo_workflow_name,
+                _check_return_type=False,
+            )
+        except NotFoundException:
+            return None
+
+        status: Dict[str, Any] = argo_workflow["status"]
+        phase: str = status["phase"].lower()
+
+        logger.debug(
+            f"Polling task: namespace: '{namespace}', name: '{argo_workflow_name}'"
+        )
+        logger.debug(f"Task status: \n{json.dumps(status, indent=2)}")
+
+        # https://github.com/argoproj/argo-workflows/blob/19eae92db339fa79eb91fb71a50d330a18b09bcf/pkg/apis/workflow/v1alpha1/workflow_phase.go#L15  # noqa: E501
+        if phase == "failed" or phase == "error":
+            return (TaskRunStatus.FAILED, status.get("message"))
+        elif phase == "running":
+            return (TaskRunStatus.RUNNING, None)
+        elif phase == "succeeded":
+            return (TaskRunStatus.COMPLETED, None)
+        elif phase == "pending":
+            return (TaskRunStatus.PENDING, None)
+        else:
+            return (TaskRunStatus.SUBMITTED, None)

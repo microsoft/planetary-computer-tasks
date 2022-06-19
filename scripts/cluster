@@ -23,6 +23,8 @@ Subcommands:
         Updates helm charts on the dev cluster
     argo-token
         Print the argo token as an export statement
+    recreate
+        Delete the dev cluster and recreate it
 "
 }
 
@@ -31,6 +33,7 @@ source scripts/env
 CREATE=""
 UPDATE=""
 GET_ARGO_TOKEN=""
+RECREATE_=""
 while [[ $# -gt 0 ]]; do case $1 in
     create)
         CREATE="--create"
@@ -44,6 +47,10 @@ while [[ $# -gt 0 ]]; do case $1 in
         GET_ARGO_TOKEN="--argo-token"
         shift
         ;;
+    recreate)
+        RECREATE="--recreate"
+        shift
+        ;;
     --help)
         usage
         exit 0
@@ -55,22 +62,21 @@ while [[ $# -gt 0 ]]; do case $1 in
         ;;
     esac done
 
-if [ -z "${CREATE}${UPDATE}${GET_ARGO_TOKEN}" ]; then
+if [ -z "${CREATE}${UPDATE}${GET_ARGO_TOKEN}${RECREATE}" ]; then
     usage "No subcommand option specified"
     exit 1
 fi
 
-if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
-    if [ "${CREATE}" ]; then
-        if ! kind get clusters | grep -q ${KIND_CLUSTER_NAME}; then
-            echo " -- CREATING KIND CLUSTER"
-            KIND_EXPERIMENTAL_DOCKER_NETWORK=${DOCKER_NETWORK_NAME} kind \
-                create cluster --name ${KIND_CLUSTER_NAME} \
-                --config cluster/kind-config.yaml
-        fi
+function create_cluster {
+    if ! kind get clusters | grep -q ${KIND_CLUSTER_NAME}; then
+        echo " -- CREATING KIND CLUSTER"
+        KIND_EXPERIMENTAL_DOCKER_NETWORK=${DOCKER_NETWORK_NAME} kind \
+            create cluster --name ${KIND_CLUSTER_NAME} \
+            --config cluster/kind-config.yaml
+    fi
 
-        echo " -- REGISTERING LOCAL IMAGE REGISTRY"
-        cat <<EOF | kubectl apply -f -
+    echo " -- REGISTERING LOCAL IMAGE REGISTRY"
+    cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -82,71 +88,96 @@ data:
     help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
 EOF
 
-        if ! kubectl get namespace | grep -q argo; then
-            echo " -- CREATING ARGO NAMESPACE"
-            kubectl create ns argo
-        fi
+    if ! kubectl get namespace | grep -q argo; then
+        echo " -- CREATING ARGO NAMESPACE"
+        kubectl create ns argo
+    fi
 
-        helm repo add argo https://argoproj.github.io/argo-helm
-        echo "Installing argo..."
-        helm upgrade --install argo-workflows argo/argo-workflows \
-            -n argo \
-            --create-namespace \
-            -f cluster/argo-values.yaml \
-            --wait \
-            --timeout 2m0s
+    helm repo add argo https://argoproj.github.io/argo-helm
+    echo "Installing argo..."
+    helm upgrade --install argo-workflows argo/argo-workflows \
+        -n argo \
+        --create-namespace \
+        -f cluster/argo-values.yaml \
+        --wait \
+        --timeout 2m0s
 
+}
+
+function update_registry() {
+    echo "Adding pctasks-server to local registry..."
+    # kind load docker-image --name kind-pctasks pctasks-server pctasks-server
+    docker tag pctasks-server localhost:5001/pctasks-server &&
+        docker push localhost:5001/pctasks-server
+
+    echo "Adding pctasks-run to local registry..."
+    # kind load docker-image --name kind-pctasks pctasks-run pctasks-run
+    docker tag pctasks-run localhost:5001/pctasks-run &&
+        docker push localhost:5001/pctasks-run
+
+    echo "Adding pctasks-ingest to local registry..."
+    # kind load docker-image --name kind-pctasks pctasks-run pctasks-run
+    docker tag pctasks-ingest localhost:5001/pctasks-ingest &&
+        docker push localhost:5001/pctasks-ingest
+}
+
+function update_cluster() {
+
+    echo "Installing dev chart..."
+    helm upgrade --install \
+        pctasks-dev \
+        cluster/pctasks-dev \
+        -n pc \
+        -f cluster/dev-values.yaml \
+        --create-namespace
+
+    # Get ARGO_TOKEN
+    ARGO_TOKEN="Bearer $(kubectl get secret -n pc pctasks-sa-token -o jsonpath='{.data.token}' | base64 --decode)"
+
+    echo "Installing pctasks-server helm chart..."
+    # Set pctasks.deploy.podAnnotations.updated to force a new deployment
+    helm upgrade --install \
+        pctasks-server \
+        deployment/helm/pctasks-server/ \
+        -n pc \
+        -f cluster/dev-values.yaml \
+        --create-namespace \
+        --set pctasks.server.deploy.podAnnotations.updated="$(date)" \
+        --set pctasks.run.argo.token="${ARGO_TOKEN}"
+
+    echo "Installing ingress-nginx..."
+    # TODO: Move to helm chart
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.0/deploy/static/provider/kind/deploy.yaml
+    kubectl wait --namespace ingress-nginx \
+        --for=condition=ready pod \
+        --selector=app.kubernetes.io/component=controller \
+        --timeout=90s
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${CREATE}" ]; then
+        create_cluster
     fi
 
     # Build deployment image
     if [ "${UPDATE}" ]; then
-        echo "Adding pctasks-server to local registry..."
-        # kind load docker-image --name kind-pctasks pctasks-server pctasks-server
-        docker tag pctasks-server localhost:5001/pctasks-server && \
-            docker push localhost:5001/pctasks-server
-
-        echo "Adding pctasks-run to local registry..."
-        # kind load docker-image --name kind-pctasks pctasks-run pctasks-run
-        docker tag pctasks-run localhost:5001/pctasks-run && \
-            docker push localhost:5001/pctasks-run
-
-        echo "Installing dev chart..."
-        helm upgrade --install \
-            pctasks-dev \
-            cluster/pctasks-dev \
-            -n pc \
-            -f cluster/dev-values.yaml \
-            --create-namespace
-
-        # Get ARGO_TOKEN
-        ARGO_TOKEN="Bearer $(kubectl get secret -n pc pctasks-sa-token -o jsonpath='{.data.token}' | base64 --decode)"
-
-        echo "Installing pctasks-server helm chart..."
-        # Set pctasks.deploy.podAnnotations.updated to force a new deployment
-        helm upgrade --install \
-            pctasks-server \
-            deployment/helm/pctasks-server/ \
-            -n pc \
-            -f cluster/dev-values.yaml \
-            --create-namespace \
-            --set pctasks.server.deploy.podAnnotations.updated="$(date)" \
-            --set pctasks.server.argo.token="${ARGO_TOKEN}"
-
-        echo "Installing ingress-nginx..."
-        # TODO: Move to helm chart
-        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.0/deploy/static/provider/kind/deploy.yaml
-        kubectl wait --namespace ingress-nginx \
-            --for=condition=ready pod \
-            --selector=app.kubernetes.io/component=controller \
-            --timeout=90s
+        update_registry;
+        update_cluster;
     fi
 
     if [ "${GET_ARGO_TOKEN}" ]; then
         echo "Use the following token for connecting to argo..."
         echo
-        ARGO_TOKEN="Bearer $(kubectl get secret -n pc pctasks-sa-token -o jsonpath='{.data.token}' | base64 --decode)"
+        ARGO_TOKEN=$(echo_argo_token)
         echo "export ARGO_TOKEN=\"${ARGO_TOKEN}\""
         echo
+    fi
+
+    if [ "${RECREATE}" ]; then
+        echo " -- RECREATING KIND CLUSTER"
+        kind delete cluster --name ${KIND_CLUSTER_NAME}
+        create_cluster;
+        update_cluster;
     fi
 
 fi

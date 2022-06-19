@@ -65,6 +65,9 @@ spec:
 
             ## Run settings ##
 
+            - name: PCTASKS_RUN__TASK_RUNNER_TYPE
+              value: "{{ .Values.pctasks.run.task_runner_type }}"
+
             # Dev executor settings
             - name: PCTASKS_RUN__LOCAL_EXECUTOR_URL
               value: "{{ .Values.pctasks.run.dev.local_executor_url }}"
