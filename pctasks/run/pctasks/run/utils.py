@@ -16,3 +16,7 @@ def get_task_output_path(job_id: str, task_id: str, run_id: str) -> str:
 
 def get_workflow_path(run_id: str) -> str:
     return f"run/{run_id}/workflow.yaml"
+
+
+def get_workflow_code_path(run_id) -> str:
+    return f"run/{run_id}/workflow.yaml"
