@@ -45,6 +45,7 @@ class CreateChunksTaskConfig(TaskConfig):
     def create(
         cls,
         image: str,
+        code: Optional[str],
         args: CreateChunksInput,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -52,6 +53,7 @@ class CreateChunksTaskConfig(TaskConfig):
         return CreateChunksTaskConfig(
             id=CREATE_CHUNKS_TASK_ID,
             image=image,
+            code=code,
             args=args.dict(),
             task=CREATE_CHUNKS_TASK_PATH,
             environment=environment,
@@ -74,6 +76,7 @@ class CreateChunksTaskConfig(TaskConfig):
 
         return cls.create(
             image=ds.image,
+            code=ds.code,
             args=CreateChunksInput(
                 src_uri=src_uri,
                 dst_uri=dst_uri,

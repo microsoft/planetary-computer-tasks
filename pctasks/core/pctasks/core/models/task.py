@@ -22,9 +22,9 @@ class TaskConfig(PCBaseModel):
     id: str
     image: Optional[str] = None
     image_key: Optional[str] = None
+    code: Optional[str] = None
     task: str
     args: Dict[str, Any]
-    code_path: Optional[str] = None
     tags: Optional[Dict[str, str]] = None
     environment: Optional[Dict[str, str]] = None
     schema_version: str = TASK_CONFIG_SCHEMA_VERSION

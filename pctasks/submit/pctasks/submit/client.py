@@ -13,8 +13,9 @@ from azure.storage.queue import (
 from pctasks.core.models.event import NotificationSubmitMessage
 from pctasks.core.models.operation import OperationSubmitMessage
 from pctasks.core.models.task import TaskConfig
-from pctasks.core.models.workflow import WorkflowSubmitMessage
+from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
 from pctasks.submit.settings import SubmitSettings
+from pctasks.submit.code_uploader import upload_code
 
 logger = logging.getLogger(__name__)
 
@@ -72,7 +73,7 @@ class SubmitClient:
             self.service_client = None
 
     def _transform_task_config(self, task_config: TaskConfig) -> None:
-        # Repace image keys with configured images.
+        # Replace image keys with configured images.
         if task_config.image_key:
             image_config = self.settings.image_keys.get(task_config.image_key)
             if image_config:
@@ -84,6 +85,25 @@ class SubmitClient:
                 task_config.environment = image_config.merge_env(
                     task_config.environment
                 )
+
+    def _transform_workflow_code(self, workflow: WorkflowConfig) -> None:
+        """
+        Handle runtime code availability.
+
+        Code files specified in the tasks are uploaded to our Azure Blob Storage.
+        The Task code paths are rewritten to point to the newly uploaded files.
+        """
+        local_path_to_blob = {}
+
+        for job_config in workflow.jobs.values():
+            for task_config in job_config.tasks:
+                if task_config.code and task_config.code in local_path_to_blob:
+                    # already uploaded from a previous task
+                    task_config.code = local_path_to_blob[task_config.code]
+                elif task_config.code:
+                    storage_path = upload_code(task_config.code, self.settings)
+                    logger.debug("Uploaded %s to %s", task_config.code, storage_path)
+                    local_path_to_blob[storage_path] = task_config.code = storage_path
 
     def submit_workflow(self, message: WorkflowSubmitMessage) -> str:
         """Submits a workflow for processing.
@@ -98,6 +118,12 @@ class SubmitClient:
             for task in job.tasks:
                 self._transform_task_config(task)
 
+        logger.debug("Uploading code...")
+        start = perf_counter()
+        self._transform_workflow_code(message.workflow)
+        end = perf_counter()
+        logger.debug(f"Uploading code took {end - start:.2f} seconds.")
+ 
         logger.debug("Submitting workflow...")
         start = perf_counter()
         _ = self.queue_client.send_message(message.json(exclude_none=True).encode())

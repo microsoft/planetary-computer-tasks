@@ -22,6 +22,7 @@ from pctasks.core.constants import (
     DEFAULT_WORKFLOW_QUEUE_NAME,
     DEFAULT_WORKFLOW_RUN_GROUP_RECORD_TABLE_NAME,
     DEFAULT_WORKFLOW_RUN_RECORD_TABLE_NAME,
+    DEFAULT_CODE_CONTAINER,
 )
 from pctasks.core.models.config import ImageConfig
 from pctasks.core.tables.config import ImageKeyEntryTable
@@ -97,6 +98,7 @@ def setup_azurite() -> None:
     for container in [
         DEFAULT_LOG_CONTAINER,
         DEFAULT_TASK_IO_CONTAINER,
+        DEFAULT_CODE_CONTAINER,
         TEST_DATA_CONTAINER,
     ]:
         if container not in containers:

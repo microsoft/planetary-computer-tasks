@@ -55,6 +55,7 @@ class CreateSplitsTaskConfig(TaskConfig):
     def create(
         cls,
         image: str,
+        code: Optional[str],
         args: CreateSplitsInput,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -100,6 +101,7 @@ class CreateSplitsTaskConfig(TaskConfig):
 
         return cls.create(
             image=ds.image,
+            code=ds.code,
             args=CreateSplitsInput(
                 inputs=split_inputs, options=options or CreateSplitsOptions()
             ),
