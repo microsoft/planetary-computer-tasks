@@ -17,6 +17,7 @@ from pctasks.core.yaml import model_from_yaml
 from pctasks.dev.queues import TempQueue
 from pctasks.submit.client import SubmitClient
 from pctasks.submit.settings import SubmitSettings
+import pytest
 
 
 HERE = pathlib.Path(__file__).parent
@@ -119,16 +120,23 @@ submit:
     )
 
 
-def test_client_submit_code():
-    test_queue = TempQueue()
-    
+@pytest.fixture
+def code_container():
+    """Fixture providing the account URL and cleaning up test code."""
     hostname = os.getenv(AZURITE_HOST_ENV_VAR, "localhost")
     account_url = f"http://{hostname}:10000/devstoreaccount1"
+    yield account_url
+    storage = BlobStorage.from_account_key("blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, account_url)
+    storage.delete_file("mycode.py")
 
+
+def test_client_submit_code(code_container):
+    test_queue = TempQueue()
+    
     settings = SubmitSettings(
         connection_string=test_queue.queue_config.connection_string,
         queue_name=test_queue.queue_config.queue_name,
-        account_url=account_url,
+        account_url=code_container,
         account_key=AZURITE_ACCOUNT_KEY,
     )
 
@@ -160,5 +168,5 @@ def test_client_submit_code():
 
         task = submit_message.workflow.jobs["test-job"].tasks[0]
         assert task.code == "blob://devstoreaccount1/code/mycode.py"
-        storage = BlobStorage.from_account_key("blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, account_url)
+        storage = BlobStorage.from_account_key("blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, code_container)
         assert storage.file_exists("mycode.py")
