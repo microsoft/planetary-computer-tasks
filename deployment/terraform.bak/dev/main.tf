@@ -1,8 +1,8 @@
 module "resources" {
   source = "../resources"
 
-  environment = "staging"
-  region = "West Europe"
+  environment           = var.username
+  region                = var.region
 
   batch_default_pool_id = var.batch_default_pool_id
 
@@ -28,7 +28,10 @@ module "resources" {
   k8s_version = "1.23.5"
   k8s_orchestrator_version = "1.23.5"
 
-  stac_db_connection_string =  var.stac_db_connection_string
+  db_username =  var.db_username
+  db_password = var.db_password
+
+  db_storage_mb = var.db_storage_mb
 
   pctasks_server_account_key = var.pctasks_server_account_key
 

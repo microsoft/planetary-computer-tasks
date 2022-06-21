@@ -96,8 +96,17 @@ variable "kv_sp_client_secret" {
 
 ## Database
 
-variable "stac_db_connection_string" {
-  type = string
+variable "db_username" {
+    type = string
+}
+
+variable "db_password" {
+    type = string
+}
+
+variable "db_storage_mb" {
+    type = number
+    default = 32768  # 5 GB
 }
 
 ## PCTasks Server

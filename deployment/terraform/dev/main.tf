@@ -28,10 +28,7 @@ module "resources" {
   k8s_version = "1.23.5"
   k8s_orchestrator_version = "1.23.5"
 
-  db_username =  var.db_username
-  db_password = var.db_password
-
-  db_storage_mb = var.db_storage_mb
+  stac_db_connection_string =  var.stac_db_connection_string
 
   pctasks_server_account_key = var.pctasks_server_account_key
 

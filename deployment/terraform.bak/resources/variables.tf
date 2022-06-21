@@ -1,29 +1,46 @@
-variable "username" {
-  description = "Username for tagging infrastructure dedicated to you"
-  type        = string
+variable "environment" {
+  type = string
 }
 
 variable "region" {
-  description = "Azure region for infrastructure"
-  type        = string
-  default     = "West Europe"
+  type = string
 }
 
-# Batch
+## AKS
+
+variable "cluster_cert_issuer" {
+  type = string
+}
+
+variable "cluster_cert_server" {
+  type = string
+}
+
+variable "k8s_version" {
+  type = string
+}
+
+variable "k8s_orchestrator_version" {
+  type = string
+}
+
+variable "aks_node_count" {
+  type = number
+  default = 1
+}
+
+variable "pctasks_server_replica_count" {
+  type    = number
+  default = 1
+}
+
+## Batch
 
 variable "batch_default_pool_id" {
-  description = "Name of the default Batch pool"
-  type        = string
-  default     = "tasks_pool"
+  type = string
 }
 
-variable "min_low_priority" {
-    type = number
-    default = 0
-    description = "Minimum number of low priority Batch nodes to keep running"
-}
-
-# ACR
+## ACR
 
 variable "task_acr_resource_group" {
   type    = string
@@ -36,14 +53,6 @@ variable "task_acr_name" {
 }
 
 variable "task_acr_sp_object_id" {
-  type = string
-}
-
-variable "task_acr_sp_client_id" {
-  type = string
-}
-
-variable "task_acr_sp_client_secret" {
   type = string
 }
 
@@ -67,19 +76,33 @@ variable "pctasks_run_image_tag" {
   default = "latest"
 }
 
+## Database
+
+variable "db_username" {
+  type = string
+}
+
+variable "db_password" {
+  type = string
+}
+
+variable "db_storage_mb" {
+  type    = number
+  default = 32768
+}
 
 ## Keyvault
 
 variable "task_sp_tenant_id" {
-  type    = string
+  type = string
 }
 
 variable "task_sp_client_id" {
-  type    = string
+  type = string
 }
 
 variable "task_sp_client_secret" {
-  type    = string
+  type = string
 }
 
 variable "kv_sp_tenant_id" {
@@ -92,12 +115,6 @@ variable "kv_sp_client_id" {
 
 variable "kv_sp_client_secret" {
   type    = string
-}
-
-## Database
-
-variable "stac_db_connection_string" {
-  type = string
 }
 
 ## PCTasks Server
@@ -121,4 +138,16 @@ variable "pctasks_server_sp_client_secret" {
 
 variable "pctasks_server_sp_object_id" {
   type    = string
+}
+
+# ---------------
+# Local variables
+
+locals {
+  stack_id              = "pctrxetl"
+  location              = lower(replace(var.region, " ", ""))
+  prefix                = "${local.stack_id}-${var.environment}"
+  full_prefix           = "${local.stack_id}-${local.location}-${var.environment}"
+  nodash_prefix         = "${local.stack_id}${var.environment}"
+  deploy_secrets_prefix = "${local.stack_id}-${var.environment}"
 }

@@ -59,7 +59,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         # Login
         az acr login -n ${ACR_NAME}
 
-        # Ingest
         publish pctasks-ingest
         publish pctasks-server
         publish pctasks-run

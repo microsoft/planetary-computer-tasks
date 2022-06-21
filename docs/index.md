@@ -10,5 +10,6 @@ caption: Contents
 ---
 
 developing
+deploying
 reference
 ````
