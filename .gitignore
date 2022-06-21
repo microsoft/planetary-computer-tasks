@@ -110,3 +110,5 @@ venv.bak/
 
 # SAS Tokens
 sas-tokens.json
+
+docs/generated
