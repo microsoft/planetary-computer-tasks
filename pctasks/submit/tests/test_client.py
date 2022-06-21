@@ -78,7 +78,7 @@ def test_client_submit(code_container):
         assert submitted_message == actual_submit_msg
 
         task = submitted_message.workflow.jobs["test-job"].tasks[0]
-        assert task.code.startswith(f"blob://devstoreaccount1/code/")
+        assert task.code.startswith("blob://devstoreaccount1/code/")
         assert task.code.endswith("/mycode.py")
 
         storage = BlobStorage.from_account_key(
