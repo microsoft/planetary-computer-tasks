@@ -21,6 +21,7 @@ import pytest
 
 
 HERE = pathlib.Path(__file__).parent
+MYCODE_TOKEN = "d98f630c8213145e9c18b02cd039fdf5"
 
 
 def test_client_submit():
@@ -31,6 +32,7 @@ def test_client_submit():
         queue_name=test_queue.queue_config.queue_name,
     )
 
+    code = HERE.joinpath("data-files", "mycode.py").absolute()
     workflow = WorkflowConfig(
         name="Test Workflow!",
         dataset=DatasetIdentifier(owner=MICROSOFT_OWNER, name="test-dataset"),
@@ -40,7 +42,8 @@ def test_client_submit():
                     TaskConfig(
                         id="submit_unit_test",
                         image="pctasks-ingest:latest",
-                        task="tests.test_submit.MockTask",
+                        code=str(code),
+                        task="mycode:MyMockTask",
                         args={"hello": "world"},
                     )
                 ],
@@ -127,7 +130,7 @@ def code_container():
     account_url = f"http://{hostname}:10000/devstoreaccount1"
     yield account_url
     storage = BlobStorage.from_account_key("blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, account_url)
-    storage.delete_file("mycode.py")
+    storage.delete_file(f"{MYCODE_TOKEN}/mycode.py")
 
 
 def test_client_submit_code(code_container):
@@ -167,6 +170,6 @@ def test_client_submit_code(code_container):
             client.submit_workflow(submit_message)
 
         task = submit_message.workflow.jobs["test-job"].tasks[0]
-        assert task.code == "blob://devstoreaccount1/code/mycode.py"
+        assert task.code == f"blob://devstoreaccount1/code/{MYCODE_TOKEN}/mycode.py"
         storage = BlobStorage.from_account_key("blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, code_container)
-        assert storage.file_exists("mycode.py")
+        assert storage.file_exists(f"{MYCODE_TOKEN}/mycode.py")

@@ -3,6 +3,10 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime as Datetime
 from typing import Any, Dict, Generator, Iterable, List, Optional, Tuple
+import io
+import hashlib
+import pathlib
+import zipfile
 
 import orjson
 
@@ -125,6 +129,29 @@ class Storage(ABC):
         self, data: bytes, target_path: str, overwrite: bool = True
     ) -> None:
         """Upload bytes to a storage file."""
+
+    def upload_code(self, file_path: str):
+        """Upload a Python module or package."""
+        path = pathlib.Path(file_path)
+
+        if not path.exists():
+            raise OSError(f"Path {path} does not exist.")
+
+        if path.is_file():
+            data = path.read_bytes()
+            name = path.name
+        else:
+            buf = io.BytesIO()
+            with zipfile.PyZipFile(buf, "w") as zf:
+                zf.writepy(str(path))
+
+            data = buf.getvalue()
+            name = path.with_suffix(".zip").name
+
+        token = hashlib.md5(data).hexdigest()
+        dst_path = f"{token}/{name}"
+        self.upload_bytes(data, dst_path)
+        return self.get_uri(dst_path)
 
     @abstractmethod
     def upload_file(
