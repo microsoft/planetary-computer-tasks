@@ -1,5 +1,4 @@
 import logging
-import urllib.parse
 from time import perf_counter
 from typing import Any, Dict, Optional, Tuple
 
@@ -15,7 +14,6 @@ from pctasks.core.models.event import NotificationSubmitMessage
 from pctasks.core.models.operation import OperationSubmitMessage
 from pctasks.core.models.task import TaskConfig
 from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
-from pctasks.core.storage.blob import BlobStorage
 from pctasks.submit.settings import SubmitSettings
 
 logger = logging.getLogger(__name__)
@@ -102,28 +100,7 @@ class SubmitClient:
                     # already uploaded from a previous task
                     task_config.code = local_path_to_blob[task_config.code]
                 elif task_config.code:
-                    if self.settings.connection_string:
-                        storage = BlobStorage.from_connection_string(
-                            self.settings.connection_string, "code"
-                        )
-                    elif self.settings.account_url and self.settings.account_key:
-                        parsed = urllib.parse.urlparse(self.settings.account_url)
-                        storage_account_name = parsed.netloc.split(".")[0]
-                        if storage_account_name in {"localhost:10000", "azurite:10000"}:
-                            # why this special case?
-                            storage_account_name = "devstoreaccount1"
-
-                        blob_uri = f"blob://{storage_account_name}/code/"
-
-                        storage = BlobStorage.from_account_key(
-                            account_key=self.settings.account_key,
-                            account_url=self.settings.account_url,
-                            blob_uri=blob_uri,
-                        )
-                    else:
-                        # probably not reachable
-                        raise RuntimeError("No storage configuration in settings file")
-
+                    storage = self.settings.get_storage("code")
                     blob_uri = storage.upload_code(task_config.code)
                     logger.debug("Uploaded %s to %s", task_config.code, blob_uri)
                     local_path_to_blob[blob_uri] = task_config.code = blob_uri

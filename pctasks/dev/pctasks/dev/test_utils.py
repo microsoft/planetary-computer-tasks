@@ -238,7 +238,7 @@ def run_test_task(
                 output_blob_config=get_blob_config(
                     DEFAULT_TASK_IO_CONTAINER, output_path
                 ),
-            )
+            ),
         )
 
         result = run_task(msg)
