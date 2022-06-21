@@ -27,12 +27,11 @@ def test_import_package():
 
     with temp_azurite_blob_storage() as storage:
         uri = storage.upload_code(path)
-        token = "7c16da5c8bd566fb687c29ed2a95b900"
-        assert uri == (
-            f"blob://devstoreaccount1/test-data/{storage.prefix}/"
-            f"{token}/example_module.zip"
-        )
-        result = ensure_code(f"{token}/example_module.zip", storage)
+
+        assert uri.startswith(f"blob://devstoreaccount1/test-data/{storage.prefix}/")
+        assert uri.endswith("/example_module.zip")
+        path = storage.get_path(uri)
+        result = ensure_code(path, storage)
         cls = importlib.metadata.EntryPoint("", "example_module:B", "").load()
         instance = cls()
         assert instance.a() == "a"
