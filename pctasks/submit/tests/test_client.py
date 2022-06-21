@@ -21,7 +21,6 @@ from pctasks.submit.client import SubmitClient
 from pctasks.submit.settings import SubmitSettings
 
 HERE = pathlib.Path(__file__).parent
-MYCODE_TOKEN = "1cf05d884469f77dcd1fa27a4c7b017f"
 
 
 @pytest.fixture
@@ -30,10 +29,9 @@ def code_container():
     hostname = os.getenv(AZURITE_HOST_ENV_VAR, "localhost")
     account_url = f"http://{hostname}:10000/devstoreaccount1"
     yield account_url
-    storage = BlobStorage.from_account_key(
-        "blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, account_url
-    )
-    storage.delete_file(f"{MYCODE_TOKEN}/mycode.py")
+    # storage = BlobStorage.from_account_key(
+    #     "blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, account_url
+    # )
 
 
 def test_client_submit(code_container):
@@ -68,7 +66,7 @@ def test_client_submit(code_container):
 
     with test_queue as read_queue:
         with SubmitClient(settings) as client:
-            client.submit_workflow(submit_message)
+            submitted_message = client.submit_workflow(submit_message)
 
         messages: List[Any] = list(read_queue.receive_messages())
 
@@ -77,15 +75,17 @@ def test_client_submit(code_container):
 
         body = json.loads(message.content)
         actual_submit_msg = WorkflowSubmitMessage(**body)
-        assert submit_message == actual_submit_msg
+        assert submitted_message == actual_submit_msg
 
-        task = submit_message.workflow.jobs["test-job"].tasks[0]
-        assert task.code == f"blob://devstoreaccount1/code/{MYCODE_TOKEN}/mycode.py"
+        task = submitted_message.workflow.jobs["test-job"].tasks[0]
+        assert task.code.startswith(f"blob://devstoreaccount1/code/")
+        assert task.code.endswith("/mycode.py")
 
         storage = BlobStorage.from_account_key(
             "blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, code_container
         )
-        assert storage.file_exists(f"{MYCODE_TOKEN}/mycode.py")
+        path = storage.get_path(task.code)
+        assert storage.file_exists(path)
 
 
 def test_sets_image_from_configured_key():
