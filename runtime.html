@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>Developing &#8212; Planetary Computer Tasks  documentation</title>
+    <title>Runtime Environment &#8212; Planetary Computer Tasks  documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
   document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
@@ -36,8 +36,7 @@
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="API Reference" href="reference.html" />
-    <link rel="prev" title="Planetary Computer Tasks" href="index.html" />
+    <link rel="prev" title="pctasks.core.models.task.TaskConfig" href="generated/pctasks.core.models.task.TaskConfig.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="docsearch:language" content="en">
   </head>
@@ -80,8 +79,8 @@
       
       <div class="navbar-center-item">
         <ul id="navbar-main-elements" class="navbar-nav">
-    <li class="toctree-l1 current active nav-item">
- <a class="current reference internal nav-link" href="#">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="developing.html">
   Developing
  </a>
 </li>
@@ -92,8 +91,8 @@
  </a>
 </li>
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="runtime.html">
+<li class="toctree-l1 current active nav-item">
+ <a class="current reference internal nav-link" href="#">
   Runtime Environment
  </a>
 </li>
@@ -160,33 +159,8 @@
 <nav id="bd-toc-nav">
     <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#requirements">
-   Requirements
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#install-packages">
-   Install packages
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#set-up-development-environment">
-   Set up development environment
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#bring-up-development-servers">
-   Bring up development servers
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#testing">
-   Testing
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#argo-ui">
-   Argo UI
+  <a class="reference internal nav-link" href="#uploading-code">
+   Uploading Code
   </a>
  </li>
 </ul>
@@ -208,63 +182,40 @@
               
               <article class="bd-article" role="main">
                 
-  <section id="developing">
-<h1>Developing<a class="headerlink" href="#developing" title="Permalink to this heading">#</a></h1>
-<section id="requirements">
-<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this heading">#</a></h2>
-<p>You must have the following installed in the development environment:</p>
-<ul class="simple">
-<li><p>docker</p></li>
-<li><p>python</p></li>
-<li><p>go</p></li>
-<li><p><a class="reference external" href="https://kind.sigs.k8s.io/">kind</a></p></li>
-<li><p>kubectl</p></li>
-<li><p><a class="reference external" href="https://helm.sh/docs/intro/install/">helm</a></p></li>
-</ul>
-</section>
-<section id="install-packages">
-<h2>Install packages<a class="headerlink" href="#install-packages" title="Permalink to this heading">#</a></h2>
-<p>Run</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">scripts</span><span class="o">/</span><span class="n">install</span>
+  <section id="runtime-environment">
+<h1>Runtime Environment<a class="headerlink" href="#runtime-environment" title="Permalink to this heading">#</a></h1>
+<section id="uploading-code">
+<h2>Uploading Code<a class="headerlink" href="#uploading-code" title="Permalink to this heading">#</a></h2>
+<p>You can make a Python module (a single <code class="docutils literal notranslate"><span class="pre">.py</span></code> file) or package (a possibly nested directory with a <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> file) available
+to the workers executing code by specifying the <code class="docutils literal notranslate"><span class="pre">code</span></code> option on your dataset. The path specified by <code class="docutils literal notranslate"><span class="pre">code</span></code> should be relative to
+the <code class="docutils literal notranslate"><span class="pre">dataset.yaml</span></code> using the <code class="docutils literal notranslate"><span class="pre">local.path(relative_path)</span></code> templater or an absolute path.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This mechanism does <em>not</em> ensure that any dependencies are installed. If your module or package
+requires additional dependencies beyond what is specified in the <code class="docutils literal notranslate"><span class="pre">image</span></code>, you’ll need to
+create a new image with those dependencies present.</p>
+</div>
+<p>Suppose you have a dataset configuration file <code class="docutils literal notranslate"><span class="pre">naip/dataset.yaml</span></code>, with an accompanying <code class="docutils literal notranslate"><span class="pre">dataset.py</span></code> file. By specifying <code class="docutils literal notranslate"><span class="pre">code:</span> <span class="pre">dataset.py</span></code>
+that module will be included in the workers runtime.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: naip/dataset.yaml</span><span class="w"></span>
+<span class="nt">naip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">naip</span><span class="w"></span>
+<span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pctasks-basic:latest</span><span class="w"></span>
+<span class="nt">code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ local.path(dataset.py) }}</span><span class="w"></span>
 </pre></div>
 </div>
-<p>to install the packages into a virtualenv (note: activate the virtualenv beforehand.) You should run this even if you are only doing docker development, otherwise the python eggs installed into the container will be overridden by volume mounts.</p>
-</section>
-<section id="set-up-development-environment">
-<h2>Set up development environment<a class="headerlink" href="#set-up-development-environment" title="Permalink to this heading">#</a></h2>
-<p>Run</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">scripts</span><span class="o">/</span><span class="n">setup</span>
+<p>For single-file modules, the module will be importable using the name of the module: <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">dataset</span></code> in this case.</p>
+<p>Packages are importable using the name of the top-level directory. Given a layout like</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mypackage</span><span class="o">/</span>
+  <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+  <span class="n">module_a</span><span class="o">.</span><span class="n">py</span>
+  <span class="n">module_b</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
-<p>To build set up the development cluster, build docker images,
-and set up test data.</p>
-<p>You can run <code class="docutils literal notranslate"><span class="pre">scripts/update</span></code> to build the docker images at any time.</p>
-<p>http://localhost:8500</p>
-</section>
-<section id="bring-up-development-servers">
-<h2>Bring up development servers<a class="headerlink" href="#bring-up-development-servers" title="Permalink to this heading">#</a></h2>
-<p>To run the development servers:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">scripts</span><span class="o">/</span><span class="n">server</span>
-</pre></div>
-</div>
-<p>This will start Azurite, a PgSTAC database, the Azure Functions server, a local executor for testing, and a stac-fastapi
-to inspect ingest results. You can access the STAC API at http://localhost:8089/</p>
-</section>
-<section id="testing">
-<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this heading">#</a></h2>
-<p>Run</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">scripts</span><span class="o">/</span><span class="n">test</span>
-</pre></div>
-</div>
-<p>to test. You can also run <code class="docutils literal notranslate"><span class="pre">scripts/format</span></code> to format code. Use <code class="docutils literal notranslate"><span class="pre">--help</span></code> to see options on any script.</p>
-</section>
-<section id="argo-ui">
-<h2>Argo UI<a class="headerlink" href="#argo-ui" title="Permalink to this heading">#</a></h2>
-<p>You can view the argo UI by running</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">kubectl</span> <span class="o">-</span><span class="n">n</span> <span class="n">argo</span> <span class="n">port</span><span class="o">-</span><span class="n">forward</span> <span class="n">deployment</span><span class="o">/</span><span class="n">argo</span><span class="o">-</span><span class="n">server</span> <span class="mi">2746</span><span class="p">:</span><span class="mi">2746</span>
-</pre></div>
-</div>
-<p>and visiting https://localhost:2746</p>
+<p>Your code is importable with <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">mypackage</span></code>, <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">mypackage</span> <span class="pre">import</span> <span class="pre">module_a</span></code>, etc.</p>
+<p>Behind the scenes, when you submit a workflow generated from this <code class="docutils literal notranslate"><span class="pre">dataset.yaml</span></code>
+the module is uploaded to Azure Blob Storage. Before executing your task, the
+worker downloads that module and places it in a location that’s importable by
+the Python interpreter.</p>
 </section>
 </section>
 
@@ -276,19 +227,12 @@ to inspect ingest results. You can access the STAC API at http://localhost:8089/
               <footer class="bd-footer-article">
                   <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-  <a class='left-prev' id="prev-link" href="index.html" title="previous page">
+  <a class='left-prev' id="prev-link" href="generated/pctasks.core.models.task.TaskConfig.html" title="previous page">
       <i class="fas fa-angle-left"></i>
       <div class="prev-next-info">
           <p class="prev-next-subtitle">previous</p>
-          <p class="prev-next-title">Planetary Computer Tasks</p>
+          <p class="prev-next-title">pctasks.core.models.task.TaskConfig</p>
       </div>
-  </a>
-  <a class='right-next' id="next-link" href="reference.html" title="next page">
-  <div class="prev-next-info">
-      <p class="prev-next-subtitle">next</p>
-      <p class="prev-next-title">API Reference</p>
-  </div>
-  <i class="fas fa-angle-right"></i>
   </a>
 </div>
               </footer>

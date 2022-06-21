@@ -43,6 +43,7 @@
       ~TaskConfig.id
       ~TaskConfig.image
       ~TaskConfig.image_key
+      ~TaskConfig.code
       ~TaskConfig.task
       ~TaskConfig.args
       ~TaskConfig.tags
