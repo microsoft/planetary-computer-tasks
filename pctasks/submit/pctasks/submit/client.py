@@ -102,7 +102,7 @@ class SubmitClient:
                     task_config.code = local_path_to_blob[task_config.code]
                 elif task_config.code:
                     storage_path = upload_code(task_config.code, self.settings)
-                    logger.debug("Uploaded %s to %s", task_config.code, storage_path)
+                    logger.warning("Uploaded %s to %s", task_config.code, storage_path)
                     local_path_to_blob[storage_path] = task_config.code = storage_path
 
     def submit_workflow(self, message: WorkflowSubmitMessage) -> str:

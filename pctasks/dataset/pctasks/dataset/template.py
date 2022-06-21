@@ -36,8 +36,21 @@ def template_dataset(
     yaml_str: str, parent_dir: Optional[Union[str, Path]] = None
 ) -> DatasetConfig:
     workflow_dict = yaml.safe_load(yaml_str)
-    templater = MultiTemplater(LocalTemplater(parent_dir or Path.cwd()), PCTemplater())
+    if parent_dir:
+        root = Path(parent_dir)
+    else:
+        root = Path.cwd()
+    templater = MultiTemplater(LocalTemplater(root), PCTemplater())
     workflow_dict = templater.template_dict(workflow_dict)
+
+    if "code" in workflow_dict:
+        code = Path(workflow_dict["code"])
+        if not code.is_absolute():
+            code = str(root.joinpath(code).absolute())
+            workflow_dict["code"] = str(code)
+        
+        if not Path(workflow_dict["code"]).exists():
+            raise ValueError(f"Code file '{code}' does not exist.")
 
     return DatasetConfig.parse_obj(workflow_dict)
 
