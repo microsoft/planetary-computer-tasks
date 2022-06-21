@@ -128,7 +128,6 @@ class SubmitClient:
                     logger.debug("Uploaded %s to %s", task_config.code, blob_uri)
                     local_path_to_blob[blob_uri] = task_config.code = blob_uri
 
-
     def submit_workflow(self, message: WorkflowSubmitMessage) -> str:
         """Submits a workflow for processing.
 
