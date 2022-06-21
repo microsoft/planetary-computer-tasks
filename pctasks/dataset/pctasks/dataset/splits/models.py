@@ -55,8 +55,8 @@ class CreateSplitsTaskConfig(TaskConfig):
     def create(
         cls,
         image: str,
-        code: Optional[str],
         args: CreateSplitsInput,
+        code: Optional[str] = None,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> "CreateSplitsTaskConfig":
