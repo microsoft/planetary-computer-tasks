@@ -1,24 +1,24 @@
-import os
 import json
+import os
 import pathlib
 from typing import Any, List
+
+import pytest
 
 from pctasks.core.constants import MICROSOFT_OWNER
 from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.task import TaskConfig
-from pctasks.core.storage.blob import BlobStorage
-from pctasks.dev.blob import AZURITE_ACCOUNT_KEY, AZURITE_HOST_ENV_VAR
 from pctasks.core.models.workflow import (
     JobConfig,
     WorkflowConfig,
     WorkflowSubmitMessage,
 )
+from pctasks.core.storage.blob import BlobStorage
 from pctasks.core.yaml import model_from_yaml
+from pctasks.dev.blob import AZURITE_ACCOUNT_KEY, AZURITE_HOST_ENV_VAR
 from pctasks.dev.queues import TempQueue
 from pctasks.submit.client import SubmitClient
 from pctasks.submit.settings import SubmitSettings
-import pytest
-
 
 HERE = pathlib.Path(__file__).parent
 MYCODE_TOKEN = "d98f630c8213145e9c18b02cd039fdf5"
@@ -30,7 +30,9 @@ def code_container():
     hostname = os.getenv(AZURITE_HOST_ENV_VAR, "localhost")
     account_url = f"http://{hostname}:10000/devstoreaccount1"
     yield account_url
-    storage = BlobStorage.from_account_key("blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, account_url)
+    storage = BlobStorage.from_account_key(
+        "blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, account_url
+    )
     storage.delete_file(f"{MYCODE_TOKEN}/mycode.py")
 
 
@@ -80,7 +82,9 @@ def test_client_submit(code_container):
         task = submit_message.workflow.jobs["test-job"].tasks[0]
         assert task.code == f"blob://devstoreaccount1/code/{MYCODE_TOKEN}/mycode.py"
 
-        storage = BlobStorage.from_account_key("blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, code_container)
+        storage = BlobStorage.from_account_key(
+            "blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, code_container
+        )
         assert storage.file_exists(f"{MYCODE_TOKEN}/mycode.py")
 
 

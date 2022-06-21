@@ -251,7 +251,9 @@ def prepare_task(
         permission=BlobSasPermissions(write=True),
     )
     code_blob_config = BlobConfig(
-        uri=code_uri, sas_token=code_blob_sas_token, account_url=settings.blob_account_url
+        uri=code_uri,
+        sas_token=code_blob_sas_token,
+        account_url=settings.blob_account_url,
     )
 
     config = TaskRunConfig(

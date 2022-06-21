@@ -615,8 +615,11 @@ class BlobStorage(Storage):
         cls: Type[T],
         connection_string: str,
         container_name: str,
-    ):
-        container_client = ContainerClient.from_connection_string(connection_string, container_name)
+    ) -> T:
+        container_client = ContainerClient.from_connection_string(
+            connection_string, container_name
+        )
         credential = container_client.credential
-        return cls.from_account_key(f"blob://{credential.account_name}/{container_name}", credential.account_key)# credential.account_url)
-
+        return cls.from_account_key(
+            f"blob://{credential.account_name}/{container_name}", credential.account_key
+        )  # credential.account_url)

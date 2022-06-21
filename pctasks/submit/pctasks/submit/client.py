@@ -1,4 +1,5 @@
 import logging
+import urllib.parse
 from time import perf_counter
 from typing import Any, Optional, Tuple
 
@@ -16,7 +17,6 @@ from pctasks.core.models.task import TaskConfig
 from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
 from pctasks.core.storage.blob import BlobStorage
 from pctasks.submit.settings import SubmitSettings
-import urllib.parse
 
 logger = logging.getLogger(__name__)
 
@@ -103,7 +103,9 @@ class SubmitClient:
                     task_config.code = local_path_to_blob[task_config.code]
                 elif task_config.code:
                     if self.settings.connection_string:
-                        storage = BlobStorage.from_connection_string(self.settings.connection_string, "code")
+                        storage = BlobStorage.from_connection_string(
+                            self.settings.connection_string, "code"
+                        )
                     else:
                         parsed = urllib.parse.urlparse(self.settings.account_url)
                         storage_account_name = parsed.netloc.split(".")[0]
@@ -140,7 +142,7 @@ class SubmitClient:
         self._transform_workflow_code(message.workflow)
         end = perf_counter()
         logger.debug(f"Uploading code took {end - start:.2f} seconds.")
- 
+
         logger.debug("Submitting workflow...")
         start = perf_counter()
         _ = self.queue_client.send_message(message.json(exclude_none=True).encode())

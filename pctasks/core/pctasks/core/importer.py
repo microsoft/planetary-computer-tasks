@@ -36,8 +36,8 @@ def ensure_code(
         Whether to treat this file as a Python package. By default, this is inferred
         by calling :func:`zipfile.is_zipfile`.
 
-        When ``is_package`` is true, the path is appended to ``sys.path``, and submodules
-        can be imported from that package.
+        When ``is_package`` is true, the path is appended to ``sys.path``, and
+        submodules can be imported from that package.
     Returns
     -------
     pathlib.Path
@@ -54,10 +54,11 @@ def ensure_code(
     if output_path.exists():
         logger.debug("Module destination %s already exists", output_path)
 
-    storage.download_file(file_path, output_path)
+    storage.download_file(file_path, str(output_path))
 
     if is_package is None:
         is_package = zipfile.is_zipfile(output_path)
     if is_package:
         logger.debug("Adding %s to sys.path", output_path)
         sys.path.append(str(output_path))
+    return pathlib.Path(output_path)

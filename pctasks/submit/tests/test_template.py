@@ -28,4 +28,3 @@ def test_local_file_template():
 
     assert data.collections
     assert data.collections[0]["id"] == "test-collection"
-

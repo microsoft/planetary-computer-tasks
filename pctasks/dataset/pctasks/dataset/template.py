@@ -45,7 +45,7 @@ def template_dataset(
 
     if "code" in workflow_dict:
         code = Path(workflow_dict["code"])
-       
+
         if not code.exists():
             raise OSError(f"Code file '{code}' does not exist.")
 

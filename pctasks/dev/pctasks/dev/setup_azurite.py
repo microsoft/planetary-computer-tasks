@@ -9,6 +9,7 @@ from azure.storage.queue import QueueServiceClient
 
 from pctasks.core.constants import (
     DEFAULT_BLOB_TRIGGER_REGISTRATION_TABLE_NAME,
+    DEFAULT_CODE_CONTAINER,
     DEFAULT_DATASET_TABLE_NAME,
     DEFAULT_IMAGE_KEY_TABLE_NAME,
     DEFAULT_INBOX_QUEUE_NAME,
@@ -22,7 +23,6 @@ from pctasks.core.constants import (
     DEFAULT_WORKFLOW_QUEUE_NAME,
     DEFAULT_WORKFLOW_RUN_GROUP_RECORD_TABLE_NAME,
     DEFAULT_WORKFLOW_RUN_RECORD_TABLE_NAME,
-    DEFAULT_CODE_CONTAINER,
 )
 from pctasks.core.models.config import ImageConfig
 from pctasks.core.tables.config import ImageKeyEntryTable

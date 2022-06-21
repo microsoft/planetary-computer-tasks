@@ -1,12 +1,12 @@
+import hashlib
+import io
 import logging
+import pathlib
+import zipfile
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime as Datetime
 from typing import Any, Dict, Generator, Iterable, List, Optional, Tuple
-import io
-import hashlib
-import pathlib
-import zipfile
 
 import orjson
 
@@ -130,7 +130,7 @@ class Storage(ABC):
     ) -> None:
         """Upload bytes to a storage file."""
 
-    def upload_code(self, file_path: str):
+    def upload_code(self, file_path: str) -> str:
         """Upload a Python module or package."""
         path = pathlib.Path(file_path)
 
