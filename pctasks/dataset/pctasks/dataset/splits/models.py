@@ -63,6 +63,7 @@ class CreateSplitsTaskConfig(TaskConfig):
         return CreateSplitsTaskConfig(
             id=CREATE_SPLITS_TASK_ID,
             image=image,
+            code=code,
             args=args.dict(),
             task=CREATE_SPLITS_TASK_PATH,
             environment=environment,

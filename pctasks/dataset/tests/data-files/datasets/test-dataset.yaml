@@ -1,6 +1,6 @@
 name: dataset-test
 image: mock:latest
-code: /opt/src/pctasks/dataset/tests/data-files/datasets/mycode.py
+code: ${{ local.path(mycode.py) }}
 
 args:
   - test_prefix

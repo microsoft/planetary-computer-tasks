@@ -1,6 +1,6 @@
 name: naip
 image: pccomponentstest.azurecr.io/pctasks-basic:latest
-code: naip/dataset.py
+code: ${{ local.file(naip/dataset.py) }}
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}

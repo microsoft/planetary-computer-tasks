@@ -4,7 +4,7 @@
 
 You can make a Python module (a single `.py` file) or package (a possibly nested directory with a `__init__.py` file) available
 to the workers executing code by specifying the `code` option on your dataset. The path specified by `code` should be relative to
-the `dataset.yaml` or absolute.
+the `dataset.yaml` using the ``local.file(relative_path)`` templater or an absolute path.
 
 ```{warning}
 This mechanism does *not* ensure that any dependencies are installed. If your module or package
@@ -19,7 +19,7 @@ that module will be included in the workers runtime.
 # file: naip/dataset.yaml
 naip: naip
 image: pctasks-basic:latest
-code: dataset.py
+code: ${{ local.file(dataset.py) }}
 ```
 
 For single-file modules, the module will be importable using the name of the module: `import dataset` in this case.

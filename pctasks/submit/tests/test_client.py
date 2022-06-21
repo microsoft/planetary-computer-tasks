@@ -24,8 +24,17 @@ HERE = pathlib.Path(__file__).parent
 MYCODE_TOKEN = "d98f630c8213145e9c18b02cd039fdf5"
 
 
-def test_client_submit():
+@pytest.fixture
+def code_container():
+    """Fixture providing the account URL and cleaning up test code."""
+    hostname = os.getenv(AZURITE_HOST_ENV_VAR, "localhost")
+    account_url = f"http://{hostname}:10000/devstoreaccount1"
+    yield account_url
+    storage = BlobStorage.from_account_key("blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, account_url)
+    storage.delete_file(f"{MYCODE_TOKEN}/mycode.py")
 
+
+def test_client_submit(code_container):
     test_queue = TempQueue()
     settings = SubmitSettings(
         connection_string=test_queue.queue_config.connection_string,
@@ -67,6 +76,12 @@ def test_client_submit():
         body = json.loads(message.content)
         actual_submit_msg = WorkflowSubmitMessage(**body)
         assert submit_message == actual_submit_msg
+
+        task = submit_message.workflow.jobs["test-job"].tasks[0]
+        assert task.code == f"blob://devstoreaccount1/code/{MYCODE_TOKEN}/mycode.py"
+
+        storage = BlobStorage.from_account_key("blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, code_container)
+        assert storage.file_exists(f"{MYCODE_TOKEN}/mycode.py")
 
 
 def test_sets_image_from_configured_key():
@@ -121,55 +136,3 @@ submit:
         actual_submit_msg.workflow.jobs["test-job"].tasks[0].image
         == "pctasks-ingest:v1"
     )
-
-
-@pytest.fixture
-def code_container():
-    """Fixture providing the account URL and cleaning up test code."""
-    hostname = os.getenv(AZURITE_HOST_ENV_VAR, "localhost")
-    account_url = f"http://{hostname}:10000/devstoreaccount1"
-    yield account_url
-    storage = BlobStorage.from_account_key("blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, account_url)
-    storage.delete_file(f"{MYCODE_TOKEN}/mycode.py")
-
-
-def test_client_submit_code(code_container):
-    test_queue = TempQueue()
-    
-    settings = SubmitSettings(
-        connection_string=test_queue.queue_config.connection_string,
-        queue_name=test_queue.queue_config.queue_name,
-        account_url=code_container,
-        account_key=AZURITE_ACCOUNT_KEY,
-    )
-
-    workflow = WorkflowConfig(
-        name="Test Workflow!",
-        dataset=DatasetIdentifier(owner=MICROSOFT_OWNER, name="test-dataset"),
-        jobs={
-            "test-job": JobConfig(
-                tasks=[
-                    TaskConfig(
-                        id="submit_unit_test",
-                        code=str(HERE / "data-files/mycode.py"),
-                        image="pctasks-ingest:latest",
-                        task="mycode:MyMockTask",
-                        args={"hello": "world"},
-                    )
-                ],
-            )
-        },
-    )
-
-    submit_message = WorkflowSubmitMessage(
-        workflow=workflow,
-    )
-
-    with test_queue as read_queue:
-        with SubmitClient(settings) as client:
-            client.submit_workflow(submit_message)
-
-        task = submit_message.workflow.jobs["test-job"].tasks[0]
-        assert task.code == f"blob://devstoreaccount1/code/{MYCODE_TOKEN}/mycode.py"
-        storage = BlobStorage.from_account_key("blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, code_container)
-        assert storage.file_exists(f"{MYCODE_TOKEN}/mycode.py")

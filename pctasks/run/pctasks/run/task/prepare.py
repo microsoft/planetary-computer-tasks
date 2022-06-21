@@ -240,7 +240,6 @@ def prepare_task(
 
     code_uri = task_config.code
     code_path = urlparse(code_uri).path.lstrip("/")
-    breakpoint()
 
     code_blob_sas_token = generate_blob_sas(
         account_name=settings.blob_account_name,

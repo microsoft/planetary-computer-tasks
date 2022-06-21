@@ -45,12 +45,9 @@ def template_dataset(
 
     if "code" in workflow_dict:
         code = Path(workflow_dict["code"])
-        if not code.is_absolute():
-            code = str(root.joinpath(code).absolute())
-            workflow_dict["code"] = str(code)
-        
-        if not Path(workflow_dict["code"]).exists():
-            raise ValueError(f"Code file '{code}' does not exist.")
+       
+        if not code.exists():
+            raise OSError(f"Code file '{code}' does not exist.")
 
     return DatasetConfig.parse_obj(workflow_dict)
 

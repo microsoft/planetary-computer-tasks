@@ -28,7 +28,6 @@ def test_import_package():
 
     with temp_azurite_blob_storage() as storage:
         uri = storage.upload_code(path)
-        uri = storage.upload_code(path)
         token = "7c16da5c8bd566fb687c29ed2a95b900"
         assert uri == f"blob://devstoreaccount1/test-data/{storage.prefix}/{token}/example_module.zip"
         ensure_code(f"{token}/example_module.zip", storage)

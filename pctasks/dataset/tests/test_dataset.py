@@ -1,5 +1,6 @@
 import json
 import logging
+import textwrap
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Set
@@ -11,7 +12,7 @@ from pctasks.cli.cli import setup_logging
 from pctasks.core.storage import StorageFactory
 from pctasks.core.storage.blob import BlobUri
 from pctasks.core.tokens import Tokens
-from pctasks.dataset.template import template_dataset_file
+from pctasks.dataset.template import template_dataset_file, template_dataset
 from pctasks.dataset.workflow import create_process_items_workflow
 from pctasks.dev.blob import (
     copy_dir_to_azurite,
@@ -20,6 +21,7 @@ from pctasks.dev.blob import (
 )
 from pctasks.run.workflow.simple import SimpleWorkflowRunner
 from pctasks.task.context import TaskContext
+import pytest
 
 HERE = Path(__file__).parent
 DATASET_PATH = HERE / "data-files/datasets/test-dataset.yaml"
@@ -76,3 +78,14 @@ def test_process_items() -> None:
                     pystac.Item.from_dict(item).validate()
                     ids.add(item["id"])
             assert len(ids) == 4
+
+
+
+def test_nonexistent_code_raises():
+    src = textwrap.dedent("""\
+        name: dataset-test
+        image: mock:latest
+        code: ${{ local.path(not_a_file.py) }}"""
+    )
+    with pytest.raises(OSError, match=r"Code file .+?/not_a_file.py"):
+        template_dataset(src)

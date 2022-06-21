@@ -77,7 +77,7 @@ class CreateItemsTaskConfig(TaskConfig):
     def create(
         cls,
         image: str,
-        code: str,
+        code: Optional[str],
         collection_class: str,
         args: CreateItemsInput,
         environment: Optional[Dict[str, str]] = None,

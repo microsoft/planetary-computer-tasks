@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pytest
 import yaml
 
 from pctasks.ingest.models import IngestCollectionsInput
@@ -27,3 +28,4 @@ def test_local_file_template():
 
     assert data.collections
     assert data.collections[0]["id"] == "test-collection"
+
