@@ -21,7 +21,7 @@ from pctasks.submit.client import SubmitClient
 from pctasks.submit.settings import SubmitSettings
 
 HERE = pathlib.Path(__file__).parent
-MYCODE_TOKEN = "d98f630c8213145e9c18b02cd039fdf5"
+MYCODE_TOKEN = "1cf05d884469f77dcd1fa27a4c7b017f"
 
 
 @pytest.fixture

@@ -1,7 +1,7 @@
 import logging
 import urllib.parse
 from time import perf_counter
-from typing import Any, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 from azure.identity import DefaultAzureCredential
 from azure.storage.queue import (
@@ -94,7 +94,7 @@ class SubmitClient:
         Code files specified in the tasks are uploaded to our Azure Blob Storage.
         The Task code paths are rewritten to point to the newly uploaded files.
         """
-        local_path_to_blob = {}
+        local_path_to_blob: Dict[str, str] = {}
 
         for job_config in workflow.jobs.values():
             for task_config in job_config.tasks:
@@ -106,7 +106,7 @@ class SubmitClient:
                         storage = BlobStorage.from_connection_string(
                             self.settings.connection_string, "code"
                         )
-                    else:
+                    elif self.settings.account_url and self.settings.account_key:
                         parsed = urllib.parse.urlparse(self.settings.account_url)
                         storage_account_name = parsed.netloc.split(".")[0]
                         if storage_account_name in {"localhost:10000", "azurite:10000"}:
@@ -120,9 +120,14 @@ class SubmitClient:
                             account_url=self.settings.account_url,
                             blob_uri=blob_uri,
                         )
+                    else:
+                        # probably not reachable
+                        raise RuntimeError("No storage configuration in settings file")
+
                     blob_uri = storage.upload_code(task_config.code)
                     logger.debug("Uploaded %s to %s", task_config.code, blob_uri)
                     local_path_to_blob[blob_uri] = task_config.code = blob_uri
+
 
     def submit_workflow(self, message: WorkflowSubmitMessage) -> str:
         """Submits a workflow for processing.

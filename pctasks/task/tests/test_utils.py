@@ -1,9 +1,6 @@
 import textwrap
 
-from numpy import isin
-
 from pctasks.core.models.config import BlobConfig
-from pctasks.core.models.task import CompletedTaskResult
 from pctasks.core.storage.blob import BlobStorage
 from pctasks.dataset.chunks.task import create_chunks_task
 from pctasks.dev.blob import temp_azurite_blob_storage
