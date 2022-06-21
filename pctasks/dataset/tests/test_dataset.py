@@ -11,7 +11,7 @@ from pctasks.cli.cli import setup_logging
 from pctasks.core.storage import StorageFactory
 from pctasks.core.storage.blob import BlobUri
 from pctasks.core.tokens import Tokens
-from pctasks.dataset.template import template_dataset, template_dataset_file
+from pctasks.dataset.template import template_dataset_file
 from pctasks.dataset.workflow import create_process_items_workflow
 from pctasks.dev.blob import (
     copy_dir_to_azurite,
