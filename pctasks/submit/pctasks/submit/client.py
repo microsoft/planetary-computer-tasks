@@ -128,12 +128,13 @@ class SubmitClient:
                     logger.debug("Uploaded %s to %s", task_config.code, blob_uri)
                     local_path_to_blob[blob_uri] = task_config.code = blob_uri
 
-    def submit_workflow(self, message: WorkflowSubmitMessage) -> str:
+    def submit_workflow(self, message: WorkflowSubmitMessage) -> WorkflowSubmitMessage:
         """Submits a workflow for processing.
 
-        Returns the run ID associated with this submission, which
-        was either set on the message or from the Queue submission.
+        Returns a modified :class:`WorkflowSubmitMessage` that has
+        a ``run_id`` set.
         """
+        message = message.copy(deep=True)
         if not self.queue_client:
             raise RuntimeError("SubmitClient is not opened. Use as a context manager.")
 
@@ -152,7 +153,7 @@ class SubmitClient:
         _ = self.queue_client.send_message(message.json(exclude_none=True).encode())
         end = perf_counter()
         logger.debug(f"Submit took {end - start:.2f} seconds.")
-        return message.run_id
+        return message
 
     def submit_notification(self, message: NotificationSubmitMessage) -> str:
         """Submits a NotificationMessage for processing.
