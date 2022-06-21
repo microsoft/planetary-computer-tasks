@@ -1,5 +1,6 @@
 from typing import Any, Dict, Optional
 
+import azure.storage.blob
 from cachetools import Cache, LRUCache, cachedmethod
 from pydantic import Field, validator
 
@@ -7,6 +8,7 @@ from pctasks.core.constants import DEFAULT_DATASET_TABLE_NAME
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.config import ImageConfig
 from pctasks.core.settings import PCTasksSettings
+from pctasks.core.storage.blob import BlobStorage
 from pctasks.core.tables.dataset import DatasetIdentifierTable
 
 
@@ -64,3 +66,33 @@ class SubmitSettings(PCTasksSettings):
         if not self.account_url:
             raise ValueError("account_url is not set.")
         return self.account_url
+
+    def get_storage(self, container_name: str) -> BlobStorage:
+        # Hack: get the "code" blob storage container associated with
+        # this storage queue. In the future, we'll have an API for
+        # submitting code.
+        if self.connection_string:
+            storage = BlobStorage.from_connection_string(
+                self.connection_string,
+                container_name,
+            )
+        elif self.account_url and self.account_key:
+            container_client = azure.storage.blob.ContainerClient(
+                account_url=self.account_url.replace(".queue.", ".blob."),
+                container_name=container_name,
+                credential=self.account_key,
+            )
+            account_url = container_client.primary_endpoint.rsplit("/", 1)[0]
+            blob_uri = (
+                f"blob://{container_client.credential.account_name}/{container_name}"
+            )
+
+            storage = BlobStorage.from_account_key(
+                account_key=self.account_key,
+                account_url=account_url,
+                blob_uri=blob_uri,
+            )
+        else:
+            # probably not reachable
+            raise RuntimeError("No storage configuration in settings file")
+        return storage

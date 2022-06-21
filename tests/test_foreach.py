@@ -36,7 +36,8 @@ def test_foreach_simple_workflow():
 
         submit_settings = SubmitSettings.get()
         with SubmitClient(submit_settings) as submit_client:
-            run_id = submit_client.submit_workflow(submit_message)
+            submit_message2 = submit_client.submit_workflow(submit_message)
+            run_id = submit_message2.run_id
 
         print(f"Submitted workflow with id: {run_id}")
 
@@ -56,7 +57,7 @@ def test_foreach_simple_workflow():
                 )
                 workflow_run_record = workflow_run_record_table.get_record(
                     RunRecordId(
-                        dataset_id=str(submit_message.workflow.dataset), run_id=run_id
+                        dataset_id=str(submit_message2.workflow.dataset), run_id=run_id
                     )
                 )
                 time.sleep(1)
@@ -94,7 +95,8 @@ def test_foreach_full_workflow():
 
         submit_settings = SubmitSettings.get()
         with SubmitClient(submit_settings) as submit_client:
-            run_id = submit_client.submit_workflow(submit_message)
+            submit_message2 = submit_client.submit_workflow(submit_message)
+            run_id = submit_message2.run_id
 
         print(f"Submitted workflow with id: {run_id}")
 
@@ -114,7 +116,7 @@ def test_foreach_full_workflow():
                 )
                 workflow_run_record = workflow_run_record_table.get_record(
                     RunRecordId(
-                        dataset_id=str(submit_message.workflow.dataset), run_id=run_id
+                        dataset_id=str(submit_message2.workflow.dataset), run_id=run_id
                     )
                 )
                 time.sleep(1)

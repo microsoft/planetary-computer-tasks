@@ -1,6 +1,7 @@
 import logging
 import os
 from datetime import datetime, timedelta
+from urllib.parse import urlparse
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.data.tables import TableSasPermissions, generate_table_sas
@@ -237,6 +238,28 @@ def prepare_task(
         account_url=settings.blob_account_url,
     )
 
+    code_uri = task_config.code
+    if code_uri:
+        code_path = str(urlparse(code_uri).path).lstrip("/")
+
+        code_blob_sas_token = generate_blob_sas(
+            account_name=settings.blob_account_name,
+            account_key=settings.blob_account_key,
+            container_name=settings.code_blob_container,
+            blob_name=code_path,
+            start=datetime.now(),
+            expiry=datetime.utcnow() + timedelta(hours=24 * 7),
+            permission=BlobSasPermissions(write=True),
+        )
+        code_blob_config = BlobConfig(
+            uri=code_uri,
+            sas_token=code_blob_sas_token,
+            account_url=settings.blob_account_url,
+        )
+
+    else:
+        code_blob_config = None
+
     config = TaskRunConfig(
         image=image_config.image,
         run_id=submit_msg.run_id,
@@ -248,6 +271,7 @@ def prepare_task(
         task_runs_table_config=task_runs_table_config,
         output_blob_config=output_blob_config,
         log_blob_config=log_blob_config,
+        code_blob_config=code_blob_config,
         event_logger_app_insights_key=event_logger_app_insights_key,
     )
 
