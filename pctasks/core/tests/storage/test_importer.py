@@ -10,7 +10,6 @@ TESTS = Path(__file__).parent.parent
 def test_import_module():
     path = str(TESTS / "data-files/example_module/a.py")
     with temp_azurite_blob_storage() as storage:
-        # storage.upload_bytes(src.encode(), "mymodule.py")
         uri = storage.upload_code(path)
         token = "b618be31818766973c94818a9e29a8f6"
         assert uri == f"blob://devstoreaccount1/test-data/{storage.prefix}/{token}/a.py"
