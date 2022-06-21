@@ -198,7 +198,6 @@ def run_test_task(
     args: Dict[str, Any],
     task: str,
     tokens: Optional[Dict[str, StorageAccountTokens]] = None,
-    task_run_config_options: Optional[Dict[str, Any]] = None,
 ) -> Union[CompletedTaskResult, WaitTaskResult]:
     job_id = "unit-test-job"
     task_id = "task-unit-test"
@@ -222,7 +221,6 @@ def run_test_task(
 
         log_path = f"{job_id}/{task_id}/{run_id}.log"
         output_path = f"{job_id}/{task_id}/{run_id}-output.json"
-        task_run_config_options = task_run_config_options or {}
 
         msg = TaskRunMessage(
             args=args,
@@ -240,8 +238,7 @@ def run_test_task(
                 output_blob_config=get_blob_config(
                     DEFAULT_TASK_IO_CONTAINER, output_path
                 ),
-                **task_run_config_options,
-            ),
+            )
         )
 
         result = run_task(msg)
