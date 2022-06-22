@@ -134,7 +134,7 @@ def ingest_ndjson_cmd(
                     fg="green",
                 )
             )
-            cli_output(client.submit_workflow(submit_message))
+            cli_output(client.submit_workflow(submit_message).run_id)
 
 
 @click.command("collection")
@@ -198,7 +198,7 @@ def ingest_collection_cmd(
                     fg="green",
                 )
             )
-            cli_output(client.submit_workflow(submit_message))
+            cli_output(client.submit_workflow(submit_message).run_id)
 
 
 @click.group("ingest")

@@ -203,6 +203,7 @@ class DatasetConfig(DatasetIdentifier):
     owner: str = MICROSOFT_OWNER
     name: str
     image: str
+    code: Optional[str] = None
     collections: List[CollectionConfig]
     args: Optional[List[str]] = None
     environment: Optional[Dict[str, Any]] = None

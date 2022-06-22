@@ -79,12 +79,14 @@ class CreateItemsTaskConfig(TaskConfig):
         image: str,
         collection_class: str,
         args: CreateItemsInput,
+        code: Optional[str] = None,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> "CreateItemsTaskConfig":
         return CreateItemsTaskConfig(
             id=CREATE_ITEMS_TASK_ID,
             image=image,
+            code=code,
             task=f"{collection_class}.create_items_task",
             args=args.dict(),
             environment=environment,
@@ -107,6 +109,7 @@ class CreateItemsTaskConfig(TaskConfig):
 
         return cls.create(
             image=ds.image,
+            code=ds.code,
             collection_class=collection.collection_class,
             args=CreateItemsInput(
                 asset_chunk_info=asset_chunk_info,

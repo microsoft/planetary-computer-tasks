@@ -497,6 +497,22 @@ class BlobStorage(Storage):
                 with open(output_path, "wb" if is_binary else "w") as f:
                     with_backoff(lambda: blob.download_blob().readinto(f))
 
+    def upload_bytes(
+        self,
+        data: bytes,
+        target_path: str,
+        overwrite: bool = True,
+    ) -> None:
+        with self._get_client() as client:
+            with client.container.get_blob_client(
+                self._add_prefix(target_path)
+            ) as blob:
+
+                def _upload() -> None:
+                    blob.upload_blob(data, overwrite=overwrite)
+
+                with_backoff(_upload)
+
     def upload_file(
         self,
         input_path: str,
@@ -603,3 +619,18 @@ class BlobStorage(Storage):
         Return the fsspec-style path.
         """
         return f"abfs://{self.container_name}/{path}"
+
+    @classmethod
+    def from_connection_string(
+        cls: Type[T],
+        connection_string: str,
+        container_name: str,
+    ) -> T:
+        container_client = ContainerClient.from_connection_string(
+            connection_string, container_name
+        )
+        credential = container_client.credential
+        return cls.from_account_key(
+            f"blob://{credential.account_name}/{container_name}", credential.account_key
+        )
+

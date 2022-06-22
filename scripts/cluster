@@ -125,7 +125,7 @@ EOF
         # Set pctasks.deploy.podAnnotations.updated to force a new deployment
         helm upgrade --install \
             pctasks-server \
-            pctasks/server/helm/pctasks-server/ \
+            deployment/helm/pctasks-server/ \
             -n pc \
             -f cluster/dev-values.yaml \
             --create-namespace \

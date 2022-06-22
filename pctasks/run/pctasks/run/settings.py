@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 from pydantic import validator
 
 from pctasks.core.constants import (
+    DEFAULT_CODE_CONTAINER,
     DEFAULT_DATASET_TABLE_NAME,
     DEFAULT_IMAGE_KEY_TABLE_NAME,
     DEFAULT_JOB_RUN_RECORD_TABLE_NAME,
@@ -78,6 +79,7 @@ class RunSettings(PCTasksSettings):
     blob_account_key: str
     log_blob_container: str = DEFAULT_LOG_CONTAINER
     task_io_blob_container: str = DEFAULT_TASK_IO_CONTAINER
+    code_blob_container: str = DEFAULT_CODE_CONTAINER
 
     # Batch
     batch_url: Optional[str] = None

@@ -1,5 +1,6 @@
 name: dataset-test
 image: mock:latest
+code: ${{ local.path(mycode.py) }}
 
 args:
   - test_prefix
@@ -7,7 +8,7 @@ args:
 
 collections:
   - id: test-dataset
-    class: tests.collection:TestCollection
+    class: mycode:TestCollection
     asset_storage:
       - storage_account: devstoreaccount1
         container: test-data
