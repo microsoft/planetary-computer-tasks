@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Union
+from pctasks.dataset.chunks.task import CreateChunksTask
+from pctasks.dataset.splits.task import CreateSplitsTask
 
 import pystac
 
@@ -20,3 +22,11 @@ class Collection(ABC):
     @classmethod
     def create_items_task(cls) -> Task:
         return CreateItemsTask(cls.create_item)
+
+    @classmethod
+    def create_splits_task(cls) -> Task:
+        return CreateSplitsTask()
+
+    @classmethod
+    def create_chunks_task(cls) -> Task:
+        return CreateChunksTask()
