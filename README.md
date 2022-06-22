@@ -3,6 +3,8 @@
 `pctasks` runs scalable workflows on Azure. It's used as a reactive ETL system for getting data into
 the Planetary Computer STAC.
 
+See [the documentation](http://microsoft.github.io/planetary-computer-tasks) for more.
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a

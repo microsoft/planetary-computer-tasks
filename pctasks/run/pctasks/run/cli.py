@@ -90,7 +90,7 @@ def remote_cmd(
         run_settings = RunSettings.get(context.profile, context.settings_file)
 
     # TODO: Do we need to pass in args at run time vs workflow submit msg?
-    workflow_args = parse_workflow_args(arg, submit_message)
+    workflow_args = parse_workflow_args(arg)
     submit_message.args = {**(submit_message.args or {}), **workflow_args}
 
     runner = RemoteWorkflowRunner(run_settings)
