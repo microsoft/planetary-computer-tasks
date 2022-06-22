@@ -3,7 +3,9 @@ dataset: microsoft/test-foreach
 target_environment: staging
 
 args:
-  - output_dir
+  - task_code_path
+  - input_uri
+  - output_uri
 
 jobs:
   list-prefix:
@@ -11,9 +13,10 @@ jobs:
     tasks:
       - id: prefixes
         image: localhost:5001/pctasks-task-base:latest
-        task: tests.tasks:list_prefixes_task
+        code: ${{ args.task_code_path }}
+        task: tasks:list_prefixes_task
         args:
-          uri: ${{ local.path(../data-files/simple-assets) }}
+          uri: ${{ args.input_uri }}
           depth: 1
 
   list-files:
@@ -24,7 +27,8 @@ jobs:
     tasks:
       - id: paths
         image: localhost:5001/pctasks-task-base:latest
-        task: tests.tasks:list_files_task
+        code: ${{ args.task_code_path }}
+        task: tasks:list_files_task
         args:
           uri: ${{ item }}
 
@@ -36,12 +40,14 @@ jobs:
     tasks:
       - id: read-file
         image: localhost:5001/pctasks-task-base:latest
-        task: tests.tasks:read_file_task
+        code: ${{ args.task_code_path }}
+        task: tasks:read_file_task
         args:
           uri: ${{ item }}
       - id: write-text
         image: localhost:5001/pctasks-task-base:latest
-        task: tests.tasks:write_file_task
+        code: ${{ args.task_code_path }}
+        task: tasks:write_file_task
         args:
-          uri: ${{ args.output_dir}}/${{ tasks.read-file.output.name }}
+          uri: ${{ args.output_uri}}/${{ tasks.read-file.output.name }}
           content: ${{ tasks.read-file.output.content }}

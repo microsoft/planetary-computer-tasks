@@ -23,6 +23,9 @@ from argo_workflows.model.io_argoproj_workflow_v1alpha1_workflow_create_request 
 from argo_workflows.model.io_argoproj_workflow_v1alpha1_workflow_spec import (
     IoArgoprojWorkflowV1alpha1WorkflowSpec,
 )
+from argo_workflows.model.io_argoproj_workflow_v1alpha1_workflow_terminate_request import (  # noqa: E501
+    IoArgoprojWorkflowV1alpha1WorkflowTerminateRequest,
+)
 from argo_workflows.model.object_meta import ObjectMeta
 from azure.storage.blob import BlobSasPermissions, generate_blob_sas
 
@@ -40,6 +43,9 @@ from pctasks.run.settings import RunSettings
 from pctasks.run.utils import get_workflow_path
 
 logger = logging.getLogger(__name__)
+
+IMAGE_PULL_BACKOFF = "ImagePullBackOff"
+ERR_IMAGE_PULL = "ErrImagePull"
 
 
 class ArgoClient:
@@ -247,6 +253,23 @@ class ArgoClient:
         if phase == "failed" or phase == "error":
             return (TaskRunStatus.FAILED, status.get("message"))
         elif phase == "running":
+            # Ensure that there's not an ImagePullBackoff error
+            nodes: Optional[Dict[str, Dict[str, Any]]] = status.get("nodes")
+            if nodes:
+                for node in nodes.values():
+                    if node["phase"] == "Pending":
+                        node_message = node.get("message")
+                        if node_message and (
+                            IMAGE_PULL_BACKOFF in node_message
+                            or ERR_IMAGE_PULL in node_message
+                        ):
+                            logger.error(
+                                f"Task {argo_workflow_name} can't pull image: "
+                                f"{node['message']}"
+                            )
+                            self._terminate_workflow(namespace, argo_workflow_name)
+                            return (TaskRunStatus.FAILED, node["message"])
+
             return (TaskRunStatus.RUNNING, None)
         elif phase == "succeeded":
             return (TaskRunStatus.COMPLETED, None)
@@ -254,3 +277,14 @@ class ArgoClient:
             return (TaskRunStatus.PENDING, None)
         else:
             return (TaskRunStatus.SUBMITTED, None)
+
+    def _terminate_workflow(self, namespace: str, argo_workflow_name: str) -> None:
+        self.api_instance.terminate_workflow(
+            namespace=namespace,
+            name=argo_workflow_name,
+            body=IoArgoprojWorkflowV1alpha1WorkflowTerminateRequest(
+                namespace=namespace,
+                name=argo_workflow_name,
+            ),
+            _check_return_type=False,
+        )

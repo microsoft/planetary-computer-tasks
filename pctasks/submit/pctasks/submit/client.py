@@ -119,6 +119,9 @@ class SubmitClient:
             for task in job.tasks:
                 self._transform_task_config(task)
 
+        # Inline args
+        message.workflow = message.get_workflow_with_templated_args()
+
         logger.debug("Uploading code...")
         start = perf_counter()
         self._transform_workflow_code(message.workflow)

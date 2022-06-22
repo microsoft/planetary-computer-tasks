@@ -83,7 +83,7 @@ def find_value(
                 elif isinstance(v, list):
                     if len(v) == 0:
                         raise TemplateError(
-                            f"Expected elements in at {head} "
+                            f"Expected elements at {head} "
                             "but found empty list "
                             f"for template {'.'.join(path)}"
                         )

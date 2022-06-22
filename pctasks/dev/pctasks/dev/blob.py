@@ -72,7 +72,11 @@ def temp_azurite_blob_storage(
     storage = get_azurite_test_storage()
     sub_storage = storage.get_substorage(f"test-{uuid1().hex}")
     if test_files:
-        copy_dir_to_azurite(sub_storage, test_files)
+        test_files = Path(test_files)
+        if test_files.is_file():
+            sub_storage.upload_file(str(test_files), test_files.name)
+        else:
+            copy_dir_to_azurite(sub_storage, test_files)
     try:
         yield sub_storage
     finally:

@@ -68,6 +68,11 @@ spec:
             - name: PCTASKS_RUN__TASK_RUNNER_TYPE
               value: "{{ .Values.pctasks.run.task_runner_type }}"
 
+            - name: PCTASKS_RUN__TASK_POLL_SECONDS
+              value: "{{ .Values.pctasks.run.task_poll_seconds }}"
+            - name: PCTASKS_RUN__CHECK_OUTPUT_SECONDS
+              value: "{{ .Values.pctasks.run.check_output_seconds }}"
+
             # Dev executor settings
             - name: PCTASKS_RUN__LOCAL_EXECUTOR_URL
               value: "{{ .Values.pctasks.run.dev.local_executor_url }}"

@@ -106,19 +106,20 @@ EOF
 
 function update_registry() {
     echo "Adding pctasks-server to local registry..."
-    # kind load docker-image --name kind-pctasks pctasks-server pctasks-server
     docker tag pctasks-server localhost:5001/pctasks-server &&
         docker push localhost:5001/pctasks-server
 
     echo "Adding pctasks-run to local registry..."
-    # kind load docker-image --name kind-pctasks pctasks-run pctasks-run
     docker tag pctasks-run localhost:5001/pctasks-run &&
         docker push localhost:5001/pctasks-run
 
     echo "Adding pctasks-ingest to local registry..."
-    # kind load docker-image --name kind-pctasks pctasks-run pctasks-run
     docker tag pctasks-ingest localhost:5001/pctasks-ingest &&
         docker push localhost:5001/pctasks-ingest
+
+    echo "Adding pctasks-task-base to local registry..."
+    docker tag pctasks-task-base localhost:5001/pctasks-task-base &&
+        docker push localhost:5001/pctasks-task-base
 }
 
 function update_cluster() {

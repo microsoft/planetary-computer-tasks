@@ -72,6 +72,16 @@ pctasks:
     #  local: Run tasks with local executor (dev)
     task_runner_type: "batch"
 
+    # The time to wait between polling task status
+    # through the task runner, which can handle
+    # issues that cause the task not to be run.
+    task_poll_seconds: 30
+
+    # The time to wait between checking for task
+    # output, which reports the success or failure
+    # of the completed task.
+    check_output_seconds: 3
+
     dev:
       local_executor_url: ""
 

@@ -205,6 +205,7 @@ class TaskState:
                         ]
                     )
         except Exception as e:
+            logger.exception(e)
             error_lines = str(e).split("\n")
 
             self.set_failed(

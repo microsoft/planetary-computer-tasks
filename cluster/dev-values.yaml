@@ -30,6 +30,8 @@ pctasks:
   run:
     task_runner_type: "argo"
 
+    task_poll_seconds: 15
+
     dev:
       azurite:
         enabled: true
