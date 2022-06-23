@@ -1,6 +1,10 @@
 name: Ingest Collection Test Workflow
 dataset: microsoft/test-dataset2
 
+args:
+- collection
+- db_connection_str
+
 jobs:
   ingest:
     name: Ingest Collection
@@ -9,9 +13,9 @@ jobs:
         image: localhost:5001/pctasks-ingest:latest
         task: pctasks.ingest_task.task:ingest_task
         environment:
-          DB_CONNECTION_STRING: "${{ secrets.DB_CONNECTION_STRING }}"
+          DB_CONNECTION_STRING: "${{ args.db_connection_str }}"
         args:
           content:
             type: Collections
             collections:
-              - ${{ local.file(../data-files/collection.json) }}
+              - ${{ args.collection }}

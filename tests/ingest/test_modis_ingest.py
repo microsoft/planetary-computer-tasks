@@ -1,11 +1,8 @@
-from pathlib import Path
 import textwrap
-from pctasks.dev.blob import temp_azurite_blob_storage
+from pathlib import Path
 
-from pctasks.dev.test_utils import (
-    assert_workflow_is_successful,
-    run_workflow,
-)
+from pctasks.dev.blob import temp_azurite_blob_storage
+from pctasks.dev.test_utils import assert_workflow_is_successful, run_workflow
 
 HERE = Path(__file__).parent
 COLLECTION_PATH = HERE / ".." / "data-files/modis/collection.json"
@@ -20,8 +17,6 @@ def test_modis_ingest() -> None:
         name: Ingest Collection Test Workflow
         dataset: microsoft/modis-test
 
-
-
         jobs:
             ingest:
                 name: Ingest Collection
@@ -35,7 +30,7 @@ def test_modis_ingest() -> None:
                     content:
                         type: Collections
                         collections:
-                        - ${{ local.file(../data-files/collection.json) }}
+                        - ${{ local.file(../data-files/modis/collection.json) }}
 
         """
     )

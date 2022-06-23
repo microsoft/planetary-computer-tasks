@@ -13,7 +13,7 @@ TEST_DB_NAME = "pctaskspgstactmptest"
 
 
 @contextmanager
-def test_pgstac_db(conn_str: str) -> Generator[str, None, None]:
+def temp_pgstac_db(conn_str: str) -> Generator[str, None, None]:
     """Creates a temporary PgSTAC database based on an existing connection string.
 
     Drops the database on __exit__.

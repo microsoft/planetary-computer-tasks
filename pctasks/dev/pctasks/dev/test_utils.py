@@ -1,6 +1,6 @@
-from pathlib import Path
 import time
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from click.testing import CliRunner, Result
@@ -252,14 +252,17 @@ def run_workflow(
 
 
 def run_workflow_from_file(
-    workflow_path: Union[str, Path], args: Optional[Dict[str, Any]] = None
+    workflow_path: Union[str, Path],
+    args: Optional[Dict[str, Any]] = None,
 ) -> str:
     """Runs a workflow from a YAML file at workflow_path.
     Uses the default submit settings.
     Returns the run_id
     """
     return run_workflow(
-        Path(workflow_path).read_text(), args=args, base_path=Path(workflow_path).parent
+        Path(workflow_path).read_text(),
+        args=args,
+        base_path=Path(workflow_path).parent,
     )
 
 

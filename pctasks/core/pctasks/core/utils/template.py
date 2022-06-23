@@ -44,9 +44,9 @@ def find_value(
     """
 
     def _fetch(
-        d: Dict[str, Any], path: List[str], fail_if_not_found: bool = False
+        d: Dict[str, Any], _path: List[str], fail_if_not_found: bool = False
     ) -> Optional[TemplateValue]:
-        head, tail = path[0], path[1:]
+        head, tail = _path[0], _path[1:]
         index: Optional[int] = None
         list_m = re.match(LIST_PATH_REGEX, head)
         if list_m:
@@ -66,7 +66,7 @@ def find_value(
                 if not isinstance(v, list):
                     raise TemplateError(
                         f"Expected list at key {head}, got {type(v)} "
-                        f"for template {'.'.join(path)}"
+                        f"for template {'.'.join(_path)}"
                     )
                 else:
                     if (index >= 0 and len(v) <= index) or (
@@ -74,7 +74,7 @@ def find_value(
                     ):
                         raise TemplateError(
                             f"Index {index} out of range for key {head} "
-                            f"for template {'.'.join(path)}"
+                            f"for template {'.'.join(_path)}"
                         )
                     v = v[index]
             if tail:
@@ -85,14 +85,14 @@ def find_value(
                         raise TemplateError(
                             f"Expected elements at {head} "
                             "but found empty list "
-                            f"for template {'.'.join(path)}"
+                            f"for template {'.'.join(_path)}"
                         )
                     # Ensure the list is of dicts, and then recurse into
                     # each of the dict values.
                     if not all(isinstance(x, dict) for x in v):
                         raise TemplateError(
                             f"Expected list of dicts at key {head}, got {type(v)} "
-                            f"for template {'.'.join(path)}"
+                            f"for template {'.'.join(_path)}"
                         )
                     values = [_fetch(x, tail, fail_if_not_found=True) for x in v]
                     if all([x is None for x in values]):
@@ -101,7 +101,7 @@ def find_value(
                         raise TemplateError(
                             f"Some elements at key {head}, "
                             f"did not return a template value "
-                            f"for template {'.'.join(path)}"
+                            f"for template {'.'.join(_path)}"
                         )
 
                     return cast(List[TemplateValue], values)

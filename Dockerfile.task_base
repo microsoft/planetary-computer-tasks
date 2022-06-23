@@ -23,6 +23,11 @@ ENV CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
 RUN python -m pip install --upgrade pip
 
+# Install common packages
+# TODO: Better way to package the base image;
+# use same technique as Hub image?
+RUN pip install pystac[validation]==1.*
+
 #
 # Copy and install packages
 #
@@ -37,6 +42,18 @@ RUN cd /opt/src/pctasks/cli && \
 
 COPY pctasks/task /opt/src/pctasks/task
 RUN cd /opt/src/pctasks/task && \
+     pip install .
+
+COPY pctasks/submit /opt/src/pctasks/submit
+RUN cd /opt/src/pctasks/submit && \
+     pip install .
+
+COPY pctasks/ingest /opt/src/pctasks/ingest
+RUN cd /opt/src/pctasks/ingest && \
+     pip install .
+
+COPY pctasks/dataset /opt/src/pctasks/dataset
+RUN cd /opt/src/pctasks/dataset && \
      pip install .
 
 # Setup Python Path to allow import of test modules

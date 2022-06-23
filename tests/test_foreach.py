@@ -6,8 +6,8 @@ in the development database.
 """
 import textwrap
 from pathlib import Path
-from pctasks.dev.blob import copy_dir_to_azurite, temp_azurite_blob_storage
 
+from pctasks.dev.blob import copy_dir_to_azurite, temp_azurite_blob_storage
 from pctasks.dev.test_utils import (
     assert_workflow_is_successful,
     run_workflow,
