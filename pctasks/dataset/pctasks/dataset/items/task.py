@@ -59,6 +59,7 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                         item.add_link(
                             pystac.Link(rel="collection", target="http://example.com")
                         )
+                        remove_collection_link = True
                     item.validate()
                     if remove_collection_link:
                         item.remove_links("collection")
