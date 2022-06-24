@@ -34,7 +34,7 @@ jobs:
         run: ./scripts/setup
 
       - name: Test
-        run: ./scripts/test --no-integration
+        run: ./scripts/test
 
     #   - name: Get image tag
     #     id: get_image_tag
