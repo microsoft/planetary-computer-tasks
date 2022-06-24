@@ -174,7 +174,7 @@ def test_task_list_folders():
                 matches=None,
                 chunk_file_name="test-chunk",
                 list_folders=True,
-                max_depth=3
+                max_depth=3,
             ),
         )
 
