@@ -25,10 +25,10 @@ The path specified in `code.requirements` should be relative to the `dataset.yam
 ## Uploading Code
 
 You can make a Python module (a single `.py` file) or package (a possibly nested directory with a `__init__.py` file) available
-to the workers executing code by specifying the `code` option on your dataset. The path specified by `code` should be relative to
+to the workers executing code by specifying the `code.src` option on your dataset. The path specified by `code.src` should be relative to
 the `dataset.yaml` using the ``local.path(relative_path)`` templater or an absolute path.
 
-Suppose you have a dataset configuration file `naip/dataset.yaml`, with an accompanying `dataset.py` file. By specifying `code: dataset.py`
+Suppose you have a dataset configuration file `naip/dataset.yaml`, with an accompanying `dataset.py` file. By setting the `code.src` option to `dataset.py`
 that module will be included in the workers runtime.
 
 ```yaml
@@ -36,7 +36,7 @@ that module will be included in the workers runtime.
 name: naip
 image: pctasks-basic:latest
 code:
-  file: ${{ local.path(dataset.py) }}
+  src: ${{ local.path(dataset.py) }}
 ```
 
 For single-file modules, the module will be importable using the name of the module: `import dataset` in this case.

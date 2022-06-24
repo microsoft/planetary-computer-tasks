@@ -100,6 +100,6 @@ class ForeachConfig(PCBaseModel):
 
 
 class CodeConfig(PCBaseModel):
-    file: Optional[str]
+    src: Optional[str]
     requirements: Optional[str]
     pip_options: Optional[List[str]]

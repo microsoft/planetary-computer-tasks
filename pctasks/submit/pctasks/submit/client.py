@@ -100,17 +100,17 @@ class SubmitClient:
         Handles both `file` and `requirements` files.
         """
         local_path_to_blob: Dict[str, Dict[str, str]] = {
-            "file": {},
+            "src": {},
             "requirements": {}
         }
 
         for job_config in workflow.jobs.values():
             for task_config in job_config.tasks:
-                for attr in ["file", "requirements"]:
+                for attr in ["src", "requirements"]:
                     thing = getattr(task_config.code, attr)
                     if thing and thing in local_path_to_blob[attr]:
                         # already uploaded from a previous task
-                        setattr(task_config.code, attr, local_path_to_blob[attr][task_config.code.file])
+                        setattr(task_config.code, attr, local_path_to_blob[attr][task_config.code.src])
                     elif thing:
                         result = self._upload_code(thing)
                         blob_uri = result.uri

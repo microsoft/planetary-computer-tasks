@@ -49,9 +49,9 @@ class SimpleWorkflowExecutor:
                     task_config.code.requirements, task_config.code.pip_options
                 )
 
-            if task_config.code.file:
+            if task_config.code.src:
                 code_storage, code_path = context.storage_factory.get_storage_for_file(
-                    task_config.code.file
+                    task_config.code.src
                 )
                 ensure_code(code_path, code_storage)
 

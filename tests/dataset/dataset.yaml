@@ -10,7 +10,7 @@ args:
 - code_path
 
 code:
-  file: ${{ args.code_path }}
+  src: ${{ args.code_path }}
 
 collections:
   - id: ${{ args.collection_id }}

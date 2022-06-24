@@ -41,7 +41,7 @@ def test_foreach_simple_workflow():
                 - id: paths
                   image: localhost:5001/pctasks-task-base:latest
                   code:
-                    file: ${{ args.task_code_path }}
+                    src: ${{ args.task_code_path }}
                   task: tasks:list_files_task
                   args:
                     uri: ${{ args.input_uri }}
@@ -55,14 +55,14 @@ def test_foreach_simple_workflow():
                 - id: read-file
                   image: localhost:5001/pctasks-task-base:latest
                   code:
-                    file: ${{ args.task_code_path }}
+                    src: ${{ args.task_code_path }}
                   task: tasks:read_file_task
                   args:
                     uri: ${{ item }}
                 - id: write-text
                   image: localhost:5001/pctasks-task-base:latest
                   code:
-                    file: ${{ args.task_code_path }}
+                    src: ${{ args.task_code_path }}
                   task: tasks:write_file_task
                   args:
                     uri: ${{ args.output_uri}}/${{ tasks.read-file.output.name }}

@@ -242,7 +242,7 @@ def prepare_task(
 
     # Handle code config
 
-    code_uri = task_config.code.file
+    code_uri = task_config.code.src
     if code_uri:
         code_path = str(urlparse(code_uri).path).lstrip("/")
 
