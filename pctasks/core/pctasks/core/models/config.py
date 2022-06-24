@@ -82,3 +82,9 @@ class ImageConfig(PCBaseModel):
         if not self.tags:
             return None
         return {k: v.strip() for k, v in [e.split("=") for e in self.tags]}
+
+
+class CodeConfig(PCBaseModel):
+    src: Optional[str]
+    requirements: Optional[str]
+    pip_options: Optional[List[str]]

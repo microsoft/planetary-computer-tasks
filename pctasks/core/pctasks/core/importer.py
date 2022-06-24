@@ -10,12 +10,51 @@ from __future__ import annotations
 import logging
 import pathlib
 import site
+import subprocess
 import sys
 import zipfile
+from typing import List, Optional
 
 import pctasks.core.storage
 
 logger = logging.getLogger(__name__)
+
+
+def ensure_requirements(
+    requirements_path: str, pip_options: Optional[List[str]] = None
+) -> None:
+    """
+    Ensure that the requirements at ``requirements_path`` are available.
+
+    Parameters
+    ----------
+    requirements_path: str
+        Path to a pip requirements file
+    pip_options: list[str]
+        Optional arguments to pass to the command ``pip install -r``.
+    """
+    pip_options = pip_options or []
+    logger.debug("Pip installing from %s", requirements_path)
+    cmd = [
+        sys.executable,
+        "-m",
+        "pip",
+        "install",
+        "-r",
+        requirements_path,
+    ] + pip_options
+
+    proc = subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    stdout, stderr = proc.communicate()
+    returncode = proc.wait()
+    if returncode:
+        logger.error("Pip install failed with %s", stderr.decode().strip())
+        raise subprocess.CalledProcessError(returncode, cmd, stdout, stderr)
+    logger.debug("Pip install output: %s", stdout.decode().strip())
 
 
 def ensure_code(

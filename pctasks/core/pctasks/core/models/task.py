@@ -11,7 +11,7 @@ from pctasks.core.constants import (
     TASK_RUN_SIGNAL_SCHEMA_VERSION,
 )
 from pctasks.core.models.base import PCBaseModel, RunRecordId
-from pctasks.core.models.config import BlobConfig, TableSasConfig
+from pctasks.core.models.config import BlobConfig, CodeConfig, TableSasConfig
 from pctasks.core.models.event import NotificationMessage
 from pctasks.core.models.tokens import StorageAccountTokens
 from pctasks.core.tables.base import InvalidTableKeyError, validate_table_key
@@ -22,7 +22,7 @@ class TaskConfig(PCBaseModel):
     id: str
     image: Optional[str] = None
     image_key: Optional[str] = None
-    code: Optional[str] = None
+    code: Optional[CodeConfig] = None
     task: str
     args: Dict[str, Any] = {}
     tags: Optional[Dict[str, str]] = None

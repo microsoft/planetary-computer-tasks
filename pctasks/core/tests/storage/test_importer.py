@@ -1,7 +1,9 @@
 import importlib.metadata
+import subprocess
+import unittest.mock
 from pathlib import Path
 
-from pctasks.core.importer import ensure_code
+from pctasks.core.importer import ensure_code, ensure_requirements
 from pctasks.core.storage.blob import BlobStorage
 from pctasks.dev.blob import temp_azurite_blob_storage
 
@@ -40,3 +42,14 @@ def test_import_package():
         assert instance.a() == "a"
         assert instance.b() == "b"
         assert result.name == "example_module.zip"
+
+
+def test_ensure_requirements():
+    with unittest.mock.patch("pctasks.core.importer.subprocess", autospec=True) as p:
+        p.Popen.return_value.communicate.return_value = (b"a", b"b")
+        p.Popen.return_value.wait.return_value = 0
+        p.CalledProcessError = subprocess.CalledProcessError
+
+        ensure_requirements("requirements.txt", pip_options=["--upgrade"])
+
+        assert p.Popen.call_count

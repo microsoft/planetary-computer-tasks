@@ -7,6 +7,7 @@ from pydantic import Field, validator
 
 from pctasks.core.constants import MICROSOFT_OWNER
 from pctasks.core.models.base import PCBaseModel
+from pctasks.core.models.config import CodeConfig
 from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.tokens import ContainerTokens, StorageAccountTokens
 from pctasks.core.storage import get_storage
@@ -209,7 +210,7 @@ class DatasetConfig(DatasetIdentifier):
     owner: str = MICROSOFT_OWNER
     name: str
     image: str
-    code: Optional[str] = None
+    code: Optional[CodeConfig] = None
     collections: List[CollectionConfig]
     args: Optional[List[str]] = None
     environment: Optional[Dict[str, Any]] = None
