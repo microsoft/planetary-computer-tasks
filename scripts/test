@@ -2,6 +2,8 @@
 
 set -e
 
+source scripts/env
+
 if [[ "${CI}" ]]; then
     set -x
 fi
@@ -91,7 +93,13 @@ fi
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
-    docker-compose \
+    if [ -z "${ARGO_TOKEN}" ]; then
+        echo "ARGO_TOKEN not set, fetching..."
+        ARGO_TOKEN=$(echo_argo_token)
+    fi
+
+    ARGO_TOKEN=${ARGO_TOKEN} \
+        docker-compose \
         -f docker-compose.console.yml \
         run --rm \
         dev \

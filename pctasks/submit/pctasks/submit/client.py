@@ -1,6 +1,6 @@
 import logging
 from time import perf_counter
-from typing import Any, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 from azure.identity import DefaultAzureCredential
 from azure.storage.queue import (
@@ -13,7 +13,7 @@ from azure.storage.queue import (
 from pctasks.core.models.event import NotificationSubmitMessage
 from pctasks.core.models.operation import OperationSubmitMessage
 from pctasks.core.models.task import TaskConfig
-from pctasks.core.models.workflow import WorkflowSubmitMessage
+from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
 from pctasks.submit.settings import SubmitSettings
 
 logger = logging.getLogger(__name__)
@@ -72,7 +72,7 @@ class SubmitClient:
             self.service_client = None
 
     def _transform_task_config(self, task_config: TaskConfig) -> None:
-        # Repace image keys with configured images.
+        # Replace image keys with configured images.
         if task_config.image_key:
             image_config = self.settings.image_keys.get(task_config.image_key)
             if image_config:
@@ -85,12 +85,33 @@ class SubmitClient:
                     task_config.environment
                 )
 
-    def submit_workflow(self, message: WorkflowSubmitMessage) -> str:
+    def _transform_workflow_code(self, workflow: WorkflowConfig) -> None:
+        """
+        Handle runtime code availability.
+
+        Code files specified in the tasks are uploaded to our Azure Blob Storage.
+        The Task code paths are rewritten to point to the newly uploaded files.
+        """
+        local_path_to_blob: Dict[str, str] = {}
+
+        for job_config in workflow.jobs.values():
+            for task_config in job_config.tasks:
+                if task_config.code and task_config.code in local_path_to_blob:
+                    # already uploaded from a previous task
+                    task_config.code = local_path_to_blob[task_config.code]
+                elif task_config.code:
+                    storage = self.settings.get_storage("code")
+                    blob_uri = storage.upload_code(task_config.code)
+                    logger.debug("Uploaded %s to %s", task_config.code, blob_uri)
+                    local_path_to_blob[blob_uri] = task_config.code = blob_uri
+
+    def submit_workflow(self, message: WorkflowSubmitMessage) -> WorkflowSubmitMessage:
         """Submits a workflow for processing.
 
-        Returns the run ID associated with this submission, which
-        was either set on the message or from the Queue submission.
+        Returns a modified :class:`WorkflowSubmitMessage` that has
+        a ``run_id`` set.
         """
+        message = message.copy(deep=True)
         if not self.queue_client:
             raise RuntimeError("SubmitClient is not opened. Use as a context manager.")
 
@@ -98,12 +119,21 @@ class SubmitClient:
             for task in job.tasks:
                 self._transform_task_config(task)
 
+        # Inline args
+        message.workflow = message.get_workflow_with_templated_args()
+
+        logger.debug("Uploading code...")
+        start = perf_counter()
+        self._transform_workflow_code(message.workflow)
+        end = perf_counter()
+        logger.debug(f"Uploading code took {end - start:.2f} seconds.")
+
         logger.debug("Submitting workflow...")
         start = perf_counter()
         _ = self.queue_client.send_message(message.json(exclude_none=True).encode())
         end = perf_counter()
         logger.debug(f"Submit took {end - start:.2f} seconds.")
-        return message.run_id
+        return message
 
     def submit_notification(self, message: NotificationSubmitMessage) -> str:
         """Submits a NotificationMessage for processing.

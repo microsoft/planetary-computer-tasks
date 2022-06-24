@@ -22,8 +22,9 @@ class TaskConfig(PCBaseModel):
     id: str
     image: Optional[str] = None
     image_key: Optional[str] = None
+    code: Optional[str] = None
     task: str
-    args: Dict[str, Any]
+    args: Dict[str, Any] = {}
     tags: Optional[Dict[str, str]] = None
     environment: Optional[Dict[str, str]] = None
     schema_version: str = TASK_CONFIG_SCHEMA_VERSION
@@ -57,6 +58,7 @@ class TaskRunConfig(PCBaseModel):
     job_id: str
     task_id: str
     task: str
+    code_blob_config: Optional[BlobConfig] = None
     environment: Optional[Dict[str, str]] = None
     tokens: Optional[Dict[str, StorageAccountTokens]] = None
     # TODO: Update task status through signals

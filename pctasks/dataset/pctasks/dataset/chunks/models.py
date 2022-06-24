@@ -46,12 +46,14 @@ class CreateChunksTaskConfig(TaskConfig):
         cls,
         image: str,
         args: CreateChunksInput,
+        code: Optional[str] = None,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> "CreateChunksTaskConfig":
         return CreateChunksTaskConfig(
             id=CREATE_CHUNKS_TASK_ID,
             image=image,
+            code=code,
             args=args.dict(),
             task=CREATE_CHUNKS_TASK_PATH,
             environment=environment,
@@ -74,6 +76,7 @@ class CreateChunksTaskConfig(TaskConfig):
 
         return cls.create(
             image=ds.image,
+            code=ds.code,
             args=CreateChunksInput(
                 src_uri=src_uri,
                 dst_uri=dst_uri,
@@ -90,6 +93,7 @@ class ListChunksTaskConfig(TaskConfig):
         cls,
         image: str,
         args: ListChunksInput,
+        task: str = CREATE_CHUNKS_TASK_PATH,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> "ListChunksTaskConfig":
@@ -97,7 +101,7 @@ class ListChunksTaskConfig(TaskConfig):
             id=LIST_CHUNKS_TASK_ID,
             image=image,
             args=args.dict(),
-            task=CREATE_CHUNKS_TASK_PATH,
+            task=task,
             environment=environment,
             tags=tags,
         )
@@ -120,6 +124,7 @@ class ListChunksTaskConfig(TaskConfig):
         return cls.create(
             image=ds.image,
             args=ListChunksInput(chunkset_uri=chunkset_uri, all=all),
+            task=f"{collection.collection_class}.create_chunks_task",
             environment=environment,
             tags=tags,
         )

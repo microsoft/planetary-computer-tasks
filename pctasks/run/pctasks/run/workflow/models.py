@@ -181,11 +181,11 @@ class TaskState:
 
         try:
             result = executor.poll_task(
-                self.submit_result.executor_id,
+                self.submit_result.task_runner_id,
                 previous_poll_count=self._poll_count,
             )
             logger.debug(
-                f"Polled task {json.dumps(self.submit_result.executor_id)}"
+                f"Polled task {json.dumps(self.submit_result.task_runner_id)}"
                 f": {result}"
             )
             self._poll_count += 1
@@ -205,13 +205,14 @@ class TaskState:
                         ]
                     )
         except Exception as e:
+            logger.exception(e)
             error_lines = str(e).split("\n")
 
             self.set_failed(
                 [
                     (
                         "Failed to poll task "
-                        f"{json.dumps(self.submit_result.executor_id)}"
+                        f"{json.dumps(self.submit_result.task_runner_id)}"
                     )
                 ]
                 + error_lines

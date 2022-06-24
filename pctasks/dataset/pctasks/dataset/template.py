@@ -35,11 +35,14 @@ class PCTemplater(Templater):
 def template_dataset(
     yaml_str: str, parent_dir: Optional[Union[str, Path]] = None
 ) -> DatasetConfig:
-    workflow_dict = yaml.safe_load(yaml_str)
-    templater = MultiTemplater(LocalTemplater(parent_dir or Path.cwd()), PCTemplater())
-    workflow_dict = templater.template_dict(workflow_dict)
-
-    return DatasetConfig.parse_obj(workflow_dict)
+    dataset_dict = yaml.safe_load(yaml_str)
+    if parent_dir:
+        root = Path(parent_dir)
+    else:
+        root = Path.cwd()
+    templater = MultiTemplater(LocalTemplater(root), PCTemplater())
+    dataset_dict = templater.template_dict(dataset_dict)
+    return DatasetConfig.parse_obj(dataset_dict)
 
 
 def template_dataset_file(

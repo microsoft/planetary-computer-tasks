@@ -256,7 +256,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         --wait \
         --timeout 2m0s \
         -f ${DEPLOY_VALUES_FILE} \
-        --set pctasks.server.argo.token="${ARGO_TOKEN}"
+        --set pctasks.run.argo.token="${ARGO_TOKEN}"
 
     echo "=================="
     echo "==== Ingress ====="

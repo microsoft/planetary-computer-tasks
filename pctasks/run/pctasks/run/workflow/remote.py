@@ -15,7 +15,7 @@ from pctasks.core.models.record import (
     WorkflowRunRecord,
     WorkflowRunStatus,
 )
-from pctasks.core.models.task import CompletedTaskResult
+from pctasks.core.models.task import CompletedTaskResult, FailedTaskResult
 from pctasks.core.models.workflow import WorkflowSubmitMessage
 from pctasks.core.queues import QueueService
 from pctasks.core.utils import grouped, map_opt
@@ -32,7 +32,7 @@ from pctasks.run.models import (
 )
 from pctasks.run.records import RecordUpdater
 from pctasks.run.settings import RunSettings
-from pctasks.run.task import get_executor
+from pctasks.run.task import get_task_runner
 from pctasks.run.template import (
     template_foreach,
     template_job_with_item,
@@ -61,7 +61,7 @@ class RemoteWorkflowRunner:
 
     def __init__(self, settings: Optional[RunSettings] = None) -> None:
         self.settings = settings or RunSettings.get()
-        self.executor = get_executor(self.settings)
+        self.executor = get_task_runner(self.settings)
         self.record_updater = RecordUpdater(self.settings)
 
     def create_job_state(self, job_submit_message: JobSubmitMessage) -> JobState:
@@ -282,6 +282,13 @@ class RemoteWorkflowRunner:
                         logger.warning(
                             f"Task failed: {job_state.job_id} - {task_state.task_id}"
                         )
+                        errors: Optional[List[str]] = None
+                        task_result = task_state.task_result
+                        if isinstance(task_result, FailedTaskResult):
+                            errors = task_result.errors
+
+                        for error in errors or []:
+                            logger.warning(f"  - {error}")
 
                         failed_job_count += 1
 
@@ -300,6 +307,7 @@ class RemoteWorkflowRunner:
                                     lambda uri: [uri],
                                     task_state.get_log_uri(task_log_storage),
                                 ),
+                                errors=errors,
                             )
                         )
 

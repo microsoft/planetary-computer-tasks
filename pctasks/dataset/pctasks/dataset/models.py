@@ -117,12 +117,17 @@ class StorageConfig(PCBaseModel, ABC):
 
 
 class BlobStorageConfig(StorageConfig):
-    storage_account: str
-    container: str
+    # TODO: Just use URI, don't differentiate between local and blob
+    # (sas_token optional)
+    storage_account: Optional[str] = None
+    container: Optional[str] = None
+    uri: Optional[str]
     prefix: Optional[str] = None
     sas_token: Optional[str] = None
 
     def get_uri(self, path: Optional[str] = None) -> str:
+        if self.uri:
+            return self.uri
         uri = f"blob://{self.storage_account}/{self.container}"
         if self.prefix:
             uri = os.path.join(uri, self.prefix)
@@ -134,6 +139,9 @@ class BlobStorageConfig(StorageConfig):
         return get_storage(self.get_uri(), sas_token=self.sas_token)
 
     def matches(self, uri: str) -> bool:
+        if self.uri:
+            return uri.startswith(self.uri)
+
         if BlobUri.matches(uri):
             blob_uri = BlobUri(uri)
             if blob_uri.storage_account_name == self.storage_account:
@@ -176,15 +184,19 @@ class CollectionConfig(PCBaseModel):
         for container in containers:
             if isinstance(container, BlobStorageConfig):
                 if container.sas_token:
-                    if container.storage_account not in tokens:
-                        tokens[container.storage_account] = StorageAccountTokens(
-                            containers={}
+                    if BlobUri.matches(container.get_uri()):
+                        blob_uri = BlobUri(container.get_uri())
+                        if blob_uri.storage_account_name not in tokens:
+                            tokens[
+                                blob_uri.storage_account_name
+                            ] = StorageAccountTokens(containers={})
+                        container_tokens = tokens[
+                            blob_uri.storage_account_name
+                        ].containers
+                        assert container_tokens is not None
+                        container_tokens[blob_uri.container_name] = ContainerTokens(
+                            token=container.sas_token
                         )
-                    container_tokens = tokens[container.storage_account].containers
-                    assert container_tokens is not None
-                    container_tokens[container.container] = ContainerTokens(
-                        token=container.sas_token
-                    )
         return tokens
 
     def get_storage_config(
@@ -203,6 +215,7 @@ class DatasetConfig(DatasetIdentifier):
     owner: str = MICROSOFT_OWNER
     name: str
     image: str
+    code: Optional[str] = None
     collections: List[CollectionConfig]
     args: Optional[List[str]] = None
     environment: Optional[Dict[str, Any]] = None
