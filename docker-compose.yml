@@ -2,7 +2,7 @@ version: "2.1"
 services:
   azurite:
     container_name: pctasks-azurite
-    image: mcr.microsoft.com/azure-storage/azurite:3.16.0
+    image: mcr.microsoft.com/azure-storage/azurite:3.17.1
     hostname: azurite
     command: "azurite --silent --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost
       0.0.0.0 -l /workspace"
@@ -114,6 +114,9 @@ services:
 
       # Local secrets provider secrets
       - SECRETS_DB_CONNECTION_STRING=postgresql://username:password@database:5432/postgis
+
+      ## Records
+      - PCTASKS_RECORDS__TABLES__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://azurite:10002/devstoreaccount1;
 
       # Run settings #######################################################
 

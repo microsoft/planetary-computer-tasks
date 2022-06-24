@@ -9,7 +9,7 @@ HAS_SUBSCRIPTION_HEADER = "X-Has-Subscription"
 SUBSCRIPTION_KEY_HEADER = "X-Subscription-Key"
 USER_EMAIL_HEADER = "X-User-Email"
 
-API_KEY_HEADER = "PC-API-KEY"
+API_KEY_HEADER = "X-API-KEY"
 
 
 class ParsedRequest:

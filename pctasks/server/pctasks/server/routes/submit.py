@@ -11,16 +11,16 @@ from pctasks.server.request import ParsedRequest
 logger = logging.getLogger(__name__)
 
 
-run_router = APIRouter()
+submit_router = APIRouter()
 
 
-@run_router.post(
+@submit_router.post(
     "/",
-    summary="Run a workflow.",
+    summary="Submit a workflow.",
     response_class=ORJSONResponse,
     response_model=WorkflowSubmitResult,
 )
-async def run_workflow(
+async def submit_workflow(
     request: Request, workflow: WorkflowSubmitMessage
 ) -> WorkflowSubmitResult:
     logger.info(f"Workflow: {workflow.workflow.name}")

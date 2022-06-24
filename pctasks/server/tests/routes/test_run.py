@@ -31,5 +31,5 @@ type: Workflow
 """
     )
 
-    response = client.post("/run/", json=workflow.dict())
+    response = client.post("/submit/", json=workflow.dict())
     assert response.status_code == 401

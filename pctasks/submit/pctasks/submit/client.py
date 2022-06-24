@@ -20,8 +20,8 @@ from pctasks.submit.settings import SubmitSettings
 logger = logging.getLogger(__name__)
 
 
-RUN_WORKFLOW_ROUTE = "run"
-UPLOAD_CODE_ROUTE = "code/upload"
+RUN_WORKFLOW_ROUTE = "submit/"
+UPLOAD_CODE_ROUTE = "code/upload/"
 
 
 class SubmitClient:
@@ -35,7 +35,7 @@ class SubmitClient:
         resp = requests.request(
             method,
             os.path.join(self.settings.endpoint, path),
-            headers={"PC-API-KEY": self.settings.api_key},
+            headers={"X-API-KEY": self.settings.api_key},
             **kwargs,
         )
         resp.raise_for_status()
