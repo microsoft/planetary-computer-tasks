@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>pctasks.core.models.base.PCBaseModel &#8212; Planetary Computer Tasks  documentation</title>
+    <title>pctasks.core.storage.blob.BlobUri &#8212; Planetary Computer Tasks  documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
   document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
@@ -36,8 +36,8 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="pctasks.core.models.task.TaskConfig" href="pctasks.core.models.task.TaskConfig.html" />
-    <link rel="prev" title="API Reference" href="../reference.html" />
+    <link rel="next" title="pctasks.core.storage.blob.BlobStorage" href="pctasks.core.storage.blob.BlobStorage.html" />
+    <link rel="prev" title="pctasks.core.storage.StorageFactory" href="pctasks.core.storage.StorageFactory.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="docsearch:language" content="en">
   </head>
@@ -137,14 +137,24 @@
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <ul class="current nav bd-sidenav">
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
-   pctasks.core.models.base.PCBaseModel
+ <li class="toctree-l1">
+  <a class="reference internal" href="pctasks.core.storage.Storage.html">
+   pctasks.core.storage.Storage
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="pctasks.core.models.task.TaskConfig.html">
-   pctasks.core.models.task.TaskConfig
+  <a class="reference internal" href="pctasks.core.storage.StorageFactory.html">
+   pctasks.core.storage.StorageFactory
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   pctasks.core.storage.blob.BlobUri
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="pctasks.core.storage.blob.BlobStorage.html">
+   pctasks.core.storage.blob.BlobStorage
   </a>
  </li>
 </ul>
@@ -185,69 +195,48 @@
               
               <article class="bd-article" role="main">
                 
-  <section id="pctasks-core-models-base-pcbasemodel">
-<h1>pctasks.core.models.base.PCBaseModel<a class="headerlink" href="#pctasks-core-models-base-pcbasemodel" title="Permalink to this heading">#</a></h1>
+  <section id="pctasks-core-storage-blob-bloburi">
+<h1>pctasks.core.storage.blob.BlobUri<a class="headerlink" href="#pctasks-core-storage-blob-bloburi" title="Permalink to this heading">#</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="pctasks.core.models.base.PCBaseModel">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pctasks.core.models.base.</span></span><span class="sig-name descname"><span class="pre">PCBaseModel</span></span><a class="headerlink" href="#pctasks.core.models.base.PCBaseModel" title="Permalink to this definition">#</a></dt>
-<dd><p>Base model that uses different defaults for serialization.</p>
+<dt class="sig sig-object py" id="pctasks.core.storage.blob.BlobUri">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pctasks.core.storage.blob.</span></span><span class="sig-name descname"><span class="pre">BlobUri</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pctasks.core.storage.blob.BlobUri" title="Permalink to this definition">#</a></dt>
+<dd><p>Represents a blob uri Azure Blob Storage.</p>
+<p>A blob URI can be to a specific blob, a prefix that represents
+many blobs, or only a storage account and container.</p>
+<dl class="simple">
+<dt>The URIs are structured like this:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">blob://{storage_account_name}/{container_name}/{prefix}/blob.txt}</span></code></p>
+</dd>
+<dt>Attributes:</dt><dd><ul class="simple">
+<li><p>storage_account_name: The name of the storage account for this path.</p></li>
+<li><p>container_name: The name of the container for this path</p></li>
+<li><p>blob_name: the blob name or prefix, if exists. If not, None.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="pctasks.core.models.base.PCBaseModel.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pctasks.core.models.base.PCBaseModel.__init__" title="Permalink to this definition">#</a></dt>
-<dd><p>Create a new model by parsing and validating input data from keyword arguments.</p>
-<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p>
-</dd></dl>
+<dt class="sig sig-object py" id="pctasks.core.storage.blob.BlobUri.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pctasks.core.storage.blob.BlobUri.__init__" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 <p class="rubric">Methods</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pctasks.core.models.base.PCBaseModel.__init__" title="pctasks.core.models.base.PCBaseModel.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(**data)</p></td>
-<td><p>Create a new model by parsing and validating input data from keyword arguments.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct</span></code>([_fields_set])</p></td>
-<td><p>Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code>(*[, include, exclude, update, deep])</p></td>
-<td><p>Duplicate a model, optionally choose which fields to include, exclude and change.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>(**kwargs)</p></td>
-<td><p>Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_orm</span></code>(obj)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pctasks.core.storage.blob.BlobUri.__init__" title="pctasks.core.storage.blob.BlobUri.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(uri)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_yaml</span></code>(yaml_str[, section])</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">matches</span></code>(uri)</p></td>
+<td><p>Checks to see if a uri is a blob uri</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">json</span></code>(**kwargs)</p></td>
-<td><p>Generate a JSON representation of the model, <cite>include</cite> and <cite>exclude</cite> arguments as per <cite>dict()</cite>.</p></td>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">base_uri</span></code></p></td>
+<td><p>Returns the BlobUri for the storage account and container</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_file</span></code>(path, *[, content_type, ...])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_obj</span></code>(obj)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_raw</span></code>(b, *[, content_type, encoding, ...])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">schema</span></code>([by_alias, ref_template])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">schema_json</span></code>(*[, by_alias, ref_template])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_json</span></code>(*args, **kwargs)</p></td>
-<td><p>Passed through to .json()</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_yaml</span></code>(*args, **kwargs)</p></td>
-<td><p>Return this model as a YAML string.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_forward_refs</span></code>(**localns)</p></td>
-<td><p>Try to update ForwardRefs on fields based on this Model, globalns and localns.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate</span></code>(value)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">url</span></code></p></td>
+<td><p>Gets the HTTPS URL for this blob path.</p></td>
 </tr>
 </tbody>
 </table>
@@ -263,17 +252,17 @@
               <footer class="bd-footer-article">
                   <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-  <a class='left-prev' id="prev-link" href="../reference.html" title="previous page">
+  <a class='left-prev' id="prev-link" href="pctasks.core.storage.StorageFactory.html" title="previous page">
       <i class="fas fa-angle-left"></i>
       <div class="prev-next-info">
           <p class="prev-next-subtitle">previous</p>
-          <p class="prev-next-title">API Reference</p>
+          <p class="prev-next-title">pctasks.core.storage.StorageFactory</p>
       </div>
   </a>
-  <a class='right-next' id="next-link" href="pctasks.core.models.task.TaskConfig.html" title="next page">
+  <a class='right-next' id="next-link" href="pctasks.core.storage.blob.BlobStorage.html" title="next page">
   <div class="prev-next-info">
       <p class="prev-next-subtitle">next</p>
-      <p class="prev-next-title">pctasks.core.models.task.TaskConfig</p>
+      <p class="prev-next-title">pctasks.core.storage.blob.BlobStorage</p>
   </div>
   <i class="fas fa-angle-right"></i>
   </a>

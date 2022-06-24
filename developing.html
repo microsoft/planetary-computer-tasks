@@ -183,6 +183,13 @@
   <a class="reference internal nav-link" href="#testing">
    Testing
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#kubernetes-config">
+     Kubernetes config
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#argo-ui">
@@ -257,14 +264,19 @@ to inspect ingest results. You can access the STAC API at http://localhost:8089/
 </pre></div>
 </div>
 <p>to test. You can also run <code class="docutils literal notranslate"><span class="pre">scripts/format</span></code> to format code. Use <code class="docutils literal notranslate"><span class="pre">--help</span></code> to see options on any script.</p>
+<section id="kubernetes-config">
+<h3>Kubernetes config<a class="headerlink" href="#kubernetes-config" title="Permalink to this heading">#</a></h3>
+<p>You can export a kubeconfig for <code class="docutils literal notranslate"><span class="pre">kubectl</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">kind</span> <span class="n">export</span> <span class="n">kubeconfig</span> <span class="o">--</span><span class="n">name</span> <span class="n">kind</span><span class="o">-</span><span class="n">pctasks</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="argo-ui">
 <h2>Argo UI<a class="headerlink" href="#argo-ui" title="Permalink to this heading">#</a></h2>
-<p>You can view the argo UI by running</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">kubectl</span> <span class="o">-</span><span class="n">n</span> <span class="n">argo</span> <span class="n">port</span><span class="o">-</span><span class="n">forward</span> <span class="n">deployment</span><span class="o">/</span><span class="n">argo</span><span class="o">-</span><span class="n">server</span> <span class="mi">2746</span><span class="p">:</span><span class="mi">2746</span>
-</pre></div>
-</div>
-<p>and visiting https://localhost:2746</p>
+<p>Once the kind cluster is up, you can view the Argo UI by visiting http://localhost:8500/argo.
+You’ll need to use your ARGO_TOKEN to log in, which you can
+find using <code class="docutils literal notranslate"><span class="pre">scripts/cluster</span> <span class="pre">argo-token</span></code></p>
 </section>
 </section>
 

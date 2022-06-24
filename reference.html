@@ -36,7 +36,7 @@
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pctasks.core.models.base.PCBaseModel" href="generated/pctasks.core.models.base.PCBaseModel.html" />
+    <link rel="next" title="pctasks.core.storage.Storage" href="generated/pctasks.core.storage.Storage.html" />
     <link rel="prev" title="Developing" href="developing.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="docsearch:language" content="en">
@@ -138,13 +138,23 @@
   <div class="bd-toc-item active">
     <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="generated/pctasks.core.models.base.PCBaseModel.html">
-   pctasks.core.models.base.PCBaseModel
+  <a class="reference internal" href="generated/pctasks.core.storage.Storage.html">
+   pctasks.core.storage.Storage
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="generated/pctasks.core.models.task.TaskConfig.html">
-   pctasks.core.models.task.TaskConfig
+  <a class="reference internal" href="generated/pctasks.core.storage.StorageFactory.html">
+   pctasks.core.storage.StorageFactory
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="generated/pctasks.core.storage.blob.BlobUri.html">
+   pctasks.core.storage.blob.BlobUri
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="generated/pctasks.core.storage.blob.BlobStorage.html">
+   pctasks.core.storage.blob.BlobStorage
   </a>
  </li>
 </ul>
@@ -179,6 +189,17 @@
     </span>
    </code>
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pctasks-core-storage">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pctasks.core.storage
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -204,16 +225,26 @@
 <section id="pctasks-core">
 <h2><code class="docutils literal notranslate"><span class="pre">pctasks.core</span></code><a class="headerlink" href="#pctasks-core" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">pctasks.core</span></code> package provides core functionality used by the rest of <code class="docutils literal notranslate"><span class="pre">pctasks</span></code>.</p>
+<section id="pctasks-core-storage">
+<h3><code class="docutils literal notranslate"><span class="pre">pctasks.core.storage</span></code><a class="headerlink" href="#pctasks-core-storage" title="Permalink to this heading">#</a></h3>
+<p>Helper functions and classes for dealing with local or remote file systems.</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/pctasks.core.models.base.PCBaseModel.html#pctasks.core.models.base.PCBaseModel" title="pctasks.core.models.base.PCBaseModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pctasks.core.models.base.PCBaseModel</span></code></a>()</p></td>
-<td><p>Base model that uses different defaults for serialization.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pctasks.core.storage.Storage.html#pctasks.core.storage.Storage" title="pctasks.core.storage.Storage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pctasks.core.storage.Storage</span></code></a>()</p></td>
+<td><p>Abstraction over storage.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/pctasks.core.models.task.TaskConfig.html#pctasks.core.models.task.TaskConfig" title="pctasks.core.models.task.TaskConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pctasks.core.models.task.TaskConfig</span></code></a>(*, id[, ...])</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pctasks.core.storage.StorageFactory.html#pctasks.core.storage.StorageFactory" title="pctasks.core.storage.StorageFactory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pctasks.core.storage.StorageFactory</span></code></a>([...])</p></td>
+<td><p>Factory that produces Storage objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pctasks.core.storage.blob.BlobUri.html#pctasks.core.storage.blob.BlobUri" title="pctasks.core.storage.blob.BlobUri"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pctasks.core.storage.blob.BlobUri</span></code></a>(uri)</p></td>
+<td><p>Represents a blob uri Azure Blob Storage.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pctasks.core.storage.blob.BlobStorage.html#pctasks.core.storage.blob.BlobStorage" title="pctasks.core.storage.blob.BlobStorage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pctasks.core.storage.blob.BlobStorage</span></code></a>(...[, ...])</p></td>
+<td><p>Utility class for blob storage access.</p></td>
 </tr>
 </tbody>
 </table>
+</section>
 </section>
 </section>
 
@@ -232,10 +263,10 @@
           <p class="prev-next-title">Developing</p>
       </div>
   </a>
-  <a class='right-next' id="next-link" href="generated/pctasks.core.models.base.PCBaseModel.html" title="next page">
+  <a class='right-next' id="next-link" href="generated/pctasks.core.storage.Storage.html" title="next page">
   <div class="prev-next-info">
       <p class="prev-next-subtitle">next</p>
-      <p class="prev-next-title">pctasks.core.models.base.PCBaseModel</p>
+      <p class="prev-next-title">pctasks.core.storage.Storage</p>
   </div>
   <i class="fas fa-angle-right"></i>
   </a>
