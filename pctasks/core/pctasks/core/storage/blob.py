@@ -67,12 +67,12 @@ class BlobUri:
     many blobs, or only a storage account and container.
 
     The URIs are structured like this:
-        blob://{storage_account_name}/{container_name}/{prefix}/blob.txt}
+        ``blob://{storage_account_name}/{container_name}/{prefix}/blob.txt}``
 
     Attributes:
-        storage_account_name: The name of the storage account for this path.
-        container_name: The name of the container for this path
-        blob_name: the blob name or prefix, if exists. If not, None.
+        * storage_account_name: The name of the storage account for this path.
+        * container_name: The name of the container for this path
+        * blob_name: the blob name or prefix, if exists. If not, None.
     """
 
     def __init__(self, uri: str) -> None:
@@ -149,17 +149,17 @@ class BlobStorage(Storage):
     will open the blob at 'blob://somesa/some-container/some/folder/file.txt'.
 
     Args:
-        storage_account_name: The storage account name,
+        * storage_account_name: The storage account name,
             e.g. 'modissa'
-        container_name: The container name to access.
-        prefix: Optional prefix to base all paths off of.
-        sas_token: Optional  SAS token.
+        * container_name: The container name to access.
+        * prefix: Optional prefix to base all paths off of.
+        * sas_token: Optional  SAS token.
             If not supplied, uses DefaultAzureCredentials, in which you
             need to make sure the environment variables
             AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and
             AZURE_TENANT_ID are set.
-        account_url: Optional account URL. If not supplied, uses
-            the defualt Azure blob URL for a storage account.
+        * account_url: Optional account URL. If not supplied, uses
+            the default Azure blob URL for a storage account.
 
     Note:
 
@@ -609,6 +609,16 @@ class BlobStorage(Storage):
         return cls.from_uri(
             blob_uri=blob_uri, sas_token=sas_token, account_url=account_url
         )
+
+    @property
+    def fsspec_storage_options(self) -> Dict[str, str]:
+        return {"account_name": self.storage_account_name}
+
+    def fsspec_path(self, path: str) -> str:
+        """
+        Return the fsspec-style path.
+        """
+        return f"abfs://{self.container_name}/{path}"
 
     @classmethod
     def from_connection_string(

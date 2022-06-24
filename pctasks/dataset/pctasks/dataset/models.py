@@ -60,6 +60,12 @@ class ChunkOptions(PCBaseModel):
     limit: Optional[int] = None
     """Limit the number of URIs to process. """
 
+    max_depth: Optional[int] = None
+    """Maximum number of directories to descend into."""
+
+    list_folders: Optional[bool] = False
+    """Whether to list files (the default) or folders instead of files."""
+
     chunk_file_name: str = "uris-list"
     """Chunk file name."""
 

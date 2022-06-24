@@ -26,12 +26,13 @@ class Storage(ABC):
     may be a directory, a storage account and container, a
     storage account, container, and a prefix, etc.
 
-    Some termnonology Storage uses:
-      path - A path relative to the storage base
-      url - The http(s) URL for a path (to be renamed to href)
-      uri - A resource ID that can use non-http schemes;
-        e.g. a etlcommon.storage.blob.BlobUri like
-        "blob://storage_account/container/prefix/blob.txt"
+    Some terminology Storage uses:
+
+      * path: A path relative to the storage base
+      * url: The http(s) URL for a path (to be renamed to href)
+      * uri: A resource ID that can use non-http schemes;
+        e.g. a :class:`pctasks.core.storage.blob.BlobUri` like
+        ``"blob://storage_account/container/prefix/blob.txt"``
 
     """
 
@@ -311,3 +312,16 @@ class Storage(ABC):
         """
         path = self.get_path_from_url(href)
         return self.get_authenticated_url(path)
+
+    @property
+    def fsspec_storage_options(self) -> Dict[str, str]:
+        """
+        Return the fsspec storage options for this storage.
+        """
+        return {}
+
+    def fsspec_path(self, path: str) -> str:
+        """
+        Return the fsspec-style URL.
+        """
+        raise NotImplementedError

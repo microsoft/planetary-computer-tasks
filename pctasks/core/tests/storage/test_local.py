@@ -29,3 +29,9 @@ def test_list_files():
     b_storage = LocalStorage(HERE / ".." / "data-files" / "simple-assets" / "b")
     result = b_storage.list_files()
     assert set(result) == set(["asset-b-1.json", "asset-b-2.json"])
+
+
+def test_fsspec_components():
+    storage = LocalStorage(HERE / ".." / "data-files" / "simple-assets")
+    assert storage.fsspec_storage_options == {}
+    assert storage.fsspec_path("foo/bar.csv") == "file://foo/bar.csv"

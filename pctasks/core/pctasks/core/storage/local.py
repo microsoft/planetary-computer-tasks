@@ -213,3 +213,6 @@ class LocalStorage(Storage):
 
     def __repr__(self) -> str:
         return f"LocalStorage({self.base_dir})"
+
+    def fsspec_path(self, path: str) -> str:
+        return f"file://{path}"

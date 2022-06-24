@@ -58,12 +58,16 @@ Run
 
 to test. You can also run `scripts/format` to format code. Use `--help` to see options on any script.
 
+### Kubernetes config
+
+You can export a kubeconfig for `kubectl`
+
+```
+> kind export kubeconfig --name kind-pctasks
+```
+
 ## Argo UI
 
-You can view the argo UI by running
-
-```
-> kubectl -n argo port-forward deployment/argo-server 2746:2746
-```
-
-and visiting https://localhost:2746
+Once the kind cluster is up, you can view the Argo UI by visiting http://localhost:8500/argo.
+You'll need to use your ARGO_TOKEN to log in, which you can
+find using `scripts/cluster argo-token`
