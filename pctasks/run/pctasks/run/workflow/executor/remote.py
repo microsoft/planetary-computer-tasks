@@ -22,11 +22,11 @@ from pctasks.core.utils import grouped, map_opt
 from pctasks.run.constants import TASKS_TEMPLATE_PATH
 from pctasks.run.dag import sort_jobs
 from pctasks.run.models import (
-    FailedSubmitResult,
+    FailedTaskSubmitResult,
     JobRunRecordUpdate,
     JobSubmitMessage,
     PreparedTaskSubmitMessage,
-    SuccessfulSubmitResult,
+    SuccessfulTaskSubmitResult,
     TaskRunRecordUpdate,
     WorkflowRunRecordUpdate,
 )
@@ -38,7 +38,7 @@ from pctasks.run.template import (
     template_job_with_item,
     template_notification,
 )
-from pctasks.run.workflow.models import (
+from pctasks.run.workflow.executor.models import (
     JobState,
     JobStateStatus,
     TaskState,
@@ -56,8 +56,8 @@ class WorkflowFailedError(Exception):
     pass
 
 
-class RemoteWorkflowRunner:
-    """Runs a workflow through executing tasks remotely via a task executor."""
+class RemoteWorkflowExecutor:
+    """Executes a workflow through submitting tasks remotely via a task runner."""
 
     def __init__(self, settings: Optional[RunSettings] = None) -> None:
         self.settings = settings or RunSettings.get()
@@ -101,11 +101,11 @@ class RemoteWorkflowRunner:
     def update_submitted_task_state(
         self,
         task_state: TaskState,
-        submit_result: Union[SuccessfulSubmitResult, FailedSubmitResult],
+        submit_result: Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult],
     ) -> None:
         task_state.set_submitted(submit_result)
 
-        if isinstance(submit_result, FailedSubmitResult):
+        if isinstance(submit_result, FailedTaskSubmitResult):
             self.record_updater.update_record(
                 TaskRunRecordUpdate(
                     run_id=task_state.prepared_task.task_submit_message.run_id,
@@ -421,11 +421,10 @@ class RemoteWorkflowRunner:
 
         return [job_state.task_outputs for job_state in job_states]
 
-    def run_workflow(
+    def execute_workflow(
         self,
         submit_message: WorkflowSubmitMessage,
     ) -> Dict[str, Any]:
-        """Runs a workflow through executing tasks in Azure Batch."""
 
         workflow = submit_message.get_workflow_with_templated_args()
         run_record_id = submit_message.get_run_record_id()
@@ -441,8 +440,6 @@ class RemoteWorkflowRunner:
         logger.info(f"Workflow: {submit_message.workflow.name}")
         logger.info(f"Run Id: {run_id}")
         logger.info("***********************************")
-
-        # TODO: Reminder: Create RECEIVED/SUBMITTED Workflow record in Azure Function
 
         self.record_updater.upsert_record(
             record=WorkflowRunRecord(
@@ -542,7 +539,7 @@ class RemoteWorkflowRunner:
             for job_state, submit_result in zip(job_states, submit_results):
                 assert job_state.current_task
                 self.update_submitted_task_state(job_state.current_task, submit_result)
-                if isinstance(submit_result, FailedSubmitResult):
+                if isinstance(submit_result, FailedTaskSubmitResult):
                     logger.error(f"Failed to submit task: {submit_result.errors}")
                     submit_failed = True
 

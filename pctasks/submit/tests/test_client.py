@@ -1,7 +1,5 @@
-import json
 import os
 import pathlib
-from typing import Any, List
 
 import pytest
 
@@ -14,9 +12,8 @@ from pctasks.core.models.workflow import (
     WorkflowSubmitMessage,
 )
 from pctasks.core.storage.blob import BlobStorage
-from pctasks.core.yaml import model_from_yaml
 from pctasks.dev.blob import AZURITE_ACCOUNT_KEY, AZURITE_HOST_ENV_VAR
-from pctasks.dev.queues import TempQueue
+from pctasks.dev.test_utils import assert_workflow_is_successful
 from pctasks.submit.client import SubmitClient
 from pctasks.submit.settings import SubmitSettings
 
@@ -29,17 +26,10 @@ def code_container():
     hostname = os.getenv(AZURITE_HOST_ENV_VAR, "localhost")
     account_url = f"http://{hostname}:10000/devstoreaccount1"
     yield account_url
-    # storage = BlobStorage.from_account_key(
-    #     "blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, account_url
-    # )
 
 
-def test_client_submit(code_container):
-    test_queue = TempQueue()
-    settings = SubmitSettings(
-        connection_string=test_queue.queue_config.connection_string,
-        queue_name=test_queue.queue_config.queue_name,
-    )
+def test_client_submit(code_container: str):
+    settings = SubmitSettings.get()
 
     code = HERE.joinpath("data-files", "mycode.py").absolute()
     workflow = WorkflowConfig(
@@ -53,7 +43,7 @@ def test_client_submit(code_container):
                         image="pctasks-ingest:latest",
                         code=str(code),
                         task="mycode:MyMockTask",
-                        args={"hello": "world"},
+                        args={"result_path": "/dev/null"},
                     )
                 ],
             )
@@ -64,79 +54,18 @@ def test_client_submit(code_container):
         workflow=workflow,
     )
 
-    with test_queue as read_queue:
-        with SubmitClient(settings) as client:
-            submitted_message = client.submit_workflow(submit_message)
+    client = SubmitClient(settings)
+    submitted_message = client.submit_workflow(submit_message)
 
-        messages: List[Any] = list(read_queue.receive_messages())
+    assert_workflow_is_successful(submit_message.run_id)
 
-        assert len(messages) == 1
-        message = messages[0]
+    task = submitted_message.workflow.jobs["test-job"].tasks[0]
+    assert task.code
+    assert task.code.startswith("blob://devstoreaccount1/code/")
+    assert task.code.endswith("/mycode.py")
 
-        body = json.loads(message.content)
-        actual_submit_msg = WorkflowSubmitMessage(**body)
-        assert submitted_message == actual_submit_msg
-
-        task = submitted_message.workflow.jobs["test-job"].tasks[0]
-        assert task.code.startswith("blob://devstoreaccount1/code/")
-        assert task.code.endswith("/mycode.py")
-
-        storage = BlobStorage.from_account_key(
-            "blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, code_container
-        )
-        path = storage.get_path(task.code)
-        assert storage.file_exists(path)
-
-
-def test_sets_image_from_configured_key():
-    test_queue = TempQueue()
-    yaml = f"""
-submit:
-    connection_string: {test_queue.queue_config.connection_string}
-    queue_name: {test_queue.queue_config.queue_name}
-    image_keys:
-        ingest-staging:
-            image: pctasks-ingest:latest
-        ingest-prod:
-            image: pctasks-ingest:v1
-"""
-
-    settings = model_from_yaml(
-        SubmitSettings, yaml, section=SubmitSettings.section_name()
+    storage = BlobStorage.from_account_key(
+        "blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, code_container
     )
-
-    workflow = WorkflowConfig.from_yaml(
-        """
-    name: A workflow*  *with* *asterisks
-    dataset:
-        owner: microsoft
-        name: test-dataset
-
-    jobs:
-        test-job:
-            tasks:
-              - id: test-task
-                image_key: ingest-prod
-                task: tests.test_submit.MockTask
-                args:
-                    hello: world
-"""
-    )
-
-    assert workflow
-
-    with test_queue as read_queue:
-        with SubmitClient(settings) as client:
-            client.submit_workflow(WorkflowSubmitMessage(workflow=workflow))
-
-        messages: List[Any] = list(read_queue.receive_messages())
-
-    assert len(messages) == 1
-    message = messages[0]
-
-    body = json.loads(message.content)
-    actual_submit_msg = WorkflowSubmitMessage(**body)
-    assert (
-        actual_submit_msg.workflow.jobs["test-job"].tasks[0].image
-        == "pctasks-ingest:v1"
-    )
+    path = storage.get_path(task.code)
+    assert storage.file_exists(path)

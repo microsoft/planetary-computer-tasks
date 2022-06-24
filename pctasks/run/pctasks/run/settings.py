@@ -36,6 +36,11 @@ class TaskRunnerType(str, Enum):
     LOCAL = "local"
 
 
+class WorkflowRunnerType(str, Enum):
+    ARGO = "argo"
+    LOCAL = "local"
+
+
 class BatchSettings(PCBaseModel):
     url: str
     key: str
@@ -98,6 +103,7 @@ class RunSettings(PCTasksSettings):
     argo_host: Optional[str] = None
     argo_token: Optional[str] = None
     argo_namespace: str = "argo"
+    workflow_runner_image: Optional[str] = None
 
     # KeyVault
     keyvault_url: Optional[str] = None
@@ -107,6 +113,9 @@ class RunSettings(PCTasksSettings):
 
     # Type of task runner to use.
     task_runner_type: TaskRunnerType = TaskRunnerType.BATCH
+
+    # Type of workflow runner to use.
+    workflow_runner_type: WorkflowRunnerType = WorkflowRunnerType.ARGO
 
     @property
     def batch_settings(self) -> BatchSettings:
@@ -179,6 +188,26 @@ class RunSettings(PCTasksSettings):
 
         return v
 
+    @validator("workflow_runner_type", always=True)
+    def _workflow_runner_type_validator(
+        cls, v: WorkflowRunnerType, values: Dict[str, Any]
+    ) -> WorkflowRunnerType:
+        if v == WorkflowRunnerType.ARGO:
+            if values.get("argo_host") is None:
+                raise ValueError(
+                    "Must specify argo_host for argo workflow runner type."
+                )
+            if values.get("argo_token") is None:
+                raise ValueError(
+                    "Must specify argo_token for argo workflow runner type."
+                )
+            if values.get("argo_workflow_runner_image") is None:
+                raise ValueError(
+                    "Must specify argo_workflow_runner_image "
+                    "for argo workflow runner type."
+                )
+        return v
+
     # Don't cache tables; executor is not thread-safe
 
     def get_image_key_table(self) -> ImageKeyEntryTable:
@@ -239,6 +268,13 @@ class RunSettings(PCTasksSettings):
     def get_log_storage(self) -> BlobStorage:
         return BlobStorage.from_account_key(
             f"blob://{self.blob_account_name}/{self.log_blob_container}",
+            account_key=self.blob_account_key,
+            account_url=self.blob_account_url,
+        )
+
+    def get_code_storage(self) -> BlobStorage:
+        return BlobStorage.from_account_key(
+            f"blob://{self.blob_account_name}/{self.code_blob_container}",
             account_key=self.blob_account_key,
             account_url=self.blob_account_url,
         )

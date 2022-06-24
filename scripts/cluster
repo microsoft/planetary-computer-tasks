@@ -16,9 +16,8 @@ function usage() {
 Script for managing dev cluster
 
 Subcommands:
-    create
-        Create the dev cluster if it doesn't exist,
-        and install Argo.
+    setup
+        Create and set up the dev cluster
     update
         Updates helm charts on the dev cluster
     argo-token
@@ -30,13 +29,13 @@ Subcommands:
 
 source scripts/env
 
-CREATE=""
+SETUP=""
 UPDATE=""
 GET_ARGO_TOKEN=""
 RECREATE_=""
 while [[ $# -gt 0 ]]; do case $1 in
-    create)
-        CREATE="--create"
+    setup)
+        SETUP="--setup"
         shift
         ;;
     update)
@@ -156,11 +155,12 @@ function update_cluster() {
 }
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
-    if [ "${CREATE}" ]; then
-        create_cluster
+    if [ "${SETUP}" ]; then
+        create_cluster;
+        update_registry;
+        update_cluster;
     fi
 
-    # Build deployment image
     if [ "${UPDATE}" ]; then
         update_registry;
         update_cluster;

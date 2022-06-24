@@ -23,10 +23,6 @@ Options:
         Run tests only for Azure Functions.
     --test-only
         Only run tests, don't lint
-    --no-integration
-        Skip running integration tests
-    --integration-only
-        Only run integration tests
     --lint-only
         Only run linting
     --no-init
@@ -42,8 +38,6 @@ SUBPACKAGE=""
 FUNCTIONS=""
 TEST_ONLY=""
 LINT_ONLY=""
-NO_INTEGRATION=""
-INTEGRATION_ONLY=""
 INIT_MYPY="--install-types --non-interactive"
 while [[ $# -gt 0 ]]; do case $1 in
     --subpackage)
@@ -63,14 +57,6 @@ while [[ $# -gt 0 ]]; do case $1 in
         LINT_ONLY="1"
         shift
         ;;
-    --no-integration)
-        NO_INTEGRATION="1"
-        shift
-        ;;
-    --integration-only)
-        INTEGRATION_ONLY="1"
-        shift
-        ;;
     --no-init)
         INIT_MYPY=""
         shift
@@ -88,7 +74,7 @@ while [[ $# -gt 0 ]]; do case $1 in
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
-    if [ -z "${FUNCTIONS}${INTEGRATION_ONLY}" ]; then
+    if [ -z "${FUNCTIONS}" ]; then
         PACKAGES=("${PACKAGE_DIRS[@]}")
         if [ "${SUBPACKAGE}" ]; then
             PACKAGES=("pctasks/${SUBPACKAGE}")
@@ -128,7 +114,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         done
     fi
 
-    if [ -z "${TEST_ONLY}${SUBPACKAGE}${INTEGRATION_ONLY}" ]; then
+    if [ -z "${TEST_ONLY}${SUBPACKAGE}" ]; then
         echo " === Running function linting... ==="
 
         for FUNC in "${FUNCTION_DIRS[@]}"; do
@@ -143,30 +129,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
             echo "Running flake8..."
             flake8 ${FUNC}
-        done
-    fi
-
-    if [ -z "${FUNCTIONS}${NO_INTEGRATION}${SUBPACKAGE}" ]; then
-        echo " == Running integration tests... == "
-
-        for TEST in "${INTEGRATION_TESTS[@]}"; do
-
-            if [ -z "${TEST_ONLY}" ]; then
-
-                echo "Running black..."
-                black --check ${TEST}
-
-                echo "Running isort..."
-                isort --check ${TEST}
-
-                echo "Running flake8..."
-                flake8 ${TEST}
-            fi
-
-            if [ -z "${LINT_ONLY}" ]; then
-                echo "Running tests..."
-                pytest ${TEST}
-            fi
         done
     fi
 fi

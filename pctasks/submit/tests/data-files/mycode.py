@@ -1,4 +1,4 @@
-from pctasks.task.tests.test_cli import MockTask
+from pctasks.dev.mocks import MockTask
 
 
 class MyMockTask(MockTask):

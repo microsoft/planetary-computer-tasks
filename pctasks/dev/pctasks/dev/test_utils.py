@@ -244,11 +244,10 @@ def run_workflow(
     )
     templated_workflow = template_workflow_dict(workflow.dict(), base_path=base_path)
     submit_settings = SubmitSettings.get()
-    with SubmitClient(submit_settings) as submit_client:
-        submit_message = submit_client.submit_workflow(
-            WorkflowSubmitMessage(workflow=templated_workflow, args=args)
-        )
-        return submit_message.run_id
+    submit_message = SubmitClient(submit_settings).submit_workflow(
+        WorkflowSubmitMessage(workflow=templated_workflow, args=args)
+    )
+    return submit_message.run_id
 
 
 def run_workflow_from_file(

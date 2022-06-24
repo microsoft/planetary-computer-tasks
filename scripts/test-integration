@@ -14,19 +14,14 @@ function usage() {
     fi
     echo -n \
         "Usage: $(basename "$0") [OPTIONS]
-Runs tests.
+Runs integration tests. Requires a development cluster
+(run scripts/cluster setup).
 
 Options:
-    --subpackage <subpackage>
-        Run tests only for a subpackage.
-    --functions
-        Run tests only for Azure Functions.
     --test-only
         Only run tests, don't lint
     --lint-only
         Only run linting
-    --no-init
-        Don't initialize mypy, which is for installing stubs, but takes extra time if already run.
     --help
         Show this help
 
@@ -34,31 +29,15 @@ Options:
 }
 
 # Parse args
-SUBPACKAGE=""
-FUNCTIONS=""
 TEST_ONLY=""
 LINT_ONLY=""
-NO_INIT=""
 while [[ $# -gt 0 ]]; do case $1 in
-    --subpackage)
-        SUBPACKAGE="--subpackage ${2}"
-        shift
-        shift
-        ;;
-    --functions)
-        FUNCTIONS="--functions"
-        shift
-        ;;
     --test-only)
         TEST_ONLY="--test-only"
         shift
         ;;
     --lint-only)
         LINT_ONLY="--lint-only"
-        shift
-        ;;
-    --no-init)
-        NO_INIT="--no-init"
         shift
         ;;
     --help)
@@ -83,7 +62,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     docker-compose \
         -f docker-compose.console.yml \
         run --rm \
-        dev \
-        scripts/bin/test ${SUBPACKAGE} ${FUNCTIONS} ${TEST_ONLY} ${LINT_ONLY} ${NO_INIT}
+        integration-tests \
+        scripts/bin/test-integration ${TEST_ONLY} ${LINT_ONLY}
 
 fi

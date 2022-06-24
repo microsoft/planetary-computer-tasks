@@ -1,75 +1,79 @@
+import io
 import logging
+import os
+import pathlib
+import zipfile
 from time import perf_counter
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict
 
-from azure.identity import DefaultAzureCredential
-from azure.storage.queue import (
-    BinaryBase64DecodePolicy,
-    BinaryBase64EncodePolicy,
-    QueueClient,
-    QueueServiceClient,
-)
+import requests
 
-from pctasks.core.models.event import NotificationSubmitMessage
-from pctasks.core.models.operation import OperationSubmitMessage
+from pctasks.core.models.api import UploadCodeResult
 from pctasks.core.models.task import TaskConfig
-from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
+from pctasks.core.models.workflow import (
+    WorkflowConfig,
+    WorkflowSubmitMessage,
+    WorkflowSubmitResult,
+)
 from pctasks.submit.settings import SubmitSettings
 
 logger = logging.getLogger(__name__)
 
 
-def _get_queue_client(
-    settings: SubmitSettings,
-) -> Tuple[QueueServiceClient, QueueClient]:
-    service_client: QueueServiceClient
-
-    queue_name = settings.queue_name
-    if settings.connection_string:
-        service_client = QueueServiceClient.from_connection_string(
-            settings.connection_string
-        )
-    else:
-        account_url = settings.get_submit_queue_url()
-        credential: Optional[str] = settings.account_key or settings.sas_token
-        service_client = QueueServiceClient(
-            account_url,
-            credential=credential or DefaultAzureCredential(),
-        )
-
-    return (
-        service_client,
-        service_client.get_queue_client(
-            queue_name,
-            message_encode_policy=BinaryBase64EncodePolicy(),
-            message_decode_policy=BinaryBase64DecodePolicy(),
-        ),
-    )
+RUN_WORKFLOW_ROUTE = "run"
+UPLOAD_CODE_ROUTE = "code/upload"
 
 
 class SubmitClient:
     def __init__(self, settings: SubmitSettings) -> None:
         self.settings = settings
-        self.service_client: Optional[QueueServiceClient] = None
-        self.queue_client: Optional[QueueClient] = None
 
-    def __enter__(self) -> "SubmitClient":
-        self.service_client, self.queue_client = _get_queue_client(self.settings)
+    def _call_api(self, method: str, path: str, **kwargs: Any) -> Dict[str, Any]:
+        """
+        Call the PCTasks API.
+        """
+        resp = requests.request(
+            method,
+            os.path.join(self.settings.endpoint, path),
+            headers={"PC-API-KEY": self.settings.api_key},
+            **kwargs,
+        )
+        resp.raise_for_status()
+        return resp.json()
 
-        return self
+    def _upload_code(self, local_path: str) -> UploadCodeResult:
+        """Upload a file to Azure Blob Storage.
 
-    def get_queue_name(self) -> str:
-        if not self.service_client:
-            raise RuntimeError("SubmitClient is not opened. Use as a context manager.")
-        return f"{self.service_client.account_name}/{self.settings.queue_name}"
+        Returns the blob URI.
+        """
+        path = pathlib.Path(local_path)
 
-    def __exit__(self, *args: Any) -> None:
-        if self.queue_client:
-            self.queue_client.close()
-            self.queue_client = None
-        if self.service_client:
-            self.service_client.close()
-            self.service_client = None
+        if not path.exists():
+            raise OSError(f"Path {path} does not exist.")
+
+        if path.is_file():
+            file_obj = path.open("rb")
+            name = path.name
+
+        else:
+            file_obj = io.BytesIO()
+            with zipfile.PyZipFile(file_obj, "w") as zf:
+                zf.writepy(str(path))
+
+            name = path.with_suffix(".zip").name
+
+        try:
+            resp = self._call_api(
+                "POST", UPLOAD_CODE_ROUTE, files={"file": (name, file_obj)}
+            )
+        finally:
+            file_obj.close()
+
+        return UploadCodeResult(**resp)
+
+    def _submit_workflow(self, message: WorkflowSubmitMessage) -> WorkflowSubmitResult:
+        resp = self._call_api("POST", RUN_WORKFLOW_ROUTE, data=message.json())
+        return WorkflowSubmitResult(**resp)
 
     def _transform_task_config(self, task_config: TaskConfig) -> None:
         # Replace image keys with configured images.
@@ -100,8 +104,8 @@ class SubmitClient:
                     # already uploaded from a previous task
                     task_config.code = local_path_to_blob[task_config.code]
                 elif task_config.code:
-                    storage = self.settings.get_storage("code")
-                    blob_uri = storage.upload_code(task_config.code)
+                    result = self._upload_code(task_config.code)
+                    blob_uri = result.uri
                     logger.debug("Uploaded %s to %s", task_config.code, blob_uri)
                     local_path_to_blob[blob_uri] = task_config.code = blob_uri
 
@@ -112,8 +116,6 @@ class SubmitClient:
         a ``run_id`` set.
         """
         message = message.copy(deep=True)
-        if not self.queue_client:
-            raise RuntimeError("SubmitClient is not opened. Use as a context manager.")
 
         for job in message.workflow.jobs.values():
             for task in job.tasks:
@@ -130,26 +132,9 @@ class SubmitClient:
 
         logger.debug("Submitting workflow...")
         start = perf_counter()
-        _ = self.queue_client.send_message(message.json(exclude_none=True).encode())
+        result = self._submit_workflow(message)
         end = perf_counter()
         logger.debug(f"Submit took {end - start:.2f} seconds.")
+        logger.debug(result.json(indent=2))
+
         return message
-
-    def submit_notification(self, message: NotificationSubmitMessage) -> str:
-        """Submits a NotificationMessage for processing.
-
-        Returns the run ID associated with this submission, which
-        was either set on the message or from the Queue submission.
-        """
-        if not self.queue_client:
-            raise RuntimeError("SubmitClient is not opened. Use as a context manager.")
-
-        logger.debug("Submitting notification...")
-        start = perf_counter()
-        _ = self.queue_client.send_message(message.json(exclude_none=True).encode())
-        end = perf_counter()
-        logger.debug(f"Submit took {end - start:.2f} seconds.")
-        return str(message.processing_id.run_id)
-
-    def submit_operation(self, message: OperationSubmitMessage) -> str:
-        ...

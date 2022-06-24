@@ -127,14 +127,14 @@ def ingest_ndjson_cmd(
         cli_output(submit_message.to_yaml())
     else:
         settings = SubmitSettings.get(context.profile, context.settings_file)
-        with SubmitClient(settings) as client:
-            cli_print(
-                click.style(
-                    f"  Submitting to {client.get_queue_name()}...",
-                    fg="green",
-                )
+        client = SubmitClient(settings)
+        cli_print(
+            click.style(
+                f"  Submitting workflow to {settings.endpoint}...",
+                fg="green",
             )
-            cli_output(client.submit_workflow(submit_message).run_id)
+        )
+        cli_output(client.submit_workflow(submit_message).run_id)
 
 
 @click.command("collection")
@@ -191,14 +191,14 @@ def ingest_collection_cmd(
         cli_output(submit_message.to_yaml())
     else:
         settings = SubmitSettings.get(context.profile, context.settings_file)
-        with SubmitClient(settings) as client:
-            cli_print(
-                click.style(
-                    f"Submitting to {client.get_queue_name()}...",
-                    fg="green",
-                )
+        client = SubmitClient(settings)
+        cli_print(
+            click.style(
+                f"Submitting workflow to {settings.endpoint}...",
+                fg="green",
             )
-            cli_output(client.submit_workflow(submit_message).run_id)
+        )
+        cli_output(client.submit_workflow(submit_message).run_id)
 
 
 @click.group("ingest")

@@ -26,18 +26,20 @@ from pctasks.task.task import Task
 logger = logging.getLogger(__name__)
 
 
-class SimpleWorkflowRunner:
+class SimpleWorkflowExecutor:
+    """Executes a workflow by running all tasks locally and sequentially."""
+
     def run_task(
         self,
         task_config: TaskConfig,
         context: TaskContext,
         output_uri: Optional[str] = None,
     ) -> TaskResult:
-        """Runs a task in a local setting, without communicating with the executor.
+        """Runs a task in a local setting, without communicating with a task runner.
 
         Useful for running tasks locally without going through the submit process.
         """
-        logger.info(" === PCTasks (local) ===")
+        logger.info(" === PCTasks (simple workflow runner) ===")
 
         logger.debug(task_config.to_yaml())
 

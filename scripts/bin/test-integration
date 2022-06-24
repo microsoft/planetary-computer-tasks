@@ -14,7 +14,7 @@ function usage() {
     fi
     echo -n \
         "Usage: $(basename "$0") [OPTIONS]
-Runs tests.
+Runs integration tests. Meant to be run in the integration-tests container.
 
 Options:
     --subpackage <subpackage>
@@ -23,6 +23,10 @@ Options:
         Run tests only for Azure Functions.
     --test-only
         Only run tests, don't lint
+    --no-integration
+        Skip running integration tests
+    --integration-only
+        Only run integration tests
     --lint-only
         Only run linting
     --no-init
@@ -34,31 +38,15 @@ Options:
 }
 
 # Parse args
-SUBPACKAGE=""
-FUNCTIONS=""
 TEST_ONLY=""
 LINT_ONLY=""
-NO_INIT=""
 while [[ $# -gt 0 ]]; do case $1 in
-    --subpackage)
-        SUBPACKAGE="--subpackage ${2}"
-        shift
-        shift
-        ;;
-    --functions)
-        FUNCTIONS="--functions"
-        shift
-        ;;
     --test-only)
-        TEST_ONLY="--test-only"
+        TEST_ONLY="1"
         shift
         ;;
     --lint-only)
-        LINT_ONLY="--lint-only"
-        shift
-        ;;
-    --no-init)
-        NO_INIT="--no-init"
+        LINT_ONLY="1"
         shift
         ;;
     --help)
@@ -72,18 +60,28 @@ while [[ $# -gt 0 ]]; do case $1 in
         ;;
     esac done
 
-# Don't run in tty if CI
-TERM=(-it)
-if [[ "${CI}" ]]; then
-    TERM=()
-fi
-
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
-    docker-compose \
-        -f docker-compose.console.yml \
-        run --rm \
-        dev \
-        scripts/bin/test ${SUBPACKAGE} ${FUNCTIONS} ${TEST_ONLY} ${LINT_ONLY} ${NO_INIT}
+    echo " == Running integration tests... == "
 
+    for TEST in "${INTEGRATION_TESTS[@]}"; do
+
+        if [ -z "${TEST_ONLY}" ]; then
+
+            echo "Running black..."
+            black --check ${TEST}
+
+            echo "Running isort..."
+            isort --check ${TEST}
+
+            echo "Running flake8..."
+            flake8 ${TEST}
+        fi
+
+        if [ -z "${LINT_ONLY}" ]; then
+            echo "Running tests..."
+            pytest ${TEST}
+        fi
+    done
 fi
+

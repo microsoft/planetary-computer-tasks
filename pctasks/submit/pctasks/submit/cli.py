@@ -5,7 +5,6 @@ import click
 from pctasks.core.cli import PCTasksCommandContext, get_plugin_subcommands
 from pctasks.core.models.workflow import WorkflowSubmitMessage
 from pctasks.submit.client import SubmitClient
-from pctasks.submit.dataset import dataset_cmd
 from pctasks.submit.settings import SubmitSettings
 from pctasks.submit.template import template_workflow_file
 
@@ -28,8 +27,8 @@ def file_cmd(ctx: click.Context, workflow_path: str) -> None:
     workflow = template_workflow_file(workflow_path)
 
     msg = WorkflowSubmitMessage(workflow=workflow)
-    with SubmitClient(settings) as submit_client:
-        submit_client.submit_workflow(msg)
+    submit_client = SubmitClient(settings)
+    submit_client.submit_workflow(msg)
 
     with open("test_workflow_argo.json", "w") as f:
         f.write(msg.json(indent=2))
@@ -48,7 +47,6 @@ def submit_cmd(ctx: click.Context) -> None:
 
 
 submit_cmd.add_command(file_cmd)
-submit_cmd.add_command(dataset_cmd)
 
 for subcommand in get_plugin_subcommands(
     click.Command, PCTASKS_SUBMIT_ENTRY_POINT_GROUP

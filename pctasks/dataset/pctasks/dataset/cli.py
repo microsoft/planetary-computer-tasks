@@ -82,11 +82,9 @@ def create_chunks_cmd(
     else:
         submit_message = WorkflowSubmitMessage(workflow=workflow)
         settings = SubmitSettings.get(context.profile, context.settings_file)
-        with SubmitClient(settings) as client:
-            cli_print(
-                click.style(f"  Submitting {submit_message.run_id}...", fg="green")
-            )
-            client.submit_workflow(submit_message)
+        client = SubmitClient(settings)
+        cli_print(click.style(f"  Submitting {submit_message.run_id}...", fg="green"))
+        client.submit_workflow(submit_message)
 
 
 @click.command("process-items")
@@ -165,11 +163,9 @@ def process_items_cmd(
     else:
         submit_message = WorkflowSubmitMessage(workflow=workflow)
         settings = SubmitSettings.get(context.profile, context.settings_file)
-        with SubmitClient(settings) as client:
-            cli_print(
-                click.style(f"  Submitting {submit_message.run_id}...", fg="green")
-            )
-            client.submit_workflow(submit_message)
+        client = SubmitClient(settings)
+        cli_print(click.style(f"  Submitting {submit_message.run_id}...", fg="green"))
+        client.submit_workflow(submit_message)
 
 
 dataset_cmd.add_command(create_chunks_cmd)

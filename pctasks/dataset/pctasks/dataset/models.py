@@ -1,7 +1,7 @@
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Set, Union
 
 from pydantic import Field, validator
 
@@ -85,11 +85,11 @@ class ChunksConfig(PCBaseModel):
     ) -> Optional[List[SplitConfig]]:
         if v is None:
             return v
-        paths = set()
+        _prefixes: Set[Optional[str]] = set()
         for split in v:
-            if split.prefix in paths:
+            if split.prefix in _prefixes:
                 raise ValueError(f"Duplicate split prefix: {split.prefix}")
-            paths.add(split.prefix)
+            _prefixes.add(split.prefix)
         return v
 
 

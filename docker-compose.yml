@@ -13,52 +13,55 @@ services:
     volumes:
       - pctasks-azurite-data:/workspace
 
-  functions:
-    container_name: pctasks-functions
-    image: pctasks-functions
-    build:
-      context: .
-      dockerfile: pctasks_funcs/Dockerfile
-    volumes:
-      - ./pctasks:/home/site/pctasks
-      - ./pctasks_funcs:/home/site/wwwroot
-    ports:
-      - "7071:7071" # Functions
-    environment:
-      - AzureWebJobsStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
-      - WEBSITE_HOSTNAME=functions:7071
+  # TODO: Removing the need for functions for now,
+  #       but we will use them for triggering reactive
+  #       workflows off of storage events; commenting out
+  #       but not deleting.
+  # functions:
+  #   container_name: pctasks-functions
+  #   image: pctasks-functions
+  #   build:
+  #     context: .
+  #     dockerfile: pctasks_funcs/Dockerfile
+  #   volumes:
+  #     - ./pctasks:/home/site/pctasks
+  #     - ./pctasks_funcs:/home/site/wwwroot
+  #   ports:
+  #     - "7071:7071" # Functions
+  #   environment:
+  #     - AzureWebJobsStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
+  #     - WEBSITE_HOSTNAME=functions:7071
 
-      # See .env for swithcing between docker-compose and kind cluster
-      - PCTASKS_SERVER_URL=${PCTASKS_SERVER_URL}
-      - PCTASKS_SERVER_ACCOUNT_KEY=hunter2
+  #     # See .env for swithcing between docker-compose and kind cluster
+  #     - PCTASKS_SERVER_URL=${PCTASKS_SERVER_URL}
+  #     - PCTASKS_SERVER_ACCOUNT_KEY=hunter2
 
-      # Function queue trigger bindings ##
-      - FUNC_NOTIFY_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-      - FUNC_ROUTER_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-      - FUNC_WORKFLOW_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
+  #     # Function queue trigger bindings ##
+  #     - FUNC_NOTIFY_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
+  #     - FUNC_ROUTER_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
+  #     - FUNC_WORKFLOW_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
 
-      # Router settings ##############################################################
+  #     # Router settings ##############################################################
 
-      ## Azure Storage
+  #     ## Azure Storage
 
-      ### Queues
-      - PCTASKS_ROUTER__QUEUES_CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
+  #     ### Queues
+  #     - PCTASKS_ROUTER__QUEUES_CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
 
-      ### Tables
-      - PCTASKS_ROUTER__TABLES_ACCOUNT_URL=http://azurite:10002/devstoreaccount1
-      - PCTASKS_ROUTER__TABLES_ACCOUNT_NAME=devstoreaccount1
-      - PCTASKS_ROUTER__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+  #     ### Tables
+  #     - PCTASKS_ROUTER__TABLES_ACCOUNT_URL=http://azurite:10002/devstoreaccount1
+  #     - PCTASKS_ROUTER__TABLES_ACCOUNT_NAME=devstoreaccount1
+  #     - PCTASKS_ROUTER__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
 
-      # Notifications settings #######################################################
+  #     # Notifications settings #######################################################
 
-      ## Azure Storage
+  #     ## Azure Storage
 
-      ### Tables
+  #     ### Tables
 
-      - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_URL=http://azurite:10002/devstoreaccount1
-      - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_NAME=devstoreaccount1
-      - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
-
+  #     - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_URL=http://azurite:10002/devstoreaccount1
+  #     - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_NAME=devstoreaccount1
+  #     - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
 
   database:
     container_name: pctasks-database
@@ -77,6 +80,17 @@ services:
       - pctasks-pgdata:/var/lib/postgresql/data
     command: postgres -N 500
 
+  nginx:
+    image: pctasks-nginx
+    container_name: pctasks-nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    volumes:
+      - ./nginx/etc/nginx:/etc/nginx
+    ports:
+      - 8510:80
+
   server:
     container_name: pctasks-server
     image: pctasks-server
@@ -86,11 +100,12 @@ services:
       args:
         - DEVELOPMENT=TRUE
     environment:
-      - APP_PORT=8580
+      - APP_ROOT_PATH=/tasks
+      - APP_PORT=8511
       - WEB_CONCURRENCY=1
 
-      - PCTASKS_SERVER__RUNNER_IMAGE=localhost:5001/pctasks-run:latest
-      - PCTASKS_SERVER__SERVER_ACCOUNT_KEY=hunter2
+      - PCTASKS_SERVER__DEV=true
+      - PCTASKS_SERVER__DEV_API_KEY=hunter2
 
       # Dev storage settings
       - AZURITE_HOST=azurite
@@ -104,12 +119,9 @@ services:
 
       # Dev executor settings
       - PCTASKS_RUN__TASK_RUNNER_TYPE=local
-      - PCTASKS_RUN__LOCAL_EXECUTOR_URL=http://local-executor:8000
+      - PCTASKS_RUN__LOCAL_EXECUTOR_URL=http://local-executor:8512
       - PCTASKS_RUN__LOCAL_SECRETS=true
-
-      # Argo
-      - PCTASKS_RUN__ARGO_HOST=host.docker.internal:8500/argo
-      - PCTASKS_RUN__ARGO_TOKEN=${ARGO_TOKEN}
+      - PCTASKS_RUN__WORKFLOW_RUNNER_TYPE=local
 
       ## Azure Storage
 
@@ -133,9 +145,9 @@ services:
     volumes:
       - ./pctasks:/opt/src
     ports:
-      - "8580:8580"
+      - "8511:8511"
     command: >
-      bash -c "uvicorn pctasks.server.main:app --host 0.0.0.0 --port 8580 --reload --proxy-headers"
+      bash -c "uvicorn pctasks.server.main:app --host 0.0.0.0 --port 8511 --reload --proxy-headers"
 
   local-executor:
     container_name: pctasks-local-executor
@@ -144,10 +156,11 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - "8899:8000"
+      - "8512:8512"
     volumes:
       - .:/opt/src
     environment:
+      - APP_PORT=8512
       # Dev storage settings
       - AZURITE_HOST=azurite
       - AZURITE_PORT=10000
@@ -156,9 +169,12 @@ services:
       [
         "uvicorn",
         "pctasks.dev.local_executor:app",
-        "--reload",
         "--host",
-        "0.0.0.0"
+        "0.0.0.0",
+        "--port",
+        "8512",
+        "--reload",
+        "--proxy-headers"
       ]
 
   stac-api:
@@ -169,7 +185,7 @@ services:
       dockerfile: Dockerfile.stacapi
     environment:
       - APP_HOST=0.0.0.0
-      - APP_PORT=8089
+      - APP_PORT=8513
       - RELOAD=false
       - ENVIRONMENT=local
       - POSTGRES_USER=username
@@ -183,7 +199,7 @@ services:
       - DB_MIN_CONN_SIZE=1
       - DB_MAX_CONN_SIZE=1
     ports:
-      - "8089:8089"
+      - "8513:8513"
     depends_on:
       - database
     command:

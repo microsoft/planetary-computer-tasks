@@ -70,8 +70,6 @@ def create_splits_cmd(
         cli_output(submit_message.to_yaml())
     else:
         settings = SubmitSettings.get(context.profile, context.settings_file)
-        with SubmitClient(settings) as client:
-            cli_print(
-                click.style(f"  Submitting {submit_message.run_id}...", fg="green")
-            )
-            client.submit_workflow(submit_message)
+        client = SubmitClient(settings)
+        cli_print(click.style(f"  Submitting {submit_message.run_id}...", fg="green"))
+        client.submit_workflow(submit_message)

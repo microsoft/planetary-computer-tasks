@@ -200,7 +200,7 @@ def prepare_task(
         sas_token=task_runs_table_sas_token,
     )
 
-    # Blob
+    # Handle log blob
     log_path = get_run_log_path(job_id, task_id, run_id)
     log_uri = (
         f"blob://{settings.blob_account_name}/{settings.log_blob_container}/{log_path}"
@@ -217,6 +217,8 @@ def prepare_task(
     log_blob_config = BlobConfig(
         uri=log_uri, sas_token=log_blob_sas_token, account_url=settings.blob_account_url
     )
+
+    # Handle output blob
 
     output_path = get_task_output_path(job_id, task_id, run_id)
     output_uri = (
@@ -237,6 +239,8 @@ def prepare_task(
         sas_token=output_blob_sas_token,
         account_url=settings.blob_account_url,
     )
+
+    # Handle code config
 
     code_uri = task_config.code
     if code_uri:

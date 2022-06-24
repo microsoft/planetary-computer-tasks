@@ -15,10 +15,10 @@ from pctasks.core.models.task import (
 )
 from pctasks.core.storage.base import Storage
 from pctasks.run.models import (
-    FailedSubmitResult,
+    FailedTaskSubmitResult,
     JobSubmitMessage,
     PreparedTaskSubmitMessage,
-    SuccessfulSubmitResult,
+    SuccessfulTaskSubmitResult,
     TaskSubmitMessage,
 )
 from pctasks.run.settings import RunSettings
@@ -57,7 +57,9 @@ class TaskState:
     prepared_task: PreparedTaskSubmitMessage
     """The prepared task. Remains fixed"""
     _status: TaskStateStatus = TaskStateStatus.NEW
-    _submit_result: Optional[Union[SuccessfulSubmitResult, FailedSubmitResult]] = None
+    _submit_result: Optional[
+        Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]
+    ] = None
     _task_result: Optional[TaskResult] = None
 
     status_updated: bool = False
@@ -77,7 +79,7 @@ class TaskState:
     @property
     def submit_result(
         self,
-    ) -> Optional[Union[SuccessfulSubmitResult, FailedSubmitResult]]:
+    ) -> Optional[Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]]:
         return self._submit_result
 
     @property
@@ -156,11 +158,11 @@ class TaskState:
         )
 
     def set_submitted(
-        self, submit_result: Union[SuccessfulSubmitResult, FailedSubmitResult]
+        self, submit_result: Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]
     ) -> None:
         self._submit_result = submit_result
 
-        if isinstance(submit_result, SuccessfulSubmitResult):
+        if isinstance(submit_result, SuccessfulTaskSubmitResult):
             self.change_status(TaskStateStatus.SUBMITTED)
         else:
             self.set_failed(submit_result.errors)
@@ -176,7 +178,7 @@ class TaskState:
         if not self.submit_result:
             raise Exception("Can not poll task that has not been submitted.")
 
-        if isinstance(self.submit_result, FailedSubmitResult):
+        if isinstance(self.submit_result, FailedTaskSubmitResult):
             raise Exception("Can not poll task that was failed to be submitted.")
 
         try:
