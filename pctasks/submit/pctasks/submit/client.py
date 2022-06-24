@@ -3,7 +3,6 @@ import logging
 import os
 import pathlib
 import zipfile
-from threading import local
 from time import perf_counter
 from typing import Any, Dict
 
@@ -101,23 +100,24 @@ class SubmitClient:
         """
         local_path_to_blob: Dict[str, Dict[str, str]] = {"src": {}, "requirements": {}}
 
+        def _uploaded_path(local_path: str, cache_key: str) -> str:
+            blob_uri = local_path_to_blob[cache_key].get(local_path)
+            if blob_uri is None:
+                blob_uri = self._upload_code(local_path).uri
+                local_path_to_blob["src"][local_path] = blob_uri
+            return blob_uri
+
         for job_config in workflow.jobs.values():
             for task_config in job_config.tasks:
-                for attr in ["src", "requirements"]:
-                    thing = getattr(task_config.code, attr)
-                    if thing and thing in local_path_to_blob[attr]:
-                        # already uploaded from a previous task
-                        setattr(
-                            task_config.code,
-                            attr,
-                            local_path_to_blob[attr][task_config.code.src],
+                if task_config.code:
+                    if task_config.code.src:
+                        task_config.code.src = _uploaded_path(
+                            task_config.code.src, "src"
                         )
-                    elif thing:
-                        result = self._upload_code(thing)
-                        blob_uri = result.uri
-                        logger.debug("Uploaded %s to %s", thing, blob_uri)
-                        local_path_to_blob[attr][blob_uri] = blob_uri
-                        setattr(task_config.code, attr, blob_uri)
+                    if task_config.code.requirements:
+                        task_config.code.requirements = _uploaded_path(
+                            task_config.code.requirements, "requirements"
+                        )
 
     def submit_workflow(self, message: WorkflowSubmitMessage) -> WorkflowSubmitMessage:
         """Submits a workflow for processing.
