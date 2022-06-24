@@ -70,7 +70,7 @@ class PreparedWorkflowSubmitMessage(PCBaseModel):
 
 class SuccessfulSubmitResult(PCBaseModel):
     success: bool = True
-    executor_id: Dict[str, Any]
+    task_runner_id: Dict[str, Any]
 
 
 class FailedSubmitResult(PCBaseModel):

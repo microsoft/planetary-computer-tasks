@@ -80,7 +80,7 @@ def setup_azurite() -> None:
         image_key_table.set_image(
             "ingest",
             image_config=ImageConfig(
-                image="pc-ingest:latest",
+                image="localhost:5001/pctasks-ingest:latest",
                 environment=[
                     "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}",
                 ],

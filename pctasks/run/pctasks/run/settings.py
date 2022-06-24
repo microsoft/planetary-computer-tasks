@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Any, Dict, Optional
 from urllib.parse import urlparse
 
@@ -27,6 +28,12 @@ from pctasks.core.tables.record import (
     WorkflowRunGroupRecordTable,
     WorkflowRunRecordTable,
 )
+
+
+class TaskRunnerType(str, Enum):
+    ARGO = "argo"
+    BATCH = "batch"
+    LOCAL = "local"
 
 
 class BatchSettings(PCBaseModel):
@@ -87,11 +94,19 @@ class RunSettings(PCTasksSettings):
     batch_default_pool_id: Optional[str] = None
     batch_submit_threads: int = 0
 
+    # Argo
+    argo_host: Optional[str] = None
+    argo_token: Optional[str] = None
+    argo_namespace: str = "argo"
+
     # KeyVault
     keyvault_url: Optional[str] = None
     keyvault_sp_tenant_id: Optional[str] = None
     keyvault_sp_client_id: Optional[str] = None
     keyvault_sp_client_secret: Optional[str] = None
+
+    # Type of task runner to use.
+    task_runner_type: TaskRunnerType = TaskRunnerType.BATCH
 
     @property
     def batch_settings(self) -> BatchSettings:
@@ -134,6 +149,34 @@ class RunSettings(PCTasksSettings):
         if not values.get("local_secrets"):
             if not v:
                 raise ValueError("Must specify keyvault_url.")
+        return v
+
+    @validator("task_runner_type", always=True)
+    def _task_runner_type_validator(
+        cls, v: TaskRunnerType, values: Dict[str, Any]
+    ) -> TaskRunnerType:
+        if v == TaskRunnerType.LOCAL:
+            if values.get("local_executor_url") is None:
+                raise ValueError(
+                    "Must specify local_executor_url for local remote runner type."
+                )
+
+        if v == TaskRunnerType.ARGO:
+            if values.get("argo_host") is None:
+                raise ValueError("Must specify argo_host for argo remote runner type.")
+            if values.get("argo_token") is None:
+                raise ValueError("Must specify argo_token for argo remote runner type.")
+
+        if v == TaskRunnerType.BATCH:
+            if values.get("batch_url") is None:
+                raise ValueError("Must specify batch_url for batch remote runner type.")
+            if values.get("batch_key") is None:
+                raise ValueError("Must specify batch_key for batch remote runner type.")
+            if values.get("batch_default_pool_id") is None:
+                raise ValueError(
+                    "Must specify batch_default_pool_id for batch remote runner type."
+                )
+
         return v
 
     # Don't cache tables; executor is not thread-safe

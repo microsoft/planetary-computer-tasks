@@ -58,11 +58,15 @@ def copy_dir_to_azurite(
     if prefix:
         storage = storage.get_substorage(prefix)
 
+    copied = False
     for root, _, files in os.walk(directory):
         for f in files:
             file_path = os.path.join(root, f)
             rel_path = os.path.relpath(file_path, directory)
             storage.upload_file(file_path, rel_path)
+            copied = True
+    if not copied:
+        raise Exception(f"No files found in {directory}")
 
 
 @contextmanager
@@ -72,7 +76,11 @@ def temp_azurite_blob_storage(
     storage = get_azurite_test_storage()
     sub_storage = storage.get_substorage(f"test-{uuid1().hex}")
     if test_files:
-        copy_dir_to_azurite(sub_storage, test_files)
+        test_files = Path(test_files)
+        if test_files.is_file():
+            sub_storage.upload_file(str(test_files), test_files.name)
+        else:
+            copy_dir_to_azurite(sub_storage, test_files)
     try:
         yield sub_storage
     finally:

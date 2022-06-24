@@ -24,7 +24,7 @@ class TaskConfig(PCBaseModel):
     image_key: Optional[str] = None
     code: Optional[str] = None
     task: str
-    args: Dict[str, Any]
+    args: Dict[str, Any] = {}
     tags: Optional[Dict[str, str]] = None
     environment: Optional[Dict[str, str]] = None
     schema_version: str = TASK_CONFIG_SCHEMA_VERSION

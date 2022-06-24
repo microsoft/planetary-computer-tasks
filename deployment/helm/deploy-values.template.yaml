@@ -21,11 +21,6 @@ pctasks:
       client_id: "{{ tf.pctasks_server_sp_client_id }}"
       client_secret: "{{ tf.pctasks_server_sp_client_secret }}"
 
-    argo:
-      namespace: pc
-      host: "http://argo-workflows-server.pc.svc.cluster.local:2746"
-      # argo token set during helm install
-
     # Image used to run workflows.
     runner_image: "{{ tf.component_acr_name }}.azurecr.io/pctasks-run:{{ tf.pctasks_run_image_tag }}"
     account_key: "{{ tf.pctasks_server_account_key }}"
@@ -57,6 +52,11 @@ pctasks:
       key: "{{ tf.batch_key }}"
       default_pool_id: "{{ tf.batch_default_pool_id }}"
       submit_threads: 0
+
+    argo:
+      namespace: pc
+      host: "http://argo-workflows-server.pc.svc.cluster.local:2746"
+      # argo token set during helm install
 
     keyvault:
       url: "{{ tf.keyvault_url }}"

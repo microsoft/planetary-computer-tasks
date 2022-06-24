@@ -191,7 +191,7 @@ class BatchTaskRunner(TaskRunner):
                                         submit_results[
                                             batch_task_info.index
                                         ] = SuccessfulSubmitResult(
-                                            executor_id=BatchTaskId(
+                                            task_runner_id=BatchTaskId(
                                                 batch_job_id=batch_job_id,
                                                 batch_task_id=task_id,
                                             ).dict(),

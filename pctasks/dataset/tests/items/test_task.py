@@ -44,22 +44,7 @@ test_create_task = CreateItemsTask(create_mock_item)
 TASK_PATH = get_task_path(test_create_task, "test_create_task", module=__name__)
 
 
-def test_create_single_item():
-    args = CreateItemsInput(
-        asset_uri="/asset1.tif",
-    )
-
-    task_result = run_test_task(args.dict(), TASK_PATH)
-    assert isinstance(task_result, CompletedTaskResult)
-
-    result = CreateItemsOutput.parse_obj(task_result.output)
-
-    assert result.item
-    item = pystac.Item.from_dict(result.item)
-    assert item.id == "asset1"
-
-
-def test_create_multiple_items():
+def test_create_items():
     with TemporaryDirectory() as tmp_dir:
         tmp_storage = LocalStorage(tmp_dir)
         chunk_storage = tmp_storage.get_substorage("chunks")

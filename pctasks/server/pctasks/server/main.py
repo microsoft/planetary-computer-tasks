@@ -1,4 +1,3 @@
-"""FastAPI application using PGStac."""
 import logging
 import os
 from typing import Any, Dict
@@ -9,6 +8,7 @@ from fastapi.responses import ORJSONResponse
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import PlainTextResponse
 
+from pctasks.run.settings import RunSettings
 from pctasks.server.routes import run
 
 DEBUG: bool = os.getenv("DEBUG") == "TRUE" or False
@@ -18,6 +18,14 @@ logger = logging.getLogger(__name__)
 # Get the root path if set in the environment
 APP_ROOT_PATH = os.environ.get("APP_ROOT_PATH", "")
 logger.info(f"APP_ROOT_PATH: {APP_ROOT_PATH}")
+
+# Ensure required settings
+run_settings = RunSettings.get()
+if not run_settings.argo_host:
+    raise Exception("Missing Argo host setting.")
+
+if not run_settings.argo_token:
+    raise Exception("Missing Argo token setting.")
 
 app = FastAPI(root_path=APP_ROOT_PATH, default_response_class=ORJSONResponse)
 

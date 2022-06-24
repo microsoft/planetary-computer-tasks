@@ -55,21 +55,8 @@ class CreateItemsInput(PCBaseModel):
 
 
 class CreateItemsOutput(PCBaseModel):
-    item: Optional[Dict[str, Any]] = None
-    """The created item."""
-
-    ndjson_uri: Optional[str] = None
-    """List of URIs to items."""
-
-    @validator("ndjson_uri")
-    def validate_uris(cls, v: Optional[str], values: Dict[str, Any]) -> Optional[str]:
-        if not v:
-            if not values.get("item"):
-                raise ValueError("Must specify either ndjson_uri or item")
-        else:
-            if values.get("item"):
-                raise ValueError("Must specify either ndjson_uri or item")
-        return v
+    ndjson_uri: str
+    """NDJSON of Items."""
 
 
 class CreateItemsTaskConfig(TaskConfig):
