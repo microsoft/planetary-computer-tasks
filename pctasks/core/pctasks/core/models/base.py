@@ -97,4 +97,3 @@ class RunRecordId(PCBaseModel):
 
 class ForeachConfig(PCBaseModel):
     items: Union[str, List[Any]]
-

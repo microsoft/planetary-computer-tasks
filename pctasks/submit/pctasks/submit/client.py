@@ -2,8 +2,8 @@ import io
 import logging
 import os
 import pathlib
-from threading import local
 import zipfile
+from threading import local
 from time import perf_counter
 from typing import Any, Dict
 
@@ -99,10 +99,7 @@ class SubmitClient:
 
         Handles both `file` and `requirements` files.
         """
-        local_path_to_blob: Dict[str, Dict[str, str]] = {
-            "src": {},
-            "requirements": {}
-        }
+        local_path_to_blob: Dict[str, Dict[str, str]] = {"src": {}, "requirements": {}}
 
         for job_config in workflow.jobs.values():
             for task_config in job_config.tasks:
@@ -110,7 +107,11 @@ class SubmitClient:
                     thing = getattr(task_config.code, attr)
                     if thing and thing in local_path_to_blob[attr]:
                         # already uploaded from a previous task
-                        setattr(task_config.code, attr, local_path_to_blob[attr][task_config.code.src])
+                        setattr(
+                            task_config.code,
+                            attr,
+                            local_path_to_blob[attr][task_config.code.src],
+                        )
                     elif thing:
                         result = self._upload_code(thing)
                         blob_uri = result.uri
