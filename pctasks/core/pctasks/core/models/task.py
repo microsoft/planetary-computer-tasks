@@ -58,7 +58,9 @@ class TaskRunConfig(PCBaseModel):
     job_id: str
     task_id: str
     task: str
-    code_blob_config: Optional[BlobConfig] = None
+    code_src_blob_config: Optional[BlobConfig] = None
+    code_requirements_blob_config: Optional[BlobConfig] = None
+    code_pip_options: Optional[List[str]] = None
     environment: Optional[Dict[str, str]] = None
     tokens: Optional[Dict[str, StorageAccountTokens]] = None
     # TODO: Update task status through signals

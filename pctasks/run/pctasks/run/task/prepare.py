@@ -1,6 +1,7 @@
 import logging
 import os
 from datetime import datetime, timedelta
+from typing import List, Optional
 from urllib.parse import urlparse
 
 from azure.core.credentials import AzureNamedKeyCredential
@@ -241,9 +242,13 @@ def prepare_task(
     )
 
     # Handle code config
+    code_src_blob_config: Optional[BlobConfig] = None
+    code_requirements_blob_config: Optional[BlobConfig] = None
+    code_pip_options: Optional[List[str]] = None
 
-    code_uri = task_config.code.src
-    if code_uri:
+    code_config = task_config.code
+    if code_config:
+        code_uri = code_config.src
         code_path = str(urlparse(code_uri).path).lstrip("/")
 
         code_blob_sas_token = generate_blob_sas(
@@ -255,36 +260,32 @@ def prepare_task(
             expiry=datetime.utcnow() + timedelta(hours=24 * 7),
             permission=BlobSasPermissions(write=True),
         )
-        code_blob_config = BlobConfig(
+        code_src_blob_config = BlobConfig(
             uri=code_uri,
             sas_token=code_blob_sas_token,
             account_url=settings.blob_account_url,
         )
 
-    else:
-        code_blob_config = None
+        requirements_uri = code_config.requirements
+        if requirements_uri:
+            requirements_path = str(urlparse(requirements_uri).path).lstrip("/")
 
-    requirements_uri = task_config.code.requirements
-    if requirements_uri:
-        requirements_path = str(urlparse(requirements_uri).path).lstrip("/")
+            requirements_blob_sas_token = generate_blob_sas(
+                account_name=settings.blob_account_name,
+                account_key=settings.blob_account_key,
+                container_name=settings.code_blob_container,
+                blob_name=requirements_path,
+                start=datetime.now(),
+                expiry=datetime.utcnow() + timedelta(hours=24 * 7),
+                permission=BlobSasPermissions(write=True),
+            )
+            code_requirements_blob_config = BlobConfig(
+                uri=requirements_uri,
+                sas_token=requirements_blob_sas_token,
+                account_url=settings.blob_account_url,
+            )
 
-        requirements_blob_sas_token = generate_blob_sas(
-            account_name=settings.blob_account_name,
-            account_key=settings.blob_account_key,
-            container_name=settings.code_blob_container,
-            blob_name=requirements_path,
-            start=datetime.now(),
-            expiry=datetime.utcnow() + timedelta(hours=24 * 7),
-            permission=BlobSasPermissions(write=True),
-        )
-        requirements_blob_config = BlobConfig(
-            uri=requirements_uri,
-            sas_token=requirements_blob_sas_token,
-            account_url=settings.blob_account_url,
-        )
-
-    else:
-        requirements_blob_config = None
+        code_pip_options = code_config.pip_options
 
     config = TaskRunConfig(
         image=image_config.image,
@@ -297,8 +298,9 @@ def prepare_task(
         task_runs_table_config=task_runs_table_config,
         output_blob_config=output_blob_config,
         log_blob_config=log_blob_config,
-        code_blob_config=code_blob_config,
-        requirements_blob_config=requirements_blob_config,
+        code_src_blob_config=code_src_blob_config,
+        code_requirements_blob_config=code_requirements_blob_config,
+        code_pip_options=code_pip_options,
         event_logger_app_insights_key=event_logger_app_insights_key,
     )
 

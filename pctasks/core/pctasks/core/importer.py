@@ -13,15 +13,18 @@ import site
 import subprocess
 import sys
 import zipfile
+from tempfile import TemporaryDirectory
 from typing import List, Optional
 
-import pctasks.core.storage
+from pctasks.core.storage import Storage
 
 logger = logging.getLogger(__name__)
 
 
 def ensure_requirements(
-    requirements_path: str, pip_options: Optional[List[str]] = None
+    requirements_path: str,
+    storage: Storage,
+    pip_options: Optional[List[str]] = None,
 ) -> None:
     """
     Ensure that the requirements at ``requirements_path`` are available.
@@ -33,33 +36,36 @@ def ensure_requirements(
     pip_options: list[str]
         Optional arguments to pass to the command ``pip install -r``.
     """
-    pip_options = pip_options or []
-    logger.debug("Pip installing from %s", requirements_path)
-    cmd = [
-        sys.executable,
-        "-m",
-        "pip",
-        "install",
-        "-r",
-        requirements_path,
-    ] + pip_options
+    with TemporaryDirectory() as tmp_dir:
+        local_path = str(pathlib.Path(tmp_dir) / pathlib.Path(requirements_path).name)
+        storage.download_file(requirements_path, local_path)
+        pip_options = pip_options or []
+        logger.debug("Pip installing from %s", requirements_path)
+        cmd = [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "-r",
+            local_path,
+        ] + pip_options
 
-    proc = subprocess.Popen(
-        cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-    stdout, stderr = proc.communicate()
-    returncode = proc.wait()
-    if returncode:
-        logger.error("Pip install failed with %s", stderr.decode().strip())
-        raise subprocess.CalledProcessError(returncode, cmd, stdout, stderr)
-    logger.debug("Pip install output: %s", stdout.decode().strip())
+        proc = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        stdout, stderr = proc.communicate()
+        returncode = proc.wait()
+        if returncode:
+            logger.error("Pip install failed with %s", stderr.decode().strip())
+            raise subprocess.CalledProcessError(returncode, cmd, stdout, stderr)
+        logger.debug("Pip install output: %s", stdout.decode().strip())
 
 
 def ensure_code(
     file_path: str,
-    storage: pctasks.core.storage.Storage,
+    storage: Storage,
     is_package: bool | None = None,
 ) -> pathlib.Path:
     """

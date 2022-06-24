@@ -70,22 +70,38 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
             output_path = output_blob_uri.blob_name
             if not output_path:
                 raise ValueError(f"Invalid output blob uri: {output_blob_config.uri}")
+
             output_storage = BlobStorage.from_uri(
                 blob_uri=output_blob_uri.base_uri,
                 sas_token=output_blob_config.sas_token,
                 account_url=output_blob_config.account_url,
             )
 
-            code_blob_config = task_config.code_blob_config
-            if code_blob_config:
-                code_blob_uri = BlobUri(code_blob_config.uri)
+            code_requirements_blob_config = task_config.code_requirements_blob_config
+            if code_requirements_blob_config:
+                req_blob_uri = BlobUri(code_requirements_blob_config.uri)
+                req_path = req_blob_uri.blob_name
+                if not req_path:
+                    raise ValueError(f"Invalid code blob uri: {req_blob_uri}")
+                req_storage = BlobStorage.from_uri(
+                    blob_uri=req_blob_uri.base_uri,
+                    sas_token=code_requirements_blob_config.sas_token,
+                    account_url=code_requirements_blob_config.account_url,
+                )
+                ensure_requirements(req_path, req_storage, task_config.code_pip_options)
+
+            code_src_blob_config = task_config.code_src_blob_config
+            if code_src_blob_config:
+                code_blob_uri = BlobUri(code_src_blob_config.uri)
                 code_path = code_blob_uri.blob_name
                 if not code_path:
-                    raise ValueError(f"Invalid code blob uri: {code_blob_config.uri}")
+                    raise ValueError(
+                        f"Invalid code blob uri: {code_src_blob_config.uri}"
+                    )
                 code_storage = BlobStorage.from_uri(
                     blob_uri=code_blob_uri.base_uri,
-                    sas_token=code_blob_config.sas_token,
-                    account_url=code_blob_config.account_url,
+                    sas_token=code_src_blob_config.sas_token,
+                    account_url=code_src_blob_config.account_url,
                 )
                 ensure_code(code_path, code_storage)
 

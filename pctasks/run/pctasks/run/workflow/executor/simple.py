@@ -44,12 +44,18 @@ class SimpleWorkflowExecutor:
         logger.debug(task_config.to_yaml())
 
         try:
-            if task_config.code.requirements:
-                ensure_requirements(
-                    task_config.code.requirements, task_config.code.pip_options
-                )
+            if task_config.code:
+                if task_config.code.requirements:
+                    (
+                        req_storage,
+                        req_path,
+                    ) = context.storage_factory.get_storage_for_file(
+                        task_config.code.requirements
+                    )
+                    ensure_requirements(
+                        req_path, req_storage, task_config.code.pip_options
+                    )
 
-            if task_config.code.src:
                 code_storage, code_path = context.storage_factory.get_storage_for_file(
                     task_config.code.src
                 )

@@ -4,6 +4,7 @@ import pathlib
 import pytest
 
 from pctasks.core.constants import MICROSOFT_OWNER
+from pctasks.core.models.config import CodeConfig
 from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.task import TaskConfig
 from pctasks.core.models.workflow import (
@@ -41,7 +42,7 @@ def test_client_submit(code_container: str):
                     TaskConfig(
                         id="submit_unit_test",
                         image="pctasks-ingest:latest",
-                        code=str(code),
+                        code=CodeConfig(src=str(code)),
                         task="mycode:MyMockTask",
                         args={"result_path": "/dev/null"},
                     )
@@ -61,11 +62,11 @@ def test_client_submit(code_container: str):
 
     task = submitted_message.workflow.jobs["test-job"].tasks[0]
     assert task.code
-    assert task.code.startswith("blob://devstoreaccount1/code/")
-    assert task.code.endswith("/mycode.py")
+    assert task.code.src.startswith("blob://devstoreaccount1/code/")
+    assert task.code.src.endswith("/mycode.py")
 
     storage = BlobStorage.from_account_key(
         "blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, code_container
     )
-    path = storage.get_path(task.code)
+    path = storage.get_path(task.code.src)
     assert storage.file_exists(path)

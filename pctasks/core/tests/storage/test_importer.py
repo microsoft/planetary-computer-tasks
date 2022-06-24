@@ -45,11 +45,16 @@ def test_import_package():
 
 
 def test_ensure_requirements():
-    with unittest.mock.patch("pctasks.core.importer.subprocess", autospec=True) as p:
-        p.Popen.return_value.communicate.return_value = (b"a", b"b")
-        p.Popen.return_value.wait.return_value = 0
-        p.CalledProcessError = subprocess.CalledProcessError
+    remote_path = "requirements.txt"
+    with temp_azurite_blob_storage() as storage:
+        storage.upload_bytes(b"pystac==1.*", remote_path)
+        with unittest.mock.patch(
+            "pctasks.core.importer.subprocess", autospec=True
+        ) as p:
+            p.Popen.return_value.communicate.return_value = (b"a", b"b")
+            p.Popen.return_value.wait.return_value = 0
+            p.CalledProcessError = subprocess.CalledProcessError
 
-        ensure_requirements("requirements.txt", pip_options=["--upgrade"])
+            ensure_requirements(remote_path, storage, pip_options=["--upgrade"])
 
-        assert p.Popen.call_count
+            assert p.Popen.call_count

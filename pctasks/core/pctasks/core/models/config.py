@@ -85,6 +85,6 @@ class ImageConfig(PCBaseModel):
 
 
 class CodeConfig(PCBaseModel):
-    src: Optional[str]
-    requirements: Optional[str]
-    pip_options: Optional[List[str]]
+    src: str
+    requirements: Optional[str] = None
+    pip_options: Optional[List[str]] = None
