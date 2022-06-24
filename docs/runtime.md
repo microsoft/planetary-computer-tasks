@@ -1,25 +1,42 @@
 # Runtime Environment
 
+## Specifying requirements
+
+In addition to the set of packages provided by the base docker image, you can specify a list of additional packages
+to install with a `requirements.txt` file.
+
+```yaml
+# file: naip/dataset.yaml
+name: naip
+image: pctasks-basic:latest
+code:
+  requirements: ${{ local.path("requirements.txt") }}
+```
+
+This should be a text file following Pip's [requirements file format](https://pip.pypa.io/en/latest/reference/requirements-file-format/).
+
+```
+# file: naip/requirements.txt
+git+https://github.com/stactools-packages/naip@dd703d010115b400e45ae8b1ca18816966e38231
+```
+
+The path specified in `code.requirements` should be relative to the `dataset.yaml`.
+
 ## Uploading Code
 
 You can make a Python module (a single `.py` file) or package (a possibly nested directory with a `__init__.py` file) available
 to the workers executing code by specifying the `code` option on your dataset. The path specified by `code` should be relative to
 the `dataset.yaml` using the ``local.path(relative_path)`` templater or an absolute path.
 
-```{warning}
-This mechanism does *not* ensure that any dependencies are installed. If your module or package
-requires additional dependencies beyond what is specified in the `image`, you'll need to
-create a new image with those dependencies present.
-```
-
 Suppose you have a dataset configuration file `naip/dataset.yaml`, with an accompanying `dataset.py` file. By specifying `code: dataset.py`
 that module will be included in the workers runtime.
 
 ```yaml
 # file: naip/dataset.yaml
-naip: naip
+name: naip
 image: pctasks-basic:latest
-code: ${{ local.path(dataset.py) }}
+code:
+  file: ${{ local.path(dataset.py) }}
 ```
 
 For single-file modules, the module will be importable using the name of the module: `import dataset` in this case.

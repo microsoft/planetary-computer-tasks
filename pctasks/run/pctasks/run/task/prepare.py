@@ -242,7 +242,7 @@ def prepare_task(
 
     # Handle code config
 
-    code_uri = task_config.code
+    code_uri = task_config.code.file
     if code_uri:
         code_path = str(urlparse(code_uri).path).lstrip("/")
 
@@ -264,6 +264,28 @@ def prepare_task(
     else:
         code_blob_config = None
 
+    requirements_uri = task_config.code.requirements
+    if requirements_uri:
+        requirements_path = str(urlparse(requirements_uri).path).lstrip("/")
+
+        requirements_blob_sas_token = generate_blob_sas(
+            account_name=settings.blob_account_name,
+            account_key=settings.blob_account_key,
+            container_name=settings.code_blob_container,
+            blob_name=requirements_path,
+            start=datetime.now(),
+            expiry=datetime.utcnow() + timedelta(hours=24 * 7),
+            permission=BlobSasPermissions(write=True),
+        )
+        requirements_blob_config = BlobConfig(
+            uri=requirements_uri,
+            sas_token=requirements_blob_sas_token,
+            account_url=settings.blob_account_url,
+        )
+
+    else:
+        requirements_blob_config = None
+
     config = TaskRunConfig(
         image=image_config.image,
         run_id=submit_msg.run_id,
@@ -276,6 +298,7 @@ def prepare_task(
         output_blob_config=output_blob_config,
         log_blob_config=log_blob_config,
         code_blob_config=code_blob_config,
+        requirements_blob_config=requirements_blob_config,
         event_logger_app_insights_key=event_logger_app_insights_key,
     )
 

@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional
 
-from pctasks.core.models.base import PCBaseModel
+from pctasks.core.models.base import CodeConfig, PCBaseModel
 from pctasks.core.models.task import TaskConfig
 from pctasks.dataset.models import (
     BlobStorageConfig,
@@ -57,7 +57,7 @@ class CreateSplitsTaskConfig(TaskConfig):
         image: str,
         args: CreateSplitsInput,
         task: str = CREATE_SPLITS_TASK_PATH,
-        code: Optional[str] = None,
+        code: Optional[CodeConfig] = None,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> "CreateSplitsTaskConfig":

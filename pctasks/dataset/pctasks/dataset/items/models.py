@@ -66,7 +66,7 @@ class CreateItemsTaskConfig(TaskConfig):
         image: str,
         collection_class: str,
         args: CreateItemsInput,
-        code: Optional[str] = None,
+        code: Optional[CodeConfig] = None,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> "CreateItemsTaskConfig":

@@ -1,6 +1,7 @@
 name: dataset-test
 image: mock:latest
-code: ${{ local.path(mycode.py) }}
+code:
+  file: ${{ local.path(mycode.py) }}
 
 args:
   - test_prefix

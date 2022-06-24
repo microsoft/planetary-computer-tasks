@@ -2,6 +2,7 @@ import io
 import logging
 import os
 import pathlib
+from threading import local
 import zipfile
 from time import perf_counter
 from typing import Any, Dict
@@ -95,19 +96,27 @@ class SubmitClient:
 
         Code files specified in the tasks are uploaded to our Azure Blob Storage.
         The Task code paths are rewritten to point to the newly uploaded files.
+
+        Handles both `file` and `requirements` files.
         """
-        local_path_to_blob: Dict[str, str] = {}
+        local_path_to_blob: Dict[str, Dict[str, str]] = {
+            "file": {},
+            "requirements": {}
+        }
 
         for job_config in workflow.jobs.values():
             for task_config in job_config.tasks:
-                if task_config.code and task_config.code in local_path_to_blob:
-                    # already uploaded from a previous task
-                    task_config.code = local_path_to_blob[task_config.code]
-                elif task_config.code:
-                    result = self._upload_code(task_config.code)
-                    blob_uri = result.uri
-                    logger.debug("Uploaded %s to %s", task_config.code, blob_uri)
-                    local_path_to_blob[blob_uri] = task_config.code = blob_uri
+                for attr in ["file", "requirements"]:
+                    thing = getattr(task_config.code, attr)
+                    if thing and thing in local_path_to_blob[attr]:
+                        # already uploaded from a previous task
+                        setattr(task_config.code, attr, local_path_to_blob[attr][task_config.code.file])
+                    elif thing:
+                        result = self._upload_code(thing)
+                        blob_uri = result.uri
+                        logger.debug("Uploaded %s to %s", thing, blob_uri)
+                        local_path_to_blob[attr][blob_uri] = blob_uri
+                        setattr(task_config.code, attr, blob_uri)
 
     def submit_workflow(self, message: WorkflowSubmitMessage) -> WorkflowSubmitMessage:
         """Submits a workflow for processing.

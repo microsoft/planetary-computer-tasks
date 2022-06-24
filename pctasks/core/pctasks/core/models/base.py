@@ -97,3 +97,9 @@ class RunRecordId(PCBaseModel):
 
 class ForeachConfig(PCBaseModel):
     items: Union[str, List[Any]]
+
+
+class CodeConfig(PCBaseModel):
+    file: Optional[str]
+    requirements: Optional[str]
+    pip_options: Optional[List[str]]
