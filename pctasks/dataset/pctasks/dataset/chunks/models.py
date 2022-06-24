@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional, Union
 
-from pctasks.core.models.base import CodeConfig, PCBaseModel
+from pctasks.core.models.base import PCBaseModel
+from pctasks.core.models.config import CodeConfig
 from pctasks.core.models.task import TaskConfig
 from pctasks.dataset.chunks.constants import (
     ASSET_CHUNKS_PREFIX,
