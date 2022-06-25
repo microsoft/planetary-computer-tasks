@@ -8,6 +8,7 @@ from typing import Any, Dict
 
 import requests
 
+from pctasks.client.settings import ClientSettings
 from pctasks.core.models.api import UploadCodeResult
 from pctasks.core.models.task import TaskConfig
 from pctasks.core.models.workflow import (
@@ -15,7 +16,6 @@ from pctasks.core.models.workflow import (
     WorkflowSubmitMessage,
     WorkflowSubmitResult,
 )
-from pctasks.submit.settings import SubmitSettings
 
 logger = logging.getLogger(__name__)
 
@@ -24,8 +24,8 @@ RUN_WORKFLOW_ROUTE = "submit/"
 UPLOAD_CODE_ROUTE = "code/upload/"
 
 
-class SubmitClient:
-    def __init__(self, settings: SubmitSettings) -> None:
+class PCTasksClient:
+    def __init__(self, settings: ClientSettings) -> None:
         self.settings = settings
 
     def _call_api(self, method: str, path: str, **kwargs: Any) -> Dict[str, Any]:

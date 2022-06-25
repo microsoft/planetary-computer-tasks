@@ -1,4 +1,4 @@
-"""pctasks: types module."""
+"""pctasks: client module."""
 
 from setuptools import find_namespace_packages, setup
 
@@ -18,8 +18,8 @@ extra_reqs = {
 
 
 setup(
-    name="pctasks.submit",
-    description="Planetary Computer Tasks framework.",
+    name="pctasks.client",
+    description="Planetary Computer Tasks framework - Client.",
     long_description=desc,
     long_description_content_type="text/markdown",
     python_requires=">=3.8",

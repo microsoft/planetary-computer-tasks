@@ -17,8 +17,8 @@ COPY cli /opt/src/cli
 RUN cd /opt/src/cli && \
      pip install .
 
-COPY submit /opt/src/submit
-RUN cd /opt/src/submit && \
+COPY client /opt/src/client
+RUN cd /opt/src/client && \
      pip install .
 
 COPY task /opt/src/task
@@ -42,7 +42,7 @@ RUN if [ "${DEVELOPMENT}" = "TRUE" ]; then \
      pip install \
      -e /opt/src/core \
      -e /opt/src/cli \
-     -e /opt/src/submit \
+     -e /opt/src/client \
      -e /opt/src/task \
      -e /opt/src/run \
      -e /opt/src/records \

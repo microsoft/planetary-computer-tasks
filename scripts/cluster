@@ -32,7 +32,7 @@ source scripts/env
 SETUP=""
 UPDATE=""
 GET_ARGO_TOKEN=""
-RECREATE_=""
+RECREATE=""
 while [[ $# -gt 0 ]]; do case $1 in
     setup)
         SETUP="--setup"
@@ -61,7 +61,7 @@ while [[ $# -gt 0 ]]; do case $1 in
         ;;
     esac done
 
-if [ -z "${CREATE}${UPDATE}${GET_ARGO_TOKEN}${RECREATE}" ]; then
+if [ -z "${SETUP}${UPDATE}${GET_ARGO_TOKEN}${RECREATE}" ]; then
     usage "No subcommand option specified"
     exit 1
 fi

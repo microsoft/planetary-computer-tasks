@@ -6,6 +6,9 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from click.testing import CliRunner, Result
 
 from pctasks.cli.cli import pctasks_cmd
+from pctasks.client.client import PCTasksClient
+from pctasks.client.settings import ClientSettings
+from pctasks.client.submit.template import template_workflow_dict
 from pctasks.core.constants import (
     DEFAULT_LOG_CONTAINER,
     DEFAULT_TASK_IO_CONTAINER,
@@ -38,9 +41,6 @@ from pctasks.dev.env import (
 )
 from pctasks.dev.tables import get_task_run_record_table
 from pctasks.run.utils import get_run_log_path
-from pctasks.submit.client import SubmitClient
-from pctasks.submit.settings import SubmitSettings
-from pctasks.submit.template import template_workflow_dict
 from pctasks.task.run import run_task
 
 
@@ -243,8 +243,8 @@ def run_workflow(
         WorkflowConfig.from_yaml(workflow) if isinstance(workflow, str) else workflow
     )
     templated_workflow = template_workflow_dict(workflow.dict(), base_path=base_path)
-    submit_settings = SubmitSettings.get()
-    submit_message = SubmitClient(submit_settings).submit_workflow(
+    submit_settings = ClientSettings.get()
+    submit_message = PCTasksClient(submit_settings).submit_workflow(
         WorkflowSubmitMessage(workflow=templated_workflow, args=args)
     )
     return submit_message.run_id

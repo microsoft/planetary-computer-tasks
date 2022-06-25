@@ -2,8 +2,8 @@ from pathlib import Path
 
 import yaml
 
+from pctasks.client.submit.template import LocalTemplater
 from pctasks.ingest.models import IngestCollectionsInput
-from pctasks.submit.template import LocalTemplater
 
 HERE = Path(__file__).parent
 TEST_COLLECTION = HERE / "data-files" / "test_collection.json"

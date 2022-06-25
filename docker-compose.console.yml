@@ -8,8 +8,8 @@ services:
     volumes:
       - .:/opt/src
     environment:
-      - PCTASKS_SUBMIT__ENDPOINT=http://nginx/tasks
-      - PCTASKS_SUBMIT__API_KEY=hunter2
+      - PCTASKS_CLIENT__ENDPOINT=http://nginx/tasks
+      - PCTASKS_CLIENT__API_KEY=hunter2
 
       # Dev executor settings
       - PCTASKS_RUN__TASK_RUNNER_TYPE=local
@@ -87,8 +87,8 @@ services:
       - .:/opt/src
     environment:
       # Submit
-      - PCTASKS_SUBMIT__ENDPOINT=http://host.docker.internal:8500/tasks
-      - PCTASKS_SUBMIT__API_KEY=kind-api-key
+      - PCTASKS_CLIENT__ENDPOINT=http://host.docker.internal:8500/tasks
+      - PCTASKS_CLIENT__API_KEY=kind-api-key
 
       # Records
       - PCTASKS_RECORDS__TABLES__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://azurite:10002/devstoreaccount1;
