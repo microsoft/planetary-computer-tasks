@@ -1,9 +1,9 @@
 import click
 
 from pctasks.cli.cli import PCTasksCommandContext
-from pctasks.records.commands.fetch import fetch_cmd
-from pctasks.records.commands.list import list_cmd
-from pctasks.records.context import RecordsCommandContext
+from pctasks.client.records.commands.fetch import fetch_cmd
+from pctasks.client.records.commands.list import list_cmd
+from pctasks.client.records.context import RecordsCommandContext
 
 
 @click.group("records")

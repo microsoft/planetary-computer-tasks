@@ -29,10 +29,6 @@ COPY run /opt/src/run
 RUN cd /opt/src/run && \
      pip install .
 
-COPY records /opt/src/records
-RUN cd /opt/src/records && \
-     pip install .
-
 COPY server /opt/src/server
 RUN cd /opt/src/server && \
      pip install .[server]
@@ -45,7 +41,6 @@ RUN if [ "${DEVELOPMENT}" = "TRUE" ]; then \
      -e /opt/src/client \
      -e /opt/src/task \
      -e /opt/src/run \
-     -e /opt/src/records \
      -e /opt/src/server[dev,server]; \
     fi
 

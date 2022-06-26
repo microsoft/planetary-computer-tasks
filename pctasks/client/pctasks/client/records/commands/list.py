@@ -4,10 +4,10 @@ import click
 from rich.console import Console
 
 from pctasks.cli.cli import cli_output
-from pctasks.core.models.dataset import DatasetIdentifier
-from pctasks.records.commands.options import opt_all, opt_page, opt_status
-from pctasks.records.render import render_jobs, render_tasks, render_workflows
-from pctasks.records.settings import RecordsSettings
+from pctasks.client.client import PCTasksClient
+from pctasks.client.records.commands.options import opt_all, opt_page, opt_status
+from pctasks.client.records.render import render_jobs, render_tasks, render_workflows
+from pctasks.client.settings import ClientSettings
 
 
 @click.command("workflows")
@@ -30,10 +30,10 @@ def list_workflows_cmd(
     ids: bool,
 ) -> None:
 
-    ds: Optional[DatasetIdentifier] = (
-        DatasetIdentifier.from_string(dataset) if not dataset == "all" else None
-    )
-    settings = RecordsSettings.from_context(ctx.obj)
+    ds: Optional[str] = None if dataset == "all" else dataset
+
+    settings = ClientSettings.from_context(ctx.obj)
+    client = PCTasksClient(settings)
     console = Console(stderr=True)
     with console.status("Fetching records...") as fetch_status:
         fetch_status.update(
@@ -41,11 +41,7 @@ def list_workflows_cmd(
             spinner="aesthetic",
             spinner_style="green",
         )
-        with settings.tables.get_workflow_run_record_table() as table:
-            if ds:
-                workflows = table.get_workflow_runs(ds)
-            else:
-                workflows = table.get_records()
+        workflows = client.get_workflows(dataset_id=ds)
 
         if status:
             workflows = [w for w in workflows if w.status == status]
@@ -78,7 +74,8 @@ def list_jobs_cmd(
     ids: bool,
 ) -> None:
 
-    settings = RecordsSettings.from_context(ctx.obj)
+    settings = ClientSettings.from_context(ctx.obj)
+    client = PCTasksClient(settings)
     console = Console(stderr=True)
     with console.status("Fetching records...") as fetch_status:
         fetch_status.update(
@@ -86,8 +83,7 @@ def list_jobs_cmd(
             spinner="aesthetic",
             spinner_style="green",
         )
-        with settings.tables.get_job_run_record_table() as table:
-            jobs = table.get_jobs(run_id)
+        jobs = client.get_jobs(run_id=run_id)
 
         if status:
             jobs = [j for j in jobs if j.status == status]
@@ -120,7 +116,8 @@ def list_tasks_cmd(
     ids: bool,
 ) -> None:
 
-    settings = RecordsSettings.from_context(ctx.obj)
+    settings = ClientSettings.from_context(ctx.obj)
+    client = PCTasksClient(settings)
     console = Console(stderr=True)
     with console.status("Fetching records...") as fetch_status:
         fetch_status.update(
@@ -128,8 +125,7 @@ def list_tasks_cmd(
             spinner="aesthetic",
             spinner_style="green",
         )
-        with settings.tables.get_task_run_record_table() as table:
-            tasks = table.get_tasks(run_id, job_id)
+        tasks = client.get_tasks(job_id=job_id, run_id=run_id)
 
         if status:
             tasks = [t for t in tasks if t.status == status]

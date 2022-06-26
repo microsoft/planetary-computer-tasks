@@ -4,12 +4,27 @@ import os
 import pathlib
 import zipfile
 from time import perf_counter
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
 import requests
+from requests import HTTPError
 
+from pctasks.client.errors import (
+    JobNotFoundError,
+    TaskNotFoundError,
+    WorkflowNotFoundError,
+)
 from pctasks.client.settings import ClientSettings
-from pctasks.core.models.api import UploadCodeResult
+from pctasks.core.models.api import (
+    JobRunResponse,
+    JobRunsResponse,
+    LinkRel,
+    TaskRunResponse,
+    TaskRunsResponse,
+    UploadCodeResult,
+    WorkflowRunResponse,
+    WorkflowRunsResponse,
+)
 from pctasks.core.models.task import TaskConfig
 from pctasks.core.models.workflow import (
     WorkflowConfig,
@@ -19,25 +34,43 @@ from pctasks.core.models.workflow import (
 
 logger = logging.getLogger(__name__)
 
-
+# Submit
 RUN_WORKFLOW_ROUTE = "submit/"
 UPLOAD_CODE_ROUTE = "code/upload/"
 
+# Records
+LIST_RUNS_ROUTE = "runs/"
+FETCH_RUN_ROUTE = "runs/{run_id}"
+LIST_JOBS_ROUTE = "runs/{run_id}/jobs/"
+FETCH_JOB_ROUTE = "runs/{run_id}/jobs/{job_id}"
+LIST_TASKS_ROUTE = "runs/{run_id}/jobs/{job_id}/tasks/"
+FETCH_TASK_ROUTE = "runs/{run_id}/jobs/{job_id}/tasks/{task_id}"
+
 
 class PCTasksClient:
-    def __init__(self, settings: ClientSettings) -> None:
-        self.settings = settings
+    def __init__(self, settings: Optional[ClientSettings] = None) -> None:
+        self.settings = settings or ClientSettings.get()
 
     def _call_api(self, method: str, path: str, **kwargs: Any) -> Dict[str, Any]:
         """
         Call the PCTasks API.
+
+        If path is a full URL that matches the API (e.g. from a link href),
+        use that URL directly.
         """
+        url = (
+            path
+            if path.startswith(self.settings.endpoint)
+            else os.path.join(self.settings.endpoint, path)
+        )
+
         resp = requests.request(
             method,
-            os.path.join(self.settings.endpoint, path),
+            url,
             headers={"X-API-KEY": self.settings.api_key},
             **kwargs,
         )
+
         resp.raise_for_status()
         return resp.json()
 
@@ -148,3 +181,108 @@ class PCTasksClient:
         logger.debug(result.json(indent=2))
 
         return message
+
+    def get_workflows(
+        self, dataset_id: Optional[str] = None
+    ) -> List[WorkflowRunResponse]:
+        route = LIST_RUNS_ROUTE
+        if dataset_id:
+            route += f"?dataset={dataset_id}"
+        result = self._call_api("GET", route)
+        return WorkflowRunsResponse.parse_obj(result).runs
+
+    def get_workflow(
+        self, run_id: str, dataset_id: Optional[str] = None
+    ) -> WorkflowRunResponse:
+        route = FETCH_RUN_ROUTE.format(run_id=run_id)
+        if dataset_id:
+            route += f"?dataset={dataset_id}"
+        try:
+            result = self._call_api("GET", route)
+            return WorkflowRunResponse.parse_obj(result)
+        except HTTPError as e:
+            if e.response.status_code == 404:
+                raise WorkflowNotFoundError(run_id) from e
+            raise
+
+    def get_jobs(self, run_id: str) -> List[JobRunResponse]:
+        route = LIST_JOBS_ROUTE.format(run_id=run_id)
+        result = self._call_api("GET", route)
+        return JobRunsResponse.parse_obj(result).jobs
+
+    def get_jobs_from_workflow(
+        self, workflow: WorkflowRunResponse
+    ) -> List[JobRunResponse]:
+        if workflow.links:
+            result: List[JobRunResponse] = []
+            for link in workflow.links:
+                if link.rel == "jobs":
+                    result.append(
+                        JobRunResponse.parse_obj(self._call_api("GET", link.href))
+                    )
+            return result
+        else:
+            return self.get_jobs(workflow.run_id)
+
+    def get_job(self, run_id: str, job_id: str) -> JobRunResponse:
+        route = FETCH_JOB_ROUTE.format(run_id=run_id, job_id=job_id)
+        result = self._call_api("GET", route)
+        try:
+            return JobRunResponse.parse_obj(result)
+        except HTTPError as e:
+            if e.response.status_code == 404:
+                raise JobNotFoundError(f"Job {job_id} for workflow run {run_id}") from e
+            raise
+
+    def get_tasks(self, run_id: str, job_id: str) -> List[TaskRunResponse]:
+        route = LIST_TASKS_ROUTE.format(run_id=run_id, job_id=job_id)
+        result = self._call_api("GET", route)
+        return TaskRunsResponse.parse_obj(result).tasks
+
+    def get_tasks_from_job(self, job: JobRunResponse) -> List[TaskRunResponse]:
+        if job.links:
+            result: List[TaskRunResponse] = []
+            for link in job.links:
+                if link.rel == "tasks":
+                    result.append(
+                        TaskRunResponse.parse_obj(self._call_api("GET", link.href))
+                    )
+            return result
+        else:
+            return self.get_tasks(job.run_id, job.job_id)
+
+    def get_task(self, run_id: str, job_id: str, task_id: str) -> TaskRunResponse:
+        route = FETCH_TASK_ROUTE.format(run_id=run_id, job_id=job_id, task_id=task_id)
+        try:
+            result = self._call_api("GET", route)
+        except HTTPError as e:
+            if e.response.status_code == 404:
+                raise TaskNotFoundError(
+                    f"Task {task_id} of job {job_id} for workflow run {run_id}"
+                )
+            raise
+        return TaskRunResponse.parse_obj(result)
+
+    def get_task_logs_from_task(self, task: TaskRunResponse) -> Dict[str, str]:
+        result: Dict[str, str] = {}
+        if not task.links:
+            return result
+
+        log_links = [link for link in task.links if link.rel == LinkRel.LOG]
+
+        if not log_links:
+            return result
+
+        for log_link in log_links:
+            resp = requests.get(
+                log_link.href, headers={"X-API-KEY": self.settings.api_key}
+            )
+            resp.raise_for_status()
+            result[pathlib.Path(log_link.href).name] = resp.content.decode("utf-8")
+        return result
+
+    def get_task_logs(
+        self, run_id: str, job_id: str, task_id: str, log_name: Optional[str]
+    ) -> Dict[str, str]:
+
+        return self.get_task_logs_from_task(self.get_task(run_id, job_id, task_id))

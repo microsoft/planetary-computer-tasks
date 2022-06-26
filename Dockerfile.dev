@@ -78,10 +78,6 @@ COPY pctasks/notify /opt/src/pctasks/notify
 RUN cd /opt/src/pctasks/notify && \
      pip install -e .
 
-COPY pctasks/records /opt/src/pctasks/records
-RUN cd /opt/src/pctasks/records && \
-     pip install -e .
-
 COPY pctasks/dev /opt/src/pctasks/dev
 RUN cd /opt/src/pctasks/dev && \
      pip install -e .[server]

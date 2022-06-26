@@ -15,7 +15,6 @@ PACKAGE_DIRS=(
     "pctasks/notify"
     "pctasks/router"
     "pctasks/operations"
-    "pctasks/records"
     "pctasks/server"
     "pctasks/dev"
 )

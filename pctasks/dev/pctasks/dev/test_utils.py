@@ -7,6 +7,7 @@ from click.testing import CliRunner, Result
 
 from pctasks.cli.cli import pctasks_cmd
 from pctasks.client.client import PCTasksClient
+from pctasks.client.errors import NotFoundError
 from pctasks.client.settings import ClientSettings
 from pctasks.client.submit.template import template_workflow_dict
 from pctasks.core.constants import (
@@ -14,13 +15,12 @@ from pctasks.core.constants import (
     DEFAULT_TASK_IO_CONTAINER,
     DEFAULT_TASK_RUN_RECORD_TABLE_NAME,
 )
+from pctasks.core.models.api import JobRunResponse, TaskRunResponse, WorkflowRunResponse
 from pctasks.core.models.base import RunRecordId
 from pctasks.core.models.record import (
-    JobRunRecord,
     JobRunStatus,
     TaskRunRecord,
     TaskRunStatus,
-    WorkflowRunRecord,
     WorkflowRunStatus,
 )
 from pctasks.core.models.task import (
@@ -39,7 +39,7 @@ from pctasks.dev.env import (
     PCTASKS_BLOB_ACCOUNT_URL_ENV_VAR,
     get_dev_env,
 )
-from pctasks.dev.tables import get_task_run_record_table
+
 from pctasks.run.utils import get_run_log_path
 from pctasks.task.run import run_task
 
@@ -66,13 +66,13 @@ def run_pctasks(
 
 @dataclass
 class TestJobRunRecords:
-    job_record: JobRunRecord
-    tasks: Dict[str, TaskRunRecord]
+    job_record: JobRunResponse
+    tasks: Dict[str, TaskRunResponse]
 
 
 @dataclass
 class TestWorkflowRunRecords:
-    workflow_record: WorkflowRunRecord
+    workflow_record: WorkflowRunResponse
     jobs: Dict[str, TestJobRunRecords]
     timeout: bool = False
 
@@ -81,82 +81,44 @@ def wait_for_test_workflow_run(
     run_id: str, timeout_seconds: int = 10
 ) -> TestWorkflowRunRecords:
     print(f"Waiting for test workflow run {run_id} to complete...")
-    workflow_run_record: Optional[WorkflowRunRecord] = None
+    workflow: Optional[WorkflowRunResponse] = None
+
+    client = PCTasksClient()
+
     tic = time.perf_counter()
     tok = time.perf_counter()
     while (
-        workflow_run_record is None
-        or workflow_run_record.status
+        workflow is None
+        or workflow.status
         not in [WorkflowRunStatus.COMPLETED, WorkflowRunStatus.FAILED]
     ) and tok - tic < timeout_seconds:
-        if not workflow_run_record:
+        if not workflow:
             print(f"waiting for workflow run record... ({tok - tic:.0f} s)".format(tok))
         else:
             print(
-                f"Retrying workflow run with status {workflow_run_record.status}... "
+                f"Retrying workflow run with status {workflow.status}... "
                 f"({tok - tic:.0f} s)".format(tok)
             )
-        workflow_record_result = run_pctasks(
-            ["records", "fetch", "workflow", run_id], catch_exceptions=True, silent=True
-        )
-
-        if workflow_record_result.exit_code == 0:
-            workflow_run_record = WorkflowRunRecord.from_yaml(
-                workflow_record_result.output
-            )
-        else:
-            print(f"Retrying, exit code: {workflow_record_result.exit_code}")
+        try:
+            workflow = client.get_workflow(run_id)
+        except NotFoundError:
+            pass
 
         time.sleep(1)
         tok = time.perf_counter()
 
-    if workflow_run_record:
-        list_jobs_result = run_pctasks(
-            ["records", "list", "jobs", "--ids", run_id],
-            catch_exceptions=True,
-            silent=True,
-        )
-
-        assert list_jobs_result.exit_code == 0
-        job_ids = list_jobs_result.output.splitlines()
+    if workflow:
+        jobs = client.get_jobs_from_workflow(workflow)
 
         job_records: Dict[str, TestJobRunRecords] = {}
-        for job_id in job_ids:
-            job_record_result = run_pctasks(
-                ["records", "fetch", "job", job_id, run_id],
-                catch_exceptions=True,
-                silent=True,
+        for job in jobs:
+            tasks = client.get_tasks_from_job(job)
+            job_records[job.job_id] = TestJobRunRecords(
+                job, {t.task_id: t for t in tasks}
             )
-
-            assert job_record_result.exit_code == 0
-            job_record = JobRunRecord.from_yaml(job_record_result.output)
-
-            list_tasks_result = run_pctasks(
-                ["records", "list", "tasks", "--ids", job_id, run_id],
-                catch_exceptions=True,
-                silent=True,
-            )
-
-            assert list_tasks_result.exit_code == 0
-            task_ids = list_tasks_result.output.splitlines()
-
-            task_records: Dict[str, TaskRunRecord] = {}
-            for task_id in task_ids:
-                task_record_result = run_pctasks(
-                    ["records", "fetch", "task", job_id, task_id, run_id],
-                    catch_exceptions=True,
-                    silent=True,
-                )
-
-                assert task_record_result.exit_code == 0
-                task_records[task_id] = TaskRunRecord.from_yaml(
-                    task_record_result.output
-                )
-
-            job_records[job_id] = TestJobRunRecords(job_record, task_records)
 
         return TestWorkflowRunRecords(
-            workflow_run_record, job_records, timeout=tok - tic >= timeout_seconds
+            workflow, job_records, timeout=tok - tic >= timeout_seconds
         )
     else:
         raise Exception(f"Timeout while waiting for workflow {run_id}")
@@ -174,8 +136,9 @@ def _check_workflow(
         )
         if workflow_run_records.timeout:
             print(f"TIMEOUT while waiting for workflow {run_id}")
-        print("Workflow:")
-        print(workflow_run_records.workflow_record.workflow.to_yaml())
+        if workflow_run_records.workflow_record.workflow:
+            print("Workflow:")
+            print(workflow_run_records.workflow_record.workflow.to_yaml())
         for error in workflow_run_records.workflow_record.errors or []:
             print(f" - {error}")
     for job_id, job_records in workflow_run_records.jobs.items():
@@ -270,6 +233,8 @@ def run_test_task(
     task: str,
     tokens: Optional[Dict[str, StorageAccountTokens]] = None,
 ) -> Union[CompletedTaskResult, WaitTaskResult]:
+    from pctasks.dev.tables import get_task_run_record_table
+
     job_id = "unit-test-job"
     task_id = "task-unit-test"
     run_id = "test_task_func"
