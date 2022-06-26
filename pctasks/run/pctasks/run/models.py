@@ -68,18 +68,18 @@ class PreparedWorkflowSubmitMessage(PCBaseModel):
     # runner_settings:
 
 
-class SuccessfulSubmitResult(PCBaseModel):
+class SuccessfulTaskSubmitResult(PCBaseModel):
     success: bool = True
     task_runner_id: Dict[str, Any]
 
 
-class FailedSubmitResult(PCBaseModel):
+class FailedTaskSubmitResult(PCBaseModel):
     success: bool = False
     errors: List[str]
 
 
 class TaskSubmitResult(PCBaseModel):
-    result: Union[SuccessfulSubmitResult, FailedSubmitResult]
+    result: Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]
 
 
 class TaskPollMessage(PCBaseModel):
@@ -111,7 +111,7 @@ class HandledTaskResult(PCBaseModel):
 class HandleTaskResultMessage(PCBaseModel):
     run_record_id: RunRecordId
     task_result_type: TaskResultType
-    submit_result: SuccessfulSubmitResult
+    submit_result: SuccessfulTaskSubmitResult
     target_environment: Optional[str] = None
     errors: Optional[List[str]] = None
     log_uri: str

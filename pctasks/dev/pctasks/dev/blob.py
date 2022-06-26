@@ -7,6 +7,7 @@ from uuid import uuid1
 
 from azure.storage.blob import ContainerSasPermissions, generate_container_sas
 
+from pctasks.core.constants import DEFAULT_CODE_CONTAINER
 from pctasks.core.storage.base import Storage
 from pctasks.core.storage.blob import BlobStorage
 from pctasks.dev.constants import (
@@ -18,16 +19,16 @@ from pctasks.dev.constants import (
 from pctasks.run.settings import RunSettings
 
 
-def get_azurite_test_storage() -> BlobStorage:
+def get_azurite_storage(container: str) -> BlobStorage:
     account_name = AZURITE_ACCOUNT_NAME
-    execute_settings: Optional[RunSettings] = None
+    run_settings: Optional[RunSettings] = None
     try:
-        execute_settings = RunSettings.get()
+        run_settings = RunSettings.get()
     except Exception:
-        # Don't fail for environments that don't have executor settings set
+        # Don't fail for environments that don't have run settings set
         pass
-    if execute_settings and execute_settings.blob_account_name == account_name:
-        account_url = execute_settings.blob_account_url
+    if run_settings and run_settings.blob_account_name == account_name:
+        account_url = run_settings.blob_account_url
     else:
         hostname = os.getenv(AZURITE_HOST_ENV_VAR, "localhost")
         account_url = f"http://{hostname}:10000/devstoreaccount1"
@@ -35,8 +36,16 @@ def get_azurite_test_storage() -> BlobStorage:
     return BlobStorage.from_account_key(
         account_key=AZURITE_ACCOUNT_KEY,
         account_url=account_url,
-        blob_uri=f"blob://{account_name}/{TEST_DATA_CONTAINER}",
+        blob_uri=f"blob://{account_name}/{container}",
     )
+
+
+def get_azurite_test_storage() -> BlobStorage:
+    return get_azurite_storage(TEST_DATA_CONTAINER)
+
+
+def get_azurite_code_storage() -> BlobStorage:
+    return get_azurite_storage(DEFAULT_CODE_CONTAINER)
 
 
 def get_azurite_sas_token() -> str:

@@ -4,9 +4,11 @@ Monitors the task status and ensures the
 STAC Collection and Items were successfully created/updated
 in the development database.
 """
+import logging
 import textwrap
 from pathlib import Path
 
+from pctasks.cli.cli import setup_logging, setup_logging_for_module
 from pctasks.dev.blob import copy_dir_to_azurite, temp_azurite_blob_storage
 from pctasks.dev.test_utils import (
     assert_workflow_is_successful,
@@ -19,6 +21,8 @@ WORKFLOWS = HERE / "workflows"
 ASSETS_DIR = HERE / "data-files" / "simple-assets"
 
 TIMEOUT_SECONDS = 120
+
+logger = logging.getLogger(__name__)
 
 
 def test_foreach_simple_workflow():
@@ -40,7 +44,8 @@ def test_foreach_simple_workflow():
                 tasks:
                 - id: paths
                   image: localhost:5001/pctasks-task-base:latest
-                  code: ${{ args.task_code_path }}
+                  code:
+                    src: ${{ args.task_code_path }}
                   task: tasks:list_files_task
                   args:
                     uri: ${{ args.input_uri }}
@@ -53,13 +58,15 @@ def test_foreach_simple_workflow():
                 tasks:
                 - id: read-file
                   image: localhost:5001/pctasks-task-base:latest
-                  code: ${{ args.task_code_path }}
+                  code:
+                    src: ${{ args.task_code_path }}
                   task: tasks:read_file_task
                   args:
                     uri: ${{ item }}
                 - id: write-text
                   image: localhost:5001/pctasks-task-base:latest
-                  code: ${{ args.task_code_path }}
+                  code:
+                    src: ${{ args.task_code_path }}
                   task: tasks:write_file_task
                   args:
                     uri: ${{ args.output_uri}}/${{ tasks.read-file.output.name }}
@@ -72,7 +79,9 @@ def test_foreach_simple_workflow():
         input_storage = root_storage.get_substorage("input")
         output_storage = root_storage.get_substorage("output")
 
+        logger.debug("Copying files to Azurite...")
         copy_dir_to_azurite(input_storage, ASSETS_DIR)
+        logger.debug("Copied files to Azurite")
 
         run_id = run_workflow(
             workflow,
@@ -130,3 +139,12 @@ def test_foreach_full_workflow():
         for path in output_storage.list_files():
             assert path in expected
             assert expected[path] == output_storage.read_text(path)
+
+
+if __name__ == "__main__":
+    setup_logging(logging.DEBUG)
+    setup_logging_for_module("__main__", logging.DEBUG)
+    test_foreach_simple_workflow()
+    test_foreach_full_workflow()
+    print("All tests passed")
+    exit(0)

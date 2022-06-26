@@ -44,8 +44,8 @@ COPY pctasks/task /opt/src/pctasks/task
 RUN cd /opt/src/pctasks/task && \
      pip install .
 
-COPY pctasks/submit /opt/src/pctasks/submit
-RUN cd /opt/src/pctasks/submit && \
+COPY pctasks/client /opt/src/pctasks/client
+RUN cd /opt/src/pctasks/client && \
      pip install .
 
 COPY pctasks/ingest /opt/src/pctasks/ingest

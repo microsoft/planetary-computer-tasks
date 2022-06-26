@@ -7,7 +7,7 @@ PACKAGE_DIRS=(
     "pctasks/core"
     "pctasks/cli"
     "pctasks/task"
-    "pctasks/submit"
+    "pctasks/client"
     "pctasks/ingest"
     "pctasks/ingest_task"
     "pctasks/dataset"
@@ -15,7 +15,6 @@ PACKAGE_DIRS=(
     "pctasks/notify"
     "pctasks/router"
     "pctasks/operations"
-    "pctasks/records"
     "pctasks/server"
     "pctasks/dev"
 )

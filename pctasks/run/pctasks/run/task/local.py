@@ -5,10 +5,11 @@ from typing import Any, Dict, List, Union
 import requests
 
 from pctasks.core.models.record import TaskRunStatus
+from pctasks.run.constants import MAX_MISSING_POLLS
 from pctasks.run.models import (
-    FailedSubmitResult,
+    FailedTaskSubmitResult,
     PreparedTaskSubmitMessage,
-    SuccessfulSubmitResult,
+    SuccessfulTaskSubmitResult,
     TaskPollResult,
 )
 from pctasks.run.task.base import TaskRunner
@@ -28,8 +29,8 @@ class LocalTaskRunner(TaskRunner):
 
     def submit_tasks(
         self, prepared_tasks: List[PreparedTaskSubmitMessage]
-    ) -> List[Union[SuccessfulSubmitResult, FailedSubmitResult]]:
-        results: List[Union[SuccessfulSubmitResult, FailedSubmitResult]] = []
+    ) -> List[Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]]:
+        results: List[Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]] = []
         for prepared_task in prepared_tasks:
             task_input_blob_config = prepared_task.task_input_blob_config
             task_tags = prepared_task.task_tags
@@ -47,10 +48,10 @@ class LocalTaskRunner(TaskRunner):
             data = json.dumps({"args": args, "tags": task_tags or {}}).encode("utf-8")
             resp = requests.post(self.local_executor_url + "/execute", data=data)
             if resp.status_code == 200:
-                results.append(SuccessfulSubmitResult(task_runner_id=resp.json()))
+                results.append(SuccessfulTaskSubmitResult(task_runner_id=resp.json()))
             else:
                 results.append(
-                    FailedSubmitResult(errors=[f"{resp.status_code}: {resp.text}"])
+                    FailedTaskSubmitResult(errors=[f"{resp.status_code}: {resp.text}"])
                 )
 
         return results
@@ -65,7 +66,15 @@ class LocalTaskRunner(TaskRunner):
             if resp.status_code == 200:
                 return TaskPollResult.parse_obj(resp.json())
             elif resp.status_code == 404:
-                return TaskPollResult(task_status=TaskRunStatus.PENDING)
+                if previous_poll_count < MAX_MISSING_POLLS:
+                    return TaskPollResult(task_status=TaskRunStatus.PENDING)
+                else:
+                    return TaskPollResult(
+                        task_status=TaskRunStatus.FAILED,
+                        poll_errors=[
+                            f"Task not found after {previous_poll_count} polls."
+                        ],
+                    )
             else:
                 resp.raise_for_status()
                 raise Exception(f"Unexpected status code: {resp.status_code}")

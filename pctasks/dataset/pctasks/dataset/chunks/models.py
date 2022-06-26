@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional, Union
 
 from pctasks.core.models.base import PCBaseModel
+from pctasks.core.models.config import CodeConfig
 from pctasks.core.models.task import TaskConfig
 from pctasks.dataset.chunks.constants import (
     ASSET_CHUNKS_PREFIX,
@@ -46,7 +47,7 @@ class CreateChunksTaskConfig(TaskConfig):
         cls,
         image: str,
         args: CreateChunksInput,
-        code: Optional[str] = None,
+        code: Optional[CodeConfig] = None,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> "CreateChunksTaskConfig":

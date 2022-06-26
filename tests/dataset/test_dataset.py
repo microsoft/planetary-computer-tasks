@@ -1,8 +1,9 @@
 import json
-import os
+import logging
 from pathlib import Path
 from uuid import uuid1
 
+from pctasks.cli.cli import setup_logging, setup_logging_for_module
 from pctasks.dataset.template import template_dataset_file
 from pctasks.dataset.workflow import create_process_items_workflow
 from pctasks.dev.blob import copy_dir_to_azurite, temp_azurite_blob_storage
@@ -23,7 +24,7 @@ TIMEOUT_SECONDS = 180
 
 
 def test_dataset():
-    with temp_pgstac_db(os.environ["SECRETS_DB_CONNECTION_STRING"]) as conn_str:
+    with temp_pgstac_db() as conn_str:
         test_tag = uuid1().hex[:5]
         collection_id = f"test-collection-{test_tag}"
 
@@ -74,3 +75,12 @@ def test_dataset():
             assert_workflow_is_successful(run_id, timeout_seconds=TIMEOUT_SECONDS)
 
         # Check items
+        # TODO
+
+
+if __name__ == "__main__":
+    setup_logging(logging.DEBUG)
+    setup_logging_for_module("__main__", logging.DEBUG)
+    test_dataset()
+    print("All tests passed")
+    exit(0)

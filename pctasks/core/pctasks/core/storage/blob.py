@@ -355,7 +355,8 @@ class BlobStorage(Storage):
                 if since_date:
                     if cast(Datetime, b.last_modified) >= since_date:
                         return False
-                return path_filter(b.name)
+                name: str = b.name  # type: ignore
+                return path_filter(name)
 
             return filter(
                 _f,
