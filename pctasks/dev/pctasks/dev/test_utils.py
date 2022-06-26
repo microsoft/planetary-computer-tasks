@@ -31,16 +31,7 @@ from pctasks.core.models.task import (
 )
 from pctasks.core.models.tokens import StorageAccountTokens
 from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
-from pctasks.core.storage.blob import BlobStorage
 from pctasks.dev.config import get_blob_config, get_table_config
-from pctasks.dev.env import (
-    PCTASKS_BLOB_ACCOUNT_KEY_ENV_VAR,
-    PCTASKS_BLOB_ACCOUNT_NAME_ENV_VAR,
-    PCTASKS_BLOB_ACCOUNT_URL_ENV_VAR,
-    get_dev_env,
-)
-
-from pctasks.run.utils import get_run_log_path
 from pctasks.task.run import run_task
 
 
@@ -76,6 +67,20 @@ class TestWorkflowRunRecords:
     jobs: Dict[str, TestJobRunRecords]
     timeout: bool = False
 
+    def print(self) -> None:
+        print(f"Workflow: {self.workflow_record.run_id}:")
+        print("----------------------------------------")
+        print(self.workflow_record.to_yaml())
+        print("----------------------------------------")
+        for job in self.jobs.values():
+            print(f"Job: {job.job_record.job_id}:")
+            print("----------------------------------------")
+            print(job.job_record.to_yaml())
+            for task in job.tasks.values():
+                print(f"Task: {task.task_id} ({task.job_id}):")
+                print("----------------------------------------")
+                print(task.to_yaml())
+
 
 def wait_for_test_workflow_run(
     run_id: str, timeout_seconds: int = 10
@@ -96,7 +101,7 @@ def wait_for_test_workflow_run(
             print(f"waiting for workflow run record... ({tok - tic:.0f} s)".format(tok))
         else:
             print(
-                f"Retrying workflow run with status {workflow.status}... "
+                f"Waiting on workflow run with status {workflow.status}... "
                 f"({tok - tic:.0f} s)".format(tok)
             )
         try:
@@ -148,31 +153,23 @@ def _check_workflow(
             for error in job_records.job_record.errors or []:
                 print(f" -- {error}")
         failed |= job_failed
-        for task_id, task_record in job_records.tasks.items():
-            task_failed = task_record.status != TaskRunStatus.COMPLETED
+        for task_id, task in job_records.tasks.items():
+            task_failed = task.status != TaskRunStatus.COMPLETED
             if task_failed:
                 print(f"Task {task_id} failed")
-                for error in task_record.errors or []:
+                for error in task.errors or []:
                     print(f" --- {error}")
             failed |= task_failed
             if task_failed:
-                run_log_path = get_run_log_path(
-                    job_id=job_id, task_id=task_id, run_id=run_id
-                )
-
-                log_storage = BlobStorage.from_account_key(
-                    f"blob://{get_dev_env(PCTASKS_BLOB_ACCOUNT_NAME_ENV_VAR)}"
-                    f"/{DEFAULT_LOG_CONTAINER}",
-                    account_key=get_dev_env(PCTASKS_BLOB_ACCOUNT_KEY_ENV_VAR),
-                    account_url=get_dev_env(PCTASKS_BLOB_ACCOUNT_URL_ENV_VAR),
-                )
-
-                if log_storage.file_exists(run_log_path):
-                    print(" -- Run log: --")
-                    print(log_storage.read_text(run_log_path))
-                    print(" -- End run log: --")
-                else:
-                    print(f"No run log found at {run_log_path}")
+                client = PCTasksClient()
+                try:
+                    logs = client.get_task_logs_from_task(task)
+                    for log_name, log in logs.items():
+                        print(f"\t\t-- log: {log_name} --")
+                        print(log)
+                        print(f"\t\t-- End log {log_name} --")
+                except NotFoundError:
+                    print(f"No run log found for task {task_id}")
 
     return (failed, workflow_run_records)
 

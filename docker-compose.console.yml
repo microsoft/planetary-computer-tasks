@@ -85,12 +85,16 @@ services:
     volumes:
       - .:/opt/src
     environment:
-      # Submit
       - PCTASKS_CLIENT__ENDPOINT=http://host.docker.internal:8500/tasks
       - PCTASKS_CLIENT__API_KEY=kind-api-key
 
-      # Records
-      # - PCTASKS_RECORDS__TABLES__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://azurite:10002/devstoreaccount1;
+      # Dev storage settings
+      - AZURITE_HOST=azurite
+      - AZURITE_PORT=10000
+      - AZURITE_STORAGE_ACCOUNT=devstoreaccount1
+
+      # Database connection string to bring up temp dbs
+      - DEV_DB_CONNECTION_STRING=postgresql://username:password@database:5432/postgis
 
 networks:
   default:

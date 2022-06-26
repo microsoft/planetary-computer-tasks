@@ -201,7 +201,7 @@ class RunSettings(PCTasksSettings):
                 raise ValueError(
                     "Must specify argo_token for argo workflow runner type."
                 )
-            if values.get("argo_workflow_runner_image") is None:
+            if values.get("workflow_runner_image") is None:
                 raise ValueError(
                     "Must specify argo_workflow_runner_image "
                     "for argo workflow runner type."

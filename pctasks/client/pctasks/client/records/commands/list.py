@@ -95,8 +95,8 @@ def list_jobs_cmd(
 
 
 @click.command("tasks")
-@click.argument("job_id")
 @click.argument("run_id")
+@click.argument("job_id")
 @opt_page
 @opt_all
 @opt_status
@@ -108,8 +108,8 @@ def list_jobs_cmd(
 @click.pass_context
 def list_tasks_cmd(
     ctx: click.Context,
-    job_id: str,
     run_id: str,
+    job_id: str,
     page: bool,
     all: bool,
     status: Optional[str],

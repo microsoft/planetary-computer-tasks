@@ -4,7 +4,7 @@ import os
 import pathlib
 import zipfile
 from time import perf_counter
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import requests
 from requests import HTTPError
@@ -74,7 +74,7 @@ class PCTasksClient:
         resp.raise_for_status()
         return resp.json()
 
-    def _upload_code(self, local_path: str) -> UploadCodeResult:
+    def upload_code(self, local_path: Union[pathlib.Path, str]) -> UploadCodeResult:
         """Upload a file to Azure Blob Storage.
 
         Returns the blob URI.
@@ -92,6 +92,7 @@ class PCTasksClient:
             file_obj = io.BytesIO()
             with zipfile.PyZipFile(file_obj, "w") as zf:
                 zf.writepy(str(path))
+            file_obj.seek(0)
 
             name = path.with_suffix(".zip").name
 
@@ -136,7 +137,7 @@ class PCTasksClient:
         def _uploaded_path(local_path: str, cache_key: str) -> str:
             blob_uri = local_path_to_blob[cache_key].get(local_path)
             if blob_uri is None:
-                blob_uri = self._upload_code(local_path).uri
+                blob_uri = self.upload_code(local_path).uri
                 local_path_to_blob["src"][local_path] = blob_uri
             return blob_uri
 
@@ -216,7 +217,7 @@ class PCTasksClient:
         if workflow.links:
             result: List[JobRunResponse] = []
             for link in workflow.links:
-                if link.rel == "jobs":
+                if link.rel == LinkRel.JOB:
                     result.append(
                         JobRunResponse.parse_obj(self._call_api("GET", link.href))
                     )
@@ -243,7 +244,7 @@ class PCTasksClient:
         if job.links:
             result: List[TaskRunResponse] = []
             for link in job.links:
-                if link.rel == "tasks":
+                if link.rel == LinkRel.TASK:
                     result.append(
                         TaskRunResponse.parse_obj(self._call_api("GET", link.href))
                     )

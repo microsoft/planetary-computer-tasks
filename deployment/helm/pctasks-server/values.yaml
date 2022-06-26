@@ -8,6 +8,10 @@ pctasks:
     debug: "FALSE"
     webConcurrency: "1"
 
+    dev:
+      enabled: false
+      api_key: ""
+
     image:
       # e.g. myacr.azurecr.io/my-repository
       repository: ""
@@ -72,6 +76,11 @@ pctasks:
     #  local: Run tasks with local executor (dev)
     task_runner_type: "batch"
 
+    # Workflow runner type, one of:
+    #  argo: Run the workflow runner in Argo
+    #  local: Run the workflow runner with local executor (dev)
+    workflow_runner_type: "argo"
+
     # The time to wait between polling task status
     # through the task runner, which can handle
     # issues that cause the task not to be run.
@@ -105,6 +114,7 @@ pctasks:
       account_url: ""
       account_name: ""
       account_key: ""
+      connection_string: ""
       image_key_table_name: "imagekeys"
       dataset_table_name: "datasets"
       task_run_record_table_name: "taskrunrecords"
@@ -130,6 +140,7 @@ pctasks:
       host: ""
       token: ""
       namespace: "argo"
+      workflow_runner_image: ""
 
     keyvault:
       enabled: true

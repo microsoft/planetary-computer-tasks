@@ -1,5 +1,4 @@
 import json
-import os
 from pathlib import Path
 
 from pctasks.dev.db import temp_pgstac_db
@@ -12,7 +11,7 @@ TIMEOUT_SECONDS = 60
 
 
 def test_ingest_collection():
-    with temp_pgstac_db(os.environ["SECRETS_DB_CONNECTION_STRING"]) as conn_str:
+    with temp_pgstac_db() as conn_str:
         collection_path = HERE / ".." / "data-files" / "collection.json"
         with collection_path.open() as f:
             collection = json.load(f)

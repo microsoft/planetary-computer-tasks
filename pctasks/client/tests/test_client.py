@@ -1,7 +1,4 @@
-import os
 import pathlib
-
-import pytest
 
 from pctasks.client.client import PCTasksClient
 from pctasks.client.settings import ClientSettings
@@ -14,22 +11,13 @@ from pctasks.core.models.workflow import (
     WorkflowConfig,
     WorkflowSubmitMessage,
 )
-from pctasks.core.storage.blob import BlobStorage
-from pctasks.dev.blob import AZURITE_ACCOUNT_KEY, AZURITE_HOST_ENV_VAR
+from pctasks.dev.blob import get_azurite_code_storage
 from pctasks.dev.test_utils import assert_workflow_is_successful
 
 HERE = pathlib.Path(__file__).parent
 
 
-@pytest.fixture
-def code_container():
-    """Fixture providing the account URL and cleaning up test code."""
-    hostname = os.getenv(AZURITE_HOST_ENV_VAR, "localhost")
-    account_url = f"http://{hostname}:10000/devstoreaccount1"
-    yield account_url
-
-
-def test_client_submit(code_container: str):
+def test_client_submit():
     settings = ClientSettings.get()
 
     code = HERE.joinpath("data-files", "mycode.py").absolute()
@@ -65,8 +53,42 @@ def test_client_submit(code_container: str):
     assert task.code.src.startswith("blob://devstoreaccount1/code/")
     assert task.code.src.endswith("/mycode.py")
 
-    storage = BlobStorage.from_account_key(
-        "blob://devstoreaccount1/code", AZURITE_ACCOUNT_KEY, code_container
-    )
+    storage = get_azurite_code_storage()
     path = storage.get_path(task.code.src)
     assert storage.file_exists(path)
+
+
+def test_upload_code_file() -> None:
+    settings = ClientSettings.get()
+    storage = get_azurite_code_storage()
+    client = PCTasksClient(settings)
+
+    code = pathlib.Path(__file__).absolute()
+    result = client.upload_code(code)
+    remote_path = storage.get_path(result.uri)
+
+    try:
+        assert storage.file_exists(remote_path)
+        bytes = storage.read_bytes(remote_path)
+        assert len(bytes) > 0
+    finally:
+        if storage.file_exists(remote_path):
+            storage.delete_file(remote_path)
+
+
+def test_upload_code_dir() -> None:
+    settings = ClientSettings.get()
+    storage = get_azurite_code_storage()
+    client = PCTasksClient(settings)
+
+    code = HERE.absolute()
+    result = client.upload_code(code)
+    remote_path = storage.get_path(result.uri)
+
+    try:
+        assert storage.file_exists(remote_path)
+        bytes = storage.read_bytes(remote_path)
+        assert len(bytes) > 0
+    finally:
+        if storage.file_exists(remote_path):
+            storage.delete_file(remote_path)

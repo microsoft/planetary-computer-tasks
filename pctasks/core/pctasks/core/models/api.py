@@ -74,6 +74,7 @@ class TaskRunResponse(RecordResponse):
             task_id=record.task_id,
             status=record.status,
             links=links,
+            errors=record.errors,
             created=record.created,
             updated=record.updated,
         )
@@ -117,6 +118,7 @@ class JobRunResponse(RecordResponse):
             job_id=record.job_id,
             status=record.status,
             links=links,
+            errors=record.errors,
             created=record.created,
             updated=record.updated,
         )
@@ -153,7 +155,7 @@ class WorkflowRunResponse(RecordResponse):
             for job in jobs:
                 links.append(
                     Link(
-                        rel=LinkRel.TASK,
+                        rel=LinkRel.JOB,
                         href=job_to_href(job),
                         type="application/json",
                         title=f"Job: {job.job_id}",
@@ -174,6 +176,7 @@ class WorkflowRunResponse(RecordResponse):
             run_id=record.run_id,
             status=record.status,
             links=links,
+            errors=record.errors,
             created=record.created,
             updated=record.updated,
             workflow=workflow,
