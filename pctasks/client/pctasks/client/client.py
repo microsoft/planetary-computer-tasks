@@ -138,7 +138,7 @@ class PCTasksClient:
             blob_uri = local_path_to_blob[cache_key].get(local_path)
             if blob_uri is None:
                 blob_uri = self.upload_code(local_path).uri
-                local_path_to_blob["src"][local_path] = blob_uri
+                local_path_to_blob[cache_key][local_path] = blob_uri
             return blob_uri
 
         for job_config in workflow.jobs.values():
