@@ -62,6 +62,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         publish pctasks-ingest
         publish pctasks-server
         publish pctasks-run
+        publish pctasks-task-base
 
     fi
 
