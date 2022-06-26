@@ -26,6 +26,8 @@ Options:
         Only build the dev image
     --task
         Only build the task images (including pctasks-run)
+    --for-cluster
+        Only build images that will be pushed to local registry for cluster
 "
 }
 
@@ -65,6 +67,11 @@ while [[ $# -gt 0 ]]; do case $1 in
         BUILD_SERVERS=""
         BUILD_DEV=""
         BUILD_DEPLOY=""
+        shift
+        ;;
+    --for-cluster)
+        BUILD_DEPLOY=""
+        BUILD_ONLY="ingest server run task-base"
         shift
         ;;
     --help)

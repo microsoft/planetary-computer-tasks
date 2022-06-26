@@ -9,7 +9,6 @@ install_requires = [
     "pctasks.core>=0.1.0",
     "pctasks.run>=0.1.0",
     "fastapi==0.78.*",
-    "argo-workflows==6.3.*",
 ]
 
 extra_reqs = {

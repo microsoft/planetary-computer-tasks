@@ -58,6 +58,11 @@ pctasks:
       default_pool_id: "{{ tf.batch_default_pool_id }}"
       submit_threads: 0
 
+    argo:
+      namespace: pc
+      host: "http://argo-workflows-server.pc.svc.cluster.local:2746"
+      # argo token set during helm install
+
     keyvault:
       url: "{{ tf.keyvault_url }}"
       sp_tenant_id: "{{ tf.kv_sp_tenant_id }}"

@@ -47,7 +47,7 @@ class LocalTaskRunner(TaskRunner):
             data = json.dumps({"args": args, "tags": task_tags or {}}).encode("utf-8")
             resp = requests.post(self.local_executor_url + "/execute", data=data)
             if resp.status_code == 200:
-                results.append(SuccessfulSubmitResult(executor_id=resp.json()))
+                results.append(SuccessfulSubmitResult(task_runner_id=resp.json()))
             else:
                 results.append(
                     FailedSubmitResult(errors=[f"{resp.status_code}: {resp.text}"])

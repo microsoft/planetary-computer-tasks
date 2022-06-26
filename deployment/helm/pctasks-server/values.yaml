@@ -24,11 +24,6 @@ pctasks:
       client_id: ""
       client_secret: ""
 
-    argo:
-      host: ""
-      token: ""
-      namespace: "argo"
-
     # Image used to run workflows.
     runner_image: ""
 
@@ -71,6 +66,21 @@ pctasks:
     fullnameOverride: ""
 
   run:
+    # Task runner type, one of:
+    #  batch: Run tasks in Azure Batch
+    #  argo: Run tasks in Argo Workflows
+    #  local: Run tasks with local executor (dev)
+    task_runner_type: "batch"
+
+    # The time to wait between polling task status
+    # through the task runner, which can handle
+    # issues that cause the task not to be run.
+    task_poll_seconds: 30
+
+    # The time to wait between checking for task
+    # output, which reports the success or failure
+    # of the completed task.
+    check_output_seconds: 3
 
     dev:
       local_executor_url: ""
@@ -115,6 +125,11 @@ pctasks:
       key: ""
       default_pool_id: ""
       submit_threads: 0
+
+    argo:
+      host: ""
+      token: ""
+      namespace: "argo"
 
     keyvault:
       enabled: true

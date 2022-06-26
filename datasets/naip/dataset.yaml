@@ -1,5 +1,7 @@
 name: naip
-image: pcttaskrob.azurecr.io/pctasks-naip:latest
+image: pccomponentstest.azurecr.io/pctasks-basic:latest
+code: ${{ local.path(naip/dataset.py) }}
+
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
   AZURE_CLIENT_ID: ${{ secrets.task-client-id }}

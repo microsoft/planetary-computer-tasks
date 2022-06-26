@@ -20,6 +20,7 @@ DEFAULT_OPERATIONS_QUEUE_NAME = "operations"
 # Default log container
 DEFAULT_LOG_CONTAINER = "tasklogs"
 DEFAULT_TASK_IO_CONTAINER = "taskio"
+DEFAULT_CODE_CONTAINER = "code"
 
 # Message types
 TASK_SUBMIT_MESSAGE_TYPE = "Task"

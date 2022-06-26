@@ -48,15 +48,20 @@ class CreateChunksTask(Task[CreateChunksInput, ChunksOutput]):
         chunkset = ChunkSet(dst_storage)
 
         asset_uris: List[str] = []
-        for root, _, files in src_storage.walk(
+        for root, folders, files in src_storage.walk(
             name_starts_with=input.options.name_starts_with,
             since_date=input.options.since,
             extensions=input.options.extensions,
             ends_with=input.options.ends_with,
             matches=input.options.matches,
             file_limit=input.options.limit,
+            max_depth=input.options.max_depth,
         ):
-            for f in files:
+            if input.options.list_folders:
+                gen = folders
+            else:
+                gen = files
+            for f in gen:
                 asset_path = os.path.join(root, f).strip("./")
                 asset_uris.append(src_storage.get_uri(asset_path))
 

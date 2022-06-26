@@ -1,4 +1,16 @@
 services:
+  task-base:
+    container_name: pctasks-task-base
+    image: pctasks-task-base
+    build:
+      context: .
+      dockerfile: Dockerfile.task_base
+    environment:
+      - AZURE_TENANT_ID=${tenantId}
+      - AZURE_CLIENT_ID=${servicePrincipalId}
+      - AZURE_CLIENT_SECRET=${servicePrincipalKey}
+    volumes:
+      - ./pctasks:/opt/src
   ingest:
     container_name: pctasks-ingest
     image: pctasks-ingest
@@ -23,3 +35,8 @@ services:
       - AZURE_CLIENT_SECRET=${servicePrincipalKey}
     volumes:
       - ./pctasks:/opt/src
+
+networks:
+  default:
+    name: pctasks-network
+

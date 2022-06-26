@@ -63,7 +63,4 @@ RUN cd /opt/src/ingest_task && \
 # Setup Python Path
 ENV PYTHONPATH=/opt/src:$PYTHONPATH
 
-# Force SSL for Postgres
-ENV PGSSLMODE=require
-
 WORKDIR /opt/src

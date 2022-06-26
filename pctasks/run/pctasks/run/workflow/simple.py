@@ -3,6 +3,7 @@ import os
 from importlib.metadata import EntryPoint
 from typing import Any, Dict, List, Optional, Union
 
+from pctasks.core.importer import ensure_code
 from pctasks.core.models.task import (
     CompletedTaskResult,
     FailedTaskResult,
@@ -41,6 +42,11 @@ class SimpleWorkflowRunner:
         logger.debug(task_config.to_yaml())
 
         try:
+            if task_config.code:
+                code_storage, code_path = context.storage_factory.get_storage_for_file(
+                    task_config.code
+                )
+                ensure_code(code_path, code_storage)
 
             task_path = task_config.task
 

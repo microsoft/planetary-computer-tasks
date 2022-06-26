@@ -1,0 +1,28 @@
+image: localhost:5001/pctasks-task-base:latest
+owner: microsoft
+name: test-dataset
+
+args:
+- collection_id
+- assets_uri
+- chunks_uri
+- items_uri
+- code_path
+
+code: ${{ args.code_path }}
+
+collections:
+  - id: ${{ args.collection_id }}
+    collection_class: dataset.collection:TestCollection
+    asset_storage:
+      - uri: ${{ args.assets_uri }}
+        chunks:
+          length: 2
+          ext: .json
+          name_starts_with: asset
+          splits:
+            - depth: 1
+    chunk_storage:
+      uri: ${{ args.chunks_uri }}
+    item_storage:
+      uri: ${{ args.items_uri }}

@@ -1,6 +1,7 @@
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Union
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from click.testing import CliRunner, Result
 
@@ -26,6 +27,7 @@ from pctasks.core.models.task import (
     WaitTaskResult,
 )
 from pctasks.core.models.tokens import StorageAccountTokens
+from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
 from pctasks.core.storage.blob import BlobStorage
 from pctasks.dev.config import get_blob_config, get_table_config
 from pctasks.dev.env import (
@@ -36,6 +38,9 @@ from pctasks.dev.env import (
 )
 from pctasks.dev.tables import get_task_run_record_table
 from pctasks.run.utils import get_run_log_path
+from pctasks.submit.client import SubmitClient
+from pctasks.submit.settings import SubmitSettings
+from pctasks.submit.template import template_workflow_dict
 from pctasks.task.run import run_task
 
 
@@ -69,6 +74,7 @@ class TestJobRunRecords:
 class TestWorkflowRunRecords:
     workflow_record: WorkflowRunRecord
     jobs: Dict[str, TestJobRunRecords]
+    timeout: bool = False
 
 
 def wait_for_test_workflow_run(
@@ -149,25 +155,42 @@ def wait_for_test_workflow_run(
 
             job_records[job_id] = TestJobRunRecords(job_record, task_records)
 
-        return TestWorkflowRunRecords(workflow_run_record, job_records)
+        return TestWorkflowRunRecords(
+            workflow_run_record, job_records, timeout=tok - tic >= timeout_seconds
+        )
     else:
-        raise Exception("Timeout while waiting for run record")
+        raise Exception(f"Timeout while waiting for workflow {run_id}")
 
 
-def assert_workflow_is_successful(
+def _check_workflow(
     run_id: str, timeout_seconds: int = 10
-) -> TestWorkflowRunRecords:
+) -> Tuple[bool, TestWorkflowRunRecords]:
     workflow_run_records = wait_for_test_workflow_run(run_id, timeout_seconds)
     failed = workflow_run_records.workflow_record.status != WorkflowRunStatus.COMPLETED
+    if failed:
+        print(
+            f"Workflow run {run_id} failed. "
+            f"Status: {workflow_run_records.workflow_record.status}"
+        )
+        if workflow_run_records.timeout:
+            print(f"TIMEOUT while waiting for workflow {run_id}")
+        print("Workflow:")
+        print(workflow_run_records.workflow_record.workflow.to_yaml())
+        for error in workflow_run_records.workflow_record.errors or []:
+            print(f" - {error}")
     for job_id, job_records in workflow_run_records.jobs.items():
         job_failed = job_records.job_record.status != JobRunStatus.COMPLETED
         if job_failed:
             print(f"Job {job_id} failed. Status: {job_records.job_record.status}")
+            for error in job_records.job_record.errors or []:
+                print(f" -- {error}")
         failed |= job_failed
         for task_id, task_record in job_records.tasks.items():
             task_failed = task_record.status != TaskRunStatus.COMPLETED
             if task_failed:
                 print(f"Task {task_id} failed")
+                for error in task_record.errors or []:
+                    print(f" --- {error}")
             failed |= task_failed
             if task_failed:
                 run_log_path = get_run_log_path(
@@ -188,10 +211,59 @@ def assert_workflow_is_successful(
                 else:
                     print(f"No run log found at {run_log_path}")
 
-    if failed:
-        raise Exception("Workflow failed")
+    return (failed, workflow_run_records)
 
-    return workflow_run_records
+
+def assert_workflow_is_successful(
+    run_id: str, timeout_seconds: int = 10
+) -> TestWorkflowRunRecords:
+    failed, records = _check_workflow(run_id, timeout_seconds)
+    assert not failed
+    return records
+
+
+def assert_workflow_fails(
+    run_id: str, timeout_seconds: int = 10
+) -> TestWorkflowRunRecords:
+    failed, records = _check_workflow(run_id, timeout_seconds)
+    assert failed
+    return records
+
+
+def run_workflow(
+    workflow: Union[str, WorkflowConfig],
+    args: Optional[Dict[str, Any]] = None,
+    base_path: Union[str, Path] = Path.cwd(),
+) -> str:
+    """Runs a workflow from either a YAML string or WorkflowConfig object.
+    Uses the default submit settings.
+    Returns the run_id
+    """
+    workflow = (
+        WorkflowConfig.from_yaml(workflow) if isinstance(workflow, str) else workflow
+    )
+    templated_workflow = template_workflow_dict(workflow.dict(), base_path=base_path)
+    submit_settings = SubmitSettings.get()
+    with SubmitClient(submit_settings) as submit_client:
+        submit_message = submit_client.submit_workflow(
+            WorkflowSubmitMessage(workflow=templated_workflow, args=args)
+        )
+        return submit_message.run_id
+
+
+def run_workflow_from_file(
+    workflow_path: Union[str, Path],
+    args: Optional[Dict[str, Any]] = None,
+) -> str:
+    """Runs a workflow from a YAML file at workflow_path.
+    Uses the default submit settings.
+    Returns the run_id
+    """
+    return run_workflow(
+        Path(workflow_path).read_text(),
+        args=args,
+        base_path=Path(workflow_path).parent,
+    )
 
 
 def run_test_task(

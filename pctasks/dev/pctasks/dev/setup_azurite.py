@@ -9,6 +9,7 @@ from azure.storage.queue import QueueServiceClient
 
 from pctasks.core.constants import (
     DEFAULT_BLOB_TRIGGER_REGISTRATION_TABLE_NAME,
+    DEFAULT_CODE_CONTAINER,
     DEFAULT_DATASET_TABLE_NAME,
     DEFAULT_IMAGE_KEY_TABLE_NAME,
     DEFAULT_INBOX_QUEUE_NAME,
@@ -79,7 +80,7 @@ def setup_azurite() -> None:
         image_key_table.set_image(
             "ingest",
             image_config=ImageConfig(
-                image="pc-ingest:latest",
+                image="localhost:5001/pctasks-ingest:latest",
                 environment=[
                     "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}",
                 ],
@@ -97,6 +98,7 @@ def setup_azurite() -> None:
     for container in [
         DEFAULT_LOG_CONTAINER,
         DEFAULT_TASK_IO_CONTAINER,
+        DEFAULT_CODE_CONTAINER,
         TEST_DATA_CONTAINER,
     ]:
         if container not in containers:

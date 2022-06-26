@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import List, Union
@@ -10,13 +11,18 @@ from pctasks.dataset.collection import Collection
 
 
 class TestCollection(Collection):
+    @classmethod
     def create_item(
-        self, asset_uri: str, storage_factory: StorageFactory
+        cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
         storage, path = storage_factory.get_storage_for_file(asset_uri)
+        m = re.search(r"/([^/]+)/assets", asset_uri)
+        if not m:
+            raise Exception(f"Invalid asset URI: {asset_uri}")
+        collection_id = m.group(1)
         return [
             pystac.Item(
-                collection="test-collection",
+                collection=collection_id,
                 id=Path(asset_uri).stem,
                 geometry={
                     "type": "Polygon",

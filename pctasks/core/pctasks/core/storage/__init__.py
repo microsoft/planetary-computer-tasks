@@ -111,7 +111,15 @@ class StorageFactory:
         return storage
 
     def get_storage_for_file(self, file_uri: str) -> Tuple[Storage, str]:
-        """Returns storage and the path to the file based on that storage."""
+        """
+        Returns storage and the path to the file based on that storage.
+
+        For local paths, storage is a :class:`storage.LocalStorage` starting at
+        the parent directory of the `file_uri`. The path is just the filename.
+
+        For Blob Storage paths, `storage` is a `:class:`storage.BlobStorage`
+        the path is the blob name (without the container).
+        """
         if blob.BlobUri.matches(file_uri):
             blob_uri = blob.BlobUri(file_uri)
             storage = self.get_storage(str(blob_uri.base_uri))

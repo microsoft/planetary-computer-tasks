@@ -19,11 +19,7 @@ install_requires = [
 ]
 
 extra_reqs = {
-    "dev": [
-        "pytest",
-        "pytest-cov",
-        "pre-commit"
-    ],
+    "dev": ["pytest", "pytest-cov", "pre-commit"],
     "docs": ["mkdocs", "mkdocs-material", "pdocs"],
 }
 
@@ -42,7 +38,7 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     keywords="Planetary, STAC",
-    author=u"Microsoft",
+    author="Microsoft",
     author_email="planetarycomputer@microsoft.com",
     url="https://github.com/Microsoft/planetary-computer-tasks",
     license="MIT",
