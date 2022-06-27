@@ -21,7 +21,7 @@ TIMEOUT_SECONDS = 60
 
 
 def test_modis_ingest() -> None:
-    with temp_pgstac_db() as conn_str:
+    with temp_pgstac_db() as conn_str_info:
         # Ingest collection
 
         collection_path = HERE / ".." / "data-files" / "modis" / "collection.json"
@@ -29,7 +29,7 @@ def test_modis_ingest() -> None:
             collection = json.load(f)
         run_id = run_workflow_from_file(
             WORKFLOWS / "ingest-collection.yaml",
-            args={"collection": collection, "db_connection_str": conn_str},
+            args={"collection": collection, "db_connection_str": conn_str_info.remote},
         )
         assert_workflow_is_successful(run_id, timeout_seconds=TIMEOUT_SECONDS)
 
@@ -69,7 +69,7 @@ def test_modis_ingest() -> None:
                 items_workflow,
                 args={
                     "ndjson_uri": storage.get_uri("items.ndjson"),
-                    "db_conn_str": conn_str,
+                    "db_conn_str": conn_str_info.remote,
                 },
             )
 

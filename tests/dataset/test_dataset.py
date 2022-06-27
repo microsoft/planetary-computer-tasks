@@ -24,7 +24,7 @@ TIMEOUT_SECONDS = 180
 
 
 def test_dataset():
-    with temp_pgstac_db() as conn_str:
+    with temp_pgstac_db() as conn_str_info:
         test_tag = uuid1().hex[:5]
         collection_id = f"test-collection-{test_tag}"
 
@@ -36,7 +36,7 @@ def test_dataset():
         collection["id"] = collection_id
         collection_run_id = run_workflow_from_file(
             WORKFLOWS / "ingest-collection.yaml",
-            args={"collection": collection, "db_connection_str": conn_str},
+            args={"collection": collection, "db_connection_str": conn_str_info.remote},
         )
         assert_workflow_is_successful(
             collection_run_id, timeout_seconds=TIMEOUT_SECONDS
@@ -47,7 +47,7 @@ def test_dataset():
         dataset = template_dataset_file(HERE / "dataset.yaml")
         if not dataset.environment:
             dataset.environment = {}
-        dataset.environment[DB_CONNECTION_STRING_ENV_VALUE] = conn_str
+        dataset.environment[DB_CONNECTION_STRING_ENV_VALUE] = conn_str_info.remote
         workflow = create_process_items_workflow(
             dataset,
             dataset.collections[0],

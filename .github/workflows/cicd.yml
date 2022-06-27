@@ -2,30 +2,19 @@ name: Planetary Computer Tasks CI/CD
 
 on:
   push:
-    branches: [main]
+    branches: [main, feature/rde/terraform-refactor]
     tags: ["*"]
-  pull_request:
-    branches: [ main ]
 
 jobs:
-
-  cicd:
-
+  build_and_publish:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
+
       - uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
-
-      - name: Install Kind
-        uses: helm/kind-action@deab45fc8df9de5090a604e8ec11778eea7170bd
-        with:
-          install_only: true
-
-      - name: Install Helm
-        uses: azure/setup-helm@v1
+          python-version: "3.8"
 
       - name: Install local dependencies
         run: ./scripts/install
@@ -36,58 +25,70 @@ jobs:
       - name: Test
         run: ./scripts/test
 
-    #   - name: Get image tag
-    #     id: get_image_tag
-    #     run:
-    #       case "${GITHUB_REF}" in
-    #         *tags*)
-    #           echo "::set-output name=tag::${GITHUB_REF/refs\/tags\//}"
-    #           ;;
-    #         *)
-    #           echo "::set-output name=tag::latest"
-    #           ;;
-    #       esac
+      # Integration Tests
 
-    #   - name: Log into the ACR
-    #     env:
-    #       CLIENT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
-    #       CLIENT_SECRET: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
-    #     run:
-    #       docker login pcccr.azurecr.io --username ${CLIENT_ID} --password ${CLIENT_SECRET}
+      - name: Install Kind
+        uses: helm/kind-action@deab45fc8df9de5090a604e8ec11778eea7170bd
+        with:
+          install_only: true
 
-    #   - name: Publish images
-    #     run: ./scripts/cipublish --acr pcccr --tag ${{steps.get_image_tag.outputs.tag}}
+      - name: Install Helm
+        uses: azure/setup-helm@v1
 
-    # outputs:
-    #   image_tag: ${{ steps.get_image_tag.outputs.tag }}
+      - name: Setup cluster
+        run: ./scripts/cluster setup
 
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   if: ${{ github.ref == 'refs/heads/main' }}
-  #   needs:
-  #     - build_and_publish
-  #   steps:
-  #     - uses: actions/checkout@v2
+      - name: Run integration tests
+        run: ./scripts/citest-integration
 
-  #     - name: Get image tag
-  #       id: get_image_tag
-  #       if: ${{ github.base_ref }}
-  #       run:
-  #         case "${GITHUB_REF}" in
-  #           *tags*)
-  #             echo "::set-output name=tag::${GITHUB_REF/refs\/tags\//}"
-  #             ;;
-  #           *)
-  #             echo "::set-output name=tag::latest"
-  #             ;;
-  #         esac
+      # Publish images
 
-  #     - name: Deploy
-  #       run: ./scripts/cideploy
-  #       env:
-  #         IMAGE_TAG: ${{needs.build_and_publish.outputs.image_tag}}
-  #         ENVIRONMENT: staging
-  #         ARM_CLIENT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
-  #         ARM_CLIENT_SECRET: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
-  #         ARM_SUBSCRIPTION_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}
-  #         ARM_TENANT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}
+      - name: Get image tag
+        id: get_image_tag
+        run: case "${GITHUB_REF}" in
+          *tags*)
+          echo "::set-output name=tag::${GITHUB_REF/refs\/tags\//}"
+          ;;
+          *)
+          echo "::set-output name=tag::latest"
+          ;;
+          esac
+
+      - name: Log into the ACR (test)
+        env:
+          CLIENT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
+          CLIENT_SECRET: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
+        run: docker login pccomponentstest.azurecr.io --username ${CLIENT_ID} --password ${CLIENT_SECRET}
+
+      - name: Publish images (test)
+        run: ./scripts/cipublish --acr pccomponentstest --tag ${{steps.get_image_tag.outputs.tag}}
+
+      - name: Log into the ACR
+        env:
+          CLIENT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
+          CLIENT_SECRET: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
+        run: docker login pccomponents.azurecr.io --username ${CLIENT_ID} --password ${CLIENT_SECRET}
+
+      - name: Publish images
+        run: ./scripts/cipublish --acr pccomponents --tag ${{steps.get_image_tag.outputs.tag}}
+
+    outputs:
+      image_tag: ${{ steps.get_image_tag.outputs.tag }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs:
+      - build_and_publish
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Deploy
+        run: ./scripts/cideploy
+        env:
+          IMAGE_TAG: ${{needs.build_and_publish.outputs.image_tag}}
+          ENVIRONMENT: staging
+          ARM_CLIENT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
+          ARM_CLIENT_SECRET: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
+          ARM_SUBSCRIPTION_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}
+          ARM_TENANT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}

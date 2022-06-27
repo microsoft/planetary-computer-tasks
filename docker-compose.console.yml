@@ -96,6 +96,10 @@ services:
       # Database connection string to bring up temp dbs
       - DEV_DB_CONNECTION_STRING=postgresql://username:password@database:5432/postgis
 
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
 networks:
   default:
     name: pctasks-network
+

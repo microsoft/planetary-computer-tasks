@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -e
+
+if [[ "${CI}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+        "Usage: $(basename "$0") --dev
+Intergration tests run as part of CI
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+
+    export PCTASKS_CLIENT__ENDPOINT=http://localhost:8500/tasks
+    export PCTASKS_CLIENT__API_KEY=kind-api-key
+    export AZURITE_HOST=localhost
+    export AZURITE_PORT=10000
+    export AZURITE_STORAGE_ACCOUNT=devstoreaccount1
+    export DEV_DB_CONNECTION_STRING=postgresql://username:password@localhost:5499/postgis
+    export DEV_REMOTE_DB_CONNECTION_STRING=postgresql://username:password@database:5432/postgis
+
+    scripts/bin/test-integration
+fi

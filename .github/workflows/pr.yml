@@ -1,0 +1,46 @@
+name: Planetary Computer Tasks PR CI
+
+on:
+  pull_request:
+    branches:
+      - XXXX # Temp while working through cicd.yml
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install local dependencies
+        run: ./scripts/install
+
+      - name: Setup
+        run: ./scripts/setup
+
+      - name: Test
+        run: ./scripts/test
+
+      # Integration Tests
+
+      - name: Install Kind
+        uses: helm/kind-action@deab45fc8df9de5090a604e8ec11778eea7170bd
+        with:
+          install_only: true
+        if: github.base_ref  == 'refs/heads/master'
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        if: github.base_ref  == 'refs/heads/master'
+
+      - name: Setup cluster
+        run: ./scripts/cluster setup
+        if: github.base_ref  == 'refs/heads/master'
+
+      - name: Run integration tests
+        run: ./scripts/citest-integration
+        if: github.base_ref  == 'refs/heads/master'
