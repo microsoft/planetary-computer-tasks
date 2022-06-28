@@ -2,7 +2,7 @@ name: Planetary Computer Tasks CI/CD
 
 on:
   push:
-    branches: [main, feature/rde/terraform-refactor]
+    branches: [main]
     tags: ["*"]
 
 jobs:
@@ -70,7 +70,7 @@ jobs:
         run: docker login pccomponents.azurecr.io --username ${CLIENT_ID} --password ${CLIENT_SECRET}
 
       - name: Publish images
-        run: ./scripts/publish --acr pccomponents --tag ${{steps.get_image_tag.outputs.tag}}  --no-login
+        run: ./scripts/publish --acr pccomponents --tag ${{steps.get_image_tag.outputs.tag}} --no-login
 
     outputs:
       image_tag: ${{ steps.get_image_tag.outputs.tag }}

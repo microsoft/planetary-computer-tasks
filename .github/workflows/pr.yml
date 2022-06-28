@@ -2,8 +2,6 @@ name: Planetary Computer Tasks PR CI
 
 on:
   pull_request:
-    branches:
-      - XXXX # Temp while working through cicd.yml
 
 jobs:
   build:
@@ -12,9 +10,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: "3.8"
 
       - name: Install local dependencies
         run: ./scripts/install
