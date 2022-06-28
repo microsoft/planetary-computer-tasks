@@ -32,6 +32,10 @@ output "dns_label" {
   value = azurerm_public_ip.pctasks.domain_name_label
 }
 
+output "cloudapp_hostname" {
+  value = "${azurerm_public_ip.pctasks.domain_name_label}.${local.location}.cloudapp.azure.com"
+}
+
 output "pctasks_server_replica_count" {
   value = var.pctasks_server_replica_count
 }
@@ -122,6 +126,12 @@ output "kv_sp_client_id" {
 
 output "kv_sp_client_secret" {
   value = var.kv_sp_client_secret
+}
+
+## API Management
+
+output "api_management_name" {
+  value = azurerm_api_management.pctasks.name
 }
 
 ## PCTasks Server
