@@ -288,7 +288,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     ######################
 
     pushd ${TERRAFORM_DIR}
-    export ACR_NAME=$(tf_output acr_name)
+    export ACR_NAME=$(tf_output task_acr_name)
     export SA_ACCOUNT_NAME=$(tf_output sa_account_name)
     export SA_ACCOUNT_KEY=$(tf_output sa_account_key)
     export SA_ACCOUNT_URL=$(tf_output sa_tables_account_url)
