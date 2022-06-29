@@ -1,8 +1,11 @@
+import json
+from pathlib import Path
 from typing import Dict, List, Optional
 
 from pctasks.core.models.base import ForeachConfig
 from pctasks.core.models.task import TaskConfig
 from pctasks.core.models.workflow import JobConfig, WorkflowConfig
+from pctasks.core.utils import map_opt
 from pctasks.dataset.chunks.models import (
     ChunkInfo,
     CreateChunksTaskConfig,
@@ -13,6 +16,7 @@ from pctasks.dataset.models import ChunkOptions, CollectionConfig, DatasetConfig
 from pctasks.dataset.splits.models import CreateSplitsOptions, CreateSplitsTaskConfig
 from pctasks.ingest.models import IngestNdjsonInput, IngestTaskConfig
 from pctasks.ingest.settings import IngestOptions
+from pctasks.ingest.utils import generate_collection_json
 
 
 def create_chunks_workflow(
@@ -188,5 +192,42 @@ def create_process_items_workflow(
         jobs={
             **chunks_jobs,
             process_items_job.get_id(): process_items_job,
+        },
+    )
+
+
+def create_ingest_collection_workflow(
+    dataset: DatasetConfig,
+    collection: CollectionConfig,
+    target: Optional[str] = None,
+    tags: Optional[Dict[str, str]] = None,
+) -> WorkflowConfig:
+    collection_template = map_opt(Path, collection.template)
+    if not collection_template:
+        raise ValueError(f"Collection {collection.id} has no template")
+
+    if collection_template.is_dir():
+        collection_body = generate_collection_json(collection_template)
+    else:
+        with open(collection_template, "r") as f:
+            collection_body = json.load(f)
+
+    # Ensure collection ID is set properly
+    collection_body["id"] = collection.id
+
+    task = IngestTaskConfig.from_collection(
+        collection=collection_body,
+        target=target,
+        environment=dataset.environment,
+        tags=tags,
+    )
+
+    return WorkflowConfig(
+        name=f"Ingest Collection: {collection.id}",
+        dataset=f"{dataset.owner}/{collection.id}",
+        target_environment=target,
+        args=dataset.args,
+        jobs={
+            "ingest-collection": JobConfig(tasks=[task]),
         },
     )

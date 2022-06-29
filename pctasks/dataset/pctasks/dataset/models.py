@@ -14,6 +14,7 @@ from pctasks.core.storage import get_storage
 from pctasks.core.storage.base import Storage
 from pctasks.core.storage.blob import BlobUri
 from pctasks.core.tables.base import InvalidTableKeyError, validate_table_key
+from pctasks.core.utils.template import DictTemplater
 from pctasks.dataset.constants import DEFAULT_CHUNK_LENGTH
 
 
@@ -174,6 +175,7 @@ class LocalStorageConfig(StorageConfig):
 
 class CollectionConfig(PCBaseModel):
     id: str
+    template: Optional[str] = None
     collection_class: str = Field(alias="class")
     asset_storage: List[Union[BlobStorageConfig, LocalStorageConfig]]
     chunk_storage: Union[BlobStorageConfig, LocalStorageConfig]
@@ -242,6 +244,9 @@ class DatasetConfig(DatasetIdentifier):
 
     def get_identifier(self) -> DatasetIdentifier:
         return DatasetIdentifier(owner=self.owner, name=self.name)
+
+    def template_args(self, args: Dict[str, str]) -> "DatasetConfig":
+        return DictTemplater({"args": args}, strict=False).template_model(self)
 
     @validator("name")
     def _validate_name(cls, v: str) -> str:

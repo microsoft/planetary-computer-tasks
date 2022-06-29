@@ -1,3 +1,4 @@
+import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -50,6 +51,8 @@ def run_pctasks(
     result = runner.invoke(pctasks_cmd, [str(c) for c in cmd], catch_exceptions=True)
     if result.output and not silent:
         print(result.output)
+    if result.stderr and not silent:
+        print(result.stderr, file=sys.stderr)
     if result.exception is not None and not catch_exceptions:
         raise CliTestError("Test code threw an exception") from result.exception
     return result

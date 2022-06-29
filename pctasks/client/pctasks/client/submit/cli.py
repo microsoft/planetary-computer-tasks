@@ -1,9 +1,11 @@
 import logging
+from typing import List, Tuple
 
 import click
 
 from pctasks.client.client import PCTasksClient
 from pctasks.client.settings import ClientSettings
+from pctasks.client.submit.options import opt_args
 from pctasks.client.submit.template import template_workflow_file
 from pctasks.core.cli import PCTasksCommandContext
 from pctasks.core.models.workflow import WorkflowSubmitMessage
@@ -13,8 +15,11 @@ logger = logging.getLogger(__name__)
 
 @click.command("workflow")
 @click.argument("workflow_path")
+@opt_args
 @click.pass_context
-def file_cmd(ctx: click.Context, workflow_path: str) -> None:
+def file_cmd(
+    ctx: click.Context, workflow_path: str, arg: List[Tuple[str, str]]
+) -> None:
     """Submit the workflow at FILE
 
     Can be a local file or a blob URI (e.g. blob://account/container/workflow.yaml)
@@ -24,7 +29,7 @@ def file_cmd(ctx: click.Context, workflow_path: str) -> None:
 
     workflow = template_workflow_file(workflow_path)
 
-    msg = WorkflowSubmitMessage(workflow=workflow)
+    msg = WorkflowSubmitMessage(workflow=workflow, args=dict(arg))
     submit_client = PCTasksClient(settings)
     submit_client.submit_workflow(msg)
 

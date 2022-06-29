@@ -3,17 +3,13 @@ import logging
 from pathlib import Path
 from uuid import uuid1
 
+from pypgstac.db import PgstacDB
+
 from pctasks.cli.cli import setup_logging, setup_logging_for_module
-from pctasks.dataset.template import template_dataset_file
-from pctasks.dataset.workflow import create_process_items_workflow
+from pctasks.core.utils import completely_flatten
 from pctasks.dev.blob import copy_dir_to_azurite, temp_azurite_blob_storage
 from pctasks.dev.db import temp_pgstac_db
-from pctasks.dev.test_utils import (
-    assert_workflow_is_successful,
-    run_workflow,
-    run_workflow_from_file,
-)
-from pctasks.ingest.constants import DB_CONNECTION_STRING_ENV_VALUE
+from pctasks.dev.test_utils import assert_workflow_is_successful, run_pctasks
 
 HERE = Path(__file__).parent
 DATASETS = HERE
@@ -28,32 +24,6 @@ def test_dataset():
         test_tag = uuid1().hex[:5]
         collection_id = f"test-collection-{test_tag}"
 
-        # Ingest collection
-
-        collection_path = HERE / ".." / "data-files" / "collection.json"
-        with collection_path.open() as f:
-            collection = json.load(f)
-        collection["id"] = collection_id
-        collection_run_id = run_workflow_from_file(
-            WORKFLOWS / "ingest-collection.yaml",
-            args={"collection": collection, "db_connection_str": conn_str_info.remote},
-        )
-        assert_workflow_is_successful(
-            collection_run_id, timeout_seconds=TIMEOUT_SECONDS
-        )
-
-        # Process items
-
-        dataset = template_dataset_file(HERE / "dataset.yaml")
-        if not dataset.environment:
-            dataset.environment = {}
-        dataset.environment[DB_CONNECTION_STRING_ENV_VALUE] = conn_str_info.remote
-        workflow = create_process_items_workflow(
-            dataset,
-            dataset.collections[0],
-            chunkset_id="test-" + test_tag,
-        )
-
         with temp_azurite_blob_storage() as root_storage:
             assets_storage = root_storage.get_substorage(f"{collection_id}/assets")
             chunks_storage = root_storage.get_substorage("chunks")
@@ -61,21 +31,77 @@ def test_dataset():
 
             copy_dir_to_azurite(assets_storage, TEST_DATA / "assets")
 
-            run_id = run_workflow(
-                workflow,
-                args={
-                    "collection_id": collection_id,
-                    "assets_uri": assets_storage.get_uri(),
-                    "chunks_uri": chunks_storage.get_uri(),
-                    "items_uri": items_storage.get_uri(),
-                    "code_path": str(HERE.resolve()),
-                },
+            args = {
+                "collection_id": collection_id,
+                "collection_template": str(TEST_DATA / "collection_template"),
+                "assets_uri": assets_storage.get_uri(),
+                "chunks_uri": chunks_storage.get_uri(),
+                "items_uri": items_storage.get_uri(),
+                "code_path": str(HERE.resolve()),
+                "db_connection_string": conn_str_info.remote,
+            }
+
+            # Ingest collection
+
+            ingest_collection_result = run_pctasks(
+                [
+                    "dataset",
+                    "ingest-collection",
+                    "-d",
+                    str(HERE / "dataset.yaml"),
+                    "-c",
+                    collection_id,
+                    "-s",
+                ]
+                + list(completely_flatten([["-a", k, v] for k, v in args.items()])),
             )
 
-            assert_workflow_is_successful(run_id, timeout_seconds=TIMEOUT_SECONDS)
+            assert ingest_collection_result.exit_code == 0
+            ingest_collection_run_id = ingest_collection_result.output
+            assert_workflow_is_successful(
+                ingest_collection_run_id, timeout_seconds=TIMEOUT_SECONDS
+            )
 
-        # Check items
-        # TODO
+            with PgstacDB(conn_str_info.local) as db:
+                res = db.query_one(
+                    "SELECT id FROM collections WHERE id=%s",
+                    (collection_id,),
+                )
+                assert res == collection_id
+
+            # Process items
+
+            process_items_result = run_pctasks(
+                [
+                    "dataset",
+                    "process-items",
+                    "-d",
+                    str(HERE / "dataset.yaml"),
+                    "-c",
+                    collection_id,
+                    "test-" + test_tag,
+                    "-s",
+                ]
+                + list(completely_flatten([["-a", k, v] for k, v in args.items()])),
+            )
+
+            assert process_items_result.exit_code == 0
+            process_items_run_id = process_items_result.output
+            assert_workflow_is_successful(
+                process_items_run_id, timeout_seconds=TIMEOUT_SECONDS
+            )
+
+            with PgstacDB(conn_str_info.local) as db:
+                res = db.search(
+                    {
+                        "filter": {
+                            "op": "=",
+                            "args": [{"property": "collection"}, collection_id],
+                        }
+                    }
+                )
+                assert isinstance(res, str)
+                assert json.loads(res)["features"]
 
 
 if __name__ == "__main__":
