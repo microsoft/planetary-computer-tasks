@@ -1,11 +1,12 @@
 import json
 import os
 from pathlib import Path
-from typing import Any, Dict, Union, cast
+from typing import Any, Dict, Union
 
 import marko
-import pystac
 from jinja2 import StrictUndefined, Template
+
+from pctasks.core.utils.stac import validate_stac
 
 
 def template(values: Dict[str, Any], template_text: str) -> str:
@@ -38,9 +39,6 @@ def generate_collection_json(
     result = json.loads(result_txt)
 
     if validate:
-        col = cast(pystac.Collection, pystac.read_dict(result))
-        assert col.STAC_OBJECT_TYPE == pystac.STACObjectType.COLLECTION
-        col.remove_links("root")
-        col.validate()
+        validate_stac(result)
 
     return result
