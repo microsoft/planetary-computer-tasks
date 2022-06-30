@@ -80,7 +80,7 @@ class SimpleWorkflowExecutor:
             # Substitute local secrets and set environment variables.
             env = task_config.environment or {}
             if env:
-                env = LocalSecretsProvider().substitute_secrets(env)
+                env = LocalSecretsProvider(settings=None).substitute_secrets(env)
 
             with environment(**env):
                 missing_env: List[str] = []

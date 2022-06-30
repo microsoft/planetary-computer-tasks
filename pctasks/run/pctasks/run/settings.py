@@ -67,7 +67,7 @@ class RunSettings(PCTasksSettings):
     check_output_seconds: int = 3
 
     # Dev
-    local_executor_url: Optional[str] = None
+    local_dev_endpoints_url: Optional[str] = None
     local_secrets: bool = False
 
     notification_queue: NotificationQueueConnStrConfig
@@ -129,28 +129,6 @@ class RunSettings(PCTasksSettings):
             submit_threads=self.batch_submit_threads,
         )
 
-    @validator("batch_url", always=True)
-    def batch_url_validator(
-        cls, v: Optional[str], values: Dict[str, Any]
-    ) -> Optional[str]:
-        if values.get("local_executor_url") is None:
-            if not v:
-                raise ValueError("Must specify batch_url.")
-        if v:
-            parsed = urlparse(v)
-            if not parsed.scheme or not parsed.netloc:
-                raise ValueError(f"Invalid batch_url: {v}")
-        return v
-
-    @validator("batch_key", always=True)
-    def batch_key_validator(
-        cls, v: Optional[str], values: Dict[str, Any]
-    ) -> Optional[str]:
-        if values.get("batch_url"):
-            if not v:
-                raise ValueError("Must specify batch_key.")
-        return v
-
     @validator("keyvault_url", always=True)
     def keyvault_url_validator(
         cls, v: Optional[str], values: Dict[str, Any]
@@ -165,9 +143,9 @@ class RunSettings(PCTasksSettings):
         cls, v: TaskRunnerType, values: Dict[str, Any]
     ) -> TaskRunnerType:
         if v == TaskRunnerType.LOCAL:
-            if values.get("local_executor_url") is None:
+            if values.get("local_dev_endpoints_url") is None:
                 raise ValueError(
-                    "Must specify local_executor_url for local remote runner type."
+                    "Must specify local_dev_endpoints_url for local remote runner type."
                 )
 
         if v == TaskRunnerType.ARGO:

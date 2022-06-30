@@ -1,7 +1,7 @@
 import os
 from typing import Any, Dict, Optional
 
-from pctasks.run.secrets.local import LOCAL_SECRETS_PREFIX
+from pctasks.run.secrets.local import LOCAL_ENV_SECRETS_PREFIX
 
 
 class TempSecrets:
@@ -16,7 +16,7 @@ class TempSecrets:
 
     def __enter__(self) -> "TempSecrets":
         for name in self._secrets:
-            env_name = f"{LOCAL_SECRETS_PREFIX}{name}"
+            env_name = f"{LOCAL_ENV_SECRETS_PREFIX}{name}"
             prev_value = os.getenv(env_name)
             os.environ[env_name] = str(self._secrets[name])
             self._secrets[name] = prev_value
@@ -25,7 +25,7 @@ class TempSecrets:
 
     def __exit__(self, *args: Any) -> None:
         for name in self._secrets:
-            env_name = f"{LOCAL_SECRETS_PREFIX}{name}"
+            env_name = f"{LOCAL_ENV_SECRETS_PREFIX}{name}"
             if self._secrets[name] is None:
                 del os.environ[env_name]
             else:

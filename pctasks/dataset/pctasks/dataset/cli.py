@@ -249,6 +249,33 @@ def ingest_collection_cmd(
         cli_output(submitted.run_id)
 
 
+@click.command("list-collections")
+@opt_ds_config
+@opt_args
+@click.pass_context
+def list_collections_cmd(
+    ctx: click.Context,
+    dataset: Optional[str],
+    arg: List[Tuple[str, str]] = [],
+) -> None:
+    """Lists the collection IDs contained in a dataset configuration."""
+    try:
+        ds_config = template_dataset_file(dataset, dict(arg))
+    except (MarkedYAMLError, YamlValidationError) as e:
+        raise click.ClickException(f"Invalid dataset config.\n{e}")
+    except FileNotFoundError:
+        raise click.ClickException(
+            "No dataset config found. Use --dataset to specify "
+            f"or name your config {DEFAULT_DATASET_YAML_PATH}."
+        )
+    if not ds_config:
+        raise click.ClickException("No dataset config found.")
+
+    for collection in ds_config.collections:
+        cli_output(collection.id)
+
+
 dataset_cmd.add_command(create_chunks_cmd)
 dataset_cmd.add_command(process_items_cmd)
 dataset_cmd.add_command(ingest_collection_cmd)
+dataset_cmd.add_command(list_collections_cmd)

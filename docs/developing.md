@@ -46,7 +46,9 @@ To run the development servers:
 ```
 
 This will start Azurite, a PgSTAC database, the Azure Functions server, a local executor for testing, and a stac-fastapi
-to inspect ingest results. You can access the STAC API at http://localhost:8089/
+to inspect ingest results.
+
+You can access the STAC API at http://localhost:8510/stac and a stac-browser of the API at http://localhost:8510/browser
 
 ## Testing
 

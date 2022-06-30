@@ -156,15 +156,9 @@ def prepare_task(
 
     secrets_provider: SecretsProvider
     if settings.local_secrets:
-        secrets_provider = LocalSecretsProvider()
+        secrets_provider = LocalSecretsProvider(settings)
     else:
-        assert settings.keyvault_url  # Handled by model validation
-        secrets_provider = KeyvaultSecretsProvider.get_provider(
-            settings.keyvault_url,
-            tenant_id=settings.keyvault_sp_tenant_id or None,
-            client_id=settings.keyvault_sp_client_id or None,
-            client_secret=settings.keyvault_sp_client_secret or None,
-        )
+        secrets_provider = KeyvaultSecretsProvider.get_provider(settings)
 
     with secrets_provider:
         if environment:

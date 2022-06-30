@@ -11,8 +11,8 @@ def get_task_runner(settings: Optional[RunSettings] = None) -> TaskRunner:
     settings = settings or RunSettings.get()
 
     if settings.task_runner_type == TaskRunnerType.LOCAL:
-        assert settings.local_executor_url  # Checked during settings validation
-        return LocalTaskRunner(settings.local_executor_url)
+        assert settings.local_dev_endpoints_url  # Checked during settings validation
+        return LocalTaskRunner(settings.local_dev_endpoints_url)
     elif settings.task_runner_type == TaskRunnerType.BATCH:
         return BatchTaskRunner(settings)
     elif settings.task_runner_type == TaskRunnerType.ARGO:

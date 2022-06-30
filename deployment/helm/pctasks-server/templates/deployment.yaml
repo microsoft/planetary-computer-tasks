@@ -80,8 +80,8 @@ spec:
             # Dev settings
             - name: PCTASKS_RUN__DEV
               value: "{{ .Values.pctasks.run.dev.enabled }}"
-            - name: PCTASKS_RUN__LOCAL_EXECUTOR_URL
-              value: "{{ .Values.pctasks.run.dev.local_executor_url }}"
+            - name: PCTASKS_RUN__LOCAL_DEV_ENDPOINTS_URL
+              value: "{{ .Values.pctasks.run.dev.local_dev_endpoints_url }}"
 
             # Argo
             - name: PCTASKS_RUN__ARGO_HOST
