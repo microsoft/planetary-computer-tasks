@@ -6,8 +6,6 @@ import click
 
 from pctasks.core.cli import PCTasksCommandContext
 from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
-from pctasks.core.storage import StorageFactory, get_storage_for_file
-from pctasks.run.settings import RunSettings
 # from pctasks.run.workflow.remote import RemoteWorkflowRunner
 # from pctasks.run.workflow.simple import SimpleWorkflowRunner
 
@@ -29,6 +27,7 @@ def local_cmd(workflow: str, args: List[str], output: Optional[str] = None) -> N
     """
     from pctasks.task.context import TaskContext  # cli-perf
     from pctasks.run.workflow.simple import SimpleWorkflowRunner  # cli-perf
+    from pctasks.core.storage import StorageFactory, get_storage_for_file  # cli-perf
 
     workflow_args: Optional[Dict[str, Any]] = None
     if args:
@@ -74,6 +73,8 @@ def remote_cmd(
 ) -> None:
     """Execute a workflow using a remote runner."""
     from pctasks.run.workflow.remote import RemoteWorkflowRunner  # cli-perf
+    from pctasks.core.storage import get_storage_for_file  # cli-perf
+    from pctasks.run.settings import RunSettings  # cli-perf
 
     storage, path = get_storage_for_file(workflow, sas_token=sas)
     workflow_yaml = storage.read_text(path)

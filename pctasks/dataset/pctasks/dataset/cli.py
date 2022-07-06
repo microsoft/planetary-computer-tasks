@@ -6,19 +6,10 @@ from pystac.utils import str_to_datetime
 from strictyaml.exceptions import MarkedYAMLError
 
 from pctasks.cli.cli import PCTasksCommandContext, cli_output, cli_print
-from pctasks.core.models.workflow import WorkflowSubmitMessage
 from pctasks.core.utils import map_opt
 from pctasks.core.yaml import YamlValidationError
-from pctasks.dataset.chunks.models import ChunkOptions
 from pctasks.dataset.constants import DEFAULT_DATASET_YAML_PATH
-from pctasks.dataset.splits.models import CreateSplitsOptions
-from pctasks.dataset.template import template_dataset_file
 from pctasks.dataset.utils import opt_collection, opt_ds_config, opt_submit
-from pctasks.dataset.workflow import (
-    create_chunks_workflow,
-    create_process_items_workflow,
-)
-
 logger = logging.getLogger(__name__)
 
 
@@ -53,6 +44,11 @@ def create_chunks_cmd(
     """Creates asset chunks for bulk processing."""
     from pctasks.submit.client import SubmitClient  # cli-perf
     from pctasks.submit.settings import SubmitSettings  # cli-perf
+    from pctasks.dataset.chunks.models import ChunkOptions  # cli-perf
+    from pctasks.core.models.workflow import WorkflowSubmitMessage  # cli-perf
+    from pctasks.dataset.splits.models import CreateSplitsOptions  # cli-perf
+    from pctasks.dataset.template import template_dataset_file  # cli-perf
+    from pctasks.dataset.workflow import create_chunks_workflow  # cli-perf
 
     context: PCTasksCommandContext = ctx.obj
     try:
@@ -134,6 +130,11 @@ def process_items_cmd(
     """
     from pctasks.submit.client import SubmitClient  # cli-perf
     from pctasks.submit.settings import SubmitSettings  # cli-perf
+    from pctasks.dataset.chunks.models import ChunkOptions  # cli-perf
+    from pctasks.core.models.workflow import WorkflowSubmitMessage  # cli-perf
+    from pctasks.dataset.splits.models import CreateSplitsOptions  # cli-perf
+    from pctasks.dataset.template import template_dataset_file  # cli-perf
+    from pctasks.dataset.workflow import create_process_items_workflow  # cli-perf
 
     context: PCTasksCommandContext = ctx.obj
     try:

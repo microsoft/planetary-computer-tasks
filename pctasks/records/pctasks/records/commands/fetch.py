@@ -14,7 +14,6 @@ from pctasks.core.models.record import (
     TaskRunRecord,
     WorkflowRunRecord,
 )
-from pctasks.core.storage import read_text
 from pctasks.core.utils import map_opt
 from pctasks.records.commands.options import opt_all, opt_page
 from pctasks.records.constants import NOT_FOUND_EXIT_CODE
@@ -168,6 +167,7 @@ def fetch_logs_cmd(
 
     Unless paginated, will output the logfile to stdout.
     """
+    from pctasks.core.storage import read_text  # cli-perf
 
     settings = RecordsSettings.from_context(ctx.obj)
     console = Console(stderr=True)
