@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 import click
 
@@ -10,10 +10,11 @@ from pctasks.core.models.dataset import (
     DatasetOperationSubmitMessage,
 )
 from pctasks.submit.operations import wait_for_operation
-from pctasks.submit.settings import SubmitSettings
+if TYPE_CHECKING:
+    from pctasks.submit.settings import SubmitSettings
 
 
-def create_dataset(dataset: DatasetIdentifier, settings: SubmitSettings) -> None:
+def create_dataset(dataset: DatasetIdentifier, settings: "SubmitSettings") -> None:
     from pctasks.submit.client import SubmitClient  # cli-perf
 
     msg = DatasetOperationSubmitMessage(
@@ -43,6 +44,8 @@ def create_cmd(ctx: click.Context, owner: str, name: str = MICROSOFT_OWNER) -> N
 
     Can be a local file or a blob URI (e.g. blob://account/container/workflow.yaml)
     """
+    from pctasks.submit.settings import SubmitSettings  # cli-perf
+
     context: PCTasksCommandContext = ctx.obj
     settings = SubmitSettings.get(context.profile, context.settings_file)
 
