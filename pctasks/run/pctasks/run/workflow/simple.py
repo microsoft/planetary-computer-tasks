@@ -1,7 +1,7 @@
 import logging
 import os
 from importlib.metadata import EntryPoint
-from typing import Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from pctasks.core.importer import ensure_code
 from pctasks.core.models.task import (
@@ -19,24 +19,26 @@ from pctasks.run.dag import sort_jobs
 from pctasks.run.errors import TaskFailedError
 from pctasks.run.secrets.local import LocalSecretsProvider
 from pctasks.run.template import template_args, template_foreach, template_job_with_item
-from pctasks.task.context import TaskContext
-from pctasks.task.run import MissingEnvironmentError, TaskLoadError
 from pctasks.task.task import Task
 
 logger = logging.getLogger(__name__)
+
+if TYPE_CHECKING:
+    from pctasks.task.context import TaskContext
 
 
 class SimpleWorkflowRunner:
     def run_task(
         self,
         task_config: TaskConfig,
-        context: TaskContext,
+        context: "TaskContext",
         output_uri: Optional[str] = None,
     ) -> TaskResult:
         """Runs a task in a local setting, without communicating with the executor.
 
         Useful for running tasks locally without going through the submit process.
         """
+        from pctasks.task.run import MissingEnvironmentError, TaskLoadError  # cli-perf
         logger.info(" === PCTasks (local) ===")
 
         logger.debug(task_config.to_yaml())
@@ -102,7 +104,7 @@ class SimpleWorkflowRunner:
     def run_job(
         self,
         job: JobConfig,
-        context: TaskContext,
+        context: "TaskContext",
         previous_job_outputs: Optional[Dict[str, Any]] = None,
         output_uri: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -143,11 +145,12 @@ class SimpleWorkflowRunner:
     def run_workflow(
         self,
         workflow: WorkflowConfig,
-        context: Optional[TaskContext] = None,
+        context: Optional["TaskContext"] = None,
         output_uri: Optional[str] = None,
         args: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """Runs a workflow and returns the final task result."""
+        from pctasks.task.context import TaskContext
         # Keep in sync with the Azure Functions execution workflow.
 
         job_outputs: Dict[str, Union[Dict[str, Any], List[Dict[str, Any]]]] = {}

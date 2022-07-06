@@ -7,7 +7,7 @@ from pctasks.dataset.splits.models import (
     CreateSplitsOutput,
     SplitTarget,
 )
-from pctasks.task import Task
+from pctasks.task.task import Task
 from pctasks.task.context import TaskContext
 
 logger = logging.getLogger(__name__)

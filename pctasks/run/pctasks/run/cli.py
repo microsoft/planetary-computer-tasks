@@ -10,7 +10,6 @@ from pctasks.core.storage import StorageFactory, get_storage_for_file
 from pctasks.run.settings import RunSettings
 from pctasks.run.workflow.remote import RemoteWorkflowRunner
 from pctasks.run.workflow.simple import SimpleWorkflowRunner
-from pctasks.task.context import TaskContext
 
 
 @click.command("local")
@@ -28,6 +27,8 @@ def local_cmd(workflow: str, args: List[str], output: Optional[str] = None) -> N
     This executes a workflow sequentially and runs tasks
     in the local environment. Useful for testing.
     """
+    from pctasks.task.context import TaskContext  # cli-perf
+
     workflow_args: Optional[Dict[str, Any]] = None
     if args:
         workflow_args = {}

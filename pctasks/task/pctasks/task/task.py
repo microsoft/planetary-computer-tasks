@@ -1,9 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Generic, List, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, Generic, List, Type, TypeVar, Union
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.task import FailedTaskResult, TaskResult, WaitTaskResult
-from pctasks.task.context import TaskContext
+
+
+if TYPE_CHECKING:
+    from pctasks.task.context import TaskContext
 
 T = TypeVar("T", bound=PCBaseModel)
 U = TypeVar("U", bound=PCBaseModel)
@@ -30,11 +33,11 @@ class Task(ABC, Generic[T, U]):
 
     @abstractmethod
     def run(
-        self, input: T, context: TaskContext
+        self, input: T, context: "TaskContext"
     ) -> Union[U, WaitTaskResult, FailedTaskResult]:
         pass
 
-    def parse_and_run(self, data: Dict[str, Any], context: TaskContext) -> TaskResult:
+    def parse_and_run(self, data: Dict[str, Any], context: "TaskContext") -> TaskResult:
         args = self._input_model.parse_obj(data)
         output = self.run(args, context)
 

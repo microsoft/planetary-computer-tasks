@@ -13,7 +13,7 @@ from pctasks.dataset.chunks.models import (
     CreateChunksInput,
     ListChunksInput,
 )
-from pctasks.task import Task
+from pctasks.task.task import Task
 from pctasks.task.context import TaskContext
 
 logger = logging.getLogger(__name__)
