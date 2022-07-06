@@ -18,7 +18,6 @@ from pctasks.dataset.workflow import (
     create_chunks_workflow,
     create_process_items_workflow,
 )
-from pctasks.submit.client import SubmitClient
 from pctasks.submit.settings import SubmitSettings
 
 logger = logging.getLogger(__name__)
@@ -53,6 +52,8 @@ def create_chunks_cmd(
     submit: bool = False,
 ) -> None:
     """Creates asset chunks for bulk processing."""
+    from pctasks.submit.client import SubmitClient  # cli-perf
+
     context: PCTasksCommandContext = ctx.obj
     try:
         ds_config = template_dataset_file(dataset)
@@ -131,6 +132,8 @@ def process_items_cmd(
     submit a workflow to process into items and ingest into
     the database.
     """
+    from pctasks.submit.client import SubmitClient  # cli-perf
+
     context: PCTasksCommandContext = ctx.obj
     try:
         ds_config = template_dataset_file(dataset)

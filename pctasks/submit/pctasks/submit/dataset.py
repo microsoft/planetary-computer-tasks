@@ -9,12 +9,12 @@ from pctasks.core.models.dataset import (
     DatasetIdentifier,
     DatasetOperationSubmitMessage,
 )
-from pctasks.submit.client import SubmitClient
 from pctasks.submit.operations import wait_for_operation
 from pctasks.submit.settings import SubmitSettings
 
 
 def create_dataset(dataset: DatasetIdentifier, settings: SubmitSettings) -> None:
+    from pctasks.submit.client import SubmitClient  # cli-perf
 
     msg = DatasetOperationSubmitMessage(
         operation=CreateDatasetOperation(dataset=dataset)

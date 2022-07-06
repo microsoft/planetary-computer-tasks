@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from typing import Callable, Optional, TypeVar
 
 import click
-import pandas as pd
 from click.exceptions import Exit
 from rich.console import Console
 from rich.syntax import Syntax
@@ -18,7 +17,6 @@ from pctasks.core.models.record import (
 from pctasks.core.storage import read_text
 from pctasks.core.utils import map_opt
 from pctasks.records.commands.options import opt_all, opt_page
-from pctasks.records.console.dataframe import DataFrameRender
 from pctasks.records.constants import NOT_FOUND_EXIT_CODE
 from pctasks.records.context import RecordsCommandContext
 from pctasks.records.query import query_logs
@@ -225,6 +223,9 @@ def fetch_logs_cmd(
 @opt_all
 @click.pass_context
 def fetch_events_cmd(ctx: click.Context, run_id: str, page: bool, all: bool) -> None:
+    import pandas as pd  # cli-perf
+    from pctasks.records.console.dataframe import DataFrameRender  # cli-perf
+
     settings = RecordsSettings.from_context(ctx.obj)
     query = f"""
     AppEvents

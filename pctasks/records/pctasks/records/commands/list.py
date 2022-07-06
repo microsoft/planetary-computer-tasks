@@ -6,7 +6,6 @@ from rich.console import Console
 from pctasks.cli.cli import cli_output
 from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.records.commands.options import opt_all, opt_page, opt_status
-from pctasks.records.render import render_jobs, render_tasks, render_workflows
 from pctasks.records.settings import RecordsSettings
 
 
@@ -29,6 +28,7 @@ def list_workflows_cmd(
     status: Optional[str],
     ids: bool,
 ) -> None:
+    from pctasks.records.render import render_workflows  # cli-perf
 
     ds: Optional[DatasetIdentifier] = (
         DatasetIdentifier.from_string(dataset) if not dataset == "all" else None
@@ -77,6 +77,7 @@ def list_jobs_cmd(
     status: Optional[str],
     ids: bool,
 ) -> None:
+    from pctasks.records.render import render_jobs  # cli-perf
 
     settings = RecordsSettings.from_context(ctx.obj)
     console = Console(stderr=True)
@@ -119,6 +120,7 @@ def list_tasks_cmd(
     status: Optional[str],
     ids: bool,
 ) -> None:
+    from pctasks.records.render import render_tasks  # cli-perf
 
     settings = RecordsSettings.from_context(ctx.obj)
     console = Console(stderr=True)

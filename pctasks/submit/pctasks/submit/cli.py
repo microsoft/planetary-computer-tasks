@@ -4,7 +4,6 @@ import click
 
 from pctasks.core.cli import PCTasksCommandContext, get_plugin_subcommands
 from pctasks.core.models.workflow import WorkflowSubmitMessage
-from pctasks.submit.client import SubmitClient
 from pctasks.submit.dataset import dataset_cmd
 from pctasks.submit.settings import SubmitSettings
 from pctasks.submit.template import template_workflow_file
@@ -22,6 +21,8 @@ def file_cmd(ctx: click.Context, workflow_path: str) -> None:
 
     Can be a local file or a blob URI (e.g. blob://account/container/workflow.yaml)
     """
+    from pctasks.submit.client import SubmitClient  # cli-perf
+
     context: PCTasksCommandContext = ctx.obj
     settings = SubmitSettings.get(context.profile, context.settings_file)
 

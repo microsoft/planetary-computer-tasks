@@ -15,7 +15,6 @@ from pctasks.ingest.constants import DEFAULT_INSERT_GROUP_SIZE
 from pctasks.ingest.models import IngestNdjsonInput, IngestTaskConfig, NdjsonFolder
 from pctasks.ingest.settings import IngestOptions, IngestSettings
 from pctasks.ingest.utils import generate_collection_json
-from pctasks.submit.client import SubmitClient
 from pctasks.submit.settings import SubmitSettings
 
 
@@ -81,6 +80,8 @@ def ingest_ndjson_cmd(
     This command will print the workflow to stdout, and submit it if the --submit
     flag is provided. If submitted, stdout will contain the run ID for the workflow.
     """
+    from pctasks.submit.client import SubmitClient  # cli-perf
+
     context: PCTasksCommandContext = ctx.obj
     ingest_settings = IngestSettings.get(context.profile, context.settings_file)
 
@@ -155,6 +156,8 @@ def ingest_collection_cmd(
     If PATH is a directory, will read collection template information
     from the directory. Otherwise PATH must bea complete STAC Collection JSON.
     """
+    from pctasks.submit.client import SubmitClient  # cli-perf
+
     context: PCTasksCommandContext = ctx.obj
     ingest_settings = IngestSettings.get(context.profile, context.settings_file)
 
