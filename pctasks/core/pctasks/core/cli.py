@@ -1,3 +1,5 @@
+import os
+import time
 import importlib.metadata
 import warnings
 from dataclasses import dataclass
@@ -25,7 +27,12 @@ def get_plugin_subcommands(command_type: Type[T], entry_point_group: str) -> Lis
     )
     for entry_point in entry_points:
         try:
+            t0 = time.time()
             subcommand = entry_point.load()
+            t1 = time.time()
+            if os.environ.get("PCTASKS_DEBUG", None):
+                print(f"loaded {entry_point} in {t1 - t0:0.2f}s")
+
         except Exception as e:
             warnings.warn(
                 f"Failed to load '{entry_point.group}' "
