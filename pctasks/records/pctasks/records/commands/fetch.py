@@ -18,7 +18,6 @@ from pctasks.core.utils import map_opt
 from pctasks.records.commands.options import opt_all, opt_page
 from pctasks.records.constants import NOT_FOUND_EXIT_CODE
 from pctasks.records.context import RecordsCommandContext
-from pctasks.records.query import query_logs
 from pctasks.records.settings import RecordsSettings
 
 T = TypeVar("T", bound=RunRecord)
@@ -225,6 +224,7 @@ def fetch_logs_cmd(
 def fetch_events_cmd(ctx: click.Context, run_id: str, page: bool, all: bool) -> None:
     import pandas as pd  # cli-perf
     from pctasks.records.console.dataframe import DataFrameRender  # cli-perf
+    from pctasks.records.query import query_logs  # cli-perf
 
     settings = RecordsSettings.from_context(ctx.obj)
     query = f"""
