@@ -97,7 +97,7 @@ class ArgoClient:
             account_key=run_settings.blob_account_key,
             container_name=run_settings.task_io_blob_container,
             blob_name=workflow_path,
-            start=datetime.now(),
+            start=datetime.utcnow(),
             expiry=datetime.utcnow() + timedelta(hours=24 * 7),
             permission=BlobSasPermissions(read=True),
         )

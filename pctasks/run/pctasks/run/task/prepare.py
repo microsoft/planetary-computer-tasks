@@ -2,7 +2,6 @@ import logging
 import os
 from datetime import datetime, timedelta
 from typing import List, Optional
-from urllib.parse import urlparse
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.data.tables import TableSasPermissions, generate_table_sas
@@ -60,7 +59,7 @@ def write_task_run_msg(run_msg: TaskRunMessage, settings: RunSettings) -> BlobCo
         account_key=settings.blob_account_key,
         container_name=settings.task_io_blob_container,
         blob_name=task_input_path,
-        start=datetime.now(),
+        start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),
         permission=BlobSasPermissions(read=True),
     )
@@ -184,7 +183,7 @@ def prepare_task(
     task_runs_table_sas_token = generate_table_sas(
         credential=tables_cred,
         table_name=settings.task_run_record_table_name,
-        start=datetime.now(),
+        start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),
         permission=TableSasPermissions(read=True, write=True, update=True),
     )
@@ -205,7 +204,7 @@ def prepare_task(
         account_key=settings.blob_account_key,
         container_name=settings.log_blob_container,
         blob_name=log_path,
-        start=datetime.now(),
+        start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),
         permission=BlobSasPermissions(write=True),
     )
@@ -225,7 +224,7 @@ def prepare_task(
         account_key=settings.blob_account_key,
         container_name=settings.task_io_blob_container,
         blob_name=output_path,
-        start=datetime.now(),
+        start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),
         permission=BlobSasPermissions(write=True),
     )
@@ -249,7 +248,7 @@ def prepare_task(
             account_key=settings.blob_account_key,
             container_name=settings.code_blob_container,
             blob_name=code_path,
-            start=datetime.now(),
+            start=datetime.utcnow(),
             expiry=datetime.utcnow() + timedelta(hours=24 * 7),
             permission=BlobSasPermissions(write=True),
         )
@@ -271,7 +270,7 @@ def prepare_task(
                 account_key=settings.blob_account_key,
                 container_name=settings.code_blob_container,
                 blob_name=requirements_path,
-                start=datetime.now(),
+                start=datetime.utcnow(),
                 expiry=datetime.utcnow() + timedelta(hours=24 * 7),
                 permission=BlobSasPermissions(write=True),
             )
