@@ -159,6 +159,11 @@
 <nav id="bd-toc-nav">
     <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#specifying-requirements">
+   Specifying requirements
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#uploading-code">
    Uploading Code
   </a>
@@ -184,23 +189,36 @@
                 
   <section id="runtime-environment">
 <h1>Runtime Environment<a class="headerlink" href="#runtime-environment" title="Permalink to this heading">#</a></h1>
+<section id="specifying-requirements">
+<h2>Specifying requirements<a class="headerlink" href="#specifying-requirements" title="Permalink to this heading">#</a></h2>
+<p>In addition to the set of packages provided by the base docker image, you can specify a list of additional packages
+to install with a <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> file.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: naip/dataset.yaml</span><span class="w"></span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">naip</span><span class="w"></span>
+<span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pctasks-basic:latest</span><span class="w"></span>
+<span class="nt">code</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">requirements</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ local.path(&quot;requirements.txt&quot;) }}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This should be a text file following Pip’s <a class="reference external" href="https://pip.pypa.io/en/latest/reference/requirements-file-format/">requirements file format</a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: naip/requirements.txt</span>
+<span class="n">git</span><span class="o">+</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">stactools</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">naip</span><span class="nd">@dd703d010115b400e45ae8b1ca18816966e38231</span>
+</pre></div>
+</div>
+<p>The path specified in <code class="docutils literal notranslate"><span class="pre">code.requirements</span></code> should be relative to the <code class="docutils literal notranslate"><span class="pre">dataset.yaml</span></code>.</p>
+</section>
 <section id="uploading-code">
 <h2>Uploading Code<a class="headerlink" href="#uploading-code" title="Permalink to this heading">#</a></h2>
 <p>You can make a Python module (a single <code class="docutils literal notranslate"><span class="pre">.py</span></code> file) or package (a possibly nested directory with a <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> file) available
-to the workers executing code by specifying the <code class="docutils literal notranslate"><span class="pre">code</span></code> option on your dataset. The path specified by <code class="docutils literal notranslate"><span class="pre">code</span></code> should be relative to
+to the workers executing code by specifying the <code class="docutils literal notranslate"><span class="pre">code.src</span></code> option on your dataset. The path specified by <code class="docutils literal notranslate"><span class="pre">code.src</span></code> should be relative to
 the <code class="docutils literal notranslate"><span class="pre">dataset.yaml</span></code> using the <code class="docutils literal notranslate"><span class="pre">local.path(relative_path)</span></code> templater or an absolute path.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This mechanism does <em>not</em> ensure that any dependencies are installed. If your module or package
-requires additional dependencies beyond what is specified in the <code class="docutils literal notranslate"><span class="pre">image</span></code>, you’ll need to
-create a new image with those dependencies present.</p>
-</div>
-<p>Suppose you have a dataset configuration file <code class="docutils literal notranslate"><span class="pre">naip/dataset.yaml</span></code>, with an accompanying <code class="docutils literal notranslate"><span class="pre">dataset.py</span></code> file. By specifying <code class="docutils literal notranslate"><span class="pre">code:</span> <span class="pre">dataset.py</span></code>
+<p>Suppose you have a dataset configuration file <code class="docutils literal notranslate"><span class="pre">naip/dataset.yaml</span></code>, with an accompanying <code class="docutils literal notranslate"><span class="pre">dataset.py</span></code> file. By setting the <code class="docutils literal notranslate"><span class="pre">code.src</span></code> option to <code class="docutils literal notranslate"><span class="pre">dataset.py</span></code>
 that module will be included in the workers runtime.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: naip/dataset.yaml</span><span class="w"></span>
-<span class="nt">naip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">naip</span><span class="w"></span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">naip</span><span class="w"></span>
 <span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pctasks-basic:latest</span><span class="w"></span>
-<span class="nt">code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ local.path(dataset.py) }}</span><span class="w"></span>
+<span class="nt">code</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">src</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ local.path(dataset.py) }}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>For single-file modules, the module will be importable using the name of the module: <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">dataset</span></code> in this case.</p>
