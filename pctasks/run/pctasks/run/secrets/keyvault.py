@@ -63,7 +63,7 @@ class KeyvaultSecretsProvider(SecretsProvider):
             return self._fetch_secret(name)
 
     @classmethod
-    @cachedmethod(lambda cls: cls._cache)
+    @cachedmethod(lambda cls: cls._cache, key=lambda _, settings: settings.keyvault_url)
     def get_provider(
         cls,
         settings: RunSettings,
