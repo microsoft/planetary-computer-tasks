@@ -6,13 +6,14 @@ from threading import Lock
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import azure.batch.models as batchmodels
+from pctasks.core.models.dataset import DatasetIdentifier
 
 from pctasks.core.models.record import TaskRunStatus
 from pctasks.core.utils import map_opt
 from pctasks.run.batch.client import BatchClient
 from pctasks.run.batch.model import BatchTaskId
 from pctasks.run.batch.task import BatchTask
-from pctasks.run.batch.utils import make_unique_job_id, make_valid_batch_id
+from pctasks.run.batch.utils import make_valid_batch_id
 from pctasks.run.constants import MAX_MISSING_POLLS
 from pctasks.run.models import (
     FailedTaskSubmitResult,
@@ -56,6 +57,12 @@ def transfer_index(job_id: str, task_id: str) -> Tuple[str, str]:
     return (job_id, task_id)
 
 
+def make_batch_job_prefix(
+    dataset_id: DatasetIdentifier, job_id: str, run_id: str, pool_id: str
+) -> str:
+    return make_valid_batch_id(f"{dataset_id.name}_{run_id}_{job_id}_{pool_id}")
+
+
 @dataclass(frozen=True)
 class BatchJobInfo:
     job_prefix: str
@@ -83,6 +90,7 @@ class BatchTaskRunner(TaskRunner):
 
             for i, prepared_task in enumerate(prepared_tasks):
                 submit_msg = prepared_task.task_submit_message
+                run_id = submit_msg.run_id
                 job_id = submit_msg.job_id
                 task_id = submit_msg.config.id
                 run_msg = prepared_task.task_run_message
@@ -107,9 +115,10 @@ class BatchTaskRunner(TaskRunner):
                         ["--account-url", task_input_blob_config.account_url]
                     )
 
-                batch_job_prefix = make_valid_batch_id(
-                    f"{submit_msg.dataset}_{job_id_for_batch}_{pool_id}"
+                batch_job_id = make_batch_job_prefix(
+                    submit_msg.dataset, job_id_for_batch, run_id, pool_id
                 )
+
                 batch_task_id = make_valid_batch_id(task_id_for_batch)
 
                 batch_task = BatchTask(
@@ -118,7 +127,7 @@ class BatchTaskRunner(TaskRunner):
                     image=run_msg.config.image,
                 )
 
-                batch_submits[BatchJobInfo(batch_job_prefix, pool_id)].append(
+                batch_submits[BatchJobInfo(batch_job_id, pool_id)].append(
                     BatchTaskInfo(batch_task, i)
                 )
 
@@ -129,29 +138,28 @@ class BatchTaskRunner(TaskRunner):
             ] = {}
 
             for batch_job_info, batch_task_infos in batch_submits.items():
-                job_prefix = batch_job_info.job_prefix
+                batch_job_id = batch_job_info.job_prefix
                 pool_id = batch_job_info.pool_id
 
                 retry_count = 0
                 task_submitted = False
-                batch_job_id: Optional[str] = None
 
                 try:
-                    with job_locks[job_prefix]:
+                    with job_locks[batch_job_id]:
                         # Try twice in case job completes before we can submit tasks
                         while not task_submitted and retry_count <= 1:
                             try:
 
-                                batch_job_id = batch_client.find_active_job(job_prefix)
+                                existing_batch_job_id = batch_client.find_active_job(
+                                    batch_job_id
+                                )
 
-                                if not batch_job_id:
+                                if not existing_batch_job_id:
                                     # Create the job
                                     if not batch_client.get_pool(pool_id):
                                         raise BatchTaskRunnerError(
                                             f"Batch pool {pool_id} not found."
                                         )
-
-                                    batch_job_id = make_unique_job_id(job_prefix)
 
                                     batch_job_id = batch_client.add_job(
                                         job_id=batch_job_id,
@@ -161,13 +169,10 @@ class BatchTaskRunner(TaskRunner):
 
                                 else:
                                     logger.info(
-                                        f"Found existing batch job {batch_job_id}."
+                                        "Found existing batch job "
+                                        f"{existing_batch_job_id}."
                                     )
-
-                                if not batch_job_id:
-                                    raise BatchTaskRunnerError(
-                                        f"Could not create batch job for {job_prefix}."
-                                    )
+                                    batch_job_id = existing_batch_job_id
 
                                 # Submit the tasks
                                 task_errors = batch_client.add_collection(
