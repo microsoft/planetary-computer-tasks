@@ -39,6 +39,7 @@ pctasks:
       account_url: {{ tf.sa_tables_account_url }}
       account_name: {{ tf.sa_account_name }}
       account_key: {{ tf.sa_account_key }}
+      connection_string: {{ tf.sa_tables_connection_string}}
 
     blob:
       account_url: {{ tf.sa_blob_account_url }}

@@ -17,8 +17,8 @@ COPY cli /opt/src/cli
 RUN cd /opt/src/cli && \
      pip install .
 
-COPY submit /opt/src/submit
-RUN cd /opt/src/submit && \
+COPY client /opt/src/client
+RUN cd /opt/src/client && \
      pip install .
 
 COPY task /opt/src/task
@@ -27,10 +27,6 @@ RUN cd /opt/src/task && \
 
 COPY run /opt/src/run
 RUN cd /opt/src/run && \
-     pip install .
-
-COPY records /opt/src/records
-RUN cd /opt/src/records && \
      pip install .
 
 COPY server /opt/src/server
@@ -42,10 +38,9 @@ RUN if [ "${DEVELOPMENT}" = "TRUE" ]; then \
      pip install \
      -e /opt/src/core \
      -e /opt/src/cli \
-     -e /opt/src/submit \
+     -e /opt/src/client \
      -e /opt/src/task \
      -e /opt/src/run \
-     -e /opt/src/records \
      -e /opt/src/server[dev,server]; \
     fi
 

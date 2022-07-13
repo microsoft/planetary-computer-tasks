@@ -9,6 +9,10 @@ pctasks:
     appRootPath: "/tasks"
     debug: "FALSE"
 
+    dev:
+      enabled: true
+      api_key: "kind-api-key"
+
     image:
       repository: "localhost:5001/pctasks-server"
       tag: "latest"
@@ -17,10 +21,6 @@ pctasks:
       type: ClusterIP
       port: 80
       annotations: {}
-
-    # Image used to run workflows.
-    runner_image: "localhost:5001/pctasks-run:latest"
-    account_key: hunter2
 
     deploy:
       replicaCount: 1
@@ -53,6 +53,7 @@ pctasks:
       account_url: "http://azurite:10002/devstoreaccount1"
       account_name: "devstoreaccount1"
       account_key: "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+      connection_string: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://azurite:10002/devstoreaccount1;"
 
     blob:
       account_url: "http://azurite:10000/devstoreaccount1"
@@ -63,6 +64,7 @@ pctasks:
 
     argo:
       host: "http://argo-workflows-server.argo.svc.cluster.local:2746"
+      workflow_runner_image: "localhost:5001/pctasks-run:latest"
       # argo token set during helm install
 
     batch:

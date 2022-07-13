@@ -19,8 +19,8 @@ COPY task /opt/src/task
 RUN cd /opt/src/task && \
      pip install .
 
-COPY submit /opt/src/submit
-RUN cd /opt/src/submit && \
+COPY client /opt/src/client
+RUN cd /opt/src/client && \
      pip install .
 
 COPY run /opt/src/run

@@ -6,7 +6,7 @@ with open("README.md") as f:
     desc = f.read()
 
 install_requires = [
-    "pctasks.submit>=0.1.0",
+    "pctasks.client>=0.1.0",
     "jinja2==3.0.3",
     "marko==1.0.1",
 ]

@@ -10,7 +10,7 @@ from pctasks.core.constants import (
     DEFAULT_TASK_IO_CONTAINER,
     DEFAULT_TASK_RUN_RECORD_TABLE_NAME,
 )
-from pctasks.core.models.base import PCBaseModel, RunRecordId
+from pctasks.core.models.base import RunRecordId
 from pctasks.core.models.record import TaskRunRecord, TaskRunStatus
 from pctasks.core.models.task import (
     FailedTaskResult,
@@ -20,31 +20,11 @@ from pctasks.core.models.task import (
 )
 from pctasks.dev.config import get_blob_config, get_table_config
 from pctasks.dev.logs import get_log_storage
+from pctasks.dev.mocks import MockTask, MockTaskInput, MockTaskOutput
 from pctasks.dev.tables import get_task_run_record_table
 from pctasks.task.context import TaskContext
 from pctasks.task.run import MissingEnvironmentError
 from pctasks.task.task import Task
-
-
-class MockTaskInput(PCBaseModel):
-    result_path: str
-
-
-class MockTaskOutput(PCBaseModel):
-    message: str
-
-
-class MockTask(Task[MockTaskInput, MockTaskOutput]):
-    _input_model = MockTaskInput
-    _output_model = MockTaskOutput
-
-    def run(
-        self, input: MockTaskInput, context: TaskContext
-    ) -> Union[MockTaskOutput, WaitTaskResult, FailedTaskResult]:
-        result_path = input.result_path
-        with open(result_path, "w") as f:
-            f.write("success")
-        return MockTaskOutput(message="success")
 
 
 class MockTaskRequiredEnv(Task[MockTaskInput, MockTaskOutput]):

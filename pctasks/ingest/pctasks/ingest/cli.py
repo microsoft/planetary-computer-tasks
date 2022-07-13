@@ -5,6 +5,8 @@ from typing import List, Optional
 import click
 
 from pctasks.cli.cli import PCTasksCommandContext, cli_output, cli_print
+from pctasks.client import PCTasksClient
+from pctasks.client.settings import ClientSettings
 from pctasks.core.constants import DEFAULT_TARGET_ENVIRONMENT, MICROSOFT_OWNER
 from pctasks.core.models.workflow import (
     JobConfig,
@@ -15,8 +17,6 @@ from pctasks.ingest.constants import DEFAULT_INSERT_GROUP_SIZE
 from pctasks.ingest.models import IngestNdjsonInput, IngestTaskConfig, NdjsonFolder
 from pctasks.ingest.settings import IngestOptions, IngestSettings
 from pctasks.ingest.utils import generate_collection_json
-from pctasks.submit.client import SubmitClient
-from pctasks.submit.settings import SubmitSettings
 
 
 @click.command("ndjsons")
@@ -126,15 +126,15 @@ def ingest_ndjson_cmd(
     if not submit:
         cli_output(submit_message.to_yaml())
     else:
-        settings = SubmitSettings.get(context.profile, context.settings_file)
-        with SubmitClient(settings) as client:
-            cli_print(
-                click.style(
-                    f"  Submitting to {client.get_queue_name()}...",
-                    fg="green",
-                )
+        settings = ClientSettings.get(context.profile, context.settings_file)
+        client = PCTasksClient(settings)
+        cli_print(
+            click.style(
+                f"  Submitting workflow to {settings.endpoint}...",
+                fg="green",
             )
-            cli_output(client.submit_workflow(submit_message).run_id)
+        )
+        cli_output(client.submit_workflow(submit_message).run_id)
 
 
 @click.command("collection")
@@ -190,15 +190,15 @@ def ingest_collection_cmd(
     if not submit:
         cli_output(submit_message.to_yaml())
     else:
-        settings = SubmitSettings.get(context.profile, context.settings_file)
-        with SubmitClient(settings) as client:
-            cli_print(
-                click.style(
-                    f"Submitting to {client.get_queue_name()}...",
-                    fg="green",
-                )
+        settings = ClientSettings.get(context.profile, context.settings_file)
+        client = PCTasksClient(settings)
+        cli_print(
+            click.style(
+                f"Submitting workflow to {settings.endpoint}...",
+                fg="green",
             )
-            cli_output(client.submit_workflow(submit_message).run_id)
+        )
+        cli_output(client.submit_workflow(submit_message).run_id)
 
 
 @click.group("ingest")

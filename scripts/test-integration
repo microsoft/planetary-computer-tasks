@@ -1,0 +1,68 @@
+#!/bin/bash
+
+set -e
+
+source scripts/env
+
+if [[ "${CI}" ]]; then
+    set -x
+fi
+
+function usage() {
+    if [[ "${1}" ]]; then
+        echo "${1}"
+    fi
+    echo -n \
+        "Usage: $(basename "$0") [OPTIONS]
+Runs integration tests. Requires a development cluster
+(run scripts/cluster setup).
+
+Options:
+    --test-only
+        Only run tests, don't lint
+    --lint-only
+        Only run linting
+    --help
+        Show this help
+
+"
+}
+
+# Parse args
+TEST_ONLY=""
+LINT_ONLY=""
+while [[ $# -gt 0 ]]; do case $1 in
+    --test-only)
+        TEST_ONLY="--test-only"
+        shift
+        ;;
+    --lint-only)
+        LINT_ONLY="--lint-only"
+        shift
+        ;;
+    --help)
+        usage
+        exit 0
+        shift
+        ;;
+    *)
+        usage "Unknown parameter passed: $1"
+        exit 1
+        ;;
+    esac done
+
+# Don't run in tty if CI
+TERM=(-it)
+if [[ "${CI}" ]]; then
+    TERM=()
+fi
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+
+    docker-compose \
+        -f docker-compose.console.yml \
+        run --rm \
+        integration-tests \
+        scripts/bin/test-integration ${TEST_ONLY} ${LINT_ONLY}
+
+fi

@@ -1,12 +1,13 @@
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Set, Union
 
 from pydantic import Field, validator
 
 from pctasks.core.constants import MICROSOFT_OWNER
 from pctasks.core.models.base import PCBaseModel
+from pctasks.core.models.config import CodeConfig
 from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.tokens import ContainerTokens, StorageAccountTokens
 from pctasks.core.storage import get_storage
@@ -91,11 +92,11 @@ class ChunksConfig(PCBaseModel):
     ) -> Optional[List[SplitConfig]]:
         if v is None:
             return v
-        paths = set()
+        _prefixes: Set[Optional[str]] = set()
         for split in v:
-            if split.prefix in paths:
+            if split.prefix in _prefixes:
                 raise ValueError(f"Duplicate split prefix: {split.prefix}")
-            paths.add(split.prefix)
+            _prefixes.add(split.prefix)
         return v
 
 
@@ -215,7 +216,7 @@ class DatasetConfig(DatasetIdentifier):
     owner: str = MICROSOFT_OWNER
     name: str
     image: str
-    code: Optional[str] = None
+    code: Optional[CodeConfig] = None
     collections: List[CollectionConfig]
     args: Optional[List[str]] = None
     environment: Optional[Dict[str, Any]] = None

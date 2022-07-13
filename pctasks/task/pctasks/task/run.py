@@ -2,10 +2,10 @@ import logging
 import os
 from importlib.metadata import EntryPoint
 
-from pctasks.core.importer import ensure_code
+from pctasks.core.importer import ensure_code, ensure_requirements
 from pctasks.core.logging import RunLogger, TaskLogger
 from pctasks.core.models.record import TaskRunStatus
-from pctasks.core.models.task import TaskResult, TaskResultType, TaskRunMessage
+from pctasks.core.models.task import TaskResult, TaskRunMessage
 from pctasks.core.storage.blob import BlobStorage, BlobUri
 from pctasks.core.tables.record import TaskRunRecordTable
 from pctasks.core.utils import environment
@@ -34,28 +34,6 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
 
     with TaskLogger.from_task_run_config(task_config):
 
-        def signal_result(result_type: TaskResultType) -> None:
-            # TODO: Remove signaling. With move to remote runner,
-            # output is polled, which serves the same purpose as this
-            # signal.
-            pass
-
-            # with QueueService.from_config(task_config.signal_queue) as signal_client:
-            #     logger.info(
-            #         f"Signaling to {task_config.signal_target_id} "
-            #         f"via queue {task_config.signal_queue} "
-            #         f"with {result_type}..."
-            #     )
-            #     signal = TaskRunSignalMessage(
-            #         signal_target_id=task_config.signal_target_id,
-            #         data=TaskRunSignal(
-            #             signal_key=task_config.signal_key,
-            #             task_result_type=result_type,
-            #         ),
-            #     )
-            #     signal_client.send_message(signal.json().encode())
-            #     logger.info("...signal sent")
-
         logger.info(" === PCTasks ===")
         logger.info(f"  == {task_config.get_run_record_id()} ")
 
@@ -70,22 +48,38 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
             output_path = output_blob_uri.blob_name
             if not output_path:
                 raise ValueError(f"Invalid output blob uri: {output_blob_config.uri}")
+
             output_storage = BlobStorage.from_uri(
                 blob_uri=output_blob_uri.base_uri,
                 sas_token=output_blob_config.sas_token,
                 account_url=output_blob_config.account_url,
             )
 
-            code_blob_config = task_config.code_blob_config
-            if code_blob_config:
-                code_blob_uri = BlobUri(code_blob_config.uri)
+            code_requirements_blob_config = task_config.code_requirements_blob_config
+            if code_requirements_blob_config:
+                req_blob_uri = BlobUri(code_requirements_blob_config.uri)
+                req_path = req_blob_uri.blob_name
+                if not req_path:
+                    raise ValueError(f"Invalid code blob uri: {req_blob_uri}")
+                req_storage = BlobStorage.from_uri(
+                    blob_uri=req_blob_uri.base_uri,
+                    sas_token=code_requirements_blob_config.sas_token,
+                    account_url=code_requirements_blob_config.account_url,
+                )
+                ensure_requirements(req_path, req_storage, task_config.code_pip_options)
+
+            code_src_blob_config = task_config.code_src_blob_config
+            if code_src_blob_config:
+                code_blob_uri = BlobUri(code_src_blob_config.uri)
                 code_path = code_blob_uri.blob_name
                 if not code_path:
-                    raise ValueError(f"Invalid code blob uri: {code_blob_config.uri}")
+                    raise ValueError(
+                        f"Invalid code blob uri: {code_src_blob_config.uri}"
+                    )
                 code_storage = BlobStorage.from_uri(
                     blob_uri=code_blob_uri.base_uri,
-                    sas_token=code_blob_config.sas_token,
-                    account_url=code_blob_config.account_url,
+                    sas_token=code_src_blob_config.sas_token,
+                    account_url=code_src_blob_config.account_url,
                 )
                 ensure_code(code_path, code_storage)
 
@@ -161,8 +155,6 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
                     update_status(TaskRunStatus.COMPLETED)
                     logger.info(" === PCTasks: Task completed! ===")
 
-                    signal_result(TaskResultType.COMPLETED)
-
                     return result
 
                 except Exception:
@@ -172,5 +164,4 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
         except Exception as e:
             logger.info(" === PCTasks: Task Failed! ===")
             logger.exception(e)
-            signal_result(TaskResultType.FAILED)
             raise

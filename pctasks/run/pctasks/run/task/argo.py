@@ -6,9 +6,9 @@ from pctasks.core.utils import map_opt
 from pctasks.run.argo.client import ArgoClient
 from pctasks.run.constants import MAX_MISSING_POLLS
 from pctasks.run.models import (
-    FailedSubmitResult,
+    FailedTaskSubmitResult,
     PreparedTaskSubmitMessage,
-    SuccessfulSubmitResult,
+    SuccessfulTaskSubmitResult,
     TaskPollResult,
 )
 from pctasks.run.settings import RunSettings
@@ -36,15 +36,15 @@ class ArgoTaskRunner(TaskRunner):
 
     def submit_tasks(
         self, prepared_tasks: List[PreparedTaskSubmitMessage]
-    ) -> List[Union[SuccessfulSubmitResult, FailedSubmitResult]]:
-        results: List[Union[SuccessfulSubmitResult, FailedSubmitResult]] = []
+    ) -> List[Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]]:
+        results: List[Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]] = []
         for prepared_task in prepared_tasks:
             try:
                 task_id = self.argo_client.submit_task(prepared_task)
-                results.append(SuccessfulSubmitResult(task_runner_id=task_id))
+                results.append(SuccessfulTaskSubmitResult(task_runner_id=task_id))
             except Exception as e:
                 logger.exception(e)
-                results.append(FailedSubmitResult(errors=[str(e)]))
+                results.append(FailedTaskSubmitResult(errors=[str(e)]))
 
         return results
 
@@ -62,9 +62,7 @@ class ArgoTaskRunner(TaskRunner):
             else:
                 return TaskPollResult(
                     task_status=TaskRunStatus.FAILED,
-                    poll_errors=[
-                        f"Batch task not found after {previous_poll_count} polls."
-                    ],
+                    poll_errors=[f"Task not found after {previous_poll_count} polls."],
                 )
         else:
             task_status, error_message = task_status_result

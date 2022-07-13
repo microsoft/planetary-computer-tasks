@@ -7,7 +7,7 @@ from pctasks.core.constants import RECORD_SCHEMA_VERSION
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.event import CloudEvent
-from pctasks.core.models.workflow import WorkflowConfig
+from pctasks.core.models.workflow import WorkflowConfig, WorkflowRunStatus
 from pctasks.core.tables.base import InvalidTableKeyError, validate_table_key
 from pctasks.core.utils import StrEnum
 from pctasks.core.version import __version__
@@ -61,14 +61,6 @@ class JobRunStatus(StrEnum):
     CANCELLED = "cancelled"
     PENDING = "pending"
     NOTASKS = "notasks"
-
-
-class WorkflowRunStatus(StrEnum):
-
-    RECEIVED = "received"
-    RUNNING = "running"
-    COMPLETED = "completed"
-    FAILED = "failed"
 
 
 class WorkflowRunGroupStatus(StrEnum):

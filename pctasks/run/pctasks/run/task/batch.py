@@ -15,9 +15,9 @@ from pctasks.run.batch.task import BatchTask
 from pctasks.run.batch.utils import make_unique_job_id, make_valid_batch_id
 from pctasks.run.constants import MAX_MISSING_POLLS
 from pctasks.run.models import (
-    FailedSubmitResult,
+    FailedTaskSubmitResult,
     PreparedTaskSubmitMessage,
-    SuccessfulSubmitResult,
+    SuccessfulTaskSubmitResult,
     TaskPollResult,
 )
 from pctasks.run.settings import BatchSettings
@@ -71,7 +71,7 @@ class BatchTaskInfo:
 class BatchTaskRunner(TaskRunner):
     def submit_tasks(
         self, prepared_tasks: List[PreparedTaskSubmitMessage]
-    ) -> List[Union[SuccessfulSubmitResult, FailedSubmitResult]]:
+    ) -> List[Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]]:
 
         batch_submits: Dict[BatchJobInfo, List[BatchTaskInfo]] = defaultdict(list)
 
@@ -125,7 +125,7 @@ class BatchTaskRunner(TaskRunner):
             # Create any jobs necessary and submit the tasks
 
             submit_results: Dict[
-                int, Union[SuccessfulSubmitResult, FailedSubmitResult]
+                int, Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]
             ] = {}
 
             for batch_job_info, batch_task_infos in batch_submits.items():
@@ -186,11 +186,11 @@ class BatchTaskRunner(TaskRunner):
                                         error_msg = err.value
                                         submit_results[
                                             batch_task_info.index
-                                        ] = FailedSubmitResult(errors=[error_msg])
+                                        ] = FailedTaskSubmitResult(errors=[error_msg])
                                     else:
                                         submit_results[
                                             batch_task_info.index
-                                        ] = SuccessfulSubmitResult(
+                                        ] = SuccessfulTaskSubmitResult(
                                             task_runner_id=BatchTaskId(
                                                 batch_job_id=batch_job_id,
                                                 batch_task_id=task_id,
@@ -214,7 +214,7 @@ class BatchTaskRunner(TaskRunner):
                     logger.exception(e)
 
                     for batch_task_info in batch_task_infos:
-                        submit_results[batch_task_info.index] = FailedSubmitResult(
+                        submit_results[batch_task_info.index] = FailedTaskSubmitResult(
                             errors=[str(e)]
                         )
 

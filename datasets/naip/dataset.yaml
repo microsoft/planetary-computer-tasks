@@ -1,6 +1,8 @@
 name: naip
 image: pccomponentstest.azurecr.io/pctasks-basic:latest
-code: ${{ local.path(naip/dataset.py) }}
+code:
+  src: ${{ local.path(naip/dataset.py) }}
+  requirements: ${{ local.path("requirements.txt" )}}
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -9,7 +11,7 @@ environment:
 
 collections:
   - id: naip
-    class: naip.dataset:Naip
+    class: dataset:Naip
     asset_storage:
       - storage_account: naipeuwest
         container: naip

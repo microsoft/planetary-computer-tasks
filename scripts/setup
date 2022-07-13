@@ -50,17 +50,12 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                 pctasks-network
         fi
 
-        echo " -- SETTING UP CLUSTER"
-        scripts/cluster create
-
         echo " -- BUILDING CONTAINERS"
         scripts/update
 
         echo " -- STARTING SERVERS"
         scripts/server --detached
 
-        echo " -- UPDATING CLUSTER"
-        scripts/cluster update
     fi
 
     echo " -- SETTING UP AZURITE"

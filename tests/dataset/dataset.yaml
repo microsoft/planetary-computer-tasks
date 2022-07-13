@@ -9,7 +9,8 @@ args:
 - items_uri
 - code_path
 
-code: ${{ args.code_path }}
+code:
+  src: ${{ args.code_path }}
 
 collections:
   - id: ${{ args.collection_id }}

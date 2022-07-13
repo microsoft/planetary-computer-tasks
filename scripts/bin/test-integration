@@ -1,0 +1,87 @@
+#!/bin/bash
+
+set -e
+
+source scripts/env
+
+if [[ "${CI}" ]]; then
+    set -x
+fi
+
+function usage() {
+    if [[ "${1}" ]]; then
+        echo "${1}"
+    fi
+    echo -n \
+        "Usage: $(basename "$0") [OPTIONS]
+Runs integration tests. Meant to be run in the integration-tests container.
+
+Options:
+    --subpackage <subpackage>
+        Run tests only for a subpackage.
+    --functions
+        Run tests only for Azure Functions.
+    --test-only
+        Only run tests, don't lint
+    --no-integration
+        Skip running integration tests
+    --integration-only
+        Only run integration tests
+    --lint-only
+        Only run linting
+    --no-init
+        Don't initialize mypy, which is for installing stubs, but takes extra time if already run.
+    --help
+        Show this help
+
+"
+}
+
+# Parse args
+TEST_ONLY=""
+LINT_ONLY=""
+while [[ $# -gt 0 ]]; do case $1 in
+    --test-only)
+        TEST_ONLY="1"
+        shift
+        ;;
+    --lint-only)
+        LINT_ONLY="1"
+        shift
+        ;;
+    --help)
+        usage
+        exit 0
+        shift
+        ;;
+    *)
+        usage "Unknown parameter passed: $1"
+        exit 1
+        ;;
+    esac done
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+
+    echo " == Running integration tests... == "
+
+    for TEST in "${INTEGRATION_TESTS[@]}"; do
+
+        if [ -z "${TEST_ONLY}" ]; then
+
+            echo "Running black..."
+            black --check ${TEST}
+
+            echo "Running isort..."
+            isort --check ${TEST}
+
+            echo "Running flake8..."
+            flake8 ${TEST}
+        fi
+
+        if [ -z "${LINT_ONLY}" ]; then
+            echo "Running tests..."
+            pytest ${TEST}
+        fi
+    done
+fi
+

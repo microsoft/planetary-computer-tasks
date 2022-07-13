@@ -13,7 +13,8 @@ jobs:
     tasks:
       - id: prefixes
         image: localhost:5001/pctasks-task-base:latest
-        code: ${{ args.task_code_path }}
+        code:
+          src: ${{ args.task_code_path }}
         task: tasks:list_prefixes_task
         args:
           uri: ${{ args.input_uri }}
@@ -27,7 +28,8 @@ jobs:
     tasks:
       - id: paths
         image: localhost:5001/pctasks-task-base:latest
-        code: ${{ args.task_code_path }}
+        code:
+          src: ${{ args.task_code_path }}
         task: tasks:list_files_task
         args:
           uri: ${{ item }}
@@ -40,13 +42,15 @@ jobs:
     tasks:
       - id: read-file
         image: localhost:5001/pctasks-task-base:latest
-        code: ${{ args.task_code_path }}
+        code:
+          src: ${{ args.task_code_path }}
         task: tasks:read_file_task
         args:
           uri: ${{ item }}
       - id: write-text
         image: localhost:5001/pctasks-task-base:latest
-        code: ${{ args.task_code_path }}
+        code:
+          src: ${{ args.task_code_path }}
         task: tasks:write_file_task
         args:
           uri: ${{ args.output_uri}}/${{ tasks.read-file.output.name }}

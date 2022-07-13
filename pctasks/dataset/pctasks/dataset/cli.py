@@ -6,6 +6,8 @@ from pystac.utils import str_to_datetime
 from strictyaml.exceptions import MarkedYAMLError
 
 from pctasks.cli.cli import PCTasksCommandContext, cli_output, cli_print
+from pctasks.client.client import PCTasksClient
+from pctasks.client.settings import ClientSettings
 from pctasks.core.models.workflow import WorkflowSubmitMessage
 from pctasks.core.utils import map_opt
 from pctasks.core.yaml import YamlValidationError
@@ -18,8 +20,6 @@ from pctasks.dataset.workflow import (
     create_chunks_workflow,
     create_process_items_workflow,
 )
-from pctasks.submit.client import SubmitClient
-from pctasks.submit.settings import SubmitSettings
 
 logger = logging.getLogger(__name__)
 
@@ -81,12 +81,10 @@ def create_chunks_cmd(
         cli_output(workflow.to_yaml())
     else:
         submit_message = WorkflowSubmitMessage(workflow=workflow)
-        settings = SubmitSettings.get(context.profile, context.settings_file)
-        with SubmitClient(settings) as client:
-            cli_print(
-                click.style(f"  Submitting {submit_message.run_id}...", fg="green")
-            )
-            client.submit_workflow(submit_message)
+        settings = ClientSettings.get(context.profile, context.settings_file)
+        client = PCTasksClient(settings)
+        cli_print(click.style(f"  Submitting {submit_message.run_id}...", fg="green"))
+        client.submit_workflow(submit_message)
 
 
 @click.command("process-items")
@@ -164,12 +162,10 @@ def process_items_cmd(
         cli_output(workflow.to_yaml())
     else:
         submit_message = WorkflowSubmitMessage(workflow=workflow)
-        settings = SubmitSettings.get(context.profile, context.settings_file)
-        with SubmitClient(settings) as client:
-            cli_print(
-                click.style(f"  Submitting {submit_message.run_id}...", fg="green")
-            )
-            client.submit_workflow(submit_message)
+        settings = ClientSettings.get(context.profile, context.settings_file)
+        client = PCTasksClient(settings)
+        cli_print(click.style(f"  Submitting {submit_message.run_id}...", fg="green"))
+        client.submit_workflow(submit_message)
 
 
 dataset_cmd.add_command(create_chunks_cmd)

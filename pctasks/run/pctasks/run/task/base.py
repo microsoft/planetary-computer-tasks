@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Union
 
 from pctasks.run.models import (
-    FailedSubmitResult,
+    FailedTaskSubmitResult,
     PreparedTaskSubmitMessage,
-    SuccessfulSubmitResult,
+    SuccessfulTaskSubmitResult,
     TaskPollResult,
 )
 from pctasks.run.settings import RunSettings
@@ -17,7 +17,7 @@ class TaskRunner(ABC):
     @abstractmethod
     def submit_tasks(
         self, prepared_tasks: List[PreparedTaskSubmitMessage]
-    ) -> List[Union[SuccessfulSubmitResult, FailedSubmitResult]]:
+    ) -> List[Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]]:
         pass
 
     @abstractmethod
