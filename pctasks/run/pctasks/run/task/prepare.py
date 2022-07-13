@@ -250,8 +250,9 @@ def prepare_task(
             blob_name=code_path,
             start=datetime.utcnow(),
             expiry=datetime.utcnow() + timedelta(hours=24 * 7),
-            permission=BlobSasPermissions(write=True),
+            permission=BlobSasPermissions(read=True),
         )
+
         code_src_blob_config = BlobConfig(
             uri=code_uri,
             sas_token=code_blob_sas_token,
@@ -272,7 +273,7 @@ def prepare_task(
                 blob_name=requirements_path,
                 start=datetime.utcnow(),
                 expiry=datetime.utcnow() + timedelta(hours=24 * 7),
-                permission=BlobSasPermissions(write=True),
+                permission=BlobSasPermissions(read=True),
             )
             code_requirements_blob_config = BlobConfig(
                 uri=requirements_uri,
