@@ -243,8 +243,7 @@ def prepare_task(
     code_config = task_config.code
     if code_config:
         code_uri = code_config.src
-        code_path = str(urlparse(code_uri).path).lstrip("/")
-
+        code_path = code_config.get_src_path()
         code_blob_sas_token = generate_blob_sas(
             account_name=settings.blob_account_name,
             account_key=settings.blob_account_key,
@@ -262,7 +261,10 @@ def prepare_task(
 
         requirements_uri = code_config.requirements
         if requirements_uri:
-            requirements_path = str(urlparse(requirements_uri).path).lstrip("/")
+            requirements_path = code_config.get_requirements_path()
+            if not requirements_path:
+                # Should be caught by model validation
+                raise ValueError(f"Invalid requirements URI: {code_uri}")
 
             requirements_blob_sas_token = generate_blob_sas(
                 account_name=settings.blob_account_name,

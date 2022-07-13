@@ -1,4 +1,5 @@
 from typing import Dict, List, Optional
+from pctasks.core.storage.blob import BlobUri
 
 from pydantic import validator
 
@@ -88,3 +89,28 @@ class CodeConfig(PCBaseModel):
     src: str
     requirements: Optional[str] = None
     pip_options: Optional[List[str]] = None
+
+    def get_src_path(self) -> str:
+        v = self.src
+        if not BlobUri.matches(v):
+            raise ValueError(f"src {v} is not a valid blob URI.")
+        path = BlobUri(v).blob_name
+        if not path:
+            raise ValueError(
+                f"src {v} is not a valid blob URI - no blob name found."
+            )
+        return path
+
+    def get_requirements_path(self) -> Optional[str]:
+        v = self.requirements
+        if v is None:
+            return None
+
+        if not BlobUri.matches(v):
+            raise ValueError(f"src {v} is not a valid blob URI.")
+        path = BlobUri(v).blob_name
+        if not path:
+            raise ValueError(
+                f"src {v} is not a valid blob URI - no blob name found."
+            )
+        return path
