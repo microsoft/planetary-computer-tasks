@@ -11,10 +11,8 @@ collections:
   - id: test-dataset
     class: mycode:TestCollection
     asset_storage:
-      - storage_account: devstoreaccount1
-        container: test-data
-        prefix: ${{ args.test_prefix }}/assets
-        sas_token: ${{ args.sas_token }}
+      - uri: blob://devstoreaccount1/test-data/${{ args.test_prefix }}/assets
+        token: ${{ args.sas_token }}
         chunks:
           options:
             chunk_length: 2
@@ -23,6 +21,4 @@ collections:
           splits:
             - depth: 1
     chunk_storage:
-      storage_account: devstoreaccount1
-      container: test-data
-      prefix: ${{ args.test_prefix }}/chunks
+      uri: blob://devstoreaccount1/test-data/${{ args.test_prefix }}/chunks

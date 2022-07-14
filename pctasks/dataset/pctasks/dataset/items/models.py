@@ -112,7 +112,9 @@ class CreateItemsTaskConfig(TaskConfig):
             collection_class=collection.collection_class,
             args=CreateItemsInput(
                 asset_chunk_info=asset_chunk_info,
-                item_chunkset_uri=chunk_storage_config.get_uri(items_chunk_folder),
+                item_chunkset_uri=chunk_storage_config.get_storage().get_uri(
+                    items_chunk_folder
+                ),
                 collection_id=collection.id,
                 options=options or CreateItemsOptions(),
             ),

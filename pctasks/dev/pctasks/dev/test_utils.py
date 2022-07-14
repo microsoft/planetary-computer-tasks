@@ -34,7 +34,7 @@ from pctasks.core.models.task import (
 )
 from pctasks.core.models.tokens import StorageAccountTokens
 from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
-from pctasks.dataset.models import BlobStorageConfig, ChunkOptions
+from pctasks.dataset.models import ChunkOptions, StorageConfig
 from pctasks.dataset.splits.models import CreateSplitsOptions
 from pctasks.dataset.template import template_dataset_file
 from pctasks.dataset.workflow import (
@@ -328,7 +328,7 @@ def run_process_items_workflow(
             dataset.environment[DB_CONNECTION_STRING_ENV_VAR] = conn_str_info.remote
 
             for collection_config in dataset.collections:
-                collection_config.chunk_storage = BlobStorageConfig(
+                collection_config.chunk_storage = StorageConfig(
                     uri=chunks_storage.get_uri()
                 )
 

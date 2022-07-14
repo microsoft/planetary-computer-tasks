@@ -1,5 +1,3 @@
-import os
-from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Set, Union
 
@@ -101,114 +99,41 @@ class ChunksConfig(PCBaseModel):
         return v
 
 
-class StorageConfig(PCBaseModel, ABC):
+class StorageConfig(PCBaseModel):
     chunks: ChunksConfig = ChunksConfig()
-
-    @abstractmethod
-    def get_uri(self, path: Optional[str] = None) -> str:
-        pass
-
-    @abstractmethod
-    def get_storage(self) -> Storage:
-        pass
-
-    @abstractmethod
-    def matches(self, uri: str) -> bool:
-        """Returns True if the uri is a valid uri for this storage config."""
-        pass
-
-
-class BlobStorageConfig(StorageConfig):
-    # TODO: Just use URI, don't differentiate between local and blob
-    # (sas_token optional)
-    storage_account: Optional[str] = None
-    container: Optional[str] = None
-    uri: Optional[str]
-    prefix: Optional[str] = None
-    sas_token: Optional[str] = None
-
-    def get_uri(self, path: Optional[str] = None) -> str:
-        if self.uri:
-            return self.uri
-        uri = f"blob://{self.storage_account}/{self.container}"
-        if self.prefix:
-            uri = os.path.join(uri, self.prefix)
-        if path:
-            uri = os.path.join(uri, path)
-        return uri
+    uri: str
+    token: Optional[str] = None
 
     def get_storage(self) -> Storage:
-        return get_storage(self.get_uri(), sas_token=self.sas_token)
-
-    def matches(self, uri: str) -> bool:
-        if self.uri:
-            return uri.startswith(self.uri)
-
-        if BlobUri.matches(uri):
-            blob_uri = BlobUri(uri)
-            if blob_uri.storage_account_name == self.storage_account:
-                if blob_uri.container_name == self.container:
-                    if self.prefix:
-                        return (
-                            blob_uri.blob_name is not None
-                            and blob_uri.blob_name.startswith(self.prefix)
-                        )
-                    else:
-                        return True
-        return False
-
-
-class LocalStorageConfig(StorageConfig):
-    path: str
-
-    def get_uri(self, path: Optional[str] = None) -> str:
-        if path:
-            return os.path.join(self.path, path)
-        return self.path
-
-    def get_storage(self) -> Storage:
-        return get_storage(self.path)
-
-    def matches(self, uri: str) -> bool:
-        return uri.startswith(self.path)
+        return get_storage(self.uri, sas_token=self.token)
 
 
 class CollectionConfig(PCBaseModel):
     id: str
     template: Optional[str] = None
     collection_class: str = Field(alias="class")
-    asset_storage: List[Union[BlobStorageConfig, LocalStorageConfig]]
-    chunk_storage: Union[BlobStorageConfig, LocalStorageConfig]
+    asset_storage: List[StorageConfig]
+    chunk_storage: StorageConfig
 
     def get_tokens(self) -> Dict[str, StorageAccountTokens]:
         """Collects SAS tokens from any container configs."""
         tokens: Dict[str, StorageAccountTokens] = {}
         containers = self.asset_storage + [self.chunk_storage]
         for container in containers:
-            if isinstance(container, BlobStorageConfig):
-                if container.sas_token:
-                    if BlobUri.matches(container.get_uri()):
-                        blob_uri = BlobUri(container.get_uri())
-                        if blob_uri.storage_account_name not in tokens:
-                            tokens[
-                                blob_uri.storage_account_name
-                            ] = StorageAccountTokens(containers={})
-                        container_tokens = tokens[
-                            blob_uri.storage_account_name
-                        ].containers
-                        assert container_tokens is not None
-                        container_tokens[blob_uri.container_name] = ContainerTokens(
-                            token=container.sas_token
+            if container.token:
+                if BlobUri.matches(container.uri):
+                    blob_uri = BlobUri(container.uri)
+                    if blob_uri.storage_account_name not in tokens:
+                        tokens[blob_uri.storage_account_name] = StorageAccountTokens(
+                            containers={}
                         )
-        return tokens
+                    container_tokens = tokens[blob_uri.storage_account_name].containers
+                    assert container_tokens is not None
+                    container_tokens[blob_uri.container_name] = ContainerTokens(
+                        token=container.token
+                    )
 
-    def get_storage_config(
-        self, uri: str
-    ) -> Union[BlobStorageConfig, LocalStorageConfig]:
-        for storage in self.asset_storage:
-            if storage.matches(uri):
-                return storage
-        raise ValueError(f"No storage config found that matches {uri}")
+        return tokens
 
     class Config:
         allow_population_by_field_name = True

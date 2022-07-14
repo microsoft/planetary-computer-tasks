@@ -18,45 +18,36 @@ collections:
     template: ${{ local.path(./template/chesapeake-lc-7) }}
     class: chesapeake_lulc:ChesapeakeCollection
     asset_storage:
-      - storage_account: landcoverdata
-        container: chesapeake
-        sas_token: ${{ pc.get_token(landcoverdata, chesapeake) }}
+      - uri: blob://landcoverdata/chesapeake
+        token: ${{ pc.get_token(landcoverdata, chesapeake) }}
         chunks:
           options:
             name_starts_with: lc-7/
             chunk_length: 1000
     chunk_storage:
-      storage_account: landcoverdata
-      container: chesapeake-etl-data
-      prefix: pctasks-chunks/lc-7/
+      uri: blob://landcoverdata/chesapeake-etl-data/pctasks-chunks/lc-7/
   - id: chesapeake-lc-13
     template: ${{ local.path(./template/chesapeake-lc-13) }}
     class: chesapeake_lulc:ChesapeakeCollection
     asset_storage:
-      - storage_account: landcoverdata
-        container: chesapeake
-        sas_token: ${{ pc.get_token(landcoverdata, chesapeake) }}
+      - uri: blob://landcoverdata/chesapeake
+        token: ${{ pc.get_token(landcoverdata, chesapeake) }}
         chunks:
           options:
             name_starts_with: lc-13/
             chunk_length: 1000
     chunk_storage:
-      storage_account: landcoverdata
-      container: chesapeake-etl-data
-      prefix: pctasks-chunks/lc-13/
+      uri: blob://landcoverdata/chesapeake-etl-data/pctasks-chunks/lc-13/
   - id: chesapeake-lu
     template: ${{ local.path(./template/chesapeake-lu) }}
     class: chesapeake_lulc:ChesapeakeCollection
     sas_token: ${{ pc.get_token(landcoverdata, chesapeake) }}
     asset_storage:
-      - storage_account: landcoverdata
-        container: chesapeake
+      - uri: blob://landcoverdata/chesapeake
         chunks:
           options:
             name_starts_with: lu/
             chunk_length: 1000
     chunk_storage:
-      storage_account: landcoverdata
-      container: chesapeake-etl-data
-      prefix: pctasks-chunks/lu/
+      uri: blob://landcoverdata/chesapeake-etl-data/pctasks-chunks/lu/
 

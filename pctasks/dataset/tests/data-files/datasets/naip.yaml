@@ -14,10 +14,6 @@ collections:
             - depth: 2
               name_starts_with: v002
     chunk_storage:
-      storage_account: naipeuwest
-      container: naip-etl-data
-      prefix: chunks/assets
+      uri: blob://naipeuwest/naip-etl-data/chunks/assets
     item_storage:
-      storage_account: naipeuwest
-      container: naip-etl-data
-      prefix: chunks/items
+      uri: blob://naipeuwest/naip-etl-data/chunks/items
