@@ -64,6 +64,22 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                     if remove_collection_link:
                         item.remove_links("collection")
 
+        def _ensure_collection(items: List[pystac.Item]) -> None:
+            for item in items:
+                if args.collection_id:
+                    if item.collection_id and item.collection_id != args.collection_id:
+                        raise CreateItemsError(
+                            f"Item {item.id} has collection {item.collection_id} "
+                            f"but expected {args.collection_id}"
+                        )
+                    else:
+                        item.collection_id = args.collection_id
+                else:
+                    if not item.collection_id:
+                        raise CreateItemsError(
+                            f"Item {item.id} has no collection ID set."
+                        )
+
         if args.asset_uri:
             try:
                 result = self._create_item(args.asset_uri, storage_factory)
@@ -94,6 +110,7 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                     return result
                 else:
                     _validate(result)
+                    _ensure_collection(result)
                     results.extend(result)
         else:
             # Should be prevented by validator
