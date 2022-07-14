@@ -90,6 +90,10 @@ services:
       - ./dev/nginx/etc/nginx:/etc/nginx
     ports:
       - 8510:80
+    depends_on:
+      - server
+      - stac-api
+      - stac-browser
 
   server:
     container_name: pctasks-server
