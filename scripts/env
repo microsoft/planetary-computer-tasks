@@ -7,7 +7,7 @@ PACKAGE_DIRS=(
     "pctasks/core"
     "pctasks/cli"
     "pctasks/task"
-    "pctasks/submit"
+    "pctasks/client"
     "pctasks/ingest"
     "pctasks/ingest_task"
     "pctasks/dataset"
@@ -15,7 +15,6 @@ PACKAGE_DIRS=(
     "pctasks/notify"
     "pctasks/router"
     "pctasks/operations"
-    "pctasks/records"
     "pctasks/server"
     "pctasks/dev"
 )
@@ -26,3 +25,17 @@ FUNCTION_DIRS=($(find pctasks_funcs -type d -exec test -e "./{}/__init__.py" \; 
 INTEGRATION_TESTS=(
     "tests"
 )
+
+function echo_argo_token() {
+    echo "Bearer $(kubectl get secret -n pc pctasks-sa-token -o jsonpath='{.data.token}' | base64 --decode)"
+}
+
+function setup_docker_network() {
+    if ! docker network ls | grep -q ${DOCKER_NETWORK_NAME}; then
+            echo " -- CREATING DOCKER NETWORK"
+
+            docker network create \
+                --driver=bridge \
+                pctasks-network
+        fi
+}

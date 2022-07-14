@@ -42,16 +42,13 @@ source scripts/env
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ -z "${AZURITE_ONLY}" ]; then
-        if ! docker network ls | grep -q ${DOCKER_NETWORK_NAME}; then
-            echo " -- CREATING DOCKER NETWORK"
 
-            docker network create \
-                --driver=bridge \
-                pctasks-network
+        # Copy secrets template if it doesn't exist
+        if [ ! -f dev-secrets.yaml ]; then
+            cp dev-secrets.template.yaml dev-secrets.yaml
         fi
 
-        echo " -- SETTING UP CLUSTER"
-        scripts/cluster create
+        setup_docker_network;
 
         echo " -- BUILDING CONTAINERS"
         scripts/update
@@ -59,8 +56,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         echo " -- STARTING SERVERS"
         scripts/server --detached
 
-        echo " -- UPDATING CLUSTER"
-        scripts/cluster update
     fi
 
     echo " -- SETTING UP AZURITE"

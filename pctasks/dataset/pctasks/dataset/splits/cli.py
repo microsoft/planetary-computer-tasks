@@ -5,6 +5,8 @@ import click
 from strictyaml.exceptions import MarkedYAMLError
 
 from pctasks.cli.cli import PCTasksCommandContext, cli_output, cli_print
+from pctasks.client.client import PCTasksClient
+from pctasks.client.settings import ClientSettings
 from pctasks.core.models.workflow import (
     JobConfig,
     WorkflowConfig,
@@ -15,8 +17,6 @@ from pctasks.dataset.constants import DEFAULT_DATASET_YAML_PATH
 from pctasks.dataset.splits.models import CreateSplitsOptions, CreateSplitsTaskConfig
 from pctasks.dataset.template import template_dataset_file
 from pctasks.dataset.utils import opt_collection, opt_ds_config, opt_submit
-from pctasks.submit.client import SubmitClient
-from pctasks.submit.settings import SubmitSettings
 
 logger = logging.getLogger(__name__)
 
@@ -69,9 +69,7 @@ def create_splits_cmd(
     if not submit:
         cli_output(submit_message.to_yaml())
     else:
-        settings = SubmitSettings.get(context.profile, context.settings_file)
-        with SubmitClient(settings) as client:
-            cli_print(
-                click.style(f"  Submitting {submit_message.run_id}...", fg="green")
-            )
-            client.submit_workflow(submit_message)
+        settings = ClientSettings.get(context.profile, context.settings_file)
+        client = PCTasksClient(settings)
+        cli_print(click.style(f"  Submitting {submit_message.run_id}...", fg="green"))
+        client.submit_workflow(submit_message)

@@ -160,6 +160,17 @@ class LocalStorage(Storage):
             raise FileExistsError(f"{target} already exists.")
         shutil.copy(input_path, target)
 
+    def upload_bytes(
+        self, data: bytes, target_path: str, overwrite: bool = True
+    ) -> None:
+        target = os.path.join(self.base_dir, target_path)
+        if not os.path.exists(os.path.dirname(target)):
+            os.makedirs(os.path.dirname(target))
+        if os.path.exists(target) and not overwrite:
+            raise FileExistsError(f"{target} already exists.")
+        with open(target, "wb") as f:
+            f.write(data)
+
     def get_url(self, file_path: str) -> str:
         return f"file://{os.path.join(self.base_dir, file_path)}"
 
@@ -202,3 +213,6 @@ class LocalStorage(Storage):
 
     def __repr__(self) -> str:
         return f"LocalStorage({self.base_dir})"
+
+    def fsspec_path(self, path: str) -> str:
+        return f"file://{path}"

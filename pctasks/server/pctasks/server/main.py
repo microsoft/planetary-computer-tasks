@@ -1,4 +1,3 @@
-"""FastAPI application using PGStac."""
 import logging
 import os
 from typing import Any, Dict
@@ -9,7 +8,11 @@ from fastapi.responses import ORJSONResponse
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import PlainTextResponse
 
-from pctasks.server.routes import run
+from pctasks.server.logging import init_logging
+from pctasks.server.routes import code, runs, submit
+
+# Initialize logging
+init_logging("tasks")
 
 DEBUG: bool = os.getenv("DEBUG") == "TRUE" or False
 
@@ -60,7 +63,19 @@ async def ping() -> Dict[str, Any]:
 
 
 app.include_router(
-    run.run_router,
-    prefix="/run",
-    tags=["Run workflows"],
+    submit.submit_router,
+    prefix="/submit",
+    tags=["Submit workflows"],
+)
+
+app.include_router(
+    code.code_router,
+    prefix="/code",
+    tags=["Manage code"],
+)
+
+app.include_router(
+    runs.runs_router,
+    prefix="/runs",
+    tags=["Fetch workflow run information"],
 )

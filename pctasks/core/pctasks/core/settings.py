@@ -1,3 +1,4 @@
+import logging
 import os
 from abc import abstractmethod
 from pathlib import Path
@@ -30,6 +31,8 @@ from pctasks.core.models.base import PCBaseModel
 from pctasks.core.utils import map_opt
 
 T = TypeVar("T", bound="PCTasksSettings")
+
+logger = logging.getLogger(__name__)
 
 
 class SettingsLoadError(Exception):
@@ -76,7 +79,12 @@ def get_settings(
 ) -> T:
     profile = profile or os.getenv(ENV_VAR_PCTASKS_PROFILE) or DEFAULT_PROFILE
     settings_dir = Path(SETTINGS_ENV_DIR).expanduser()
-    settings_dir.mkdir(exist_ok=True)
+    try:
+        settings_dir.mkdir(exist_ok=True)
+    except Exception:
+        # Don't fail if we can't create the settings directory
+        logger.warning(f"Could not create settings directory {settings_dir}")
+        pass
 
     _settings_file: Optional[str]
     if settings_file:

@@ -1,6 +1,7 @@
 import logging
 import os
 from datetime import datetime, timedelta
+from typing import List, Optional
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.data.tables import TableSasPermissions, generate_table_sas
@@ -58,7 +59,7 @@ def write_task_run_msg(run_msg: TaskRunMessage, settings: RunSettings) -> BlobCo
         account_key=settings.blob_account_key,
         container_name=settings.task_io_blob_container,
         blob_name=task_input_path,
-        start=datetime.now(),
+        start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),
         permission=BlobSasPermissions(read=True),
     )
@@ -154,15 +155,9 @@ def prepare_task(
 
     secrets_provider: SecretsProvider
     if settings.local_secrets:
-        secrets_provider = LocalSecretsProvider()
+        secrets_provider = LocalSecretsProvider(settings)
     else:
-        assert settings.keyvault_url  # Handled by model validation
-        secrets_provider = KeyvaultSecretsProvider.get_provider(
-            settings.keyvault_url,
-            tenant_id=settings.keyvault_sp_tenant_id or None,
-            client_id=settings.keyvault_sp_client_id or None,
-            client_secret=settings.keyvault_sp_client_secret or None,
-        )
+        secrets_provider = KeyvaultSecretsProvider.get_provider(settings)
 
     with secrets_provider:
         if environment:
@@ -188,7 +183,7 @@ def prepare_task(
     task_runs_table_sas_token = generate_table_sas(
         credential=tables_cred,
         table_name=settings.task_run_record_table_name,
-        start=datetime.now(),
+        start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),
         permission=TableSasPermissions(read=True, write=True, update=True),
     )
@@ -199,7 +194,7 @@ def prepare_task(
         sas_token=task_runs_table_sas_token,
     )
 
-    # Blob
+    # Handle log blob
     log_path = get_run_log_path(job_id, task_id, run_id)
     log_uri = (
         f"blob://{settings.blob_account_name}/{settings.log_blob_container}/{log_path}"
@@ -209,13 +204,15 @@ def prepare_task(
         account_key=settings.blob_account_key,
         container_name=settings.log_blob_container,
         blob_name=log_path,
-        start=datetime.now(),
+        start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),
         permission=BlobSasPermissions(write=True),
     )
     log_blob_config = BlobConfig(
         uri=log_uri, sas_token=log_blob_sas_token, account_url=settings.blob_account_url
     )
+
+    # Handle output blob
 
     output_path = get_task_output_path(job_id, task_id, run_id)
     output_uri = (
@@ -227,7 +224,7 @@ def prepare_task(
         account_key=settings.blob_account_key,
         container_name=settings.task_io_blob_container,
         blob_name=output_path,
-        start=datetime.now(),
+        start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),
         permission=BlobSasPermissions(write=True),
     )
@@ -236,6 +233,55 @@ def prepare_task(
         sas_token=output_blob_sas_token,
         account_url=settings.blob_account_url,
     )
+
+    # Handle code config
+    code_src_blob_config: Optional[BlobConfig] = None
+    code_requirements_blob_config: Optional[BlobConfig] = None
+    code_pip_options: Optional[List[str]] = None
+
+    code_config = task_config.code
+    if code_config:
+        code_uri = code_config.src
+        code_path = code_config.get_src_path()
+        code_blob_sas_token = generate_blob_sas(
+            account_name=settings.blob_account_name,
+            account_key=settings.blob_account_key,
+            container_name=settings.code_blob_container,
+            blob_name=code_path,
+            start=datetime.utcnow(),
+            expiry=datetime.utcnow() + timedelta(hours=24 * 7),
+            permission=BlobSasPermissions(read=True),
+        )
+
+        code_src_blob_config = BlobConfig(
+            uri=code_uri,
+            sas_token=code_blob_sas_token,
+            account_url=settings.blob_account_url,
+        )
+
+        requirements_uri = code_config.requirements
+        if requirements_uri:
+            requirements_path = code_config.get_requirements_path()
+            if not requirements_path:
+                # Should be caught by model validation
+                raise ValueError(f"Invalid requirements URI: {code_uri}")
+
+            requirements_blob_sas_token = generate_blob_sas(
+                account_name=settings.blob_account_name,
+                account_key=settings.blob_account_key,
+                container_name=settings.code_blob_container,
+                blob_name=requirements_path,
+                start=datetime.utcnow(),
+                expiry=datetime.utcnow() + timedelta(hours=24 * 7),
+                permission=BlobSasPermissions(read=True),
+            )
+            code_requirements_blob_config = BlobConfig(
+                uri=requirements_uri,
+                sas_token=requirements_blob_sas_token,
+                account_url=settings.blob_account_url,
+            )
+
+        code_pip_options = code_config.pip_options
 
     config = TaskRunConfig(
         image=image_config.image,
@@ -248,6 +294,9 @@ def prepare_task(
         task_runs_table_config=task_runs_table_config,
         output_blob_config=output_blob_config,
         log_blob_config=log_blob_config,
+        code_src_blob_config=code_src_blob_config,
+        code_requirements_blob_config=code_requirements_blob_config,
+        code_pip_options=code_pip_options,
         event_logger_app_insights_key=event_logger_app_insights_key,
     )
 

@@ -1,9 +1,9 @@
 from typing import Dict, List, Optional
 
 from pctasks.core.models.base import PCBaseModel
+from pctasks.core.models.config import CodeConfig
 from pctasks.core.models.task import TaskConfig
 from pctasks.dataset.models import (
-    BlobStorageConfig,
     ChunkOptions,
     CollectionConfig,
     DatasetConfig,
@@ -56,14 +56,17 @@ class CreateSplitsTaskConfig(TaskConfig):
         cls,
         image: str,
         args: CreateSplitsInput,
+        task: str = CREATE_SPLITS_TASK_PATH,
+        code: Optional[CodeConfig] = None,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> "CreateSplitsTaskConfig":
         return CreateSplitsTaskConfig(
             id=CREATE_SPLITS_TASK_ID,
             image=image,
+            code=code,
             args=args.dict(),
-            task=CREATE_SPLITS_TASK_PATH,
+            task=task,
             environment=environment,
             tags=tags,
         )
@@ -80,9 +83,7 @@ class CreateSplitsTaskConfig(TaskConfig):
     ) -> "CreateSplitsTaskConfig":
         split_inputs: List[SplitInput] = []
         for asset_storage_config in collection.asset_storage:
-            sas_token: Optional[str] = None
-            if isinstance(asset_storage_config, BlobStorageConfig):
-                sas_token = asset_storage_config.sas_token
+            sas_token = asset_storage_config.token
 
             storage_chunk_options = asset_storage_config.chunks.options
             if chunk_options:
@@ -91,7 +92,7 @@ class CreateSplitsTaskConfig(TaskConfig):
                 )
             split_inputs.append(
                 SplitInput(
-                    uri=asset_storage_config.get_uri(),
+                    uri=asset_storage_config.uri,
                     splits=asset_storage_config.chunks.splits,
                     sas_token=sas_token,
                     chunk_options=storage_chunk_options,
@@ -100,9 +101,11 @@ class CreateSplitsTaskConfig(TaskConfig):
 
         return cls.create(
             image=ds.image,
+            code=ds.code,
             args=CreateSplitsInput(
                 inputs=split_inputs, options=options or CreateSplitsOptions()
             ),
+            task=f"{collection.collection_class}.create_splits_task",
             environment=environment,
             tags=tags,
         )

@@ -9,6 +9,10 @@ pctasks:
     appRootPath: "/tasks"
     debug: "FALSE"
 
+    dev:
+      enabled: true
+      api_key: "kind-api-key"
+
     image:
       repository: "localhost:5001/pctasks-server"
       tag: "latest"
@@ -18,22 +22,19 @@ pctasks:
       port: 80
       annotations: {}
 
-    argo:
-      host: "http://argo-workflows-server.argo.svc.cluster.local:2746"
-      # argo token set during helm install
-
-    # Image used to run workflows.
-    runner_image: "localhost:5001/pctasks-run:latest"
-    account_key: hunter2
-
     deploy:
       replicaCount: 1
       podAnnotations:
         "updated": "unknown"  # Value generated on helm upgrade
 
   run:
+
+    task_runner_type: "argo"
+
+    task_poll_seconds: 15
+
     dev:
-      local_executor_url: "http://local-executor:8000"
+      local_dev_endpoints_url: "http://local-dev-endpoints:8512"
 
       azurite:
         enabled: true
@@ -55,6 +56,7 @@ pctasks:
       account_url: "http://azurite:10002/devstoreaccount1"
       account_name: "devstoreaccount1"
       account_key: "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+      connection_string: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://azurite:10002/devstoreaccount1;"
 
     blob:
       account_url: "http://azurite:10000/devstoreaccount1"
@@ -62,6 +64,11 @@ pctasks:
       account_key: "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
       log_blob_container: tasklogs
       task_io_blob_container: taskio
+
+    argo:
+      host: "http://argo-workflows-server.argo.svc.cluster.local:2746"
+      workflow_runner_image: "localhost:5001/pctasks-run:latest"
+      # argo token set during helm install
 
     batch:
       enabled: false

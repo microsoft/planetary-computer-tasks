@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/cbl-mariner/base/nodejs:16
+
+RUN tdnf install -y git
+
+RUN mkdir -p /opt/src
+WORKDIR /opt/src
+RUN git clone https://github.com/radiantearth/stac-browser
+WORKDIR /opt/src/stac-browser
+RUN git checkout v3.0.0-beta.1
+RUN npm install
+RUN npm install http-server -g
+RUN npm run build -- --catalogUrl="http://localhost:8510/stac/" --pathPrefix="/browser/"
+WORKDIR /opt/src/stac-browser/dist
+
+CMD ["http-server", "-p", "8080", "."]

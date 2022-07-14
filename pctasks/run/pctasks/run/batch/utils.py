@@ -4,7 +4,7 @@ from datetime import datetime
 
 def make_unique_job_id(job_id: str) -> str:
     return make_valid_batch_id(
-        f"{job_id}-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}"
+        f"{job_id}-{datetime.utcnow().strftime('%y%m%d-%H%M%S')}"
     )
 
 

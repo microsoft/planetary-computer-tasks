@@ -2,6 +2,8 @@
 
 set -e
 
+source scripts/env
+
 if [[ "${CI}" ]]; then
     set -x
 fi
@@ -21,10 +23,6 @@ Options:
         Run tests only for Azure Functions.
     --test-only
         Only run tests, don't lint
-    --no-integration
-        Skip running integration tests
-    --integration-only
-        Only run integration tests
     --lint-only
         Only run linting
     --no-init
@@ -40,7 +38,6 @@ SUBPACKAGE=""
 FUNCTIONS=""
 TEST_ONLY=""
 LINT_ONLY=""
-NO_INTEGRATION=""
 NO_INIT=""
 while [[ $# -gt 0 ]]; do case $1 in
     --subpackage)
@@ -58,14 +55,6 @@ while [[ $# -gt 0 ]]; do case $1 in
         ;;
     --lint-only)
         LINT_ONLY="--lint-only"
-        shift
-        ;;
-    --no-integration)
-        NO_INTEGRATION="--no-integration"
-        shift
-        ;;
-    --integration-only)
-        INTEGRATION_ONLY="--integration-only"
         shift
         ;;
     --no-init)
@@ -95,6 +84,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         -f docker-compose.console.yml \
         run --rm \
         dev \
-        scripts/bin/test ${SUBPACKAGE} ${FUNCTIONS} ${TEST_ONLY} ${LINT_ONLY} ${NO_INTEGRATION} ${INTEGRATION_ONLY} ${NO_INIT}
+        scripts/bin/test ${SUBPACKAGE} ${FUNCTIONS} ${TEST_ONLY} ${LINT_ONLY} ${NO_INIT}
 
 fi

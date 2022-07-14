@@ -3,6 +3,7 @@ from typing import Any, Dict, Optional
 from pydantic import validator
 
 from pctasks.core.models.base import PCBaseModel
+from pctasks.core.models.config import CodeConfig
 from pctasks.core.models.task import TaskConfig
 from pctasks.dataset.chunks.constants import ITEM_CHUNKS_PREFIX
 from pctasks.dataset.chunks.models import ChunkInfo
@@ -38,6 +39,17 @@ class CreateItemsInput(PCBaseModel):
     If set, this will be set as each created item's ``collection``.
     """
 
+    collection_id: Optional[str] = None
+    """Collection ID to use for the items.
+
+    If provided, the collection ID items created by create_items must either not be set,
+        in which case the collection will be set by the framework logic, or must be
+        set to this value. If the collection ID exists on
+        items and does not match the provided value, an error will be raised.
+    If not provided, the collection ID items created by create_items must be set.
+        If the collection_id is not provided on items, an error will be raised.
+    """
+
     options: CreateItemsOptions = CreateItemsOptions()
 
     @validator("asset_chunk_info")
@@ -60,21 +72,8 @@ class CreateItemsInput(PCBaseModel):
 
 
 class CreateItemsOutput(PCBaseModel):
-    item: Optional[Dict[str, Any]] = None
-    """The created item."""
-
-    ndjson_uri: Optional[str] = None
-    """List of URIs to items."""
-
-    @validator("ndjson_uri")
-    def validate_uris(cls, v: Optional[str], values: Dict[str, Any]) -> Optional[str]:
-        if not v:
-            if not values.get("item"):
-                raise ValueError("Must specify either ndjson_uri or item")
-        else:
-            if values.get("item"):
-                raise ValueError("Must specify either ndjson_uri or item")
-        return v
+    ndjson_uri: str
+    """NDJSON of Items."""
 
 
 class CreateItemsTaskConfig(TaskConfig):
@@ -84,12 +83,14 @@ class CreateItemsTaskConfig(TaskConfig):
         image: str,
         collection_class: str,
         args: CreateItemsInput,
+        code: Optional[CodeConfig] = None,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> "CreateItemsTaskConfig":
         return CreateItemsTaskConfig(
             id=CREATE_ITEMS_TASK_ID,
             image=image,
+            code=code,
             task=f"{collection_class}.create_items_task",
             args=args.dict(),
             environment=environment,
@@ -112,10 +113,13 @@ class CreateItemsTaskConfig(TaskConfig):
 
         return cls.create(
             image=ds.image,
+            code=ds.code,
             collection_class=collection.collection_class,
             args=CreateItemsInput(
                 asset_chunk_info=asset_chunk_info,
-                item_chunkset_uri=chunk_storage_config.get_uri(items_chunk_folder),
+                item_chunkset_uri=chunk_storage_config.get_storage().get_uri(
+                    items_chunk_folder
+                ),
                 collection_id=collection.id,
                 options=options or CreateItemsOptions(),
             ),

@@ -1,5 +1,5 @@
-resource "azurerm_resource_group" "rxetl" {
-  name     = "${local.full_prefix}_rg"
+resource "azurerm_resource_group" "pctasks" {
+  name     = "rg-${local.full_prefix}"
   location = var.region
 
   tags = {

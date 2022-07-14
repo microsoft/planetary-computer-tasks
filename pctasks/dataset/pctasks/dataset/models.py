@@ -1,18 +1,18 @@
-import os
-from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Set, Union
 
 from pydantic import Field, validator
 
 from pctasks.core.constants import MICROSOFT_OWNER
 from pctasks.core.models.base import PCBaseModel
+from pctasks.core.models.config import CodeConfig
 from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.tokens import ContainerTokens, StorageAccountTokens
 from pctasks.core.storage import get_storage
 from pctasks.core.storage.base import Storage
 from pctasks.core.storage.blob import BlobUri
 from pctasks.core.tables.base import InvalidTableKeyError, validate_table_key
+from pctasks.core.utils.template import DictTemplater
 from pctasks.dataset.constants import DEFAULT_CHUNK_LENGTH
 
 
@@ -60,6 +60,12 @@ class ChunkOptions(PCBaseModel):
     limit: Optional[int] = None
     """Limit the number of URIs to process. """
 
+    max_depth: Optional[int] = None
+    """Maximum number of directories to descend into."""
+
+    list_folders: Optional[bool] = False
+    """Whether to list files (the default) or folders instead of files."""
+
     chunk_file_name: str = "uris-list"
     """Chunk file name."""
 
@@ -85,109 +91,49 @@ class ChunksConfig(PCBaseModel):
     ) -> Optional[List[SplitConfig]]:
         if v is None:
             return v
-        paths = set()
+        _prefixes: Set[Optional[str]] = set()
         for split in v:
-            if split.prefix in paths:
+            if split.prefix in _prefixes:
                 raise ValueError(f"Duplicate split prefix: {split.prefix}")
-            paths.add(split.prefix)
+            _prefixes.add(split.prefix)
         return v
 
 
-class StorageConfig(PCBaseModel, ABC):
+class StorageConfig(PCBaseModel):
     chunks: ChunksConfig = ChunksConfig()
-
-    @abstractmethod
-    def get_uri(self, path: Optional[str] = None) -> str:
-        pass
-
-    @abstractmethod
-    def get_storage(self) -> Storage:
-        pass
-
-    @abstractmethod
-    def matches(self, uri: str) -> bool:
-        """Returns True if the uri is a valid uri for this storage config."""
-        pass
-
-
-class BlobStorageConfig(StorageConfig):
-    storage_account: str
-    container: str
-    prefix: Optional[str] = None
-    sas_token: Optional[str] = None
-
-    def get_uri(self, path: Optional[str] = None) -> str:
-        uri = f"blob://{self.storage_account}/{self.container}"
-        if self.prefix:
-            uri = os.path.join(uri, self.prefix)
-        if path:
-            uri = os.path.join(uri, path)
-        return uri
+    uri: str
+    token: Optional[str] = None
 
     def get_storage(self) -> Storage:
-        return get_storage(self.get_uri(), sas_token=self.sas_token)
-
-    def matches(self, uri: str) -> bool:
-        if BlobUri.matches(uri):
-            blob_uri = BlobUri(uri)
-            if blob_uri.storage_account_name == self.storage_account:
-                if blob_uri.container_name == self.container:
-                    if self.prefix:
-                        return (
-                            blob_uri.blob_name is not None
-                            and blob_uri.blob_name.startswith(self.prefix)
-                        )
-                    else:
-                        return True
-        return False
-
-
-class LocalStorageConfig(StorageConfig):
-    path: str
-
-    def get_uri(self, path: Optional[str] = None) -> str:
-        if path:
-            return os.path.join(self.path, path)
-        return self.path
-
-    def get_storage(self) -> Storage:
-        return get_storage(self.path)
-
-    def matches(self, uri: str) -> bool:
-        return uri.startswith(self.path)
+        return get_storage(self.uri, sas_token=self.token)
 
 
 class CollectionConfig(PCBaseModel):
     id: str
+    template: Optional[str] = None
     collection_class: str = Field(alias="class")
-    asset_storage: List[Union[BlobStorageConfig, LocalStorageConfig]]
-    chunk_storage: Union[BlobStorageConfig, LocalStorageConfig]
+    asset_storage: List[StorageConfig]
+    chunk_storage: StorageConfig
 
     def get_tokens(self) -> Dict[str, StorageAccountTokens]:
         """Collects SAS tokens from any container configs."""
         tokens: Dict[str, StorageAccountTokens] = {}
         containers = self.asset_storage + [self.chunk_storage]
         for container in containers:
-            if isinstance(container, BlobStorageConfig):
-                if container.sas_token:
-                    if container.storage_account not in tokens:
-                        tokens[container.storage_account] = StorageAccountTokens(
+            if container.token:
+                if BlobUri.matches(container.uri):
+                    blob_uri = BlobUri(container.uri)
+                    if blob_uri.storage_account_name not in tokens:
+                        tokens[blob_uri.storage_account_name] = StorageAccountTokens(
                             containers={}
                         )
-                    container_tokens = tokens[container.storage_account].containers
+                    container_tokens = tokens[blob_uri.storage_account_name].containers
                     assert container_tokens is not None
-                    container_tokens[container.container] = ContainerTokens(
-                        token=container.sas_token
+                    container_tokens[blob_uri.container_name] = ContainerTokens(
+                        token=container.token
                     )
-        return tokens
 
-    def get_storage_config(
-        self, uri: str
-    ) -> Union[BlobStorageConfig, LocalStorageConfig]:
-        for storage in self.asset_storage:
-            if storage.matches(uri):
-                return storage
-        raise ValueError(f"No storage config found that matches {uri}")
+        return tokens
 
     class Config:
         allow_population_by_field_name = True
@@ -197,6 +143,7 @@ class DatasetConfig(DatasetIdentifier):
     owner: str = MICROSOFT_OWNER
     name: str
     image: str
+    code: Optional[CodeConfig] = None
     collections: List[CollectionConfig]
     args: Optional[List[str]] = None
     environment: Optional[Dict[str, Any]] = None
@@ -222,6 +169,9 @@ class DatasetConfig(DatasetIdentifier):
 
     def get_identifier(self) -> DatasetIdentifier:
         return DatasetIdentifier(owner=self.owner, name=self.name)
+
+    def template_args(self, args: Dict[str, str]) -> "DatasetConfig":
+        return DictTemplater({"args": args}, strict=False).template_model(self)
 
     @validator("name")
     def _validate_name(cls, v: str) -> str:

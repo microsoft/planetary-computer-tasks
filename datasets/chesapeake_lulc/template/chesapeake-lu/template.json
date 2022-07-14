@@ -1,0 +1,188 @@
+{
+    "stac_version": "1.0.0",
+    "type": "Collection",
+    "id": "chesapeake-lu",
+    "title": "Chesapeake Land Use",
+    "description": "{{ collection.description }}",
+    "license": "proprietary",
+    "links": [
+        {
+            "rel": "describedby",
+            "href": "https://www.chesapeakeconservancy.org/wp-content/uploads/2018/11/2013-Phase-6-Mapped-Land-Use-Definitions-Updated-PC-11302018.pdf",
+            "type": "application/pdf",
+            "title": "Class Descriptions"
+        },
+        {
+            "rel": "license",
+            "href": "https://www.chesapeakeconservancy.org/conservation-innovation-center/precision-conservation/chesapeake-bay-program/",
+            "type": "text/html",
+            "title": "Data Availability Description"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/classification/v1.0.0/schema.json"
+    ],
+    "keywords": [
+        "Land Use",
+        "Chesapeake Bay Watershed",
+        "Chesapeake Conservancy"
+    ],
+    "msft:short_description": "Chesapeake Bay Watershed land use product with 17 classes at 1m resolution.",
+    "msft:storage_account": "landcoverdata",
+    "msft:container": "chesapeake",
+    "msft:group_id": "chesapeake-lulc",
+    "providers": [
+        {
+            "name": "Chesapeake Conservancy Conservation Innovation Center",
+            "roles": [
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://www.chesapeakeconservancy.org/conservation-innovation-center/high-resolution-data/land-use-data-project/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "title": "Chesapeake Land Use Thumbnail",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/chesapeake-lu-thumb.png",
+            "type": "image/png",
+            "roles": [
+                    "thumbnail"
+            ]
+        }
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -81.14648244566828,
+                    36.18730972451623,
+                    -73.11082086653798,
+                    44.7781991560751
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2013-01-01T00:00:00Z",
+                    "2014-12-31T23:59:59Z"
+                ]
+            ]
+        }
+    },
+    "item_assets": {
+        "data": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Land Use Classes",
+            "raster:bands": [
+                {
+                    "nodata": 0,
+                    "sampling": "area",
+                    "data_type": "uint8",
+                    "spatial_resolution": 1
+                }
+            ],
+            "classification:classes": [
+                {
+                    "value": 1,
+                    "description": "Impervious Roads",
+                    "color-hint": "000000"
+                },
+                {
+                    "value": 2,
+                    "description": "Impervious Non-Roads",
+                    "color-hint": "730000"
+                },
+                {
+                    "value": 3,
+                    "description": "Tree Canopy over Impervious Surfaces",
+                    "color-hint": "55FF00"
+                },
+                {
+                    "value": 4,
+                    "description": "Water",
+                    "color-hint": "0070FF"
+                },
+                {
+                    "value": 5,
+                    "description": "Tidal Wetlands",
+                    "color-hint": "00FFC5"
+                },
+                {
+                    "value": 6,
+                    "description": "Floodplain Wetlands",
+                    "color-hint": "00E6A9"
+                },
+                {
+                    "value": 7,
+                    "description": "Other Wetlands",
+                    "color-hint": "00E6A9"
+                },
+                {
+                    "value": 8,
+                    "description": "Forest",
+                    "color-hint": "267300"
+                },
+                {
+                    "value": 9,
+                    "description": "Tree Canopy over Turf Grass",
+                    "color-hint": "AAFF00"
+                },
+                {
+                    "value": 10,
+                    "description": "Mixed Open",
+                    "color-hint": "A87000"
+                },
+                {
+                    "value": 11,
+                    "description": "Fractional Turf (small)",
+                    "color-hint": "FFBEE8"
+                },
+                {
+                    "value": 12,
+                    "description": "Fractional Turf (medium)",
+                    "color-hint": "FFBEE8"
+                },
+                {
+                    "value": 13,
+                    "description": "Fractional Turf (large)",
+                    "color-hint": "FFBEE8"
+                },
+                {
+                    "value": 14,
+                    "description": "Fractional Impervious",
+                    "color-hint": "C500FF"
+                },
+                {
+                    "value": 15,
+                    "description": "Turf Grass",
+                    "color-hint": "FFFF73"
+                },
+                {
+                    "value": 16,
+                    "description": "Cropland",
+                    "color-hint": "E69800"
+                },
+                {
+                    "value": 17,
+                    "description": "Pasture/Hay",
+                    "color-hint": "E69800"
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        }
+    }
+}

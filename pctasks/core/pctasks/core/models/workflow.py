@@ -10,6 +10,7 @@ from pctasks.core.models.event import CloudEvent, ItemNotificationConfig
 from pctasks.core.models.task import TaskConfig
 from pctasks.core.models.tokens import StorageAccountTokens
 from pctasks.core.tables.base import InvalidTableKeyError, validate_table_key
+from pctasks.core.utils import StrEnum
 from pctasks.core.utils.template import DictTemplater
 
 
@@ -172,3 +173,23 @@ class WorkflowSubmitMessage(PCBaseModel):
             raise ValueError(f"Argument errors: {';'.join(errors)}")
 
         return v
+
+
+class WorkflowRunStatus(StrEnum):
+
+    SUBMITTED = "submitted"
+    RUNNING = "running"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+
+class WorkflowSubmitResult(PCBaseModel):
+    """
+    Result of submitting a workflow.
+    Returned from the API, consumed by the submit client.
+    """
+
+    dataset: DatasetIdentifier
+    run_id: str
+    status: WorkflowRunStatus
+    errors: Optional[List[str]] = None

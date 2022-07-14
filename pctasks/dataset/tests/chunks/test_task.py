@@ -155,3 +155,53 @@ def test_task_simple_assets() -> None:
             for line in storage.read_text(storage.get_path(chunk.uri)).splitlines():
                 assert "/./" not in line
                 assert storage.file_exists(storage.get_path(line))
+
+
+def test_task_list_folders():
+    src_storage_uri = str(TEST_ASSETS_PATH.parent / "simple-assets")
+
+    with TemporaryDirectory() as tmp_dir:
+        args = CreateChunksInput(
+            src_uri=src_storage_uri,
+            dst_uri=tmp_dir,
+            options=ChunkOptions(
+                chunk_length=2,
+                name_starts_with=None,
+                since=None,
+                limit=None,
+                extensions=None,
+                ends_with=None,
+                matches=None,
+                chunk_file_name="test-chunk",
+                list_folders=True,
+                max_depth=3,
+            ),
+        )
+
+        task_path = get_task_path(create_chunks_task, "create_chunks_task")
+
+        task_result = run_test_task(args.dict(), task_path)
+        assert isinstance(task_result, CompletedTaskResult)
+
+        result = ChunksOutput.parse_obj(task_result.output)
+
+        test_asset_folder = str(TEST_ASSETS_PATH.parent / "simple-assets").strip("/")
+
+        assert len(result.chunks) == 1
+        assert set([c.uri for c in result.chunks]) == set(
+            [
+                str(
+                    Path(tmp_dir)
+                    / ALL_CHUNK_PREFIX
+                    / test_asset_folder
+                    / "0"
+                    / "test-chunk.csv"
+                ),
+            ]
+        )
+
+        for chunk in result.chunks:
+            with open(chunk.uri) as f:
+                for line in f:
+                    assert Path(line).exists
+                    assert Path(line.strip()).is_dir()

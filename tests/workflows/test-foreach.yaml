@@ -3,17 +3,21 @@ dataset: microsoft/test-foreach
 target_environment: staging
 
 args:
-  - output_dir
+  - task_code_path
+  - input_uri
+  - output_uri
 
 jobs:
   list-prefix:
     name: List prefixes
     tasks:
       - id: prefixes
-        image: mock:latest
-        task: tests.tasks:list_prefixes_task
+        image: localhost:5001/pctasks-task-base:latest
+        code:
+          src: ${{ args.task_code_path }}
+        task: tasks:list_prefixes_task
         args:
-          uri: ${{ local.path(../data-files/simple-assets) }}
+          uri: ${{ args.input_uri }}
           depth: 1
 
   list-files:
@@ -23,8 +27,10 @@ jobs:
       items: ${{ jobs.list-prefix.tasks.prefixes.output.uris }}
     tasks:
       - id: paths
-        image: mock:latest
-        task: tests.tasks:list_files_task
+        image: localhost:5001/pctasks-task-base:latest
+        code:
+          src: ${{ args.task_code_path }}
+        task: tasks:list_files_task
         args:
           uri: ${{ item }}
 
@@ -35,13 +41,17 @@ jobs:
       items: ${{ jobs.list-files.tasks.paths.output.uris }}
     tasks:
       - id: read-file
-        image: mock:latest
-        task: tests.tasks:read_file_task
+        image: localhost:5001/pctasks-task-base:latest
+        code:
+          src: ${{ args.task_code_path }}
+        task: tasks:read_file_task
         args:
           uri: ${{ item }}
       - id: write-text
-        image: mock:latest
-        task: tests.tasks:write_file_task
+        image: localhost:5001/pctasks-task-base:latest
+        code:
+          src: ${{ args.task_code_path }}
+        task: tasks:write_file_task
         args:
-          uri: ${{ args.output_dir}}/${{ tasks.read-file.output.name }}
+          uri: ${{ args.output_uri}}/${{ tasks.read-file.output.name }}
           content: ${{ tasks.read-file.output.content }}

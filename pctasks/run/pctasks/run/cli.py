@@ -8,8 +8,8 @@ from pctasks.core.cli import PCTasksCommandContext
 from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
 from pctasks.core.storage import StorageFactory, get_storage_for_file
 from pctasks.run.settings import RunSettings
-from pctasks.run.workflow.remote import RemoteWorkflowRunner
-from pctasks.run.workflow.simple import SimpleWorkflowRunner
+from pctasks.run.workflow.executor.remote import RemoteWorkflowExecutor
+from pctasks.run.workflow.executor.simple import SimpleWorkflowExecutor
 from pctasks.task.context import TaskContext
 
 
@@ -41,7 +41,7 @@ def local_cmd(workflow: str, args: List[str], output: Optional[str] = None) -> N
     workflow_yaml = storage.read_text(path)
     workflow_config = WorkflowConfig.from_yaml(workflow_yaml)
 
-    runner = SimpleWorkflowRunner()
+    runner = SimpleWorkflowExecutor()
     runner.run_workflow(
         workflow_config,
         TaskContext(storage_factory=StorageFactory()),
@@ -95,12 +95,12 @@ def remote_cmd(
             workflow_args[split_args[0]] = split_args[1]
         submit_message.args = {**(submit_message.args or {}), **workflow_args}
 
-    runner = RemoteWorkflowRunner(run_settings)
+    runner = RemoteWorkflowExecutor(run_settings)
 
     if new_id:
         submit_message.run_id = uuid4().hex
 
-    runner.run_workflow(submit_message)
+    runner.execute_workflow(submit_message)
 
 
 @click.group("run")

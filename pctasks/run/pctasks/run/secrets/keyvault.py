@@ -1,28 +1,35 @@
-from functools import lru_cache
 import threading
 from typing import Any, Optional, Union
 
 from azure.identity import ClientSecretCredential, DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
-from cachetools import Cache, TTLCache, cachedmethod
+from cachetools import Cache, LRUCache, TTLCache, cachedmethod
 
 from pctasks.core.utils.backoff import with_backoff
 from pctasks.run.secrets.base import SecretsProvider
+from pctasks.run.settings import RunSettings
 
 secret_lock = threading.Lock()
 
 
 class KeyvaultSecretsProvider(SecretsProvider):
+    _cache: Cache = LRUCache(maxsize=100)
+
     _creds: Union[DefaultAzureCredential, ClientSecretCredential]
 
-    def __init__(
-        self,
-        keyvault_url: str,
-        tenant_id: Optional[str] = None,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-    ) -> None:
-        self.keyvault_url = keyvault_url
+    def __init__(self, settings: Optional[RunSettings]) -> None:
+        if not settings:
+            raise ValueError("Must be initialized with a settings object")
+        super().__init__(settings)
+
+        if not settings.keyvault_url:
+            # Should be handled by model validation
+            raise ValueError("Keyvault url not set")
+        self.keyvault_url = settings.keyvault_url
+        tenant_id = settings.keyvault_sp_tenant_id or None
+        client_id = settings.keyvault_sp_client_id or None
+        client_secret = settings.keyvault_sp_client_secret or None
+
         self._client: Optional[SecretClient] = None
         self._cache: Cache = TTLCache(maxsize=128, ttl=60)
 
@@ -56,12 +63,9 @@ class KeyvaultSecretsProvider(SecretsProvider):
             return self._fetch_secret(name)
 
     @classmethod
-    @lru_cache(maxsize=10)
+    @cachedmethod(lambda cls: cls._cache, key=lambda _, settings: settings.keyvault_url)
     def get_provider(
         cls,
-        keyvault_url: str,
-        tenant_id: Optional[str] = None,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
+        settings: RunSettings,
     ) -> "KeyvaultSecretsProvider":
-        return cls(keyvault_url, tenant_id, client_id, client_secret)
+        return cls(settings)

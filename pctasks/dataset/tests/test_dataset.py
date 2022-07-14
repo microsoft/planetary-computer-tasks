@@ -5,12 +5,12 @@ from tempfile import TemporaryDirectory
 from typing import Set
 
 import orjson
-import pystac
 
 from pctasks.cli.cli import setup_logging
 from pctasks.core.storage import StorageFactory
 from pctasks.core.storage.blob import BlobUri
 from pctasks.core.tokens import Tokens
+from pctasks.core.utils.stac import validate_stac
 from pctasks.dataset.template import template_dataset_file
 from pctasks.dataset.workflow import create_chunks_workflow, create_process_items_workflow
 from pctasks.dev.blob import (
@@ -18,7 +18,7 @@ from pctasks.dev.blob import (
     get_azurite_sas_token,
     temp_azurite_blob_storage,
 )
-from pctasks.run.workflow.simple import SimpleWorkflowRunner
+from pctasks.run.workflow.executor.simple import SimpleWorkflowExecutor
 from pctasks.task.context import TaskContext
 
 HERE = Path(__file__).parent
@@ -47,7 +47,7 @@ def test_process_items() -> None:
             )
             path = BlobUri(storage.get_uri()).blob_name
             assert path
-            outputs = SimpleWorkflowRunner().run_workflow(
+            outputs = SimpleWorkflowExecutor().run_workflow(
                 workflow,
                 output_uri=tmp_dir,
                 args={"test_prefix": path, "sas_token": get_azurite_sas_token()},
@@ -74,6 +74,6 @@ def test_process_items() -> None:
                 assert len(lines) == 2
                 for line in lines:
                     item = orjson.loads(line)
-                    pystac.Item.from_dict(item).validate()
+                    validate_stac(item)
                     ids.add(item["id"])
             assert len(ids) == 4

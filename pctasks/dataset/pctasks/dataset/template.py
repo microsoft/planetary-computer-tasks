@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 import yaml
 from planetary_computer.sas import get_token
@@ -35,15 +35,18 @@ class PCTemplater(Templater):
 def template_dataset(
     yaml_str: str, parent_dir: Optional[Union[str, Path]] = None
 ) -> DatasetConfig:
-    workflow_dict = yaml.safe_load(yaml_str)
-    templater = MultiTemplater(LocalTemplater(parent_dir or Path.cwd()), PCTemplater())
-    workflow_dict = templater.template_dict(workflow_dict)
-
-    return DatasetConfig.parse_obj(workflow_dict)
+    dataset_dict = yaml.safe_load(yaml_str)
+    if parent_dir:
+        root = Path(parent_dir)
+    else:
+        root = Path.cwd()
+    templater = MultiTemplater(LocalTemplater(root), PCTemplater())
+    dataset_dict = templater.template_dict(dataset_dict)
+    return DatasetConfig.parse_obj(dataset_dict)
 
 
 def template_dataset_file(
-    path: Optional[Union[str, Path]],
+    path: Optional[Union[str, Path]], args: Optional[Dict[str, str]] = None
 ) -> DatasetConfig:
     """Read and template a dataset YAML file.
     All local relative paths are relative to the file path.
@@ -60,4 +63,8 @@ def template_dataset_file(
     if not p.exists():
         raise FileNotFoundError(f"Dataset YAML file not found at '{p}'")
 
-    return template_dataset(p.read_text(), p.parent)
+    dataset = template_dataset(p.read_text(), p.parent)
+    if args:
+        dataset = dataset.template_args(args)
+
+    return dataset

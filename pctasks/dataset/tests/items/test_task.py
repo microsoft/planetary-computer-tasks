@@ -9,6 +9,7 @@ from pystac.utils import str_to_datetime
 from pctasks.core.models.task import CompletedTaskResult, WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.core.storage.local import LocalStorage
+from pctasks.core.utils.stac import validate_stac
 from pctasks.dataset.chunks.models import ChunkInfo
 from pctasks.dataset.items.models import CreateItemsOutput
 from pctasks.dataset.items.task import CreateItemsInput, CreateItemsTask
@@ -44,22 +45,7 @@ test_create_task = CreateItemsTask(create_mock_item)
 TASK_PATH = get_task_path(test_create_task, "test_create_task", module=__name__)
 
 
-def test_create_single_item():
-    args = CreateItemsInput(
-        asset_uri="/asset1.tif",
-    )
-
-    task_result = run_test_task(args.dict(), TASK_PATH)
-    assert isinstance(task_result, CompletedTaskResult)
-
-    result = CreateItemsOutput.parse_obj(task_result.output)
-
-    assert result.item
-    item = pystac.Item.from_dict(result.item)
-    assert item.id == "asset1"
-
-
-def test_create_multiple_items():
+def test_create_items():
     with TemporaryDirectory() as tmp_dir:
         tmp_storage = LocalStorage(tmp_dir)
         chunk_storage = tmp_storage.get_substorage("chunks")
@@ -74,6 +60,7 @@ def test_create_multiple_items():
             asset_chunk_info=ChunkInfo(
                 uri=chunk_storage.get_uri(chunk_path), chunk_id=chunk_path
             ),
+            collection_id="test-collection",
             item_chunkset_uri=items_storage.get_uri(ndjson_path),
         )
 
@@ -85,14 +72,14 @@ def test_create_multiple_items():
         assert ndjson_uri
         assert Path(ndjson_uri).exists()
 
-        items = []
+        items: List[pystac.Item] = []
 
         for item_json in items_storage.read_text(ndjson_uri).split("\n"):
             items.append(pystac.Item.from_dict(json.loads(item_json)))
 
         assert len(items) == len(TEST_ASSET_URIS)
         for item in items:
-            item.validate()
+            validate_stac(item)
 
 
 def test_wait_for_assets():

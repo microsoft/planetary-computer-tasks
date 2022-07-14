@@ -8,9 +8,10 @@ with open("README.md") as f:
 install_requires = [
     "pctasks.core>=0.1.0",
     "pctasks.task>=0.1.0",
-    "pctasks.submit>=0.1.0",
+    "pctasks.client>=0.1.0",
     "azure-batch==11.*",
     "azure-keyvault-secrets==4.*",
+    "argo-workflows==6.3.*",
     "networkx==2.*"
 ]
 

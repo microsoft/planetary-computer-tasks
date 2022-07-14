@@ -13,17 +13,14 @@ install_requires = [
     "pydantic>=1.9,<2.0.0",
     "orjson==3.*",
     "strictyaml>=1.6",
+    "stac-validator==3.1.*",
     "opencensus-ext-azure==1.1.0",
     "opencensus-ext-logging==0.1.1",
     "pyyaml>=5.3",
 ]
 
 extra_reqs = {
-    "dev": [
-        "pytest",
-        "pytest-cov",
-        "pre-commit"
-    ],
+    "dev": ["pytest", "pytest-cov", "pre-commit"],
     "docs": ["mkdocs", "mkdocs-material", "pdocs"],
 }
 
@@ -42,7 +39,7 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     keywords="Planetary, STAC",
-    author=u"Microsoft",
+    author="Microsoft",
     author_email="planetarycomputer@microsoft.com",
     url="https://github.com/Microsoft/planetary-computer-tasks",
     license="MIT",

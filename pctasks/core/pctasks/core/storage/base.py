@@ -1,4 +1,8 @@
+import hashlib
+import io
 import logging
+import pathlib
+import zipfile
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime as Datetime
@@ -22,12 +26,13 @@ class Storage(ABC):
     may be a directory, a storage account and container, a
     storage account, container, and a prefix, etc.
 
-    Some termnonology Storage uses:
-      path - A path relative to the storage base
-      url - The http(s) URL for a path (to be renamed to href)
-      uri - A resource ID that can use non-http schemes;
-        e.g. a etlcommon.storage.blob.BlobUri like
-        "blob://storage_account/container/prefix/blob.txt"
+    Some terminology Storage uses:
+
+      * path: A path relative to the storage base
+      * url: The http(s) URL for a path (to be renamed to href)
+      * uri: A resource ID that can use non-http schemes;
+        e.g. a :class:`pctasks.core.storage.blob.BlobUri` like
+        ``"blob://storage_account/container/prefix/blob.txt"``
 
     """
 
@@ -119,6 +124,35 @@ class Storage(ABC):
     def get_file_info(self, file_path: str) -> StorageFileInfo:
         """Returns information for a file at the given path"""
         pass
+
+    @abstractmethod
+    def upload_bytes(
+        self, data: bytes, target_path: str, overwrite: bool = True
+    ) -> None:
+        """Upload bytes to a storage file."""
+
+    def upload_code(self, file_path: str) -> str:
+        """Upload a Python module or package."""
+        path = pathlib.Path(file_path)
+
+        if not path.exists():
+            raise OSError(f"Path {path} does not exist.")
+
+        if path.is_file():
+            data = path.read_bytes()
+            name = path.name
+        else:
+            buf = io.BytesIO()
+            with zipfile.PyZipFile(buf, "w") as zf:
+                zf.writepy(str(path))
+
+            data = buf.getvalue()
+            name = path.with_suffix(".zip").name
+
+        token = hashlib.md5(data).hexdigest()
+        dst_path = f"{token}/{name}"
+        self.upload_bytes(data, dst_path)
+        return self.get_uri(dst_path)
 
     @abstractmethod
     def upload_file(
@@ -278,3 +312,16 @@ class Storage(ABC):
         """
         path = self.get_path_from_url(href)
         return self.get_authenticated_url(path)
+
+    @property
+    def fsspec_storage_options(self) -> Dict[str, str]:
+        """
+        Return the fsspec storage options for this storage.
+        """
+        return {}
+
+    def fsspec_path(self, path: str) -> str:
+        """
+        Return the fsspec-style URL.
+        """
+        raise NotImplementedError

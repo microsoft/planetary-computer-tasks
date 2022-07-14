@@ -1,20 +1,17 @@
-from functools import lru_cache
+from typing import Optional
 
-from pydantic import BaseSettings
-
-from pctasks.core.constants import (
-    DEFAULT_TASK_RUN_RECORD_TABLE_NAME,
-    ENV_VAR_PCTASK_PREFIX,
-)
+from pctasks.core.settings import PCTasksSettings
 
 
-class TaskSettings(BaseSettings):
-    task_runs_table_name: str = DEFAULT_TASK_RUN_RECORD_TABLE_NAME
-
-    class Config:
-        env_prefix = ENV_VAR_PCTASK_PREFIX
-
+class TaskSettings(PCTasksSettings):
     @classmethod
-    @lru_cache(maxsize=1)
-    def get(cls) -> "TaskSettings":
-        return cls()
+    def section_name(cls) -> str:
+        return "task"
+
+    code_dir: Optional[str] = None
+    """The directory which downloaded code and requirements are stored.
+
+    If provided, this directory will be used as the target for pip installs,
+    and code source will be downloaded to this directory.
+    If None, will use sys.path and pip install will not use a target directory.
+    """

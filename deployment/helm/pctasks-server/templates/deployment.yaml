@@ -50,16 +50,12 @@ spec:
               value: "{{ .Values.pctasks.server.webConcurrency }}"
             - name: ENVIRONMENT
               value: "{{ .Values.pctasks.server.environment }}"
-            - name: PCTASKS_SERVER__ARGO__HOST
-              value: "{{ .Values.pctasks.server.argo.host }}"
-            - name: PCTASKS_SERVER__ARGO__TOKEN
-              value: "{{ .Values.pctasks.server.argo.token }}"
-            - name: PCTASKS_SERVER__ARGO__NAMESPACE
-              value: "{{ .Values.pctasks.server.argo.namespace }}"
-            - name: PCTASKS_SERVER__RUNNER_IMAGE
-              value: "{{ .Values.pctasks.server.runner_image }}"
-            - name: PCTASKS_SERVER__SERVER_ACCOUNT_KEY
-              value: "{{ .Values.pctasks.server.account_key }}"
+            - name: PCTASKS_SERVER__DEV
+              value: "{{ .Values.pctasks.server.dev.enabled }}"
+            - name: PCTASKS_SERVER__DEV_API_KEY
+              value: "{{ .Values.pctasks.server.dev.api_key }}"
+            - name: PCTASKS_SERVER__RECORD_TABLES__CONNECTION_STRING
+              value: "{{ .Values.pctasks.run.tables.connection_string }}"
 
             ## Azure service principal
             - name: AZURE_TENANT_ID
@@ -71,9 +67,31 @@ spec:
 
             ## Run settings ##
 
-            # Dev executor settings
-            - name: PCTASKS_RUN__LOCAL_EXECUTOR_URL
-              value: "{{ .Values.pctasks.run.dev.local_executor_url }}"
+            - name: PCTASKS_RUN__TASK_RUNNER_TYPE
+              value: "{{ .Values.pctasks.run.task_runner_type }}"
+            - name: PCTASKS_RUN__WORKFLOW_RUNNER_TYPE
+              value: "{{ .Values.pctasks.run.workflow_runner_type }}"
+
+            - name: PCTASKS_RUN__TASK_POLL_SECONDS
+              value: "{{ .Values.pctasks.run.task_poll_seconds }}"
+            - name: PCTASKS_RUN__CHECK_OUTPUT_SECONDS
+              value: "{{ .Values.pctasks.run.check_output_seconds }}"
+
+            # Dev settings
+            - name: PCTASKS_RUN__DEV
+              value: "{{ .Values.pctasks.run.dev.enabled }}"
+            - name: PCTASKS_RUN__LOCAL_DEV_ENDPOINTS_URL
+              value: "{{ .Values.pctasks.run.dev.local_dev_endpoints_url }}"
+
+            # Argo
+            - name: PCTASKS_RUN__ARGO_HOST
+              value: "{{ .Values.pctasks.run.argo.host }}"
+            - name: PCTASKS_RUN__ARGO_TOKEN
+              value: "{{ .Values.pctasks.run.argo.token }}"
+            - name: PCTASKS_RUN__ARGO_NAMESPACE
+              value: "{{ .Values.pctasks.run.argo.namespace }}"
+            - name: PCTASKS_RUN__WORKFLOW_RUNNER_IMAGE
+              value: "{{ .Values.pctasks.run.argo.workflow_runner_image }}"
 
             # Azurite storage settings
             {{- if .Values.pctasks.run.dev.azurite.enabled }}
@@ -116,6 +134,13 @@ spec:
               value: "{{ .Values.pctasks.run.blob.account_name }}"
             - name: PCTASKS_RUN__BLOB_ACCOUNT_KEY
               value: "{{ .Values.pctasks.run.blob.account_key }}"
+
+            - name: PCTASKS_RUN__ARGO__HOST
+              value: "{{ .Values.pctasks.run.argo.host }}"
+            - name: PCTASKS_RUN__ARGO__TOKEN
+              value: "{{ .Values.pctasks.run.argo.token }}"
+            - name: PCTASKS_RUN__ARGO__NAMESPACE
+              value: "{{ .Values.pctasks.run.argo.namespace }}"
 
             ## Azure Batch
             {{- if .Values.pctasks.run.batch.enabled }}

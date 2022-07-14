@@ -48,7 +48,7 @@ def get_blob_config(container: str, path: str) -> BlobConfig:
         account_key=exec_settings.blob_account_key,
         container_name=container,
         blob_name=path,
-        start=datetime.now(),
+        start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),
         permission=BlobSasPermissions(write=True),
     )

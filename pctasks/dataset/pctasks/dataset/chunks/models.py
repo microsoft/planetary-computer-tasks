@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional, Union
 
 from pctasks.core.models.base import PCBaseModel
+from pctasks.core.models.config import CodeConfig
 from pctasks.core.models.task import TaskConfig
 from pctasks.dataset.chunks.constants import (
     ASSET_CHUNKS_PREFIX,
@@ -46,12 +47,14 @@ class CreateChunksTaskConfig(TaskConfig):
         cls,
         image: str,
         args: CreateChunksInput,
+        code: Optional[CodeConfig] = None,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> "CreateChunksTaskConfig":
         return CreateChunksTaskConfig(
             id=CREATE_CHUNKS_TASK_ID,
             image=image,
+            code=code,
             args=args.dict(),
             task=CREATE_CHUNKS_TASK_PATH,
             environment=environment,
@@ -70,10 +73,13 @@ class CreateChunksTaskConfig(TaskConfig):
         tags: Optional[Dict[str, str]] = None,
     ) -> "CreateChunksTaskConfig":
         chunk_storage_config = collection.chunk_storage
-        dst_uri = chunk_storage_config.get_uri(f"{chunkset_id}/{ASSET_CHUNKS_PREFIX}")
+        dst_uri = chunk_storage_config.get_storage().get_uri(
+            f"{chunkset_id}/{ASSET_CHUNKS_PREFIX}"
+        )
 
         return cls.create(
             image=ds.image,
+            code=ds.code,
             args=CreateChunksInput(
                 src_uri=src_uri,
                 dst_uri=dst_uri,
@@ -90,6 +96,7 @@ class ListChunksTaskConfig(TaskConfig):
         cls,
         image: str,
         args: ListChunksInput,
+        task: str = CREATE_CHUNKS_TASK_PATH,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> "ListChunksTaskConfig":
@@ -97,7 +104,7 @@ class ListChunksTaskConfig(TaskConfig):
             id=LIST_CHUNKS_TASK_ID,
             image=image,
             args=args.dict(),
-            task=CREATE_CHUNKS_TASK_PATH,
+            task=task,
             environment=environment,
             tags=tags,
         )
@@ -113,13 +120,14 @@ class ListChunksTaskConfig(TaskConfig):
         tags: Optional[Dict[str, str]] = None,
     ) -> "ListChunksTaskConfig":
         chunk_storage_config = collection.chunk_storage
-        chunkset_uri = chunk_storage_config.get_uri(
+        chunkset_uri = chunk_storage_config.get_storage().get_uri(
             f"{chunkset_id}/{ASSET_CHUNKS_PREFIX}"
         )
 
         return cls.create(
             image=ds.image,
             args=ListChunksInput(chunkset_uri=chunkset_uri, all=all),
+            task=f"{collection.collection_class}.create_chunks_task",
             environment=environment,
             tags=tags,
         )

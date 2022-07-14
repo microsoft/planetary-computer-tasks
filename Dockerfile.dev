@@ -50,8 +50,8 @@ COPY pctasks/task /opt/src/pctasks/task
 RUN cd /opt/src/pctasks/task && \
      pip install -e .
 
-COPY pctasks/submit /opt/src/pctasks/submit
-RUN cd /opt/src/pctasks/submit && \
+COPY pctasks/client /opt/src/pctasks/client
+RUN cd /opt/src/pctasks/client && \
      pip install -e .
 
 COPY pctasks/ingest /opt/src/pctasks/ingest
@@ -76,10 +76,6 @@ RUN cd /opt/src/pctasks/dataset && \
 
 COPY pctasks/notify /opt/src/pctasks/notify
 RUN cd /opt/src/pctasks/notify && \
-     pip install -e .
-
-COPY pctasks/records /opt/src/pctasks/records
-RUN cd /opt/src/pctasks/records && \
      pip install -e .
 
 COPY pctasks/dev /opt/src/pctasks/dev

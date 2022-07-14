@@ -7,7 +7,10 @@ from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
 from pctasks.dev.blob import temp_azurite_blob_storage
 from pctasks.dev.test_utils import assert_workflow_is_successful
 from pctasks.run.settings import RunSettings
-from pctasks.run.workflow.remote import RemoteWorkflowRunner, WorkflowFailedError
+from pctasks.run.workflow.executor.remote import (
+    RemoteWorkflowExecutor,
+    WorkflowFailedError,
+)
 
 
 def run_workflow(
@@ -23,9 +26,9 @@ def run_workflow(
         settings = RunSettings.get()
         settings = settings.copy(deep=True)
         settings.task_poll_seconds = 5
-        runner = RemoteWorkflowRunner(settings)
+        runner = RemoteWorkflowExecutor(settings)
 
-        result = runner.run_workflow(submit_message)
+        result = runner.execute_workflow(submit_message)
 
     except WorkflowFailedError:
         workflow_failed = True

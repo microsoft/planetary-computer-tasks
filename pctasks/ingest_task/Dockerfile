@@ -44,8 +44,8 @@ COPY task /opt/src/task
 RUN cd /opt/src/task && \
      pip install .
 
-COPY submit /opt/src/submit
-RUN cd /opt/src/submit && \
+COPY client /opt/src/client
+RUN cd /opt/src/client && \
      pip install .
 
 COPY ingest /opt/src/ingest
@@ -62,8 +62,5 @@ RUN cd /opt/src/ingest_task && \
 
 # Setup Python Path
 ENV PYTHONPATH=/opt/src:$PYTHONPATH
-
-# Force SSL for Postgres
-ENV PGSSLMODE=require
 
 WORKDIR /opt/src

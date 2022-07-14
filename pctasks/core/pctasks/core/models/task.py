@@ -11,7 +11,7 @@ from pctasks.core.constants import (
     TASK_RUN_SIGNAL_SCHEMA_VERSION,
 )
 from pctasks.core.models.base import PCBaseModel, RunRecordId
-from pctasks.core.models.config import BlobConfig, TableSasConfig
+from pctasks.core.models.config import BlobConfig, CodeConfig, TableSasConfig
 from pctasks.core.models.event import NotificationMessage
 from pctasks.core.models.tokens import StorageAccountTokens
 from pctasks.core.tables.base import InvalidTableKeyError, validate_table_key
@@ -22,8 +22,9 @@ class TaskConfig(PCBaseModel):
     id: str
     image: Optional[str] = None
     image_key: Optional[str] = None
+    code: Optional[CodeConfig] = None
     task: str
-    args: Dict[str, Any]
+    args: Dict[str, Any] = {}
     tags: Optional[Dict[str, str]] = None
     environment: Optional[Dict[str, str]] = None
     schema_version: str = TASK_CONFIG_SCHEMA_VERSION
@@ -57,6 +58,9 @@ class TaskRunConfig(PCBaseModel):
     job_id: str
     task_id: str
     task: str
+    code_src_blob_config: Optional[BlobConfig] = None
+    code_requirements_blob_config: Optional[BlobConfig] = None
+    code_pip_options: Optional[List[str]] = None
     environment: Optional[Dict[str, str]] = None
     tokens: Optional[Dict[str, StorageAccountTokens]] = None
     # TODO: Update task status through signals
