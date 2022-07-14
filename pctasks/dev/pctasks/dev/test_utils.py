@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from click.testing import CliRunner, Result
-from pctasks.dataset.splits.models import CreateSplitsOptions
 from pypgstac.db import PgstacDB
 
 from pctasks.cli.cli import pctasks_cmd
@@ -36,6 +35,7 @@ from pctasks.core.models.task import (
 from pctasks.core.models.tokens import StorageAccountTokens
 from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
 from pctasks.dataset.models import BlobStorageConfig, ChunkOptions
+from pctasks.dataset.splits.models import CreateSplitsOptions
 from pctasks.dataset.template import template_dataset_file
 from pctasks.dataset.workflow import (
     create_ingest_collection_workflow,

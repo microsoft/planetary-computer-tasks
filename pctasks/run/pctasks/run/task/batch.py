@@ -6,8 +6,8 @@ from threading import Lock
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import azure.batch.models as batchmodels
-from pctasks.core.models.dataset import DatasetIdentifier
 
+from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.record import TaskRunStatus
 from pctasks.core.utils import map_opt
 from pctasks.run.batch.client import BatchClient

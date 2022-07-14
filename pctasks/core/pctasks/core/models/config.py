@@ -1,9 +1,9 @@
 from typing import Dict, List, Optional
-from pctasks.core.storage.blob import BlobUri
 
 from pydantic import validator
 
 from pctasks.core.models.base import PCBaseModel
+from pctasks.core.storage.blob import BlobUri
 
 
 class QueueSasConfig(PCBaseModel):
@@ -96,9 +96,7 @@ class CodeConfig(PCBaseModel):
             raise ValueError(f"src {v} is not a valid blob URI.")
         path = BlobUri(v).blob_name
         if not path:
-            raise ValueError(
-                f"src {v} is not a valid blob URI - no blob name found."
-            )
+            raise ValueError(f"src {v} is not a valid blob URI - no blob name found.")
         return path
 
     def get_requirements_path(self) -> Optional[str]:
@@ -110,7 +108,5 @@ class CodeConfig(PCBaseModel):
             raise ValueError(f"src {v} is not a valid blob URI.")
         path = BlobUri(v).blob_name
         if not path:
-            raise ValueError(
-                f"src {v} is not a valid blob URI - no blob name found."
-            )
+            raise ValueError(f"src {v} is not a valid blob URI - no blob name found.")
         return path

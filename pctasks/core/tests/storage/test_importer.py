@@ -1,10 +1,10 @@
 import importlib.metadata
 import subprocess
 import sys
-from tempfile import TemporaryDirectory
-from typing import Optional
 import unittest.mock
 from pathlib import Path
+from tempfile import TemporaryDirectory
+from typing import Optional
 
 from pctasks.core.importer import ensure_code, ensure_requirements
 from pctasks.core.storage.blob import BlobStorage
