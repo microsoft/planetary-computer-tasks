@@ -1,10 +1,13 @@
+import json
 import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from click.testing import CliRunner, Result
+from pctasks.dataset.splits.models import CreateSplitsOptions
+from pypgstac.db import PgstacDB
 
 from pctasks.cli.cli import pctasks_cmd
 from pctasks.client.client import PCTasksClient
@@ -32,7 +35,16 @@ from pctasks.core.models.task import (
 )
 from pctasks.core.models.tokens import StorageAccountTokens
 from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
+from pctasks.dataset.models import BlobStorageConfig, ChunkOptions
+from pctasks.dataset.template import template_dataset_file
+from pctasks.dataset.workflow import (
+    create_ingest_collection_workflow,
+    create_process_items_workflow,
+)
+from pctasks.dev.blob import temp_azurite_blob_storage
 from pctasks.dev.config import get_blob_config, get_table_config
+from pctasks.dev.db import temp_pgstac_db
+from pctasks.ingest.constants import DB_CONNECTION_STRING_ENV_VAR
 from pctasks.task.run import run_task
 
 
@@ -289,3 +301,95 @@ def run_test_task(
         else:
             assert isinstance(result, WaitTaskResult)
             return result
+
+
+def run_process_items_workflow(
+    dataset_path: Union[Path, str],
+    collection_id: Optional[str] = None,
+    args: Optional[Dict[str, str]] = None,
+    check_items: Optional[Callable[[List[Dict[str, Any]]], None]] = None,
+    timeout_seconds: int = 300,
+    splits_limit: int = 1,
+    chunks_limit: int = 2,
+) -> None:
+    with temp_pgstac_db() as conn_str_info:
+        with temp_azurite_blob_storage() as root_storage:
+            chunks_storage = root_storage.get_substorage("chunks")
+
+            args = {
+                "registry": "localhost:5001",
+            }
+
+            dataset = template_dataset_file(Path(dataset_path), args)
+
+            # Modify dataset for tests
+            if not dataset.environment:
+                dataset.environment = {}
+            dataset.environment[DB_CONNECTION_STRING_ENV_VAR] = conn_str_info.remote
+
+            for collection_config in dataset.collections:
+                collection_config.chunk_storage = BlobStorageConfig(
+                    uri=chunks_storage.get_uri()
+                )
+
+            collection_config = dataset.get_collection(collection_id)
+
+            # Ingest collection
+
+            assert_workflow_is_successful(
+                PCTasksClient()
+                .submit_workflow(
+                    WorkflowSubmitMessage(
+                        workflow=create_ingest_collection_workflow(
+                            dataset, collection_config
+                        ),
+                        args=args,
+                    )
+                )
+                .run_id,
+                timeout_seconds=timeout_seconds,
+            )
+
+            with PgstacDB(conn_str_info.local) as db:
+                res = db.query_one(
+                    "SELECT id FROM collections WHERE id=%s",
+                    (collection_id,),
+                )
+                assert res == collection_id
+
+            # Process items
+
+            assert_workflow_is_successful(
+                PCTasksClient()
+                .submit_workflow(
+                    WorkflowSubmitMessage(
+                        workflow=create_process_items_workflow(
+                            dataset,
+                            collection_config,
+                            "test-chunkset-id",
+                            create_splits_options=CreateSplitsOptions(
+                                limit=splits_limit
+                            ),
+                            chunk_options=ChunkOptions(limit=chunks_limit),
+                        ),
+                        args=args,
+                    )
+                )
+                .run_id,
+                timeout_seconds=timeout_seconds,
+            )
+
+            with PgstacDB(conn_str_info.local) as db:
+                res = db.search(
+                    {
+                        "filter": {
+                            "op": "=",
+                            "args": [{"property": "collection"}, collection_id],
+                        }
+                    }
+                )
+                assert isinstance(res, str)
+                item_dicts = json.loads(res)["features"]
+                assert item_dicts
+                if check_items:
+                    check_items(item_dicts)
