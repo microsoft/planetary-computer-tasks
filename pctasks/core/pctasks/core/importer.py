@@ -25,6 +25,7 @@ def ensure_requirements(
     requirements_path: str,
     storage: Storage,
     pip_options: Optional[List[str]] = None,
+    target_dir: Optional[str] = None,
 ) -> None:
     """
     Ensure that the requirements at ``requirements_path`` are available.
@@ -40,6 +41,18 @@ def ensure_requirements(
         local_path = str(pathlib.Path(tmp_dir) / pathlib.Path(requirements_path).name)
         storage.download_file(requirements_path, local_path)
         pip_options = pip_options or []
+        if target_dir:
+            if "-t" in pip_options or "--target" in pip_options:
+                raise ValueError(
+                    "Cannot specify target directory in pip options; "
+                    f"target directory already specified as {target_dir}"
+                )
+            target_dir_path = pathlib.Path(target_dir)
+            target_dir_path.mkdir(parents=True, exist_ok=True)
+            resolved_dir = str(target_dir_path.resolve())
+            pip_options.extend(["-t", resolved_dir])
+            if resolved_dir not in sys.path:
+                sys.path = [resolved_dir] + sys.path
         logger.debug("Pip installing from %s", requirements_path)
         cmd = [
             sys.executable,
@@ -67,6 +80,7 @@ def ensure_code(
     file_path: str,
     storage: Storage,
     is_package: bool | None = None,
+    target_dir: Optional[str] = None,
 ) -> pathlib.Path:
     """
     Ensure that a module or zipped package at a URI ``file_path`` is importable.
@@ -95,7 +109,18 @@ def ensure_code(
     for more on creating Zip files for Python packages.
 
     """
-    output_path = pathlib.Path(site.getsitepackages()[0]) / pathlib.Path(file_path).name
+    if target_dir:
+        target_dir_path = pathlib.Path(target_dir)
+        target_dir_path.mkdir(parents=True, exist_ok=True)
+        resolved_dir = str(target_dir_path.resolve())
+        if resolved_dir not in sys.path:
+            sys.path = [resolved_dir] + sys.path
+        output_path = pathlib.Path(target_dir) / pathlib.Path(file_path).name
+    else:
+        output_path = (
+            pathlib.Path(site.getsitepackages()[0]) / pathlib.Path(file_path).name
+        )
+
     if output_path.exists():
         logger.debug("Module destination %s already exists", output_path)
 
@@ -106,4 +131,5 @@ def ensure_code(
     if is_package:
         logger.debug("Adding %s to sys.path", output_path)
         sys.path.append(str(output_path))
+
     return pathlib.Path(output_path)

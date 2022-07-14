@@ -2,7 +2,6 @@ import logging
 import os
 from datetime import datetime, timedelta
 from typing import List, Optional
-from urllib.parse import urlparse
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.data.tables import TableSasPermissions, generate_table_sas
@@ -60,7 +59,7 @@ def write_task_run_msg(run_msg: TaskRunMessage, settings: RunSettings) -> BlobCo
         account_key=settings.blob_account_key,
         container_name=settings.task_io_blob_container,
         blob_name=task_input_path,
-        start=datetime.now(),
+        start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),
         permission=BlobSasPermissions(read=True),
     )
@@ -156,15 +155,9 @@ def prepare_task(
 
     secrets_provider: SecretsProvider
     if settings.local_secrets:
-        secrets_provider = LocalSecretsProvider()
+        secrets_provider = LocalSecretsProvider(settings)
     else:
-        assert settings.keyvault_url  # Handled by model validation
-        secrets_provider = KeyvaultSecretsProvider.get_provider(
-            settings.keyvault_url,
-            tenant_id=settings.keyvault_sp_tenant_id or None,
-            client_id=settings.keyvault_sp_client_id or None,
-            client_secret=settings.keyvault_sp_client_secret or None,
-        )
+        secrets_provider = KeyvaultSecretsProvider.get_provider(settings)
 
     with secrets_provider:
         if environment:
@@ -190,7 +183,7 @@ def prepare_task(
     task_runs_table_sas_token = generate_table_sas(
         credential=tables_cred,
         table_name=settings.task_run_record_table_name,
-        start=datetime.now(),
+        start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),
         permission=TableSasPermissions(read=True, write=True, update=True),
     )
@@ -211,7 +204,7 @@ def prepare_task(
         account_key=settings.blob_account_key,
         container_name=settings.log_blob_container,
         blob_name=log_path,
-        start=datetime.now(),
+        start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),
         permission=BlobSasPermissions(write=True),
     )
@@ -231,7 +224,7 @@ def prepare_task(
         account_key=settings.blob_account_key,
         container_name=settings.task_io_blob_container,
         blob_name=output_path,
-        start=datetime.now(),
+        start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),
         permission=BlobSasPermissions(write=True),
     )
@@ -249,17 +242,17 @@ def prepare_task(
     code_config = task_config.code
     if code_config:
         code_uri = code_config.src
-        code_path = str(urlparse(code_uri).path).lstrip("/")
-
+        code_path = code_config.get_src_path()
         code_blob_sas_token = generate_blob_sas(
             account_name=settings.blob_account_name,
             account_key=settings.blob_account_key,
             container_name=settings.code_blob_container,
             blob_name=code_path,
-            start=datetime.now(),
+            start=datetime.utcnow(),
             expiry=datetime.utcnow() + timedelta(hours=24 * 7),
-            permission=BlobSasPermissions(write=True),
+            permission=BlobSasPermissions(read=True),
         )
+
         code_src_blob_config = BlobConfig(
             uri=code_uri,
             sas_token=code_blob_sas_token,
@@ -268,16 +261,19 @@ def prepare_task(
 
         requirements_uri = code_config.requirements
         if requirements_uri:
-            requirements_path = str(urlparse(requirements_uri).path).lstrip("/")
+            requirements_path = code_config.get_requirements_path()
+            if not requirements_path:
+                # Should be caught by model validation
+                raise ValueError(f"Invalid requirements URI: {code_uri}")
 
             requirements_blob_sas_token = generate_blob_sas(
                 account_name=settings.blob_account_name,
                 account_key=settings.blob_account_key,
                 container_name=settings.code_blob_container,
                 blob_name=requirements_path,
-                start=datetime.now(),
+                start=datetime.utcnow(),
                 expiry=datetime.utcnow() + timedelta(hours=24 * 7),
-                permission=BlobSasPermissions(write=True),
+                permission=BlobSasPermissions(read=True),
             )
             code_requirements_blob_config = BlobConfig(
                 uri=requirements_uri,

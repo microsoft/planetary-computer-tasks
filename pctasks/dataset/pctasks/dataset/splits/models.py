@@ -4,7 +4,6 @@ from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.config import CodeConfig
 from pctasks.core.models.task import TaskConfig
 from pctasks.dataset.models import (
-    BlobStorageConfig,
     ChunkOptions,
     CollectionConfig,
     DatasetConfig,
@@ -84,9 +83,7 @@ class CreateSplitsTaskConfig(TaskConfig):
     ) -> "CreateSplitsTaskConfig":
         split_inputs: List[SplitInput] = []
         for asset_storage_config in collection.asset_storage:
-            sas_token: Optional[str] = None
-            if isinstance(asset_storage_config, BlobStorageConfig):
-                sas_token = asset_storage_config.sas_token
+            sas_token = asset_storage_config.token
 
             storage_chunk_options = asset_storage_config.chunks.options
             if chunk_options:
@@ -95,7 +92,7 @@ class CreateSplitsTaskConfig(TaskConfig):
                 )
             split_inputs.append(
                 SplitInput(
-                    uri=asset_storage_config.get_uri(),
+                    uri=asset_storage_config.uri,
                     splits=asset_storage_config.chunks.splits,
                     sas_token=sas_token,
                     chunk_options=storage_chunk_options,

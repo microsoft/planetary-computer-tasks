@@ -22,6 +22,7 @@ def opt_ds_config(fn: Callable[..., Any]) -> Callable[..., Any]:
 
 def opt_collection(fn: Callable[..., Any]) -> Callable[..., Any]:
     _opt = click.option(
+        "-c",
         "--collection",
         help=(
             "Collection ID to process. "

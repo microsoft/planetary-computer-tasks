@@ -1,7 +1,6 @@
 import pathlib
 
 from pctasks.client.client import PCTasksClient
-from pctasks.client.settings import ClientSettings
 from pctasks.core.constants import MICROSOFT_OWNER
 from pctasks.core.models.config import CodeConfig
 from pctasks.core.models.dataset import DatasetIdentifier
@@ -18,8 +17,6 @@ HERE = pathlib.Path(__file__).parent
 
 
 def test_client_submit():
-    settings = ClientSettings.get()
-
     code = HERE.joinpath("data-files", "mycode.py").absolute()
     workflow = WorkflowConfig(
         name="Test Workflow!",
@@ -43,7 +40,7 @@ def test_client_submit():
         workflow=workflow,
     )
 
-    client = PCTasksClient(settings)
+    client = PCTasksClient()
     submitted_message = client.submit_workflow(submit_message)
 
     assert_workflow_is_successful(submit_message.run_id)
@@ -59,9 +56,8 @@ def test_client_submit():
 
 
 def test_upload_code_file() -> None:
-    settings = ClientSettings.get()
     storage = get_azurite_code_storage()
-    client = PCTasksClient(settings)
+    client = PCTasksClient()
 
     code = pathlib.Path(__file__).absolute()
     result = client.upload_code(code)
@@ -77,9 +73,8 @@ def test_upload_code_file() -> None:
 
 
 def test_upload_code_dir() -> None:
-    settings = ClientSettings.get()
     storage = get_azurite_code_storage()
-    client = PCTasksClient(settings)
+    client = PCTasksClient()
 
     code = HERE.absolute()
     result = client.upload_code(code)

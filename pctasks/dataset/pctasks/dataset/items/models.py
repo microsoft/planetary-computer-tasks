@@ -34,6 +34,17 @@ class CreateItemsInput(PCBaseModel):
     Required if processing results in more than one item.
     """
 
+    collection_id: Optional[str] = None
+    """Collection ID to use for the items.
+
+    If provided, the collection ID items created by create_items must either not be set,
+        in which case the collection will be set by the framework logic, or must be
+        set to this value. If the collection ID exists on
+        items and does not match the provided value, an error will be raised.
+    If not provided, the collection ID items created by create_items must be set.
+        If the collection_id is not provided on items, an error will be raised.
+    """
+
     options: CreateItemsOptions = CreateItemsOptions()
 
     @validator("asset_chunk_info")
@@ -101,7 +112,10 @@ class CreateItemsTaskConfig(TaskConfig):
             collection_class=collection.collection_class,
             args=CreateItemsInput(
                 asset_chunk_info=asset_chunk_info,
-                item_chunkset_uri=chunk_storage_config.get_uri(items_chunk_folder),
+                item_chunkset_uri=chunk_storage_config.get_storage().get_uri(
+                    items_chunk_folder
+                ),
+                collection_id=collection.id,
                 options=options or CreateItemsOptions(),
             ),
             environment=environment,

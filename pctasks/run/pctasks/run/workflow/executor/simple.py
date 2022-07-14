@@ -21,6 +21,7 @@ from pctasks.run.secrets.local import LocalSecretsProvider
 from pctasks.run.template import template_args, template_foreach, template_job_with_item
 from pctasks.task.context import TaskContext
 from pctasks.task.run import MissingEnvironmentError, TaskLoadError
+from pctasks.task.settings import TaskSettings
 from pctasks.task.task import Task
 
 logger = logging.getLogger(__name__)
@@ -45,6 +46,7 @@ class SimpleWorkflowExecutor:
 
         try:
             if task_config.code:
+                task_settings = TaskSettings.get()
                 if task_config.code.requirements:
                     (
                         req_storage,
@@ -53,13 +55,16 @@ class SimpleWorkflowExecutor:
                         task_config.code.requirements
                     )
                     ensure_requirements(
-                        req_path, req_storage, task_config.code.pip_options
+                        req_path,
+                        req_storage,
+                        task_config.code.pip_options,
+                        task_settings.code_dir,
                     )
 
                 code_storage, code_path = context.storage_factory.get_storage_for_file(
                     task_config.code.src
                 )
-                ensure_code(code_path, code_storage)
+                ensure_code(code_path, code_storage, target_dir=task_settings.code_dir)
 
             task_path = task_config.task
 
@@ -80,7 +85,7 @@ class SimpleWorkflowExecutor:
             # Substitute local secrets and set environment variables.
             env = task_config.environment or {}
             if env:
-                env = LocalSecretsProvider().substitute_secrets(env)
+                env = LocalSecretsProvider(settings=None).substitute_secrets(env)
 
             with environment(**env):
                 missing_env: List[str] = []

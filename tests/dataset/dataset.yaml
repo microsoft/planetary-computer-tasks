@@ -4,16 +4,21 @@ name: test-dataset
 
 args:
 - collection_id
+- collection_template
 - assets_uri
 - chunks_uri
-- items_uri
 - code_path
+- db_connection_string
+
+environment:
+  DB_CONNECTION_STRING: ${{ args.db_connection_string }}
 
 code:
   src: ${{ args.code_path }}
 
 collections:
   - id: ${{ args.collection_id }}
+    template: ${{ args.collection_template }}
     collection_class: dataset.collection:TestCollection
     asset_storage:
       - uri: ${{ args.assets_uri }}
@@ -25,5 +30,3 @@ collections:
             - depth: 1
     chunk_storage:
       uri: ${{ args.chunks_uri }}
-    item_storage:
-      uri: ${{ args.items_uri }}

@@ -4,7 +4,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  pr-build-and-test:
 
     runs-on: ubuntu-latest
 

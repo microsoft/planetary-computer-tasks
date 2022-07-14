@@ -8,7 +8,7 @@ from pctasks.core.models.task import TaskConfig
 from pctasks.ingest.constants import (
     COLLECTION_TASK_ID,
     COLLECTIONS_MESSAGE_TYPE,
-    DB_CONNECTION_STRING_ENV_VALUE,
+    DB_CONNECTION_STRING_ENV_VAR,
     INGEST_TASK,
     ITEM_TASK_ID,
     NDJSON_MESSAGE_TYPE,
@@ -111,11 +111,11 @@ class IngestTaskConfig(TaskConfig):
             image_key = settings.image_keys.get_key(target)
 
         if not image_key and (
-            not environment or DB_CONNECTION_STRING_ENV_VALUE not in environment
+            not environment or DB_CONNECTION_STRING_ENV_VAR not in environment
         ):
             raise ValueError(
                 "Must supply image_key or "
-                f"environment[{DB_CONNECTION_STRING_ENV_VALUE}]"
+                f"environment[{DB_CONNECTION_STRING_ENV_VAR}]"
             )
 
         return TaskConfig(

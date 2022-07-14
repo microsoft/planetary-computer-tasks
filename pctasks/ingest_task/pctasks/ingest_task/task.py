@@ -6,7 +6,7 @@ from pctasks.core.models.event import STACCollectionEventType, STACItemEventType
 from pctasks.core.models.task import FailedTaskResult, WaitTaskResult
 from pctasks.ingest.constants import (
     COLLECTIONS_MESSAGE_TYPE,
-    DB_CONNECTION_STRING_ENV_VALUE,
+    DB_CONNECTION_STRING_ENV_VAR,
     NDJSON_MESSAGE_TYPE,
 )
 from pctasks.ingest.models import (
@@ -45,14 +45,14 @@ class IngestTask(Task[IngestTaskInput, IngestTaskOutput]):
     _output_model = IngestTaskOutput
 
     def get_required_environment_variables(self) -> List[str]:
-        return [DB_CONNECTION_STRING_ENV_VALUE]
+        return [DB_CONNECTION_STRING_ENV_VAR]
 
     def run(
         self, input: IngestTaskInput, context: TaskContext
     ) -> Union[IngestTaskOutput, WaitTaskResult, FailedTaskResult]:
         content = input.content
 
-        conn_str = os.environ[DB_CONNECTION_STRING_ENV_VALUE]
+        conn_str = os.environ[DB_CONNECTION_STRING_ENV_VAR]
 
         pgstac = PgSTAC(conn_str)
 

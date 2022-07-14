@@ -73,7 +73,9 @@ class CreateChunksTaskConfig(TaskConfig):
         tags: Optional[Dict[str, str]] = None,
     ) -> "CreateChunksTaskConfig":
         chunk_storage_config = collection.chunk_storage
-        dst_uri = chunk_storage_config.get_uri(f"{chunkset_id}/{ASSET_CHUNKS_PREFIX}")
+        dst_uri = chunk_storage_config.get_storage().get_uri(
+            f"{chunkset_id}/{ASSET_CHUNKS_PREFIX}"
+        )
 
         return cls.create(
             image=ds.image,
@@ -118,7 +120,7 @@ class ListChunksTaskConfig(TaskConfig):
         tags: Optional[Dict[str, str]] = None,
     ) -> "ListChunksTaskConfig":
         chunk_storage_config = collection.chunk_storage
-        chunkset_uri = chunk_storage_config.get_uri(
+        chunkset_uri = chunk_storage_config.get_storage().get_uri(
             f"{chunkset_id}/{ASSET_CHUNKS_PREFIX}"
         )
 

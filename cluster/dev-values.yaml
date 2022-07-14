@@ -28,11 +28,14 @@ pctasks:
         "updated": "unknown"  # Value generated on helm upgrade
 
   run:
-    task_runner_type: "argo" 
+
+    task_runner_type: "argo"
 
     task_poll_seconds: 15
 
     dev:
+      local_dev_endpoints_url: "http://local-dev-endpoints:8512"
+
       azurite:
         enabled: true
         host: "azurite"

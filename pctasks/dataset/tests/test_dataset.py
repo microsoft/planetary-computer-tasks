@@ -5,12 +5,12 @@ from tempfile import TemporaryDirectory
 from typing import Set
 
 import orjson
-import pystac
 
 from pctasks.cli.cli import setup_logging
 from pctasks.core.storage import StorageFactory
 from pctasks.core.storage.blob import BlobUri
 from pctasks.core.tokens import Tokens
+from pctasks.core.utils.stac import validate_stac
 from pctasks.dataset.template import template_dataset_file
 from pctasks.dataset.workflow import create_process_items_workflow
 from pctasks.dev.blob import (
@@ -73,6 +73,6 @@ def test_process_items() -> None:
                 assert len(lines) == 2
                 for line in lines:
                     item = orjson.loads(line)
-                    pystac.Item.from_dict(item).validate()
+                    validate_stac(item)
                     ids.add(item["id"])
             assert len(ids) == 4

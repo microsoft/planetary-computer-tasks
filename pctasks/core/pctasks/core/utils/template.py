@@ -223,6 +223,9 @@ class Templater(ABC):
     def get_value(self, path: List[str]) -> Optional[TemplateValue]:
         pass
 
+    def template_str(self, value: str) -> TemplateValue:
+        return template_str(value, self.get_value)
+
     def template_dict(self, data: Dict[str, Any]) -> Dict[str, Any]:
         return template_dict(data, self.get_value)
 

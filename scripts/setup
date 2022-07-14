@@ -43,6 +43,11 @@ source scripts/env
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ -z "${AZURITE_ONLY}" ]; then
 
+        # Copy secrets template if it doesn't exist
+        if [ ! -f dev-secrets.yaml ]; then
+            cp dev-secrets.template.yaml dev-secrets.yaml
+        fi
+
         setup_docker_network;
 
         echo " -- BUILDING CONTAINERS"

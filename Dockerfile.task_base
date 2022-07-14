@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y software-properties-common
 RUN add-apt-repository ppa:ubuntugis/ppa && \
      apt-get update && \
      apt-get install -y build-essential python3-dev python3-pip \
-     jq unzip ca-certificates wget curl && \
+     jq unzip ca-certificates wget curl git && \
      apt-get autoremove && apt-get autoclean && apt-get clean
 
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10

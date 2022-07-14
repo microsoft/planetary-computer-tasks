@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional
 
 from pctasks.core.utils.template import template_dict
+from pctasks.run.settings import RunSettings
 
 
 class SecretNotFoundError(Exception):
@@ -9,6 +10,9 @@ class SecretNotFoundError(Exception):
 
 
 class SecretsProvider(ABC):
+    def __init__(self, settings: Optional[RunSettings]) -> None:
+        self.settings = settings
+
     def substitute_secrets(self, d: Dict[str, Any]) -> Dict[str, Any]:
         """Replaces dictionary with all secrets replaced with their values.
 

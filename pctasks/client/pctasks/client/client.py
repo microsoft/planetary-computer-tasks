@@ -25,7 +25,6 @@ from pctasks.core.models.api import (
     WorkflowRunResponse,
     WorkflowRunsResponse,
 )
-from pctasks.core.models.task import TaskConfig
 from pctasks.core.models.workflow import (
     WorkflowConfig,
     WorkflowSubmitMessage,
@@ -109,21 +108,7 @@ class PCTasksClient:
         resp = self._call_api("POST", RUN_WORKFLOW_ROUTE, data=message.json())
         return WorkflowSubmitResult(**resp)
 
-    def _transform_task_config(self, task_config: TaskConfig) -> None:
-        # Replace image keys with configured images.
-        if task_config.image_key:
-            image_config = self.settings.image_keys.get(task_config.image_key)
-            if image_config:
-                logger.debug(
-                    f"Setting image to '{image_config.image}' from settings..."
-                )
-                task_config.image = image_config.image
-                task_config.image_key = None
-                task_config.environment = image_config.merge_env(
-                    task_config.environment
-                )
-
-    def _transform_workflow_code(self, workflow: WorkflowConfig) -> None:
+    def _upload_code(self, workflow: WorkflowConfig) -> None:
         """
         Handle runtime code availability.
 
@@ -161,16 +146,12 @@ class PCTasksClient:
         """
         message = message.copy(deep=True)
 
-        for job in message.workflow.jobs.values():
-            for task in job.tasks:
-                self._transform_task_config(task)
-
         # Inline args
         message.workflow = message.get_workflow_with_templated_args()
 
         logger.debug("Uploading code...")
         start = perf_counter()
-        self._transform_workflow_code(message.workflow)
+        self._upload_code(message.workflow)
         end = perf_counter()
         logger.debug(f"Uploading code took {end - start:.2f} seconds.")
 

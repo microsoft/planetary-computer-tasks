@@ -39,7 +39,7 @@ from pctasks.core.models.workflow import WorkflowSubmitMessage
 from pctasks.core.storage.blob import BlobStorage, BlobUri
 from pctasks.core.utils import map_opt
 from pctasks.run.models import PreparedTaskSubmitMessage
-from pctasks.run.secrets.local import LOCAL_SECRETS_PREFIX
+from pctasks.run.secrets.local import LOCAL_ENV_SECRETS_PREFIX
 from pctasks.run.settings import RunSettings
 from pctasks.run.utils import get_workflow_path
 
@@ -97,7 +97,7 @@ class ArgoClient:
             account_key=run_settings.blob_account_key,
             container_name=run_settings.task_io_blob_container,
             blob_name=workflow_path,
-            start=datetime.now(),
+            start=datetime.utcnow(),
             expiry=datetime.utcnow() + timedelta(hours=24 * 7),
             permission=BlobSasPermissions(read=True),
         )
@@ -117,7 +117,7 @@ class ArgoClient:
         # Enable local secrets for development environment
         if run_settings.local_secrets:
             for env_var in [
-                k for k in os.environ if k.startswith(LOCAL_SECRETS_PREFIX)
+                k for k in os.environ if k.startswith(LOCAL_ENV_SECRETS_PREFIX)
             ]:
                 env.append(EnvVar(name=env_var, value=os.environ[env_var]))
 

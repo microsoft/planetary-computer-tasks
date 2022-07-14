@@ -84,12 +84,16 @@ services:
     image: pctasks-nginx
     container_name: pctasks-nginx
     build:
-      context: ./nginx
+      context: ./dev/nginx
       dockerfile: Dockerfile
     volumes:
-      - ./nginx/etc/nginx:/etc/nginx
+      - ./dev/nginx/etc/nginx:/etc/nginx
     ports:
       - 8510:80
+    depends_on:
+      - server
+      - stac-api
+      - stac-browser
 
   server:
     container_name: pctasks-server
@@ -121,7 +125,7 @@ services:
 
       # Dev executor settings
       - PCTASKS_RUN__TASK_RUNNER_TYPE=local
-      - PCTASKS_RUN__LOCAL_EXECUTOR_URL=http://local-executor:8512
+      - PCTASKS_RUN__LOCAL_DEV_ENDPOINTS_URL=http://local-dev-endpoints:8512
       - PCTASKS_RUN__LOCAL_SECRETS=true
       - PCTASKS_RUN__WORKFLOW_RUNNER_TYPE=local
 
@@ -151,8 +155,9 @@ services:
     command: >
       bash -c "uvicorn pctasks.server.main:app --host 0.0.0.0 --port 8511 --reload --proxy-headers"
 
-  local-executor:
-    container_name: pctasks-local-executor
+  local-dev-endpoints:
+    # HTTP endpoints for running tasks and serving secrets
+    container_name: pctasks-local-dev-endpoints
     image: pctasks-dev
     build:
       context: .
@@ -167,10 +172,12 @@ services:
       - AZURITE_HOST=azurite
       - AZURITE_PORT=10000
       - AZURITE_STORAGE_ACCOUNT=devstoreaccount1
+      # Local dev secrets file
+      - DEV_SECRETS_FILE=/opt/src/dev-secrets.yaml
     command:
       [
         "uvicorn",
-        "pctasks.dev.local_executor:app",
+        "pctasks.dev.local_dev_endpoints:app",
         "--host",
         "0.0.0.0",
         "--port",
@@ -188,6 +195,7 @@ services:
     environment:
       - APP_HOST=0.0.0.0
       - APP_PORT=8513
+      - APP_ROOT_PATH=/stac
       - RELOAD=false
       - ENVIRONMENT=local
       - POSTGRES_USER=username
@@ -202,10 +210,20 @@ services:
       - DB_MAX_CONN_SIZE=1
     ports:
       - "8513:8513"
+    volumes:
+      - ./dev/stacapi.py:/opt/src/stacapi.py
     depends_on:
       - database
-    command:
-      bash -c "python -m stac_fastapi.pgstac.app"
+    command: [ "uvicorn", "stacapi:app", "--host", "0.0.0.0", "--port", "8513", "--reload", "--proxy-headers" ]
+
+  stac-browser:
+    container_name: pctasks-stac-browser
+    image: pctasks-stacbrowser
+    build:
+      context: .
+      dockerfile: Dockerfile.stacbrowser
+    ports:
+      - "8514:8080"
 
   # Used to let kind cluster pull local docker images
   # See https://kind.sigs.k8s.io/docs/user/local-registry/

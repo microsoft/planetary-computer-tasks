@@ -156,7 +156,6 @@ def ingest_collection_cmd(
     from the directory. Otherwise PATH must bea complete STAC Collection JSON.
     """
     context: PCTasksCommandContext = ctx.obj
-    ingest_settings = IngestSettings.get(context.profile, context.settings_file)
 
     collection_path = Path(path)
 
@@ -177,8 +176,6 @@ def ingest_collection_cmd(
     workflow = WorkflowConfig(
         name=f"Ingest Collection: {collection_id}",
         dataset=f"{owner}/{collection_id}",
-        collection_id=collection_id,
-        image_key=ingest_settings.image_keys.get_key(target),
         target_environment=target,
         jobs={
             "ingest-collection": JobConfig(tasks=[task]),

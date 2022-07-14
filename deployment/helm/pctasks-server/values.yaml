@@ -92,7 +92,7 @@ pctasks:
     check_output_seconds: 3
 
     dev:
-      local_executor_url: ""
+      local_dev_endpoints_url: ""
 
       azurite:
         enabled: false

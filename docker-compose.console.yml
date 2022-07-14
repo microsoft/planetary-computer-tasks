@@ -13,7 +13,7 @@ services:
 
       # Dev executor settings
       - PCTASKS_RUN__TASK_RUNNER_TYPE=local
-      - PCTASKS_RUN__LOCAL_EXECUTOR_URL=http://local-executor:8512
+      - PCTASKS_RUN__LOCAL_DEV_ENDPOINTS_URL=http://local-dev-endpoints:8512
       - PCTASKS_RUN__LOCAL_SECRETS=true
       - PCTASKS_RUN__WORKFLOW_RUNNER_TYPE=local
 

@@ -10,7 +10,7 @@ def get_workflow_runner(settings: Optional[RunSettings] = None) -> WorkflowRunne
     settings = settings or RunSettings.get()
 
     if settings.workflow_runner_type == WorkflowRunnerType.LOCAL:
-        assert settings.local_executor_url  # Checked during settings validation
+        assert settings.local_dev_endpoints_url  # Checked during settings validation
         return LocalWorkflowRunner(settings)
     elif settings.workflow_runner_type == WorkflowRunnerType.ARGO:
         return ArgoWorkflowRunner(settings)

@@ -7,7 +7,7 @@ from pctasks.core.settings import PCTasksSettings
 from pctasks.ingest.constants import DEFAULT_INSERT_GROUP_SIZE
 
 SECTION_NAME = "ingest"
-DEFAULT_IMAGE_KEY = "ingest"
+DEFAULT_INGEST_IMAGE_KEY = "ingest"
 
 
 class IngestOptions(PCBaseModel):
@@ -22,7 +22,7 @@ class IngestOptions(PCBaseModel):
 
 
 class ImageKeys(PCBaseModel):
-    default: str = Field(default=DEFAULT_IMAGE_KEY)
+    default: str = Field(default=DEFAULT_INGEST_IMAGE_KEY)
     targets: Optional[Dict[str, str]] = None
 
     def get_key(self, target: Optional[str] = None) -> Optional[str]:
