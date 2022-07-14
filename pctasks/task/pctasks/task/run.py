@@ -10,6 +10,7 @@ from pctasks.core.storage.blob import BlobStorage, BlobUri
 from pctasks.core.tables.record import TaskRunRecordTable
 from pctasks.core.utils import environment
 from pctasks.task.context import TaskContext
+from pctasks.task.settings import TaskSettings
 from pctasks.task.task import Task
 
 logger = logging.getLogger(__name__)
@@ -25,6 +26,8 @@ class MissingEnvironmentError(Exception):
 
 def run_task(msg: TaskRunMessage) -> TaskResult:
     task_data, task_config = msg.args, msg.config
+
+    task_settings = TaskSettings.get()
 
     event_logger = RunLogger(
         task_config.get_run_record_id(),
@@ -66,7 +69,12 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
                     sas_token=code_requirements_blob_config.sas_token,
                     account_url=code_requirements_blob_config.account_url,
                 )
-                ensure_requirements(req_path, req_storage, task_config.code_pip_options)
+                ensure_requirements(
+                    req_path,
+                    req_storage,
+                    task_config.code_pip_options,
+                    target_dir=task_settings.code_dir,
+                )
 
             code_src_blob_config = task_config.code_src_blob_config
             if code_src_blob_config:
@@ -81,7 +89,7 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
                     sas_token=code_src_blob_config.sas_token,
                     account_url=code_src_blob_config.account_url,
                 )
-                ensure_code(code_path, code_storage)
+                ensure_code(code_path, code_storage, target_dir=task_settings.code_dir)
 
             with TaskRunRecordTable.from_sas_token(
                 account_url=task_config.task_runs_table_config.account_url,

@@ -60,7 +60,7 @@ def transfer_index(job_id: str, task_id: str) -> Tuple[str, str]:
 def make_batch_job_prefix(
     dataset_id: DatasetIdentifier, job_id: str, run_id: str, pool_id: str
 ) -> str:
-    return make_valid_batch_id(f"{dataset_id.name}_{run_id}_{job_id}_{pool_id}")
+    return make_valid_batch_id(f"{dataset_id.name}_{job_id}_{run_id}_{pool_id}")
 
 
 @dataclass(frozen=True)
@@ -125,6 +125,10 @@ class BatchTaskRunner(TaskRunner):
                     task_id=batch_task_id,
                     command=command,
                     image=run_msg.config.image,
+                    # Set code directory to working directory,
+                    # as Azure Batch doesn't allow containers to
+                    # modify system or user directories.
+                    environ={"PCTASKS_TASK__CODE_DIR": "./_code"},
                 )
 
                 batch_submits[BatchJobInfo(batch_job_id, pool_id)].append(
