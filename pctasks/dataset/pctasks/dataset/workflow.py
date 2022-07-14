@@ -213,7 +213,13 @@ def create_ingest_collection_workflow(
             collection_body = json.load(f)
 
     # Ensure collection ID is set properly
-    collection_body["id"] = collection.id
+    existing_collection_id = collection_body.get("id")
+    if existing_collection_id and existing_collection_id != collection.id:
+        raise ValueError(
+            f"Collection has ID {existing_collection_id}, expected {collection.id}"
+        )
+    else:
+        collection_body["id"] = collection.id
 
     task = IngestTaskConfig.from_collection(
         collection=collection_body,
