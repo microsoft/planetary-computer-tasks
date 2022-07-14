@@ -1,0 +1,1 @@
+stactools.chesapeake-lulc @ git+https://github.com/stactools-packages/chesapeake-lulc.git@698b13066cb5ffeb55f972d79d21ce04ec30874e
