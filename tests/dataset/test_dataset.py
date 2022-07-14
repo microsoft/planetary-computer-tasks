@@ -22,7 +22,7 @@ TIMEOUT_SECONDS = 180
 def test_dataset():
     with temp_pgstac_db() as conn_str_info:
         test_tag = uuid1().hex[:5]
-        collection_id = f"test-collection-{test_tag}"
+        collection_id = f"test-collection"
 
         with temp_azurite_blob_storage() as root_storage:
             assets_storage = root_storage.get_substorage(f"{collection_id}/assets")

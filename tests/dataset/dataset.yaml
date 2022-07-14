@@ -7,7 +7,6 @@ args:
 - collection_template
 - assets_uri
 - chunks_uri
-- items_uri
 - code_path
 - db_connection_string
 

@@ -9,6 +9,7 @@ from pystac.utils import str_to_datetime
 from pctasks.core.models.task import CompletedTaskResult, WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.core.storage.local import LocalStorage
+from pctasks.core.utils.stac import validate_stac
 from pctasks.dataset.chunks.models import ChunkInfo
 from pctasks.dataset.items.models import CreateItemsOutput
 from pctasks.dataset.items.task import CreateItemsInput, CreateItemsTask
@@ -59,6 +60,7 @@ def test_create_items():
             asset_chunk_info=ChunkInfo(
                 uri=chunk_storage.get_uri(chunk_path), chunk_id=chunk_path
             ),
+            collection_id="test-collection",
             item_chunkset_uri=items_storage.get_uri(ndjson_path),
         )
 
@@ -70,14 +72,14 @@ def test_create_items():
         assert ndjson_uri
         assert Path(ndjson_uri).exists()
 
-        items = []
+        items: List[pystac.Item] = []
 
         for item_json in items_storage.read_text(ndjson_uri).split("\n"):
             items.append(pystac.Item.from_dict(json.loads(item_json)))
 
         assert len(items) == len(TEST_ASSET_URIS)
         for item in items:
-            item.validate()
+            validate_stac(item)
 
 
 def test_wait_for_assets():
