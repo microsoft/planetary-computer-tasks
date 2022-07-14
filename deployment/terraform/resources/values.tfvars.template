@@ -1,0 +1,79 @@
+# Region that the entire stac will be deployed to
+region = "West Europe"
+
+# Task ACR
+# --------
+# This is the Azure Container Registry that all task images
+# will be pushed to, and which the Azure Batch task runner will
+# have access to run. The service principal credentials will be loaded
+# into the Azure Batch pools to enable Batch access. The IAM role for
+# ACRPull will be assigned to the service principal during deployment.
+
+task_acr_name = ""
+acr_sp_object_id = ""
+acr_sp_client_id = ""
+acr_sp_client_secret = ""
+
+# Component ACR
+# -------------
+# This is the Azure Container Registry that component images
+# will be pushed to. This is what AKS reads for deploying
+# pctasks-server or any Argo workflow, including the pctasks-runner.
+# The managed identity of the AKS will be assigned ACRPull to this ACR.
+
+component_acr_name = ""
+
+# Task Sevice Principal
+# ---------------------
+# The task service principal credentials provided here
+# will be store in the task KeyVault and exposed to workflows
+# through ${{ secrets.task-tenant-id }}, etc.
+
+task_sp_tenant_id = ""
+task_sp_client_id = ""
+task_sp_client_secret = ""
+
+# Task secrets KeyVault Sevice Principal
+# ---------------------
+# This service principal is used inside the workflow runner process
+# to access task secrets from the task secret keyvault that is created
+# during terraform deployment. This enables workflows to access secrets
+# using the ${{ secrest.secret_name }} templating syntax to inject
+# secret values into workflows.
+
+kv_sp_tenant_id = ""
+kv_sp_client_id = ""
+kv_sp_client_secret = ""
+
+# pctasks-server Service Principal
+# --------------------------------
+# This is the service principal that will be used to interact with Azure
+# resources in the pctasks-server container running on AKS.
+
+pctasks_server_sp_tenant_id = ""
+pctasks_server_sp_client_id = ""
+pctasks_server_sp_client_secret = ""
+pctasks_server_sp_object_id = ""
+
+
+# STAC DB connection string
+# -----------------------
+# This is the connection string for the STAC database.
+# This will be written into the task secrets keyvault
+# and be available for use by workflows.
+
+stac_db_connection_string = ""
+
+# Batch pool settings
+# ------------------
+# This controls the name of the default batch pool and the
+# minimum number of low priority nodes for the pool.
+
+batch_default_pool_id = "tasks_pool"
+min_low_priority = 0
+
+# PCTasks server account key
+# --------------------------
+# This is the key that is used to as simple authentication against
+# the pctasks-server endpoints. TODO: Replace with API Management.
+pctasks_server_account_key = ""

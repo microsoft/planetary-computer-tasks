@@ -1,8 +1,8 @@
-resource "azurerm_public_ip" "rxetl" {
-  name                = "${local.prefix}-ip"
-  domain_name_label   = "pct-tasks-${var.environment}"
-  resource_group_name = azurerm_kubernetes_cluster.rxetl.node_resource_group
-  location            = azurerm_resource_group.rxetl.location
+resource "azurerm_public_ip" "pctasks" {
+  name                = "ip-${local.prefix}"
+  domain_name_label   = local.prefix
+  resource_group_name = azurerm_kubernetes_cluster.pctasks.node_resource_group
+  location            = azurerm_resource_group.pctasks.location
   allocation_method   = "Static"
   sku                 = "Standard"
 

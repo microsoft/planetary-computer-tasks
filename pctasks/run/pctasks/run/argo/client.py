@@ -37,6 +37,7 @@ from pctasks.core.constants import (
 from pctasks.core.models.record import TaskRunStatus
 from pctasks.core.models.workflow import WorkflowSubmitMessage
 from pctasks.core.storage.blob import BlobStorage, BlobUri
+from pctasks.core.utils import map_opt
 from pctasks.run.models import PreparedTaskSubmitMessage
 from pctasks.run.secrets.local import LOCAL_SECRETS_PREFIX
 from pctasks.run.settings import RunSettings
@@ -242,7 +243,8 @@ class ArgoClient:
             return None
 
         status: Dict[str, Any] = argo_workflow["status"]
-        phase: str = status["phase"].lower()
+        phase_opt: Optional[str] = status.get("phase")
+        phase: str = map_opt(lambda p: p.lower(), phase_opt) or "pending"
 
         logger.debug(
             f"Polling task: namespace: '{namespace}', name: '{argo_workflow_name}'"

@@ -15,5 +15,5 @@ def ingest_test_environment() -> Generator[None, None, None]:
         raise ValueError("SECRETS_DB_CONNECTION_STRING must be set")
 
     with temp_pgstac_db(db_secret) as test_db_conn_str:
-        with environment(**{DB_CONNECTION_STRING_ENV_VALUE: test_db_conn_str}):
+        with environment(**{DB_CONNECTION_STRING_ENV_VALUE: test_db_conn_str.local}):
             yield

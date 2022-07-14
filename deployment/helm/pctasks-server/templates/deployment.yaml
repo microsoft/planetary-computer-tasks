@@ -135,6 +135,13 @@ spec:
             - name: PCTASKS_RUN__BLOB_ACCOUNT_KEY
               value: "{{ .Values.pctasks.run.blob.account_key }}"
 
+            - name: PCTASKS_RUN__ARGO__HOST
+              value: "{{ .Values.pctasks.run.argo.host }}"
+            - name: PCTASKS_RUN__ARGO__TOKEN
+              value: "{{ .Values.pctasks.run.argo.token }}"
+            - name: PCTASKS_RUN__ARGO__NAMESPACE
+              value: "{{ .Values.pctasks.run.argo.namespace }}"
+
             ## Azure Batch
             {{- if .Values.pctasks.run.batch.enabled }}
             - name: PCTASKS_RUN__BATCH_URL

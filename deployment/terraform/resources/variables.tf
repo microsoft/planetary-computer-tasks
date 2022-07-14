@@ -78,17 +78,8 @@ variable "pctasks_run_image_tag" {
 
 ## Database
 
-variable "db_username" {
+variable "stac_db_connection_string" {
   type = string
-}
-
-variable "db_password" {
-  type = string
-}
-
-variable "db_storage_mb" {
-  type    = number
-  default = 32768
 }
 
 ## Keyvault
@@ -144,10 +135,10 @@ variable "pctasks_server_sp_object_id" {
 # Local variables
 
 locals {
-  stack_id              = "pctrxetl"
+  stack_id              = "pctaskstest"
   location              = lower(replace(var.region, " ", ""))
   prefix                = "${local.stack_id}-${var.environment}"
-  full_prefix           = "${local.stack_id}-${local.location}-${var.environment}"
+  full_prefix           = "${local.stack_id}-${var.environment}-${local.location}"
   nodash_prefix         = "${local.stack_id}${var.environment}"
   deploy_secrets_prefix = "${local.stack_id}-${var.environment}"
 }

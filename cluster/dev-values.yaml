@@ -28,7 +28,7 @@ pctasks:
         "updated": "unknown"  # Value generated on helm upgrade
 
   run:
-    task_runner_type: "argo"
+    task_runner_type: "argo" 
 
     task_poll_seconds: 15
 

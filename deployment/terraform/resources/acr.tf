@@ -10,16 +10,12 @@ data "azurerm_container_registry" "component_acr" {
 
 # Role assignments
 
-# add the role to the batch account acrpull service principal
-resource "azurerm_role_assignment" "batch-pull" {
-  scope                = data.azurerm_container_registry.task_acr.id
-  role_definition_name = "AcrPull"
-  principal_id         = var.task_acr_sp_object_id
-}
+# Note:  role to the batch account task acr service principal
+# should have AcrPull access to the task acr.
 
 # add the role to the identity the kubernetes cluster was assigned
 resource "azurerm_role_assignment" "attach_acr" {
   scope                = data.azurerm_container_registry.component_acr.id
   role_definition_name = "AcrPull"
-  principal_id         = azurerm_kubernetes_cluster.rxetl.kubelet_identity[0].object_id
+  principal_id         = azurerm_kubernetes_cluster.pctasks.kubelet_identity[0].object_id
 }

@@ -1,7 +1,7 @@
-resource "azurerm_kubernetes_cluster" "rxetl" {
-  name                = "${local.prefix}-cluster"
-  location            = azurerm_resource_group.rxetl.location
-  resource_group_name = azurerm_resource_group.rxetl.name
+resource "azurerm_kubernetes_cluster" "pctasks" {
+  name                = "aks-${local.prefix}"
+  location            = azurerm_resource_group.pctasks.location
+  resource_group_name = azurerm_resource_group.pctasks.name
   dns_prefix          = "${local.prefix}-cluster"
   kubernetes_version  = var.k8s_version
 
@@ -12,7 +12,7 @@ resource "azurerm_kubernetes_cluster" "rxetl" {
 
     oms_agent {
       enabled                    = true
-      log_analytics_workspace_id = azurerm_log_analytics_workspace.rxetl.id
+      log_analytics_workspace_id = azurerm_log_analytics_workspace.pctasks.id
     }
   }
 
@@ -36,7 +36,7 @@ resource "azurerm_kubernetes_cluster" "rxetl" {
 
 # add the role to the identity the kubernetes cluster was assigned
 resource "azurerm_role_assignment" "network" {
-  scope                = azurerm_resource_group.rxetl.id
+  scope                = azurerm_resource_group.pctasks.id
   role_definition_name = "Network Contributor"
-  principal_id         = azurerm_kubernetes_cluster.rxetl.identity[0].principal_id
+  principal_id         = azurerm_kubernetes_cluster.pctasks.identity[0].principal_id
 }

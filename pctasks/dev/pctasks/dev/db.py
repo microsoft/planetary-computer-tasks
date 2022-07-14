@@ -1,6 +1,7 @@
 import logging
 import os
 from contextlib import contextmanager
+from dataclasses import dataclass
 from typing import Generator, Optional
 
 import psycopg
@@ -13,10 +14,28 @@ logger = logging.getLogger(__name__)
 TEST_DB_NAME = "pctaskspgstactmptest"
 
 DEV_DB_CONN_STR_ENV_VAR = "DEV_DB_CONNECTION_STRING"
+DEV_REMOTE_DB_CONN_STR_ENV_VAR = "DEV_REMOTE_DB_CONNECTION_STRING"
+
+
+@dataclass
+class ConnStrInfo:
+    local: str
+    """Connection string that can be accessed by the process running tests"""
+
+    remote: str
+    """Connection string that can be accessed by tasks running on the remote server
+
+    This may be different if for instance the test accessing the database through
+    localhost and the task is accessing through the docker network.
+
+    Will be the same as local DEV_REMOTE_DB_CONNECTION_STRING is not provided.
+    """
 
 
 @contextmanager
-def temp_pgstac_db(conn_str: Optional[str] = None) -> Generator[str, None, None]:
+def temp_pgstac_db(
+    conn_str: Optional[str] = None,
+) -> Generator[ConnStrInfo, None, None]:
     """Creates a temporary PgSTAC database based on an existing connection string.
 
     If the connection string is not provided it will be
@@ -47,7 +66,13 @@ def temp_pgstac_db(conn_str: Optional[str] = None) -> Generator[str, None, None]
         version = migrator.run_migration()
         print(f"Test DB migrated to version {version}")
 
-    yield new_conn_info
+    remote_conn_str = os.getenv(DEV_REMOTE_DB_CONN_STR_ENV_VAR)
+    if remote_conn_str:
+        new_remote_conn_info = make_conninfo(remote_conn_str, dbname=TEST_DB_NAME)
+    else:
+        new_remote_conn_info = new_conn_info
+
+    yield ConnStrInfo(local=new_conn_info, remote=new_remote_conn_info)
 
     print("Dropping DB...")
     with psycopg.connect(conn_str, autocommit=True) as conn:

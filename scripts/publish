@@ -17,6 +17,9 @@ Tags and pushes task images.
 
 ACR_NAME - The ACR repository name.
 IMAGE_TAG - The tag to use for all images.
+
+options:
+  --no-login     Don't attempt log into the ACR using the azure cli.
 "
 }
 
@@ -31,6 +34,10 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     --tag)
         IMAGE_TAG=$2
         shift
+        shift
+        ;;
+    --no-login)
+        NO_LOGIN="1"
         shift
         ;;
     --help)
@@ -57,12 +64,15 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         usage
     else
         # Login
-        az acr login -n ${ACR_NAME}
+        if [ -z "${NO_LOGIN}" ]; then
+            echo "Logging into ACR..."
+            az acr login -n ${ACR_NAME}
+        fi
 
-        # Ingest
         publish pctasks-ingest
         publish pctasks-server
         publish pctasks-run
+        publish pctasks-task-base
 
     fi
 

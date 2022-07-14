@@ -24,6 +24,8 @@ Subcommands:
         Print the argo token as an export statement
     recreate
         Delete the dev cluster and recreate it
+    delete
+        Delete the dev cluster
 "
 }
 
@@ -33,6 +35,7 @@ SETUP=""
 UPDATE=""
 GET_ARGO_TOKEN=""
 RECREATE=""
+DELETE=""
 while [[ $# -gt 0 ]]; do case $1 in
     setup)
         SETUP="--setup"
@@ -50,6 +53,10 @@ while [[ $# -gt 0 ]]; do case $1 in
         RECREATE="--recreate"
         shift
         ;;
+    delete)
+        DELETE="--delete"
+        shift
+        ;;
     --help)
         usage
         exit 0
@@ -61,7 +68,7 @@ while [[ $# -gt 0 ]]; do case $1 in
         ;;
     esac done
 
-if [ -z "${SETUP}${UPDATE}${GET_ARGO_TOKEN}${RECREATE}" ]; then
+if [ -z "${SETUP}${UPDATE}${GET_ARGO_TOKEN}${RECREATE}${DELETE}" ]; then
     usage "No subcommand option specified"
     exit 1
 fi
@@ -179,6 +186,11 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         kind delete cluster --name ${KIND_CLUSTER_NAME}
         create_cluster;
         update_cluster;
+    fi
+
+    if [ "${DELETE}" ]; then
+        echo " -- DELETING KIND CLUSTER"
+        kind delete cluster --name ${KIND_CLUSTER_NAME}
     fi
 
 fi

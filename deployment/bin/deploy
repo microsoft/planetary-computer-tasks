@@ -27,9 +27,6 @@ Options:
     --skip-functions: Don't run function publish.
     --skip-fetch-tf-vars: Skip fetching terraform variables.
 
-Be sure to run deployment with '--initial' for a new deployment, or else
-terraform will fail.
-
 "
 }
 
@@ -147,22 +144,20 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
     pushd ${TERRAFORM_DIR}
 
+    if [ -f values.tfvars ]; then
+        VARS_OPT="-var-file=values.tfvars"
+    else
+        echo "ERROR: You must create a values.tfvars file in ${TERRAFORM_DIR} before deploying"
+        echo "This must be pulled from keyvault, or if --skip-fetch-tf-vars is passed, you must create it manually"
+        echo "See the README in the deployment directory for more information"
+        exit 1
+    fi
+
     if [ -z "${SKIP_TF}" ]; then
 
         # Check dev deployment setup
-        VARS_OPT=""
         AUTO_APPROVE_OPT=""
-        if [ "${DEV_DEPLOY}" ]; then
-            if [ ! -f values.tfvars ]; then
-                echo "ERROR: You must create a values.tfvars file in ${TERRAFORM_DIR} before deploying"
-                echo "Use the values.tfvars.template in that directory"
-                echo "See the README in the deployment directory for more information"
-                exit 1
-            fi
-            VARS_OPT="-var-file=values.tfvars"
-        else
-            # TODO: Download {terraform_dir}.tfvars from container
-
+        if [ -z "${DEV_DEPLOY}" ]; then
             AUTO_APPROVE_OPT="-auto-approve"
         fi
 
@@ -174,7 +169,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         if [ "${PLAN_ONLY}" ]; then
             if [ "${INITIAL}" ]; then
                 echo " !!! Only showing initial Azure Function deployment plan"
-                terraform plan -target=module.resources.azurerm_function_app.rxetl "${VARS_OPT}"
+                terraform plan -target=module.resources.azurerm_function_app.pctasks "${VARS_OPT}"
             else
                 terraform plan "${VARS_OPT}"
             fi
@@ -222,11 +217,13 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
     # Install cert-manager
 
-    echo "Installing cert-manager..."
+    echo "==================="
+    echo "== cert-manager ==="
+    echo "==================="
 
     helm upgrade --install \
         cert-manager \
-        --namespace pcaux \
+        --namespace pc \
         --create-namespace \
         --version v1.6.0 \
         --set installCRDs=true jetstack/cert-manager
@@ -241,6 +238,19 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         -f "helm/argo-values.yaml" \
         --wait \
         --timeout 2m0s
+
+    echo "===================="
+    echo "== PCTasksIngress =="
+    echo "===================="
+
+    echo "Deploying ingress component..."
+    helm upgrade --install pc-tasks-ingress helm/pc-tasks-ingress \
+        -n pc \
+        --create-namespace \
+        --kube-context "${KUBE_CONTEXT}" \
+        --wait \
+        --timeout 2m0s \
+        -f ${DEPLOY_VALUES_FILE}
 
     echo "==================="
     echo "= PCTasks Server =="
@@ -258,22 +268,12 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         -f ${DEPLOY_VALUES_FILE} \
         --set pctasks.run.argo.token="${ARGO_TOKEN}"
 
-    echo "=================="
-    echo "==== Ingress ====="
-    echo "=================="
+    echo "==================="
+    echo "== nginx-ingress =="
+    echo "==================="
 
-    echo "Deploying ingress component..."
-    helm upgrade --install pc-tasks-ingress helm/pc-tasks-ingress \
-        -n pc \
-        --create-namespace \
-        --kube-context "${KUBE_CONTEXT}" \
-        --wait \
-        --timeout 2m0s \
-        -f ${DEPLOY_VALUES_FILE}
-
-    echo "Installing ingress-nginx..."
     helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx \
-        -n pcaux \
+        -n pc \
         --create-namespace \
         --set controller.replicaCount=1 \
         --set controller.service.externalTrafficPolicy="Local" \
@@ -282,37 +282,13 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         --wait \
         --timeout 2m0s
 
-    ####################
-    # Migrate Database #
-    ####################
-
-    # Only migrate for dev deployments
-
-    if [ "${DEV_DEPLOY}" ]; then
-
-        if [ -z "${FUNCTIONS}" ]; then
-
-            echo "Migrating the database..."
-
-            pushd ${TERRAFORM_DIR}
-            export PGHOST=$(tf_output db_fqdn)
-            export PGPORT=5432
-            export PGUSER=$(tf_output db_username)
-            export PGDATABASE=$(tf_output db_name)
-            export PGPASSWORD=$(tf_output db_password)
-            popd
-
-            pypgstac migrate
-        fi
-
-    fi
 
     ######################
     # Gather environment #
     ######################
 
     pushd ${TERRAFORM_DIR}
-    export ACR_NAME=$(tf_output acr_name)
+    export ACR_NAME=$(tf_output task_acr_name)
     export SA_ACCOUNT_NAME=$(tf_output sa_account_name)
     export SA_ACCOUNT_KEY=$(tf_output sa_account_key)
     export SA_ACCOUNT_URL=$(tf_output sa_tables_account_url)

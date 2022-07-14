@@ -42,13 +42,8 @@ source scripts/env
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ -z "${AZURITE_ONLY}" ]; then
-        if ! docker network ls | grep -q ${DOCKER_NETWORK_NAME}; then
-            echo " -- CREATING DOCKER NETWORK"
 
-            docker network create \
-                --driver=bridge \
-                pctasks-network
-        fi
+        setup_docker_network;
 
         echo " -- BUILDING CONTAINERS"
         scripts/update
