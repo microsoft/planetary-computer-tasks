@@ -27,7 +27,6 @@ def test_dataset():
         with temp_azurite_blob_storage() as root_storage:
             assets_storage = root_storage.get_substorage(f"{collection_id}/assets")
             chunks_storage = root_storage.get_substorage("chunks")
-            items_storage = root_storage.get_substorage("items")
 
             copy_dir_to_azurite(assets_storage, TEST_DATA / "assets")
 
@@ -36,7 +35,6 @@ def test_dataset():
                 "collection_template": str(TEST_DATA / "collection_template"),
                 "assets_uri": assets_storage.get_uri(),
                 "chunks_uri": chunks_storage.get_uri(),
-                "items_uri": items_storage.get_uri(),
                 "code_path": str(HERE.resolve()),
                 "db_connection_string": conn_str_info.remote,
             }
