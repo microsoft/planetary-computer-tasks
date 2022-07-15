@@ -12,7 +12,7 @@ from pctasks.core.storage.blob import BlobUri
 from pctasks.core.tokens import Tokens
 from pctasks.core.utils.stac import validate_stac
 from pctasks.dataset.template import template_dataset_file
-from pctasks.dataset.workflow import create_chunks_workflow, create_process_items_workflow
+from pctasks.dataset.workflow import create_process_items_workflow
 from pctasks.dev.blob import (
     copy_dir_to_azurite,
     get_azurite_sas_token,
@@ -32,7 +32,11 @@ def test_process_items() -> None:
     collection_config = ds_config.collections[0]
 
     workflow = create_process_items_workflow(
-        ds_config, collection_config, chunkset_id="test-chunkset", ingest=False, target="test"
+        ds_config,
+        collection_config,
+        chunkset_id="test-chunkset",
+        ingest=False,
+        target="test",
     )
     assert workflow.target_environment == "test"
 

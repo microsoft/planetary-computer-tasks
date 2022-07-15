@@ -33,11 +33,6 @@ class CreateItemsInput(PCBaseModel):
 
     Required if processing results in more than one item.
     """
-    collection_id: Optional[str] = None
-    """The ID of this STAC collection.
-
-    If set, this will be set as each created item's ``collection``.
-    """
 
     collection_id: Optional[str] = None
     """Collection ID to use for the items.

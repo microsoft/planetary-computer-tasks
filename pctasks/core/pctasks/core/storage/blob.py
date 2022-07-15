@@ -86,7 +86,7 @@ class BlobUri:
             )
         self.blob_name: Optional[str] = "/".join(parsed.path.split("/")[2:]) or None
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"BlobUri({self.uri})"
 
     @property
