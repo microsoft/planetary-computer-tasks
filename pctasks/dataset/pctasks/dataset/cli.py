@@ -2,26 +2,9 @@ import logging
 from typing import List, Optional, Tuple
 
 import click
-from pystac.utils import str_to_datetime
-from strictyaml.exceptions import MarkedYAMLError
 
-from pctasks.cli.cli import PCTasksCommandContext, cli_output, cli_print
-from pctasks.client.client import PCTasksClient
-from pctasks.client.settings import ClientSettings
 from pctasks.client.submit.options import opt_args
-from pctasks.core.models.workflow import WorkflowSubmitMessage
-from pctasks.core.utils import map_opt
-from pctasks.core.yaml import YamlValidationError
-from pctasks.dataset.chunks.models import ChunkOptions
-from pctasks.dataset.constants import DEFAULT_DATASET_YAML_PATH
-from pctasks.dataset.splits.models import CreateSplitsOptions
-from pctasks.dataset.template import template_dataset_file
 from pctasks.dataset.utils import opt_collection, opt_ds_config, opt_submit
-from pctasks.dataset.workflow import (
-    create_chunks_workflow,
-    create_ingest_collection_workflow,
-    create_process_items_workflow,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -61,39 +44,18 @@ def create_chunks_cmd(
     Output: If -s is present, will print the run ID to stdout. Otherwise,
     will print the workflow yaml.
     """
-    context: PCTasksCommandContext = ctx.obj
-    try:
-        ds_config = template_dataset_file(dataset, dict(arg))
-    except (MarkedYAMLError, YamlValidationError) as e:
-        raise click.ClickException(f"Invalid dataset config.\n{e}")
-    except FileNotFoundError:
-        raise click.ClickException(
-            "No dataset config found. Use --config to specify "
-            f"or name your config {DEFAULT_DATASET_YAML_PATH}."
-        )
+    from ._cli import create_chunks_cmd
 
-    if not ds_config:
-        raise click.ClickException("No dataset config found.")
-
-    collection_config = ds_config.get_collection(collection)
-
-    workflow = create_chunks_workflow(
-        dataset=ds_config,
-        collection=collection_config,
-        chunkset_id=chunkset_id,
-        create_splits_options=CreateSplitsOptions(limit=limit),
-        chunk_options=ChunkOptions(since=map_opt(str_to_datetime, since)),
+    return create_chunks_cmd(
+        ctx,
+        chunkset_id,
+        dataset=dataset,
+        collection=collection,
+        arg=arg,
+        since=since,
+        limit=limit,
+        submit=submit,
     )
-
-    if not submit:
-        cli_output(workflow.to_yaml())
-    else:
-        submit_message = WorkflowSubmitMessage(workflow=workflow, args=dict(arg))
-        settings = ClientSettings.get(context.profile, context.settings_file)
-        client = PCTasksClient(settings)
-        cli_print(click.style(f"  Submitting {submit_message.run_id}...", fg="green"))
-        submitted = client.submit_workflow(submit_message)
-        cli_output(submitted.run_id)
 
 
 @click.command("process-items")
@@ -143,44 +105,21 @@ def process_items_cmd(
     Output: If -s is present, will print the run ID to stdout. Otherwise,
     will print the workflow yaml.
     """
-    context: PCTasksCommandContext = ctx.obj
-    try:
-        ds_config = template_dataset_file(dataset, dict(arg))
-    except (MarkedYAMLError, YamlValidationError) as e:
-        raise click.ClickException(f"Invalid dataset config.\n{e}")
-    except FileNotFoundError:
-        raise click.ClickException(
-            "No dataset config found. Use --dataset to specify "
-            f"or name your config {DEFAULT_DATASET_YAML_PATH}."
-        )
-    if not ds_config:
-        raise click.ClickException("No dataset config found.")
+    from ._cli import process_items_cmd
 
-    collection_config = ds_config.get_collection(collection)
-
-    workflow = create_process_items_workflow(
-        dataset=ds_config,
-        collection=collection_config,
-        chunkset_id=chunkset_id,
-        use_existing_chunks=use_existing_chunks,
-        ingest=not no_ingest,
-        create_splits_options=CreateSplitsOptions(limit=limit),
-        chunk_options=ChunkOptions(since=map_opt(str_to_datetime, since), limit=limit),
-        create_items_options=None,
-        ingest_options=None,
+    return process_items_cmd(
+        ctx,
+        chunkset_id,
+        dataset,
+        collection,
+        arg=arg,
         target=target,
-        tags=None,
+        no_ingest=no_ingest,
+        use_existing_chunks=use_existing_chunks,
+        since=since,
+        limit=limit,
+        submit=submit,
     )
-
-    if not submit:
-        cli_output(workflow.to_yaml())
-    else:
-        submit_message = WorkflowSubmitMessage(workflow=workflow, args=dict(arg))
-        settings = ClientSettings.get(context.profile, context.settings_file)
-        client = PCTasksClient(settings)
-        cli_print(click.style(f"  Submitting {submit_message.run_id}...", fg="green"))
-        submitted = client.submit_workflow(submit_message)
-        cli_output(submitted.run_id)
 
 
 @click.command("ingest-collection")
@@ -211,42 +150,11 @@ def ingest_collection_cmd(
     Output: If -s is present, will print the run ID to stdout. Otherwise,
     will print the workflow yaml.
     """
-    context: PCTasksCommandContext = ctx.obj
-    try:
-        ds_config = template_dataset_file(dataset, dict(arg))
-    except (MarkedYAMLError, YamlValidationError) as e:
-        raise click.ClickException(f"Invalid dataset config.\n{e}")
-    except FileNotFoundError:
-        raise click.ClickException(
-            "No dataset config found. Use --dataset to specify "
-            f"or name your config {DEFAULT_DATASET_YAML_PATH}."
-        )
-    if not ds_config:
-        raise click.ClickException("No dataset config found.")
+    from ._cli import ingest_collection_cmd
 
-    collection_config = ds_config.get_collection(collection)
-
-    if not collection_config.template:
-        raise click.ClickException(
-            f"'template' not specified for collection {collection_config.id}"
-        )
-
-    workflow = create_ingest_collection_workflow(
-        dataset=ds_config,
-        collection=collection_config,
-        target=target,
-        tags=None,
+    return ingest_collection_cmd(
+        ctx, dataset, collection, arg=arg, target=target, submit=submit
     )
-
-    if not submit:
-        cli_output(workflow.to_yaml())
-    else:
-        submit_message = WorkflowSubmitMessage(workflow=workflow, args=dict(arg))
-        settings = ClientSettings.get(context.profile, context.settings_file)
-        client = PCTasksClient(settings)
-        cli_print(click.style(f"  Submitting {submit_message.run_id}...", fg="green"))
-        submitted = client.submit_workflow(submit_message)
-        cli_output(submitted.run_id)
 
 
 @click.command("list-collections")
@@ -259,20 +167,9 @@ def list_collections_cmd(
     arg: List[Tuple[str, str]] = [],
 ) -> None:
     """Lists the collection IDs contained in a dataset configuration."""
-    try:
-        ds_config = template_dataset_file(dataset, dict(arg))
-    except (MarkedYAMLError, YamlValidationError) as e:
-        raise click.ClickException(f"Invalid dataset config.\n{e}")
-    except FileNotFoundError:
-        raise click.ClickException(
-            "No dataset config found. Use --dataset to specify "
-            f"or name your config {DEFAULT_DATASET_YAML_PATH}."
-        )
-    if not ds_config:
-        raise click.ClickException("No dataset config found.")
+    from ._cli import list_collections_cmd
 
-    for collection in ds_config.collections:
-        cli_output(collection.id)
+    return list_collections_cmd(ctx, dataset, arg=arg)
 
 
 dataset_cmd.add_command(create_chunks_cmd)

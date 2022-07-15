@@ -9,8 +9,8 @@ from pctasks.core.models.task import FailedTaskResult, WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.chunks.chunkset import ChunkSet
 from pctasks.dataset.items.models import CreateItemsInput, CreateItemsOutput
-from pctasks.task import Task
 from pctasks.task.context import TaskContext
+from pctasks.task.task import Task
 
 logger = logging.getLogger(__name__)
 

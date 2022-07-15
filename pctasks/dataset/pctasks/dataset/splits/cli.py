@@ -7,6 +7,7 @@ from strictyaml.exceptions import MarkedYAMLError
 from pctasks.cli.cli import PCTasksCommandContext, cli_output, cli_print
 from pctasks.client.client import PCTasksClient
 from pctasks.client.settings import ClientSettings
+from pctasks.core.context import PCTasksCommandContext
 from pctasks.core.models.workflow import (
     JobConfig,
     WorkflowConfig,

@@ -6,7 +6,8 @@ from typing import Any, Optional, Union
 import click
 
 from pctasks.cli.version import __version__
-from pctasks.core.cli import PCTasksCommandContext, get_plugin_subcommands
+from pctasks.core.cli import get_plugin_subcommands
+from pctasks.core.context import PCTasksCommandContext
 from pctasks.core.settings import SettingsError
 
 logger = logging.getLogger(__name__)

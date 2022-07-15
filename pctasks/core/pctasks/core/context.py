@@ -1,15 +1,10 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from pctasks.core.context import PCTasksCommandContext
-
 
 @dataclass
-class RecordsCommandContext(PCTasksCommandContext):
-    pretty_print: bool = False
-    """Whether to pretty print the output, e.g. syntax highlight YAML."""
-
-    # PCTasksCommandContext added here to avoid mypy issues
+class PCTasksCommandContext:
+    """Context used in the pctasks CLI."""
 
     profile: Optional[str] = None
     """Settings profile. Determines which settings file is read."""

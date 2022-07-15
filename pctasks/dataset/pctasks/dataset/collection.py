@@ -8,7 +8,7 @@ from pctasks.core.storage import StorageFactory
 from pctasks.dataset.chunks.task import CreateChunksTask
 from pctasks.dataset.items.task import CreateItemsTask
 from pctasks.dataset.splits.task import CreateSplitsTask
-from pctasks.task import Task
+from pctasks.task.task import Task
 
 
 class Collection(ABC):
