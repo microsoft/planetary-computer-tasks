@@ -1,0 +1,257 @@
+{
+    "id": "deltares-floods",
+    "type": "Collection",
+    "links": [
+        {
+            "rel": "documentation",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/aod_docs/11206409-003-ZWS-0003_v0.1-Planetary-Computer-Deltares-global-flood-docs.pdf",
+            "type": "application/pdf",
+            "title": "User Guide"
+        },
+        {
+            "rel": "license",
+            "href": "https://cdla.dev/permissive-1-0/",
+            "type": "text/html",
+            "title": "Community Data License Agreement - Permissive, Version 1.0"
+        }
+    ],
+    "title": "Deltares Global Flood Maps",
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.azureedge.net/assets/pc_thumbnails/additional_datasets/deltares-flood.png",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "Thumbnail"
+        }
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    90,
+                    180,
+                    -90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2018-01-01T00:00:00Z",
+                    "2018-12-31T00:00:00Z"
+                ],
+                [
+                    "2050-01-01T00:00:00Z",
+                    "2050-12-31T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "CDLA-Permissive-1.0",
+    "keywords": [
+        "Deltares",
+        "Flood",
+        "Sea level rise",
+        "Water",
+        "Global"
+    ],
+    "providers": [
+        {
+            "url": "https://www.deltares.nl/en/",
+            "name": "Deltares",
+            "roles": [
+                "producer"
+            ]
+        },
+        {
+            "url": "https://planetarycomputer.microsoft.com/",
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ]
+        }
+    ],
+    "summaries": {
+        "deltares:dem_name": [
+            "NASADEM",
+            "MERITDEM",
+            "LIDAR"
+        ],
+        "deltares:resolution": [
+            "90m",
+            "1km",
+            "5km"
+        ],
+        "deltares:return_period": [
+            0,
+            2,
+            5,
+            10,
+            25,
+            50,
+            100,
+            250
+        ],
+        "deltares:sea_level_year": [
+            2018,
+            2050
+        ]
+    },
+    "description": "{{ collection.description }}",
+    "item_assets": {
+        "data": {
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "title": "Flood Map",
+            "description": "Inundation maps of flood depth using a model that takes into account water level attenuation and is forced by sea level."
+        },
+        "index": {
+            "type": "application/json",
+            "roles": [
+                "index"
+            ],
+            "title": "Index file",
+            "description": "Kerchunk index file."
+        }
+    },
+    "stac_version": "1.0.0",
+    "cube:variables": {
+        "inun": {
+            "type": "data",
+            "unit": "m",
+            "attrs": {
+                "units": "m",
+                "long_name": "Coastal flooding",
+                "standard_name": "water_surface_height_above_reference_datum"
+            },
+            "dimensions": [
+                "time",
+                "lat",
+                "lon"
+            ],
+            "description": "Coastal flooding"
+        },
+        "projection": {
+            "type": "data",
+            "attrs": {
+                "EPSG_code": "EPSG:4326",
+                "long_name": "wgs84",
+                "proj4_params": "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
+                "grid_mapping_name": "latitude_longitude"
+            },
+            "shape": [],
+            "dimensions": [],
+            "description": "wgs84"
+        }
+    },
+    "msft:container": "floods",
+    "cube:dimensions": {
+        "lat": {
+            "axis": "y",
+            "type": "spatial",
+            "extent": [
+                -89.97500000000002,
+                89.975
+            ],
+            "description": "latitude",
+            "reference_system": {
+                "name": "undefined",
+                "type": "GeographicCRS",
+                "datum": {
+                    "id": {
+                        "code": 6326,
+                        "authority": "EPSG"
+                    },
+                    "name": "World Geodetic System 1984",
+                    "type": "GeodeticReferenceFrame",
+                    "ellipsoid": {
+                        "name": "WGS 84",
+                        "semi_major_axis": 6378137,
+                        "inverse_flattening": 298.257223563
+                    }
+                },
+                "$schema": "https://proj.org/schemas/v0.4/projjson.schema.json",
+                "coordinate_system": {
+                    "axis": [
+                        {
+                            "name": "Longitude",
+                            "unit": "degree",
+                            "direction": "east",
+                            "abbreviation": "lon"
+                        },
+                        {
+                            "name": "Latitude",
+                            "unit": "degree",
+                            "direction": "north",
+                            "abbreviation": "lat"
+                        }
+                    ],
+                    "subtype": "ellipsoidal"
+                }
+            }
+        },
+        "lon": {
+            "axis": "x",
+            "type": "spatial",
+            "extent": [
+                -179.975,
+                179.97500000000005
+            ],
+            "description": "longitude",
+            "reference_system": {
+                "name": "undefined",
+                "type": "GeographicCRS",
+                "datum": {
+                    "id": {
+                        "code": 6326,
+                        "authority": "EPSG"
+                    },
+                    "name": "World Geodetic System 1984",
+                    "type": "GeodeticReferenceFrame",
+                    "ellipsoid": {
+                        "name": "WGS 84",
+                        "semi_major_axis": 6378137,
+                        "inverse_flattening": 298.257223563
+                    }
+                },
+                "$schema": "https://proj.org/schemas/v0.4/projjson.schema.json",
+                "coordinate_system": {
+                    "axis": [
+                        {
+                            "name": "Longitude",
+                            "unit": "degree",
+                            "direction": "east",
+                            "abbreviation": "lon"
+                        },
+                        {
+                            "name": "Latitude",
+                            "unit": "degree",
+                            "direction": "north",
+                            "abbreviation": "lat"
+                        }
+                    ],
+                    "subtype": "ellipsoidal"
+                }
+            }
+        },
+        "time": {
+            "type": "temporal",
+            "extent": [
+                "2010-01-01T00:00:00Z",
+                "2010-01-01T00:00:00Z"
+            ],
+            "description": "time"
+        }
+    },
+    "stac_extensions": [
+        "https://stac-extensions.github.io/datacube/v2.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+    ],
+    "msft:storage_account": "deltaresfloodssa",
+    "msft:short_description": "Global estimates of coastal inundation under various sea level rise conditions and return periods."
+}

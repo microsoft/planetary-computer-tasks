@@ -8,18 +8,16 @@ environment:
 
 collections:
   - id: deltares-floods
+    template: ${{ local.path(./collection) }}
     class: pctasks.dataset.collection:PremadeItemCollection
     asset_storage:
       # the STAC items
-      - storage_account: deltaresfloodssa
-        container: floods-stac
-        sas_token: ${{ pc.get_token(deltaresfloodssa, floods-stac)}}
+      - uri: blob://deltaresfloodssa/floods-stac
+        token: ${{ pc.get_token(deltaresfloodssa, floods-stac)}}
         chunks:
           options:
             chunk_length: 3000
             extensions:
               - ".json"
     chunk_storage:
-      storage_account: deltaresfloodssa
-      container: floods-etl-data
-      prefix: chunks
+      uri: blob://deltaresfloodssa/floods-etl-data/chunks

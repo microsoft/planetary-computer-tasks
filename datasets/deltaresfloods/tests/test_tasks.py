@@ -2,28 +2,26 @@ import json
 import logging
 from pathlib import Path
 
+import pytest
+
 from pctasks.cli.cli import setup_logging
+from pctasks.core.storage import StorageFactory
+from pctasks.core.tokens import Tokens
 from pctasks.dataset.items.models import CreateItemsOptions
 from pctasks.dataset.models import (
-    BlobStorageConfig,
     ChunkOptions,
     CollectionConfig,
     DatasetConfig,
+    StorageConfig,
 )
-from pctasks.core.storage import StorageFactory
-from pctasks.core.tokens import Tokens
-from pctasks.dataset.splits.models import (
-    CreateSplitsOptions,
-)
+from pctasks.dataset.splits.models import CreateSplitsOptions
 from pctasks.dataset.template import template_dataset_file
-from pctasks.task.context import TaskContext
-from pctasks.run.workflow.simple import SimpleWorkflowRunner
 from pctasks.dataset.workflow import (
     create_chunks_workflow,
     create_process_items_workflow,
 )
-import pytest
-
+from pctasks.run.workflow.executor.simple import SimpleWorkflowExecutor
+from pctasks.task.context import TaskContext
 
 TESTS_DIR = Path(__file__).parent
 DATASET_PATH = TESTS_DIR.parent / "dataset.yaml"
@@ -36,18 +34,17 @@ def dataset_config() -> DatasetConfig:
     ds_config.image = "mock:latest"
     ds_config.args = [test_prefix]
     ds_config.collections[0].asset_storage[0].chunks.options.chunk_length = 2
-    ds_config.collections[0].chunk_storage = BlobStorageConfig(
-        storage_account="devstoreaccount1",
-        container="test-data",
-        prefix=f"{test_prefix}/chunks",
+    ds_config.collections[0].chunk_storage = StorageConfig(
+        uri=f"blob://devstoreaccount1/test-data/{test_prefix}/chunks",
     )
 
-    ds_config.environment.clear()
+    if ds_config.environment:
+        ds_config.environment.clear()
 
     return ds_config
 
 
-def test_create_chunks(dataset_config) -> None:
+def test_create_chunks(dataset_config: DatasetConfig) -> None:
     collection_config: CollectionConfig = dataset_config.collections[0]
     workflow = create_chunks_workflow(
         dataset=dataset_config,
@@ -59,7 +56,7 @@ def test_create_chunks(dataset_config) -> None:
     tokens = Tokens(collection_config.get_tokens())
     context = TaskContext(StorageFactory(tokens=tokens))
 
-    runner = SimpleWorkflowRunner()
+    runner = SimpleWorkflowExecutor()
     result = runner.run_workflow(
         workflow, context=context, args={"test_prefix": "test"}
     )
@@ -74,14 +71,14 @@ def test_create_chunks(dataset_config) -> None:
     )
 
 
-def test_create_items(dataset_config) -> None:
+def test_create_items(dataset_config: DatasetConfig) -> None:
     setup_logging(logging.DEBUG)
 
     collection_config: CollectionConfig = dataset_config.collections[0]
     tokens = Tokens(collection_config.get_tokens())
     context = TaskContext(StorageFactory(tokens=tokens))
 
-    runner = SimpleWorkflowRunner()
+    runner = SimpleWorkflowExecutor()
 
     workflow = create_process_items_workflow(
         dataset=dataset_config,
