@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional, TypeVar
+from typing import Optional
 
 import click
 
@@ -16,9 +16,9 @@ def fetch_workflow_cmd(
 
     Outputs the YAML of the record to stdout.
     """
-    from ._fetch import fetch_workflow_cmd
+    from . import _fetch
 
-    return fetch_workflow_cmd(ctx, run_id, dataset)
+    return _fetch.fetch_workflow_cmd(ctx, run_id, dataset)
 
 
 @click.command("job")
@@ -34,9 +34,9 @@ def fetch_job_cmd(
 
     Outputs the YAML of the record to stdout.
     """
-    from ._fetch import fetch_job_cmd
+    from . import _fetch
 
-    return fetch_job_cmd(ctx, run_id, job_id)
+    return _fetch.fetch_job_cmd(ctx, run_id, job_id)
 
 
 @click.command("task")
@@ -54,9 +54,9 @@ def fetch_task_cmd(
 
     Outputs the YAML of the record to stdout.
     """
-    from ._fetch import fetch_task_cmd
+    from . import _fetch
 
-    return fetch_task_cmd(ctx, run_id, job_id, task_id)
+    return _fetch.fetch_task_cmd(ctx, run_id, job_id, task_id)
 
 
 @click.command("logs")
@@ -72,9 +72,9 @@ def fetch_logs_cmd(
 
     Outputs the YAML of the record to stdout.
     """
-    from ._fetch import fetch_logs_cmd
+    from . import _fetch
 
-    return fetch_logs_cmd(ctx, job_id, task_id, run_id, name)
+    return _fetch.fetch_logs_cmd(ctx, job_id, task_id, run_id, name)
 
 
 @click.group("fetch")

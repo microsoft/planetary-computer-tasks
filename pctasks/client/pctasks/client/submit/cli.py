@@ -19,9 +19,9 @@ def file_cmd(
 
     Can be a local file or a blob URI (e.g. blob://account/container/workflow.yaml)
     """
-    from ._cli import file_cmd
+    from . import _cli
 
-    return file_cmd(ctx, workflow_path, arg)
+    return _cli.file_cmd(ctx, workflow_path, arg)
 
 
 @click.group("submit")

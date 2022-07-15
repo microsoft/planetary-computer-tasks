@@ -24,9 +24,9 @@ def list_workflows_cmd(
     status: Optional[str],
     ids: bool,
 ) -> None:
-    from ._list import list_workflows_cmd
+    from . import _list
 
-    return list_workflows_cmd(ctx, dataset, page, all, status, ids)
+    return _list.list_workflows_cmd(ctx, dataset, page, all, status, ids)
 
 
 @click.command("jobs")
@@ -48,9 +48,9 @@ def list_jobs_cmd(
     status: Optional[str],
     ids: bool,
 ) -> None:
-    from ._list import list_jobs_cmd
+    from . import _list
 
-    return list_jobs_cmd(ctx, run_id, page, all, status, ids)
+    return _list.list_jobs_cmd(ctx, run_id, page, all, status, ids)
 
 
 @click.command("tasks")
@@ -74,9 +74,9 @@ def list_tasks_cmd(
     status: Optional[str],
     ids: bool,
 ) -> None:
-    from ._list import list_tasks_cmd
+    from . import _list
 
-    return list_tasks_cmd(ctx, run_id, job_id, page, all, status, ids)
+    return _list.list_tasks_cmd(ctx, run_id, job_id, page, all, status, ids)
 
 
 @click.group("list")

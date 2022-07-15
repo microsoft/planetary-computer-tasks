@@ -68,9 +68,9 @@ def ingest_ndjson_cmd(
     This command will print the workflow to stdout, and submit it if the --submit
     flag is provided. If submitted, stdout will contain the run ID for the workflow.
     """
-    from ._cli import ingest_ndjson_cmd
+    from . import _cli
 
-    return ingest_ndjson_cmd(
+    return _cli.ingest_ndjson_cmd(
         ctx,
         collection_id,
         ndjson_folder_uri,
@@ -107,9 +107,9 @@ def ingest_collection_cmd(
     If PATH is a directory, will read collection template information
     from the directory. Otherwise PATH must bea complete STAC Collection JSON.
     """
-    from ._cli import ingest_collection_cmd
+    from . import _cli
 
-    return ingest_collection_cmd(ctx, path, target, owner, submit)
+    return _cli.ingest_collection_cmd(ctx, path, target, owner, submit)
 
 
 @click.group("ingest")

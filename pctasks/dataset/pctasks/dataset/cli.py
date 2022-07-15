@@ -44,9 +44,9 @@ def create_chunks_cmd(
     Output: If -s is present, will print the run ID to stdout. Otherwise,
     will print the workflow yaml.
     """
-    from ._cli import create_chunks_cmd
+    from . import _cli
 
-    return create_chunks_cmd(
+    return _cli.create_chunks_cmd(
         ctx,
         chunkset_id,
         dataset=dataset,
@@ -105,9 +105,9 @@ def process_items_cmd(
     Output: If -s is present, will print the run ID to stdout. Otherwise,
     will print the workflow yaml.
     """
-    from ._cli import process_items_cmd
+    from . import _cli
 
-    return process_items_cmd(
+    return _cli.process_items_cmd(
         ctx,
         chunkset_id,
         dataset,
@@ -150,9 +150,9 @@ def ingest_collection_cmd(
     Output: If -s is present, will print the run ID to stdout. Otherwise,
     will print the workflow yaml.
     """
-    from ._cli import ingest_collection_cmd
+    from . import _cli
 
-    return ingest_collection_cmd(
+    return _cli.ingest_collection_cmd(
         ctx, dataset, collection, arg=arg, target=target, submit=submit
     )
 
@@ -167,9 +167,9 @@ def list_collections_cmd(
     arg: List[Tuple[str, str]] = [],
 ) -> None:
     """Lists the collection IDs contained in a dataset configuration."""
-    from ._cli import list_collections_cmd
+    from . import _cli
 
-    return list_collections_cmd(ctx, dataset, arg=arg)
+    return _cli.list_collections_cmd(ctx, dataset, arg=arg)
 
 
 dataset_cmd.add_command(create_chunks_cmd)

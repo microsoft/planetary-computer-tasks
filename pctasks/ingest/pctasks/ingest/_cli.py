@@ -4,7 +4,7 @@ from typing import List, Optional
 
 import click
 
-from pctasks.cli.cli import PCTasksCommandContext, cli_output, cli_print
+from pctasks.cli.cli import cli_output, cli_print
 from pctasks.client.client import PCTasksClient
 from pctasks.client.settings import ClientSettings
 from pctasks.core.constants import DEFAULT_TARGET_ENVIRONMENT

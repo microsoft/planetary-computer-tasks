@@ -45,9 +45,9 @@ def run_cmd(
     output_sas_token: Optional[str] = None,
 ) -> None:
     """Runs a task from a JSON-serialized TaskRunMessage."""
-    from ._cli import run_cmd
+    from . import _cli
 
-    run_cmd(
+    _cli.run_cmd(
         ctx=ctx,
         input_uri=input_uri,
         sas_token=sas_token,

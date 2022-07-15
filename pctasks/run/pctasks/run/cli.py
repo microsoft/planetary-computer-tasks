@@ -18,9 +18,9 @@ def local_cmd(workflow: str, args: List[str], output: Optional[str] = None) -> N
     This executes a workflow sequentially and runs tasks
     in the local environment. Useful for testing.
     """
-    from ._cli import local_cmd
+    from . import _cli
 
-    return local_cmd(workflow, args, output=output)
+    return _cli.local_cmd(workflow, args, output=output)
 
 
 @click.command("remote")
@@ -44,9 +44,9 @@ def remote_cmd(
     sas: Optional[str],
 ) -> None:
     """Execute a workflow using a remote runner."""
-    from ._cli import remote_cmd
+    from . import _cli
 
-    return remote_cmd(ctx, workflow, arg, new_id, settings, sas)
+    return _cli.remote_cmd(ctx, workflow, arg, new_id, settings, sas)
 
 
 @click.group("run")

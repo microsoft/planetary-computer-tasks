@@ -14,9 +14,9 @@ from pctasks.client.records.commands.list import list_cmd
 @click.pass_context
 def records_cmd(ctx: click.Context, pretty_print: bool) -> None:
     """Query and show records from PCTasks."""
-    from ._cli import records_cmd
+    from . import _cli
 
-    records_cmd(ctx, pretty_print)
+    _cli.records_cmd(ctx, pretty_print)
 
 
 records_cmd.add_command(list_cmd)

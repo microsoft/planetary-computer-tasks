@@ -4,7 +4,7 @@ from typing import Optional
 import click
 from strictyaml.exceptions import MarkedYAMLError
 
-from pctasks.cli.cli import PCTasksCommandContext, cli_output, cli_print
+from pctasks.cli.cli import cli_output, cli_print
 from pctasks.client.client import PCTasksClient
 from pctasks.client.settings import ClientSettings
 from pctasks.core.context import PCTasksCommandContext
