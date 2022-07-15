@@ -15,7 +15,7 @@ environment:
 
 collections:
   - id: chesapeake-lc-7
-    template: ${{ local.path(./template/chesapeake-lc-7) }}
+    template: ${{ local.path(./collection/chesapeake-lc-7) }}
     class: chesapeake_lulc:ChesapeakeCollection
     asset_storage:
       - uri: blob://landcoverdata/chesapeake
@@ -27,7 +27,7 @@ collections:
     chunk_storage:
       uri: blob://landcoverdata/chesapeake-etl-data/pctasks-chunks/lc-7/
   - id: chesapeake-lc-13
-    template: ${{ local.path(./template/chesapeake-lc-13) }}
+    template: ${{ local.path(./collection/chesapeake-lc-13) }}
     class: chesapeake_lulc:ChesapeakeCollection
     asset_storage:
       - uri: blob://landcoverdata/chesapeake
@@ -39,7 +39,7 @@ collections:
     chunk_storage:
       uri: blob://landcoverdata/chesapeake-etl-data/pctasks-chunks/lc-13/
   - id: chesapeake-lu
-    template: ${{ local.path(./template/chesapeake-lu) }}
+    template: ${{ local.path(./collection/chesapeake-lu) }}
     class: chesapeake_lulc:ChesapeakeCollection
     sas_token: ${{ pc.get_token(landcoverdata, chesapeake) }}
     asset_storage:
