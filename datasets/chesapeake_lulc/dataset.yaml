@@ -41,9 +41,9 @@ collections:
   - id: chesapeake-lu
     template: ${{ local.path(./collection/chesapeake-lu) }}
     class: chesapeake_lulc:ChesapeakeCollection
-    sas_token: ${{ pc.get_token(landcoverdata, chesapeake) }}
     asset_storage:
       - uri: blob://landcoverdata/chesapeake
+        token: ${{ pc.get_token(landcoverdata, chesapeake) }}
         chunks:
           options:
             name_starts_with: lu/
