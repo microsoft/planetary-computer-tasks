@@ -311,7 +311,7 @@ def run_process_items_workflow(
     timeout_seconds: int = 300,
     splits_limit: int = 1,
     chunks_limit: int = 2,
-    image: Optional[str] = None
+    image: Optional[str] = None,
 ) -> None:
     with temp_pgstac_db() as conn_str_info:
         with temp_azurite_blob_storage() as root_storage:
