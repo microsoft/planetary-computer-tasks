@@ -1,42 +1,6 @@
-from typing import Callable, Optional, TypeVar
+from typing import Optional
 
 import click
-from click.exceptions import Exit
-from rich.console import Console
-from rich.syntax import Syntax
-
-from pctasks.cli.cli import cli_output
-from pctasks.client.client import PCTasksClient
-from pctasks.client.errors import NotFoundError
-from pctasks.client.records.constants import NOT_FOUND_EXIT_CODE
-from pctasks.client.records.context import RecordsCommandContext
-from pctasks.client.settings import ClientSettings
-from pctasks.core.models.api import RecordResponse
-
-T = TypeVar("T", bound=RecordResponse)
-
-
-def fetch_record(
-    ctx: click.Context, fetch: Callable[[PCTasksClient, Console], T]
-) -> int:
-    settings = ClientSettings.from_context(ctx.obj)
-    client = PCTasksClient(settings)
-
-    records_context: RecordsCommandContext = ctx.obj
-    console = Console(stderr=True)
-
-    try:
-        record = fetch(client, console)
-    except NotFoundError as e:
-        console.print(f"[bold red]Error: {e}")
-        raise Exit(NOT_FOUND_EXIT_CODE)
-
-    if records_context.pretty_print:
-        console.print(Syntax(record.to_yaml(), "yaml"))
-    else:
-        cli_output(record.to_yaml())
-
-    return 0
 
 
 @click.command("workflow")
@@ -52,7 +16,9 @@ def fetch_workflow_cmd(
 
     Outputs the YAML of the record to stdout.
     """
-    return fetch_record(ctx, lambda client, _: client.get_workflow(run_id, dataset))
+    from . import _fetch
+
+    return _fetch.fetch_workflow_cmd(ctx, run_id, dataset)
 
 
 @click.command("job")
@@ -68,8 +34,9 @@ def fetch_job_cmd(
 
     Outputs the YAML of the record to stdout.
     """
+    from . import _fetch
 
-    return fetch_record(ctx, lambda client, _: client.get_job(run_id, job_id))
+    return _fetch.fetch_job_cmd(ctx, run_id, job_id)
 
 
 @click.command("task")
@@ -87,8 +54,9 @@ def fetch_task_cmd(
 
     Outputs the YAML of the record to stdout.
     """
+    from . import _fetch
 
-    return fetch_record(ctx, lambda client, _: client.get_task(run_id, job_id, task_id))
+    return _fetch.fetch_task_cmd(ctx, run_id, job_id, task_id)
 
 
 @click.command("logs")
@@ -104,24 +72,9 @@ def fetch_logs_cmd(
 
     Outputs the YAML of the record to stdout.
     """
+    from . import _fetch
 
-    settings = ClientSettings.from_context(ctx.obj)
-    client = PCTasksClient(settings)
-
-    logs = client.get_task_logs(run_id, job_id, task_id, log_name=name)
-
-    console = Console(stderr=True)
-    if not logs:
-        console.print("[yellow]No logs found.")
-        return NOT_FOUND_EXIT_CODE
-
-    console.print(f"[green]Logs for task {task_id}:")
-
-    for log_name, log_text in logs.items():
-        console.print(f"\n[bold green]{log_name}:")
-        cli_output(log_text)
-
-    return 0
+    return _fetch.fetch_logs_cmd(ctx, job_id, task_id, run_id, name)
 
 
 @click.group("fetch")

@@ -20,13 +20,13 @@ from cachetools.keys import hashkey
 from pydantic import BaseSettings, Field, ValidationError
 from pydantic.env_settings import SettingsSourceCallable
 
-from pctasks.core.cli import PCTasksCommandContext
 from pctasks.core.constants import (
     DEFAULT_PROFILE,
     ENV_VAR_PCTASK_PREFIX,
     ENV_VAR_PCTASKS_PROFILE,
     SETTINGS_ENV_DIR,
 )
+from pctasks.core.context import PCTasksCommandContext
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.utils import map_opt
 
