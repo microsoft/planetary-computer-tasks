@@ -311,16 +311,16 @@ def run_process_items_workflow(
     timeout_seconds: int = 300,
     splits_limit: int = 1,
     chunks_limit: int = 2,
+    image: Optional[str] = None,
 ) -> None:
     with temp_pgstac_db() as conn_str_info:
         with temp_azurite_blob_storage() as root_storage:
             chunks_storage = root_storage.get_substorage("chunks")
 
-            args = {
-                "registry": "localhost:5001",
-            }
-
             dataset = template_dataset_file(Path(dataset_path), args)
+
+            if image:
+                dataset.image = image
 
             # Modify dataset for tests
             if not dataset.environment:
@@ -333,6 +333,7 @@ def run_process_items_workflow(
                 )
 
             collection_config = dataset.get_collection(collection_id)
+            collection_id = collection_config.id
 
             # Ingest collection
 

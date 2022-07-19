@@ -34,6 +34,7 @@ def create_chunks_cmd(
     since: Optional[str] = None,
     limit: Optional[int] = None,
     submit: bool = False,
+    target: Optional[str] = None,
 ) -> None:
     """Creates workflow to generate asset chunks for bulk processing.
 
@@ -62,6 +63,7 @@ def create_chunks_cmd(
         chunkset_id=chunkset_id,
         create_splits_options=CreateSplitsOptions(limit=limit),
         chunk_options=ChunkOptions(since=map_opt(str_to_datetime, since)),
+        target=target,
     )
 
     if not submit:

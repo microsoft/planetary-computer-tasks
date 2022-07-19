@@ -101,6 +101,12 @@ class StorageFactory:
         self.tokens = tokens
         self.account_url = account_url
 
+    def __repr__(self) -> str:
+        return (
+            f"<StorageFactory(account_url={self.account_url}) "
+            f"with {len(self._cache)} tokens>"
+        )
+
     @cachedmethod(lambda self: self._cache)
     def get_storage(self, uri: str) -> Storage:
         """Gets storage that represents the folder at the uri."""
