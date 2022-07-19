@@ -44,6 +44,11 @@ def dataset_cmd(ctx: click.Context) -> None:
     help=("Only process files that have been modified at or after this datetime."),
 )
 @click.option("--limit", type=int, help="Limit prefix listing, used for testing")
+@click.option(
+    "-t",
+    "--target",
+    help="The target environment to process the items in.",
+)
 @opt_submit
 @click.pass_context
 def create_chunks_cmd(
@@ -54,6 +59,7 @@ def create_chunks_cmd(
     arg: List[Tuple[str, str]] = [],
     since: Optional[str] = None,
     limit: Optional[int] = None,
+    target: Optional[str] = None,
     submit: bool = False,
 ) -> None:
     """Creates workflow to generate asset chunks for bulk processing.
@@ -83,6 +89,7 @@ def create_chunks_cmd(
         chunkset_id=chunkset_id,
         create_splits_options=CreateSplitsOptions(limit=limit),
         chunk_options=ChunkOptions(since=map_opt(str_to_datetime, since)),
+        target=target,
     )
 
     if not submit:

@@ -25,6 +25,7 @@ def create_chunks_workflow(
     chunkset_id: str,
     create_splits_options: Optional[CreateSplitsOptions] = None,
     chunk_options: Optional[ChunkOptions] = None,
+    target: Optional[str] = None,
     tags: Optional[Dict[str, str]] = None,
 ) -> WorkflowConfig:
 
@@ -71,6 +72,7 @@ def create_chunks_workflow(
             create_splits_job.get_id(): create_splits_job,
             create_chunks_job.get_id(): create_chunks_job,
         },
+        target=target,
     )
 
 
@@ -193,6 +195,7 @@ def create_process_items_workflow(
             **chunks_jobs,
             process_items_job.get_id(): process_items_job,
         },
+        target_environment=target,
     )
 
 

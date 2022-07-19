@@ -32,8 +32,13 @@ def test_process_items() -> None:
     collection_config = ds_config.collections[0]
 
     workflow = create_process_items_workflow(
-        ds_config, collection_config, chunkset_id="test-chunkset", ingest=False
+        ds_config,
+        collection_config,
+        chunkset_id="test-chunkset",
+        ingest=False,
+        target="test",
     )
+    assert workflow.target_environment == "test"
 
     print(workflow.to_yaml())
 

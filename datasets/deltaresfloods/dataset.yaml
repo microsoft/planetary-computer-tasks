@@ -1,0 +1,23 @@
+name: deltaresfloods
+image: pccomponentstest.azurecr.io/pctasks-basic:2022.6.16.2
+target_environment: staging
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: deltares-floods
+    template: ${{ local.path(./collection) }}
+    class: pctasks.dataset.collection:PremadeItemCollection
+    asset_storage:
+      # the STAC items
+      - uri: blob://deltaresfloodssa/floods-stac
+        token: ${{ pc.get_token(deltaresfloodssa, floods-stac)}}
+        chunks:
+          options:
+            chunk_length: 3000
+            extensions:
+              - ".json"
+    chunk_storage:
+      uri: blob://deltaresfloodssa/floods-etl-data/chunks
