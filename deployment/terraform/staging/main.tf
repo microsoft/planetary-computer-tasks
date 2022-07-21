@@ -30,8 +30,6 @@ module "resources" {
 
   stac_db_connection_string =  var.stac_db_connection_string
 
-  pctasks_server_account_key = var.pctasks_server_account_key
-
   cluster_cert_issuer = "letsencrypt"
   cluster_cert_server = "https://acme-v02.api.letsencrypt.org/directory"
   aks_node_count = 1
