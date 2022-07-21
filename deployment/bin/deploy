@@ -259,7 +259,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     ARGO_TOKEN="$(get_argo_token)"
 
     echo "Deploying PCTasks Server helm chart..."
-    helm upgrade --install pctasks-server helm/pctasks-server \
+    helm upgrade --install pctasks-server helm/published/pctasks-server \
         -n pc \
         --create-namespace \
         --kube-context "${KUBE_CONTEXT}" \
