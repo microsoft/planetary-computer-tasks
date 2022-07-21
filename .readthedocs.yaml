@@ -1,0 +1,44 @@
+# .readthedocs.yaml
+# Read the Docs configuration file
+# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
+
+version: 2
+
+formats:
+  # Temporarily disabling PDF downloads due to problem with nbsphinx in LateX builds
+  # - pdf
+  - htmlzip
+
+python:
+  version: "3.8"
+  install:
+    - requirements: requirements-dev.txt
+    - method: pip
+      path: "pctasks/core"
+    - method: pip
+      path: "pctasks/cli"
+    - method: pip
+      path: "pctasks/task"
+    - method: pip
+      path: "pctasks/client"
+    - method: pip
+      path: "pctasks/ingest"
+    - method: pip
+      path: "pctasks/ingest_task"
+    - method: pip
+      path: "pctasks/dataset"
+    - method: pip
+      path: "pctasks/run"
+    - method: pip
+      path: "pctasks/notify"
+    - method: pip
+      path: "pctasks/router"
+    - method: pip
+      path: "pctasks/operations"
+    - method: pip
+      path: "pctasks/server"
+    - method: pip
+      path: "pctasks/dev"
+
+sphinx:
+  fail_on_warning: false
