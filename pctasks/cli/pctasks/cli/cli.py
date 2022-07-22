@@ -1,14 +1,16 @@
 import logging
 import sys
 from functools import lru_cache
+from pathlib import Path
 from typing import Any, Optional, Union
 
 import click
 
 from pctasks.cli.version import __version__
 from pctasks.core.cli import get_plugin_subcommands
+from pctasks.core.constants import DEFAULT_PROFILE, ENV_VAR_PCTASKS_PROFILE
 from pctasks.core.context import PCTasksCommandContext
-from pctasks.core.settings import SettingsError
+from pctasks.core.settings import SettingsConfig, SettingsError
 
 logger = logging.getLogger(__name__)
 
@@ -122,6 +124,42 @@ def pctasks_cmd(
 
     setup_logging(logging_level)
 
+
+@click.command(name="set-profile")
+@click.argument("profile")
+def set_profile_command(profile: str) -> None:
+    settings_config = SettingsConfig.get(profile=profile)
+    profile_only_config = settings_config.copy(update={"settings_file": None})
+    profile_settings_file = profile_only_config.get_settings_file()
+    if not Path(profile_settings_file).exists():
+        raise click.UsageError(
+            f"Settings file for profile '{profile}' "
+            f"does not exist at location {profile_settings_file}."
+        )
+    settings_config.write()
+    cli_print(f"Profile set to '{profile}'.")
+
+
+@click.command(name="get-profile")
+def get_profile_command() -> None:
+    settings_config = SettingsConfig.get()
+    if settings_config.is_profile_from_environment:
+        cli_print(
+            f"Profile set to '{settings_config.profile}' through the "
+            f"environment variable {ENV_VAR_PCTASKS_PROFILE}."
+        )
+    else:
+        if (
+            settings_config.profile is None
+            or settings_config.profile == DEFAULT_PROFILE
+        ):
+            cli_print("No profile set.")
+        else:
+            cli_print(f"Profile set to '{settings_config.profile}'.")
+
+
+pctasks_cmd.add_command(set_profile_command)
+pctasks_cmd.add_command(get_profile_command)
 
 for subcommand in get_plugin_subcommands(
     click.Command, PCTASKS_COMMAND_ENTRY_POINT_GROUP

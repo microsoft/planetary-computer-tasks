@@ -102,11 +102,6 @@ variable "stac_db_connection_string" {
 
 ## PCTasks Server
 
-variable "pctasks_server_account_key" {
-  type = string
-  sensitive = true
-}
-
 variable "pctasks_server_sp_tenant_id" {
   type    = string
 }

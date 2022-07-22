@@ -34,7 +34,6 @@ services:
 
   #     # See .env for swithcing between docker-compose and kind cluster
   #     - PCTASKS_SERVER_URL=${PCTASKS_SERVER_URL}
-  #     - PCTASKS_SERVER_ACCOUNT_KEY=hunter2
 
   #     # Function queue trigger bindings ##
   #     - FUNC_NOTIFY_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;

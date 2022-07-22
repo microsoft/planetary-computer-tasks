@@ -1,9 +1,13 @@
 # Planetary Computer Tasks (pctasks)
+![Build Status](https://github.com/microsoft/pctasks/workflows/CI/badge.svg?branch=main)
+[![PyPI version](https://badge.fury.io/py/pctasks.client.svg)](https://badge.fury.io/py/pctasks.client)
+[![Documentation Status](https://readthedocs.org/projects/planetary-computer-tasks/badge/?version=latest)](https://planetary-computer-tasks.readthedocs.io/en/latest/?badge=latest)
+[![License](https://img.shields.io/github/license/microsoft/pctasks)](https://opensource.org/licenses/MIT)
 
 `pctasks` runs scalable workflows on Azure. It's used as a reactive ETL system for getting data into
 the Planetary Computer STAC.
 
-See [the documentation](http://microsoft.github.io/planetary-computer-tasks) for more.
+See [the documentation](https://planetary-computer-tasks.readthedocs.io) for more.
 
 ## Contributing
 

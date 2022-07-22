@@ -136,11 +136,6 @@ output "api_management_name" {
 
 ## PCTasks Server
 
-output "pctasks_server_account_key" {
-  value     = var.pctasks_server_account_key
-  sensitive = true
-}
-
 output "pctasks_server_sp_tenant_id" {
   value  = var.pctasks_server_sp_tenant_id
   sensitive = true

@@ -53,6 +53,80 @@ class SettingsError(Exception):
         super().__init__(message, *args)
 
 
+class SettingsConfig(PCBaseModel):
+    _cache: Cache = LRUCache(maxsize=100)
+
+    """Configuration for the settings location."""
+    profile: Optional[str] = None
+    settings_file: Optional[str] = None
+
+    @classmethod
+    @cachedmethod(lambda cls: cls._cache)
+    def get(
+        cls, profile: Optional[str] = None, settings_file: Optional[str] = None
+    ) -> "SettingsConfig":
+        settings_dir = Path(SETTINGS_ENV_DIR).expanduser()
+        config_file = settings_dir / ".config.yaml"
+        config: Optional[SettingsConfig] = None
+        if config_file.exists():
+            try:
+                config = SettingsConfig.from_yaml(config_file.read_text())
+            except Exception as e:
+                logger.warning(
+                    f"Failed to load settings config from {config_file}: {e}"
+                )
+        if not config:
+            config = SettingsConfig()
+
+        # Replace profile with the environment variable if it is set
+        if ENV_VAR_PCTASKS_PROFILE in os.environ:
+            config.profile = os.environ[ENV_VAR_PCTASKS_PROFILE]
+
+        # Use explicit values if present
+        if profile:
+            config.profile = profile
+        if settings_file:
+            config.settings_file = settings_file
+
+        # Use the default profile if none is provided
+        if not config.profile:
+            config.profile = DEFAULT_PROFILE
+
+        return config
+
+    def write(self) -> None:
+        settings_dir = Path(SETTINGS_ENV_DIR).expanduser()
+        try:
+            settings_dir.mkdir(exist_ok=True)
+        except Exception:
+            # Don't fail if we can't create the settings directory
+            logger.warning(f"Could not create settings directory {settings_dir}")
+            return
+        config_file = settings_dir / ".config.yaml"
+        config_file.write_text(self.to_yaml())
+
+    def get_settings_file(self) -> str:
+        settings_dir = Path(SETTINGS_ENV_DIR).expanduser()
+        _settings_file: Optional[str]
+        if self.settings_file:
+            _settings_file = self.settings_file
+        else:
+            _settings_file = map_opt(
+                str, next(settings_dir.glob(f"{self.profile}.y*ml"), None)
+            )
+            if not _settings_file:
+                _settings_file = str(settings_dir / f"{self.profile}.yaml")
+
+        return _settings_file
+
+    @property
+    def is_profile_from_environment(self) -> bool:
+        return (
+            ENV_VAR_PCTASKS_PROFILE in os.environ
+            and self.profile == os.environ[ENV_VAR_PCTASKS_PROFILE]
+        )
+
+
 def _get_yaml_settings_source(
     settings_file: str,
 ) -> SettingsSourceCallable:
@@ -77,22 +151,8 @@ def get_settings(
     profile: Optional[str] = None,
     settings_file: Optional[str] = None,
 ) -> T:
-    profile = profile or os.getenv(ENV_VAR_PCTASKS_PROFILE) or DEFAULT_PROFILE
-    settings_dir = Path(SETTINGS_ENV_DIR).expanduser()
-    try:
-        settings_dir.mkdir(exist_ok=True)
-    except Exception:
-        # Don't fail if we can't create the settings directory
-        logger.warning(f"Could not create settings directory {settings_dir}")
-        pass
-
-    _settings_file: Optional[str]
-    if settings_file:
-        _settings_file = settings_file
-    else:
-        _settings_file = map_opt(str, next(settings_dir.glob(f"{profile}.y*ml"), None))
-        if not _settings_file:
-            _settings_file = str(settings_dir / f"{profile}.yaml")
+    settings_config = SettingsConfig.get(profile=profile, settings_file=settings_file)
+    _settings_file = settings_config.get_settings_file()
 
     class _Settings(BaseSettings):
         # mypy doesn't like using type vars here,

@@ -47,7 +47,6 @@ resource "azurerm_function_app" "pctasks" {
     # PCTasks Server settings #######################################################
 
     "PCTASKS_SERVER_URL"         = "https://${azurerm_public_ip.pctasks.domain_name_label}.${local.location}.cloudapp.azure.com/tasks"
-    "PCTASKS_SERVER_ACCOUNT_KEY" = var.pctasks_server_account_key
 
     # Executor settings #######################################################
 

@@ -71,9 +71,3 @@ stac_db_connection_string = ""
 
 batch_default_pool_id = "tasks_pool"
 min_low_priority = 0
-
-# PCTasks server account key
-# --------------------------
-# This is the key that is used to as simple authentication against
-# the pctasks-server endpoints. TODO: Replace with API Management.
-pctasks_server_account_key = ""
