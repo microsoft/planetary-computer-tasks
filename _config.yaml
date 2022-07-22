@@ -1,0 +1,10 @@
+title: Planetary Computer Tasks Helm charts for Kubernetes
+description: This site stores Helm chart tarballs for the Planteary Computer Tasks project
+theme: minima
+url: "https://microsoft.github.io/planetary-computer-tasks"
+repo_name: planetary-computer-tasks
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - .gitignore
