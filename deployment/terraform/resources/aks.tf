@@ -5,16 +5,7 @@ resource "azurerm_kubernetes_cluster" "pctasks" {
   dns_prefix          = "${local.prefix}-cluster"
   kubernetes_version  = var.k8s_version
 
-  addon_profile {
-    kube_dashboard {
-      enabled = false
-    }
 
-    oms_agent {
-      enabled                    = true
-      log_analytics_workspace_id = azurerm_log_analytics_workspace.pctasks.id
-    }
-  }
 
   default_node_pool {
     name           = "agentpool"

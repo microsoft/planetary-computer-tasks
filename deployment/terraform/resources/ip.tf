@@ -14,6 +14,6 @@ resource "azurerm_public_ip" "pctasks" {
     # See https://github.com/terraform-providers/terraform-provider-azurerm/issues/7034
     # and https://github.com/terraform-providers/terraform-provider-azurerm/pull/11020#issuecomment-802606941
 
-    k8s-azure-dns-label-service = "pcaux/nginx-ingress-ingress-nginx-controller"
+    # k8s-azure-dns-label-service = "pc/nginx-ingress-ingress-nginx-controller"
   }
 }
