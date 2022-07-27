@@ -53,3 +53,15 @@ resource "azurerm_key_vault_secret" "task-client-secret" {
   value        = var.task_sp_client_secret
   key_vault_id = azurerm_key_vault.pctasks.id
 }
+
+# API Management access key
+
+data "azurerm_key_vault" "deploy_secrets" {
+  name                = var.deploy_secrets_kv_name
+  resource_group_name = var.deploy_secrets_kv_rg
+}
+
+data "azurerm_key_vault_secret" "access_key" {
+  name         = var.access_key_secret_name
+  key_vault_id = data.azurerm_key_vault.deploy_secrets.id
+}
