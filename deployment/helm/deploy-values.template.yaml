@@ -7,6 +7,10 @@ pctasks:
     appRootPath: "/tasks"
     debug: "FALSE"
 
+    access_key:
+      enabled: true
+      value: "{{ tf.kv_access_key }}"
+
     image:
       repository: "{{ tf.component_acr_name }}.azurecr.io/pctasks-server"
       tag: "{{ tf.pctasks_server_image_tag }}"

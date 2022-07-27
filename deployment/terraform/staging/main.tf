@@ -4,6 +4,9 @@ module "resources" {
   environment = "staging"
   region = "West Europe"
 
+  pctasks_server_image_tag = "latest"
+  pctasks_run_image_tag = "latest"
+
   batch_default_pool_id = var.batch_default_pool_id
 
   task_acr_resource_group = var.task_acr_resource_group
@@ -19,6 +22,10 @@ module "resources" {
   kv_sp_tenant_id = var.kv_sp_tenant_id
   kv_sp_client_id = var.kv_sp_client_id
   kv_sp_client_secret = var.kv_sp_client_secret
+
+  deploy_secrets_kv_name = var.deploy_secrets_kv_name
+  deploy_secrets_kv_rg = var.deploy_secrets_kv_rg
+  access_key_secret_name = var.access_key_secret_name
 
   pctasks_server_sp_tenant_id = var.pctasks_server_sp_tenant_id
   pctasks_server_sp_client_id = var.pctasks_server_sp_client_id

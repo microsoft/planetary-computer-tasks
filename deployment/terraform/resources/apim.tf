@@ -1,11 +1,40 @@
 resource "azurerm_api_management" "pctasks" {
-  name                = "${local.prefix}"
+  name                = local.prefix
   location            = azurerm_resource_group.pctasks.location
   resource_group_name = azurerm_resource_group.pctasks.name
   publisher_name      = "Microsoft"
   publisher_email     = "planetarycomputer@microsoft.com"
 
   sku_name = "Standard_1"
+
+  identity {
+    type = "SystemAssigned"
+  }
+}
+
+resource "azurerm_key_vault_access_policy" "apim" {
+  key_vault_id = data.azurerm_key_vault.deploy_secrets.id
+  tenant_id    = azurerm_api_management.pctasks.identity[0].tenant_id
+  object_id    = azurerm_api_management.pctasks.identity[0].principal_id
+
+  depends_on = [
+    azurerm_api_management.pctasks,
+  ]
+
+  secret_permissions = [
+    "Get", "List"
+  ]
+}
+
+resource "azurerm_api_management_named_value" "pctasks_access_key" {
+  name                = "pctasks-apim-access-key"
+  resource_group_name = azurerm_resource_group.pctasks.name
+  api_management_name = azurerm_api_management.pctasks.name
+  display_name        = "pctasks-apim-access-key"
+  secret              = true
+  value_from_key_vault {
+    secret_id = data.azurerm_key_vault_secret.access_key.id
+  }
 }
 
 resource "azurerm_api_management_api" "pctasks" {
@@ -20,7 +49,7 @@ resource "azurerm_api_management_api" "pctasks" {
   subscription_required = false
   subscription_key_parameter_names {
     header = "x-api-key"
-    query = "api-key"
+    query  = "api-key"
   }
 }
 
@@ -116,6 +145,10 @@ resource "azurerm_api_management_api_policy" "pctasks_policy" {
   api_management_name = azurerm_api_management.pctasks.name
   resource_group_name = azurerm_resource_group.pctasks.name
 
+  depends_on = [
+    azurerm_api_management_named_value.pctasks_access_key
+  ]
+
   xml_content = <<XML
     <policies>
     <inbound>
@@ -149,6 +182,9 @@ resource "azurerm_api_management_api_policy" "pctasks_policy" {
                  return context.User.Email;
              }
              return null; }</value>
+        </set-header>
+        <set-header name="X-Access-Key" exists-action="override">
+             <value>{{pctasks-apim-access-key}}</value>
         </set-header>
         <rate-limit-by-key calls="100" renewal-period="1" counter-key="@(context.Request.IpAddress)" />
     </inbound>

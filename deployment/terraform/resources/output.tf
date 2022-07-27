@@ -128,6 +128,10 @@ output "kv_sp_client_secret" {
   value = var.kv_sp_client_secret
 }
 
+output "kv_access_key" {
+  value = data.azurerm_key_vault_secret.access_key.value
+}
+
 ## API Management
 
 output "api_management_name" {

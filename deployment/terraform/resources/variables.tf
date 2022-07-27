@@ -108,6 +108,18 @@ variable "kv_sp_client_secret" {
   type    = string
 }
 
+variable "deploy_secrets_kv_name" {
+  type    = string
+}
+
+variable deploy_secrets_kv_rg {
+  type    = string
+}
+
+variable access_key_secret_name {
+  type    = string
+}
+
 ## PCTasks Server
 
 variable "pctasks_server_sp_tenant_id" {
