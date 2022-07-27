@@ -57,6 +57,11 @@ spec:
             - name: PCTASKS_SERVER__RECORD_TABLES__CONNECTION_STRING
               value: "{{ .Values.pctasks.run.tables.connection_string }}"
 
+            {{- if .Values.pctasks.server.access_key.enabled }}
+            - name: PCTASKS_SERVER__ACCESS_KEY
+              value: "{{ .Values.pctasks.server.access_key.value }}"
+            {{- end }}
+
             ## Azure service principal
             - name: AZURE_TENANT_ID
               value: "{{ .Values.pctasks.server.azure.tenant_id }}"

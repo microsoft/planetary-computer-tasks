@@ -7,6 +7,9 @@ pctasks:
     appRootPath: ""
     debug: "FALSE"
     webConcurrency: "1"
+    access_key:
+      enabled: false
+      value: ""
 
     dev:
       enabled: false
