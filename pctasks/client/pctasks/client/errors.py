@@ -26,3 +26,7 @@ class TaskNotFoundError(NotFoundError):
     """Raised when a task is not found."""
 
     pass
+
+
+class ConfirmationError(Exception):
+    pass

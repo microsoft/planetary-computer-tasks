@@ -1,9 +1,13 @@
 import logging
+import sys
 from typing import List, Tuple
 
 import click
+from rich import print as rprint
 
+from pctasks.cli.cli import cli_output
 from pctasks.client.client import PCTasksClient
+from pctasks.client.errors import ConfirmationError
 from pctasks.client.settings import ClientSettings
 from pctasks.client.submit.template import template_workflow_file
 from pctasks.core.context import PCTasksCommandContext
@@ -12,7 +16,7 @@ from pctasks.core.models.workflow import WorkflowSubmitMessage
 logger = logging.getLogger(__name__)
 
 
-def file_cmd(
+def workflow_cmd(
     ctx: click.Context, workflow_path: str, arg: List[Tuple[str, str]]
 ) -> None:
     """Submit the workflow at FILE
@@ -26,12 +30,14 @@ def file_cmd(
 
     msg = WorkflowSubmitMessage(workflow=workflow, args=dict(arg))
     submit_client = PCTasksClient(settings)
-    submit_client.submit_workflow(msg)
+    try:
+        submit_client.submit_workflow(msg)
+    except ConfirmationError:
+        rprint("[red]Submit cancelled by user[/red]")
+        raise click.Abort()
 
-    with open("test_workflow_argo.json", "w") as f:
-        f.write(msg.json(indent=2))
-
-    with open("test_workflow_argo.yaml", "w") as f:
-        f.write(msg.to_yaml())
-
-    click.echo(click.style(f"Submitted workflow with run ID: {msg.run_id}", fg="green"))
+    rprint(
+        f"[green]Submitted workflow with run ID: [/green][bold{msg.run_id}[/bold]",
+        file=sys.stderr,
+    )
+    cli_output(msg.run_id)

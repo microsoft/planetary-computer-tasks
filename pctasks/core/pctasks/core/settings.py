@@ -11,6 +11,7 @@ from typing import (
     Tuple,
     Type,
     TypeVar,
+    Union,
     cast,
 )
 
@@ -24,6 +25,7 @@ from pctasks.core.constants import (
     DEFAULT_PROFILE,
     ENV_VAR_PCTASK_PREFIX,
     ENV_VAR_PCTASKS_PROFILE,
+    SETTINGS_DIR_ENV_VAR,
     SETTINGS_ENV_DIR,
 )
 from pctasks.core.context import PCTasksCommandContext
@@ -33,6 +35,10 @@ from pctasks.core.utils import map_opt
 T = TypeVar("T", bound="PCTasksSettings")
 
 logger = logging.getLogger(__name__)
+
+
+def get_settings_dir() -> Path:
+    return Path(os.environ.get(SETTINGS_DIR_ENV_VAR, SETTINGS_ENV_DIR)).expanduser()
 
 
 class SettingsLoadError(Exception):
@@ -63,9 +69,12 @@ class SettingsConfig(PCBaseModel):
     @classmethod
     @cachedmethod(lambda cls: cls._cache)
     def get(
-        cls, profile: Optional[str] = None, settings_file: Optional[str] = None
+        cls,
+        profile: Optional[str] = None,
+        settings_file: Optional[Union[str, Path]] = None,
     ) -> "SettingsConfig":
-        settings_dir = Path(SETTINGS_ENV_DIR).expanduser()
+        settings_file = map_opt(Path, settings_file)
+        settings_dir = get_settings_dir()
         config_file = settings_dir / ".config.yaml"
         config: Optional[SettingsConfig] = None
         if config_file.exists():
@@ -75,6 +84,7 @@ class SettingsConfig(PCBaseModel):
                 logger.warning(
                     f"Failed to load settings config from {config_file}: {e}"
                 )
+
         if not config:
             config = SettingsConfig()
 
@@ -86,7 +96,7 @@ class SettingsConfig(PCBaseModel):
         if profile:
             config.profile = profile
         if settings_file:
-            config.settings_file = settings_file
+            config.settings_file = str(settings_file)
 
         # Use the default profile if none is provided
         if not config.profile:
@@ -95,7 +105,7 @@ class SettingsConfig(PCBaseModel):
         return config
 
     def write(self) -> None:
-        settings_dir = Path(SETTINGS_ENV_DIR).expanduser()
+        settings_dir = get_settings_dir()
         try:
             settings_dir.mkdir(exist_ok=True)
         except Exception:
@@ -105,8 +115,8 @@ class SettingsConfig(PCBaseModel):
         config_file = settings_dir / ".config.yaml"
         config_file.write_text(self.to_yaml())
 
-    def get_settings_file(self) -> str:
-        settings_dir = Path(SETTINGS_ENV_DIR).expanduser()
+    def get_settings_file(self) -> Path:
+        settings_dir = get_settings_dir()
         _settings_file: Optional[str]
         if self.settings_file:
             _settings_file = self.settings_file
@@ -117,7 +127,7 @@ class SettingsConfig(PCBaseModel):
             if not _settings_file:
                 _settings_file = str(settings_dir / f"{self.profile}.yaml")
 
-        return _settings_file
+        return Path(_settings_file)
 
     @property
     def is_profile_from_environment(self) -> bool:
@@ -128,13 +138,13 @@ class SettingsConfig(PCBaseModel):
 
 
 def _get_yaml_settings_source(
-    settings_file: str,
+    settings_file: Path,
 ) -> SettingsSourceCallable:
     def yaml_config_settings_source(settings: BaseSettings) -> Dict[str, Any]:
         """
         A settings source that loads configuration from YAML.
         """
-        if Path(settings_file).exists():
+        if settings_file.exists():
             with open(settings_file) as f:
                 yaml_txt = f.read()
             yml: strictyaml.YAML = strictyaml.load(yaml_txt)
@@ -149,7 +159,7 @@ def get_settings(
     model: Type[T],
     section_name: str,
     profile: Optional[str] = None,
-    settings_file: Optional[str] = None,
+    settings_file: Optional[Path] = None,
 ) -> T:
     settings_config = SettingsConfig.get(profile=profile, settings_file=settings_file)
     _settings_file = settings_config.get_settings_file()
@@ -175,11 +185,11 @@ def get_settings(
                 env_settings: SettingsSourceCallable,
                 file_secret_settings: SettingsSourceCallable,
             ) -> Any:
-                if _settings_file and Path(_settings_file).exists():
+                if _settings_file.exists():
                     return (
                         init_settings,
                         env_settings,
-                        _get_yaml_settings_source(str(_settings_file)),
+                        _get_yaml_settings_source(_settings_file),
                         file_secret_settings,
                     )
                 else:
@@ -201,7 +211,7 @@ def get_settings(
         msg += f" - {e}"
         raise SettingsError(
             msg,
-            path=_settings_file,
+            path=str(_settings_file),
             validation_error=e if isinstance(e, ValidationError) else None,
         ) from e
 
@@ -227,14 +237,14 @@ class PCTasksSettings(PCBaseModel):
     def get(
         cls: Type[T],
         profile: Optional[str] = None,
-        settings_file: Optional[str] = None,
+        settings_file: Optional[Union[str, Path]] = None,
     ) -> T:
         try:
             return get_settings(
                 cls,
                 cls.section_name(),
                 profile=profile,
-                settings_file=settings_file,
+                settings_file=map_opt(Path, settings_file),
             )
         except Exception as e:
             raise SettingsLoadError(f"Failed to load settings.: {e}") from e
