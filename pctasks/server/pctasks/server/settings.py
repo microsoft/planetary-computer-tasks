@@ -90,6 +90,8 @@ class ServerSettings(PCTasksSettings):
     dev: bool = False
     dev_api_key: Optional[str] = None
 
+    access_key: Optional[str] = None
+
     record_tables: RecordTablesConfig
 
     app_insights_instrumentation_key: Optional[str] = Field(
