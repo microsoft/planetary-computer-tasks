@@ -35,9 +35,6 @@ RUN cd /opt/src && pip install -r requirements-dev.txt
 # Copy and install packages
 #
 
-# TODO: remove this
-RUN apt-get install -y git
-
 COPY pctasks/core /opt/src/pctasks/core
 RUN cd /opt/src/pctasks/core && \
      pip install -e .
