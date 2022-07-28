@@ -34,7 +34,7 @@ class TaskRunStatus(StrEnum):
     SUBMITTED = "submitted"
     """Task run was submitted to the executor (e.g. Azure Batch)."""
 
-    STARTING = "staring"
+    STARTING = "starting"
     """Task run is starting."""
 
     RUNNING = "running"
