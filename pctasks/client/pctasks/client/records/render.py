@@ -4,18 +4,8 @@ import pandas as pd
 from rich.console import Console
 
 from pctasks.client.records.console.dataframe import DataFrameRender
+from pctasks.client.utils import status_emoji
 from pctasks.core.models.api import JobRunResponse, TaskRunResponse, WorkflowRunResponse
-
-
-def status_emoji(status: str) -> str:
-    if status.lower() == "completed":
-        return "✅"
-    if status.lower() == "failed":
-        return "❌"
-    if status.lower() == "running":
-        return "🏃"
-    else:
-        return "🕖"
 
 
 def workflows_to_df(workflows: List[WorkflowRunResponse]) -> pd.DataFrame:

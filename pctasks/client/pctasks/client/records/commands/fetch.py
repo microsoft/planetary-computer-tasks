@@ -6,11 +6,10 @@ import click
 @click.command("workflow")
 @click.argument("run_id")
 @click.option("-d", "--dataset", help="Filter by dataset.")
+@click.option("-s", "--status", is_flag=True, help="Only report status.")
 @click.pass_context
 def fetch_workflow_cmd(
-    ctx: click.Context,
-    run_id: str,
-    dataset: Optional[str],
+    ctx: click.Context, run_id: str, dataset: Optional[str], status: bool
 ) -> int:
     """Fetch a workflow record.
 
@@ -18,7 +17,7 @@ def fetch_workflow_cmd(
     """
     from . import _fetch
 
-    return _fetch.fetch_workflow_cmd(ctx, run_id, dataset)
+    return _fetch.fetch_workflow_cmd(ctx, run_id, dataset, status)
 
 
 @click.command("job")
