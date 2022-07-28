@@ -24,3 +24,4 @@ types-PyYAML
 myst-parser
 pydata-sphinx-theme
 sphinx
+sphinx-autobuild==2021.3.14

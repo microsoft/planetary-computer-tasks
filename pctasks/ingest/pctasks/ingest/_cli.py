@@ -7,6 +7,7 @@ import click
 from pctasks.cli.cli import cli_output, cli_print
 from pctasks.client.client import PCTasksClient
 from pctasks.client.settings import ClientSettings
+from pctasks.client.submit._cli import cli_submit_workflow
 from pctasks.core.constants import DEFAULT_TARGET_ENVIRONMENT
 from pctasks.core.context import PCTasksCommandContext
 from pctasks.core.models.workflow import (
@@ -91,6 +92,7 @@ def ingest_ndjson_cmd(
     else:
         settings = ClientSettings.get(context.profile, context.settings_file)
         client = PCTasksClient(settings)
+        cli_submit_workflow(client, submit_message, settings)
         cli_print(
             click.style(
                 f"  Submitting workflow to {settings.endpoint}...",

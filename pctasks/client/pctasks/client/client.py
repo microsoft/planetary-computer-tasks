@@ -8,8 +8,10 @@ from typing import Any, Dict, List, Optional, Union
 
 import requests
 from requests import HTTPError
+from rich.prompt import Confirm
 
 from pctasks.client.errors import (
+    ConfirmationError,
     JobNotFoundError,
     TaskNotFoundError,
     WorkflowNotFoundError,
@@ -138,12 +140,21 @@ class PCTasksClient:
                             task_config.code.requirements, "requirements"
                         )
 
-    def submit_workflow(self, message: WorkflowSubmitMessage) -> WorkflowSubmitMessage:
+    def submit_workflow(
+        self, message: WorkflowSubmitMessage, confirmation_required: bool = False
+    ) -> WorkflowSubmitMessage:
         """Submits a workflow for processing.
 
         Returns a modified :class:`WorkflowSubmitMessage` that has
         a ``run_id`` set.
+
+        Set "confirm" to True to skip the confirmation prompt.
         """
+        if confirmation_required:
+            confirmed = Confirm.ask(f"Submit workflow to {self.settings.endpoint}?")
+            if not confirmed:
+                raise ConfirmationError("Submit cancelled.")
+
         message = message.copy(deep=True)
 
         # Inline args

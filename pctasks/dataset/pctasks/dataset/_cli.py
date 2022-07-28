@@ -5,9 +5,10 @@ import click
 from pystac.utils import str_to_datetime
 from strictyaml.exceptions import MarkedYAMLError
 
-from pctasks.cli.cli import cli_output, cli_print
+from pctasks.cli.cli import cli_output
 from pctasks.client.client import PCTasksClient
 from pctasks.client.settings import ClientSettings
+from pctasks.client.submit._cli import cli_submit_workflow
 from pctasks.core.context import PCTasksCommandContext
 from pctasks.core.models.workflow import WorkflowSubmitMessage
 from pctasks.core.utils import map_opt
@@ -72,9 +73,7 @@ def create_chunks_cmd(
         submit_message = WorkflowSubmitMessage(workflow=workflow, args=dict(arg))
         settings = ClientSettings.get(context.profile, context.settings_file)
         client = PCTasksClient(settings)
-        cli_print(click.style(f"  Submitting {submit_message.run_id}...", fg="green"))
-        submitted = client.submit_workflow(submit_message)
-        cli_output(submitted.run_id)
+        cli_submit_workflow(client, submit_message, settings)
 
 
 def process_items_cmd(
@@ -134,9 +133,7 @@ def process_items_cmd(
         submit_message = WorkflowSubmitMessage(workflow=workflow, args=dict(arg))
         settings = ClientSettings.get(context.profile, context.settings_file)
         client = PCTasksClient(settings)
-        cli_print(click.style(f"  Submitting {submit_message.run_id}...", fg="green"))
-        submitted = client.submit_workflow(submit_message)
-        cli_output(submitted.run_id)
+        cli_submit_workflow(client, submit_message, settings)
 
 
 def ingest_collection_cmd(
@@ -189,9 +186,7 @@ def ingest_collection_cmd(
         submit_message = WorkflowSubmitMessage(workflow=workflow, args=dict(arg))
         settings = ClientSettings.get(context.profile, context.settings_file)
         client = PCTasksClient(settings)
-        cli_print(click.style(f"  Submitting {submit_message.run_id}...", fg="green"))
-        submitted = client.submit_workflow(submit_message)
-        cli_output(submitted.run_id)
+        cli_submit_workflow(client, submit_message, settings)
 
 
 def list_collections_cmd(

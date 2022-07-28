@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 @click.argument("workflow_path")
 @opt_args
 @click.pass_context
-def file_cmd(
+def workflow_cmd(
     ctx: click.Context, workflow_path: str, arg: List[Tuple[str, str]]
 ) -> None:
     """Submit the workflow at FILE
@@ -21,7 +21,7 @@ def file_cmd(
     """
     from . import _cli
 
-    return _cli.file_cmd(ctx, workflow_path, arg)
+    return _cli.workflow_cmd(ctx, workflow_path, arg)
 
 
 @click.group("submit")
@@ -31,4 +31,4 @@ def submit_cmd(ctx: click.Context) -> None:
     pass
 
 
-submit_cmd.add_command(file_cmd)
+submit_cmd.add_command(workflow_cmd)
