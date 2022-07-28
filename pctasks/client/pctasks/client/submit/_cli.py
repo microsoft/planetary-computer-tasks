@@ -31,7 +31,9 @@ def workflow_cmd(
     msg = WorkflowSubmitMessage(workflow=workflow, args=dict(arg))
     submit_client = PCTasksClient(settings)
     try:
-        submit_client.submit_workflow(msg)
+        submit_client.submit_workflow(
+            msg, confirmation_required=settings.confirmation_required
+        )
     except ConfirmationError:
         rprint("[red]Submit cancelled by user[/red]")
         raise click.Abort()

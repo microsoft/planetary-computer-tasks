@@ -141,7 +141,7 @@ class PCTasksClient:
                         )
 
     def submit_workflow(
-        self, message: WorkflowSubmitMessage, confirm: bool = False
+        self, message: WorkflowSubmitMessage, confirmation_required: bool = False
     ) -> WorkflowSubmitMessage:
         """Submits a workflow for processing.
 
@@ -150,7 +150,7 @@ class PCTasksClient:
 
         Set "confirm" to True to skip the confirmation prompt.
         """
-        if self.settings.confirmation_required and not confirm:
+        if confirmation_required:
             confirmed = Confirm.ask(f"Submit workflow to {self.settings.endpoint}?")
             if not confirmed:
                 raise ConfirmationError("Submit cancelled.")
