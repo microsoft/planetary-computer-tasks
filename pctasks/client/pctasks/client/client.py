@@ -219,8 +219,8 @@ class PCTasksClient:
 
     def get_job(self, run_id: str, job_id: str) -> JobRunResponse:
         route = FETCH_JOB_ROUTE.format(run_id=run_id, job_id=job_id)
-        result = self._call_api("GET", route)
         try:
+            result = self._call_api("GET", route)
             return JobRunResponse.parse_obj(result)
         except HTTPError as e:
             if e.response.status_code == 404:
@@ -248,13 +248,13 @@ class PCTasksClient:
         route = FETCH_TASK_ROUTE.format(run_id=run_id, job_id=job_id, task_id=task_id)
         try:
             result = self._call_api("GET", route)
+            return TaskRunResponse.parse_obj(result)
         except HTTPError as e:
             if e.response.status_code == 404:
                 raise TaskNotFoundError(
                     f"Task {task_id} of job {job_id} for workflow run {run_id}"
                 )
             raise
-        return TaskRunResponse.parse_obj(result)
 
     def get_task_logs_from_task(self, task: TaskRunResponse) -> Dict[str, str]:
         result: Dict[str, str] = {}

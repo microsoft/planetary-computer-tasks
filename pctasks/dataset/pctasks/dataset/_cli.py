@@ -6,11 +6,9 @@ from pystac.utils import str_to_datetime
 from strictyaml.exceptions import MarkedYAMLError
 
 from pctasks.cli.cli import cli_output
-from pctasks.client.client import PCTasksClient
 from pctasks.client.settings import ClientSettings
 from pctasks.client.submit._cli import cli_submit_workflow
 from pctasks.core.context import PCTasksCommandContext
-from pctasks.core.models.workflow import WorkflowSubmitMessage
 from pctasks.core.utils import map_opt
 from pctasks.core.yaml import YamlValidationError
 from pctasks.dataset.chunks.models import ChunkOptions
@@ -69,11 +67,12 @@ def create_chunks_cmd(
 
     if not submit:
         cli_output(workflow.to_yaml())
+        ctx.exit(0)
     else:
-        submit_message = WorkflowSubmitMessage(workflow=workflow, args=dict(arg))
         settings = ClientSettings.get(context.profile, context.settings_file)
-        client = PCTasksClient(settings)
-        cli_submit_workflow(client, submit_message, settings)
+        ctx.exit(
+            cli_submit_workflow(workflow=workflow, args=dict(arg), settings=settings)
+        )
 
 
 def process_items_cmd(
@@ -129,11 +128,12 @@ def process_items_cmd(
 
     if not submit:
         cli_output(workflow.to_yaml())
+        ctx.exit(0)
     else:
-        submit_message = WorkflowSubmitMessage(workflow=workflow, args=dict(arg))
         settings = ClientSettings.get(context.profile, context.settings_file)
-        client = PCTasksClient(settings)
-        cli_submit_workflow(client, submit_message, settings)
+        ctx.exit(
+            cli_submit_workflow(workflow=workflow, args=dict(arg), settings=settings)
+        )
 
 
 def ingest_collection_cmd(
@@ -182,11 +182,12 @@ def ingest_collection_cmd(
 
     if not submit:
         cli_output(workflow.to_yaml())
+        ctx.exit(0)
     else:
-        submit_message = WorkflowSubmitMessage(workflow=workflow, args=dict(arg))
         settings = ClientSettings.get(context.profile, context.settings_file)
-        client = PCTasksClient(settings)
-        cli_submit_workflow(client, submit_message, settings)
+        ctx.exit(
+            cli_submit_workflow(workflow=workflow, args=dict(arg), settings=settings)
+        )
 
 
 def list_collections_cmd(
