@@ -1,6 +1,6 @@
 import logging
 import sys
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import click
 from rich import print as rprint
@@ -14,6 +14,28 @@ from pctasks.core.context import PCTasksCommandContext
 from pctasks.core.models.workflow import WorkflowSubmitMessage
 
 logger = logging.getLogger(__name__)
+
+
+def cli_submit_workflow(
+    submit_client: PCTasksClient,
+    msg: WorkflowSubmitMessage,
+    settings: Optional[ClientSettings] = None,
+) -> None:
+    """Submit a workflow to the PCTasks task queue."""
+    settings = settings or ClientSettings.get()
+    try:
+        submit_client.submit_workflow(
+            msg, confirmation_required=settings.confirmation_required
+        )
+    except ConfirmationError:
+        rprint("[red]Submit cancelled by user[/red]")
+        raise click.Abort()
+
+    rprint(
+        "[green]Submitted workflow with run ID: [/green]",
+        file=sys.stderr,
+    )
+    cli_output(msg.run_id)
 
 
 def workflow_cmd(
@@ -30,16 +52,4 @@ def workflow_cmd(
 
     msg = WorkflowSubmitMessage(workflow=workflow, args=dict(arg))
     submit_client = PCTasksClient(settings)
-    try:
-        submit_client.submit_workflow(
-            msg, confirmation_required=settings.confirmation_required
-        )
-    except ConfirmationError:
-        rprint("[red]Submit cancelled by user[/red]")
-        raise click.Abort()
-
-    rprint(
-        f"[green]Submitted workflow with run ID: [/green][bold{msg.run_id}[/bold]",
-        file=sys.stderr,
-    )
-    cli_output(msg.run_id)
+    cli_submit_workflow(submit_client, msg, settings)
