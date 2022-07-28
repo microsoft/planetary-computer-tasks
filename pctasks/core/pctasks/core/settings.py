@@ -74,7 +74,8 @@ class SettingsConfig(PCBaseModel):
         profile: Optional[str] = None,
         settings_file: Optional[Union[str, Path]] = None,
     ) -> "SettingsConfig":
-        settings_file = map_opt(lambda x: Path(x), settings_file)
+        if settings_file:
+            settings_file = Path(settings_file)
         settings_dir = get_settings_dir()
         config_file = settings_dir / ".config.yaml"
         config: Optional[SettingsConfig] = None
@@ -250,11 +251,13 @@ class PCTasksSettings(PCBaseModel):
         settings_file: Optional[Union[str, Path]] = None,
     ) -> T:
         try:
+            if isinstance(settings_file, str):
+                settings_file = Path(settings_file)
             return get_settings(
                 cls,
                 cls.section_name(),
                 profile=profile,
-                settings_file=map_opt(lambda x: Path(x), settings_file),
+                settings_file=settings_file,
             )
         except Exception as e:
             raise SettingsLoadError(f"Failed to load settings.: {e}") from e
