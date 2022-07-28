@@ -6,6 +6,7 @@ from typing import (
     Any,
     Dict,
     Hashable,
+    List,
     Optional,
     OrderedDict,
     Tuple,
@@ -128,6 +129,15 @@ class SettingsConfig(PCBaseModel):
                 _settings_file = str(settings_dir / f"{self.profile}.yaml")
 
         return Path(_settings_file)
+
+    @classmethod
+    def get_profile_names(cls) -> List[str]:
+        settings_dir = get_settings_dir()
+        if not settings_dir.exists():
+            return []
+        return [
+            f.stem for f in settings_dir.glob("*.y*ml") if not f.name.startswith(".")
+        ]
 
     @property
     def is_profile_from_environment(self) -> bool:

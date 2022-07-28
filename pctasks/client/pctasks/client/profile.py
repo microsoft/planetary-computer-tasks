@@ -5,11 +5,13 @@ import click
 import yaml
 from pydantic import ValidationError
 from rich import print as rprint
+from rich.console import Console
 from rich.prompt import Confirm, Prompt
+from rich.table import Table
 
 from pctasks.client.settings import ClientSettings
 from pctasks.core.constants import DEFAULT_PROFILE, ENV_VAR_PCTASKS_PROFILE
-from pctasks.core.settings import SettingsConfig
+from pctasks.core.settings import SettingsConfig, SettingsLoadError
 from pctasks.core.utils import map_opt
 
 
@@ -104,13 +106,18 @@ def edit_profile_command(ctx: click.Context, profile: str) -> None:
 
 @click.command(name="set")
 @click.argument("profile")
-def set_profile_command(profile: str) -> None:
+@click.pass_context
+def set_profile_command(ctx: click.Context, profile: str) -> None:
     """Sets the profile to be used by pctasks.
 
     The profile set by this command can still be overridden by the
     environment variable PCTASKS_PROFILE or by command line options.
     """
     settings_config = SettingsConfig.get(profile=profile)
+    if profile not in settings_config.get_profile_names():
+        rprint(f"[red]Profile [bold]{profile}[/bold] does not exists[/red]")
+        ctx.exit(1)
+
     profile_only_config = settings_config.copy(update={"settings_file": None})
     profile_settings_file = profile_only_config.get_settings_file()
     if not Path(profile_settings_file).exists():
@@ -148,6 +155,35 @@ def get_profile_command() -> None:
             print()
 
 
+@click.command(name="list")
+def list_profiles_command() -> None:
+    """Lists all available profiles."""
+    settings_config = SettingsConfig.get()
+    current_profile = settings_config.profile
+    table = Table(title="Profiles", show_lines=True)
+    table.add_column("Profile")
+    table.add_column(
+        "Endpoint",
+        justify="right",
+    )
+    for profile in settings_config.get_profile_names():
+        try:
+            profile_settings = ClientSettings.get(profile=profile)
+            endpoint = profile_settings.endpoint
+        except SettingsLoadError:
+            endpoint = "[red]Invalid settings![/red]"
+
+        if profile == current_profile:
+            profile_out = f"[bold]{profile}[/bold] [green](current)[/green]"
+            endpoint = f"[bold]{endpoint}[/bold]"
+        else:
+            profile_out = profile
+
+        table.add_row(profile_out, endpoint)
+    console = Console()
+    console.print(table)
+
+
 @click.group(name="profile")
 def profile_cmd() -> None:
     pass
@@ -157,3 +193,4 @@ profile_cmd.add_command(create_profile_command)
 profile_cmd.add_command(edit_profile_command)
 profile_cmd.add_command(set_profile_command)
 profile_cmd.add_command(get_profile_command)
+profile_cmd.add_command(list_profiles_command)
