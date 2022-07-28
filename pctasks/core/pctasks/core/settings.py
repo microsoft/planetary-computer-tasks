@@ -2,25 +2,14 @@ import logging
 import os
 from abc import abstractmethod
 from pathlib import Path
-from typing import (
-    Any,
-    Dict,
-    Hashable,
-    List,
-    Optional,
-    OrderedDict,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-    cast,
-)
+from typing import Any, Dict, Hashable, List, Optional, Tuple, Type, TypeVar, Union
 
-import strictyaml
+import yaml
 from cachetools import Cache, LRUCache, cachedmethod
 from cachetools.keys import hashkey
 from pydantic import BaseSettings, Field, ValidationError
 from pydantic.env_settings import SettingsSourceCallable
+from yaml import Loader
 
 from pctasks.core.constants import (
     DEFAULT_PROFILE,
@@ -158,8 +147,8 @@ def _get_yaml_settings_source(
         if settings_file.exists():
             with open(settings_file) as f:
                 yaml_txt = f.read()
-            yml: strictyaml.YAML = strictyaml.load(yaml_txt)
-            return cast(OrderedDict[str, Any], yml.data)
+            result: Dict[str, Any] = yaml.load(yaml_txt, Loader=Loader)
+            return result
         else:
             return {}
 
