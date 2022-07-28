@@ -25,14 +25,17 @@ def cli_submit_workflow(
     """Submit a workflow to the PCTasks task queue."""
     settings = settings or ClientSettings.get()
     submit_client = PCTasksClient(settings)
-    args_errors = workflow.get_argument_errors(args)
+
+    msg = WorkflowSubmitMessage(workflow=workflow, args=args)
+    settings.add_default_arguments(msg)
+
+    args_errors = msg.workflow.get_argument_errors(msg.args)
     if args_errors:
         rprint("[red]Argument errors:[/red]")
         for error in args_errors:
             rprint(f"  [red bold]{error}[/red bold]")
         return 1
 
-    msg = WorkflowSubmitMessage(workflow=workflow, args=args)
     try:
         submit_client.submit_workflow(
             msg, confirmation_required=settings.confirmation_required

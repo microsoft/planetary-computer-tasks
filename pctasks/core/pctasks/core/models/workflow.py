@@ -14,6 +14,10 @@ from pctasks.core.utils import StrEnum
 from pctasks.core.utils.template import DictTemplater
 
 
+class WorkflowArgumentError(Exception):
+    pass
+
+
 class BlobCreatedTriggerConfig(PCBaseModel):
     storage_account: str
     container: str
@@ -160,19 +164,12 @@ class WorkflowSubmitMessage(PCBaseModel):
             return self.workflow
         return self.workflow.template_args(self.args)
 
-    @validator("args", always=True)
-    def _validate_args(
-        cls, v: Optional[Dict[str, Any]], values: Dict[str, Any]
-    ) -> Optional[Dict[str, Any]]:
-        """Check that args match the workflow args."""
-        if "workflow" not in values:
-            raise ValueError("'workflow' is a required field.")
-        errors = values["workflow"].get_argument_errors(v)
+    def ensure_args_match(self) -> None:
+        """Raise exception if args don't match the workflow args."""
+        errors = self.workflow.get_argument_errors(self.args)
 
         if errors:
-            raise ValueError(f"Argument errors: {';'.join(errors)}")
-
-        return v
+            raise WorkflowArgumentError(f"Argument errors: {';'.join(errors)}")
 
 
 class WorkflowRunStatus(StrEnum):

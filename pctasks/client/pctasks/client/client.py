@@ -157,6 +157,10 @@ class PCTasksClient:
 
         message = message.copy(deep=True)
 
+        # Ensure arguments
+        self.settings.add_default_arguments(message)
+        message.ensure_args_match()
+
         # Inline args
         message.workflow = message.get_workflow_with_templated_args()
 

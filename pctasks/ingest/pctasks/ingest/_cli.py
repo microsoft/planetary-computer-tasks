@@ -5,14 +5,11 @@ from typing import List, Optional
 import click
 
 from pctasks.cli.cli import cli_output
-from pctasks.client.submit._cli import cli_submit_workflow
 from pctasks.client.settings import ClientSettings
+from pctasks.client.submit._cli import cli_submit_workflow
 from pctasks.core.constants import DEFAULT_TARGET_ENVIRONMENT
 from pctasks.core.context import PCTasksCommandContext
-from pctasks.core.models.workflow import (
-    JobConfig,
-    WorkflowConfig,
-)
+from pctasks.core.models.workflow import JobConfig, WorkflowConfig
 from pctasks.ingest.models import IngestNdjsonInput, IngestTaskConfig, NdjsonFolder
 from pctasks.ingest.settings import IngestOptions, IngestSettings
 from pctasks.ingest.utils import generate_collection_json
