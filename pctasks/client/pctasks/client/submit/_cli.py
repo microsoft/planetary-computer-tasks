@@ -3,6 +3,7 @@ import sys
 from typing import List, Optional, Tuple
 
 import click
+import requests
 from rich import print as rprint
 
 from pctasks.cli.cli import cli_output
@@ -30,6 +31,11 @@ def cli_submit_workflow(
     except ConfirmationError:
         rprint("[red]Submit cancelled by user[/red]")
         raise click.Abort()
+    except requests.HTTPError as e:
+        logger.debug(e, exc_info=True)
+        rprint("[red]Error submitting workflow![/red]", file=sys.stderr)
+        rprint(f"[red bold]{e}[/red bold]", file=sys.stderr)
+        sys.exit(1)
 
     rprint(
         "[green]Submitted workflow with run ID: [/green]",
