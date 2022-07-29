@@ -1,0 +1,41 @@
+name: io_lulc
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./io_lulc.py) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: io-lulc
+    template: ${{ local.path(./collection/io-lulc) }}
+    class: io_lulc:TenClassIOCollection
+    asset_storage:
+      - uri: blob://ai4edataeuwest/io-lulc
+        token: ${{ pc.get_token(ai4edataeuwest, io-lulc) }}
+        chunks:
+          options:
+            name_starts_with: io-lulc-model-001-v01-composite-v03-supercell-v02-clip-v01/
+            ends_with: ".tif"
+            chunk_length: 100
+    chunk_storage:
+      uri: blob://ai4edataeuwest/io-lulc-etl-data/pctasks-chunks/io-lulc/
+  - id: io-lulc-9-class
+    template: ${{ local.path(./collection/io-lulc-9-class) }}
+    class: io_lulc:NineClassIOCollection
+    asset_storage:
+      - uri: blob://ai4edataeuwest/io-lulc
+        token: ${{ pc.get_token(ai4edataeuwest, io-lulc) }}
+        chunks:
+          options:
+            name_starts_with: nine-class/
+            ends_with: ".tif"
+            chunk_length: 100
+    chunk_storage:
+      uri: blob://ai4edataeuwest/io-lulc-etl-data/pctasks-chunks/io-lulc-9-class/

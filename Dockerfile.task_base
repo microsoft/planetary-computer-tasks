@@ -21,12 +21,21 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 # See https://github.com/mapbox/rasterio/issues/1289
 ENV CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
+# Install Python 3.8
+RUN curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh" \
+   && bash "Mambaforge-$(uname)-$(uname -m).sh" -b -p /opt/conda \
+   && rm -rf "Mambaforge-$(uname)-$(uname -m).sh"
+
+ENV PATH /opt/conda/bin:$PATH
+ENV LD_LIBRARY_PATH /opt/conda/lib/:$LD_LIBRARY_PATH
+
+RUN mamba install -y -c conda-forge python=3.8 gdal=3.3.3 pip setuptools cython numpy==1.21.5
+
 RUN python -m pip install --upgrade pip
 
 # Install common packages
-# TODO: Better way to package the base image;
-# use same technique as Hub image?
-RUN pip install pystac[validation]==1.*
+COPY requirements-task-base.txt /tmp/requirements.txt
+RUN python -m pip install --no-build-isolation -r /tmp/requirements.txt
 
 #
 # Copy and install packages
