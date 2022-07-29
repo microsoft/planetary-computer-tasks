@@ -90,8 +90,12 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
             if isinstance(result, WaitTaskResult):
                 return result
             else:
-                _validate(result)
-                results.extend(result)
+                if not result:
+                    logger.warning(f"No items created from {args.asset_uri}")
+                else:
+                    _validate(result)
+                    _ensure_collection(result)
+                    results.extend(result)
         elif args.asset_chunk_info:
             chunk_storage, chunk_path = storage_factory.get_storage_for_file(
                 args.asset_chunk_info.uri
@@ -109,17 +113,20 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                 if isinstance(result, WaitTaskResult):
                     return result
                 else:
-                    _validate(result)
-                    _ensure_collection(result)
-                    results.extend(result)
-
-                if args.collection_id:
-                    for item in results:
-                        item.collection_id = args.collection_id
+                    if not result:
+                        logger.warning(f"No items created from {asset_uri}")
+                    else:
+                        _validate(result)
+                        _ensure_collection(result)
+                        results.extend(result)
 
         else:
             # Should be prevented by validator
             raise ValueError("Neither asset_uri nor chunk_uri specified")
+
+        if args.collection_id:
+            for item in results:
+                item.collection_id = args.collection_id
 
         return results
 
