@@ -2,6 +2,7 @@ import click
 
 from pctasks.client.records.commands.fetch import fetch_cmd
 from pctasks.client.records.commands.list import list_cmd
+from pctasks.client.records.commands.status import status_cmd
 
 
 @click.group("records")
@@ -21,3 +22,4 @@ def records_cmd(ctx: click.Context, pretty_print: bool) -> None:
 
 records_cmd.add_command(list_cmd)
 records_cmd.add_command(fetch_cmd)
+records_cmd.add_command(status_cmd)

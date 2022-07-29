@@ -4,17 +4,12 @@ from typing import List, Optional
 
 import click
 
-from pctasks.cli.cli import cli_output, cli_print
-from pctasks.client.client import PCTasksClient
+from pctasks.cli.cli import cli_output
 from pctasks.client.settings import ClientSettings
 from pctasks.client.submit._cli import cli_submit_workflow
 from pctasks.core.constants import DEFAULT_TARGET_ENVIRONMENT
 from pctasks.core.context import PCTasksCommandContext
-from pctasks.core.models.workflow import (
-    JobConfig,
-    WorkflowConfig,
-    WorkflowSubmitMessage,
-)
+from pctasks.core.models.workflow import JobConfig, WorkflowConfig
 from pctasks.ingest.models import IngestNdjsonInput, IngestTaskConfig, NdjsonFolder
 from pctasks.ingest.settings import IngestOptions, IngestSettings
 from pctasks.ingest.utils import generate_collection_json
@@ -85,21 +80,11 @@ def ingest_ndjson_cmd(
         },
     )
 
-    submit_message = WorkflowSubmitMessage(workflow=workflow)
-
     if not submit:
-        cli_output(submit_message.to_yaml())
+        cli_output(workflow.to_yaml())
     else:
         settings = ClientSettings.get(context.profile, context.settings_file)
-        client = PCTasksClient(settings)
-        cli_submit_workflow(client, submit_message, settings)
-        cli_print(
-            click.style(
-                f"  Submitting workflow to {settings.endpoint}...",
-                fg="green",
-            )
-        )
-        cli_output(client.submit_workflow(submit_message).run_id)
+        cli_submit_workflow(workflow=workflow, args=None, settings=settings)
 
 
 def ingest_collection_cmd(
@@ -141,17 +126,9 @@ def ingest_collection_cmd(
         },
     )
 
-    submit_message = WorkflowSubmitMessage(workflow=workflow)
-
     if not submit:
-        cli_output(submit_message.to_yaml())
+        cli_output(workflow.to_yaml())
+        ctx.exit(0)
     else:
         settings = ClientSettings.get(context.profile, context.settings_file)
-        client = PCTasksClient(settings)
-        cli_print(
-            click.style(
-                f"Submitting workflow to {settings.endpoint}...",
-                fg="green",
-            )
-        )
-        cli_output(client.submit_workflow(submit_message).run_id)
+        ctx.exit(cli_submit_workflow(workflow=workflow, args=None, settings=settings))

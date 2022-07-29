@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
 import click
 import yaml
@@ -35,10 +35,40 @@ def _prompt_for_settings(existing: Optional[ClientSettings] = None) -> ClientSet
         "Confirmation required?",
         default=default_conf,
     )
+
+    rprint("[underline]Default arguments:[/underline]")
+    default_args: Optional[Dict[str, str]] = None
+    if existing:
+        default_args = existing.default_args
+    if default_args:
+        for k, v in list(default_args.items())[:]:
+            rprint(f"  [bold]{k}[/bold] = [blue]{v}[/blue]")
+            action = Prompt.ask(
+                "  Modify?",
+                choices=["skip", "delete", "edit"],
+                default="skip",
+            )
+            if action == "delete":
+                default_args.pop(k)
+            elif action == "edit":
+                default_args[k] = Prompt.ask(
+                    f"Enter value for default argument {k}", default=v
+                )
+    while True:
+        add_default_arg = Confirm.ask("  Add new default?", default=False)
+        if not add_default_arg:
+            break
+        k = Prompt.ask("    Enter key")
+        v = Prompt.ask("    Enter value")
+        if default_args is None:
+            default_args = {}
+        default_args[k] = v
+
     return ClientSettings(
         endpoint=endpoint,
         api_key=api_key,
         confirmation_required=confirmation_required,
+        default_args=default_args,
     )
 
 
@@ -54,7 +84,7 @@ def create_profile_command(ctx: click.Context, profile: str) -> None:
         rprint("Use `pctasks profile edit` to edit the profile")
         ctx.exit(1)
 
-    rprint(f"[green]Creating profile {profile}: [/green]")
+    rprint(f"[green]Creating profile [bold]{profile}[/bold]: [/green]")
 
     try:
         settings = _prompt_for_settings()
@@ -69,7 +99,7 @@ def create_profile_command(ctx: click.Context, profile: str) -> None:
     with open(settings_file, "w") as f:
         f.write(yaml_str)
 
-    rprint(f"\n[green]Profile {profile} created![/green]")
+    rprint(f"\n[green]Profile [bold]{profile}[/bold] created![/green]")
 
 
 @click.command(name="edit")
@@ -86,7 +116,7 @@ def edit_profile_command(ctx: click.Context, profile: str) -> None:
 
     exisiting_settings = ClientSettings.get(settings_file=settings_file)
 
-    rprint(f"[green]Editing profile {profile}: [/green]")
+    rprint(f"[green]Editing profile [/green][bold]{profile}[/bold][green]: [/green]")
 
     try:
         settings = _prompt_for_settings(exisiting_settings)
@@ -101,7 +131,8 @@ def edit_profile_command(ctx: click.Context, profile: str) -> None:
     with open(settings_file, "w") as f:
         f.write(yaml_str)
 
-    rprint(f"\n[green]Profile {profile} updated![/green]")
+    rprint(f"\n[green]Profile [/green][bold]{profile}[/bold] [green]updated![/green]")
+    print()
 
 
 @click.command(name="set")

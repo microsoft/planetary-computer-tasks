@@ -39,6 +39,7 @@ class RecordResponse(PCBaseModel):
     errors: Optional[List[str]] = None
     created: datetime
     updated: datetime
+    status: str
 
 
 class TaskRunResponse(RecordResponse):
