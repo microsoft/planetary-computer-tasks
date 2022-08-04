@@ -1,0 +1,55 @@
+name: cil_gdpcir
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./cil_gdpcir.py) }}
+  # requirements: ${{ local.path(./requirements.txt) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: cil-gdpcir-cc-by
+    template: ${{ local.path(./collection/cil-gdpcir-cc-by) }}
+    class: pctasks.dataset.collection:PremadeItemCollection
+    asset_storage:
+      - uri: blob://rhgeuwest/cil-gdpcir-stac
+        token: ${{ pc.get_token(rhgeuwest, cil-gdpcir-stac) }}
+        chunks:
+          options:
+            name_starts_with: CC-BY-4.0
+            chunk_length: 1000
+    chunk_storage:
+      uri: blob://rhgeuwest/cil-gdpcir-etl-data/chunks/cc-by
+
+  - id: cil-gdpcir-cc-by-sa
+    template: ${{ local.path(./collection/cil-gdpcir-cc-by-sa) }}
+    class: pctasks.dataset.collection:PremadeItemCollection
+    asset_storage:
+      - uri: blob://rhgeuwest/cil-gdpcir-stac
+        token: ${{ pc.get_token(rhgeuwest, cil-gdpcir-stac) }}
+        chunks:
+          options:
+            name_starts_with: CC-BY-SA-4.0
+            chunk_length: 1000
+    chunk_storage:
+      uri: blob://rhgeuwest/cil-gdpcir-etl-data/chunks/cc-by-sa
+
+  - id: cil-gdpcir-cc0
+    template: ${{ local.path(./collection/cil-gdpcir-cc0) }}
+    class: pctasks.dataset.collection:PremadeItemCollection
+    asset_storage:
+      - uri: blob://rhgeuwest/cil-gdpcir-stac
+        token: ${{ pc.get_token(rhgeuwest, cil-gdpcir-stac) }}
+        chunks:
+          options:
+            name_starts_with: CC0-1.0
+            chunk_length: 1000
+    chunk_storage:
+      uri: blob://rhgeuwest/cil-gdpcir-etl-data/chunks/cc0
+
