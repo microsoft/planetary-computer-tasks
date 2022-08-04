@@ -1,0 +1,40 @@
+name: noaa_nclimgrid
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./noaa_nclimgrid.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: noaa-nclimgrid-monthly
+    template: ${{ local.path(./collection/noaa-nclimgrid-monthly) }}
+    class: chesapeake_lulc:ChesapeakeCollection
+    asset_storage:
+      - uri: blob://landcoverdata/chesapeake
+        token: ${{ pc.get_token(landcoverdata, chesapeake) }}
+        chunks:
+          options:
+            name_starts_with: lc-7/
+            chunk_length: 1000
+    chunk_storage:
+      uri: blob://landcoverdata/chesapeake-etl-data/pctasks-chunks/lc-7/
+  - id: chesapeake-lc-13
+    template: ${{ local.path(./collection/chesapeake-lc-13) }}
+    class: chesapeake_lulc:ChesapeakeCollection
+    asset_storage:
+      - uri: blob://landcoverdata/chesapeake
+        token: ${{ pc.get_token(landcoverdata, chesapeake) }}
+        chunks:
+          options:
+            name_starts_with: lc-13/
+            chunk_length: 1000
+    chunk_storage:
+      uri: blob://landcoverdata/chesapeake-etl-data/pctasks-chunks/lc-13/

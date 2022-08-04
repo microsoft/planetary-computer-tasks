@@ -1,0 +1,179 @@
+{
+    "stac_version": "1.0.0",
+    "type": "Collection",
+    "id": "noaa-nclimgrid-monthly",
+    "title": "NOAA Monthly U.S. Climate Gridded Dataset (NClimGrid)",
+    "description": "{{ collection.description }}",
+    "license": "proprietary",
+    "links": [
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.7289/V5SX6B56",
+            "type": "text/html",
+            "title": "NOAA Monthly U.S. Climate Gridded Dataset (NClimGrid)"
+        },
+        {
+            "rel": "license",
+            "href": "https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332#Constraints",
+            "type": "text/html",
+            "title": "NClimGrid Data Use and Access Constraints"
+        },
+        {
+            "rel": "about",
+            "href": "https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332",
+            "type": "text/html",
+            "title": "Product Landing Page"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.1.0/schema.json"
+    ],
+    "keywords": [
+        "NOAA",
+        "NClimGrid",
+        "Air Temperature",
+        "Precipitation",
+        "Surface Observations",
+        "Climatology",
+        "CONUS"
+    ],
+    "msft:short_description": "Monthly NOAA U.S. Climate Gridded Dataset (NClimGrid)",
+    "msft:storage_account": "nclimgridwesteurope",
+    "msft:container": "nclimgrid",
+    "msft:group_id": "noaa-nclimgrid",
+    "providers": [
+        {
+            "name": "NOAA National Centers for Environmental Information",
+            "roles": [
+                "producer",
+                "licensor"
+            ],
+            "url": "https://www.ncei.noaa.gov/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "processor",
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "title": "NOAA NClimGrid Monthly Thumbnail",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-nclimgrid-monthly-thumb.png",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/noaa-nclimgrid-daily.parquet",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            }
+        } 
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -124.708333,
+                    24.541666,
+                    -66.999995,
+                    49.375001
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "1895-01-01T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "item_assets": {
+        "prcp": {
+            "media_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Monthly Precipitation (mm)",
+            "raster:bands": [
+                {
+                    "data_type": "float32",
+                    "nodata": "nan",
+                    "unit": "mm",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tavg": {
+            "media_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Monthly Average Temperature (degree Celsius)",
+            "raster:bands": [
+                {
+                    "data_type": "float32",
+                    "nodata": "nan",
+                    "unit": "degree Celsius",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tmax": {
+            "media_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Monthly Maximmum Temperature (degree Celsius)",
+            "raster:bands": [
+                {
+                    "data_type": "float32",
+                    "nodata": "nan",
+                    "unit": "degree Celsius",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tmin": {
+            "media_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Monthly Minimum Temperature (degree Celsius)",
+            "raster:bands": [
+                {
+                    "data_type": "float32",
+                    "nodata": "nan",
+                    "unit": "degree Celsius",
+                    "spatial_resolution": 5000
+                }
+            ]
+        }
+    },
+    "sci:doi": "10.7289/V5SX6B56",
+    "sci:citation": "Vose, Russell S., Applequist, Scott, Squires, Mike, Durre, Imke, Menne, Matthew J., Williams, Claude N. Jr., Fenimore, Chris, Gleason, Karin, and Arndt, Derek (2014): NOAA Monthly U.S. Climate Gridded Dataset (NClimGrid), Version 1. NOAA National Centers for Environmental Information. DOI:10.7289/V5SX6B56.",
+    "sci:publications": [
+        {
+            "doi": "10.1175/JAMC-D-13-0248.1",
+            "citation": "Vose, R. S., Applequist, S., Squires, M., Durre, I., Menne, M. J., Williams, C. N., Jr., Fenimore, C., Gleason, K., & Arndt, D. (2014). Improved Historical Temperature and Precipitation Time Series for U.S. Climate Divisions, Journal of Applied Meteorology and Climatology, 53(5), 1232-1251."
+        }
+    ]
+}

@@ -1,0 +1,170 @@
+{
+    "stac_version": "1.0.0",
+    "type": "Collection",
+    "id": "noaa-nclimgrid-daily",
+    "title": "NOAA Daily U.S. Climate Gridded Dataset (NClimGrid-d)",
+    "description": "{{ collection.description }}",
+    "license": "proprietary",
+    "links": [
+        {
+            "rel": "describedby",
+            "href": "https://www1.ncdc.noaa.gov/pub/data/daily-grids/docs/nclimdiv-description.pdf",
+            "type": "application/pdf",
+            "title": "NOAA Daily NClimGrid Product Description"
+        },
+        {
+            "rel": "license",
+            "href": "https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332#Constraints",
+            "type": "text/html",
+            "title": "NClimGrid Data Use and Access Constraints"
+        },
+        {
+            "rel": "about",
+            "href": "https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332",
+            "type": "text/html",
+            "title": "Product Landing Page"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.1.0/schema.json"
+    ],
+    "keywords": [
+        "NOAA",
+        "NClimGrid",
+        "Air Temperature",
+        "Precipitation",
+        "Surface Observations",
+        "Climatology",
+        "CONUS"
+    ],
+    "msft:short_description": "Daily NOAA U.S. Climate Gridded Dataset (NClimGrid)",
+    "msft:storage_account": "nclimgridwesteurope",
+    "msft:container": "nclimgrid",
+    "msft:group_id": "noaa-nclimgrid",
+    "providers": [
+        {
+            "name": "NOAA National Centers for Environmental Information",
+            "roles": [
+                "producer",
+                "licensor"
+            ],
+            "url": "https://www.ncei.noaa.gov/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "processor",
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "title": "NOAA NClimGrid Daily Thumbnail",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-nclimgrid-daily-thumb.png",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/noaa-nclimgrid-daily.parquet",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            }
+        } 
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -124.708333,
+                    24.541666,
+                    -66.999995,
+                    49.375001
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "1951-01-01T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "item_assets": {
+        "prcp": {
+            "media_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Daily Precipitation (mm)",
+            "raster:bands": [
+                {
+                    "data_type": "float32",
+                    "nodata": "nan",
+                    "unit": "mm",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tavg": {
+            "media_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Daily Average Temperature (degree Celsius)",
+            "raster:bands": [
+                {
+                    "data_type": "float32",
+                    "nodata": "nan",
+                    "unit": "degree Celsius",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tmax": {
+            "media_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Daily Maximmum Temperature (degree Celsius)",
+            "raster:bands": [
+                {
+                    "data_type": "float32",
+                    "nodata": "nan",
+                    "unit": "degree Celsius",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tmin": {
+            "media_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Daily Minimum Temperature (degree Celsius)",
+            "raster:bands": [
+                {
+                    "data_type": "float32",
+                    "nodata": "nan",
+                    "unit": "degree Celsius",
+                    "spatial_resolution": 5000
+                }
+            ]
+        }
+    }
+}
