@@ -108,6 +108,14 @@ variable "kv_sp_client_secret" {
   type    = string
 }
 
+variable "pctasks_test_kv" {
+  type = string
+}
+
+variable "pctasks_test_kv_resource_group_name" {
+  type = string
+}
+
 variable "deploy_secrets_kv_name" {
   type    = string
 }

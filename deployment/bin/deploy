@@ -323,7 +323,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         # Create symlink to enable function app building of pctasks
         ln -s /opt/src/pctasks /opt/src/functions_deploy/pctasks_linked
         cp requirements-deploy.txt requirements.txt
-        func azure functionapp publish ${FUNCTION_APP_NAME}
+        func azure functionapp publish ${FUNCTION_APP_NAME} --python
         popd
 
     fi
