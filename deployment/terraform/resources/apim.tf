@@ -140,6 +140,17 @@ resource "azurerm_api_management_api_operation" "tasks_post_op" {
   description         = "Calls PC Tasks POST Operation"
 }
 
+resource "azurerm_api_management_api_operation" "tasks_options_op" {
+  operation_id        = "pctasksoptionsop"
+  api_name            = azurerm_api_management_api.pctasks.name
+  api_management_name = azurerm_api_management.pctasks.name
+  resource_group_name = azurerm_resource_group.pctasks.name
+  display_name        = "PC Tasks OPTIONS Operation"
+  method              = "OPTIONS"
+  url_template        = "/tasks/*"
+  description         = "Calls PC Tasks OPTIONS Operation"
+}
+
 resource "azurerm_api_management_api_policy" "pctasks_policy" {
   api_name            = azurerm_api_management_api.pctasks.name
   api_management_name = azurerm_api_management.pctasks.name
@@ -195,4 +206,3 @@ resource "azurerm_api_management_api_policy" "pctasks_policy" {
 
   XML
 }
-
