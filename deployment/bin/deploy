@@ -236,6 +236,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         -n pc \
         --create-namespace \
         -f "helm/argo-values.yaml" \
+        --set server.config.sso.redirectUrl "" \
         --wait \
         --timeout 2m0s
 

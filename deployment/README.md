@@ -61,6 +61,16 @@ In addition, some ETL-specific deployment resources need to be created
 - A service principal that tasks will use to access Azure resources. The credentials of this service principal are stored in the ETL keyvault.
 - A service principal that has access to the ETL key vault. The credentials are injected into the submit container and passed along as command line arguments during the Batch job submission.
 
+#### Azure AD App Registration for Argo UI
+
+We need an app registration.
+
+* Name: `pctask-{env}`
+* Supported account types: Signle tenant
+* Redirect URI: `https://pctaskstest-{env}.westeurope.cloudapp.azure.com/argo/oauth2/callback`
+
+Create a Client Secret and provide the Client ID and secret and set these as Kubernetes secrets. They're referenced as `client-id` and `client-secret`.
+
 #### Credentials used within task containers
 
 - A keyvault names `pct-etl-kv` that holds secrets that will be used inside the task containers

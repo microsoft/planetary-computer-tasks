@@ -2,4 +2,19 @@ server:
   baseHref: /argo/
   secure: false
   extraArgs:
-  - --auth-mode=server
+  - --auth-mode=sso
+  config:
+    sso:
+      clientId:
+        name: argo-server-sso
+        key: client-id
+      clientSecret:
+        name: argo-server-sso
+        key: client-secret
+      # redirectUrl: set via CLI
+      # should end with /oauth2/callback
+      # I'm uncertain whether or not we want rbac.
+      # rbac:
+      #   enabled: true
+      scopes:
+        - groups
