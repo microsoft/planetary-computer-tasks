@@ -76,7 +76,7 @@ resource "azurerm_function_app" "pctasks" {
     "PCTASKS_RUN__BATCH_DEFAULT_POOL_ID" = var.batch_default_pool_id,
 
     ##  KeyVault
-    "PCTASKS_RUN__KEYVAULT_URL" = azurerm_key_vault.pctasks.vault_uri,
+    "PCTASKS_RUN__KEYVAULT_URL" = data.azurerm_key_vault.pctasks.vault_uri,
 
     # Router settings ##############################################################
 
