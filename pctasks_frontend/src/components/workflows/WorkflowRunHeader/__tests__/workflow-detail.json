@@ -1,0 +1,412 @@
+{
+  "links": [
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/create-chunks[0]",
+      "type": "application/json",
+      "title": "Job: create-chunks[0]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/create-splits",
+      "type": "application/json",
+      "title": "Job: create-splits"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[0]",
+      "type": "application/json",
+      "title": "Job: process-chunk[0]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[10]",
+      "type": "application/json",
+      "title": "Job: process-chunk[10]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[11]",
+      "type": "application/json",
+      "title": "Job: process-chunk[11]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[12]",
+      "type": "application/json",
+      "title": "Job: process-chunk[12]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[13]",
+      "type": "application/json",
+      "title": "Job: process-chunk[13]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[14]",
+      "type": "application/json",
+      "title": "Job: process-chunk[14]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[15]",
+      "type": "application/json",
+      "title": "Job: process-chunk[15]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[16]",
+      "type": "application/json",
+      "title": "Job: process-chunk[16]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[17]",
+      "type": "application/json",
+      "title": "Job: process-chunk[17]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[18]",
+      "type": "application/json",
+      "title": "Job: process-chunk[18]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[19]",
+      "type": "application/json",
+      "title": "Job: process-chunk[19]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[1]",
+      "type": "application/json",
+      "title": "Job: process-chunk[1]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[20]",
+      "type": "application/json",
+      "title": "Job: process-chunk[20]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[21]",
+      "type": "application/json",
+      "title": "Job: process-chunk[21]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[22]",
+      "type": "application/json",
+      "title": "Job: process-chunk[22]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[23]",
+      "type": "application/json",
+      "title": "Job: process-chunk[23]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[24]",
+      "type": "application/json",
+      "title": "Job: process-chunk[24]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[25]",
+      "type": "application/json",
+      "title": "Job: process-chunk[25]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[26]",
+      "type": "application/json",
+      "title": "Job: process-chunk[26]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[27]",
+      "type": "application/json",
+      "title": "Job: process-chunk[27]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[28]",
+      "type": "application/json",
+      "title": "Job: process-chunk[28]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[29]",
+      "type": "application/json",
+      "title": "Job: process-chunk[29]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[2]",
+      "type": "application/json",
+      "title": "Job: process-chunk[2]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[30]",
+      "type": "application/json",
+      "title": "Job: process-chunk[30]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[31]",
+      "type": "application/json",
+      "title": "Job: process-chunk[31]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[32]",
+      "type": "application/json",
+      "title": "Job: process-chunk[32]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[33]",
+      "type": "application/json",
+      "title": "Job: process-chunk[33]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[34]",
+      "type": "application/json",
+      "title": "Job: process-chunk[34]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[35]",
+      "type": "application/json",
+      "title": "Job: process-chunk[35]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[36]",
+      "type": "application/json",
+      "title": "Job: process-chunk[36]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[3]",
+      "type": "application/json",
+      "title": "Job: process-chunk[3]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[4]",
+      "type": "application/json",
+      "title": "Job: process-chunk[4]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[5]",
+      "type": "application/json",
+      "title": "Job: process-chunk[5]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[6]",
+      "type": "application/json",
+      "title": "Job: process-chunk[6]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[7]",
+      "type": "application/json",
+      "title": "Job: process-chunk[7]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[8]",
+      "type": "application/json",
+      "title": "Job: process-chunk[8]"
+    },
+    {
+      "rel": "job",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/process-chunk[9]",
+      "type": "application/json",
+      "title": "Job: process-chunk[9]"
+    }
+  ],
+  "errors": null,
+  "created": "2022-08-01T16:06:45.142577",
+  "updated": "2022-07-28T23:01:05.051527",
+  "dataset": "microsoft/io_lulc",
+  "run_id": "b6320d38fcec41a0a959831efc54345f",
+  "status": "completed",
+  "workflow": {
+    "name": "Process items for io-lulc-9-class",
+    "dataset": {
+      "owner": "microsoft",
+      "name": "io_lulc"
+    },
+    "group_id": null,
+    "tokens": {
+      "ai4edataeuwest": {
+        "token": null,
+        "containers": {
+          "io-lulc": {
+            "token": "***",
+            "blobs": null
+          }
+        }
+      }
+    },
+    "target_environment": null,
+    "args": ["registry"],
+    "jobs": {
+      "create-splits": {
+        "id": "create-splits",
+        "tasks": [
+          {
+            "id": "create-splits",
+            "image": "pccomponentstest.azurecr.io/pctasks-task-base:latest",
+            "image_key": null,
+            "code": {
+              "src": "blob://pctasksteststaging/code/94a127b730b624d935b93fe4cc610de1/io_lulc.py",
+              "requirements": null,
+              "pip_options": null
+            },
+            "task": "io_lulc:NineClassIOCollection.create_splits_task",
+            "args": {
+              "inputs": [
+                {
+                  "uri": "blob://ai4edataeuwest/io-lulc",
+                  "sas_token": "****",
+                  "chunk_options": {
+                    "chunk_length": 100,
+                    "name_starts_with": "nine-class/",
+                    "ends_with": ".tif",
+                    "list_folders": false,
+                    "chunk_file_name": "uris-list",
+                    "chunk_extension": ".csv"
+                  }
+                }
+              ],
+              "options": {}
+            },
+            "tags": null,
+            "environment": {
+              "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+              "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+              "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+            },
+            "schema_version": "1.0.0"
+          }
+        ],
+        "foreach": null,
+        "notifications": null,
+        "needs": null
+      },
+      "create-chunks": {
+        "id": "create-chunks",
+        "tasks": [
+          {
+            "id": "create-chunks",
+            "image": "pccomponentstest.azurecr.io/pctasks-task-base:latest",
+            "image_key": null,
+            "code": {
+              "src": "blob://pctasksteststaging/code/94a127b730b624d935b93fe4cc610de1/io_lulc.py",
+              "requirements": null,
+              "pip_options": null
+            },
+            "task": "pctasks.dataset.chunks.task:create_chunks_task",
+            "args": {
+              "src_uri": "${{ item.uri }}",
+              "dst_uri": "blob://ai4edataeuwest/io-lulc-etl-data/pctasks-chunks/io-lulc-9-class/2022-07-28_full/assets",
+              "options": "${{ item.chunk_options }}"
+            },
+            "tags": null,
+            "environment": {
+              "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+              "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+              "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+            },
+            "schema_version": "1.0.0"
+          }
+        ],
+        "foreach": {
+          "items": "${{ jobs.create-splits.tasks.create-splits.output.splits }}"
+        },
+        "notifications": null,
+        "needs": "create-splits"
+      },
+      "process-chunk": {
+        "id": "process-chunk",
+        "tasks": [
+          {
+            "id": "create-items",
+            "image": "pccomponentstest.azurecr.io/pctasks-task-base:latest",
+            "image_key": null,
+            "code": {
+              "src": "blob://pctasksteststaging/code/94a127b730b624d935b93fe4cc610de1/io_lulc.py",
+              "requirements": null,
+              "pip_options": null
+            },
+            "task": "io_lulc:NineClassIOCollection.create_items_task",
+            "args": {
+              "asset_chunk_info": {
+                "uri": "${{ item.uri }}",
+                "chunk_id": "${{ item.chunk_id }}"
+              },
+              "item_chunkset_uri": "blob://ai4edataeuwest/io-lulc-etl-data/pctasks-chunks/io-lulc-9-class/2022-07-28_full/items",
+              "collection_id": "io-lulc-9-class",
+              "options": {
+                "skip_validation": false
+              }
+            },
+            "tags": null,
+            "environment": {
+              "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+              "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+              "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+            },
+            "schema_version": "1.0.0"
+          },
+          {
+            "id": "ingest-items",
+            "image": null,
+            "image_key": "ingest",
+            "code": null,
+            "task": "pctasks.ingest_task.task:ingest_task",
+            "args": {
+              "content": {
+                "type": "Ndjson",
+                "uris": ["${{tasks.create-items.output.ndjson_uri}}"]
+              },
+              "options": {
+                "insert_group_size": 5000,
+                "insert_only": false
+              }
+            },
+            "tags": null,
+            "environment": {
+              "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+              "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+              "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+            },
+            "schema_version": "1.0.0"
+          }
+        ],
+        "foreach": {
+          "items": "${{ jobs.create-chunks.tasks.create-chunks.output.chunks }}"
+        },
+        "notifications": null,
+        "needs": "create-chunks"
+      }
+    },
+    "on": null,
+    "schema_version": "1.0.0"
+  },
+  "trigger_event": null,
+  "args": {
+    "registry": "pccomponentstest.azurecr.io"
+  }
+}

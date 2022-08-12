@@ -1,0 +1,65 @@
+{
+  "process-chunk": {
+    "id": "process-chunk",
+    "tasks": [
+      {
+        "id": "create-items",
+        "image": "pccomponentstest.azurecr.io/pctasks-task-base:latest",
+        "image_key": null,
+        "code": {
+          "src": "blob://pctasksteststaging/code/94a127b730b624d935b93fe4cc610de1/io_lulc.py",
+          "requirements": null,
+          "pip_options": null
+        },
+        "task": "io_lulc:NineClassIOCollection.create_items_task",
+        "args": {
+          "asset_chunk_info": {
+            "uri": "${{ item.uri }}",
+            "chunk_id": "${{ item.chunk_id }}"
+          },
+          "item_chunkset_uri": "blob://ai4edataeuwest/io-lulc-etl-data/pctasks-chunks/io-lulc-9-class/2022-07-28_full/items",
+          "collection_id": "io-lulc-9-class",
+          "options": {
+            "skip_validation": false
+          }
+        },
+        "tags": null,
+        "environment": {
+          "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+          "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+          "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+        },
+        "schema_version": "1.0.0"
+      },
+      {
+        "id": "ingest-items",
+        "image": null,
+        "image_key": "ingest",
+        "code": null,
+        "task": "pctasks.ingest_task.task:ingest_task",
+        "args": {
+          "content": {
+            "type": "Ndjson",
+            "uris": ["${{tasks.create-items.output.ndjson_uri}}"]
+          },
+          "options": {
+            "insert_group_size": 5000,
+            "insert_only": false
+          }
+        },
+        "tags": null,
+        "environment": {
+          "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+          "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+          "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+        },
+        "schema_version": "1.0.0"
+      }
+    ],
+    "foreach": {
+      "items": "${{ jobs.create-chunks.tasks.create-chunks.output.chunks }}"
+    },
+    "notifications": null,
+    "needs": "create-chunks"
+  }
+}

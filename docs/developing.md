@@ -13,6 +13,8 @@ You must have the following installed in the development environment:
 
 ## Install packages
 
+### Python
+
 Run
 
 ```
@@ -20,6 +22,17 @@ Run
 ```
 
 to install the packages into a virtualenv (note: activate the virtualenv beforehand.) You should run this even if you are only doing docker development, otherwise the python eggs installed into the container will be overridden by volume mounts.
+
+### JavaScript
+
+If you need JavaScript dependencies from the pctasks_frontend application on your host for IDE integration, you can run
+
+```console
+> cd pctasks_frontend
+> npm install --legacy-peer-deps
+```
+
+Alternatively, for vscode users, you can use the preconfigured `.devcontainer` for that folder. From the command palette, run "Remote Containers: Open folder in container", and select the `pctasks_frontend` folder from the subsequent list. This dev container is separate from the server containers, though uses the same image, and can be stopped/started independently of the `server` script.
 
 ## Set up development environment
 
