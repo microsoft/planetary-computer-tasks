@@ -30,9 +30,7 @@ def test_serialize_task_run_msg():
         ),
     )
 
-    msg_text = b64encode(
-        msg.json(exclude_unset=True, exclude_none=True).encode("utf-8")
-    ).decode("utf-8")
+    msg_text = b64encode(msg.json(exclude_none=True).encode("utf-8")).decode("utf-8")
 
     msg_dict = json.loads(b64decode(msg_text.encode("utf-8")).decode("utf-8"))
     deserialized = TaskRunMessage.parse_obj(msg_dict)
