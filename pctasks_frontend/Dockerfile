@@ -4,7 +4,7 @@ USER node
 WORKDIR /home/node/app
 
 # Install dependencies
-COPY --chown=node:node package*.json .
+COPY --chown=node:node package*.json ./
 
 RUN npm install --legacy-peer-deps
 
