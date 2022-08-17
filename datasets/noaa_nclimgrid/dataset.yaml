@@ -14,31 +14,16 @@ environment:
   AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
 
 collections:
-  - id: noaa-nclimgrid-monthly
-    template: ${{ local.path(./collection/noaa-nclimgrid-monthly) }}
-    class: noaa_climgrid:NoaaNclimgridCollection
-    asset_storage:
-      - uri: blob://nclimgridwesteurope/nclimgrid
-        token: ${{ pc.get_token(nclimgridwesteurope, chesapeake) }}
-        chunks:
-          options:
-            name_starts_with: nclimgrid-monthly/
-            chunk_length: 1000
-    chunk_storage:
-      uri: where are we storing nclimgrid etl data? not in the same public account as the netcdf assets I assume.
-    cog_storage:
-      uri: i added this. need to check if cog_storage (extra storage) functionaliy is supported
   - id: noaa-nclimgrid-daily
     template: ${{ local.path(./collection/noaa-nclimgrid-daily) }}
     class: noaa_climgrid:NoaaNclimgridCollection
     asset_storage:
       - uri: blob://nclimgridwesteurope/nclimgrid
-        token: ${{ pc.get_token(nclimgridwesteurope, chesapeake) }}
+        token: ${{ pc.get_token(nclimgridwesteurope, nclimgrid) }}
         chunks:
           options:
             name_starts_with: nclimgrid-daily/
+            matches: r"/prcp-[^-]+-grd-scaled\.nc"
             chunk_length: 1000
     chunk_storage:
-      uri:  where are we storing nclimgrid etl data? not in the same public account as the netcdf assets I assume.
-    cog_storage:
-      uri: i added this. need to check if cog_storage (extra storage) functionaliy is supported
+      uri: blob://nclimgridetlstorageaccount/nclimgridetlstoragecontainer
