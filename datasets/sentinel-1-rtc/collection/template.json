@@ -1,0 +1,252 @@
+{
+  "type": "Collection",
+  "stac_version": "1.0.0",
+  "id": "sentinel-1-rtc",
+  "title": "Sentinel 1 Radiometrically Terrain Corrected (RTC)",
+  "msft:short_description": "Radiometrically terrain corrected SAR imagery derived from the Sentinel 1 Level 1 GRD product.",
+  "description": "{{ collection.description }}",
+  "msft:storage_account": "sentinel1euwestrtc",
+  "msft:container": "sentinel1-grd-rtc",
+  "msft:requires_account": true,
+  "msft:group_id": "sentinel-1",
+  "license": "CC-BY-4.0",
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://creativecommons.org/licenses/by/4.0/",
+      "title": "CC BY 4.0"
+    }
+  ],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/sar/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/sat/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+  ],
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -180,
+          -90,
+          180,
+          90
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2014-10-10T00:28:21Z",
+          null
+        ]
+      ]
+    }
+  },
+  "keywords": [
+    "ESA",
+    "Copernicus",
+    "Sentinel",
+    "C-Band",
+    "SAR",
+    "RTC"
+  ],
+  "providers": [
+    {
+      "name": "Catalyst",
+      "roles": [
+        "processor"
+      ],
+      "url": "https://catalyst.earth"
+    },
+    {
+      "name": "Microsoft",
+      "roles": [
+        "host",
+        "licensor"
+      ],
+      "url": "https://planetarycomputer.microsoft.com"
+    }
+  ],
+  "assets": {
+    "thumbnail": {
+      "title": "Sentinel 1 RTC",
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-1-rtc.png",
+      "type": "image/png",
+      "roles": [
+        "thumbnail"
+      ]
+    },
+    "geoparquet-items": {
+      "href": "abfs://items/sentinel-1-rtc.parquet",
+      "title": "GeoParquet STAC items",
+      "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+      "type": "application/x-parquet",
+      "roles": [
+        "stac-items"
+      ],
+      "table:storage_options": {
+        "account_name": "pcstacitems"
+      },
+      "msft:partition_info": {
+        "is_partitioned": true,
+        "partition_frequency": "MS"
+      }
+    }
+  },
+  "summaries": {
+    "constellation": [
+      "Sentinel-1"
+    ],
+    "platform": [
+      "SENTINEL-1A",
+      "SENTINEL-1B"
+    ],
+    "sar:frequency_band": [
+      "C"
+    ],
+    "sar:center_frequency": [
+      5.405
+    ],
+    "sar:observation_direction": [
+      "right"
+    ],
+    "sar:instrument_mode": [
+      "IW"
+    ],
+    "sar:polarizations": [
+      [
+        "VV",
+        "VH"
+      ],
+      [
+        "HH",
+        "HV"
+      ],
+      [
+        "VV"
+      ],
+      [
+        "VH"
+      ],
+      [
+        "HH"
+      ]
+    ],
+    "sar:product_type": [
+      "GRD"
+    ],
+    "sar:resolution_range": [
+      20
+    ],
+    "sar:resolution_azimuth": [
+      22
+    ],
+    "sar:pixel_spacing_range": [
+      10
+    ],
+    "sar:pixel_spacing_azimuth": [
+      10
+    ],
+    "sar:looks_range": [
+      5
+    ],
+    "sar:looks_azimuth": [
+      1
+    ],
+    "sar:looks_equivalent_number": [
+      4.4
+    ],
+    "sat:platform_international_designator": [
+      "2014-016A",
+      "2016-025A",
+      "0000-000A"
+    ],
+    "sat:orbit_state": [
+      "ascending",
+      "descending"
+    ],
+    "s1:product_timeliness": [
+      "NRT-10m",
+      "NRT-1h",
+      "NRT-3h",
+      "Fast-24h",
+      "Off-line",
+      "Reprocessing"
+    ],
+    "s1:processing_level": [
+      "1"
+    ],
+    "s1:resolution": [
+      "high"
+    ],
+    "s1:orbit_source": [
+      "DOWNLINK",
+      "POEORB",
+      "PREORB",
+      "RESORB"
+    ]
+  },
+  "item_assets": {
+    "vv": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "VV: vertical transmit, vertical receive",
+      "description": "Terrain-corrected gamma naught values of signal transmitted with vertical polarization and received with vertical polarization with radiometric terrain correction applied.",
+      "raster:bands": [
+        {
+          "data_type": "float32",
+          "spatial_resolution": 10.0,
+          "nodata": -32768
+        }
+      ],
+      "roles": [
+        "data"
+      ]
+    },
+    "vh": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "VH: vertical transmit, horizontal receive",
+      "description": "Terrain-corrected gamma naught values of signal transmitted with vertical polarization and received with horizontal polarization with radiometric terrain correction applied.",
+      "raster:bands": [
+        {
+          "data_type": "float32",
+          "spatial_resolution": 10.0,
+          "nodata": -32768
+        }
+      ],
+      "roles": [
+        "data"
+      ]
+    },
+    "hh": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "HH: horizontal transmit, horizontal receive",
+      "description": "Terrain-corrected gamma naught values of signal transmitted with horizontal polarization and received with horizontal polarization with radiometric terrain correction applied.",
+      "raster:bands": [
+        {
+          "data_type": "float32",
+          "spatial_resolution": 10.0,
+          "nodata": -32768
+        }
+      ],
+      "roles": [
+        "data"
+      ]
+    },
+    "hv": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "HV: horizontal transmit, vertical receive",
+      "description": "Terrain-corrected gamma naught values of signal transmitted with horizontal polarization and received with vertical polarization with radiometric terrain correction applied.",
+      "raster:bands": [
+        {
+          "data_type": "float32",
+          "spatial_resolution": 10.0,
+          "nodata": -32768
+        }
+      ],
+      "roles": [
+        "data"
+      ]
+    }
+  }
+}
