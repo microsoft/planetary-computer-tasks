@@ -40,30 +40,3 @@ class NoaaNclimgridCollection(Collection):
             # update cog hrefs from temporary to blob storage
         
         return items
-
-
-# def lets_test_some_stuff():
-#     with TemporaryDirectory() as tmp_dir:
-#         tmp_nc_dir = Path(tmp_dir, "nc")
-#         tmp_cog_dir = Path(tmp_dir, "cog")
-#         Path.mkdir(tmp_nc_dir)
-#         Path.mkdir(tmp_cog_dir)
-
-#         asset_uri = "blob://nclimgridwesteurope/nclimgrid/nclimgrid-daily/beta/by-month/2022/01/prcp-202201-grd-scaled.nc"
-
-#         # download the netcdfs to a temporary directory
-#         all_nc_uris = nc_href_dict(asset_uri)
-#         storage_factory = StorageFactory()
-#         for nc_uri in all_nc_uris.values():
-#             storage, nc_path = storage_factory.get_storage_for_file(nc_uri)
-#             tmp_nc_path = Path(tmp_nc_dir, Path(nc_path).name)
-#             print(nc_uri)
-#             print(nc_path)
-#             print(tmp_nc_path)
-#             print(storage.__repr__)
-#             storage.download_file(nc_path, tmp_nc_path)
-#             exit()
-
-
-# if __name__ == "__main__":
-#     lets_test_some_stuff()

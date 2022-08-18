@@ -16,14 +16,13 @@ environment:
 collections:
   - id: noaa-nclimgrid-daily
     template: ${{ local.path(./collection/noaa-nclimgrid-daily) }}
-    class: noaa_climgrid:NoaaNclimgridCollection
+    class: noaa_nclimgrid:NoaaNclimgridCollection
     asset_storage:
       - uri: blob://nclimgridwesteurope/nclimgrid
-        token: ${{ pc.get_token(nclimgridwesteurope, nclimgrid) }}
         chunks:
           options:
             name_starts_with: nclimgrid-daily/
             matches: r"/prcp-[^-]+-grd-scaled\.nc"
-            chunk_length: 1000
+            chunk_length: 100
     chunk_storage:
-      uri: blob://nclimgridetlstorageaccount/nclimgridetlstoragecontainer
+      uri: blob://nclimgridwesteurope/nclimgrid-etl-data/pctasks-chunks/daily/

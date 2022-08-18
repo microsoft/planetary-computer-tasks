@@ -1,1 +1,1 @@
-git+https://github.com/pjhartzell/noaa-nclimgrid@8e842928db31d38d6657534a9b3a3fd76244f3d6
+git+https://github.com/pjhartzell/noaa-nclimgrid.git@8e842928db31d38d6657534a9b3a3fd76244f3d6
