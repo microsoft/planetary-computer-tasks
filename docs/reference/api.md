@@ -21,3 +21,15 @@ Helper functions and classes for dealing with local or remote file systems.
    pctasks.core.storage.blob.BlobUri
    pctasks.core.storage.blob.BlobStorage
 ```
+
+## `pctasks.task`
+
+The `pctasks.task` package provides functionality for building tasks to be executed in PCTasks.
+
+```{eval-rst}
+.. autosummary::
+   :toctree: ./generated/
+   :recursive:
+
+   pctasks.task.task.Task
+```

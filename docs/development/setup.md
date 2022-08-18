@@ -1,4 +1,4 @@
-# Developing
+# Setting up the development environment
 
 ## Requirements
 
@@ -49,6 +49,33 @@ This will start Azurite, a PgSTAC database, the Azure Functions server, a local 
 to inspect ingest results.
 
 You can access the STAC API at http://localhost:8510/stac and a stac-browser of the API at http://localhost:8510/browser
+
+## Bring up the development Kind cluster
+
+If you are using the development cluster, use the `scripts/cluster` script to manage the cluster:
+
+```
+# Create cluster, install Helm charts, publish relevant docker images to local registry:
+scripts/cluster setup
+# Update the helm charts and images
+scripts/cluster update
+# Get an Argo token that can be used to log into the Argo UI
+scripts/cluster argo-token
+# Destroys and recreates the cluster
+scripts/cluster recreate
+# Deletes the cluster
+scripts/cluster delete
+```
+
+Clusters are ephemeral, and can take up significant resources; it is fine to run `scripts/cluster delete` and `scripts/cluster create` as needed.
+
+## Setting up local secrets
+
+PCTasks uses a docker container run via `docker-compose`, brought up by `scripts/server`, to mock the functionality of KeyVault for fetching secrets.
+It will return any secret that is contained in the `dev-secrets.yaml` file in the root directory of the repository.
+
+To create secrets, copy `dev-secrets.template.yaml` to `dev-secrets.yaml`, and fill in any key/value pairs
+you need for secrets, e.g. the `tenant-id`, `client-id`, and `client-secret` for our Azure service principal.
 
 ## Testing
 
