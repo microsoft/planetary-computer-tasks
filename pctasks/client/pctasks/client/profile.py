@@ -7,6 +7,7 @@ from pydantic import ValidationError
 from rich import print as rprint
 from rich.console import Console
 from rich.prompt import Confirm, Prompt
+from rich.syntax import Syntax
 from rich.table import Table
 
 from pctasks.client.settings import ClientSettings
@@ -161,6 +162,24 @@ def set_profile_command(ctx: click.Context, profile: str) -> None:
     print()
 
 
+@click.command(name="show")
+@click.argument("profile")
+@click.pass_context
+def show_profile_command(ctx: click.Context, profile: str) -> None:
+    """Shows the values of the settings for PROFILE
+    """
+    settings_config = SettingsConfig.get(profile=profile)
+    if profile not in settings_config.get_profile_names():
+        rprint(f"[red]Profile [bold]{profile}[/bold] does not exists[/red]")
+        ctx.exit(1)
+
+    profile_only_config = settings_config.copy(update={"settings_file": None})
+    yaml_txt = profile_only_config.get_settings_file().read_text()
+    console = Console()
+    console.print(Syntax(yaml_txt, "yaml"))
+    print()
+
+
 @click.command(name="get")
 def get_profile_command() -> None:
     """Gets the profile that has been set to be used by pctasks."""
@@ -223,5 +242,6 @@ def profile_cmd() -> None:
 profile_cmd.add_command(create_profile_command)
 profile_cmd.add_command(edit_profile_command)
 profile_cmd.add_command(set_profile_command)
+profile_cmd.add_command(show_profile_command)
 profile_cmd.add_command(get_profile_command)
 profile_cmd.add_command(list_profiles_command)
