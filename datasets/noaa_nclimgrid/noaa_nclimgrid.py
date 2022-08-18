@@ -31,7 +31,11 @@ class NoaaNclimgridCollection(Collection):
 
             # create items and cogs
             items = create_items(tmp_nc_path, tmp_cog_dir)  # update to include netcdf assets?
-        
+
+            # temporarily remove assets for testing
+            for item in items:
+                item.assets.clear()
+
             # # upload cogs to blob storage - need cog_storage
             # cog_uri = "blob://nclimgridcogstorageaccount/nclimgridcogstoragecontainer"
             # cog_storage = storage_factory.get_storage(cog_uri)
