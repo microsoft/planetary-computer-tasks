@@ -228,7 +228,6 @@ services:
     container_name: pctasks-frontend-app
     image: node:16.16-slim
     working_dir: /usr/src/app
-    user: node
     ports:
       - "8515:8515"
     environment:
