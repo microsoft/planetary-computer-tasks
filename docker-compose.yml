@@ -226,11 +226,9 @@ services:
 
   frontend:
     container_name: pctasks-frontend-app
-    image: pctasks-frontend
-    build:
-      context: ./pctasks_frontend
-      dockerfile: Dockerfile
-    working_dir: /home/node/app
+    image: node:16.16-slim
+    working_dir: /usr/src/app
+    user: node
     ports:
       - "8515:8515"
     environment:
@@ -238,8 +236,8 @@ services:
       - CHOKIDAR_INTERVAL=100
       - REACT_APP_API_ROOT
     volumes:
-      - /home/node/app/node_modules
-      - ./pctasks_frontend:/home/node/app
+      - ./pctasks_frontend:/usr/src/app
+    command: "npm start"
 
   # Used to let kind cluster pull local docker images
   # See https://kind.sigs.k8s.io/docs/user/local-registry/

@@ -23,17 +23,6 @@ Run
 
 to install the packages into a virtualenv (note: activate the virtualenv beforehand.) You should run this even if you are only doing docker development, otherwise the python eggs installed into the container will be overridden by volume mounts.
 
-### JavaScript
-
-If you need JavaScript dependencies from the pctasks_frontend application on your host for IDE integration, you can run
-
-```console
-> cd pctasks_frontend
-> npm install --legacy-peer-deps
-```
-
-Alternatively, for vscode users, you can use the preconfigured `.devcontainer` for that folder. From the command palette, run "Remote Containers: Open folder in container", and select the `pctasks_frontend` folder from the subsequent list. This dev container is separate from the server containers, though uses the same image, and can be stopped/started independently of the `server` script.
-
 ## Set up development environment
 
 Run
@@ -45,7 +34,9 @@ Run
 To build set up the development cluster, build docker images,
 and set up test data.
 
-You can run `scripts/update` to build the docker images at any time.
+You can run `scripts/update` to build the docker images and update dependencies
+at any time. Add the `--help` flag to see the available options targeting
+subsets of images.
 
 
 http://localhost:8500
@@ -58,10 +49,15 @@ To run the development servers:
 > scripts/server
 ```
 
-This will start Azurite, a PgSTAC database, the Azure Functions server, a local executor for testing, and a stac-fastapi
-to inspect ingest results.
+This will start Azurite, a PgSTAC database, the Azure Functions server, a local executor for testing, a stac-fastapi
+to inspect ingest results, and the frontend.
 
-You can access the STAC API at http://localhost:8510/stac and a stac-browser of the API at http://localhost:8510/browser
+| Service           | URL                             |
+|-------------------|---------------------------------|
+| PC Tasks API      | <http://localhost:8511/runs>    |
+| PC Tasks Frontend | <http://localhost:8515>         |
+| STAC API          | <http://localhost:8510/stac>    |
+| STAC Browser      | <http://localhost:8510/browser> |
 
 ## Testing
 

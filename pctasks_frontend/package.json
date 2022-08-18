@@ -1,5 +1,5 @@
 {
-  "name": "pc-tasks-viewer",
+  "name": "pc-tasks-frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
