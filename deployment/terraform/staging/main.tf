@@ -19,6 +19,10 @@ module "resources" {
   task_sp_client_id = var.task_sp_client_id
   task_sp_client_secret = var.task_sp_client_secret
 
+  pctasks_test_kv = "kv-pctaskstest-staging"
+  # Note: this resource group is managed by terraform but contains the manually managed keyvault
+  pctasks_test_kv_resource_group_name = "rg-pctaskstest-staging-westeurope"
+
   kv_sp_tenant_id = var.kv_sp_tenant_id
   kv_sp_client_id = var.kv_sp_client_id
   kv_sp_client_secret = var.kv_sp_client_secret

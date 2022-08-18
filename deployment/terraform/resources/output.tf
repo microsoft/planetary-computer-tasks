@@ -113,7 +113,7 @@ output "sa_connection_string" {
 ## Keyvault
 
 output "keyvault_url" {
-  value = azurerm_key_vault.pctasks.vault_uri
+  value = data.azurerm_key_vault.pctasks.vault_uri
 }
 
 output "kv_sp_tenant_id" {

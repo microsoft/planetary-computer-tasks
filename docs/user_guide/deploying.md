@@ -28,6 +28,11 @@ The PgSTAC database information is written into the PCTasks key vault as a secre
 
 The deploy secrets keyvault holds keys for terraform to read. The keyvault must contain a secret that holds the terraform values file that is used to specify values for terraform variables, described below.
 
+### PC Tasks KeyVault
+
+The PCTasks keyvault for the should be manually created prior to running terraform. Set the KeyVault name and resource group 
+`pctasks_test_kv` and `pctasks_test_kv_resource_group_name` variables. Note that in the `staging` environment, this manually created resources is in the resource group managed by terraform, but is not itself managed.
+
 ### Terraform Variables
 
 A terraform variables file is stored in the deployment keyvault, which is fetched and applied to the deployment of a specific stack in the terraform stage. The keyvault secret that is fetched depends on the `env.sh` file stored in the stack's terraform directory. For example,
