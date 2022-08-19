@@ -1,7 +1,0 @@
-{
-	"name": "Existing Dockerfile",
-	"context": "..",
-	"dockerFile": "../Dockerfile",
-	"workspaceMount": "source=${localWorkspaceFolder},target=/home/node/app,type=bind",
-	"workspaceFolder": "/home/node/app"
-}
