@@ -18,23 +18,25 @@ collections:
     template: ${{ local.path(./collection/noaa-nclimgrid-daily) }}
     class: noaa_nclimgrid:NoaaNclimgridCollection
     asset_storage:
-      - uri: blob://devstoreaccount1/nclimgrid/
+      - uri: blob://nclimgridwesteurope/nclimgrid/
+        token: ${{ pc.get_token(nclimgridwesteurope, nclimgrid) }}
         chunks:
           options:
             name_starts_with: nclimgrid-daily/beta/by-month/
             matches: prcp-[^-]+-grd-scaled\.nc
             chunk_length: 100
     chunk_storage:
-      uri: blob://devstoreaccount1/nclimgrid-etl-data/daily/
+      uri: blob://nclimgridwesteurope/nclimgrid-etl-data/daily/
   - id: noaa-nclimgrid-monthly
     template: ${{ local.path(./collection/noaa-nclimgrid-monthly) }}
     class: noaa_nclimgrid:NoaaNclimgridCollection
     asset_storage:
-      - uri: blob://devstoreaccount1/nclimgrid/
+      - uri: blob://nclimgridwesteurope/nclimgrid/
+        token: ${{ pc.get_token(nclimgridwesteurope, nclimgrid) }}
         chunks:
           options:
             name_starts_with: nclimgrid-monthly/
             matches: nclimgrid_prcp\.nc
             chunk_length: 100
     chunk_storage:
-      uri: blob://devstoreaccount1/nclimgrid-etl-data/monthly/
+      uri: blob://nclimgridwesteurope/nclimgrid-etl-data/monthly/
