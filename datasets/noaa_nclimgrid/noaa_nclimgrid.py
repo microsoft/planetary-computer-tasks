@@ -4,14 +4,14 @@ from pathlib import Path
 
 import pystac
 from stactools.noaa_nclimgrid.stac import create_items
-from stactools.noaa_nclimgrid.utils import nc_href_dict
+from stactools.noaa_nclimgrid.utils import nc_href_dict, data_frequency
 
 from pctasks.core.storage import StorageFactory
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.dataset.collection import Collection
 
-COG_CONTAINER = "blob://devstoreaccount1/nclimgrid-cogs/"
-# COG_CONTAINER = "blob://nclimgridwesteurope/nclimgrid-cogs/"
+COG_CONTAINER = "blob://devstoreaccount1/nclimgrid-cogs"
+# COG_CONTAINER = "blob://nclimgridwesteurope/nclimgrid-cogs"
 
 class MissingCogs(Exception):
     pass
@@ -21,6 +21,8 @@ class NoaaNclimgridCollection(Collection):
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
+        frequency = data_frequency(asset_uri).value
+
         with TemporaryDirectory() as tmp_dir:
             tmp_nc_dir = Path(tmp_dir, "nc")
             tmp_cog_dir = Path(tmp_dir, "cog")
@@ -42,10 +44,13 @@ class NoaaNclimgridCollection(Collection):
                 raise MissingCogs("not all cogs created")
             
             # upload cogs and update asset hrefs with new location
-            cog_storage = storage_factory.get_storage(COG_CONTAINER)
+            cog_storage = storage_factory.get_storage(f"{COG_CONTAINER}/{frequency}/")
             for item in items:
                 for var in ["prcp", "tavg", "tmax", "tmin"]:
-                    cog_filename = f"{var}-{item.id}.tif"
+                    if frequency == "daily":
+                        cog_filename = f"{var}-{item.id}.tif"
+                    else:
+                        cog_filename = f"{item.id[0:10]}{var}{item.id[9:]}.tif"
                     cog_storage.upload_file(local_cogs[cog_filename], cog_filename)                    
                     item.assets[var].href = cog_storage.get_url(cog_filename)
         
