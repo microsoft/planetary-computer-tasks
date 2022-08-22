@@ -7,6 +7,7 @@ from pctasks.core.constants import RECORD_SCHEMA_VERSION
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.event import CloudEvent
+from pctasks.core.models.utils import tzutc_now
 from pctasks.core.models.workflow import WorkflowConfig, WorkflowRunStatus
 from pctasks.core.tables.base import InvalidTableKeyError, validate_table_key
 from pctasks.core.utils import StrEnum
@@ -72,8 +73,8 @@ class WorkflowRunGroupStatus(StrEnum):
 
 class RunRecord(PCBaseModel):
     type: str
-    created: datetime = Field(default_factory=datetime.utcnow)
-    updated: datetime = Field(default_factory=datetime.utcnow)
+    created: datetime = Field(default_factory=tzutc_now)
+    updated: datetime = Field(default_factory=tzutc_now)
 
     errors: Optional[List[str]] = None
 
@@ -82,7 +83,7 @@ class RunRecord(PCBaseModel):
     schema_version: str = RECORD_SCHEMA_VERSION
 
     def set_update_time(self) -> None:
-        self.updated = datetime.utcnow()
+        self.updated = tzutc_now()
 
 
 class TaskRunRecord(RunRecord):
@@ -135,8 +136,8 @@ class WorkflowRunRecord(RunRecord):
     trigger_event: Optional[CloudEvent] = None
     args: Optional[Dict[str, Any]] = None
 
-    created: datetime = Field(default_factory=datetime.utcnow)
-    updated: datetime = Field(default_factory=datetime.utcnow)
+    created: datetime = Field(default_factory=tzutc_now)
+    updated: datetime = Field(default_factory=tzutc_now)
 
 
 class WorkflowRunGroupRecord(RunRecord):
