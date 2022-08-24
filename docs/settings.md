@@ -44,4 +44,15 @@ If `confirmation_required` is true, PCTasks will ask for confirmation before sub
 
 ## Frontend Settings
 
-To run locally, the frontend will need separate configuration settings for the API endpoint and the API key. In the `pctasks_frontend` directory, copy .env.example to .env and update the values to match your environment.
+The frontend is configured with default values to connect to and authenticate against the local PCTasks API server. If you want to use a remote API, like staging or test, you'll need to override a few settings. You can do this either by modifying the `.env` file in the root `pctasks_frontend` project directory.
+
+The `REACT_APP_AUTH_*` variables are used to establish an oAuth2 flow against a registered Azure AD application. You'll need to get these values from the Azure AD portal for the target environment. These values are unused and can remain unset when `REACT_APP_IS_DEV` is set to true.
+
+| Variable                      | Description                                                                                           | Default               |
+|-------------------------------|-------------------------------------------------------------------------------------------------------|-----------------------|
+| REACT_APP_IS_DEV              | Whether the frontend is running in development mode and using a dev-only auth token for API requests. | true                  |
+| REACT_APP_API_ROOT            | The root of the API endpoint to use for requests.                                                     | http://localhost:8511 |
+| REACT_APP_DEV_AUTH_TOKEN      | The dev-only auth token to use for API requests.                                                      | hunter2               |
+| REACT_APP_AUTH_TENANT_ID      | The tenant ID to use for API requests.                                                                | --                    |
+| REACT_APP_AUTH_CLIENT_ID      | The client ID to use for API requests.                                                                | --                    |
+| REACT_APP_AUTH_BACKEND_APP_ID | The backend App ID that exposes API scopes via the frontend App Registration.                         | --                    |
