@@ -1,5 +1,5 @@
 import logging
-from typing import List, Tuple
+from typing import IO, List, Tuple
 
 import click
 
@@ -9,19 +9,19 @@ logger = logging.getLogger(__name__)
 
 
 @click.command("workflow")
-@click.argument("workflow_path")
+@click.argument("workflow", type=click.File("r"))
 @opt_args
 @click.pass_context
 def workflow_cmd(
-    ctx: click.Context, workflow_path: str, arg: List[Tuple[str, str]]
+    ctx: click.Context, workflow: IO[str], arg: List[Tuple[str, str]]
 ) -> None:
-    """Submit the workflow at FILE
+    """Submit the workflow from local file or stdin
 
-    Can be a local file or a blob URI (e.g. blob://account/container/workflow.yaml)
+    Use "-" to read the workflow from stdin.
     """
     from . import _cli
 
-    return _cli.workflow_cmd(ctx, workflow_path, arg)
+    return _cli.workflow_cmd(ctx, workflow, arg)
 
 
 @click.group("submit")

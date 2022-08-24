@@ -1,6 +1,7 @@
 import logging
+from pathlib import Path
 import sys
-from typing import Dict, List, Optional, Tuple
+from typing import IO, Dict, List, Optional, Tuple
 
 import click
 import requests
@@ -10,7 +11,9 @@ from pctasks.cli.cli import cli_output
 from pctasks.client.client import PCTasksClient
 from pctasks.client.errors import ConfirmationError
 from pctasks.client.settings import ClientSettings
-from pctasks.client.submit.template import template_workflow_file
+from pctasks.client.submit.template import (
+    template_workflow_contents,
+)
 from pctasks.core.context import PCTasksCommandContext
 from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
 
@@ -58,7 +61,7 @@ def cli_submit_workflow(
 
 
 def workflow_cmd(
-    ctx: click.Context, workflow_path: str, arg: List[Tuple[str, str]]
+    ctx: click.Context, workflow_io: IO[str], arg: List[Tuple[str, str]]
 ) -> None:
     """Submit the workflow at FILE
 
@@ -67,6 +70,13 @@ def workflow_cmd(
     context: PCTasksCommandContext = ctx.obj
     settings = ClientSettings.get(context.profile, context.settings_file)
 
-    workflow = template_workflow_file(workflow_path)
+    workflow_base_dir: Optional[Path] = None
+    if hasattr(workflow_io, "name"):
+        workflow_base_dir = Path(workflow_io.name).parent
+
+    workflow_contents = workflow_io.read()
+    workflow = template_workflow_contents(
+        workflow_contents, base_path=workflow_base_dir
+    )
 
     ctx.exit(cli_submit_workflow(workflow, dict(arg), settings))
