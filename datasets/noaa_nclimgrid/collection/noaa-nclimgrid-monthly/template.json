@@ -31,15 +31,14 @@
         "https://stac-extensions.github.io/raster/v1.1.0/schema.json"
     ],
     "keywords": [
+        "United States",
         "NOAA",
         "NClimGrid",
-        "Air Temperature",
+        "Climate",
         "Precipitation",
-        "Surface Observations",
-        "Climatology",
-        "CONUS"
+        "Temperature"
     ],
-    "msft:short_description": "Monthly NOAA U.S. Climate Gridded Dataset (NClimGrid)",
+    "msft:short_description": "Gridded surface observations of monthly temperature and precipitation for the continental United States",
     "msft:storage_account": "nclimgridwesteurope",
     "msft:container": "nclimgrid",
     "msft:group_id": "noaa-nclimgrid",
@@ -108,7 +107,7 @@
     },
     "item_assets": {
         "prcp": {
-            "media_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
                 "data"
             ],
@@ -123,7 +122,7 @@
             ]
         },
         "tavg": {
-            "media_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
                 "data"
             ],
@@ -138,7 +137,7 @@
             ]
         },
         "tmax": {
-            "media_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
                 "data"
             ],
@@ -153,7 +152,7 @@
             ]
         },
         "tmin": {
-            "media_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
                 "data"
             ],
@@ -166,6 +165,38 @@
                     "spatial_resolution": 5000
                 }
             ]
+        },
+        "prcp_source": {
+            "type": "application/netcdf",
+            "roles": [
+                "data",
+                "source"
+            ],
+            "title": "Monthly Precipitation Source Data"
+        },
+        "tavg_source": {
+            "type": "application/netcdf",
+            "roles": [
+                "data",
+                "source"
+            ],
+            "title": "Monthly Average Temperature Source Data"
+        },
+        "tmax_source": {
+            "type": "application/netcdf",
+            "roles": [
+                "data",
+                "source"
+            ],
+            "title": "Monthly Maximmum Temperature Source Data"
+        },
+        "tmin_source": {
+            "type": "application/netcdf",
+            "roles": [
+                "data",
+                "source"
+            ],
+            "title": "Monthly Minimum Temperature Source Data"
         }
     },
     "sci:doi": "10.7289/V5SX6B56",

@@ -2,7 +2,7 @@
     "stac_version": "1.0.0",
     "type": "Collection",
     "id": "noaa-nclimgrid-daily",
-    "title": "NOAA Daily U.S. Climate Gridded Dataset (NClimGrid-d)",
+    "title": "NOAA Daily U.S. Climate Gridded Dataset (NClimGrid)",
     "description": "{{ collection.description }}",
     "license": "proprietary",
     "links": [
@@ -30,15 +30,14 @@
         "https://stac-extensions.github.io/raster/v1.1.0/schema.json"
     ],
     "keywords": [
+        "United States",
         "NOAA",
         "NClimGrid",
-        "Air Temperature",
+        "Climate",
         "Precipitation",
-        "Surface Observations",
-        "Climatology",
-        "CONUS"
+        "Temperature"
     ],
-    "msft:short_description": "Daily NOAA U.S. Climate Gridded Dataset (NClimGrid)",
+    "msft:short_description": "Gridded surface observations of daily temperature and precipitation for the continental United States",
     "msft:storage_account": "nclimgridwesteurope",
     "msft:container": "nclimgrid",
     "msft:group_id": "noaa-nclimgrid",
@@ -107,7 +106,7 @@
     },
     "item_assets": {
         "prcp": {
-            "media_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
                 "data"
             ],
@@ -122,7 +121,7 @@
             ]
         },
         "tavg": {
-            "media_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
                 "data"
             ],
@@ -137,7 +136,7 @@
             ]
         },
         "tmax": {
-            "media_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
                 "data"
             ],
@@ -152,7 +151,7 @@
             ]
         },
         "tmin": {
-            "media_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
                 "data"
             ],
@@ -165,6 +164,38 @@
                     "spatial_resolution": 5000
                 }
             ]
+        },
+        "prcp_source": {
+            "type": "application/netcdf",
+            "roles": [
+                "data",
+                "source"
+            ],
+            "title": "Daily Precipitation Source Data"
+        },
+        "tavg_source": {
+            "type": "application/netcdf",
+            "roles": [
+                "data",
+                "source"
+            ],
+            "title": "Daily Average Temperature Source Data"
+        },
+        "tmax_source": {
+            "type": "application/netcdf",
+            "roles": [
+                "data",
+                "source"
+            ],
+            "title": "Daily Maximmum Temperature Source Data"
+        },
+        "tmin_source": {
+            "type": "application/netcdf",
+            "roles": [
+                "data",
+                "source"
+            ],
+            "title": "Daily Minimum Temperature Source Data"
         }
     }
 }
