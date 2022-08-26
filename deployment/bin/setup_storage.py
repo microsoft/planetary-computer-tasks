@@ -40,6 +40,7 @@ def setup_storage(
                 environment=[
                     "DB_CONNECTION_STRING=${{ secrets.pgstac-connection-string }}",
                 ],
+                tags=["batch_pool_id=ingest_pool"],
             )
         )
 
