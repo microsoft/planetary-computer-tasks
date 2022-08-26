@@ -1,4 +1,4 @@
-name: Planetary Computer Tasks CI/CD
+name: CI/CD
 
 on:
   push:
