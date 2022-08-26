@@ -25,6 +25,11 @@ module "resources" {
   pctasks_server_sp_client_secret = var.pctasks_server_sp_client_secret
   pctasks_server_sp_object_id = var.pctasks_server_sp_object_id
 
+  deploy_secrets_kv_name = var.deploy_secrets_kv_name
+  deploy_secrets_kv_rg = var.deploy_secrets_kv_rg
+  access_key_secret_name = var.access_key_secret_name
+  backend_api_app_id_secret_name = var.backend_api_app_id_secret_name
+
   k8s_version = "1.23.5"
   k8s_orchestrator_version = "1.23.5"
 
