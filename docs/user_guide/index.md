@@ -6,6 +6,7 @@ maxdepth: 2
 ---
 settings
 workflows
+templating
 deploying
 runtime
 ````
