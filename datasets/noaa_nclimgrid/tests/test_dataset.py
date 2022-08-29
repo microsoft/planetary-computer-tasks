@@ -8,6 +8,8 @@ HERE = Path(__file__).parent
 DATASET_PATH = HERE / ".." / "dataset.yaml"
 
 
+# Change the COG_CONTAINER to devstoreaccount1 in noaa_nclimgrid.py to avoid
+# uploading COGs to nclimgridwesteurope
 def test_daily():
     run_process_items_workflow(
         DATASET_PATH,
@@ -17,6 +19,12 @@ def test_daily():
         },
         chunks_limit=1
     )
+
+
+def test_monthly():
+    pass
+    # The monthly data is one chunk for all data. Since COGs are being created,
+    # it is onerous to run a test for this collection
 
 
 if __name__ == "__main__":

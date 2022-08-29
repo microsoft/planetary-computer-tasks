@@ -219,7 +219,6 @@ def run_workflow(
     )
     templated_workflow = template_workflow_dict(workflow.dict(), base_path=base_path)
     submit_settings = ClientSettings.get()
-    submit_settings.confirmation_required = False
     submit_message = PCTasksClient(submit_settings).submit_workflow(
         WorkflowSubmitMessage(workflow=templated_workflow, args=args)
     )
