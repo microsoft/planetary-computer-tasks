@@ -8,7 +8,7 @@ HERE = Path(__file__).parent
 DATASET_PATH = HERE / ".." / "dataset.yaml"
 
 
-# Change the COG_CONTAINER to devstoreaccount1 in noaa_nclimgrid.py to avoid
+# Change the COG_CONTAINER in noaa_nclimgrid.py to devstoreaccount1 to avoid
 # uploading COGs to nclimgridwesteurope
 def test_daily():
     run_process_items_workflow(
@@ -17,7 +17,7 @@ def test_daily():
         args={
             "registry": "localhost:5001",
         },
-        chunks_limit=1
+        chunks_limit=1,
     )
 
 

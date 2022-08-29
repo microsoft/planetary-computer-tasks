@@ -1,13 +1,13 @@
+from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Union
-from pathlib import Path
 
 import pystac
 from stactools.noaa_nclimgrid.stac import create_items
-from stactools.noaa_nclimgrid.utils import nc_href_dict, data_frequency
+from stactools.noaa_nclimgrid.utils import data_frequency, nc_href_dict
 
-from pctasks.core.storage import StorageFactory
 from pctasks.core.models.task import WaitTaskResult
+from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
 
 # COG_CONTAINER = "blob://devstoreaccount1/nclimgrid-cogs"
@@ -48,7 +48,9 @@ class NoaaNclimgridCollection(Collection):
                 raise MissingCogs("not all cogs created")
 
             # upload cogs; update cog and netcdf asset hrefs
-            cog_storage = storage_factory.get_storage(f"{COG_CONTAINER}/nclimgrid-{frequency}/")
+            cog_storage = storage_factory.get_storage(
+                f"{COG_CONTAINER}/nclimgrid-{frequency}/"
+            )
             for item in items:
                 for var in ["prcp", "tavg", "tmax", "tmin"]:
                     if frequency == "daily":
