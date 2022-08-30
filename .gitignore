@@ -115,3 +115,5 @@ dev-secrets.yaml
 sas-tokens.json
 
 docs/generated
+
+kubeconfig
