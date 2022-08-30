@@ -3,3 +3,7 @@ server:
   secure: false
   # extraArgs:
   # - --auth-mode=server
+
+controller:
+  workflowNameSpaces:
+    - pc
