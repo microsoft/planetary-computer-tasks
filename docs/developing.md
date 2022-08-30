@@ -13,6 +13,8 @@ You must have the following installed in the development environment:
 
 ## Install packages
 
+### Python
+
 Run
 
 ```
@@ -32,7 +34,9 @@ Run
 To build set up the development cluster, build docker images,
 and set up test data.
 
-You can run `scripts/update` to build the docker images at any time.
+You can run `scripts/update` to build the docker images and update dependencies
+at any time. Add the `--help` flag to see the available options targeting
+subsets of images.
 
 
 http://localhost:8500
@@ -45,10 +49,15 @@ To run the development servers:
 > scripts/server
 ```
 
-This will start Azurite, a PgSTAC database, the Azure Functions server, a local executor for testing, and a stac-fastapi
-to inspect ingest results.
+This will start Azurite, a PgSTAC database, the Azure Functions server, a local executor for testing, a stac-fastapi
+to inspect ingest results, and the frontend.
 
-You can access the STAC API at http://localhost:8510/stac and a stac-browser of the API at http://localhost:8510/browser
+| Service           | URL                             |
+|-------------------|---------------------------------|
+| PC Tasks API      | <http://localhost:8511/runs>    |
+| PC Tasks Frontend | <http://localhost:8515>         |
+| STAC API          | <http://localhost:8510/stac>    |
+| STAC Browser      | <http://localhost:8510/browser> |
 
 ## Testing
 
