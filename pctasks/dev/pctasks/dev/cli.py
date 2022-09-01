@@ -4,7 +4,7 @@ import sys
 from functools import lru_cache
 from typing import Any, Dict, List, Optional, Union
 
-from pctasks.dev.setup_azurite import setup_azurite
+from pctasks.dev.setup_azurite import setup_azurite, clear_records
 from pctasks.task.version import __version__
 
 logger = logging.getLogger(__name__)
@@ -29,6 +29,11 @@ def _setup_logging(level: Union[str, int], log_libraries: bool = False) -> None:
 
 def setup_azurite_cmd(args: Dict[str, Any]) -> int:
     setup_azurite()
+    return 0
+
+
+def clear_records_cmd(args: Dict[str, Any]) -> int:
+    clear_records()
     return 0
 
 
@@ -61,6 +66,14 @@ def parse_args(args: List[str]) -> Optional[Dict[str, Any]]:
         formatter_class=dhf,
     )
 
+    # clear-records command
+    _ = subparsers.add_parser(
+        "clear-records",
+        help="Clears Azurite records.",
+        parents=[parent],
+        formatter_class=dhf,
+    )
+
     parsed_args = {
         k: v for k, v in vars(parser0.parse_args(args)).items() if v is not None
     }
@@ -85,6 +98,8 @@ def cli(args: Optional[List[str]] = None) -> Optional[int]:
 
     if cmd == "setup-azurite":
         return setup_azurite_cmd(parsed_args)
+    if cmd == "clear-records":
+        return clear_records_cmd(parsed_args)
     return None
 
 

@@ -108,5 +108,28 @@ def setup_azurite() -> None:
     print("~ Done Azurite setup.")
 
 
+def clear_records() -> None:
+    """Clears Azurite records from the tables.
+
+    Useful when there are changes to the Records models which make
+    existing dev records invalid.
+    """
+    table_service_client = TableServiceClient.from_connection_string(
+        get_azurite_connection_string()
+    )
+    tables = [t.name for t in table_service_client.list_tables()]
+    for table in [
+        DEFAULT_DATASET_TABLE_NAME,
+        DEFAULT_WORKFLOW_RUN_GROUP_RECORD_TABLE_NAME,
+        DEFAULT_WORKFLOW_RUN_RECORD_TABLE_NAME,
+        DEFAULT_JOB_RUN_RECORD_TABLE_NAME,
+        DEFAULT_TASK_RUN_RECORD_TABLE_NAME,
+    ]:
+        if table in tables:
+            print(f"~ ~ Clearing table {table}...")
+            table_service_client.delete_table(table)
+            table_service_client.create_table(table)
+
+
 if __name__ == "__main__":
     setup_azurite()
