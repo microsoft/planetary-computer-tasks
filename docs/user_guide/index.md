@@ -7,6 +7,8 @@ maxdepth: 2
 settings
 workflows
 templating
-deploying
+storage
+secrets
 runtime
+deploying
 ````

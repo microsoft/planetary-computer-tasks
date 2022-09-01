@@ -58,3 +58,4 @@ html_theme_options = {
 # -- Options for autodoc -------------------------------------------------
 
 autosummary_generate = True
+autodoc_typehints = "both"

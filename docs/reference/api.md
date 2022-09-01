@@ -33,3 +33,15 @@ The `pctasks.task` package provides functionality for building tasks to be execu
 
    pctasks.task.task.Task
 ```
+
+## `pctasks.dataset`
+
+The `pctasks.dataset` package provides functionality for defining PCTasks workflows that process STAC Items and Collections.
+
+```{eval-rst}
+.. autosummary::
+   :toctree: ./generated/
+   :recursive:
+
+   pctasks.dataset.collection.Collection
+```

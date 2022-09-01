@@ -118,6 +118,10 @@ environment:
   AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
 ```
 
+The `environment` provides the ability to inject environment variables into each task that is issued for the dataset. In this case, we're injecting the Azure SDK credentials for tasks. These environment variables will be provided to each task, regardless
+of whether they will be utilized in any specific task. In this case, the variable values are using the `${{ secrets.* }}` template
+group to retrieve secret values. See [](../user_guide/secrets) for more details about secrets.
+
 ### collections
 
 The `collections` element is a list of collection configuration. If your dataset only has one collection,
@@ -173,6 +177,8 @@ The implementation of the class is described below.
 
 #### asset_storage
 
+There can be multiple asset storage configurations, which describes where assets for the dataset exist, are specified in the list elements of `asset_storage` property. We'll look at the single asset_storage configuration here:
+
 ```yaml
 uri: blob://landcoverdata/chesapeake
 token: ${{ pc.get_token(landcoverdata, chesapeake) }}
@@ -182,6 +188,15 @@ chunks:
         chunk_length: 1000
 ```
 
+ The `uri` is the PC URI to the assets (currently must be a `blob://storage_account/container(/prefix)` type URI).
+
+ The `token` provides a SAS token to access the assets. Any token provided with asset storage will be available to tasks through the {ref}`StorageFactory` mechanism.
+
+The `chunks` section describes how the dataset assets get translated into "chunk files". Chunk files are simple lists of asset URIs
+that are used to break data processing work into groups of work that can be processed in parallel. This section would also
+contain information defining the "splits" that would parallelize the creation of chunk files, though this particular dataset
+does not utilize splits and so no options are defined. See [](../user_guide/chunking) for more information about splits and chunk files.
+
 #### chunk_storage
 
 ```yaml
@@ -189,23 +204,71 @@ chunk_storage:
     uri: blob://landcoverdata/chesapeake-etl-data/pctasks-chunks/lc-7/
 ```
 
+This section defines where chunk files will be stored. You can supply a read/write SAS token in this configuration, but in this example we only specify the URI, which requires the service principal whose credentials are set in the `environment` have read/write access to this container. See [](../user_guide/chunking) for more information about chunk files.
+
 ## Collection templates
 
-A Collection template has two files: `template.json`, which
+A Collection template is a directory has two files: `template.json`, which
 is a STAC Collection JSON with a templated description value, and a `description.md`, which contains the text that will be
 templated into the Collection JSON.
 
+For example, using
+
+```
+> pctasks dataset ingest-collection -d datasets/chesapeake_lulc/dataset.yaml -c chesapeake-lc-7 --submit
+```
+
+will submit a task to write the collection to the database. Note that if your dataset only has a single collection, you
+do not have to supply the `-c` option. Also, if you are in the dataset directory and your dataset is named `dataset.yaml`,
+you do not have to supply teh `-d` option.
+
 ## chesapeake_lulc.py
 
-This is the code file.
+This is the code file that contains the subclass of [pctasks.dataset.model.collection.Collection](../reference/generated/pctasks.dataset.collection.Collection). This dataset uses a [stactools package](https://stactools-packages.github.io/) for Item
+creation, so the code quite simply calls out to that stactools package to create an item from an asset:
+
+```python
+from typing import List, Union
+
+import pystac
+from stactools.chesapeake_lulc.stac import create_item
+
+from pctasks.core.models.task import WaitTaskResult
+from pctasks.core.storage import StorageFactory
+from pctasks.dataset.collection import Collection
+
+
+class ChesapeakeCollection(Collection):
+    @classmethod
+    def create_item(
+        cls, asset_uri: str, storage_factory: StorageFactory
+    ) -> Union[List[pystac.Item], WaitTaskResult]:
+        storage, asset_path = storage_factory.get_storage_for_file(asset_uri)
+        href = storage.get_url(asset_path)
+        item = create_item(href, read_href_modifier=storage.sign)
+        return [item]
+```
+
+See the [chesapeake-lulc stactools package](https://github.com/stactools-packages/chesapeake-lulc) for an example
+of how to create a stactools package. It's recommended that any public dataset ingestion starts with a stactools package,
+which allows community involvement in the generation of STAC for public datasets.
+
 
 ## requirements.txt
 
-...
+This file contains the requirements that are needed to run the code contained in `chesapeake_lulc.py` file. Since this
+is declared in the `code:` block of the `dataset.yaml` file, this requirements file along with the code file will be
+uploaded and then transferred to task runners, which will install the dependencies before running any task.
+
+Because installation of dependencies can be time consuming, you can speed up the running of dataset tasks by
+creating and publishing a docker image that already contains the requirements and code. The image must be available
+to be `docker pull`'d by the task runner. In that scenario, you would not need to supply a `code:` block in the
+dataset configuration.
 
 ## Running the dataset
 
 With the above configuration file, code files, and collection templates, you can ingest the dataset into the development or deployed PCTasks system.
+
 With the appropriate profile set, use:
 
 ```

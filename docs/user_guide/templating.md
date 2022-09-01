@@ -25,7 +25,7 @@ The `args` group allows access to [](arguments). The argument names are accessed
 
 ### secrets
 
-...
+The secrets template group is the mechanism for injecting secrets, such as credentials, into task environments. The secrets group template can only be used with the `environment` or `tokens` section of workflows and tasks. These secrets are injected by the PCTasks execution processes server side, and the secrets available are dependant on the service. See [](../user_guide/secrets) for more details about secrets.
 
 ### item
 

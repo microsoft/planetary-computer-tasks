@@ -1,0 +1,6 @@
+# Storage
+
+(StorageFactory)=
+## `StorageFactory`
+
+...
