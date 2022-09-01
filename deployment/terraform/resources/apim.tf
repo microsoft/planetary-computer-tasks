@@ -211,8 +211,9 @@ resource "azurerm_api_management_api_policy" "pctasks_policy" {
                             <value>{{pctasks-apim-jwt-aud-backend-app-id}}</value>
                         </claim>
                         <!--JWT must provide Run Read and Write API scopes as published by the app registration -->
-                        <claim name="scp">
-                            <value>Runs.Read.All Runs.Write.All</value>
+                        <claim name="scp" separator=" ">
+                            <value>Runs.Read.All</value>
+                            <value>Runs.Write.All</value>
                         </claim>
                     </required-claims>
                 </validate-jwt>
