@@ -104,6 +104,10 @@ You can export a kubeconfig for `kubectl`
 > kind export kubeconfig --name kind-pctasks
 ```
 
+## Frontend Settings
+
+To run locally, the frontend will need separate configuration settings for the API endpoint and the API key. In the `pctasks_frontend` directory, copy .env.example to .env and update the values to match your environment.
+
 ## Argo UI
 
 Once the kind cluster is up, you can view the Argo UI by visiting http://localhost:8500/argo.
