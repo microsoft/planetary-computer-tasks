@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { Spinner } from "@fluentui/react";
+
 import { usePageTitle } from "components/common/hooks";
 import { WorkflowRunList } from "components/workflows";
 import { useWorkflowRuns } from "helpers/api";
 import { useSelection } from "state/SelectionProvider";
+import { AuthPage } from "components/auth";
 
 export const Workflows = () => {
   const { data: workflowRuns, isError, isLoading } = useWorkflowRuns();
@@ -20,9 +22,11 @@ export const Workflows = () => {
   return (
     <div>
       <h2>Workflows</h2>
-      {isLoading && loading}
-      {isError && error}
-      {workflowRuns && <WorkflowRunList runs={workflowRuns} />}
+      <AuthPage>
+        {isLoading && loading}
+        {isError && error}
+        {workflowRuns && <WorkflowRunList runs={workflowRuns} />}
+      </AuthPage>
     </div>
   );
 };

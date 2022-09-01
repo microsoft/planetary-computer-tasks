@@ -8,6 +8,7 @@ import { gapRegular, gapSmall } from "styles/global";
 import { TextOutput } from "components/common/TextOutput/TextOutput.index";
 import { useSelection } from "state/SelectionProvider";
 import { usePageTitle } from "components/common/hooks";
+import { AuthPage } from "components/auth";
 
 export const WorkflowDetail = () => {
   const { workflowRunId } = useParams();
@@ -25,7 +26,7 @@ export const WorkflowDetail = () => {
 
   usePageTitle(pageTitle);
   return (
-    <>
+    <AuthPage>
       <WorkflowRunHeader run={workflowRun} />
       {isLoading && <Spinner />}
       {isError && <div>Error</div>}
@@ -36,7 +37,7 @@ export const WorkflowDetail = () => {
         </StackItem>
         <TextOutput taskRun={selectedTaskRun} />
       </Stack>
-    </>
+    </AuthPage>
   );
 };
 

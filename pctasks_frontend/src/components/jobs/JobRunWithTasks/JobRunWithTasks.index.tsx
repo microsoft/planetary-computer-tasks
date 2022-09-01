@@ -25,7 +25,6 @@ export const JobRunWithTasks: React.FC<JobRunWithTasksProps> = ({
   const { isExpanded, toggleButton } = useExpandButton(expanded);
   const { data: taskRuns } = useJobTaskRuns(jobRun, isExpanded);
 
-  console.log("tr", taskRuns);
   const jobHeader = <JobRunItem job={job} run={jobRun} indent={0} />;
   const styles = getStyles(indent);
 

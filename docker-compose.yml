@@ -109,6 +109,7 @@ services:
 
       - PCTASKS_SERVER__DEV=true
       - PCTASKS_SERVER__DEV_API_KEY=hunter2
+      - PCTASKS_SERVER__DEV_AUTH_TOKEN=Bearer hunter2
 
       - PCTASKS_SERVER__RECORD_TABLES__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://azurite:10002/devstoreaccount1;
 
@@ -228,12 +229,14 @@ services:
     container_name: pctasks-frontend-app
     image: node:16.16-slim
     working_dir: /usr/src/app
+    env_file:
+      - "pctasks_frontend/.env"
     ports:
       - "8515:8515"
     environment:
       - CHOKIDAR_USEPOLLING=true
       - CHOKIDAR_INTERVAL=100
-      - REACT_APP_API_ROOT
+      - REACT_APP_DEV_AUTH_TOKEN=${REACT_APP_DEV_AUTH_TOKEN:-hunter2}
     volumes:
       - ./pctasks_frontend:/usr/src/app
     command: "npm start"

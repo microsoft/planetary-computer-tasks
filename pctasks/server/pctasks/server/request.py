@@ -6,6 +6,8 @@ from fastapi import Request
 from pctasks.server.settings import ServerSettings
 
 # Headers containing user data from API Management
+HAS_AUTHORIZATION_HEADER = "X-Has-Authorization"
+AUTHORIZATION_HEADER = "Authorization"
 HAS_SUBSCRIPTION_HEADER = "X-Has-Subscription"
 SUBSCRIPTION_KEY_HEADER = "X-Subscription-Key"
 USER_EMAIL_HEADER = "X-User-Email"
@@ -23,23 +25,43 @@ class ParsedRequest:
         self._request = request
         self.dev = settings.dev
         self.dev_api_key = settings.dev_api_key
+        self.dev_auth_token = settings.dev_auth_token
         self.access_key = settings.access_key
 
     @property
     def is_authenticated(self) -> bool:
+        """Authenticated users can pass in a valid subscription key or access
+        token (JWT). In either case the request must include the secret access
+        key set by the API gateway."""
         if self.dev:
-            return self._request.headers.get(API_KEY_HEADER) == self.dev_api_key
+            return self.has_subscription or self.has_authorization
 
         if self.access_key:
             if not self.request_access_key == self.access_key:
                 logger.warning("Request made with mismatched access key")
                 return False
+        else:
+            logger.warning("Access key is unset in non-dev environment!")
 
-        return (
+        has_subscription_key = (
             self.has_subscription
             and bool(self.subscription_key)
             and bool(self.user_email)
         )
+
+        has_access_token = self.has_authorization and bool(self.user_email)
+
+        return has_subscription_key or has_access_token
+
+    @property
+    def has_authorization(self) -> bool:
+        """Determines whether or not this request has a validated access token (JWT)."""
+        if self.dev:
+            return (
+                self._request.headers.get(AUTHORIZATION_HEADER) == self.dev_auth_token
+            )
+
+        return self._request.headers.get(HAS_AUTHORIZATION_HEADER) == "true"
 
     @property
     def has_subscription(self) -> bool:
@@ -72,7 +94,7 @@ class ParsedRequest:
         user email. This function translates that to None.
         """
         if self.dev:
-            if self._request.headers.get(API_KEY_HEADER) == self.dev_api_key:
+            if self.has_authorization or self.has_subscription:
                 return "dev@null.com"
             else:
                 return None

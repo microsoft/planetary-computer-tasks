@@ -19,6 +19,11 @@ resource "azurerm_kubernetes_cluster" "pctasks" {
     type = "SystemAssigned"
   }
 
+  azure_active_directory_role_based_access_control {
+    managed            = true
+    azure_rbac_enabled = true
+  }
+
   tags = {
     Environment = var.environment
     ManagedBy   = "AI4E"

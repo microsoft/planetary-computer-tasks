@@ -1,0 +1,112 @@
+{
+  "id": "{{ application_system_id}}",
+  "acceptMappedClaims": null,
+  "accessTokenAcceptedVersion": 2,
+  "addIns": [],
+  "allowPublicClient": null,
+  "appId": "{{ application_id }}",
+  "appRoles": [
+    {
+      "allowedMemberTypes": ["User"],
+      "description": "Writers can submit workflow tasks.",
+      "displayName": "Writer",
+      "id": "65b99a27-049f-47b1-9590-de8577d287ae",
+      "isEnabled": true,
+      "lang": null,
+      "origin": "Application",
+      "value": "Run.Writer"
+    },
+    {
+      "allowedMemberTypes": ["User"],
+      "description": "Readers can view all output of a workflow run.",
+      "displayName": "Reader",
+      "id": "a6fc4df7-cc66-4b66-8d5b-0fc180882446",
+      "isEnabled": true,
+      "lang": null,
+      "origin": "Application",
+      "value": "Run.Reader"
+    }
+  ],
+  "oauth2AllowUrlPathMatching": false,
+  "createdDateTime": "{{ created_date_time }}",
+  "description": null,
+  "certification": null,
+  "disabledByMicrosoftStatus": null,
+  "groupMembershipClaims": null,
+  "identifierUris": ["{{ unique_uri }}"],
+  "informationalUrls": {
+    "termsOfService": null,
+    "support": null,
+    "privacy": null,
+    "marketing": null
+  },
+  "keyCredentials": [],
+  "knownClientApplications": [],
+  "logoUrl": null,
+  "logoutUrl": null,
+  "name": "{{ app_name }}",
+  "notes": null,
+  "oauth2AllowIdTokenImplicitFlow": false,
+  "oauth2AllowImplicitFlow": false,
+  "oauth2Permissions": [
+    {
+      "adminConsentDescription": "Submit and schedule workflow runs",
+      "adminConsentDisplayName": "Submit workflows",
+      "id": "0465b2a7-4d84-4248-86da-1f7667a095c7",
+      "isEnabled": true,
+      "lang": null,
+      "origin": "Application",
+      "type": "User",
+      "userConsentDescription": "Submit and schedule workflow runs",
+      "userConsentDisplayName": "Submit workflows",
+      "value": "Runs.Write.All"
+    },
+    {
+      "adminConsentDescription": "List and view workflow, job, and task runs and logs.",
+      "adminConsentDisplayName": "View run details",
+      "id": "987ddcd1-b3f3-4e59-9d34-e866da9162fc",
+      "isEnabled": true,
+      "lang": null,
+      "origin": "Application",
+      "type": "User",
+      "userConsentDescription": "List and view workflow, job, and task runs and logs.",
+      "userConsentDisplayName": "View run details",
+      "value": "Runs.Read.All"
+    }
+  ],
+  "oauth2RequirePostResponse": false,
+  "optionalClaims": null,
+  "orgRestrictions": [],
+  "parentalControlSettings": {
+    "countriesBlockedForMinors": [],
+    "legalAgeGroupRule": "Allow"
+  },
+  "passwordCredentials": [],
+  "preAuthorizedApplications": [
+    {
+      "appId": "{{ frontend_app_id }}",
+      "permissionIds": [
+        "987ddcd1-b3f3-4e59-9d34-e866da9162fc",
+        "0465b2a7-4d84-4248-86da-1f7667a095c7"
+      ]
+    }
+  ],
+  "publisherDomain": "microsoft.onmicrosoft.com",
+  "replyUrlsWithType": [],
+  "requiredResourceAccess": [
+    {
+      "resourceAppId": "00000003-0000-0000-c000-000000000000",
+      "resourceAccess": [
+        {
+          "id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d",
+          "type": "Scope"
+        }
+      ]
+    }
+  ],
+  "samlMetadataUrl": null,
+  "signInUrl": null,
+  "signInAudience": "AzureADMyOrg",
+  "tags": [],
+  "tokenEncryptionKeyId": null
+}

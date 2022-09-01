@@ -11,4 +11,5 @@ storage
 secrets
 runtime
 deploying
+app_registrations
 ````

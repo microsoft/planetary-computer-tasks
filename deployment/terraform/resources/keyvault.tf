@@ -52,3 +52,8 @@ data "azurerm_key_vault_secret" "access_key" {
   name         = var.access_key_secret_name
   key_vault_id = data.azurerm_key_vault.deploy_secrets.id
 }
+
+data "azurerm_key_vault_secret" "backend_app_id" {
+  name         = var.backend_api_app_id_secret_name
+  key_vault_id = data.azurerm_key_vault.deploy_secrets.id
+}

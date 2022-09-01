@@ -48,6 +48,12 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
             cp dev-secrets.template.yaml dev-secrets.yaml
         fi
 
+        # Copy frontend settings template if it doesn't exist
+        if [ ! -f pctasks_frontend/.env ]; then
+            echo "Initialized default frontend settings"
+            cp pctasks_frontend/.env.example pctasks_frontend/.env
+        fi
+
         setup_docker_network;
 
         echo " -- BUILDING CONTAINERS"
