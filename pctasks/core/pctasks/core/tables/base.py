@@ -35,9 +35,7 @@ class InvalidTableKeyError(Exception):
 
 
 def encode_model(m: BaseModel) -> str:
-    return b64encode(
-        m.json(exclude_unset=True, exclude_none=True).encode("utf-8")
-    ).decode("utf-8")
+    return b64encode(m.json(exclude_none=True).encode("utf-8")).decode("utf-8")
 
 
 def decode_dict(s: str) -> Dict[str, Any]:

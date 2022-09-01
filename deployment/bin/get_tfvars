@@ -45,10 +45,8 @@ if __name__ == "__main__":
     )
 
     raw_text = raw_bytes.decode("utf-8")
-    # print('\n'.join(raw_text.split(r"\n")))
-    # raise Exception()
-    dequoted = raw_text[1:-1].replace(r'\"', r'"').replace('""', '"').strip()
-    processed_text = '\n'.join(dequoted.split(r"\n"))
+    dequoted = raw_text[1:-1].replace(r"\"", r'"').replace('""', '"').strip()
+    processed_text = "\n".join([line for line in dequoted.split(r"\n") if line != '"'])
 
     if args.output:
         with open(args.output, "w") as f:
