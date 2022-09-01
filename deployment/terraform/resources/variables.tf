@@ -128,6 +128,10 @@ variable access_key_secret_name {
   type    = string
 }
 
+variable backend_api_app_id_secret_name {
+  type    = string
+}
+
 ## PCTasks Server
 
 variable "pctasks_server_sp_tenant_id" {

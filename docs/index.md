@@ -12,6 +12,7 @@ caption: Contents
 settings
 developing
 deploying
+app_registrations
 reference
 runtime
 ````

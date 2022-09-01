@@ -11,9 +11,7 @@ You must have the following installed in the development environment:
 - kubectl
 - [helm](https://helm.sh/docs/intro/install/)
 
-## Install packages
-
-### Python
+## Install Python packages
 
 Run
 
