@@ -13,7 +13,7 @@ import {
 export const PcPersona: React.FC = () => {
   const { instance, accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();
-  if (!isAuthenticated) return null;
+  if (!isAuthenticated || !accounts.length) return null;
 
   const account = accounts[0];
   const name = account?.name;
@@ -26,9 +26,16 @@ export const PcPersona: React.FC = () => {
   };
 
   const handleLogout = () => {
-    instance.logoutRedirect().catch(e => {
-      console.error(e);
-    });
+    instance
+      .logoutRedirect({
+        onRedirectNavigate: () => {
+          // Stop navigation after local logout (user remains signed into their server session)
+          return false;
+        },
+      })
+      .catch(e => {
+        console.error(e);
+      });
   };
 
   const menu: IContextualMenuProps = {
