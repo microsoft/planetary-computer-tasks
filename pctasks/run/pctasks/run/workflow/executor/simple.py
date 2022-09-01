@@ -181,7 +181,9 @@ class SimpleWorkflowExecutor:
                 pass
 
         if not context:
-            context = TaskContext(storage_factory=StorageFactory())
+            context = TaskContext(
+                storage_factory=StorageFactory(), run_id=workflow.name
+            )
 
         workflow_jobs = list(workflow.jobs.values())
         sorted_jobs = sort_jobs(workflow_jobs)

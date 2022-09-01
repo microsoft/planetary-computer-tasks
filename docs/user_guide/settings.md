@@ -41,3 +41,7 @@ The endpoint is the PCTasks API endpoint, and the API Key is the API Management 
 If `confirmation_required` is true, PCTasks will ask for confirmation before submitting workflows to the endpoint. This can provide a double-check to ensure the intended profile is being used.
 
 `default_args` allows a profile to specify default arguments for workflows. This is useful for common arguments in workflows, such as the container registry that should be used to pull a task image. In the above example, the user would not have to specify the `registry` argument when using the profile with these settings as they will be supplied by the defaults. Note that an argument is specified on the command line, will take precedence over a settings default.
+
+## Frontend Settings
+
+To run locally, the frontend will need separate configuration settings for the API endpoint and the API key. In the `pctasks_frontend` directory, copy .env.example to .env and update the values to match your environment.

@@ -83,9 +83,7 @@ class TaskRunMessage(PCBaseModel):
     config: TaskRunConfig
 
     def encoded(self) -> str:
-        return b64encode(
-            self.json(exclude_unset=True, exclude_none=True).encode("utf-8")
-        ).decode("utf-8")
+        return b64encode(self.json(exclude_none=True).encode("utf-8")).decode("utf-8")
 
     @classmethod
     def decode(cls, msg_text: str) -> "TaskRunMessage":

@@ -12,9 +12,7 @@ class MockTaskContext(TaskContext):
 
     @classmethod
     def default(cls) -> "MockTaskContext":
-        return MockTaskContext(
-            storage_factory=StorageFactory(),
-        )
+        return MockTaskContext(storage_factory=StorageFactory(), run_id="run-id")
 
 
 class MockTaskInput(PCBaseModel):

@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Any, Dict, Optional, Union
 from uuid import uuid4
 
@@ -6,6 +5,7 @@ from pydantic import BaseModel, Field
 
 from pctasks.core.constants import MICROSOFT_OWNER
 from pctasks.core.models.base import ForeachConfig, PCBaseModel, RunRecordId
+from pctasks.core.models.utils import tzutc_now
 from pctasks.core.utils import StrEnum
 
 
@@ -15,7 +15,7 @@ class CloudEvent(PCBaseModel):
     source: str
     subject: Optional[str] = None
     id: str = Field(default_factory=lambda: uuid4().hex)
-    time: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    time: str = Field(default_factory=lambda: tzutc_now().isoformat())
     data_content_type: str = Field(default="application/json", alias="datacontenttype")
     data: Union[Dict[str, Any], BaseModel]
 

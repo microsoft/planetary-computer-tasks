@@ -35,7 +35,7 @@ def local_cmd(workflow: str, args: List[str], output: Optional[str] = None) -> N
     runner = SimpleWorkflowExecutor()
     runner.run_workflow(
         workflow_config,
-        TaskContext(storage_factory=StorageFactory()),
+        TaskContext(storage_factory=StorageFactory(), run_id=workflow_config.name),
         args=workflow_args,
         output_uri=output,
     )

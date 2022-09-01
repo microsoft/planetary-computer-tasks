@@ -54,7 +54,7 @@ def test_create_chunks(dataset_config: DatasetConfig) -> None:
     )
 
     tokens = Tokens(collection_config.get_tokens())
-    context = TaskContext(StorageFactory(tokens=tokens))
+    context = TaskContext(StorageFactory(tokens=tokens), run_id="test-1")
 
     runner = SimpleWorkflowExecutor()
     result = runner.run_workflow(
@@ -76,7 +76,7 @@ def test_create_items(dataset_config: DatasetConfig) -> None:
 
     collection_config: CollectionConfig = dataset_config.collections[0]
     tokens = Tokens(collection_config.get_tokens())
-    context = TaskContext(StorageFactory(tokens=tokens))
+    context = TaskContext(StorageFactory(tokens=tokens), run_id="test-1")
 
     runner = SimpleWorkflowExecutor()
 

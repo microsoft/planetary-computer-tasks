@@ -1,0 +1,208 @@
+{
+  "jobs": {
+    "create-splits": {
+      "id": "create-splits",
+      "tasks": [
+        {
+          "id": "create-splits",
+          "image": "pccomponentstest.azurecr.io/pctasks-task-base:latest",
+          "image_key": null,
+          "code": {
+            "src": "blob://pctasksteststaging/code/94a127b730b624d935b93fe4cc610de1/io_lulc.py",
+            "requirements": null,
+            "pip_options": null
+          },
+          "task": "io_lulc:NineClassIOCollection.create_splits_task",
+          "args": {
+            "inputs": [
+              {
+                "uri": "blob://ai4edataeuwest/io-lulc",
+                "sas_token": "****",
+                "chunk_options": {
+                  "chunk_length": 100,
+                  "name_starts_with": "nine-class/",
+                  "ends_with": ".tif",
+                  "list_folders": false,
+                  "chunk_file_name": "uris-list",
+                  "chunk_extension": ".csv"
+                }
+              }
+            ],
+            "options": {}
+          },
+          "tags": null,
+          "environment": {
+            "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+            "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+            "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+          },
+          "schema_version": "1.0.0"
+        }
+      ],
+      "foreach": null,
+      "notifications": null,
+      "needs": null
+    },
+    "create-chunks": {
+      "id": "create-chunks",
+      "tasks": [
+        {
+          "id": "create-chunks",
+          "image": "pccomponentstest.azurecr.io/pctasks-task-base:latest",
+          "image_key": null,
+          "code": {
+            "src": "blob://pctasksteststaging/code/94a127b730b624d935b93fe4cc610de1/io_lulc.py",
+            "requirements": null,
+            "pip_options": null
+          },
+          "task": "pctasks.dataset.chunks.task:create_chunks_task",
+          "args": {
+            "src_uri": "${{ item.uri }}",
+            "dst_uri": "blob://ai4edataeuwest/io-lulc-etl-data/pctasks-chunks/io-lulc-9-class/2022-07-28_full/assets",
+            "options": "${{ item.chunk_options }}"
+          },
+          "tags": null,
+          "environment": {
+            "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+            "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+            "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+          },
+          "schema_version": "1.0.0"
+        }
+      ],
+      "foreach": {
+        "items": "${{ jobs.create-splits.tasks.create-splits.output.splits }}"
+      },
+      "notifications": null,
+      "needs": "create-splits"
+    },
+    "process-chunk": {
+      "id": "process-chunk",
+      "tasks": [
+        {
+          "id": "create-items",
+          "image": "pccomponentstest.azurecr.io/pctasks-task-base:latest",
+          "image_key": null,
+          "code": {
+            "src": "blob://pctasksteststaging/code/94a127b730b624d935b93fe4cc610de1/io_lulc.py",
+            "requirements": null,
+            "pip_options": null
+          },
+          "task": "io_lulc:NineClassIOCollection.create_items_task",
+          "args": {
+            "asset_chunk_info": {
+              "uri": "${{ item.uri }}",
+              "chunk_id": "${{ item.chunk_id }}"
+            },
+            "item_chunkset_uri": "blob://ai4edataeuwest/io-lulc-etl-data/pctasks-chunks/io-lulc-9-class/2022-07-28_full/items",
+            "collection_id": "io-lulc-9-class",
+            "options": {
+              "skip_validation": false
+            }
+          },
+          "tags": null,
+          "environment": {
+            "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+            "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+            "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+          },
+          "schema_version": "1.0.0"
+        },
+        {
+          "id": "ingest-items",
+          "image": null,
+          "image_key": "ingest",
+          "code": null,
+          "task": "pctasks.ingest_task.task:ingest_task",
+          "args": {
+            "content": {
+              "type": "Ndjson",
+              "uris": ["${{tasks.create-items.output.ndjson_uri}}"]
+            },
+            "options": {
+              "insert_group_size": 5000,
+              "insert_only": false
+            }
+          },
+          "tags": null,
+          "environment": {
+            "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+            "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+            "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+          },
+          "schema_version": "1.0.0"
+        }
+      ],
+      "foreach": {
+        "items": "${{ jobs.create-chunks.tasks.create-chunks.output.chunks }}"
+      },
+      "notifications": null,
+      "needs": "create-chunks"
+    },
+    "post-process-chunk": {
+      "id": "post-process-chunk",
+      "tasks": [
+        {
+          "id": "create-items",
+          "image": "pccomponentstest.azurecr.io/pctasks-task-base:latest",
+          "image_key": null,
+          "code": {
+            "src": "blob://pctasksteststaging/code/94a127b730b624d935b93fe4cc610de1/io_lulc.py",
+            "requirements": null,
+            "pip_options": null
+          },
+          "task": "io_lulc:NineClassIOCollection.create_items_task",
+          "args": {
+            "asset_chunk_info": {
+              "uri": "${{ item.uri }}",
+              "chunk_id": "${{ item.chunk_id }}"
+            },
+            "item_chunkset_uri": "blob://ai4edataeuwest/io-lulc-etl-data/pctasks-chunks/io-lulc-9-class/2022-07-28_full/items",
+            "collection_id": "io-lulc-9-class",
+            "options": {
+              "skip_validation": false
+            }
+          },
+          "tags": null,
+          "environment": {
+            "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+            "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+            "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+          },
+          "schema_version": "1.0.0"
+        },
+        {
+          "id": "ingest-items",
+          "image": null,
+          "image_key": "ingest",
+          "code": null,
+          "task": "pctasks.ingest_task.task:ingest_task",
+          "args": {
+            "content": {
+              "type": "Ndjson",
+              "uris": ["${{tasks.create-items.output.ndjson_uri}}"]
+            },
+            "options": {
+              "insert_group_size": 5000,
+              "insert_only": false
+            }
+          },
+          "tags": null,
+          "environment": {
+            "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+            "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+            "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+          },
+          "schema_version": "1.0.0"
+        }
+      ],
+      "foreach": {
+        "items": "${{ jobs.create-chunks.tasks.create-chunks.output.chunks }}"
+      },
+      "notifications": null,
+      "needs": "create-chunks"
+    }
+  },
+  "on": null,
+  "schema_version": "1.0.0"
+}

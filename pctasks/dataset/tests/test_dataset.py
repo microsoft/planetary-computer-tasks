@@ -56,7 +56,8 @@ def test_process_items() -> None:
                 output_uri=tmp_dir,
                 args={"test_prefix": path, "sas_token": get_azurite_sas_token()},
                 context=TaskContext(
-                    storage_factory=StorageFactory(tokens=Tokens(tokens))
+                    storage_factory=StorageFactory(tokens=Tokens(tokens)),
+                    run_id="test-dataset-1",
                 ),
             )
 

@@ -28,6 +28,8 @@ Options:
         Only build the task images (including pctasks-run)
     --for-cluster
         Only build images that will be pushed to local registry for cluster
+    --frontend
+        Only update the frontend dev container
 "
 }
 
@@ -36,12 +38,14 @@ BUILD_SERVERS="-f docker-compose.yml"
 BUILD_DEV="-f docker-compose.console.yml"
 BUILD_TASK="-f docker-compose.tasks.yml"
 BUILD_ONLY=""
+BUILD_FRONTEND=1
 while [[ $# -gt 0 ]]; do case $1 in
     --deploy)
         DEPLOY_ONLY=1
         BUILD_SERVERS=""
         BUILD_DEV=""
         BUILD_TASK=""
+        BUILD_FRONTEND=""
         shift
         ;;
     --server)
@@ -49,6 +53,7 @@ while [[ $# -gt 0 ]]; do case $1 in
         BUILD_DEV=""
         BUILD_TASK=""
         BUILD_ONLY="server"
+        BUILD_FRONTEND=""
         shift
         ;;
     --servers)
@@ -67,11 +72,21 @@ while [[ $# -gt 0 ]]; do case $1 in
         BUILD_SERVERS=""
         BUILD_DEV=""
         BUILD_DEPLOY=""
+        BUILD_FRONTEND=""
         shift
         ;;
     --for-cluster)
         BUILD_DEPLOY=""
         BUILD_ONLY="ingest server run task-base"
+        BUILD_FRONTEND=""
+        shift
+        ;;
+    --frontend)
+        DEPLOY_ONLY=1
+        BUILD_DEPLOY=""
+        BUILD_DEV=""
+        BUILD_TASK=""
+        BUILD_ONLY=""
         shift
         ;;
     --help)
@@ -97,6 +112,12 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ -z "${DEPLOY_ONLY}" ]; then
         docker-compose ${BUILD_SERVERS} ${BUILD_TASK} ${BUILD_DEV} \
             build ${BUILD_ONLY};
+    fi
+
+    if [ "${BUILD_FRONTEND}" ]; then
+        docker-compose run --rm --no-deps \
+            frontend \
+            npm install --legacy-peer-deps
     fi
 
 fi
