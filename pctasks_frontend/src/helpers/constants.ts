@@ -34,4 +34,10 @@ if (IS_DEV) {
   ) {
     console.error("Missing authentication app environment variables");
   }
+
+  if (API_ROOT?.startsWith("http://localhost")) {
+    console.warn(
+      `Possible misconfiguration: using localhost in non-development mode.`
+    );
+  }
 }

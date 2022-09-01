@@ -47,10 +47,10 @@ Updating the manifest file itself is a two-step process because it contains
 self-referencing values. First, update the backend app manifest file to include
 new values:
 
-| Manifest key name                    | Template marker                     | Value                                                                                                       |
-|--------------------------------------|-------------------------------------|-------------------------------------------------------------------------------------------------------------|
-| `identifierUris`                     | `{{ application_identifier_uris }}` | List of single value, `api://{{ backend_application_name }}/`, e.g. `api://pctaskstest-staging-backend-app` |
-| `preAuthorizedApplications[0].appId` | `{{ frontend_app_id }}`             | The Application ID of the frontend app created earlier                                                      |
+| Manifest key name                    | Template marker                     | Value                                                  |
+|--------------------------------------|-------------------------------------|--------------------------------------------------------|
+| `identifierUris`                     | `{{ application_identifier_uris }}` | List of single value, `api://{{ backend_app_id }}/`    |
+| `preAuthorizedApplications[0].appId` | `{{ frontend_app_id }}`             | The Application ID of the frontend app created earlier |
 
 Then, go to the Azure portal and update the backend app registration with the new manifest values:
 
