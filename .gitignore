@@ -89,6 +89,8 @@ ENV/
 env.bak/
 venv.bak/
 
+.env
+
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -115,3 +117,6 @@ dev-secrets.yaml
 sas-tokens.json
 
 docs/generated
+
+kubeconfig
+

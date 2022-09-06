@@ -3,13 +3,16 @@ services:
     container_name: pctasks-dev
     image: pctasks-dev
     build:
-        context: .
-        dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: Dockerfile.dev
     volumes:
       - .:/opt/src
     environment:
       - PCTASKS_CLIENT__ENDPOINT=http://nginx/tasks
       - PCTASKS_CLIENT__API_KEY=hunter2
+
+      # Server API access key
+      - PCTASKS_SERVER__ACCESS_KEY=access-key-test
 
       # Dev executor settings
       - PCTASKS_RUN__TASK_RUNNER_TYPE=local
@@ -80,8 +83,8 @@ services:
     container_name: pctasks-integration-tests
     image: pctasks-dev
     build:
-        context: .
-        dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: Dockerfile.dev
     volumes:
       - .:/opt/src
     environment:
@@ -102,4 +105,3 @@ services:
 networks:
   default:
     name: pctasks-network
-

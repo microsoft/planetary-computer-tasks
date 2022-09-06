@@ -89,6 +89,7 @@ class ServerSettings(PCTasksSettings):
 
     dev: bool = False
     dev_api_key: Optional[str] = None
+    dev_auth_token: Optional[str] = None
 
     access_key: Optional[str] = None
 
@@ -106,4 +107,13 @@ class ServerSettings(PCTasksSettings):
         if values.get("dev"):
             if not v:
                 raise ValueError("dev_api_key is required when dev is True")
+        return v
+
+    @validator("dev_auth_token", always=True)
+    def _dev_auth_token_validator(
+        cls, v: Optional[str], values: Dict[str, Any]
+    ) -> Optional[str]:
+        if values.get("dev"):
+            if not v:
+                raise ValueError("dev_auth_token is required when dev is True")
         return v
