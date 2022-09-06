@@ -1,1 +1,1 @@
-git+https://github.com/stactools-packages/noaa-nclimgrid.git@b3a8ef55e28e7736d12e853082d2bb62949a4a99
+git+https://github.com/stactools-packages/noaa-nclimgrid.git@6fc541014a0ecf0d7a6173d08d6a6f20ed40d928

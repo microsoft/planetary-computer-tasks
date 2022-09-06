@@ -10,8 +10,8 @@ from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
 
-# COG_CONTAINER = "blob://devstoreaccount1/nclimgrid-cogs"
-COG_CONTAINER = "blob://nclimgridwesteurope/nclimgrid-cogs"
+COG_CONTAINER = "blob://devstoreaccount1/nclimgrid-cogs"
+# COG_CONTAINER = "blob://nclimgridwesteurope/nclimgrid-cogs"
 
 
 class MissingCogs(Exception):

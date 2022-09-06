@@ -8,8 +8,8 @@ HERE = Path(__file__).parent
 DATASET_PATH = HERE / ".." / "dataset.yaml"
 
 
-# Change the COG_CONTAINER in noaa_nclimgrid.py to devstoreaccount1 to avoid
-# uploading COGs to nclimgridwesteurope
+# Change the COG_CONTAINER in noaa_nclimgrid.py to "devstoreaccount1" to avoid
+# uploading COGs to the nclimgridwesteurope storage account
 def test_daily():
     run_process_items_workflow(
         DATASET_PATH,
@@ -23,8 +23,10 @@ def test_daily():
 
 def test_monthly():
     pass
-    # The monthly data is one chunk for all data. Since COGs are being created,
-    # it is onerous to run a test for this collection
+    # The monthly data is one asset chunkline for all data. This is onerous to
+    # run for testing. Note that all monthly data was ingested into PC Test,
+    # which can serve as a proxy for an end-to-end integration test for the
+    # monthly collection.
 
 
 if __name__ == "__main__":
