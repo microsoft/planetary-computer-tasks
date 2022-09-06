@@ -165,7 +165,7 @@ Note here we use the PCTasks template function `local.path` to specify the path 
 
 #### class
 
-```yalm
+```yaml
 class: chesapeake_lulc:ChesapeakeCollection
 ```
 
@@ -214,7 +214,7 @@ templated into the Collection JSON.
 
 For example, using
 
-```
+```shell
 > pctasks dataset ingest-collection -d datasets/chesapeake_lulc/dataset.yaml -c chesapeake-lc-7 --submit
 ```
 
@@ -271,7 +271,7 @@ With the above configuration file, code files, and collection templates, you can
 
 With the appropriate profile set, use:
 
-```
+```shell
 > pctasks dataset ingest-collection -d dataset.yaml -c chesapeake-lc-7 --submit
 > pctasks dataset process-items -d dataset.yaml -c chesapeake-lc-7 test-ingest --limit 1 --submit
 ```
