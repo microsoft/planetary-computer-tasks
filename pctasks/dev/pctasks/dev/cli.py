@@ -4,7 +4,7 @@ import sys
 from functools import lru_cache
 from typing import Any, Dict, List, Optional, Union
 
-from pctasks.dev.setup_azurite import setup_azurite, clear_records
+from pctasks.dev.setup_azurite import clear_records, setup_azurite
 from pctasks.task.version import __version__
 
 logger = logging.getLogger(__name__)
