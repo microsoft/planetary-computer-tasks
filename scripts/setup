@@ -17,6 +17,8 @@ Sets up this project for development.
 Options:
     --azurite
         Only run the Azurite setup.
+    --clear-records
+        Only clear the records tables from Azurite.
 "
 }
 
@@ -24,6 +26,10 @@ AZURITE_ONLY=""
 while [[ $# -gt 0 ]]; do case $1 in
     --azurite)
         AZURITE_ONLY=1
+        shift
+        ;;
+    --clear-records)
+        CLEAR_RECORDS=1
         shift
         ;;
     --help)
@@ -37,10 +43,18 @@ while [[ $# -gt 0 ]]; do case $1 in
         ;;
     esac done
 
-
 source scripts/env
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${CLEAR_RECORDS}" ]; then
+        echo "Clearing records from Azurite Tables..."
+        docker-compose -f docker-compose.console.yml run --rm \
+            dev \
+            pctasks-dev clear-records
+
+        echo "Records cleared."
+        exit 0;
+    fi
     if [ -z "${AZURITE_ONLY}" ]; then
 
         # Copy secrets template if it doesn't exist
