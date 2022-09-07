@@ -8,8 +8,8 @@ HERE = Path(__file__).parent
 DATASET_PATH = HERE / ".." / "dataset.yaml"
 
 
-# Change the COG_CONTAINER in noaa_nclimgrid.py to "devstoreaccount1" to avoid
-# uploading COGs to the nclimgridwesteurope storage account
+# Change COG_CONTAINER in noaa_nclimgrid.py to "blob://devstoreaccount1/nclimgrid-cogs"
+# to avoid saving COGs to the remote Azure container
 def test_daily():
     run_process_items_workflow(
         DATASET_PATH,
@@ -23,10 +23,11 @@ def test_daily():
 
 def test_monthly():
     pass
-    # The monthly data is one asset chunkline for all data. This is onerous to
-    # run for testing. Note that all monthly data was ingested into PC Test,
-    # which can serve as a proxy for an end-to-end integration test for the
-    # monthly collection.
+    # The monthly data exists in a single set of NetCDFs (so one asset/line in
+    # an asset chunkfile). So all Item and COGs for the monthly collection are
+    # created from a single asset uri. This is onerous for testing. All monthly
+    # data was ingested into PC Test, which more or less serves as a proxy for
+    # an end-to-end integration test here.
 
 
 if __name__ == "__main__":
