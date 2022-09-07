@@ -17,11 +17,19 @@ variable "batch_default_pool_id" {
   default     = "tasks_pool"
 }
 
-variable "min_low_priority" {
+variable "min_tasks_low_priority" {
     type = number
     default = 0
-    description = "Minimum number of low priority Batch nodes to keep running"
+    description = "Minimum number of low priority Batch nodes to keep running in the tasks pool"
 }
+
+variable "min_ingest_low_priority" {
+    type = number
+    default = 0
+    description = "Minimum number of low priority Batch nodes to keep running in the ingest pool"
+}
+
+
 
 # ACR
 

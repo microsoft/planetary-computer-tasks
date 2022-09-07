@@ -34,7 +34,11 @@ variable "max_dedicated" {
   type = number
 }
 
-variable "min_low_priority" {
+variable "min_tasks_low_priority" {
+  type = number
+}
+
+variable "min_ingest_low_priority" {
   type = number
 }
 

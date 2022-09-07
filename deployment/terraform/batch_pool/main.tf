@@ -37,7 +37,7 @@ resource "azurerm_batch_pool" "batch_pool" {
 
       minTargetDedicated = ${var.min_dedicated};
       maxTargetDedicated = ${var.max_dedicated};
-      minTargetLowPriority = ${var.min_low_priority};
+      minTargetLowPriority = ${var.min_tasks_low_priority};
       maxTargetLowPriority = ${var.max_low_priority};
 
       maxIncreasePerScale = ${var.max_increase_per_scale};
