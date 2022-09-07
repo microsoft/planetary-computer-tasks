@@ -24,7 +24,7 @@ collections:
           options:
             name_starts_with: nclimgrid-daily/beta/by-month/
             matches: prcp-[^-]+-grd-scaled\.nc
-            chunk_length: 1
+            chunk_length: 12
     chunk_storage:
       uri: blob://nclimgridwesteurope/nclimgrid-etl-data/nclimgrid-daily/
   - id: noaa-nclimgrid-monthly
