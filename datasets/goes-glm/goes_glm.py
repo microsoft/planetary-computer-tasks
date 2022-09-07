@@ -36,6 +36,12 @@ class GoesGlmCollection(Collection):
             item = stac.create_item(tmp_nc_asset_path)
             tmp_parquets = {f.name: f.as_posix() for f in tmp_dir.glob("*.parquet")}
 
+            # strip processing time off of item id
+            item.id = item.id[0:item.id.find("_c")]
+            # slim down the source netcdf asset
+            item.assets["netcdf"].pop("cube:dimensions")
+            item.assets["netcdf"].pop("cube:variables")
+
             # upload geoparquets; update geoparquet and netcdf asset hrefs
             parquet_storage = storage_factory.get_storage(f"{GEOPARQUET_CONTAINER}")
             for tmp_name, tmp_path in tmp_parquets.items():
