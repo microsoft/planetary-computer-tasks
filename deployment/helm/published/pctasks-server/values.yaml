@@ -14,6 +14,7 @@ pctasks:
     dev:
       enabled: false
       api_key: ""
+      auth_token: ""
 
     image:
       # e.g. myacr.azurecr.io/my-repository
