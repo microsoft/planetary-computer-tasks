@@ -46,7 +46,7 @@ class NoaaNclimgridCollection(Collection):
             if len(local_cogs) != len(items) * 4:
                 raise MissingCogs("not all cogs created")
 
-            # upload cogs; update cog and netcdf asset hrefs
+            # upload cogs to Azure container; update cog and netcdf asset hrefs
             cog_storage = storage_factory.get_storage(
                 f"{COG_CONTAINER}/nclimgrid-{frequency}/"
             )
