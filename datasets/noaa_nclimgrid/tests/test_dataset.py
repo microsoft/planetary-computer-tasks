@@ -1,15 +1,19 @@
-import logging
 from pathlib import Path
 
-from pctasks.cli.cli import setup_logging, setup_logging_for_module
+import pytest
+
 from pctasks.dev.test_utils import run_process_items_workflow
 
 HERE = Path(__file__).parent
 DATASET_PATH = HERE / ".." / "dataset.yaml"
 
 
-# Change COG_CONTAINER in noaa_nclimgrid.py to "blob://devstoreaccount1/nclimgrid-cogs"
-# to avoid saving COGs to the remote Azure container
+# NOTE: Use pytest
+# NOTE: Change the COG_CONTAINER variable in noaa_nclimgrid.py to
+# "blob://devstoreaccount1/nclimgrid-cogs" to avoid saving COGs to the remote
+# Azure container
+
+
 def test_daily():
     run_process_items_workflow(
         DATASET_PATH,
@@ -21,18 +25,18 @@ def test_daily():
     )
 
 
+# The monthly data exists in a single set of NetCDFs, so only a single asset
+# (line) in a single asset chunkfile is generated --> all Item and COGs for the
+# monthly collection are created from a single asset uri. This is onerous for
+# testing, so best not to run it. The monthly dataset was ingested into PC Test,
+# which more or less serves as a proxy for this test.
+@pytest.mark.slow
 def test_monthly():
-    pass
-    # The monthly data exists in a single set of NetCDFs (so one asset/line in
-    # an asset chunkfile). So all Item and COGs for the monthly collection are
-    # created from a single asset uri. This is onerous for testing. All monthly
-    # data was ingested into PC Test, which more or less serves as a proxy for
-    # an end-to-end integration test here.
-
-
-if __name__ == "__main__":
-    setup_logging(logging.DEBUG)
-    setup_logging_for_module("__main__", logging.DEBUG)
-    test_daily()
-    print("All tests passed")
-    exit(0)
+    run_process_items_workflow(
+        DATASET_PATH,
+        collection_id="noaa-nclimgrid-monthly",
+        args={
+            "registry": "localhost:5001",
+        },
+        chunks_limit=1,
+    )
