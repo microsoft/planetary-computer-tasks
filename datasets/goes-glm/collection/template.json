@@ -89,7 +89,7 @@
             "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
             "msft:partition_info": {
                 "is_partitioned": true,
-                "partition_frequency": ""
+                "partition_frequency": "QS"
             },
             "table:storage_options": {
                 "account_name": "pcstacitems"
