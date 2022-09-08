@@ -5,12 +5,12 @@ from typing import List, Union
 
 import pystac
 from stactools.goes_glm import stac
+from stactools.goes_glm.constants import DATACUBE_EXTENSION
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
 
-# GEOPARQUET_CONTAINER = "blob://devstoreaccount1/noaa-goes-geoparquet/"
 GEOPARQUET_CONTAINER = "blob://goeseuwest/noaa-goes-geoparquet/"
 
 # The original GOES ETL code indicates duplicate assets. Is there a way to
@@ -39,8 +39,11 @@ class GoesGlmCollection(Collection):
             # strip processing time off of item id
             item.id = item.id[0:item.id.find("_c")]
             # slim down the source netcdf asset
-            item.assets["netcdf"].pop("cube:dimensions")
-            item.assets["netcdf"].pop("cube:variables")
+            netcdf_asset_dict = item.assets["netcdf"].to_dict()
+            netcdf_asset_dict.pop("cube:dimensions")
+            netcdf_asset_dict.pop("cube:variables")
+            item.assets["netcdf"] = pystac.Asset.from_dict(netcdf_asset_dict)
+            item.stac_extensions.remove(DATACUBE_EXTENSION)
 
             # upload geoparquets; update geoparquet and netcdf asset hrefs
             parquet_storage = storage_factory.get_storage(f"{GEOPARQUET_CONTAINER}")
