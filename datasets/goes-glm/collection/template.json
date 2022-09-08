@@ -2,7 +2,7 @@
     "stac_version": "1.0.0",
     "type": "Collection",
     "id": "goes-glm",
-    "title": "GLM L2 Lightning Detections: Events, Groups, and Flashes",
+    "title": "GOES-R Lightning Detection",
     "description": "{{ collection.description }}",
     "license": "proprietary",
     "links": [
@@ -43,11 +43,12 @@
     "keywords": [
         "GOES",
         "NOAA",
+        "NASA",
         "Satellite",
         "Lightning",
         "Weather"
     ],
-    "msft:short_description": "Lightning detection data over the Western Hemisphere.",
+    "msft:short_description": "The GOES-R Geostationary Lightning Mapper (GLM) product provides continuous lightning activity detection over the Western Hemisphere.",
     "msft:storage_account": "goeseuwest",
     "msft:container": "noaa-goes-geoparquet",
     "msft:group_id": "goes",
