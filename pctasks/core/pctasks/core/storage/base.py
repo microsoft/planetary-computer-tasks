@@ -249,9 +249,19 @@ class Storage(ABC):
             file_path: Path to the JSON file.
 
         Returns:
-            The Dict[str, Any] that is read from e.g. json.load
+            The Dict[str, Any] that is read from parsing the JSON file.
         """
         return orjson.loads(self.read_bytes(file_path))
+
+    def read_ndjson(self, file_path: str) -> List[Dict[str, Any]]:
+        """Reads a list of dict from an NDJSON file in storage.
+        Args:
+            file_path: Path to the NDJSON file.
+
+        Returns:
+            The List[Dict[str, Any]] that is read from parsing the NDJSON file.
+        """
+        return [orjson.loads(line) for line in self.read_text(file_path).splitlines()]
 
     @abstractmethod
     def write_bytes(self, file_path: str, data: bytes, overwrite: bool = True) -> None:
