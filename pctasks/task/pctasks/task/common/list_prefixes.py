@@ -24,6 +24,7 @@ class ListPrefixesTask(Task[ListPrefixesInput, ListPrefixesOutput]):
     This can be used to parallelize downstream tasks based on
     a partitioning of storage directories.
     """
+
     _input_model = ListPrefixesInput
     _output_model = ListPrefixesOutput
 

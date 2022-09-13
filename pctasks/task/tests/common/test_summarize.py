@@ -2,26 +2,20 @@ from pathlib import Path
 from typing import List
 
 from pctasks.core.models.task import CompletedTaskResult
+from pctasks.core.utils.summary import KeySet
 from pctasks.dev.blob import temp_azurite_blob_storage
 from pctasks.dev.test_utils import run_test_task
+from pctasks.task.common.list_files import TASK_PATH as LIST_FILES_TASK_PATH
+from pctasks.task.common.list_files import ListFilesInput, ListFilesOutput
+from pctasks.task.common.list_prefixes import TASK_PATH as LIST_PREFIXES_TASK_PATH
+from pctasks.task.common.list_prefixes import ListPrefixesInput, ListPrefixesOutput
 from pctasks.task.common.summarize import (
     MAP_TASK_PATH,
     REDUCE_TASK_PATH,
     SummarizeMapInput,
-    SummarizeReduceInput,
     SummarizeOutput,
+    SummarizeReduceInput,
 )
-from pctasks.task.common.list_prefixes import (
-    TASK_PATH as LIST_PREFIXES_TASK_PATH,
-    ListPrefixesInput,
-    ListPrefixesOutput,
-)
-from pctasks.task.common.list_files import (
-    TASK_PATH as LIST_FILES_TASK_PATH,
-    ListFilesInput,
-    ListFilesOutput,
-)
-from pctasks.core.utils.summary import KeySet
 
 HERE = Path(__file__).parent
 TEST_JSONS_DIR = HERE / ".." / "data-files/items/s1-rtc/2019/12/15/IW"

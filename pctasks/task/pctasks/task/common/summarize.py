@@ -1,5 +1,5 @@
-from functools import reduce
 import logging
+from functools import reduce
 from typing import Any, Dict, List, Optional
 
 from pctasks.core.models.base import PCBaseModel
@@ -7,7 +7,6 @@ from pctasks.core.utils.summary import ObjectSummary, SummarySettings
 from pctasks.task.context import TaskContext
 from pctasks.task.task import Task
 from pctasks.task.utils import get_task_path
-
 
 logger = logging.getLogger(__name__)
 

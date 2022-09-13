@@ -1,12 +1,7 @@
-
 from pctasks.core.models.task import CompletedTaskResult
 from pctasks.dev.blob import temp_azurite_blob_storage
 from pctasks.dev.test_utils import run_test_task
-from pctasks.task.common.write import (
-    TASK_PATH,
-    WriteInput,
-    WriteOutput,
-)
+from pctasks.task.common.write import TASK_PATH, WriteInput, WriteOutput
 
 
 def test_write_text() -> None:

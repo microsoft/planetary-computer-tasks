@@ -94,7 +94,9 @@ class PropertySummary(BaseModel):
     count_without: int
 
     @abstractmethod
-    def merge(self, other: "PropertySummary") -> "PropertySummary":
+    def merge(
+        self, other: "PropertySummary", settings: SummarySettings
+    ) -> "PropertySummary":
         ...
 
 

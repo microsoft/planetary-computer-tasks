@@ -1,20 +1,21 @@
-from copy import deepcopy
 import json
+from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict, List, cast
+
 from pctasks.core.utils.summary import (
+    DistinctKeySets,
     DistinctValueSummary,
     FloatValueCount,
+    KeySet,
+    ListValueCount,
     MixedKeySets,
     ObjectListSummary,
-    ObjectSummary,
     ObjectPropertySummary,
-    KeySet,
-    DistinctKeySets,
+    ObjectSummary,
+    StringValueCount,
     SummarySettings,
     ValueTypes,
-    ListValueCount,
-    StringValueCount,
 )
 
 HERE = Path(__file__).parent
