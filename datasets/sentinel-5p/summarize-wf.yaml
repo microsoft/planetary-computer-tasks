@@ -1,0 +1,75 @@
+name: Summarize Sentinel 5P L2 Items
+
+dataset:
+  owner: microsoft
+  name: sentinel-5p-l2
+
+args:
+- registry
+
+jobs:
+  create-splits:
+    tasks:
+    - id: list-prefixes
+      image: ${{ args.registry }}/pctasks-task-base:rob
+      task: pctasks.task.common.list_prefixes:task
+      args:
+        src_uri: blob://sentinel5euwest/sentinel-5p-stac
+        depth: 4
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+  summarize-map:
+    foreach:
+      items: ${{ jobs.create-splits.tasks.list-prefixes.output.uris }}
+    tasks:
+    - id: list-files
+      image: ${{ args.registry }}/pctasks-task-base:latest
+      task: pctasks.task.common.list_files:task
+      args:
+        src_uri: ${{ item }}
+        extensions:
+          - .json
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+    - id: summarize-map
+      image: ${{ args.registry }}/pctasks-task-base:rob
+      task: pctasks.task.common.summarize:map_task
+      args:
+        uris: ${{ tasks.list-files.output.uris }}
+        include_keys:
+          - assets.data.description
+          - properties.s5p:product_type
+        summary_settings:
+          max_mixed_value_samples: 100
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+  summarize-reduce:
+    tasks:
+    - id: summarize-reduce
+      image: ${{ args.registry }}/pctasks-task-base:rob
+      task: pctasks.task.common.summarize:reduce_task
+      args:
+        summaries: ${{ jobs.summarize-map.tasks.summarize-map.output.summary }}
+        summary_settings:
+          max_mixed_value_samples: 100
+    - id: write-output
+      image: ${{ args.registry }}/pctasks-task-base:rob
+      task: pctasks.task.common.write:task
+      args:
+        uri: blob://sentinel5euwest/sentinel-5p-etl-data/summaries/2022-09-08.json
+        content: ${{ tasks.summarize-reduce.output.summary }}
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+
