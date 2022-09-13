@@ -10,13 +10,14 @@ from pctasks.core.utils import completely_flatten
 from pctasks.dev.blob import copy_dir_to_azurite, temp_azurite_blob_storage
 from pctasks.dev.db import temp_pgstac_db
 from pctasks.dev.test_utils import assert_workflow_is_successful, run_pctasks
+from tests.constants import DEFAULT_TIMEOUT
 
 HERE = Path(__file__).parent
 DATASETS = HERE
 TEST_DATA = HERE / ".." / "data-files"
 WORKFLOWS = HERE / ".." / "workflows"
 
-TIMEOUT_SECONDS = 180
+TIMEOUT_SECONDS = DEFAULT_TIMEOUT
 
 
 def test_dataset():
