@@ -1,4 +1,3 @@
-import json
 import logging
 import sys
 from typing import Optional
@@ -30,16 +29,16 @@ def run_cmd(
     msg = TaskRunMessage.decode(msg_text)
 
     try:
-        output = run_task(msg).dict()
+        output = run_task(msg)
 
         if output_uri:
             logger.info("Saving task output...")
             output_storage, output_path = get_storage_for_file(
                 file_uri=output_uri, sas_token=output_sas_token, account_url=account_url
             )
-            output_storage.write_text(output_path, json.dumps(output))
+            output_storage.write_text(output_path, output.json())
             logger.info("...output saved")
         else:
-            sys.stdout.write(json.dumps(output, indent=2))
+            sys.stdout.write(output.json(indent=2))
     finally:
         logger.info("Task run complete.")
