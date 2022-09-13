@@ -19,7 +19,7 @@ jobs:
         run: ./scripts/install
 
       - name: Setup
-        run: ./scripts/setup
+        run: ./scripts/setup --no-aux-servers
 
       - name: Test
         run: ./scripts/test

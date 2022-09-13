@@ -13,6 +13,8 @@ Runs the development servers
 
 --detached
     Run the servers in detached mode
+--no-aux-servers
+    Don't run non-essential devevelopment environment servers
 down
     Stop the servers
 "
@@ -20,6 +22,7 @@ down
 
 DETACHED_ARG=""
 STOP_SERVERS=""
+AUX_SERVERS="-f docker-compose.aux.yml"
 
 while [[ "$#" -gt 0 ]]; do case $1 in
     down)
@@ -28,6 +31,10 @@ while [[ "$#" -gt 0 ]]; do case $1 in
         ;;
     --detached)
         DETACHED_ARG="--detach"
+        shift
+        ;;
+    --no-aux-servers)
+        AUX_SERVERS=""
         shift
         ;;
     --help)
@@ -41,10 +48,10 @@ while [[ "$#" -gt 0 ]]; do case $1 in
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${STOP_SERVERS}" ]; then
         echo "Stopping servers"
-        docker-compose -f docker-compose.yml down
+        docker-compose -f docker-compose.yml -f docker-compose.aux.yml down
     else
         echo "Starting servers"
-        docker-compose -f docker-compose.yml \
+        docker-compose -f docker-compose.yml ${AUX_SERVERS} \
         up ${DETACHED_ARG} "$@"
     fi
 fi

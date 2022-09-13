@@ -24,6 +24,8 @@ Options:
         Only build all the servers images (e.g functions, local-executor)
     --dev
         Only build the dev image
+    --no-aux-servers
+        Don't build non-essential devevelopment environment servers
     --task
         Only build the task images (including pctasks-run)
     --for-cluster
@@ -37,6 +39,7 @@ BUILD_DEPLOY=1
 BUILD_SERVERS="-f docker-compose.yml"
 BUILD_DEV="-f docker-compose.console.yml"
 BUILD_TASK="-f docker-compose.tasks.yml"
+BUILD_AUX_SERVERS="-f docker-compose.aux.yml"
 BUILD_ONLY=""
 BUILD_FRONTEND=1
 while [[ $# -gt 0 ]]; do case $1 in
@@ -46,6 +49,7 @@ while [[ $# -gt 0 ]]; do case $1 in
         BUILD_DEV=""
         BUILD_TASK=""
         BUILD_FRONTEND=""
+        BUILD_AUX_SERVERS=""
         shift
         ;;
     --server)
@@ -54,18 +58,25 @@ while [[ $# -gt 0 ]]; do case $1 in
         BUILD_TASK=""
         BUILD_ONLY="server"
         BUILD_FRONTEND=""
+        BUILD_AUX_SERVERS=""
         shift
         ;;
     --servers)
         BUILD_DEPLOY=""
         BUILD_DEV=""
         BUILD_TASK=""
+        BUILD_AUX_SERVERS=""
         shift
         ;;
     --dev)
         BUILD_SERVERS=""
         BUILD_DEPLOY=""
         BUILD_TASK=""
+        BUILD_AUX_SERVERS=""
+        shift
+        ;;
+    --no-aux-servers)
+        BUILD_AUX_SERVERS=""
         shift
         ;;
     --task)
@@ -73,12 +84,14 @@ while [[ $# -gt 0 ]]; do case $1 in
         BUILD_DEV=""
         BUILD_DEPLOY=""
         BUILD_FRONTEND=""
+        BUILD_AUX_SERVERS=""
         shift
         ;;
     --for-cluster)
         BUILD_DEPLOY=""
         BUILD_ONLY="ingest server run task-base"
         BUILD_FRONTEND=""
+        BUILD_AUX_SERVERS=""
         shift
         ;;
     --frontend)
@@ -87,6 +100,7 @@ while [[ $# -gt 0 ]]; do case $1 in
         BUILD_DEV=""
         BUILD_TASK=""
         BUILD_ONLY=""
+        BUILD_AUX_SERVERS=""
         shift
         ;;
     --help)
@@ -110,7 +124,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
     # Build project images
     if [ -z "${DEPLOY_ONLY}" ]; then
-        docker-compose ${BUILD_SERVERS} ${BUILD_TASK} ${BUILD_DEV} \
+        docker-compose ${BUILD_SERVERS} ${BUILD_TASK} ${BUILD_DEV} ${BUILD_AUX_SERVERS} \
             build ${BUILD_ONLY};
     fi
 

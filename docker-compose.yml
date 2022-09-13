@@ -42,8 +42,6 @@ services:
       - 8510:80
     depends_on:
       - server
-      - stac-api
-      - stac-browser
 
   server:
     container_name: pctasks-server
@@ -136,45 +134,6 @@ services:
         "--reload",
         "--proxy-headers"
       ]
-
-  stac-api:
-    container_name: pctasks-stac-api
-    image: pctasks-stacapi
-    build:
-      context: .
-      dockerfile: Dockerfile.stacapi
-    environment:
-      - APP_HOST=0.0.0.0
-      - APP_PORT=8513
-      - APP_ROOT_PATH=/stac
-      - RELOAD=false
-      - ENVIRONMENT=local
-      - POSTGRES_USER=username
-      - POSTGRES_PASS=password
-      - POSTGRES_DBNAME=postgis
-      - POSTGRES_HOST_READER=database
-      - POSTGRES_HOST_WRITER=database
-      - POSTGRES_PORT=5432
-      - WEB_CONCURRENCY=10
-      - VSI_CACHE=TRUE
-      - DB_MIN_CONN_SIZE=1
-      - DB_MAX_CONN_SIZE=1
-    ports:
-      - "8513:8513"
-    volumes:
-      - ./dev/stacapi.py:/opt/src/stacapi.py
-    depends_on:
-      - database
-    command: [ "uvicorn", "stacapi:app", "--host", "0.0.0.0", "--port", "8513", "--reload", "--proxy-headers" ]
-
-  stac-browser:
-    container_name: pctasks-stac-browser
-    image: pctasks-stacbrowser
-    build:
-      context: .
-      dockerfile: Dockerfile.stacbrowser
-    ports:
-      - "8514:8080"
 
   frontend:
     container_name: pctasks-frontend-app
