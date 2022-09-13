@@ -13,55 +13,6 @@ services:
     volumes:
       - pctasks-azurite-data:/workspace
 
-  # TODO: Removing the need for functions for now,
-  #       but we will use them for triggering reactive
-  #       workflows off of storage events; commenting out
-  #       but not deleting.
-  # functions:
-  #   container_name: pctasks-functions
-  #   image: pctasks-functions
-  #   build:
-  #     context: .
-  #     dockerfile: pctasks_funcs/Dockerfile
-  #   volumes:
-  #     - ./pctasks:/home/site/pctasks
-  #     - ./pctasks_funcs:/home/site/wwwroot
-  #   ports:
-  #     - "7071:7071" # Functions
-  #   environment:
-  #     - AzureWebJobsStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
-  #     - WEBSITE_HOSTNAME=functions:7071
-
-  #     # See .env for swithcing between docker-compose and kind cluster
-  #     - PCTASKS_SERVER_URL=${PCTASKS_SERVER_URL}
-
-  #     # Function queue trigger bindings ##
-  #     - FUNC_NOTIFY_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-  #     - FUNC_ROUTER_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-  #     - FUNC_WORKFLOW_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-
-  #     # Router settings ##############################################################
-
-  #     ## Azure Storage
-
-  #     ### Queues
-  #     - PCTASKS_ROUTER__QUEUES_CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-
-  #     ### Tables
-  #     - PCTASKS_ROUTER__TABLES_ACCOUNT_URL=http://azurite:10002/devstoreaccount1
-  #     - PCTASKS_ROUTER__TABLES_ACCOUNT_NAME=devstoreaccount1
-  #     - PCTASKS_ROUTER__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
-
-  #     # Notifications settings #######################################################
-
-  #     ## Azure Storage
-
-  #     ### Tables
-
-  #     - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_URL=http://azurite:10002/devstoreaccount1
-  #     - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_NAME=devstoreaccount1
-  #     - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
-
   database:
     container_name: pctasks-database
     image: ghcr.io/stac-utils/pgstac:v0.6.6
