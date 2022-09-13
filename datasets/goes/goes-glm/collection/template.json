@@ -48,7 +48,7 @@
         "Lightning",
         "Weather"
     ],
-    "msft:short_description": "The GOES-R Geostationary Lightning Mapper (GLM) product provides continuous lightning activity detection over the Western Hemisphere.",
+    "msft:short_description": "Continuous lightning detection over the Western Hemisphere from the Geostationary Lightning Mapper (GLM) instrument.",
     "msft:storage_account": "goeseuwest",
     "msft:container": "noaa-goes-geoparquet",
     "msft:group_id": "goes",
@@ -95,7 +95,7 @@
             "table:storage_options": {
                 "account_name": "pcstacitems"
             }
-        } 
+        }
     },
     "extent": {
         "spatial": {
@@ -330,5 +330,5 @@
         ]
     },
     "sci:doi": "10.7289/V5KH0KK6",
-    "sci:citation": "GOES-R Algorithm Working Group and GOES-R Series Program, (2018): NOAA GOES-R Series Geostationary Lightning Mapper (GLM) Level 2 Lightning Detection: Events, Groups, and Flashes. [indicate subset used].NOAA National Centers for Environmental Information. doi:10.7289/V5KH0KK6. [access date]."
+    "sci:citation": "GOES-R Algorithm Working Group and GOES-R Series Program, (2018): NOAA GOES-R Series Geostationary Lightning Mapper (GLM) Level 2 Lightning Detection: Events, Groups, and Flashes. NOAA National Centers for Environmental Information. doi:10.7289/V5KH0KK6."
 }
