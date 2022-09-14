@@ -1,9 +1,12 @@
+import logging
 from typing import List
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.task.context import TaskContext
 from pctasks.task.task import Task
 from pctasks.task.utils import get_task_path
+
+logger = logging.getLogger(__name__)
 
 
 class ListPrefixesInput(PCBaseModel):
@@ -30,10 +33,10 @@ class ListPrefixesTask(Task[ListPrefixesInput, ListPrefixesOutput]):
 
     def run(self, input: ListPrefixesInput, context: TaskContext) -> ListPrefixesOutput:
         storage = context.storage_factory.get_storage(input.src_uri)
-        result = [
-            storage.get_uri(root)
-            for root, _, _ in storage.walk(max_depth=input.depth, min_depth=input.depth)
-        ]
+        result: List[str] = []
+        for root, _, _ in storage.walk(max_depth=input.depth, min_depth=input.depth):
+            logger.info(f"Walking prefix: {root}")
+            result.append(storage.get_uri(root))
         return ListPrefixesOutput(uris=result)
 
 
