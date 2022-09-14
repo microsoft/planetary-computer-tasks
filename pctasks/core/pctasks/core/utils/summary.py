@@ -61,7 +61,16 @@ def is_value_type(v: Any) -> bool:
     return isinstance(v, (bool, str, float, int))
 
 
+# Value Counts
+
+
 class ValueCount(BaseModel):
+    """Represents a count of a specific value type.
+
+    This model is tagged with a 'type' field, overridden by subclasses
+    with a literal value, which allows for proper serialization/deserialization.
+    """
+
     type: str
     count: int
 
@@ -70,36 +79,61 @@ class ValueCount(BaseModel):
 
 
 class BoolValueCount(ValueCount):
+    """Count of boolean values."""
+
     type: str = Field(default=ValueTypes.BOOLEAN, const=True)
     value: bool
 
 
 class IntValueCount(ValueCount):
+    """Count of integer values."""
+
     type: str = Field(default=ValueTypes.INT, const=True)
     value: int
 
 
 class FloatValueCount(ValueCount):
+    """Count of float values."""
+
     type: str = Field(default=ValueTypes.FLOAT, const=True)
     value: float
 
 
 class StringValueCount(ValueCount):
+    """Count of string values."""
+
     type: str = Field(default=ValueTypes.STRING, const=True)
     value: str
 
 
 class NullValueCount(ValueCount):
+    """Count of null values."""
+
     type: str = Field(default=ValueTypes.NULL, const=True)
     value: Optional[str] = Field(default=None, const=True)
 
 
 class ListValueCount(ValueCount):
+    """Count of list values."""
+
     type: str = Field(default=ValueTypes.LIST, const=True)
     value: List[Any]
 
 
+# Property Summaries
+
+
 class PropertySummary(BaseModel):
+    """Represents a summary of a single property in a JSON object.
+
+    PropertySummaries are merged together through
+    the merging of ObjectSummary instances. The merge function
+    can produce a different PropertySummary type depending on the
+    the type it's being merged with or by rules that transform types.
+
+    See the individual merge function docs for the rules that apply.
+    """
+
     type: str
     count_with: int
     count_without: int
@@ -137,13 +171,31 @@ ValueCountAndRangeList = List[
 
 
 class DistinctValueSummary(PropertySummary):
+    """Represents a property that has a set of distinct values.
+
+    Each of the values is represented by a ValueCount instance.
+    The values can be bool, int, float, string, list, or null.
+    """
+
     type: str = Field(default=SummaryTypes.DISTINCT, const=True)
     values: ValueCountList
 
     def merge(
         self, other: PropertySummary, settings: SummarySettings
     ) -> PropertySummary:
-        """Merge another PropertySummary into this one."""
+        """Merge another PropertySummary into this one.
+
+        If other is a MixedValueSummary, IntRangeSummary, FloatRangeSummary,
+        this method will defer to the merge function of the other summary.
+
+        If other is not one of the above, and is not a DistinctValueSummary,
+        it will return a MixedSummary.
+
+        If other is a DistinctValueSummary, this method will merge the values
+        of the other summary into this one. If the number of distinct values
+        exceeds the max_distinct_values setting, this method will return a
+        MixedValueSummary.
+        """
         if isinstance(other, (MixedValueSummary, IntRangeSummary, FloatRangeSummary)):
             return other.merge(self, settings=settings)
 
@@ -225,6 +277,8 @@ class DistinctValueSummary(PropertySummary):
 
 
 class IntRangeSummary(PropertySummary):
+    """Represents a property that is an integer in a specific range."""
+
     type: str = Field(default=SummaryTypes.INT_RANGE, const=True)
     min: int
     max: int
@@ -232,6 +286,16 @@ class IntRangeSummary(PropertySummary):
     def merge(
         self, other: PropertySummary, settings: SummarySettings
     ) -> PropertySummary:
+        """Merge another PropertySummary into this one.
+
+        If the other is a DistinctValueSummary with integer values,
+        the range will be expanded to include those values.
+        If the other is a DistinctValueSummary with non-integer values,
+        or if the other is not a IntRangeSummary itself,
+        a MixedSummary will be returned.
+        If the other is an IntRangeSummary, the range will be expanded to include
+        the other range.
+        """
         if isinstance(other, DistinctValueSummary):
             data_types = set(v.type for v in other.values)
             if data_types == {ValueTypes.INT}:
@@ -265,6 +329,8 @@ class IntRangeSummary(PropertySummary):
 
 
 class FloatRangeSummary(PropertySummary):
+    """Represents a property that is an float in a specific range."""
+
     type: str = Field(default=SummaryTypes.FLOAT_RANGE, const=True)
     min: float
     max: float
@@ -272,6 +338,16 @@ class FloatRangeSummary(PropertySummary):
     def merge(
         self, other: PropertySummary, settings: SummarySettings
     ) -> PropertySummary:
+        """Merge another PropertySummary into this one.
+
+        If the other is a DistinctValueSummary with float values,
+        the range will be expanded to include those values.
+        If the other is a DistinctValueSummary with non-float values,
+        or if the other is not a FloatRangeSummary itself,
+        a MixedSummary will be returned.
+        If the other is an FloatRangeSummary, the range will be expanded to include
+        the other range.
+        """
         if isinstance(other, DistinctValueSummary):
             data_types = set(v.type for v in other.values)
             if data_types == {ValueTypes.FLOAT}:
@@ -305,12 +381,20 @@ class FloatRangeSummary(PropertySummary):
 
 
 class ObjectPropertySummary(PropertySummary):
+    """Represents a property that is an JSON Object."""
+
     type: str = Field(default="object", const=True)
     summary: "ObjectSummary"
 
     def merge(
         self, other: PropertySummary, settings: SummarySettings
     ) -> PropertySummary:
+        """Merge another PropertySummary into this one.
+
+        If the other is not an ObjectPropertySummary, a MixedSummary will be returned.
+        If the other is an ObjectPropertySummary, the respective
+        PropertySummaries will be merged and this summary will be returned.
+        """
         if not isinstance(other, ObjectPropertySummary):
             return MixedSummary.create(self, other, settings=settings)
 
@@ -345,12 +429,23 @@ class ObjectPropertySummary(PropertySummary):
 
 
 class ObjectListSummary(PropertySummary):
+    """Represents a property that is a list of JSON Objects."""
+
     type: str = Field(default=SummaryTypes.OBJECT_LIST, const=True)
     values: List["ObjectSummary"]
 
     def merge(
         self, other: PropertySummary, settings: SummarySettings
     ) -> PropertySummary:
+        """Merge another PropertySummary into this one.
+
+        If other is a MixedObjectListSummary, this method will defer to the
+        other's merge method. If the other is not an ObjectListSummary, a
+        MixedObjectListSummary will be created.
+        Otherwise, if the lengths of the lists are equal, the respective
+        objects from the two lists will be merged and this summary will be returned.
+        Otherwise, a MixedObjectListSummary will be created.
+        """
         if isinstance(other, MixedObjectListSummary):
             return other.merge(self, settings=settings)
 
@@ -373,6 +468,8 @@ class ObjectListSummary(PropertySummary):
 
 
 class MixedObjectListSummary(PropertySummary):
+    """Represents a property that is a non-uniform list of JSON Objects."""
+
     type: str = Field(default=SummaryTypes.MIXED_OBJECT_LIST, const=True)
     lengths: Set[int]
     sample: List[List["ObjectSummary"]]
@@ -380,12 +477,24 @@ class MixedObjectListSummary(PropertySummary):
     def merge(
         self, other: PropertySummary, settings: SummarySettings
     ) -> PropertySummary:
+        """Merge another PropertySummary into this one.
+
+        If other is an ObjectListSummary or MixedObjectListSummary, the
+        summary values of other
+        will be merged into this summary and this summary will be returned.
+        Otherwise, if the other is not a MixedObjectListSummary, a
+        MixedSummary will be returned.
+        """
         if isinstance(other, ObjectListSummary):
             self.count_with += other.count_with
             self.count_without += other.count_without
             self.lengths.add(len(other.values))
             if len(self.sample) < settings.max_mixed_object_list_samples:
-                self.sample.append(other.values)
+                self.sample.append(
+                    other.values[
+                        : settings.max_mixed_object_list_samples - len(self.sample)
+                    ]
+                )
             return self
 
         if not isinstance(other, MixedObjectListSummary):
@@ -402,6 +511,15 @@ class MixedObjectListSummary(PropertySummary):
 
 
 class MixedValueSummary(PropertySummary):
+    """Represents a property that has values with distinct values
+    exceeding the max_mixed_value_samples setting.
+
+    This summary applies to properties that, if they were all
+    the same type, would have been represented by a DistinctValueSummary.
+    RangeSummaries will also be merged into a MixedValueSummary, but will
+    not be represented in the samples.
+    """
+
     type: str = Field(default=SummaryTypes.MIXED_VALUE, const=True)
     data_types: Set[str]
     sample: ValueCountAndRangeList
@@ -409,6 +527,12 @@ class MixedValueSummary(PropertySummary):
     def merge(
         self, other: PropertySummary, settings: SummarySettings
     ) -> PropertySummary:
+        """Merge another PropertySummary into this one.
+
+        If other is a DistinctValueSummary, MixedValueSummary, IntegerRangeSummary,
+        or FloatRangeSummary, merge the summary values of other into this summmary
+        and return this summary. Otherwise return a MixedSummary.
+        """
         if isinstance(other, DistinctValueSummary):
             self.count_with += other.count_with
             self.count_without += other.count_without
@@ -438,6 +562,8 @@ class MixedValueSummary(PropertySummary):
 
 
 class MixedSummary(PropertySummary):
+    """Represents a property that is represented by a mix of summary types."""
+
     type: str = Field(default=SummaryTypes.MIXED_SUMMARIES, const=True)
     summary_types: Set[str]
     sample: List[PropertySummary]
@@ -445,6 +571,10 @@ class MixedSummary(PropertySummary):
     def merge(
         self, other: PropertySummary, settings: SummarySettings
     ) -> PropertySummary:
+        """Merge another summary into this one.
+
+        This will simply add the other summary type to the set of summary types"""
+        self.summary_types.add(other.type)
         return self
 
     @classmethod
@@ -480,6 +610,8 @@ SummaryType = Union[
     MixedObjectListSummary,
 ]
 
+# Key Sets
+
 
 class KeySetsType(str, Enum):
     DISTINCT = "distinct"
@@ -487,15 +619,27 @@ class KeySetsType(str, Enum):
 
 
 class KeySet(BaseModel):
+    """Represents a set of keys that are present in objects."""
+
     keys: Set[str]
+    """The distinct set of keys that are present in an object."""
     count_with: int
+    """The number of objects that have this set of keys."""
 
 
 class DistinctKeySets(BaseModel):
+    """Represents a set of distinct key sets."""
+
     type: KeySetsType = Field(default=KeySetsType.DISTINCT, const=True)
     values: List[KeySet]
 
     def merge(self, other: "KeySetType", settings: SummarySettings) -> "KeySetType":
+        """Merges another KeySetType into this one.
+
+        If the other key set is a MixedKeySets, the result will be a MixedKeySets.
+        If the merging of this and the other key sets creates more values than
+        the max_distinct_key_sets setting, the result will be a MixedKeySets.
+        """
         if isinstance(other, MixedKeySets):
             return other.merge(self, settings=settings)
         new_key_sets: List[KeySet] = []
@@ -522,6 +666,11 @@ class DistinctKeySets(BaseModel):
 
 
 class MixedKeySets(BaseModel):
+    """Represents a mixed set of keys that are present in objects.
+
+    The number of samples present is limited by the max_mixed_key_sets setting.
+    """
+
     type: KeySetsType = Field(default=KeySetsType.MIXED, const=True)
     sample_values: List[KeySet]
 
@@ -544,7 +693,18 @@ class MixedKeySets(BaseModel):
 KeySetType = Union[DistinctKeySets, MixedKeySets]
 
 
+# Object Summary
+
+
 class ObjectSummary(BaseModel):
+    """An ObjectSummary represents summary information about a set of objects.
+
+    This object is used to understand the structure and common properties of a set
+    of objects, such as STAC Items. Summaries are generated for individual objects,
+    and summaries can be merged together to create a single summary for a set of
+    objects.
+    """
+
     count: int
     keys: Dict[
         str,
@@ -554,12 +714,16 @@ class ObjectSummary(BaseModel):
 
     @classmethod
     def summarize_dict(
-        cls, d: Dict[str, Any], include_keys: Optional[List[str]] = None
+        cls, document: Dict[str, Any], include_keys: Optional[List[str]] = None
     ) -> "ObjectSummary":
+        """Create a summary of a JSON Document represented by 'document'."""
+
         summary = cls(
             count=1,
             keys={},
-            key_sets=DistinctKeySets(values=[KeySet(keys=set(d.keys()), count_with=1)]),
+            key_sets=DistinctKeySets(
+                values=[KeySet(keys=set(document.keys()), count_with=1)]
+            ),
         )
 
         # Allow for '.' separated keys to be included.
@@ -578,7 +742,7 @@ class ObjectSummary(BaseModel):
         # included, skip it. If there are sub-keys, ensure
         # they get forwarded to the next recursive calls.
         sub_include_keys: Optional[List[str]] = None
-        for key, value in d.items():
+        for key, value in document.items():
             if indexed_keys:
                 if key not in indexed_keys:
                     continue
@@ -643,6 +807,7 @@ class ObjectSummary(BaseModel):
     def merge(
         self, other: "ObjectSummary", settings: SummarySettings = SummarySettings()
     ) -> "ObjectSummary":
+        """Merge this summary with another summary."""
         summary = ObjectSummary(
             count=self.count + other.count,
             keys={},
@@ -668,6 +833,11 @@ class ObjectSummary(BaseModel):
         include_keys: Optional[List[str]] = None,
         settings: SummarySettings = SummarySettings(),
     ) -> "ObjectSummary":
+        """Summarize a sequence of JSON documents.
+
+        This method generates a summary for each of the JSON documents
+        and returns the merged summary.
+        """
         if not data:
             raise ValueError("No values: can not summarize empty list of objects")
         return reduce(
