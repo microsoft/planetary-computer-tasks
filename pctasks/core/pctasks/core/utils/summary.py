@@ -49,7 +49,7 @@ class ValueCount(BaseModel):
     type: str
     count: int
 
-    def add_count(self, other: "ValueCount") -> None:
+    def merge(self, other: "ValueCount") -> None:
         self.count += other.count
 
 
@@ -149,7 +149,7 @@ class DistinctValueSummary(PropertySummary):
                 list_values_self.append(v)
             else:
                 if v.value in indexed_other:
-                    v.add_count(indexed_other[v.value])
+                    v.merge(indexed_other[v.value])
                     del indexed_other[v.value]
                 values.append(v)
 
@@ -161,7 +161,7 @@ class DistinctValueSummary(PropertySummary):
             found = False
             for i, other_v in enumerate(list_values_other):
                 if v.value == other_v.value:
-                    v.add_count(other_v)
+                    v.merge(other_v)
                     list_values_other.pop(i)
                     values.append(v)
                     found = True
