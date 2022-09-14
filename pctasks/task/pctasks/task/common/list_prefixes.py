@@ -33,6 +33,7 @@ class ListPrefixesTask(Task[ListPrefixesInput, ListPrefixesOutput]):
 
     def run(self, input: ListPrefixesInput, context: TaskContext) -> ListPrefixesOutput:
         storage = context.storage_factory.get_storage(input.src_uri)
+
         result: List[str] = []
         for root, _, _ in storage.walk(max_depth=input.depth, min_depth=input.depth):
             logger.info(f"Walking prefix: {root}")
