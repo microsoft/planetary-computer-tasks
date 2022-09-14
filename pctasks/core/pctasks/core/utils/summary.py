@@ -42,12 +42,7 @@ class SummaryTypes(str, Enum):
 
 
 def is_value_type(v: Any) -> bool:
-    return (
-        isinstance(v, bool)
-        or isinstance(v, str)
-        or isinstance(v, float)
-        or isinstance(v, int)
-    )
+    return isinstance(v, (bool, str, float, int))
 
 
 class ValueCount(BaseModel):
@@ -132,11 +127,8 @@ class DistinctValueSummary(PropertySummary):
     def merge(
         self, other: PropertySummary, settings: SummarySettings
     ) -> PropertySummary:
-        if (
-            isinstance(other, MixedValueSummary)
-            or isinstance(other, IntRangeSummary)
-            or isinstance(other, FloatRangeSummary)
-        ):
+        """Merge another PropertySummary into this one."""
+        if isinstance(other, (MixedValueSummary, IntRangeSummary, FloatRangeSummary)):
             return other.merge(self, settings=settings)
 
         if not isinstance(other, DistinctValueSummary):
