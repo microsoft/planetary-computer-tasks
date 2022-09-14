@@ -16,10 +16,26 @@ from pctasks.core.utils import map_opt
 
 
 class SummarySettings(BaseModel):
-    max_mixed_summary_samples = 4
-    max_mixed_value_samples = 4
+
+    max_distinct_values = 4
+    """The max number of distinct values to collect in a distinct value summary.
+
+    If there are more values collected than this settings, the DistinctValueSummary
+    will be converted into a MixedValueSummary.
+    """
+
+    max_distinct_key_sets = 5
+    """The max number of distinct values to collect in a distinct key sets.
+
+    If there are more values collected than this setting, the DistinctKeySets
+    will be converted to a MixedKeySets.
+    """
+
     max_mixed_object_list_samples = 3
-    max_mixed_key_sets = 5
+    """The max number of distinct samples to include in a mixed object list summary."""
+
+    max_mixed_summary_samples = 4
+    """The max number of distinct samples to include in a mixed summary."""
 
 
 class ValueTypes(str, Enum):
@@ -171,7 +187,7 @@ class DistinctValueSummary(PropertySummary):
         values.extend(list_values_other)
 
         # Check if we have too many values
-        if len(values) > settings.max_mixed_value_samples:
+        if len(values) > settings.max_distinct_values:
             data_types = set(v.type for v in values)
             if data_types == {ValueTypes.INT}:
                 int_values = [v.value for v in values if isinstance(v, IntValueCount)]
@@ -197,7 +213,7 @@ class DistinctValueSummary(PropertySummary):
                 data_types=set(v.type for v in values),
                 sample=cast(
                     ValueCountAndRangeList,
-                    [x for x in values[: settings.max_mixed_value_samples]],
+                    [x for x in values[: settings.max_distinct_values]],
                 ),
             )
         else:
@@ -229,7 +245,7 @@ class IntRangeSummary(PropertySummary):
                 return self
             else:
                 sample: ValueCountAndRangeList = [self]
-                sample.extend(other.values[: settings.max_mixed_value_samples])
+                sample.extend(other.values[: settings.max_distinct_values])
                 return MixedValueSummary(
                     count_with=self.count_with + other.count_with,
                     count_without=self.count_without + other.count_without,
@@ -269,7 +285,7 @@ class FloatRangeSummary(PropertySummary):
                 return self
             else:
                 sample: ValueCountAndRangeList = [self]
-                sample.extend(other.values[: settings.max_mixed_value_samples])
+                sample.extend(other.values[: settings.max_distinct_values])
                 return MixedValueSummary(
                     count_with=self.count_with + other.count_with,
                     count_without=self.count_without + other.count_without,
@@ -448,7 +464,7 @@ class MixedSummary(PropertySummary):
                 ]
             else:
                 result.summary_types.add(summary.type)
-                if len(result.sample) < settings.max_mixed_value_samples:
+                if len(result.sample) < settings.max_distinct_values:
                     result.sample.append(summary)
         return result
 
@@ -492,10 +508,10 @@ class DistinctKeySets(BaseModel):
             new_key_sets.append(ks)
         for ks in other.values:
             new_key_sets.append(ks)
-        if len(new_key_sets) > settings.max_mixed_key_sets:
+        if len(new_key_sets) > settings.max_distinct_key_sets:
             return MixedKeySets(
                 sample_values=sorted(
-                    new_key_sets[: settings.max_mixed_key_sets],
+                    new_key_sets[: settings.max_distinct_key_sets],
                     key=lambda k: k.count_with,
                     reverse=True,
                 )
@@ -518,7 +534,7 @@ class MixedKeySets(BaseModel):
 
         return MixedKeySets(
             sample_values=sorted(
-                new_key_sets[: settings.max_mixed_key_sets],
+                new_key_sets[: settings.max_distinct_key_sets],
                 key=lambda k: k.count_with,
                 reverse=True,
             )

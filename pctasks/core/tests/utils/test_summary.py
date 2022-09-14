@@ -319,7 +319,7 @@ def test_several_asset_descriptions():
     summary = ObjectSummary.summarize(
         *items,
         include_keys=["assets.image.description"],
-        settings=SummarySettings(max_mixed_value_samples=20),
+        settings=SummarySettings(max_distinct_values=20),
     )
 
     print(summary.json(indent=2))
