@@ -11,7 +11,7 @@ jobs:
   create-splits:
     tasks:
     - id: list-prefixes
-      image: ${{ args.registry }}/pctasks-task-base:rob
+      image: ${{ args.registry }}/pctasks-task-base:latest
       task: pctasks.task.common.list_prefixes:task
       args:
         src_uri: blob://sentinel5euwest/sentinel-5p-stac
@@ -38,7 +38,7 @@ jobs:
         AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
       schema_version: 1.0.0
     - id: summarize-map
-      image: ${{ args.registry }}/pctasks-task-base:rob
+      image: ${{ args.registry }}/pctasks-task-base:latest
       task: pctasks.task.common.summarize:map_task
       args:
         uris: ${{ tasks.list-files.output.uris }}
@@ -53,12 +53,12 @@ jobs:
   summarize-reduce:
     tasks:
     - id: summarize-reduce
-      image: ${{ args.registry }}/pctasks-task-base:rob
+      image: ${{ args.registry }}/pctasks-task-base:latest
       task: pctasks.task.common.summarize:reduce_task
       args:
         summaries: ${{ jobs.summarize-map.tasks.summarize-map.output.summary }}
     - id: write-output
-      image: ${{ args.registry }}/pctasks-task-base:rob
+      image: ${{ args.registry }}/pctasks-task-base:latest
       task: pctasks.task.common.write:task
       args:
         uri: blob://sentinel5euwest/sentinel-5p-etl-data/summaries/2022-09-08.json
