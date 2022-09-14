@@ -64,6 +64,8 @@ class SummarizeReduceTask(Task[SummarizeReduceInput, SummarizeOutput]):
     _output_model = SummarizeOutput
 
     def run(self, input: SummarizeReduceInput, context: TaskContext) -> SummarizeOutput:
+        if not input.summaries:
+            return SummarizeOutput(summary=ObjectSummary.empty())
         summary = reduce(
             lambda a, b: a.merge(b, settings=input.summary_settings), input.summaries
         )

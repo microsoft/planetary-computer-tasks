@@ -675,6 +675,10 @@ class ObjectSummary(BaseModel):
             [cls.summarize_dict(d, include_keys=include_keys) for d in data],
         )
 
+    @classmethod
+    def empty(cls) -> "ObjectSummary":
+        return cls(count=0, keys={}, key_sets=DistinctKeySets(values=[]))
+
 
 ObjectListSummary.update_forward_refs()
 ObjectPropertySummary.update_forward_refs()
