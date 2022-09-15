@@ -15,12 +15,13 @@ from pctasks.dev.test_utils import (
     run_workflow,
     run_workflow_from_file,
 )
+from tests.constants import DEFAULT_TIMEOUT
 
 HERE = Path(__file__).parent
 WORKFLOWS = HERE / "workflows"
 ASSETS_DIR = HERE / "data-files" / "simple-assets"
 
-TIMEOUT_SECONDS = 120
+TIMEOUT_SECONDS = DEFAULT_TIMEOUT
 
 logger = logging.getLogger(__name__)
 

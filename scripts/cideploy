@@ -44,7 +44,7 @@ if [[ "${CI}" != "true" ]]; then
     echo "Only CI can deploy to staging!"
     exit 1
 fi
-TERRAFORM_DIR=/opt/src/terraform/${ENVIRONMENT}
+TERRAFORM_DIR=/opt/src/deployment/terraform/${ENVIRONMENT}
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 

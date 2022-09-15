@@ -1,0 +1,206 @@
+{
+  "type": "Feature",
+  "stac_version": "1.0.0",
+  "id": "S1A_IW_GRDH_1SDH_20191215T034818_20191215T034847_030353_0378EA_rtc",
+  "properties": {
+    "sar:frequency_band": "C",
+    "sar:center_frequency": 5.405,
+    "sar:observation_direction": "right",
+    "sar:instrument_mode": "IW",
+    "sar:polarizations": [
+      "HH",
+      "HV"
+    ],
+    "sar:product_type": "GRD",
+    "sar:resolution_range": 20,
+    "sar:resolution_azimuth": 22,
+    "sar:pixel_spacing_range": 10,
+    "sar:pixel_spacing_azimuth": 10,
+    "sar:looks_range": 5,
+    "sar:looks_azimuth": 1,
+    "sar:looks_equivalent_number": 4.4,
+    "sat:platform_international_designator": "2014-016A",
+    "sat:orbit_state": "ascending",
+    "sat:absolute_orbit": 30353,
+    "sat:relative_orbit": 6,
+    "providers": [
+      {
+        "name": "ESA",
+        "roles": [
+          "producer",
+          "processor",
+          "licensor"
+        ],
+        "url": "https://earth.esa.int/web/guest/home"
+      },
+      {
+        "name": "Microsoft",
+        "roles": [
+          "host",
+          "processor"
+        ],
+        "url": "https://planetarycomputer.microsoft.com"
+      },
+      {
+        "name": "CATALYST",
+        "roles": [
+          "processor"
+        ],
+        "url": "https://catalyst.earth/"
+      }
+    ],
+    "platform": "SENTINEL-1A",
+    "constellation": "Sentinel-1",
+    "start_datetime": "2019-12-15 03:48:18.806068+00:00",
+    "end_datetime": "2019-12-15 03:48:47.821617+00:00",
+    "s1:instrument_configuration_ID": "6",
+    "s1:datatake_id": "227562",
+    "s1:product_timeliness": "Fast-24h",
+    "s1:processing_level": "1",
+    "s1:resolution": "high",
+    "s1:orbit_source": "RESORB",
+    "s1:slice_number": "1",
+    "s1:total_slices": "5",
+    "s1:shape": [
+      29204,
+      25126
+    ],
+    "datetime": "2019-12-15T03:48:33.313842Z",
+    "proj:epsg": 32707,
+    "proj:shape": [
+      29204,
+      25126
+    ],
+    "proj:bbox": [
+      459110.0,
+      8214410.0,
+      745560.0,
+      8464610.0
+    ],
+    "proj:transform": [
+      10.0,
+      0.0,
+      457250.0,
+      0.0,
+      -10.0,
+      8464920.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          729190.0,
+          8281120.0
+        ],
+        [
+          670215.0,
+          8267330.0
+        ],
+        [
+          671655.0,
+          8260990.0
+        ],
+        [
+          586055.0,
+          8240970.0
+        ],
+        [
+          587625.0,
+          8233990.0
+        ],
+        [
+          503905.0,
+          8214410.0
+        ],
+        [
+          459110.0,
+          8407565.0
+        ],
+        [
+          703745.0,
+          8464610.0
+        ],
+        [
+          745560.0,
+          8284955.0
+        ],
+        [
+          729190.0,
+          8281120.0
+        ]
+      ]
+    ]
+  },
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice"
+    }
+  ],
+  "assets": {
+    "hh-rtc": {
+      "href": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2019/12/15/IW/DH/S1A_IW_GRDH_1SDH_20191215T034818_20191215T034847_030353_0378EA_7E80/measurement/iw-hh.rtc.tiff",
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "HH-RTC",
+      "description": "Actual SAR data that have been processed into an image",
+      "eo:bands": [
+        {
+          "name": "HH",
+          "description": "HH band: horizontal transmit and horizontal receive"
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "raster:bands": [
+        {
+          "data_type": "float32",
+          "spatial_resolution": 10.0,
+          "nodata": -32768
+        }
+      ],
+      "file:size": 2063532979,
+      "file:checksum": "b970f4b7ea951e77019f2040b2b676f3"
+    },
+    "hv-rtc": {
+      "href": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2019/12/15/IW/DH/S1A_IW_GRDH_1SDH_20191215T034818_20191215T034847_030353_0378EA_7E80/measurement/iw-hv.rtc.tiff",
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "HV-RTC",
+      "description": "Actual SAR data that have been processed into an image",
+      "eo:bands": [
+        {
+          "name": "HV",
+          "description": "HV band: horizontal transmit and vertical receive"
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "raster:bands": [
+        {
+          "data_type": "float32",
+          "spatial_resolution": 10.0,
+          "nodata": -32768
+        }
+      ],
+      "file:size": 2048349545,
+      "file:checksum": "ea2bfff98c223f52a32c0a27bbe26c77"
+    }
+  },
+  "bbox": [
+    459110.0,
+    8214410.0,
+    745560.0,
+    8464610.0
+  ],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/sar/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/sat/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/eo/v1.0.0/schema.json"
+  ]
+}

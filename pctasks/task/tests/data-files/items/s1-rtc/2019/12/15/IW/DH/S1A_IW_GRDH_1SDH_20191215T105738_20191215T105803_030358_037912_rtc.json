@@ -1,0 +1,190 @@
+{
+  "type": "Feature",
+  "stac_version": "1.0.0",
+  "id": "S1A_IW_GRDH_1SDH_20191215T105738_20191215T105803_030358_037912_rtc",
+  "properties": {
+    "sar:frequency_band": "C",
+    "sar:center_frequency": 5.405,
+    "sar:observation_direction": "right",
+    "sar:instrument_mode": "IW",
+    "sar:polarizations": [
+      "HH",
+      "HV"
+    ],
+    "sar:product_type": "GRD",
+    "sar:resolution_range": 20,
+    "sar:resolution_azimuth": 22,
+    "sar:pixel_spacing_range": 10,
+    "sar:pixel_spacing_azimuth": 10,
+    "sar:looks_range": 5,
+    "sar:looks_azimuth": 1,
+    "sar:looks_equivalent_number": 4.4,
+    "sat:platform_international_designator": "2014-016A",
+    "sat:orbit_state": "descending",
+    "sat:absolute_orbit": 30358,
+    "sat:relative_orbit": 11,
+    "providers": [
+      {
+        "name": "ESA",
+        "roles": [
+          "producer",
+          "processor",
+          "licensor"
+        ],
+        "url": "https://earth.esa.int/web/guest/home"
+      },
+      {
+        "name": "Microsoft",
+        "roles": [
+          "host",
+          "processor"
+        ],
+        "url": "https://planetarycomputer.microsoft.com"
+      },
+      {
+        "name": "CATALYST",
+        "roles": [
+          "processor"
+        ],
+        "url": "https://catalyst.earth/"
+      }
+    ],
+    "platform": "SENTINEL-1A",
+    "constellation": "Sentinel-1",
+    "start_datetime": "2019-12-15 10:57:38.245963+00:00",
+    "end_datetime": "2019-12-15 10:58:03.245353+00:00",
+    "s1:instrument_configuration_ID": "6",
+    "s1:datatake_id": "227602",
+    "s1:product_timeliness": "Fast-24h",
+    "s1:processing_level": "1",
+    "s1:resolution": "high",
+    "s1:orbit_source": "RESORB",
+    "s1:slice_number": "10",
+    "s1:total_slices": "15",
+    "s1:shape": [
+      29053,
+      22713
+    ],
+    "datetime": "2019-12-15T10:57:50.745658Z",
+    "proj:epsg": 32620,
+    "proj:shape": [
+      29053,
+      22713
+    ],
+    "proj:bbox": [
+      313430.0,
+      7734300.0,
+      599225.0,
+      7960350.0
+    ],
+    "proj:transform": [
+      10.0,
+      0.0,
+      310620.0,
+      0.0,
+      -10.0,
+      7961000.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          567830.0,
+          7776230.0
+        ],
+        [
+          556785.0,
+          7734300.0
+        ],
+        [
+          313430.0,
+          7797995.0
+        ],
+        [
+          355705.0,
+          7960350.0
+        ],
+        [
+          599225.0,
+          7897990.0
+        ],
+        [
+          567830.0,
+          7776230.0
+        ]
+      ]
+    ]
+  },
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice"
+    }
+  ],
+  "assets": {
+    "hh-rtc": {
+      "href": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2019/12/15/IW/DH/S1A_IW_GRDH_1SDH_20191215T105738_20191215T105803_030358_037912_4C25/measurement/iw-hh.rtc.tiff",
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "HH-RTC",
+      "description": "Actual SAR data that have been processed into an image",
+      "eo:bands": [
+        {
+          "name": "HH",
+          "description": "HH band: horizontal transmit and horizontal receive"
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "raster:bands": [
+        {
+          "data_type": "float32",
+          "spatial_resolution": 10.0,
+          "nodata": -32768
+        }
+      ],
+      "file:size": 1832009690,
+      "file:checksum": "97fef962384167b79f84232ddb3040dc"
+    },
+    "hv-rtc": {
+      "href": "https://sentinel1euwestrtc.blob.core.windows.net/sentinel1-grd-rtc/GRD/2019/12/15/IW/DH/S1A_IW_GRDH_1SDH_20191215T105738_20191215T105803_030358_037912_4C25/measurement/iw-hv.rtc.tiff",
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "HV-RTC",
+      "description": "Actual SAR data that have been processed into an image",
+      "eo:bands": [
+        {
+          "name": "HV",
+          "description": "HV band: horizontal transmit and vertical receive"
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "raster:bands": [
+        {
+          "data_type": "float32",
+          "spatial_resolution": 10.0,
+          "nodata": -32768
+        }
+      ],
+      "file:size": 1807521126,
+      "file:checksum": "e22f4e9239a0fbeed7bef12304cae827"
+    }
+  },
+  "bbox": [
+    313430.0,
+    7734300.0,
+    599225.0,
+    7960350.0
+  ],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/sar/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/sat/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/eo/v1.0.0/schema.json"
+  ]
+}

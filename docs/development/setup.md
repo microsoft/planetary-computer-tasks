@@ -50,12 +50,17 @@ To run the development servers:
 This will start Azurite, a PgSTAC database, the Azure Functions server, a local executor for testing, a stac-fastapi
 to inspect ingest results, and the frontend.
 
-| Service           | URL                             |
-|-------------------|---------------------------------|
-| PC Tasks API      | <http://localhost:8511/runs>    |
-| PC Tasks Frontend | <http://localhost:8515>         |
-| STAC API          | <http://localhost:8510/stac>    |
-| STAC Browser      | <http://localhost:8510/browser> |
+| Service           | URL                          |
+| ----------------- | ---------------------------- |
+| PC Tasks API      | <http://localhost:8511/runs> |
+| PC Tasks Frontend | <http://localhost:8515>      |
+| STAC API          | <http://localhost:8513>      |
+| STAC Browser      | <http://localhost:8514>      |
+
+You can avoid building or bringing up the STAC API and STAC Browser
+servers by using the flag `--no-aux-servers` in `scripts/setup`,
+`scripts/update`, and `scripts/server`. This can save on build time
+and memory footprint if you are not using those services.
 
 ## Bring up the development Kind cluster
 

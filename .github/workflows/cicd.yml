@@ -20,7 +20,7 @@ jobs:
         run: ./scripts/install
 
       - name: Setup
-        run: ./scripts/setup
+        run: ./scripts/setup --no-aux-servers
 
       - name: Test
         run: ./scripts/test
@@ -88,7 +88,7 @@ jobs:
         env:
           IMAGE_TAG: ${{needs.build_and_publish.outputs.image_tag}}
           ENVIRONMENT: staging
-          ARM_CLIENT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
-          ARM_CLIENT_SECRET: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
-          ARM_SUBSCRIPTION_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}
-          ARM_TENANT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}
+          AZURE_SUBSCRIPTION_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}
+          AZURE_TENANT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}
+          AZURE_CLIENT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
+          AZURE_CLIENT_SECRET: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}

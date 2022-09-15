@@ -12,6 +12,7 @@ pctasks:
     dev:
       enabled: true
       api_key: "kind-api-key"
+      auth_token: "Bearer hunter2"
 
     image:
       repository: "localhost:5001/pctasks-server"

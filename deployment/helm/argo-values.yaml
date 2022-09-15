@@ -3,3 +3,6 @@ server:
   secure: false
   # extraArgs:
   # - --auth-mode=server
+  serviceAccount:
+    name: pctasks-sa
+
