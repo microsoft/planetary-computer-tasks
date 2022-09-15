@@ -41,6 +41,9 @@ def find_value(
 
     Handles lists that are represented as suffixes to paths, like
     "parent.child[0].url"
+
+    If part of the path is a list and no index is specified, returns
+    a list of values for each item in the list.
     """
 
     def _fetch(
@@ -174,7 +177,7 @@ def template_dict(
     d: Dict[str, Any],
     get_value: Callable[[List[str]], Optional[TemplateValue]],
 ) -> Dict[str, Any]:
-    """Replaces dictionary with all secrets replaced with their values.
+    """Replaces dictionary with all templates replaced with their values.
 
     get_value takes the list of strings that make up the template path
     and expects a string value. For example, ${{ output.file.path }}

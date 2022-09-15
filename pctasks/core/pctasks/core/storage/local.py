@@ -116,7 +116,7 @@ class LocalStorage(Storage):
             if min_depth and depth < min_depth:
                 continue
             if max_depth and depth > max_depth:
-                break
+                continue
             if file_limit and file_count + len(files) > file_limit:
                 files = files[: file_limit - file_count]
                 limit_break = True

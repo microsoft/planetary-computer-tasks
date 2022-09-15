@@ -4,8 +4,9 @@ import textwrap
 from pctasks.cli.cli import setup_logging
 from pctasks.dev.test_utils import assert_workflow_fails, run_workflow
 from pctasks.run.argo.client import ERR_IMAGE_PULL, IMAGE_PULL_BACKOFF
+from tests.constants import DEFAULT_TIMEOUT
 
-TIMEOUT_SECONDS = 60
+TIMEOUT_SECONDS = DEFAULT_TIMEOUT
 
 
 def test_invalid_image():

@@ -12,6 +12,12 @@ def test_walk_with_depth():
     assert set(subdirs["a"]) == set(["asset-a-1.json", "asset-a-2.json"])
 
 
+def test_walk_folders_with_depth():
+    storage = LocalStorage(HERE / ".." / "data-files" / "simple-assets")
+    subdirs = [root for root, _, _ in storage.walk(min_depth=1, max_depth=1)]
+    assert set(subdirs) == set(["a", "b"])
+
+
 def test_walk_folders():
     storage = LocalStorage(HERE / ".." / "data-files" / "simple-assets")
     subdirs = {root: files for root, _, files in storage.walk()}

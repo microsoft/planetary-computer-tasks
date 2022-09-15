@@ -13,55 +13,6 @@ services:
     volumes:
       - pctasks-azurite-data:/workspace
 
-  # TODO: Removing the need for functions for now,
-  #       but we will use them for triggering reactive
-  #       workflows off of storage events; commenting out
-  #       but not deleting.
-  # functions:
-  #   container_name: pctasks-functions
-  #   image: pctasks-functions
-  #   build:
-  #     context: .
-  #     dockerfile: pctasks_funcs/Dockerfile
-  #   volumes:
-  #     - ./pctasks:/home/site/pctasks
-  #     - ./pctasks_funcs:/home/site/wwwroot
-  #   ports:
-  #     - "7071:7071" # Functions
-  #   environment:
-  #     - AzureWebJobsStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
-  #     - WEBSITE_HOSTNAME=functions:7071
-
-  #     # See .env for swithcing between docker-compose and kind cluster
-  #     - PCTASKS_SERVER_URL=${PCTASKS_SERVER_URL}
-
-  #     # Function queue trigger bindings ##
-  #     - FUNC_NOTIFY_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-  #     - FUNC_ROUTER_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-  #     - FUNC_WORKFLOW_QUEUE_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-
-  #     # Router settings ##############################################################
-
-  #     ## Azure Storage
-
-  #     ### Queues
-  #     - PCTASKS_ROUTER__QUEUES_CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
-
-  #     ### Tables
-  #     - PCTASKS_ROUTER__TABLES_ACCOUNT_URL=http://azurite:10002/devstoreaccount1
-  #     - PCTASKS_ROUTER__TABLES_ACCOUNT_NAME=devstoreaccount1
-  #     - PCTASKS_ROUTER__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
-
-  #     # Notifications settings #######################################################
-
-  #     ## Azure Storage
-
-  #     ### Tables
-
-  #     - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_URL=http://azurite:10002/devstoreaccount1
-  #     - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_NAME=devstoreaccount1
-  #     - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
-
   database:
     container_name: pctasks-database
     image: ghcr.io/stac-utils/pgstac:v0.6.6
@@ -91,8 +42,6 @@ services:
       - 8510:80
     depends_on:
       - server
-      - stac-api
-      - stac-browser
 
   server:
     container_name: pctasks-server
@@ -185,45 +134,6 @@ services:
         "--reload",
         "--proxy-headers"
       ]
-
-  stac-api:
-    container_name: pctasks-stac-api
-    image: pctasks-stacapi
-    build:
-      context: .
-      dockerfile: Dockerfile.stacapi
-    environment:
-      - APP_HOST=0.0.0.0
-      - APP_PORT=8513
-      - APP_ROOT_PATH=/stac
-      - RELOAD=false
-      - ENVIRONMENT=local
-      - POSTGRES_USER=username
-      - POSTGRES_PASS=password
-      - POSTGRES_DBNAME=postgis
-      - POSTGRES_HOST_READER=database
-      - POSTGRES_HOST_WRITER=database
-      - POSTGRES_PORT=5432
-      - WEB_CONCURRENCY=10
-      - VSI_CACHE=TRUE
-      - DB_MIN_CONN_SIZE=1
-      - DB_MAX_CONN_SIZE=1
-    ports:
-      - "8513:8513"
-    volumes:
-      - ./dev/stacapi.py:/opt/src/stacapi.py
-    depends_on:
-      - database
-    command: [ "uvicorn", "stacapi:app", "--host", "0.0.0.0", "--port", "8513", "--reload", "--proxy-headers" ]
-
-  stac-browser:
-    container_name: pctasks-stac-browser
-    image: pctasks-stacbrowser
-    build:
-      context: .
-      dockerfile: Dockerfile.stacbrowser
-    ports:
-      - "8514:8080"
 
   frontend:
     container_name: pctasks-frontend-app
