@@ -1,8 +1,8 @@
 {
     "stac_version": "1.0.0",
     "type": "Collection",
-    "id": "noaa-nclimgrid-daily",
-    "title": "NOAA Daily U.S. Climate Gridded Dataset (NClimGrid)",
+    "id": "noaa-nclimgrid-daily-scaled",
+    "title": "NOAA Daily U.S. Climate Gridded Dataset (NClimGrid) - Scaled",
     "description": "{{ collection.description }}",
     "license": "proprietary",
     "links": [
@@ -37,7 +37,7 @@
         "Precipitation",
         "Temperature"
     ],
-    "msft:short_description": "Gridded surface observations of daily temperature and precipitation for the continental United States",
+    "msft:short_description": "Gridded surface observations of daily temperature and precipitation for the continental United States scaled to match the corresponding monthly values.",
     "msft:storage_account": "nclimgridwesteurope",
     "msft:container": "nclimgrid",
     "msft:group_id": "noaa-nclimgrid",
@@ -61,15 +61,15 @@
     ],
     "assets": {
         "thumbnail": {
-            "title": "NOAA NClimGrid Daily Thumbnail",
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-nclimgrid-daily-thumb.png",
+            "title": "NOAA NClimGrid Daily Thumbnail - Scaled",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-nclimgrid-daily-scaled-thumb.png",
             "type": "image/png",
             "roles": [
                 "thumbnail"
             ]
         },
         "geoparquet-items": {
-            "href": "abfs://items/noaa-nclimgrid-daily.parquet",
+            "href": "abfs://items/noaa-nclimgrid-daily-scaled.parquet",
             "type": "application/x-parquet",
             "roles": [
                 "stac-items"

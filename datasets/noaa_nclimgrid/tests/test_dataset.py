@@ -14,10 +14,21 @@ DATASET_PATH = HERE / ".." / "dataset.yaml"
 # Azure container
 
 
-def test_daily():
+def test_daily_prelim():
     run_process_items_workflow(
         DATASET_PATH,
-        collection_id="noaa-nclimgrid-daily",
+        collection_id="noaa-nclimgrid-daily-prelim",
+        args={
+            "registry": "localhost:5001",
+        },
+        chunks_limit=1,
+    )
+
+
+def test_daily_scaled():
+    run_process_items_workflow(
+        DATASET_PATH,
+        collection_id="noaa-nclimgrid-daily-scaled",
         args={
             "registry": "localhost:5001",
         },
@@ -26,7 +37,7 @@ def test_daily():
 
 
 # The monthly data exists in a single set of NetCDFs, so only a single asset
-# (line) in a single asset chunkfile is generated --> all Item and COGs for the
+# (line) in a single asset chunkfile is generated --> all Items and COGs for the
 # monthly collection are created from a single asset uri. This is onerous for
 # testing, so best not to run it. The monthly dataset was ingested into PC Test,
 # which more or less serves as a proxy for this test.

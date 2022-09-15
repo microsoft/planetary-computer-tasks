@@ -2,7 +2,7 @@ The [NOAA U.S. Climate Gridded Dataset (NClimGrid)](https://www.ncei.noaa.gov/ac
 
 NClimGrid data is available in monthly and daily temporal intervals, with the daily data further differentiated as "prelim" (preliminary) or "scaled". Preliminary daily data is available within approximately three days of collection. Once a calendar month of preliminary daily data has been collected, it is scaled to match the corresponding monthly value. Monthly data is available from 1895 to the present. Daily preliminary and daily scaled data is available from 1951 to the present. 
 
-This Collection contains **Monthly** data. See the journal publication ["Improved Historical Temperature and Precipitation Time Series for U.S. Climate Divisions"](https://journals.ametsoc.org/view/journals/apme/53/5/jamc-d-13-0248.1.xml) for more information about monthly gridded data.
+This Collection contains **Daily Scaled** data. See the product description ["Daily Grids and Area Averages of Temperature and Precipitation for the Contiguous United States, 1951-Present (nClimGrid-d and nClimDiv-d)"](https://www1.ncdc.noaa.gov/pub/data/daily-grids/docs/nclimdiv-description.pdf) for more information about daily gridded data.
 
 Users of all NClimGrid data product should be aware that [NOAA advertises](https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332) that:
 >On an annual basis, approximately one year of "final" NClimGrid data is submitted to replace the initially supplied "preliminary" data for the same time period. Users should be sure to ascertain which level of data is required for their research.
