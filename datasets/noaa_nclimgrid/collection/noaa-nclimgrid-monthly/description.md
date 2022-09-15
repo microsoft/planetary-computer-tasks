@@ -5,4 +5,4 @@ NClimGrid data is available in monthly and daily temporal intervals, with the da
 This Collection contains **Monthly** data. See the journal publication ["Improved Historical Temperature and Precipitation Time Series for U.S. Climate Divisions"](https://journals.ametsoc.org/view/journals/apme/53/5/jamc-d-13-0248.1.xml) for more information about monthly gridded data.
 
 Users of all NClimGrid data product should be aware that [NOAA advertises](https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332) that:
->On an annual basis, approximately one year of "final" NClimGrid data is submitted to replace the initially supplied "preliminary" data for the same time period. Users should be sure to ascertain which level of data is required for their research.
+>"On an annual basis, approximately one year of "final" NClimGrid data is submitted to replace the initially supplied "preliminary" data for the same time period. Users should be sure to ascertain which level of data is required for their research."

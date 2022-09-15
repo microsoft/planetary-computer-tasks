@@ -2,7 +2,7 @@
     "stac_version": "1.0.0",
     "type": "Collection",
     "id": "noaa-nclimgrid-monthly",
-    "title": "NOAA Monthly U.S. Climate Gridded Dataset (NClimGrid)",
+    "title": "Monthly NOAA U.S. Climate Gridded Dataset (NClimGrid)",
     "description": "{{ collection.description }}",
     "license": "proprietary",
     "links": [
@@ -62,7 +62,7 @@
     ],
     "assets": {
         "thumbnail": {
-            "title": "NOAA NClimGrid Monthly Thumbnail",
+            "title": "Monthly NOAA NClimGrid Thumbnail",
             "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-nclimgrid-monthly-thumb.png",
             "type": "image/png",
             "roles": [

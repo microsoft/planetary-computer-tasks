@@ -2,7 +2,7 @@
     "stac_version": "1.0.0",
     "type": "Collection",
     "id": "noaa-nclimgrid-daily-prelim",
-    "title": "NOAA Daily U.S. Climate Gridded Dataset (NClimGrid) - Preliminary",
+    "title": "Preliminary Daily NOAA U.S. Climate Gridded Dataset (NClimGrid)",
     "description": "{{ collection.description }}",
     "license": "proprietary",
     "links": [
@@ -61,7 +61,7 @@
     ],
     "assets": {
         "thumbnail": {
-            "title": "NOAA NClimGrid Daily Thumbnail - Preliminary",
+            "title": "Preliminary Daily NOAA NClimGrid Thumbnail",
             "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-nclimgrid-daily-prelim-thumb.png",
             "type": "image/png",
             "roles": [
