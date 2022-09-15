@@ -55,7 +55,7 @@ resource "azurerm_api_management_named_value" "pctasks_backend_app_id" {
   resource_group_name = azurerm_resource_group.pctasks.name
   api_management_name = azurerm_api_management.pctasks.name
   display_name        = "pctasks-apim-jwt-aud-backend-app-id"
-  secret              = false
+  secret              = true
   value_from_key_vault {
     secret_id = data.azurerm_key_vault_secret.backend_app_id.id
   }
