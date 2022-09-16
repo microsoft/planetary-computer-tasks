@@ -1,0 +1,56 @@
+name: Update ASTER geometries
+id: aster-update-geometries
+dataset: aster
+args:
+  - registry
+jobs:
+  get-partitions:
+    tasks:
+      - id: get-partitions
+        image: ${{ args.registry }}/pctasks-task-base:latest
+        code:
+          src: ${{ local.path(./aster.py) }}
+          requirements: ${{ local.path(./requirements.txt) }}
+        task: aster:get_partitions_task
+        args:
+          url: https://planetarycomputer.microsoft.com/api/stac/v1/collections/aster-l1t
+          asset_key: geoparquet-items
+        environment:
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+  process-partition:
+    foreach:
+      items: ${{ jobs.get-partitions.tasks.get-partitions.output.assets }}
+    needs: get-partitions
+    tasks:
+      - id: update-items
+        image: ${{ args.registry }}/pctasks-task-base:latest
+        code:
+          src: ${{ local.path(./aster.py) }}
+          requirements: ${{ local.path(./requirements.txt) }}
+        task: aster:update_items_task
+        args:
+          asset: ${{ item }}
+          item_chunkset_uri: blob://ai4edataeuwest/pctasks-scratch-etl-data/aster/update-geometries/items
+          precision: 0.001
+          limit: 1
+        environment:
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      - id: ingest-items
+        image_key: ingest
+        task: pctasks.ingest_task.task:ingest_task
+        args:
+          content:
+            type: Ndjson
+            uris:
+              - ${{ tasks.update-items.output.ndjson_uri }}
+          options:
+            insert_group_size: 5000
+            insert_only: false
+        environment:
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}

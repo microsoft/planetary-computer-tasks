@@ -1,0 +1,5 @@
+adlfs==2022.7.0
+geopandas==0.12.1
+git+https://github.com/stactools-packages/aster@61a244788dc1d7c2085729621803618f99267679
+git+https://github.com/TomAugspurger/stac-geoparquet@09f3bce33c4e2ab8a796b21fd02df55c1b7754f9
+orjson==3.*
