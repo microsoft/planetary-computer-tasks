@@ -32,6 +32,7 @@ The `pctasks.task` package provides functionality for building tasks to be execu
    :recursive:
 
    pctasks.task.task.Task
+   pctasks.task.task.TaskContext
 ```
 
 ## `pctasks.dataset`

@@ -32,6 +32,7 @@
       ~BlobStorage.list_files
       ~BlobStorage.read_bytes
       ~BlobStorage.read_json
+      ~BlobStorage.read_ndjson
       ~BlobStorage.read_text
       ~BlobStorage.sign
       ~BlobStorage.upload_bytes

@@ -29,6 +29,7 @@
       ~Storage.list_files
       ~Storage.read_bytes
       ~Storage.read_json
+      ~Storage.read_ndjson
       ~Storage.read_text
       ~Storage.sign
       ~Storage.upload_bytes

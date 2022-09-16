@@ -58,7 +58,7 @@ We can now set pctasks to use either the dev-local or dev-cluster profile. For t
 > pctasks profile set dev-cluster
 ```
 
-You can test running a pctasks workflow by using the `examples/whalesay.yaml` workflow:
+You can test running a pctasks workflow by using the `examples/list-logs.yaml` workflow:
 
 ```shell
 > pctasks submit workflow examples/list-logs.yaml

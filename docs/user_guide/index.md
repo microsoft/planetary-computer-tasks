@@ -8,6 +8,6 @@ settings
 workflows
 templating
 storage
-secrets
 runtime
+chunking
 ````
