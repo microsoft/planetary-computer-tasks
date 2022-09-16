@@ -8,8 +8,7 @@ from pctasks.core.utils.template import LocalTemplater
 
 
 def template_workflow_dict(
-    workflow_dict: Dict[str, Any],
-    base_path: Optional[Union[str, Path]] = None
+    workflow_dict: Dict[str, Any], base_path: Optional[Union[str, Path]] = None
 ) -> WorkflowConfig:
     """Read and template a workflow dict.
     All local relative paths are relative to base_path
@@ -29,8 +28,7 @@ def template_workflow_dict(
 
 
 def template_workflow_contents(
-    contents: str,
-    base_path: Optional[Union[str, Path]] = None
+    contents: str, base_path: Optional[Union[str, Path]] = None
 ) -> WorkflowConfig:
     """Read and template a workflow file contents.
     All local relative paths are relative to base_path

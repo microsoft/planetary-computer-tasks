@@ -36,6 +36,7 @@ class Collection(ABC):
                 return [item]
 
     """
+
     @classmethod
     @abstractmethod
     def create_item(

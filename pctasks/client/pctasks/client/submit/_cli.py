@@ -1,6 +1,6 @@
 import logging
-from pathlib import Path
 import sys
+from pathlib import Path
 from typing import IO, Dict, List, Optional, Tuple
 
 import click
@@ -11,9 +11,7 @@ from pctasks.cli.cli import cli_output
 from pctasks.client.client import PCTasksClient
 from pctasks.client.errors import ConfirmationError
 from pctasks.client.settings import ClientSettings
-from pctasks.client.submit.template import (
-    template_workflow_contents,
-)
+from pctasks.client.submit.template import template_workflow_contents
 from pctasks.core.context import PCTasksCommandContext
 from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
 

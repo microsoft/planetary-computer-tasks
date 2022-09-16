@@ -23,6 +23,7 @@ class Task(ABC, Generic[T, U]):
     ensure that the task will not be run if the environment variables are not
     set as part of the task configuration.
     """
+
     _input_model: Type[T]
     _output_model: Type[U]
 

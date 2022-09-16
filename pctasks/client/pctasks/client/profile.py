@@ -166,8 +166,7 @@ def set_profile_command(ctx: click.Context, profile: str) -> None:
 @click.argument("profile")
 @click.pass_context
 def show_profile_command(ctx: click.Context, profile: str) -> None:
-    """Shows the values of the settings for PROFILE
-    """
+    """Shows the values of the settings for PROFILE"""
     settings_config = SettingsConfig.get(profile=profile)
     if profile not in settings_config.get_profile_names():
         rprint(f"[red]Profile [bold]{profile}[/bold] does not exists[/red]")
