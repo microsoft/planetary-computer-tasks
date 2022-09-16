@@ -1,0 +1,35 @@
+name: noaa_mrms_qpe
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+- registry
+
+tokens:
+  mrms:
+    containers:
+      mrms:
+        token: sv=2021-04-10&st=2022-09-16T19%3A14%3A51Z&se=2022-09-17T19%3A14%3A51Z&sr=c&sp=rl&sig=6Y6iOfxST9kZ8JjwJnLDY3nPhI0ATdxU6FrCDlal2hI%3D
+
+code:
+  src: ${{ local.path(./noaa_mrms_qpe.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+
+environment: 
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: noaa-mrms-qpe-1h-pass1
+    template: ${{ local.path(./collection/noaa-mrms-qpe-1h-pass1) }}
+    class: noaa_mrms_qpe:NoaaMrmsQpeCollection
+    asset_storage:
+      - uri: blob://mrms/mrms
+        token: ${{ pc.get_token(mrms, mrms) }}
+        chunks:
+          options:
+            matches: '[A-Z]*?/MultiSensor_QPE_01H_Pass1_00\.00/'
+            ends_with: [grib2.gz]
+            chunk_length: 2
+    chunk_storage:
+      uri: blob://mrms/mrms-etl-data/qpe-1h-pass1/
