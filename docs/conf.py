@@ -31,6 +31,7 @@ extensions = [
     "myst_parser",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
+    "sphinx_design",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -40,6 +41,9 @@ templates_path = ["_templates"]
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+
+# -- Options for MyST -------------------------------------------------
+myst_enable_extensions = ["colon_fence"]
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -54,3 +58,4 @@ html_theme_options = {
 # -- Options for autodoc -------------------------------------------------
 
 autosummary_generate = True
+autodoc_typehints = "both"

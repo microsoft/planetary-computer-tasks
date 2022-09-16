@@ -10,6 +10,20 @@ U = TypeVar("U", bound=PCBaseModel)
 
 
 class Task(ABC, Generic[T, U]):
+    """Task[T, U] is the base class for all tasks to be executed by PCTasks.
+
+    To create a new task, subclass Task with T as the input model (a Pydantic mode)
+    and U as the output model (also a Pydantic model). The only other requirement
+    is to implement the run method, which takes the input model and a TaskContext
+    and returns either an instance of the output model, a WaitTaskResult, or a
+    FailedTaskResult.
+
+    You can also define what environment variables are required to run the task
+    through overriding the get_required_environment_variables method. This will
+    ensure that the task will not be run if the environment variables are not
+    set as part of the task configuration.
+    """
+
     _input_model: Type[T]
     _output_model: Type[U]
 

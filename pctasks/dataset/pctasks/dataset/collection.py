@@ -12,11 +12,42 @@ from pctasks.task.task import Task
 
 
 class Collection(ABC):
+    """Base class for defining how Items in a Collection are created.
+
+    To create a Collection, subclass this class and implement the create_item
+    method. You may also override the other methods, which define the tasks
+    that create splits, create chunks, and creates items from the chunk files.
+    However the defaults for those tasks should generally work, and you should
+    normally only need to supply the create_item method.
+
+    If you're working with a stactools package, this class can be as simple
+    as calling out to the stactools package to create an Item from
+    an asset.
+
+    Example:
+
+        class MyCollection(Collection):
+            def create_item(
+                self, asset_uri: str, storage_factory: StorageFactory
+            ) -> Union[List[pystac.Item], WaitTaskResult]:
+                storage, asset_path = storage_factor.get_storage_for_file(asset_uri)
+                signed_url = storage.get_authenticated_url(asset_path)
+                item = stactools.mypackage.create_item(signed_url)
+                return [item]
+
+    """
+
     @classmethod
     @abstractmethod
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
+        """Create an Item from the given asset_uri.
+
+        Returns a list of Items if the asset is a collection, or a WaitTaskResult
+        when there is a reason to delay the processing of that item (for example,
+        when not all auxiliary files are available).
+        """
         pass
 
     @classmethod
@@ -41,7 +72,8 @@ class PremadeItemCollection(Collection):
         Create items from URLs to GeoJSON files.
 
         Use this :ref:`Collection` subclass when your STAC items already exist
-        as JSON files in some storage location. This reads the file
+        as JSON files in some storage location. This reads the file and returns
+        the Item parsed from that file.
         """
         asset_storage, path = storage_factory.get_storage_for_file(asset_uri)
         item_href = asset_storage.get_authenticated_url(path)

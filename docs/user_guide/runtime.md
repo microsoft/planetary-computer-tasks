@@ -3,7 +3,7 @@
 ## Specifying requirements
 
 In addition to the set of packages provided by the base docker image, you can specify a list of additional packages
-to install with a `requirements.txt` file.
+to install with a `requirements.txt` file. This can be done in a dataset configuration or in a task configuration.
 
 ```yaml
 # file: naip/dataset.yaml

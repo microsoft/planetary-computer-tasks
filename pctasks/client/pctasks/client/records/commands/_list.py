@@ -2,11 +2,14 @@ from typing import Optional
 
 import click
 from rich.console import Console
+from rich.table import Table
 
 from pctasks.cli.cli import cli_output
 from pctasks.client.client import PCTasksClient
-from pctasks.client.records.render import render_jobs, render_tasks, render_workflows
+from pctasks.client.records.render import render_jobs, render_tasks
 from pctasks.client.settings import ClientSettings
+from pctasks.client.utils import status_emoji
+from pctasks.core.utils import map_opt
 
 
 def list_workflows_cmd(
@@ -37,9 +40,21 @@ def list_workflows_cmd(
     if ids:
         cli_output("\n".join([w.run_id for w in workflows]))
     else:
-        render_workflows(
-            console=console, workflows=workflows, show_all=all, page_results=page
-        )
+        table = Table()
+        table.add_column("Run ID", style="cyan", justify="left")
+        table.add_column("Name", style="cyan", justify="left")
+        table.add_column("Status", style="cyan", justify="left")
+        table.add_column("Created", style="cyan", justify="left")
+
+        for workflow in workflows:
+            workflow = client.get_workflow(run_id=workflow.run_id)
+            table.add_row(
+                workflow.run_id,
+                map_opt(lambda w: w.name, workflow.workflow) or "",
+                status_emoji(workflow.status),
+                workflow.created.replace(microsecond=0).isoformat(),
+            )
+        console.print(table)
 
 
 def list_jobs_cmd(
