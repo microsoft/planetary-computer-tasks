@@ -1,0 +1,30 @@
+# TODO actually implement this -- this is currently a placeholder just to upload the collection
+id: aster
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+  - registry
+
+code:
+  src: ${{ local.path(./aster.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: aster-l1t
+    template: ${{ local.path(./collection) }}
+    class: aster:AsterL1tCollection
+    asset_storage:
+      - uri: blob://astersa/aster/
+        token: ${{ pc.get_token(astersa, aster) }}
+        chunks:
+          options:
+            name_starts_with: images/L1T
+            ends_with: .xml
+            chunk_length: 1000
+    chunk_storage:
+      uri: blob://astersa/aster-etl-data/chunks/
