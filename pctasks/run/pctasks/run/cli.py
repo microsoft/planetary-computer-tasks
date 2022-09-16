@@ -6,6 +6,7 @@ import click
 @click.command("local")
 @click.argument("workflow")
 @click.option(
+    "args",
     "-a",
     "--arg",
     multiple=True,
@@ -26,6 +27,7 @@ def local_cmd(workflow: str, args: List[str], output: Optional[str] = None) -> N
 @click.command("remote")
 @click.argument("workflow")
 @click.option(
+    "args",
     "-a",
     "--arg",
     multiple=True,
@@ -38,7 +40,7 @@ def local_cmd(workflow: str, args: List[str], output: Optional[str] = None) -> N
 def remote_cmd(
     ctx: click.Context,
     workflow: str,
-    arg: List[str],
+    args: List[str],
     new_id: bool,
     settings: Optional[str],
     sas: Optional[str],
@@ -46,7 +48,7 @@ def remote_cmd(
     """Execute a workflow using a remote runner."""
     from . import _cli
 
-    return _cli.remote_cmd(ctx, workflow, arg, new_id, settings, sas)
+    return _cli.remote_cmd(ctx, workflow, args, new_id, settings, sas)
 
 
 @click.group("run")

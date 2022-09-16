@@ -44,7 +44,7 @@ def local_cmd(workflow: str, args: List[str], output: Optional[str] = None) -> N
 def remote_cmd(
     ctx: click.Context,
     workflow: str,
-    arg: List[str],
+    args: List[str],
     new_id: bool,
     settings: Optional[str],
     sas: Optional[str],
@@ -65,12 +65,12 @@ def remote_cmd(
 
     # TODO: Do we need to pass in args at run time vs workflow submit msg?
     workflow_args: Optional[Dict[str, Any]] = None
-    if arg:
+    if args:
         workflow_args = {}
-        for a in arg:
+        for a in args:
             split_args = a.split("=")
             if not len(split_args) == 2:
-                raise click.UsageError(f"Invalid argument: {arg}")
+                raise click.UsageError(f"Invalid argument: {a}")
             workflow_args[split_args[0]] = split_args[1]
         submit_message.args = {**(submit_message.args or {}), **workflow_args}
 
