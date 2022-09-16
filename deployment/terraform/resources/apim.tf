@@ -181,7 +181,9 @@ resource "azurerm_api_management_api_policy" "pctasks_policy" {
   resource_group_name = azurerm_resource_group.pctasks.name
 
   depends_on = [
-    azurerm_api_management_named_value.pctasks_access_key
+    azurerm_api_management_named_value.pctasks_access_key,
+    azurerm_api_management_named_value.pctasks_backend_app_id,
+    azurerm_api_management_named_value.pctasks_signing_tenant_id
   ]
 
   xml_content = <<XML
