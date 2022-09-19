@@ -91,7 +91,7 @@ If you experience issues with the above step, take a look at some of these commo
 Using the run ID from the previous step, you can watch the execution status of the workflow using:
 
 ```shell
-> pctasks records show workflow --watch ${RUN_ID}
+> pctasks records status workflow --watch ${RUN_ID}
 ```
 
 This may return instantly, since the workflow should run quickly. However you can use this command with the `--watch` option to poll the API for status and update the console until the job completes.
