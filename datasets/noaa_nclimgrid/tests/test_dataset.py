@@ -22,6 +22,7 @@ def test_daily_prelim():
             "registry": "localhost:5001",
         },
         chunks_limit=1,
+        timeout_seconds=1000,
     )
 
 
@@ -33,6 +34,7 @@ def test_daily_scaled():
             "registry": "localhost:5001",
         },
         chunks_limit=1,
+        timeout_seconds=1000,
     )
 
 
@@ -50,4 +52,5 @@ def test_monthly():
             "registry": "localhost:5001",
         },
         chunks_limit=1,
+        timeout_seconds=10000,
     )
