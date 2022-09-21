@@ -40,7 +40,7 @@
     ],
     "msft:short_description": "Gridded surface observations of monthly temperature and precipitation for the continental United States",
     "msft:storage_account": "nclimgridwesteurope",
-    "msft:container": "nclimgrid",
+    "msft:container": "nclimgrid-cogs",
     "msft:group_id": "noaa-nclimgrid",
     "providers": [
         {
