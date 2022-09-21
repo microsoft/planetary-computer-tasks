@@ -16,7 +16,9 @@ GEOPARQUET_CONTAINER = "blob://goeseuwest/noaa-goes-geoparquet/"
 # The original GOES ETL code indicates duplicate assets. Is there a way to
 # handle duplicate assets in pctasks? Default item ingest is an upsert, so
 # the ingest should not fail even with duplicates, but no logic is applied to
-# decide which duplicate asset/item to ingest.
+# decide which duplicate asset/item to ingest. Should we run with --insert-only,
+# which will fail for conflicting items, so we can detect if duplicate assets
+# exist in the GLM source data?
 
 
 class GoesGlmCollection(Collection):
