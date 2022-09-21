@@ -42,7 +42,7 @@
     ],
     "msft:short_description": "Integrated multi-sensor cumulative precipation estimate for the past hour with a two-hour latency.",
     "msft:storage_account": "mrms",
-    "msft:container": "mrms",
+    "msft:container": "mrms-cogs",
     "msft:group_id": "noaa-mrms-qpe",
     "providers": [
         {
