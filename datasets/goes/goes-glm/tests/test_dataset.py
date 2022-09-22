@@ -5,7 +5,7 @@ from pctasks.cli.cli import setup_logging, setup_logging_for_module
 from pctasks.dev.test_utils import run_process_items_workflow
 
 HERE = Path(__file__).parent
-DATASET_PATH = HERE / ".." / "dataset.yaml"
+DATASET_PATH = HERE / ".." / "dataset-dev-cluster.yaml"
 
 
 def test_goes_glm():

@@ -1,8 +1,12 @@
-name: goes_cmi
+name: goes_glm
 image: ${{ args.registry }}/pctasks-task-base:latest
 
 args:
 - registry
+
+code:
+  src: ${{ local.path(./goes_glm.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -10,23 +14,21 @@ environment:
   AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
 
 collections:
-  - id: goes-cmi
+  - id: goes-glm
     template: ${{ local.path(./collection) }}
-    class: dummy:Dummy
+    class: goes_glm:GoesGlmCollection
     asset_storage:
-      - uri: blob://goeseuwest/noaa-goes16/
-        token: ${{ pc.get_token(goeseuwest, noaa-goes16) }}
+      - uri: blob://devstoreaccount1/noaa-goes16/
         chunks:
           options:
-            name_starts_with: ABI-L2-MCMIPC/2020/001/
+            name_starts_with: GLM-L2-LCFA/
             ends_with: .nc
             chunk_length: 2
-      - uri: blob://goeseuwest/noaa-goes17/
-        token: ${{ pc.get_token(goeseuwest, noaa-goes17) }}
+      - uri: blob://devstoreaccount1/noaa-goes17/
         chunks:
           options:
-            name_starts_with: ABI-L2-MCMIPC/2020/001/
+            name_starts_with: GLM-L2-LCFA/
             ends_with: .nc
             chunk_length: 2
     chunk_storage:
-      uri: blob://goeseuwest/noaa-goes-etl-data/pctasks/cmi/
+      uri: blob://devstoreaccount1/noaa-goes-etl-data/pctasks/glm/

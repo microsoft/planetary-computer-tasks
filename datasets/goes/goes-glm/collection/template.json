@@ -160,7 +160,8 @@
                 }
             ],
             "roles": [
-                "data"
+                "data",
+                "cloud-optimized"
             ]
         },
         "geoparquet_flashes": {
@@ -232,7 +233,8 @@
                 }
             ],
             "roles": [
-                "data"
+                "data",
+                "cloud-optimized"
             ]
         },
         "geoparquet_groups": {
@@ -291,7 +293,8 @@
                 }
             ],
             "roles": [
-                "data"
+                "data",
+                "cloud-optimized"
             ]
         },
         "netcdf": {
