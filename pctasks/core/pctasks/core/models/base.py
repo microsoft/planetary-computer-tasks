@@ -96,4 +96,14 @@ class RunRecordId(PCBaseModel):
 
 
 class ForeachConfig(PCBaseModel):
+    """
+    Configuration for foreach blocks in workflows.
+
+    Parameters
+    ----------
+    items: string or list of objects
+    flatten: bool, default True
+        Whether to flatten lists nested objects to a single flat list.
+    """
     items: Union[str, List[Any]]
+    flatten: bool = True
