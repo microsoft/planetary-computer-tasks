@@ -8,7 +8,6 @@ from pctasks.core.models.record import (
     JobRunRecord,
     RunRecord,
     TaskRunRecord,
-    WorkflowRunGroupRecord,
     WorkflowRunRecord,
 )
 from pctasks.core.tables.base import ModelTableService
@@ -159,44 +158,3 @@ class WorkflowRunRecordTable(RunRecordTable[WorkflowRunRecord]):
                 ),
                 None,
             )
-
-
-class WorkflowRunGroupRecordTable(ModelTableService[WorkflowRunGroupRecord]):
-    _model = WorkflowRunGroupRecord
-
-    def _get_key_from_record(self, record: WorkflowRunGroupRecord) -> Tuple[str, str]:
-        return (record.dataset.as_key(), record.group_id)
-
-    def insert_record(self, record: WorkflowRunGroupRecord) -> None:
-        key = self._get_key_from_record(record)
-        self.insert(
-            partition_key=key[0],
-            row_key=key[1],
-            entity=record,
-        )
-
-    def upsert_record(self, record: WorkflowRunGroupRecord) -> None:
-        record.set_update_time()
-        key = self._get_key_from_record(record)
-        self.upsert(
-            partition_key=key[0],
-            row_key=key[1],
-            entity=record,
-        )
-
-    def update_record(self, record: WorkflowRunGroupRecord) -> None:
-        record.set_update_time()
-        key = self._get_key_from_record(record)
-        self.update(
-            partition_key=key[0],
-            row_key=key[1],
-            entity=record,
-        )
-
-    def get_record(
-        self, dataset: DatasetIdentifier, group_id: str
-    ) -> Optional[WorkflowRunGroupRecord]:
-        return self.get(
-            partition_key=dataset.as_key(),
-            row_key=group_id,
-        )

@@ -13,7 +13,6 @@ from pctasks.core.constants import (
     DEFAULT_NOTIFICATIONS_QUEUE_NAME,
     DEFAULT_TASK_IO_CONTAINER,
     DEFAULT_TASK_RUN_RECORD_TABLE_NAME,
-    DEFAULT_WORKFLOW_RUN_GROUP_RECORD_TABLE_NAME,
     DEFAULT_WORKFLOW_RUN_RECORD_TABLE_NAME,
 )
 from pctasks.core.models.base import PCBaseModel
@@ -25,7 +24,6 @@ from pctasks.core.tables.dataset import DatasetIdentifierTable
 from pctasks.core.tables.record import (
     JobRunRecordTable,
     TaskRunRecordTable,
-    WorkflowRunGroupRecordTable,
     WorkflowRunRecordTable,
 )
 
@@ -81,9 +79,6 @@ class RunSettings(PCTasksSettings):
     task_run_record_table_name: str = DEFAULT_TASK_RUN_RECORD_TABLE_NAME
     job_run_record_table_name: str = DEFAULT_JOB_RUN_RECORD_TABLE_NAME
     workflow_run_record_table_name: str = DEFAULT_WORKFLOW_RUN_RECORD_TABLE_NAME
-    workflow_run_group_record_table_name: str = (
-        DEFAULT_WORKFLOW_RUN_GROUP_RECORD_TABLE_NAME
-    )
 
     # Blob
     blob_account_url: str
@@ -226,14 +221,6 @@ class RunSettings(PCTasksSettings):
             account_name=self.tables_account_name,
             account_key=self.tables_account_key,
             table_name=self.workflow_run_record_table_name,
-        )
-
-    def get_workflow_run_group_record_table(self) -> WorkflowRunGroupRecordTable:
-        return WorkflowRunGroupRecordTable.from_account_key(
-            account_url=self.tables_account_url,
-            account_name=self.tables_account_name,
-            account_key=self.tables_account_key,
-            table_name=self.workflow_run_group_record_table_name,
         )
 
     def get_task_io_storage(self) -> BlobStorage:

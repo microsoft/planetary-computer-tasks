@@ -13,8 +13,6 @@ from pctasks.core.models.record import (
     RecordType,
     TaskRunRecord,
     TaskRunStatus,
-    WorkflowRunGroupRecord,
-    WorkflowRunGroupStatus,
     WorkflowRunRecord,
     WorkflowRunStatus,
 )
@@ -153,21 +151,6 @@ class RecordUpdate(PCBaseModel):
     errors: Optional[List[str]] = None
 
 
-class CreateWorkflowRunGroupRecordUpdate(RecordUpdate):
-    type: str = Field(default=f"Create{RecordType.WORKFLOW_GROUP}", const=True)
-    record: WorkflowRunGroupRecord
-
-
-class WorkflowRunGroupRecordUpdate(RecordUpdate):
-    type: str = Field(default=f"Update{RecordType.WORKFLOW_GROUP}", const=True)
-    dataset: DatasetIdentifier
-    group_id: str
-    status: WorkflowRunGroupStatus
-
-    def update_record(self, record: WorkflowRunGroupRecord) -> None:
-        record.status = self.status
-
-
 class CreateWorkflowRunRecordUpdate(RecordUpdate):
     type: str = Field(default=f"Create{RecordType.WORKFLOW}", const=True)
     record: WorkflowRunRecord
@@ -234,8 +217,6 @@ class TaskRunRecordUpdate(RecordUpdate):
 
 class UpdateRecordMessage(PCBaseModel):
     update: Union[
-        CreateWorkflowRunGroupRecordUpdate,
-        WorkflowRunGroupRecordUpdate,
         CreateWorkflowRunRecordUpdate,
         WorkflowRunRecordUpdate,
         CreateJobRunRecordUpdate,

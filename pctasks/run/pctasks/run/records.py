@@ -4,7 +4,6 @@ from pctasks.core.models.record import (
     JobRunRecord,
     RunRecord,
     TaskRunRecord,
-    WorkflowRunGroupRecord,
     WorkflowRunRecord,
 )
 from pctasks.core.utils.backoff import with_backoff
@@ -12,7 +11,6 @@ from pctasks.run.models import (
     JobRunRecordUpdate,
     RecordUpdate,
     TaskRunRecordUpdate,
-    WorkflowRunGroupRecordUpdate,
     WorkflowRunRecordUpdate,
 )
 from pctasks.run.settings import RunSettings
@@ -30,22 +28,17 @@ class RecordUpdater:
 
     def upsert_record(self, record: RunRecord) -> None:
         def _do_upsert() -> None:
-            # Workflow Group
-            if isinstance(record, WorkflowRunGroupRecord):
-                with self.settings.get_workflow_run_group_record_table() as wrg_table:
-                    wrg_table.upsert_record(record)
-
             # Workflow
             if isinstance(record, WorkflowRunRecord):
                 with self.settings.get_workflow_run_record_table() as wr_table:
                     wr_table.upsert_record(record)
 
-            # Workflow Run Group
+            # Job
             if isinstance(record, JobRunRecord):
                 with self.settings.get_job_run_record_table() as jr_table:
                     jr_table.upsert_record(record)
 
-            # Workflow Run Group
+            # Task
             if isinstance(record, TaskRunRecord):
                 with self.settings.get_task_run_record_table() as tr_table:
                     tr_table.upsert_record(record)
@@ -54,27 +47,8 @@ class RecordUpdater:
 
     def update_record(self, update: RecordUpdate) -> None:
         def _do_update() -> None:
-            # Workflow  Group
-            if isinstance(update, WorkflowRunGroupRecordUpdate):
-                logger.debug(
-                    f"Updating workflow run group record status to {update.status}."
-                )
-                with self.settings.get_workflow_run_group_record_table() as wrg_table:
-                    wrg_record = wrg_table.get_record(
-                        dataset=update.dataset, group_id=update.group_id
-                    )
-                    if not wrg_record:
-                        raise RecordUpdateError(
-                            "Workflow group record for "
-                            f"{update.dataset}/{update.group_id} "
-                            "expected but not found.",
-                        )
-                    wrg_record.set_update_time()
-                    update.update_record(wrg_record)
-                    wrg_table.update_record(wrg_record)
-
             # Workflow
-            elif isinstance(update, WorkflowRunRecordUpdate):
+            if isinstance(update, WorkflowRunRecordUpdate):
                 logger.debug(f"Updating workflow run record status to {update.status}.")
                 with self.settings.get_workflow_run_record_table() as wr_table:
                     wr_record = wr_table.get_record(update.get_run_record_id())

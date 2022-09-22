@@ -1,7 +1,6 @@
 #!/bin/bash
 """
 Sets up the Azurite development environment.
-Meant to execute in a pctasks development docker container.
 """
 from azure.data.tables import TableServiceClient
 from azure.storage.blob import BlobServiceClient
@@ -21,7 +20,6 @@ from pctasks.core.constants import (
     DEFAULT_TASK_IO_CONTAINER,
     DEFAULT_TASK_RUN_RECORD_TABLE_NAME,
     DEFAULT_WORKFLOW_QUEUE_NAME,
-    DEFAULT_WORKFLOW_RUN_GROUP_RECORD_TABLE_NAME,
     DEFAULT_WORKFLOW_RUN_RECORD_TABLE_NAME,
 )
 from pctasks.core.models.config import ImageConfig
@@ -60,7 +58,6 @@ def setup_azurite() -> None:
     tables = [t.name for t in table_service_client.list_tables()]
     for table in [
         DEFAULT_DATASET_TABLE_NAME,
-        DEFAULT_WORKFLOW_RUN_GROUP_RECORD_TABLE_NAME,
         DEFAULT_WORKFLOW_RUN_RECORD_TABLE_NAME,
         DEFAULT_JOB_RUN_RECORD_TABLE_NAME,
         DEFAULT_TASK_RUN_RECORD_TABLE_NAME,
@@ -120,7 +117,6 @@ def clear_records() -> None:
     tables = [t.name for t in table_service_client.list_tables()]
     for table in [
         DEFAULT_DATASET_TABLE_NAME,
-        DEFAULT_WORKFLOW_RUN_GROUP_RECORD_TABLE_NAME,
         DEFAULT_WORKFLOW_RUN_RECORD_TABLE_NAME,
         DEFAULT_JOB_RUN_RECORD_TABLE_NAME,
         DEFAULT_TASK_RUN_RECORD_TABLE_NAME,

@@ -15,7 +15,6 @@ from pctasks.core.version import __version__
 
 
 class RecordType(StrEnum):
-    WORKFLOW_GROUP = "WorkflowGroup"
     WORKFLOW = "Workflow"
     JOB = "Job"
     TASK = "Task"
@@ -62,13 +61,6 @@ class JobRunStatus(StrEnum):
     CANCELLED = "cancelled"
     PENDING = "pending"
     NOTASKS = "notasks"
-
-
-class WorkflowRunGroupStatus(StrEnum):
-
-    RUNNING = "running"
-    COMPLETED = "completed"
-    FAILED = "failed"
 
 
 class RunRecord(PCBaseModel):
@@ -138,23 +130,3 @@ class WorkflowRunRecord(RunRecord):
 
     created: datetime = Field(default_factory=tzutc_now)
     updated: datetime = Field(default_factory=tzutc_now)
-
-
-class WorkflowRunGroupRecord(RunRecord):
-    # Record for "workflow groups"
-    # These are not currently used and the concept may be dropped.
-    type: str = Field(default=RecordType.WORKFLOW_GROUP, const=True)
-
-    dataset: DatasetIdentifier
-    group_id: str
-
-    status: WorkflowRunGroupStatus
-
-    @validator("group_id")
-    def validate_group_id(cls, v: Optional[str]) -> Optional[str]:
-        if v:
-            try:
-                validate_table_key(v)
-            except InvalidTableKeyError as e:
-                raise ValueError(f"Invalid group id '{v}': {e.INFO_MESSAGE}")
-        return v

@@ -1,7 +1,6 @@
 # Default table names
 DEFAULT_DATASET_TABLE_NAME = "datasets"
 
-DEFAULT_WORKFLOW_RUN_GROUP_RECORD_TABLE_NAME = "workflowrungrouprecords"
 DEFAULT_WORKFLOW_RUN_RECORD_TABLE_NAME = "workflowrunrecords"
 DEFAULT_JOB_RUN_RECORD_TABLE_NAME = "jobrunrecords"
 DEFAULT_TASK_RUN_RECORD_TABLE_NAME = "taskrunrecords"
