@@ -70,9 +70,9 @@ def template_foreach(
         raise TemplateError(f"foreach expected list of items, got {items}")
 
     if foreach.flatten:
-        items = completely_flatten(items)
-    items = list(items)
-    return items
+        return list(completely_flatten(items))
+    else:
+        return list(items)
 
 
 class ItemTemplater(Templater):

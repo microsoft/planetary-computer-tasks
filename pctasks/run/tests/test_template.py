@@ -43,8 +43,7 @@ def test_template_foreach_multilevel():
 
 def test_template_foreach_nested():
     foreach_config = ForeachConfig(
-        items="${{ jobs.job1.tasks.task1.output.items }}",
-        flatten=False
+        items="${{ jobs.job1.tasks.task1.output.items }}", flatten=False
     )
     jobs_output: Dict[str, Union[Dict[str, Any], List[Dict[str, Any]]]] = {
         "job1": [
