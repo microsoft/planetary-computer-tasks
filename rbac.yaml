@@ -1,0 +1,51 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: pc
+  name: argo-workflows-manual-role
+rules:
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "patch", "list"]
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get", "watch"]
+- apiGroups: ["argoproj.io/v1alpha1"]
+  resources: ["workflowtaskresults.argoprogj.io"]
+  verbs: ["create"]
+- apiGroups: ["argoproj.io/v1alpha1"]
+  resources: ["workflowtasksets.argoproj.io"]
+  verbs: ["list", "watch", "patch"]
+- apiGroups: ["argoproj.io/v1alpha1"]
+  resources: ["workflowtasksets.argoproj.io/status"]
+  verbs: ["patch"]
+# - apiGroups: ["argoproj.io/v1alpha1"]
+#   resources: ["workflowtemplates.argoproj.io", "workflowtemplates"]
+#   verbs: ["get", "list"]
+# - apiGroups: ["argoproj.io/v1alpha1"]
+#   resources: ["cronworkflows.argoproj.io", "cronworkflows"]
+#   verbs: ["get", "list"]
+- apiGroups: ["argoproj.io"]
+  resources: ["workflowtemplates.argoproj.io", "workflowtemplates"]
+  verbs: ["get", "list"]
+- apiGroups: ["argoproj.io"]
+  resources: ["cronworkflows.argoproj.io", "cronworkflows"]
+  verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+    name: argo-workflows-manual-rolebinding
+    namespace: pc
+subjects:
+    - kind: ServiceAccount
+      name: pctasks-sa
+      namespace: pc
+roleRef:
+    kind: Role
+    name: argo-workflows-manual-role
+    apiGroup: rbac.authorization.k8s.io
