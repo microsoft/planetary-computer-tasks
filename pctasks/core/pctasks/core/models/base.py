@@ -105,5 +105,6 @@ class ForeachConfig(PCBaseModel):
     flatten: bool, default True
         Whether to flatten lists nested objects to a single flat list.
     """
+
     items: Union[str, List[Any]]
     flatten: bool = True
