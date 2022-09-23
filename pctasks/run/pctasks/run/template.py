@@ -69,7 +69,10 @@ def template_foreach(
     if not isinstance(items, list):
         raise TemplateError(f"foreach expected list of items, got {items}")
 
-    return list(completely_flatten(items))
+    if foreach.flatten:
+        return list(completely_flatten(items))
+    else:
+        return list(items)
 
 
 class ItemTemplater(Templater):

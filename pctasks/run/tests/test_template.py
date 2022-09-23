@@ -39,3 +39,18 @@ def test_template_foreach_multilevel():
 
     templated = template_foreach(foreach_config, jobs_output, None)
     assert templated == ["one", "two", "three"]
+
+
+def test_template_foreach_nested():
+    foreach_config = ForeachConfig(
+        items="${{ jobs.job1.tasks.task1.output.items }}", flatten=False
+    )
+    jobs_output: Dict[str, Union[Dict[str, Any], List[Dict[str, Any]]]] = {
+        "job1": [
+            {"tasks": {"task1": {"output": {"items": ["a", "b"]}}}},
+            {"tasks": {"task1": {"output": {"items": ["c", "d"]}}}},
+        ]
+    }
+
+    templated = template_foreach(foreach_config, jobs_output, None)
+    assert templated == [["a", "b"], ["c", "d"]]
