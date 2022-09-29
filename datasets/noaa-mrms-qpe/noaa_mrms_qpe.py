@@ -9,8 +9,9 @@ from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
 
-COG_CONTAINER = "blob://mrms/mrms-cogs"
-# COG_CONTAINER = "blob://devstoreaccount1/mrms-cogs"
+# COG_CONTAINER = "blob://mrms/mrms-cogs"
+COG_CONTAINER = "blob://devstoreaccount1/mrms-cogs"
+
 AOIS = ["ALASKA", "CARIB", "CONUS", "GUAM", "HAWAII"]
 
 
@@ -21,7 +22,6 @@ class NoaaMrmsQpeCollection(Collection):
     ) -> Union[List[pystac.Item], WaitTaskResult]:
 
         meta = parse_filename(asset_uri)
-        # collection = f"noaa-mrms-qpe-{meta.period}h-pass{meta.pass_no}"
         aoi = next(aoi for aoi in AOIS if aoi in asset_uri)
         parts = asset_uri.split("/")
         path_fragment = "/".join(parts[4:7])

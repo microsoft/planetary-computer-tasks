@@ -15,6 +15,9 @@ def test_1h_pass1():
         args={
             "registry": "localhost:5001",
         },
+        splits_limit=1,
+        chunks_limit=2,
+        timeout_seconds=600,
     )
 
 
@@ -25,6 +28,9 @@ def test_1h_pass2():
         args={
             "registry": "localhost:5001",
         },
+        splits_limit=1,
+        chunks_limit=2,
+        timeout_seconds=600,
     )
 
 
@@ -35,6 +41,9 @@ def test_24h_2pass():
         args={
             "registry": "localhost:5001",
         },
+        splits_limit=1,
+        chunks_limit=2,
+        timeout_seconds=600,
     )
 
 

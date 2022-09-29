@@ -22,8 +22,11 @@ collections:
         token: ${{ pc.get_token(mrms, mrms) }}
         chunks:
           options:
-            matches: .*MultiSensor_QPE_01H_Pass1_00.00.*grib2.gz
-            chunk_length: 2
+            name_starts_with: MultiSensor_QPE_01H_Pass1_00.00
+            extensions: [.gz]
+            chunk_length: 5
+          splits:
+            - depth: 1
     chunk_storage:
       uri: blob://mrms/mrms-etl-data/qpe-1h-pass1/
 
@@ -35,8 +38,11 @@ collections:
         token: ${{ pc.get_token(mrms, mrms) }}
         chunks:
           options:
-            matches: .*MultiSensor_QPE_01H_Pass2_00.00.*grib2.gz
-            chunk_length: 2
+            name_starts_with: MultiSensor_QPE_01H_Pass2_00.00
+            extensions: [.gz]
+            chunk_length: 5
+          splits:
+            - depth: 1
     chunk_storage:
       uri: blob://mrms/mrms-etl-data/qpe-1h-pass2/
 
@@ -48,7 +54,10 @@ collections:
         token: ${{ pc.get_token(mrms, mrms) }}
         chunks:
           options:
-            matches: .*MultiSensor_QPE_24H_Pass2_00.00.*grib2.gz
-            chunk_length: 2
+            name_starts_with: MultiSensor_QPE_24H_Pass2_00.00
+            extensions: [.gz]
+            chunk_length: 5
+          splits:
+            - depth: 1
     chunk_storage:
       uri: blob://mrms/mrms-etl-data/qpe-24h-pass2/

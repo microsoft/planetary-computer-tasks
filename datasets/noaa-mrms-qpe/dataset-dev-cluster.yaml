@@ -18,11 +18,15 @@ collections:
     template: ${{ local.path(./collection/noaa-mrms-qpe-1h-pass1) }}
     class: noaa_mrms_qpe:NoaaMrmsQpeCollection
     asset_storage:
-      - uri: blob://devstoreaccount1/mrms
+      - uri: blob://mrms/mrms
+        token: ${{ pc.get_token(mrms, mrms) }}
         chunks:
           options:
-            matches: .*MultiSensor_QPE_01H_Pass1_00.00.*grib2.gz
+            name_starts_with: MultiSensor_QPE_01H_Pass1_00.00
+            extensions: [.gz]
             chunk_length: 2
+          splits:
+            - depth: 1
     chunk_storage:
       uri: blob://devstoreaccount1/mrms-etl-data/qpe-1h-pass1/
 
@@ -30,11 +34,15 @@ collections:
     template: ${{ local.path(./collection/noaa-mrms-qpe-1h-pass2) }}
     class: noaa_mrms_qpe:NoaaMrmsQpeCollection
     asset_storage:
-      - uri: blob://devstoreaccount1/mrms
+      - uri: blob://mrms/mrms
+        token: ${{ pc.get_token(mrms, mrms) }}
         chunks:
           options:
-            matches: .*MultiSensor_QPE_01H_Pass2_00.00.*grib2.gz
+            name_starts_with: MultiSensor_QPE_01H_Pass2_00.00
+            extensions: [.gz]
             chunk_length: 2
+          splits:
+            - depth: 1
     chunk_storage:
       uri: blob://devstoreaccount1/mrms-etl-dataKC/qpe-1h-pass2/
 
@@ -42,10 +50,14 @@ collections:
     template: ${{ local.path(./collection/noaa-mrms-qpe-24h-pass2) }}
     class: noaa_mrms_qpe:NoaaMrmsQpeCollection
     asset_storage:
-      - uri: blob://devstoreaccount1/mrms
+      - uri: blob://mrms/mrms
+        token: ${{ pc.get_token(mrms, mrms) }}
         chunks:
           options:
-            matches: .*MultiSensor_QPE_24H_Pass2_00.00.*grib2.gz
+            name_starts_with: MultiSensor_QPE_24H_Pass2_00.00
+            extensions: [.gz]
             chunk_length: 2
+          splits:
+            - depth: 1
     chunk_storage:
       uri: blob://devstoreaccount1/mrms-etl-data/qpe-24h-pass2/
