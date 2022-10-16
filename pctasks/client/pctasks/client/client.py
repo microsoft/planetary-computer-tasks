@@ -5,6 +5,7 @@ import pathlib
 import zipfile
 from time import perf_counter
 from typing import Any, Dict, List, Optional, Union
+from pctasks.core.utils.backoff import with_backoff
 
 import requests
 from requests import HTTPError
@@ -65,14 +66,17 @@ class PCTasksClient:
             else os.path.join(self.settings.endpoint, path)
         )
 
-        resp = requests.request(
-            method,
-            url,
-            headers={"X-API-KEY": self.settings.api_key},
-            **kwargs,
-        )
+        def do_request() -> requests.Response:
+            resp = requests.request(
+                method,
+                url,
+                headers={"X-API-KEY": self.settings.api_key},
+                **kwargs,
+            )
+            resp.raise_for_status()
+            return resp
 
-        resp.raise_for_status()
+        resp = with_backoff(do_request)
         return resp.json()
 
     def upload_code(self, local_path: Union[pathlib.Path, str]) -> UploadCodeResult:
