@@ -42,9 +42,9 @@ UPLOAD_CODE_ROUTE = "code/upload/"
 # Records
 LIST_RUNS_ROUTE = "runs/"
 FETCH_RUN_ROUTE = "runs/{run_id}"
-LIST_JOBS_ROUTE = "runs/{run_id}/jobs/"
+LIST_JOBS_ROUTE = "runs/{run_id}/jobs"
 FETCH_JOB_ROUTE = "runs/{run_id}/jobs/{job_id}"
-LIST_TASKS_ROUTE = "runs/{run_id}/jobs/{job_id}/tasks/"
+LIST_TASKS_ROUTE = "runs/{run_id}/jobs/{job_id}/tasks"
 FETCH_TASK_ROUTE = "runs/{run_id}/jobs/{job_id}/tasks/{task_id}"
 
 
