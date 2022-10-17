@@ -1,1 +1,1 @@
-stactools-noaa-mrms-qpe == 0.1.1
+stactools-noaa-mrms-qpe == 0.2.0

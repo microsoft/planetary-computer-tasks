@@ -24,7 +24,7 @@ collections:
           options:
             name_starts_with: MultiSensor_QPE_01H_Pass1_00.00
             extensions: [.gz]
-            chunk_length: 5
+            chunk_length: 48
           splits:
             - depth: 1
     chunk_storage:
@@ -40,7 +40,7 @@ collections:
           options:
             name_starts_with: MultiSensor_QPE_01H_Pass2_00.00
             extensions: [.gz]
-            chunk_length: 5
+            chunk_length: 48
           splits:
             - depth: 1
     chunk_storage:
@@ -56,7 +56,7 @@ collections:
           options:
             name_starts_with: MultiSensor_QPE_24H_Pass2_00.00
             extensions: [.gz]
-            chunk_length: 5
+            chunk_length: 48
           splits:
             - depth: 1
     chunk_storage:

@@ -175,6 +175,13 @@
         ],
         "noaa_mrms_qpe:period": [
             1
+        ],
+        "noaa_mrms_qpe:region": [
+          "CONUS",
+          "HAWAII",
+          "GUAM",
+          "ALASKA",
+          "CARIB"
         ]
     }
 }
