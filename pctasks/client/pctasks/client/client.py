@@ -5,7 +5,6 @@ import pathlib
 import zipfile
 from time import perf_counter
 from typing import Any, Dict, List, Optional, Union
-from pctasks.core.utils.backoff import with_backoff
 
 import requests
 from requests import HTTPError
@@ -33,6 +32,7 @@ from pctasks.core.models.workflow import (
     WorkflowSubmitMessage,
     WorkflowSubmitResult,
 )
+from pctasks.core.utils.backoff import with_backoff
 
 logger = logging.getLogger(__name__)
 
