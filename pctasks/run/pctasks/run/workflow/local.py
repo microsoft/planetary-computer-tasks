@@ -32,13 +32,13 @@ class LocalWorkflowRunner(WorkflowRunner):
 
         global _workflow_count
         global _thread_pool
-        executor = RemoteWorkflowExecutor(self.settings)
+        executor = RemoteWorkflowExecutor(self.get_executor_config())
         with _pool_lock:
             if _thread_pool is None:
                 _thread_pool = futures.ThreadPoolExecutor(max_workers=1)
 
-            def _execute_workflow(s: WorkflowSubmitMessage):
-                if self.settings.is_cosmosdb_emulator:
+            def _execute_workflow(s: WorkflowSubmitMessage) -> None:
+                if self.cosmosdb_settings.is_cosmosdb_emulator():
                     with ignore_ssl_warnings():
                         executor.execute_workflow(s)
                 else:

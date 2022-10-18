@@ -142,6 +142,18 @@ function update_cluster() {
     ARGO_TOKEN="Bearer $(kubectl get secret -n pc pctasks-sa-token -o jsonpath='{.data.token}' | base64 --decode)"
 
     echo "Installing pctasks-server helm chart..."
+
+    COSMOSDB_VARS=""
+    if [ "${PCTASKS_COSMOSDB__URL}" ]; then
+        COSMOSDB_VARS="--set pctasks.cosmosdb.url=${PCTASKS_COSMOSDB__URL} \
+            --set pctasks.cosmosdb.key=${PCTASKS_COSMOSDB__KEY}"
+    fi
+
+    if [ "${PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX}" ]; then
+        COSMOSDB_VARS="${COSMOSDB_VARS} \
+            --set pctasks.cosmosdb.dev.test_container_suffix=${PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX}"
+    fi
+
     # Set pctasks.deploy.podAnnotations.updated to force a new deployment
     helm upgrade --install \
         pctasks-server \
@@ -150,7 +162,7 @@ function update_cluster() {
         -f cluster/dev-values.yaml \
         --create-namespace \
         --set pctasks.server.deploy.podAnnotations.updated="$(date)" \
-        --set pctasks.run.argo.token="${ARGO_TOKEN}"
+        --set pctasks.run.argo.token="${ARGO_TOKEN}" ${COSMOSDB_VARS}
 
     echo "Installing ingress-nginx..."
     # TODO: Move to helm chart

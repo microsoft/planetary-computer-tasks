@@ -1,7 +1,7 @@
 import logging
 import sys
 from pathlib import Path
-from typing import IO, Optional, Tuple
+from typing import IO, Any, Dict, Optional, Tuple
 
 import click
 import requests
@@ -17,7 +17,9 @@ logger = logging.getLogger(__name__)
 
 
 def _get_workflow_def(
-    workflow_io: IO[str], workflow_id: Optional[str]
+    workflow_io: IO[str],
+    workflow_id: Optional[str],
+    args: Optional[Dict[str, Any]],
 ) -> Tuple[WorkflowDefinition, str]:
     workflow_base_dir: Optional[Path] = None
     if hasattr(workflow_io, "name"):
@@ -28,6 +30,9 @@ def _get_workflow_def(
         workflow_contents, base_path=workflow_base_dir
     )
 
+    if args:
+        workflow_def = workflow_def.template_args(args)
+
     workflow_id = workflow_id or workflow_def.workflow_id
     if not workflow_id:
         raise click.UsageError(
@@ -37,13 +42,16 @@ def _get_workflow_def(
 
 
 def cli_create_workflow(
-    ctx: click.Context, workflow_io: IO[str], workflow_id: Optional[str]
+    ctx: click.Context,
+    workflow_io: IO[str],
+    workflow_id: Optional[str],
+    args: Optional[Dict[str, Any]],
 ) -> None:
     """Create the workflow from the definition at workflow_io"""
     context: PCTasksCommandContext = ctx.obj
     settings = ClientSettings.get(context.profile, context.settings_file)
 
-    workflow_def, workflow_id = _get_workflow_def(workflow_io, workflow_id)
+    workflow_def, workflow_id = _get_workflow_def(workflow_io, workflow_id, args)
 
     client = PCTasksClient(settings)
 
@@ -57,13 +65,16 @@ def cli_create_workflow(
 
 
 def cli_update_workflow(
-    ctx: click.Context, workflow_io: IO[str], workflow_id: Optional[str]
+    ctx: click.Context,
+    workflow_io: IO[str],
+    workflow_id: Optional[str],
+    args: Optional[Dict[str, Any]],
 ) -> None:
     """Create the workflow from the definition at workflow_io"""
     context: PCTasksCommandContext = ctx.obj
     settings = ClientSettings.get(context.profile, context.settings_file)
 
-    workflow_def, workflow_id = _get_workflow_def(workflow_io, workflow_id)
+    workflow_def, workflow_id = _get_workflow_def(workflow_io, workflow_id, args)
 
     client = PCTasksClient(settings)
 

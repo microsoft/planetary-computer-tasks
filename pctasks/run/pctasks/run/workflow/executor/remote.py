@@ -30,7 +30,7 @@ from pctasks.run.models import (
     PreparedTaskSubmitMessage,
     SuccessfulTaskSubmitResult,
 )
-from pctasks.run.settings import RunSettings
+from pctasks.run.settings import WorkflowExecutorConfig
 from pctasks.run.task import get_task_runner
 from pctasks.run.template import (
     template_foreach,
@@ -176,9 +176,9 @@ def update_task_run_status(
 class RemoteWorkflowExecutor:
     """Executes a workflow through submitting tasks remotely via a task runner."""
 
-    def __init__(self, settings: Optional[RunSettings] = None) -> None:
-        self.settings = settings or RunSettings.get()
-        self.executor = get_task_runner(self.settings)
+    def __init__(self, settings: Optional[WorkflowExecutorConfig] = None) -> None:
+        self.config = settings or WorkflowExecutorConfig.get()
+        self.executor = get_task_runner(self.config.run_settings)
 
     def create_job_partition_state(
         self, submit_msg: JobPartitionSubmitMessage
@@ -191,13 +191,13 @@ class RemoteWorkflowExecutor:
         )
 
         container = WorkflowRunsContainer(
-            JobPartitionRunRecord, db=self.settings.get_cosmosdb()
+            JobPartitionRunRecord, db=self.config.get_cosmosdb()
         )
 
         job_partition_state = JobPartitionState.create(
             submit_msg,
             job_part_run_record_id=job_partition_run.get_id(),
-            settings=self.settings,
+            settings=self.config.run_settings,
         )
 
         try:
@@ -223,7 +223,7 @@ class RemoteWorkflowExecutor:
         self, notification_submit_message: NotificationSubmitMessage
     ) -> None:
         """Send a notification to the notification queue."""
-        queue_settings = self.settings.notification_queue
+        queue_settings = self.config.run_settings.notification_queue
         with QueueService.from_connection_string(
             connection_string=queue_settings.connection_string,
             queue_name=queue_settings.queue_name,
@@ -257,7 +257,7 @@ class RemoteWorkflowExecutor:
         if task_state:
             task_state.change_status(TaskStateStatus.CANCELLED)
             container = WorkflowRunsContainer(
-                JobPartitionRunRecord, db=self.settings.get_cosmosdb()
+                JobPartitionRunRecord, db=self.config.get_cosmosdb()
             )
             job_part_run = container.get(
                 job_part_state.job_part_run_record_id,
@@ -277,7 +277,7 @@ class RemoteWorkflowExecutor:
         job_part_run: Optional[JobPartitionRunRecord] = None,
     ) -> bool:
         container = container or WorkflowRunsContainer(
-            JobPartitionRunRecord, db=self.settings.get_cosmosdb()
+            JobPartitionRunRecord, db=self.config.get_cosmosdb()
         )
         job_part_run = job_part_run or container.get(
             task_state.job_part_run_record_id, partition_key=task_state.run_id
@@ -311,8 +311,8 @@ class RemoteWorkflowExecutor:
 
         This is a blocking loop that is meant to be called on it's own thread.
         """
-        task_io_storage = self.settings.get_task_io_storage()
-        task_log_storage = self.settings.get_log_storage()
+        task_io_storage = self.config.run_settings.get_task_io_storage()
+        task_log_storage = self.config.run_settings.get_log_storage()
 
         completed_job_count = 0
         failed_job_count = 0
@@ -326,7 +326,7 @@ class RemoteWorkflowExecutor:
         )
 
         container = WorkflowRunsContainer(
-            JobPartitionRunRecord, db=self.settings.get_cosmosdb()
+            JobPartitionRunRecord, db=self.config.get_cosmosdb()
         )
         job_part_runs: Dict[str, JobPartitionRunRecord] = {}
 
@@ -363,28 +363,30 @@ class RemoteWorkflowExecutor:
                         task_state.update_if_waiting()
 
                         if task_state.should_check_output(
-                            self.settings.check_output_seconds
+                            self.config.run_settings.check_output_seconds
                         ):
                             task_state.process_output_if_available(
-                                task_io_storage, self.settings
+                                task_io_storage, self.config.run_settings
                             )
 
                         # If not completed through output,
                         # check the status blob
                         if task_state.should_check_status_blob(
-                            self.settings.check_status_blob_seconds
+                            self.config.run_settings.check_status_blob_seconds
                         ):
                             task_state.process_status_blob_if_available(task_io_storage)
 
                         # If not completed through output or status update,
                         # poll the executor in case of other failure.
-                        if task_state.should_poll(self.settings.task_poll_seconds):
+                        if task_state.should_poll(
+                            self.config.run_settings.task_poll_seconds
+                        ):
                             logger.debug(
                                 f" ~ Polling {job_part_state.job_id}:"
                                 f"{task_state.task_id}"
                             )
                             task_state.poll(
-                                self.executor, task_io_storage, self.settings
+                                self.executor, task_io_storage, self.config.run_settings
                             )
 
                         #
@@ -520,7 +522,9 @@ class RemoteWorkflowExecutor:
                             )
 
                             try:
-                                job_part_state.prepare_next_task(self.settings)
+                                job_part_state.prepare_next_task(
+                                    self.config.run_settings
+                                )
                             except Exception:
                                 job_part_state.status = JobPartitionStateStatus.FAILED
                                 failed_job_count += 1
@@ -583,13 +587,13 @@ class RemoteWorkflowExecutor:
         run_id = submit_message.run_id
 
         pool = futures.ThreadPoolExecutor(
-            max_workers=self.settings.remote_runner_threads
+            max_workers=self.config.run_settings.remote_runner_threads
         )
 
         log_path = get_workflow_log_path(run_id)
         log_uri = (
-            f"blob://{self.settings.blob_account_name}/"
-            f"{self.settings.log_blob_container}/{log_path}"
+            f"blob://{self.config.run_settings.blob_account_name}/"
+            f"{self.config.run_settings.log_blob_container}/{log_path}"
         )
 
         with StorageLogger.from_uri(log_uri):
@@ -600,7 +604,7 @@ class RemoteWorkflowExecutor:
             logger.info("***********************************")
 
             container = WorkflowRunsContainer(
-                WorkflowRunRecord, db=self.settings.get_cosmosdb()
+                WorkflowRunRecord, db=self.config.get_cosmosdb()
             )
             workflow_run = container.get(run_id, partition_key=run_id)
 
@@ -819,7 +823,7 @@ class RemoteWorkflowExecutor:
                                 int(
                                     math.ceil(
                                         len(job_part_states)
-                                        / self.settings.remote_runner_threads
+                                        / self.config.run_settings.remote_runner_threads
                                     )
                                 ),
                             )

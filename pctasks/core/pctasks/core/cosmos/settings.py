@@ -1,4 +1,5 @@
 import os
+import re
 from typing import Any, Dict, Optional
 from urllib.parse import urlparse
 
@@ -30,13 +31,39 @@ class CosmosDBSettings(PCTasksSettings):
     url: Optional[str] = None
     key: Optional[str] = None
 
+    test_container_suffix: Optional[str] = None
+
     database: str = DEFAULT_DATABASE_NAME
     workflows_container_name: str = DEFAULT_WORKFLOWS_CONTAINER
     workflow_runs_container_name: str = DEFAULT_WORKFLOW_RUNS_CONTAINER
     records_container_name: str = DEFAULT_RECORDS_CONTAINER
 
-    # Workflow Runs
-    workflow_runs_container: str = DEFAULT_WORKFLOW_RUNS_CONTAINER
+    def get_workflows_container_name(self) -> str:
+        if self.test_container_suffix:
+            return f"tmp-{self.workflows_container_name}-{self.test_container_suffix}"
+        return self.workflows_container_name
+
+    def get_workflow_runs_container_name(self) -> str:
+        if self.test_container_suffix:
+            return (
+                f"tmp-{self.workflow_runs_container_name}"
+                f"-{self.test_container_suffix}"
+            )
+        return self.workflow_runs_container_name
+
+    def get_records_container_name(self) -> str:
+        if self.test_container_suffix:
+            return f"tmp-{self.records_container_name}-{self.test_container_suffix}"
+        return self.records_container_name
+
+    @validator("connection_string")
+    def _validate_connection_string(cls, v: Optional[str]) -> Optional[str]:
+        if v:
+            if not re.search(r"AccountEndpoint=(.*?);", v):
+                raise ValueError("Cannot find AccountEndpoint in connection_string")
+            if not re.search(r"AccountKey=(.*?);", v):
+                raise ValueError("Cannot find AccountKey in connection_string")
+        return v
 
     @validator("key", always=True)  # Validates all connection properties (last defined)
     def _validate_key(cls, v: Optional[str], values: Dict[str, Any]) -> Optional[str]:
@@ -47,6 +74,45 @@ class CosmosDBSettings(PCTasksSettings):
                 raise ValueError("Must set url when setting key")
 
         return v
+
+    def ensure_valid_connection_info(self) -> None:
+        if self.connection_string:
+            return
+        if not self.url:
+            raise CosmosDBSettingsError("Must set either connection_string or url")
+        if not self.key:
+            if not (
+                os.environ.get("AZURE_CLIENT_ID")
+                and os.environ.get("AZURE_CLIENT_SECRET")
+                and os.environ.get("AZURE_TENANT_ID")
+            ):
+                # Validate that the Azure credentials are set
+                # Validation is here instead of pydantic validator
+                # because we may want to get container name settings
+                # without setting credentials.
+                raise CosmosDBSettingsError(
+                    "Must set key or connection_string, account key or "
+                    "provide Azure credentials to the environment"
+                )
+
+    def get_cosmosdb_url(self) -> str:
+        self.ensure_valid_connection_info()
+        if self.connection_string:
+            m = re.search(r"AccountEndpoint=(.*?);", self.connection_string)
+            assert m  # Should be validated by pydantic
+            return m.group(1)
+        else:
+            assert self.url
+            return self.url
+
+    def is_cosmosdb_emulator(self) -> bool:
+        emulator_host = os.environ.get(COSMOSDB_EMULATOR_HOST_ENV_VAR)
+        if (
+            emulator_host
+            and urlparse(self.get_cosmosdb_url()).hostname == emulator_host
+        ):
+            return True
+        return False
 
     def get_client(self) -> CosmosClient:
         # If this is the emulator, don't verify the connection SSL cert
@@ -62,22 +128,8 @@ class CosmosDBSettings(PCTasksSettings):
                 self.connection_string, connection_verify=connection_verify
             )
         else:
-            if not self.key:
-                if not (
-                    os.environ.get("AZURE_CLIENT_ID")
-                    and os.environ.get("AZURE_CLIENT_SECRET")
-                    and os.environ.get("AZURE_TENANT_ID")
-                ):
-                    # Validate that the Azure credentials are set
-                    # Validation is here instead of pydantic validator
-                    # because we may want to get container name settings
-                    # without setting credentials.
-                    raise CosmosDBSettingsError(
-                        "Must set key or connection_string, account key or "
-                        "provide Azure credentials to the environment"
-                    )
-            if not self.url:
-                raise ValueError("Cosmos DB URL is not set")
+            self.ensure_valid_connection_info()
+            assert self.url
             credential = self.key or DefaultAzureCredential()
             return CosmosClient(
                 self.url, credential=credential, connection_verify=connection_verify

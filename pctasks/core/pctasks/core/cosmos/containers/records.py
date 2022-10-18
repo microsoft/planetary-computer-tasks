@@ -37,15 +37,12 @@ class RecordsContainer(CosmosDBContainer[T]):
         db: Optional[CosmosDBDatabase] = None,
         settings: Optional[CosmosDBSettings] = None,
     ) -> None:
-        if not settings:
-            settings = CosmosDBSettings.get()
-        if not db:
-            db = CosmosDBDatabase(settings)
         super().__init__(
-            settings.records_container_name,
+            lambda settings: settings.get_records_container_name(),
             partition_key=TYPE_FIELD_NAME,
             model_type=model_type,  # type: ignore[arg-type]
             db=db,
+            settings=settings,
             stored_procedures=STORED_PROCEDURES,
             triggers=TRIGGERS,
         )

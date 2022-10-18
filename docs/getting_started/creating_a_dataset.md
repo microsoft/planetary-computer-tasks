@@ -281,4 +281,4 @@ Also note that, because our dataset has multiple collections, you need to pass i
 `-c` argument with the collection name. If your dataset only has a single argument, this
 option is not required. The `--submit` option will submit the generated workflow to PCTasks;
 if not supplied, then the workflow will be printed to stdout, which can be submitted later through
-the `pctasks submit workflow` command.
+the `pctasks workflow submit` command.

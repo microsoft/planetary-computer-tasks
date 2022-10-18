@@ -1,6 +1,6 @@
 image: localhost:5001/pctasks-task-base:latest
 owner: microsoft
-name: test-dataset
+id: test-dataset
 
 args:
 - collection_id

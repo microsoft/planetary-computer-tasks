@@ -50,16 +50,13 @@ def create_chunks_cmd(
     """Creates workflow to generate asset chunks for bulk processing.
 
     Use -u or --upsert to upsert the workflow through the API.
-    Use -s or --submit to submit the workflow through the API (requires -u).
+    Use -s or --submit to upsert and submit the workflow through the API.
 
     Output: If neither -u or -s is present, Will print the workflow yaml.
     If -u is present, will print the workflow ID to stdout.
     If -s is present, will print the run ID to stdout.
     """
     from . import _cli
-
-    if submit and not upsert:
-        raise click.UsageError("Cannot submit without --upsert")
 
     return _cli.create_chunks_cmd(
         ctx,
@@ -122,16 +119,13 @@ def process_items_cmd(
     the database.
 
     Use -u or --upsert to upsert the workflow through the API.
-    Use -s or --submit to submit the workflow through the API (requires -u).
+    Use -s or --submit to upsert and submit the workflow through the API.
 
     Output: If neither -u or -s is present, Will print the workflow yaml.
     If -u is present, will print the workflow ID to stdout.
     If -s is present, will print the run ID to stdout.
     """
     from . import _cli
-
-    if submit and not upsert:
-        raise click.UsageError("Cannot submit without --upsert")
 
     return _cli.process_items_cmd(
         ctx,
@@ -177,16 +171,13 @@ def ingest_collection_cmd(
     configuration of the dataset YAML.
 
     Use -u or --upsert to upsert the workflow through the API.
-    Use -s or --submit to submit the workflow through the API (requires -u).
+    Use -s or --submit to upsert and submit the workflow through the API.
 
     Output: If neither -u or -s is present, Will print the workflow yaml.
     If -u is present, will print the workflow ID to stdout.
     If -s is present, will print the run ID to stdout.
     """
     from . import _cli
-
-    if submit and not upsert:
-        raise click.UsageError("Cannot submit without --upsert")
 
     return _cli.ingest_collection_cmd(
         ctx,

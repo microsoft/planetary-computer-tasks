@@ -227,7 +227,7 @@ def assert_workflow_fails(
 
 
 def run_workflow(
-    workflow: Union[str, WorkflowDefinition],
+    workflow_def: Union[str, WorkflowDefinition],
     args: Optional[Dict[str, Any]] = None,
     base_path: Union[str, Path] = Path.cwd(),
 ) -> str:
@@ -235,17 +235,22 @@ def run_workflow(
     Uses the default submit settings.
     Returns the run_id
     """
-    workflow = (
-        WorkflowDefinition.from_yaml(workflow)
-        if isinstance(workflow, str)
-        else workflow
+    workflow_def = (
+        WorkflowDefinition.from_yaml(workflow_def)
+        if isinstance(workflow_def, str)
+        else workflow_def
     )
-    templated_workflow = template_workflow_dict(workflow.dict(), base_path=base_path)
+    workflow_def = template_workflow_dict(workflow_def.dict(), base_path=base_path)
+    if args:
+        workflow_def = workflow_def.template_args(args)
+
     submit_settings = ClientSettings.get()
     submit_settings.confirmation_required = False
+
     submit_response = PCTasksClient(submit_settings).upsert_and_submit_workflow(
-        workflow_definition=templated_workflow, request=WorkflowSubmitRequest(args=args)
+        workflow_definition=workflow_def, request=WorkflowSubmitRequest(args=args)
     )
+
     return submit_response.run_id
 
 

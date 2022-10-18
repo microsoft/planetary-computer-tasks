@@ -5,6 +5,11 @@ on:
     branches: [main]
     tags: ["*"]
 
+env:
+  PCTASKS_COSMOSDB__URL: ${{ secrets.COSMOSDB_URL }}
+  PCTASKS_COSMOSDB__KEY: ${{ secrets.COSMOSDB_KEY }}
+  PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX: ${{ github.run_id }}
+
 jobs:
   build_and_publish:
     runs-on: ubuntu-latest
@@ -71,6 +76,10 @@ jobs:
 
       - name: Publish images
         run: ./scripts/publish --acr pccomponents --tag ${{steps.get_image_tag.outputs.tag}} --no-login
+
+      - name: Clean up CosmosDB test containers
+        run: ./scripts/setup --rm-test-containers
+        if: always()
 
     outputs:
       image_tag: ${{ steps.get_image_tag.outputs.tag }}

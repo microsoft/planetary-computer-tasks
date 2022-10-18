@@ -158,7 +158,7 @@ async def submit_workflow(
         trigger_event=submit_request.trigger_event,
     )
 
-    workflow_runner = get_workflow_runner(RunSettings.get())
+    workflow_runner = get_workflow_runner()
 
     workflow_runs = WorkflowRunsContainer(WorkflowRunRecord)
     workflow_runs.put(WorkflowRunRecord.from_submit_message(submit_msg))

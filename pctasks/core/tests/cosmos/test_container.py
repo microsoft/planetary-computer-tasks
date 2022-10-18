@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Tuple, Type
 from pctasks.core.cosmos.container import CosmosDBContainer
 from pctasks.core.cosmos.database import CosmosDBDatabase
 from pctasks.core.models.record import Record
-from pctasks.dev.cosmosdb import temp_cosmosdb
+from pctasks.dev.cosmosdb import temp_cosmosdb_if_emulator
 
 
 class MockModel(Record):
@@ -41,7 +41,7 @@ class MockContainer(CosmosDBContainer[MockModel]):
 
 
 def test_container_transforms_models():
-    with temp_cosmosdb(
+    with temp_cosmosdb_if_emulator(
         containers={MockContainer.container_name: MockContainer.partition_key}
     ) as db:
         original = MockModel(id="1", name="one")

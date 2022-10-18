@@ -108,6 +108,17 @@ You can use the CosmosDB Explorer at <https://localhost:8081/_explorer/index.htm
 
 The `functions` docker-compose service startup script waits for CosmosDB to become available, and then installs the SSL certificates so that the CosmosDB triggers can work. Otherwise, a `COSMOSDB_EMULATOR_HOST` environment variable is set in containers to notify PCTasks to disable SSL verification so that there are no SSL errors thrown when trying to communicate with the emulator.
 
+### Using a deployed Azure CosmosDB instance
+
+You can also use a deployed Azure CosmosDB instance instead of the emulator. To do this, set the following environment variables:
+
+```
+export PCTASKS_COSMOSDB__URL=<Account URL>
+export PCTASKS_COSMOSDB__KEY=<Account Key>
+```
+
+If set, this will be used as the CosmosDB for all docker containers and the Kind cluster, and the CosmoDB Emulator will not be started as part of the normal scripts process.
+
 ## Setting up local secrets
 
 PCTasks uses a docker container run via `docker-compose`, brought up by `scripts/server`, to mock the functionality of KeyVault for fetching secrets.

@@ -5,6 +5,7 @@ import pathlib
 import zipfile
 from time import perf_counter
 from typing import Any, Dict, Iterable, Optional, Type, TypeVar, Union
+from urllib.parse import urlparse
 
 import requests
 from requests import HTTPError
@@ -210,13 +211,15 @@ class PCTasksClient:
             for task_config in job_config.tasks:
                 if task_config.code:
                     if task_config.code.src:
-                        task_config.code.src = _uploaded_path(
-                            task_config.code.src, "src"
-                        )
+                        if not urlparse(task_config.code.src).scheme:
+                            task_config.code.src = _uploaded_path(
+                                task_config.code.src, "src"
+                            )
                     if task_config.code.requirements:
-                        task_config.code.requirements = _uploaded_path(
-                            task_config.code.requirements, "requirements"
-                        )
+                        if not urlparse(task_config.code.requirements).scheme:
+                            task_config.code.requirements = _uploaded_path(
+                                task_config.code.requirements, "requirements"
+                            )
 
     # ## WORKFLOWS ##
 

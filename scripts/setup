@@ -21,6 +21,8 @@ Options:
         Only run the Cosmos Emulator setup.
     --reset-cosmos
         Reset the CosmosDB emulator.
+    --rm-test-containers
+        Remove test containers from CosmosDB. Requires PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX be set.
     --no-aux-servers
         Don't build non-essential devevelopment environment servers
     --clear-records
@@ -31,6 +33,7 @@ Options:
 AZURITE_ONLY=""
 COSMOS_ONLY=""
 RESET_COSMOS_DB=""
+RM_TEST_CONTAINERS=""
 NO_AUX=""
 while [[ $# -gt 0 ]]; do case $1 in
     --azurite)
@@ -47,6 +50,11 @@ while [[ $# -gt 0 ]]; do case $1 in
         ;;
     --reset-cosmos)
         RESET_COSMOS_DB=1
+        COSMOS_ONLY=1
+        shift
+        ;;
+    --rm-test-containers)
+        RM_TEST_CONTAINERS=1
         COSMOS_ONLY=1
         shift
         ;;
@@ -79,13 +87,22 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     fi
     if [ "${RESET_COSMOS_DB}" ]; then
         echo "Reset cosmos db..."
-        docker-compose stop cosmosdb
-        docker-compose rm -f cosmosdb
+        docker-compose -f docker-compose.cosmosdb.yml stop cosmosdb
+        docker-compose -f docker-compose.cosmosdb.yml rm -f cosmosdb
         docker volume rm pctasks_pctasks-cosmosdb-data
-        docker-compose up -d cosmosdb
+        docker-compose -f docker-compose.cosmosdb.yml up -d cosmosdb
+    fi
+    if [ "${RM_TEST_CONTAINERS}" ]; then
+        if [ -z "${PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX}" ]; then
+            echo "No test container suffix set, not removing test containers."
+            exit 1
+        fi
+        echo "Removing test containers..."
+        docker-compose ${COSMOSDB_EMULATOR} -f docker-compose.console.yml run --rm \
+            dev \
+            pctasks-dev cosmosdb rm-test-containers;
 
-        echo "Waiting for CosmosDB emulator to start..."
-        sleep 60  # Wait a while for the emulator to start up
+        exit 0
     fi
     if [ -z "${AZURITE_ONLY}${COSMOS_ONLY}" ]; then
 
@@ -111,8 +128,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     fi
 
     if [ -z "${COSMOS_ONLY}" ]; then
-        docker-compose up -d cosmosdb
-
         echo " -- SETTING UP AZURITE"
         docker-compose -f docker-compose.console.yml run --rm \
             dev \
@@ -120,13 +135,22 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     fi
 
     if [ -z "${AZURITE_ONLY}" ]; then
-
-        echo " -- SETTING UP COSMOSDB EMULATOR"
-        if [ -z $(docker-compose ps -q cosmosdb) ]; then
-            echo "CosmosDB is not running. Starting it..."
-            docker-compose up -d cosmosdb
+        COSMOSDB_EMULATOR="-f docker-compose.cosmosdb.yml"
+        if [ "${PCTASKS_COSMOSDB__URL}" ]; then
+            echo "Skipping emulator, using external CosmosDB at ${PCTASKS_COSMOSDB__URL}"
+            COSMOSDB_EMULATOR=""
         fi
-        docker-compose -f docker-compose.console.yml run --rm \
+
+        echo " -- SETTING UP COSMOSDB"
+        if [ "${COSMOSDB_EMULATOR}" ]; then
+            if [ -z $(docker-compose ${COSMOSDB_EMULATOR} ps -q cosmosdb) ]; then
+
+                echo "CosmosDB is not running. Starting it..."
+                docker-compose ${COSMOSDB_EMULATOR} up -d cosmosdb
+            fi
+        fi
+
+        docker-compose ${COSMOSDB_EMULATOR} -f docker-compose.console.yml run --rm \
             dev \
             pctasks-dev cosmosdb setup
     fi

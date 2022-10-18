@@ -44,6 +44,6 @@ module "resources" {
 
   cluster_cert_issuer = "letsencrypt"
   cluster_cert_server = "https://acme-v02.api.letsencrypt.org/directory"
-  aks_node_count = 1
+  aks_node_count = 2
   pctasks_server_replica_count = 1
 }

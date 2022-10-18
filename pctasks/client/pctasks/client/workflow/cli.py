@@ -31,11 +31,13 @@ def submit_cmd(
 @click.command("create")
 @click.argument("workflow", type=click.File("r"))
 @click.option("-w", "--workflow-id", help="Workflow ID, if not specified in workflow")
+@opt_args
 @click.pass_context
 def create_cmd(
     ctx: click.Context,
     workflow: IO[str],
     workflow_id: Optional[str],
+    arg: List[Tuple[str, str]],
 ) -> None:
     """Create a workflow from a definition at local file or stdin
 
@@ -43,15 +45,21 @@ def create_cmd(
     """
     from . import _cli
 
-    return _cli.cli_create_workflow(ctx, workflow, workflow_id=workflow_id)
+    return _cli.cli_create_workflow(
+        ctx, workflow, workflow_id=workflow_id, args={a[0]: a[1] for a in arg}
+    )
 
 
 @click.command("update")
 @click.argument("workflow", type=click.File("r"))
 @click.option("-w", "--workflow-id", help="Workflow ID, if not specified in workflow")
+@opt_args
 @click.pass_context
 def update_cmd(
-    ctx: click.Context, workflow: IO[str], workflow_id: Optional[str]
+    ctx: click.Context,
+    workflow: IO[str],
+    workflow_id: Optional[str],
+    arg: List[Tuple[str, str]],
 ) -> None:
     """Update a workflow from a definition at local file or stdin
 
@@ -59,13 +67,15 @@ def update_cmd(
     """
     from . import _cli
 
-    return _cli.cli_update_workflow(ctx, workflow, workflow_id=workflow_id)
+    return _cli.cli_update_workflow(
+        ctx, workflow, workflow_id=workflow_id, args={a[0]: a[1] for a in arg}
+    )
 
 
 @click.group("workflow")
 @click.pass_context
 def workflow_cmd(ctx: click.Context) -> None:
-    """Submit tasks to a PCTasks task queue."""
+    """Create, update, and submit workflows"""
     pass
 
 

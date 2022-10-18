@@ -31,15 +31,12 @@ class WorkflowsContainer(CosmosDBContainer[T]):
         db: Optional[CosmosDBDatabase] = None,
         settings: Optional[CosmosDBSettings] = None,
     ) -> None:
-        if not settings:
-            settings = CosmosDBSettings.get()
-        if not db:
-            db = CosmosDBDatabase(settings)
         super().__init__(
-            settings.workflows_container_name,
+            lambda settings: settings.get_workflows_container_name(),
             PARTITION_KEY,
             model_type=model_type,  # type: ignore[arg-type]
             db=db,
+            settings=settings,
             stored_procedures=STORED_PROCEDURES,
             triggers=TRIGGERS,
         )

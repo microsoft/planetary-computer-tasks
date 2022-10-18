@@ -10,14 +10,14 @@ from pctasks.core.models.run import (
     WorkflowRunRecord,
 )
 from pctasks.core.models.workflow import WorkflowRunStatus
-from pctasks.dev.cosmosdb import temp_cosmosdb
+from pctasks.dev.cosmosdb import temp_cosmosdb_if_emulator
 
 
 def test_job_part_pagination():
     run_id = "test-run"
     job_id = "test-job"
     dataset_id = "test-dataset"
-    with temp_cosmosdb() as db:
+    with temp_cosmosdb_if_emulator() as db:
         workflow_run = WorkflowRunRecord(
             workflow_id="test-workflow",
             run_id=run_id,

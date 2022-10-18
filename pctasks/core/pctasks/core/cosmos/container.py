@@ -1,6 +1,18 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Any, Dict, Generic, Iterable, List, Optional, Type, TypeVar, cast
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    Iterable,
+    List,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+)
 
 import orjson
 from azure.core.paging import ItemPaged, PageIterator
@@ -9,6 +21,7 @@ from pydantic import BaseModel
 
 from pctasks.core.cosmos.database import CosmosDBDatabase
 from pctasks.core.cosmos.page import Page
+from pctasks.core.cosmos.settings import CosmosDBSettings
 from pctasks.core.models.run import Record
 from pctasks.core.models.utils import tzutc_now
 
@@ -26,24 +39,36 @@ class TriggerType(Enum):
     POST = "post"
 
 
+def query_clean(s: str) -> str:
+    return s.replace("\n", " ").replace("\t", " ").strip()
+
+
 class CosmosDBContainer(Generic[T], ABC):
     def __init__(
         self,
-        name: str,
+        name: Union[str, Callable[[CosmosDBSettings], str]],
         partition_key: str,
         model_type: Type[T],
         db: Optional[CosmosDBDatabase] = None,
+        settings: Optional[CosmosDBSettings] = None,
         stored_procedures: Optional[
             Dict[ContainerOperation, Dict[Type[BaseModel], str]]
         ] = None,
         triggers: Optional[Dict[ContainerOperation, Dict[TriggerType, str]]] = None,
     ) -> None:
+        if not settings:
+            if db:
+                settings = db.settings
+            else:
+                settings = CosmosDBSettings.get()
         if not db:
-            db = CosmosDBDatabase()
+            db = CosmosDBDatabase(settings)
         self.client = db
-        self.name = name
         self.partition_key = partition_key
         self.model_type = model_type
+        if callable(name):
+            name = name(settings)
+        self.name = name
         self.container_client = self.client.get_container_client(name)
         self.stored_procedures = stored_procedures
         self.triggers = triggers
@@ -129,14 +154,14 @@ class CosmosDBContainer(Generic[T], ABC):
         params: Optional[List[Dict[str, Any]]] = None
         if parameters:
             params = [
-                {"name": k if k.startswith("@") else f"@{k}", "value": v}
+                {"name": k if k.startswith("@") else f"@{k}", "value": query_clean(v)}
                 for k, v in parameters.items()
             ]
 
         item_paged = cast(
             ItemPaged[Dict[str, Any]],
             self.container_client.query_items(
-                query=query,
+                query=query_clean(query),
                 parameters=params,
                 partition_key=partition_key,
                 max_item_count=page_size,

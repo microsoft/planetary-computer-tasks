@@ -40,7 +40,7 @@ from pctasks.core.storage.blob import BlobStorage, BlobUri
 from pctasks.core.utils import map_opt
 from pctasks.run.models import PreparedTaskSubmitMessage
 from pctasks.run.secrets.local import LOCAL_ENV_SECRETS_PREFIX
-from pctasks.run.settings import RunSettings
+from pctasks.run.settings import WorkflowExecutorConfig
 from pctasks.run.utils import get_workflow_path
 
 logger = logging.getLogger(__name__)
@@ -66,14 +66,15 @@ class ArgoClient:
         self,
         submit_msg: WorkflowSubmitMessage,
         run_id: str,
-        run_settings: RunSettings,
+        executor_config: WorkflowExecutorConfig,
         runner_image: Optional[str] = None,
     ) -> Dict[str, Any]:
-        b64encoded_settings = b64encode(run_settings.to_yaml().encode("utf-8")).decode(
+        b64encoded_config = b64encode(executor_config.to_yaml().encode("utf-8")).decode(
             "utf-8"
         )
 
         runner_image = runner_image
+        run_settings = executor_config.run_settings
 
         workflow_path = get_workflow_path(run_id)
         workflow_uri = BlobUri(
@@ -146,7 +147,7 @@ class ArgoClient:
                                 "--sas",
                                 input_blob_sas_token,
                                 "--settings",
-                                b64encoded_settings,
+                                b64encoded_config,
                             ],
                         ),
                     )

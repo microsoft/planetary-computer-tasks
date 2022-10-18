@@ -1,12 +1,11 @@
-import os
 from enum import Enum
-from typing import Any, Dict, Optional
+from pathlib import Path
+from typing import Any, Dict, Optional, Union
 from urllib.parse import urlparse
 
 from pydantic import validator
 
 from pctasks.core.constants import (
-    COSMOSDB_EMULATOR_HOST_ENV_VAR,
     DEFAULT_CODE_CONTAINER,
     DEFAULT_IMAGE_KEY_TABLE_NAME,
     DEFAULT_LOG_CONTAINER,
@@ -65,10 +64,6 @@ class RunSettings(PCTasksSettings):
 
     notification_queue: NotificationQueueConnStrConfig
 
-    # Cosmos DB
-    cosmosdb_url: str
-    cosmosdb_key: str
-
     # Tables
     tables_account_url: str
     tables_account_name: str
@@ -118,12 +113,6 @@ class RunSettings(PCTasksSettings):
             default_pool_id=self.batch_default_pool_id,
             submit_threads=self.batch_submit_threads,
         )
-
-    def is_cosmosdb_emulator(self) -> bool:
-        emulator_host = os.environ.get(COSMOSDB_EMULATOR_HOST_ENV_VAR)
-        if urlparse(self.cosmosdb_url).hostname == emulator_host:
-            return True
-        return False
 
     @validator("keyvault_url", always=True)
     def keyvault_url_validator(
@@ -184,10 +173,6 @@ class RunSettings(PCTasksSettings):
 
     # Don't cache tables; executor is not thread-safe
 
-    def get_cosmosdb(self) -> CosmosDBDatabase:
-        settings = CosmosDBSettings(url=self.cosmosdb_url, key=self.cosmosdb_key)
-        return CosmosDBDatabase(settings=settings)
-
     def get_image_key_table(self) -> ImageKeyEntryTable:
         return ImageKeyEntryTable.from_account_key(
             account_url=self.tables_account_url,
@@ -216,3 +201,21 @@ class RunSettings(PCTasksSettings):
             account_key=self.blob_account_key,
             account_url=self.blob_account_url,
         )
+
+
+class WorkflowExecutorConfig(PCBaseModel):
+    run_settings: RunSettings
+    cosmosdb_settings: CosmosDBSettings
+
+    def get_cosmosdb(self) -> CosmosDBDatabase:
+        return CosmosDBDatabase(settings=self.cosmosdb_settings)
+
+    @classmethod
+    def get(
+        cls,
+        profile: Optional[str] = None,
+        settings_file: Optional[Union[str, Path]] = None,
+    ) -> "WorkflowExecutorConfig":
+        run_settings = RunSettings.get(profile, settings_file)
+        cosmosdb_settings = CosmosDBSettings.get(profile, settings_file)
+        return cls(run_settings=run_settings, cosmosdb_settings=cosmosdb_settings)

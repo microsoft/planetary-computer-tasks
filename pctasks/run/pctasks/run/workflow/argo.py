@@ -1,20 +1,16 @@
 from pctasks.core.models.run import WorkflowRunStatus
 from pctasks.core.models.workflow import WorkflowSubmitMessage, WorkflowSubmitResult
 from pctasks.run.argo.client import ArgoClient
-from pctasks.run.settings import RunSettings
 from pctasks.run.workflow.base import WorkflowRunner
 
 
 class ArgoWorkflowRunner(WorkflowRunner):
-    def __init__(self, settings: RunSettings):
-        super().__init__(settings)
-
     def submit_workflow(
         self, submit_msg: WorkflowSubmitMessage
     ) -> WorkflowSubmitResult:
-        argo_host = self.settings.argo_host
-        argo_token = self.settings.argo_token
-        runner_image = self.settings.workflow_runner_image
+        argo_host = self.run_settings.argo_host
+        argo_token = self.run_settings.argo_token
+        runner_image = self.run_settings.workflow_runner_image
 
         if not argo_host:
             raise ValueError("Argo host not configured")
@@ -24,14 +20,14 @@ class ArgoWorkflowRunner(WorkflowRunner):
             raise ValueError("Workflow runner image not configured")
 
         argo_client = ArgoClient(
-            host=argo_host, token=argo_token, namespace=self.settings.argo_namespace
+            host=argo_host, token=argo_token, namespace=self.run_settings.argo_namespace
         )
 
         try:
             _ = argo_client.submit_workflow(
                 submit_msg,
                 run_id=submit_msg.run_id,
-                run_settings=self.settings,
+                executor_config=self.get_executor_config(),
                 runner_image=runner_image,
             )
         except Exception as e:
