@@ -26,6 +26,7 @@ Options:
     --skip-tf-init: Skip running terrform init.
     --skip-functions: Don't run function publish.
     --skip-fetch-tf-vars: Skip fetching terraform variables.
+    -y: Skip confirmation.
 
 "
 }
@@ -57,6 +58,10 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     -t)
         TERRAFORM_DIR=${2}
         shift
+        shift
+        ;;
+    -y)
+        SKIP_CONFIRM=true
         shift
         ;;
     --plan)
@@ -158,6 +163,8 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         # Check dev deployment setup
         AUTO_APPROVE_OPT=""
         if [ -z "${DEV_DEPLOY}" ]; then
+            AUTO_APPROVE_OPT="-auto-approve"
+        elif [ "${SKIP_CONFIRM}" ]; then
             AUTO_APPROVE_OPT="-auto-approve"
         fi
 

@@ -40,6 +40,7 @@ def test_modis_ingest() -> None:
 
             items_workflow = textwrap.dedent(
                 """\
+                id: test-modis-ingest-items
                 name: Ingest Items Test Workflow
                 dataset: microsoft/modis-test
 

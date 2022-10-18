@@ -1,116 +1,140 @@
-from typing import Optional
+from typing import Callable, Iterable, Optional, TypeVar
 
 import click
+from click.exceptions import Exit
 from rich.console import Console
 from rich.table import Table
 
-from pctasks.cli.cli import cli_output
 from pctasks.client.client import PCTasksClient
-from pctasks.client.records.render import render_jobs, render_tasks
+from pctasks.client.records.constants import NOT_FOUND_EXIT_CODE
 from pctasks.client.settings import ClientSettings
 from pctasks.client.utils import status_emoji
-from pctasks.core.utils import map_opt
+from pctasks.core.models.run import JobPartitionRunRecord, WorkflowRunRecord
+
+T = TypeVar("T", WorkflowRunRecord, JobPartitionRunRecord)
 
 
-def list_workflows_cmd(
+def list_run_records(
     ctx: click.Context,
-    dataset: str,
-    page: bool,
-    all: bool,
-    status: Optional[str],
-    ids: bool,
-) -> None:
-
-    ds: Optional[str] = None if dataset == "all" else dataset
-
+    list: Callable[[PCTasksClient, Console], Optional[Iterable[T]]],
+) -> int:
     settings = ClientSettings.from_context(ctx.obj)
     client = PCTasksClient(settings)
     console = Console(stderr=True)
+
+    table: Table
+
+    def status_entry(status: str) -> str:
+        return f"{status_emoji(status)} {status.capitalize()}"
+
+    def get_table(records: Iterable[T]) -> Table:
+        _table = Table()
+        _table.add_column("")
+        _table.add_column("status")
+
+        for record in records:
+            _table.add_row(record.get_id(), status_entry(record.status))
+
+        return _table
+
     with console.status("Fetching records...") as fetch_status:
         fetch_status.update(
             status="[bold green]Fetching records...",
             spinner="aesthetic",
             spinner_style="green",
         )
-        workflows = client.get_workflows(dataset_id=ds)
+        records = list(client, console)
+        if records is None:
+            console.print("[bold red]No records found.")
+            raise Exit(NOT_FOUND_EXIT_CODE)
+        table = get_table(records)
 
-        if status:
-            workflows = [w for w in workflows if w.status == status]
+    console.print(table)
+    return 0
 
-    if ids:
-        cli_output("\n".join([w.run_id for w in workflows]))
-    else:
+
+def list_workflows_cmd(ctx: click.Context) -> int:
+    """Fetch a workflow run record.
+
+    Outputs the YAML of the record to stdout.
+    """
+    settings = ClientSettings.from_context(ctx.obj)
+    client = PCTasksClient(settings)
+    console = Console(stderr=True)
+
+    with console.status("Fetching records...") as fetch_status:
+        fetch_status.update(
+            status="[bold green]Fetching records...",
+            spinner="aesthetic",
+            spinner_style="green",
+        )
+        records = client.list_workflows()
+        if records is None:
+            console.print("[bold red]No records found.")
+            raise Exit(NOT_FOUND_EXIT_CODE)
         table = Table()
-        table.add_column("Run ID", style="cyan", justify="left")
-        table.add_column("Name", style="cyan", justify="left")
-        table.add_column("Status", style="cyan", justify="left")
-        table.add_column("Created", style="cyan", justify="left")
+        table.add_column("id")
+        table.add_column("name")
 
-        for workflow in workflows:
-            workflow = client.get_workflow(run_id=workflow.run_id)
-            table.add_row(
-                workflow.run_id,
-                map_opt(lambda w: w.name, workflow.workflow) or "",
-                status_emoji(workflow.status),
-                workflow.created.replace(microsecond=0).isoformat(),
-            )
-        console.print(table)
+        for record in records:
+            table.add_row(record.get_id(), record.workflow.definition.name)
+
+    console.print(table)
+    return 0
 
 
-def list_jobs_cmd(
-    ctx: click.Context,
-    run_id: str,
-    page: bool,
-    all: bool,
-    status: Optional[str],
-    ids: bool,
-) -> None:
+def list_workflow_runs_cmd(ctx: click.Context, workflow_id: str) -> int:
+    """Fetch a workflow run record.
 
-    settings = ClientSettings.from_context(ctx.obj)
-    client = PCTasksClient(settings)
-    console = Console(stderr=True)
-    with console.status("Fetching records...") as fetch_status:
-        fetch_status.update(
-            status="[bold green]Fetching records...",
-            spinner="aesthetic",
-            spinner_style="green",
-        )
-        jobs = client.get_jobs(run_id=run_id)
-
-        if status:
-            jobs = [j for j in jobs if j.status == status]
-
-    if ids:
-        cli_output("\n".join([j.job_id for j in jobs]))
-    else:
-        render_jobs(console=console, jobs=jobs, show_all=all, page_results=page)
+    Outputs the YAML of the record to stdout.
+    """
+    return list_run_records(
+        ctx,
+        lambda client, _: client.list_workflow_runs(workflow_id),
+    )
 
 
-def list_tasks_cmd(
+def list_job_part_cmd(
     ctx: click.Context,
     run_id: str,
     job_id: str,
-    page: bool,
-    all: bool,
-    status: Optional[str],
-    ids: bool,
-) -> None:
+) -> int:
+    """Fetch a job partition run record.
 
-    settings = ClientSettings.from_context(ctx.obj)
-    client = PCTasksClient(settings)
-    console = Console(stderr=True)
-    with console.status("Fetching records...") as fetch_status:
-        fetch_status.update(
-            status="[bold green]Fetching records...",
-            spinner="aesthetic",
-            spinner_style="green",
-        )
-        tasks = client.get_tasks(job_id=job_id, run_id=run_id)
+    Outputs the YAML of the record to stdout.
+    """
 
-        if status:
-            tasks = [t for t in tasks if t.status == status]
+    return list_run_records(
+        ctx,
+        lambda client, _: client.list_job_partition_runs(run_id, job_id),
+    )
 
-    if ids:
-        cli_output("\n".join([t.task_id for t in tasks]))
-    else:
-        render_tasks(console=console, tasks=tasks, show_all=all, page_results=page)
+
+# def fetch_task_log_cmd(
+#     ctx: click.Context,
+#     job_id: str,
+#     part_id: str,
+#     task_id: str,
+#     run_id: str,
+# ) -> int:
+#     """Fetch a task record.
+
+#     Outputs the YAML of the record to stdout.
+#     """
+
+#     settings = ClientSettings.from_context(ctx.obj)
+#     client = PCTasksClient(settings)
+
+#     log_text = client.get_task_log(run_id, job_id, part_id, task_id)
+
+#     console = Console(stderr=True)
+#     if not log_text:
+#         console.print("[yellow]No logs found.")
+#         return NOT_FOUND_EXIT_CODE
+
+#     console.print(f"[green]Logs for task {task_id}:")
+
+#     console.print(f"\n[bold green]Log for task {task_id}:")
+#     cli_output(log_text)
+
+#     return 0

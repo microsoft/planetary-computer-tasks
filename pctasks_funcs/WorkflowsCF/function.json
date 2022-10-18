@@ -1,0 +1,13 @@
+{
+    "scriptFile": "__init__.py",
+    "bindings": [
+        {
+            "name": "container",
+            "type": "cosmosDBTrigger",
+            "direction": "in",
+            "connectionStringSetting": "FUNC_COSMOSDB_CONN_STR",
+            "databaseName": "pctasks",
+            "collectionName": "workflows"
+        }
+    ]
+}

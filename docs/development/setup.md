@@ -81,6 +81,33 @@ scripts/cluster delete
 
 Clusters are ephemeral, and can take up significant resources; it is fine to run `scripts/cluster delete` and `scripts/cluster create` as needed.
 
+## CosmosDB
+
+The development environmnet uses the [Azure CosmosDB Emulator for Linux](https://learn.microsoft.com/en-us/azure/cosmos-db/linux-emulator?tabs=sql-api%2Cssl-netstd21) through docker-compose. There are scripts for managing the Cosmos DB environment - the emulator can be finicky and refuse to start all partitions sometimes, in which case it should be recreated using:
+
+```shell
+scripts/setup --reset-cosmos
+```
+
+That script will stop and remove the emulator container, recreate it and run the CosmosDB setup. If you reset the database, stop and start the
+`functions` service to ensure the Azure Functions can respond to CosmoDB change feeds. You can do that to a running `functions` service with
+
+```shell
+docker-compose stop functions && docker-compose start functions
+```
+
+The setup itself can be run on it's own by using
+
+```shell
+scripts/setup --cosmos
+```
+
+Which will create the necessary database, containers, stored procedures and triggers.
+
+You can use the CosmosDB Explorer at <https://localhost:8081/_explorer/index.html> to explore the data in the emulator.
+
+The `functions` docker-compose service startup script waits for CosmosDB to become available, and then installs the SSL certificates so that the CosmosDB triggers can work. Otherwise, a `COSMOSDB_EMULATOR_HOST` environment variable is set in containers to notify PCTasks to disable SSL verification so that there are no SSL errors thrown when trying to communicate with the emulator.
+
 ## Setting up local secrets
 
 PCTasks uses a docker container run via `docker-compose`, brought up by `scripts/server`, to mock the functionality of KeyVault for fetching secrets.

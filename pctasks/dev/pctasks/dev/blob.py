@@ -2,7 +2,7 @@ import os
 from contextlib import contextmanager
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Generator, Optional, Union
+from typing import Generator, Optional, Union, cast
 from uuid import uuid1
 
 from azure.storage.blob import ContainerSasPermissions, generate_container_sas
@@ -19,6 +19,11 @@ from pctasks.dev.constants import (
 from pctasks.run.settings import RunSettings
 
 
+def get_azurite_account_url() -> str:
+    hostname = os.getenv(AZURITE_HOST_ENV_VAR, "localhost")
+    return f"http://{hostname}:10000/devstoreaccount1"
+
+
 def get_azurite_storage(container: str) -> BlobStorage:
     account_name = AZURITE_ACCOUNT_NAME
     run_settings: Optional[RunSettings] = None
@@ -30,8 +35,7 @@ def get_azurite_storage(container: str) -> BlobStorage:
     if run_settings and run_settings.blob_account_name == account_name:
         account_url = run_settings.blob_account_url
     else:
-        hostname = os.getenv(AZURITE_HOST_ENV_VAR, "localhost")
-        account_url = f"http://{hostname}:10000/devstoreaccount1"
+        account_url = get_azurite_account_url()
 
     return BlobStorage.from_account_key(
         account_key=AZURITE_ACCOUNT_KEY,
@@ -81,7 +85,7 @@ def copy_dir_to_azurite(
 @contextmanager
 def temp_azurite_blob_storage(
     test_files: Optional[Union[str, Path]] = None,
-) -> Generator[Storage, None, None]:
+) -> Generator[BlobStorage, None, None]:
     storage = get_azurite_test_storage()
     sub_storage = storage.get_substorage(f"test-{uuid1().hex}")
     if test_files:
@@ -91,7 +95,7 @@ def temp_azurite_blob_storage(
         else:
             copy_dir_to_azurite(sub_storage, test_files)
     try:
-        yield sub_storage
+        yield cast(BlobStorage, sub_storage)
     finally:
         for path in sub_storage.list_files():
             sub_storage.delete_file(path)

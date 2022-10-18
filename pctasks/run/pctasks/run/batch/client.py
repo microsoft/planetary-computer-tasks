@@ -13,7 +13,7 @@ from azure.batch.custom.custom_errors import CreateTasksErrorException
 from dateutil.tz import tzutc
 from requests import Response
 
-from pctasks.core.models.record import TaskRunStatus
+from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.utils import map_opt
 from pctasks.core.utils.backoff import with_backoff
 from pctasks.run.batch.model import BatchJobInfo
@@ -149,10 +149,13 @@ class BatchClient:
         params = [task.to_params() for task in tasks]
         try:
             result: batchmodels.TaskAddCollectionResult = with_backoff(
-                lambda: self._client.task.add_collection(
-                    job_id=job_id,
-                    value=params,
-                    threads=self.settings.submit_threads,
+                lambda: cast(
+                    batchmodels.TaskAddCollectionResult,
+                    self._client.task.add_collection(
+                        job_id=job_id,
+                        value=params,
+                        threads=self.settings.submit_threads,
+                    ),
                 )
             )
             task_results: List[batchmodels.TaskAddResult] = result.value  # type: ignore
@@ -422,3 +425,8 @@ class BatchClient:
                 return None
             else:
                 raise BatchClientError(error.message.value)
+
+    def terminate_task(self, job_id: str, task_id: str) -> None:
+        with_backoff(
+            lambda: self._client.task.terminate(job_id=job_id, task_id=task_id)
+        )

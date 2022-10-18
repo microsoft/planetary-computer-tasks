@@ -5,10 +5,9 @@ azure-functions-durable
 # Docker deploy process needs symlinks to bring in
 # pctasks libraries. Symlink is created in deploy script
 pctasks_linked/core
-pctasks_linked/cli
-pctasks_linked/task
-pctasks_linked/client
-pctasks_linked/run
-pctasks_linked/notify
-pctasks_linked/operations
-pctasks_linked/router
+# pctasks_linked/cli
+# pctasks_linked/task
+# pctasks_linked/client
+# pctasks_linked/run
+# pctasks_linked/notify
+# pctasks_linked/router

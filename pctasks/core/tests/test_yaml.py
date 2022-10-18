@@ -1,10 +1,10 @@
-from pctasks.core.models.workflow import WorkflowConfig
+from pctasks.core.models.workflow import WorkflowDefinition
 from pctasks.core.yaml import YamlValidationError
 
 
 def test_error_handling():
     try:
-        _ = WorkflowConfig.from_yaml(
+        _ = WorkflowDefinition.from_yaml(
             """
             name: A workflow*  *with* *asterisks
 

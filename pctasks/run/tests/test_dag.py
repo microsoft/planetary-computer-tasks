@@ -1,9 +1,9 @@
-from pctasks.core.models.workflow import WorkflowConfig
+from pctasks.core.models.workflow import WorkflowDefinition
 from pctasks.run.dag import sort_jobs
 
 
 def test_sort_jobs():
-    jobs = WorkflowConfig.from_yaml(
+    jobs = WorkflowDefinition.from_yaml(
         """
             name: Test job sort workflow
             dataset: microsoft/test-dataset

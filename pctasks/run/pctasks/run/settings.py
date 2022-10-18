@@ -1,3 +1,4 @@
+import os
 from enum import Enum
 from typing import Any, Dict, Optional
 from urllib.parse import urlparse
@@ -5,27 +6,20 @@ from urllib.parse import urlparse
 from pydantic import validator
 
 from pctasks.core.constants import (
+    COSMOSDB_EMULATOR_HOST_ENV_VAR,
     DEFAULT_CODE_CONTAINER,
-    DEFAULT_DATASET_TABLE_NAME,
     DEFAULT_IMAGE_KEY_TABLE_NAME,
-    DEFAULT_JOB_RUN_RECORD_TABLE_NAME,
     DEFAULT_LOG_CONTAINER,
     DEFAULT_NOTIFICATIONS_QUEUE_NAME,
     DEFAULT_TASK_IO_CONTAINER,
-    DEFAULT_TASK_RUN_RECORD_TABLE_NAME,
-    DEFAULT_WORKFLOW_RUN_RECORD_TABLE_NAME,
 )
+from pctasks.core.cosmos.database import CosmosDBDatabase
+from pctasks.core.cosmos.settings import CosmosDBSettings
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.config import QueueConnStrConfig
 from pctasks.core.settings import PCTasksSettings
 from pctasks.core.storage.blob import BlobStorage
 from pctasks.core.tables.config import ImageKeyEntryTable
-from pctasks.core.tables.dataset import DatasetIdentifierTable
-from pctasks.core.tables.record import (
-    JobRunRecordTable,
-    TaskRunRecordTable,
-    WorkflowRunRecordTable,
-)
 
 
 class TaskRunnerType(str, Enum):
@@ -63,6 +57,7 @@ class RunSettings(PCTasksSettings):
     max_wait_retries: int = 10
     task_poll_seconds: int = 30
     check_output_seconds: int = 3
+    check_status_blob_seconds: int = 5
 
     # Dev
     local_dev_endpoints_url: Optional[str] = None
@@ -70,15 +65,15 @@ class RunSettings(PCTasksSettings):
 
     notification_queue: NotificationQueueConnStrConfig
 
+    # Cosmos DB
+    cosmosdb_url: str
+    cosmosdb_key: str
+
     # Tables
     tables_account_url: str
     tables_account_name: str
     tables_account_key: str
     image_key_table_name: str = DEFAULT_IMAGE_KEY_TABLE_NAME
-    dataset_table_name: str = DEFAULT_DATASET_TABLE_NAME
-    task_run_record_table_name: str = DEFAULT_TASK_RUN_RECORD_TABLE_NAME
-    job_run_record_table_name: str = DEFAULT_JOB_RUN_RECORD_TABLE_NAME
-    workflow_run_record_table_name: str = DEFAULT_WORKFLOW_RUN_RECORD_TABLE_NAME
 
     # Blob
     blob_account_url: str
@@ -123,6 +118,12 @@ class RunSettings(PCTasksSettings):
             default_pool_id=self.batch_default_pool_id,
             submit_threads=self.batch_submit_threads,
         )
+
+    def is_cosmosdb_emulator(self) -> bool:
+        emulator_host = os.environ.get(COSMOSDB_EMULATOR_HOST_ENV_VAR)
+        if urlparse(self.cosmosdb_url).hostname == emulator_host:
+            return True
+        return False
 
     @validator("keyvault_url", always=True)
     def keyvault_url_validator(
@@ -183,44 +184,16 @@ class RunSettings(PCTasksSettings):
 
     # Don't cache tables; executor is not thread-safe
 
+    def get_cosmosdb(self) -> CosmosDBDatabase:
+        settings = CosmosDBSettings(url=self.cosmosdb_url, key=self.cosmosdb_key)
+        return CosmosDBDatabase(settings=settings)
+
     def get_image_key_table(self) -> ImageKeyEntryTable:
         return ImageKeyEntryTable.from_account_key(
             account_url=self.tables_account_url,
             account_name=self.tables_account_name,
             account_key=self.tables_account_key,
             table_name=self.image_key_table_name,
-        )
-
-    def get_dataset_table(self) -> DatasetIdentifierTable:
-        return DatasetIdentifierTable.from_account_key(
-            account_url=self.tables_account_url,
-            account_name=self.tables_account_name,
-            account_key=self.tables_account_key,
-            table_name=self.dataset_table_name,
-        )
-
-    def get_task_run_record_table(self) -> TaskRunRecordTable:
-        return TaskRunRecordTable.from_account_key(
-            account_url=self.tables_account_url,
-            account_name=self.tables_account_name,
-            account_key=self.tables_account_key,
-            table_name=self.task_run_record_table_name,
-        )
-
-    def get_job_run_record_table(self) -> JobRunRecordTable:
-        return JobRunRecordTable.from_account_key(
-            account_url=self.tables_account_url,
-            account_name=self.tables_account_name,
-            account_key=self.tables_account_key,
-            table_name=self.job_run_record_table_name,
-        )
-
-    def get_workflow_run_record_table(self) -> WorkflowRunRecordTable:
-        return WorkflowRunRecordTable.from_account_key(
-            account_url=self.tables_account_url,
-            account_name=self.tables_account_name,
-            account_key=self.tables_account_key,
-            table_name=self.workflow_run_record_table_name,
         )
 
     def get_task_io_storage(self) -> BlobStorage:

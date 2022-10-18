@@ -10,6 +10,7 @@ install_requires = [
     "azure-storage-blob==12.9",  # Issues with 12.11 generating sas from account keys
     "azure-storage-queue>=12.*",
     "azure-data-tables==12.*",
+    "azure-cosmos==4.3.*",
     "pydantic>=1.9,<2.0.0",
     "orjson==3.*",
     "strictyaml>=1.6",

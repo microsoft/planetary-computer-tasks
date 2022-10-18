@@ -2,7 +2,7 @@ from typing import Dict, List, Optional
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.config import CodeConfig
-from pctasks.core.models.task import TaskConfig
+from pctasks.core.models.task import TaskDefinition
 from pctasks.dataset.models import (
     ChunkOptions,
     CollectionConfig,
@@ -50,7 +50,7 @@ class CreateSplitsOutput(PCBaseModel):
     splits: List[SplitTarget]
 
 
-class CreateSplitsTaskConfig(TaskConfig):
+class CreateSplitsTaskConfig(TaskDefinition):
     @classmethod
     def create(
         cls,

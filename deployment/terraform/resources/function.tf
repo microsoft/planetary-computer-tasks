@@ -98,16 +98,6 @@ resource "azurerm_function_app" "pctasks" {
     "PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_URL"  = azurerm_storage_account.pctasks.primary_table_endpoint,
     "PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_NAME" = azurerm_storage_account.pctasks.name,
     "PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_KEY"  = azurerm_batch_account.pctasks.primary_access_key,
-
-    # Operations settings #######################################################
-
-    ## Azure Storage
-
-    ### Tables
-
-    "PCTASKS_OPS__TABLES_ACCOUNT_URL"  = azurerm_storage_account.pctasks.primary_table_endpoint,
-    "PCTASKS_OPS__TABLES_ACCOUNT_NAME" = azurerm_storage_account.pctasks.name,
-    "PCTASKS_OPS__TABLES_ACCOUNT_KEY"  = azurerm_batch_account.pctasks.primary_access_key,
   }
 
   os_type = "linux"

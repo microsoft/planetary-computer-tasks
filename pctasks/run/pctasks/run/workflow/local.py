@@ -2,8 +2,9 @@ from concurrent import futures
 from threading import Lock
 from typing import Optional
 
-from pctasks.core.models.record import WorkflowRunStatus
+from pctasks.core.models.run import WorkflowRunStatus
 from pctasks.core.models.workflow import WorkflowSubmitMessage, WorkflowSubmitResult
+from pctasks.core.utils import ignore_ssl_warnings
 from pctasks.run.workflow.base import WorkflowRunner
 from pctasks.run.workflow.executor.remote import RemoteWorkflowExecutor
 
@@ -25,19 +26,29 @@ def _shutdown_pool() -> None:
 class LocalWorkflowRunner(WorkflowRunner):
     """Executes a workflow in the local process on a background thread."""
 
-    def submit_workflow(self, workflow: WorkflowSubmitMessage) -> WorkflowSubmitResult:
+    def submit_workflow(
+        self, submit_msg: WorkflowSubmitMessage
+    ) -> WorkflowSubmitResult:
+
         global _workflow_count
         global _thread_pool
         executor = RemoteWorkflowExecutor(self.settings)
         with _pool_lock:
             if _thread_pool is None:
                 _thread_pool = futures.ThreadPoolExecutor(max_workers=1)
-            _thread_pool.submit(executor.execute_workflow, workflow).add_done_callback(
+
+            def _execute_workflow(s: WorkflowSubmitMessage):
+                if self.settings.is_cosmosdb_emulator:
+                    with ignore_ssl_warnings():
+                        executor.execute_workflow(s)
+                else:
+                    executor.execute_workflow(s)
+
+            _thread_pool.submit(_execute_workflow, submit_msg).add_done_callback(
                 lambda _: _shutdown_pool()
             )
 
         return WorkflowSubmitResult(
-            dataset=workflow.workflow.get_dataset_id(),
-            run_id=workflow.run_id,
+            run_id=submit_msg.run_id,
             status=WorkflowRunStatus.RUNNING,
         )

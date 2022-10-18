@@ -20,6 +20,6 @@ def records_cmd(ctx: click.Context, pretty_print: bool) -> None:
     _cli.records_cmd(ctx, pretty_print)
 
 
-records_cmd.add_command(list_cmd)
 records_cmd.add_command(fetch_cmd)
+records_cmd.add_command(list_cmd)
 records_cmd.add_command(status_cmd)

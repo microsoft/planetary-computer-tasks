@@ -3,10 +3,8 @@ from typing import Any, Dict, List, Optional, Set, Union
 
 from pydantic import Field, validator
 
-from pctasks.core.constants import MICROSOFT_OWNER
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.config import CodeConfig
-from pctasks.core.models.dataset import DatasetIdentifier
 from pctasks.core.models.tokens import ContainerTokens, StorageAccountTokens
 from pctasks.core.storage import get_storage
 from pctasks.core.storage.base import Storage
@@ -139,9 +137,8 @@ class CollectionConfig(PCBaseModel):
         allow_population_by_field_name = True
 
 
-class DatasetConfig(DatasetIdentifier):
-    owner: str = MICROSOFT_OWNER
-    name: str
+class DatasetConfig(PCBaseModel):
+    id: str
     image: str
     code: Optional[CodeConfig] = None
     collections: List[CollectionConfig]
@@ -154,7 +151,7 @@ class DatasetConfig(DatasetIdentifier):
                 raise MultipleCollections(
                     "Multiple collections for dataset, "
                     "cannot return default collection id: "
-                    f"dataset={self.name}, "
+                    f"dataset={self.id}, "
                     f"collections={[c.id for c in self.collections]}"
                 )
             return self.collections[0]
@@ -164,21 +161,18 @@ class DatasetConfig(DatasetIdentifier):
                     return collection
             raise CollectionNotFound(
                 f"Collection not found for dataset: "
-                f"dataset={self.name}, collection_id={collection_id}"
+                f"dataset={self.id}, collection_id={collection_id}"
             )
-
-    def get_identifier(self) -> DatasetIdentifier:
-        return DatasetIdentifier(owner=self.owner, name=self.name)
 
     def template_args(self, args: Dict[str, str]) -> "DatasetConfig":
         return DictTemplater({"args": args}, strict=False).template_model(self)
 
-    @validator("name")
+    @validator("id")
     def _validate_name(cls, v: str) -> str:
         try:
             validate_table_key(v)
         except InvalidTableKeyError as e:
-            raise ValueError(f"Invalid dataset name: {e.INFO_MESSAGE}")
+            raise ValueError(f"Invalid dataset id: {e.INFO_MESSAGE}")
         return v
 
     @validator("collections")

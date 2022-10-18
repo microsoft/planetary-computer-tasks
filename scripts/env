@@ -14,7 +14,6 @@ PACKAGE_DIRS=(
     "pctasks/run"
     "pctasks/notify"
     "pctasks/router"
-    "pctasks/operations"
     "pctasks/server"
     "pctasks/dev"
 )
@@ -36,6 +35,7 @@ function setup_docker_network() {
 
             docker network create \
                 --driver=bridge \
+                --subnet=172.16.238.0/24 \
                 pctasks-network
         fi
 }

@@ -1,3 +1,4 @@
+id: list-logs
 name: List log files in Azurite
 dataset: microsoft/test
 

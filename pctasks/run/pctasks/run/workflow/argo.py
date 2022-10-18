@@ -1,4 +1,4 @@
-from pctasks.core.models.record import WorkflowRunStatus
+from pctasks.core.models.run import WorkflowRunStatus
 from pctasks.core.models.workflow import WorkflowSubmitMessage, WorkflowSubmitResult
 from pctasks.run.argo.client import ArgoClient
 from pctasks.run.settings import RunSettings
@@ -9,7 +9,9 @@ class ArgoWorkflowRunner(WorkflowRunner):
     def __init__(self, settings: RunSettings):
         super().__init__(settings)
 
-    def submit_workflow(self, workflow: WorkflowSubmitMessage) -> WorkflowSubmitResult:
+    def submit_workflow(
+        self, submit_msg: WorkflowSubmitMessage
+    ) -> WorkflowSubmitResult:
         argo_host = self.settings.argo_host
         argo_token = self.settings.argo_token
         runner_image = self.settings.workflow_runner_image
@@ -27,20 +29,19 @@ class ArgoWorkflowRunner(WorkflowRunner):
 
         try:
             _ = argo_client.submit_workflow(
-                workflow,
+                submit_msg,
+                run_id=submit_msg.run_id,
                 run_settings=self.settings,
                 runner_image=runner_image,
             )
         except Exception as e:
             return WorkflowSubmitResult(
-                dataset=workflow.workflow.get_dataset_id(),
-                run_id=workflow.run_id,
+                run_id=submit_msg.run_id,
                 status=WorkflowRunStatus.FAILED,
                 errors=[str(e)],
             )
 
         return WorkflowSubmitResult(
-            dataset=workflow.workflow.get_dataset_id(),
-            run_id=workflow.run_id,
+            run_id=submit_msg.run_id,
             status=WorkflowRunStatus.RUNNING,
         )

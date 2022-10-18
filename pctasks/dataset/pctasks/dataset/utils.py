@@ -33,6 +33,12 @@ def opt_collection(fn: Callable[..., Any]) -> Callable[..., Any]:
     return fn
 
 
+def opt_upsert(fn: Callable[..., Any]) -> Callable[..., Any]:
+    _opt = click.option("-u", "--upsert", is_flag=True, help="Upsert the workflow.")
+    _opt(fn)
+    return fn
+
+
 def opt_submit(fn: Callable[..., Any]) -> Callable[..., Any]:
     _opt = click.option("-s", "--submit", is_flag=True, help="Submit the workflow.")
     _opt(fn)

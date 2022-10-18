@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Tuple
 
 import click
 from click.exceptions import Exit
@@ -7,16 +7,14 @@ from rich.live import Live
 from rich.table import Table
 
 from pctasks.client.client import PCTasksClient
-from pctasks.client.errors import NotFoundError
 from pctasks.client.records.constants import NOT_FOUND_EXIT_CODE
 from pctasks.client.settings import ClientSettings
 from pctasks.client.utils import status_emoji
+from pctasks.core.models.run import JobRunStatus
 from pctasks.core.models.workflow import WorkflowRunStatus
 
 
-def workflow_status_cmd(
-    ctx: click.Context, run_id: str, dataset: Optional[str], watch: bool = False
-) -> int:
+def workflow_status_cmd(ctx: click.Context, run_id: str, watch: bool = False) -> int:
     """Show status of a workflow, including all jobs and tasks."""
     client = PCTasksClient(ClientSettings.from_context(ctx.obj))
 
@@ -32,25 +30,44 @@ def workflow_status_cmd(
         _table = Table()
         _table.add_column("")
         _table.add_column("status")
-        try:
-            workflow = client.get_workflow(run_id, dataset)
-            wf_name = workflow.workflow.name if workflow.workflow else run_id
-        except NotFoundError as e:
-            console.print(f"[bold red]Workflow not found: {e}")
+        workflow = client.get_workflow_run(run_id)
+        if not workflow:
+            console.print("[bold red]Workflow run not found.[/bold red]")
             raise Exit(NOT_FOUND_EXIT_CODE)
+        wf_name = workflow.workflow_id
 
         _table.add_row(
             f"[bold]Workflow: {wf_name}[/bold]", status_entry(workflow.status)
         )
 
-        for job in sorted(client.get_jobs(run_id), key=lambda j: j.created):
-            _table.add_row(f" - Job: {job.job_id}", f" {status_entry(job.status)}")
-            for task in sorted(
-                client.get_tasks(run_id, job.job_id), key=lambda t: t.created
-            ):
+        def _job_status_sort(job_status: JobRunStatus) -> int:
+            if job_status == JobRunStatus.RUNNING:
+                return 0
+            if job_status == JobRunStatus.FAILED:
+                return 1
+            if job_status == JobRunStatus.PENDING:
+                return 2
+            if job_status == JobRunStatus.RUNNING:
+                return 3
+            else:
+                return 4
+
+        for job in sorted(workflow.jobs, key=lambda x: _job_status_sort(x.status)):
+            _table.add_row(
+                f"  [bold]Job: {job.job_id}[/bold]", status_entry(job.status)
+            )
+            job_parts = client.list_job_partition_runs(run_id, job.job_id)
+            for job_part in job_parts:
                 _table.add_row(
-                    f"    - Task:{task.task_id}", f"  {status_entry(task.status)}"
+                    f"    [bold]Partition: {job_part.partition_id}[/bold]",
+                    status_entry(job_part.status),
                 )
+                for task in job_part.tasks:
+                    _table.add_row(
+                        f"      [bold]Task: {task.task_id}[/bold]",
+                        status_entry(task.status),
+                    )
+
         return (
             _table,
             workflow.status == WorkflowRunStatus.COMPLETED

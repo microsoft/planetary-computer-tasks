@@ -13,6 +13,38 @@ services:
     volumes:
       - pctasks-azurite-data:/workspace
 
+  cosmosdb:
+    container_name: pctasks-cosmosdb
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+    tty: true
+    environment:
+      - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
+      - AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE=172.16.238.246
+      # Controls the number of possible containers the emulator can hold
+      # This this number of containers is reached, the emulator will start
+      # throwing ServiceUnavailable exceptions.
+      # See https://learn.microsoft.com/en-us/azure/cosmos-db/emulator-command-line-parameters#set-partitioncount
+      - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=10
+    ports:
+        - '8081:8081'
+        - '8900:8900'
+        - '8901:8901'
+        - '8902:8902'
+        - '10250:10250'
+        - '10251:10251'
+        - '10252:10252'
+        - '10253:10253'
+        - '10254:10254'
+        - '10255:10255'
+        - '10256:10256'
+        - '10350:10350'
+    volumes:
+      - pctasks-cosmosdb-data:/tmp/cosmosdb
+    stop_grace_period: 1s  # Cosmos emulator isn't responsive to SIGTERM
+    networks:
+      default:
+        ipv4_address: 172.16.238.246
+
   database:
     container_name: pctasks-database
     image: ghcr.io/stac-utils/pgstac:v0.6.6
@@ -92,6 +124,15 @@ services:
       - PCTASKS_RUN__TABLES_ACCOUNT_NAME=devstoreaccount1
       - PCTASKS_RUN__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
 
+      ### Cosmos DB
+      - COSMOSDB_EMULATOR_HOST=cosmosdb
+      # For server
+      - PCTASKS_COSMOSDB__URL=https://cosmosdb:8081/
+      - PCTASKS_COSMOSDB__KEY=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+      # For run
+      - PCTASKS_RUN__COSMOSDB_URL=https://cosmosdb:8081/
+      - PCTASKS_RUN__COSMOSDB_KEY=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+
       ### Blobs
       - PCTASKS_RUN__BLOB_ACCOUNT_URL=http://azurite:10000/devstoreaccount1
       - PCTASKS_RUN__BLOB_ACCOUNT_NAME=devstoreaccount1
@@ -159,6 +200,30 @@ services:
     ports:
       - 5001:5000
 
+  functions:
+    container_name: pctasks-functions
+    image: pctasks-functions
+    build:
+      context: .
+      dockerfile: pctasks_funcs/Dockerfile
+    volumes:
+      - ./pctasks:/home/site/pctasks
+      - ./pctasks_funcs:/home/site/wwwroot
+    ports:
+      - "7071:7071" # Functions
+    environment:
+      - AzureWebJobsStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
+      - WEBSITE_HOSTNAME=functions:7071
+
+      # Must use IP address to avoid SSL errors
+      - PCTASKS_COSMOSDB__CONNECTION_STRING=AccountEndpoint=https://172.16.238.246:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+      # Set trigger app setting separately to avoid issues with __ in env var names
+      - FUNC_COSMOSDB_CONN_STR=AccountEndpoint=https://172.16.238.246:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+
+      - COSMOSDB_EMULATOR_HOST=172.16.238.246
+    depends_on:
+      - cosmosdb
+
 networks:
   default:
     # Network created during scripts/setup
@@ -168,3 +233,4 @@ networks:
 volumes:
   pctasks-azurite-data: null
   pctasks-pgdata: null
+  pctasks-cosmosdb-data: null

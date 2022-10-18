@@ -1,23 +1,17 @@
 import logging
-from typing import Optional
+from typing import List, Optional, Tuple
 
 import click
 from strictyaml.exceptions import MarkedYAMLError
 
-from pctasks.cli.cli import cli_output, cli_print
-from pctasks.client.client import PCTasksClient
-from pctasks.client.settings import ClientSettings
-from pctasks.core.context import PCTasksCommandContext
-from pctasks.core.models.workflow import (
-    JobConfig,
-    WorkflowConfig,
-    WorkflowSubmitMessage,
-)
+from pctasks.client.utils import cli_handle_workflow
+from pctasks.client.workflow.options import opt_args
+from pctasks.core.models.workflow import JobDefinition, WorkflowDefinition
 from pctasks.core.yaml import YamlValidationError
 from pctasks.dataset.constants import DEFAULT_DATASET_YAML_PATH
 from pctasks.dataset.splits.models import CreateSplitsOptions, CreateSplitsTaskConfig
 from pctasks.dataset.template import template_dataset_file
-from pctasks.dataset.utils import opt_collection, opt_ds_config, opt_submit
+from pctasks.dataset.utils import opt_collection, opt_ds_config, opt_submit, opt_upsert
 
 logger = logging.getLogger(__name__)
 
@@ -26,17 +20,23 @@ logger = logging.getLogger(__name__)
 @opt_ds_config
 @opt_collection
 @click.option("--limit", type=int, help="Limit prefix linking, used for testing")
+@opt_args
 @opt_submit
+@opt_upsert
 @click.pass_context
 def create_splits_cmd(
     ctx: click.Context,
     dataset: Optional[str] = None,
     collection: Optional[str] = None,
     limit: Optional[int] = None,
+    arg: List[Tuple[str, str]] = [],
+    upsert: bool = False,
     submit: bool = False,
 ) -> None:
     """Creates a chunkset for bulk processing."""
-    context: PCTasksCommandContext = ctx.obj
+    if submit and not upsert:
+        raise click.UsageError("Cannot submit without --upsert")
+
     try:
         ds_config = template_dataset_file(dataset)
     except (MarkedYAMLError, YamlValidationError) as e:
@@ -56,21 +56,21 @@ def create_splits_cmd(
         ds_config, collection_config, options=CreateSplitsOptions(limit=limit)
     )
 
-    workflow = WorkflowConfig(
+    workflow_id = f"{ds_config.id}-{collection_config.id}-create-splits"
+    workflow_def = WorkflowDefinition(
+        id=workflow_id,
         name=f"Create splits for {collection_config.id}",
-        dataset=ds_config.get_identifier(),
+        dataset=ds_config.id,
         collection_id=collection_config.id,
         image=ds_config.image,
         tokens=collection_config.get_tokens(),
-        jobs={"splits": JobConfig(tasks=[task_config])},
+        jobs={"splits": JobDefinition(tasks=[task_config])},
     )
 
-    submit_message = WorkflowSubmitMessage(workflow=workflow)
-
-    if not submit:
-        cli_output(submit_message.to_yaml())
-    else:
-        settings = ClientSettings.get(context.profile, context.settings_file)
-        client = PCTasksClient(settings)
-        cli_print(click.style(f"  Submitting {submit_message.run_id}...", fg="green"))
-        client.submit_workflow(submit_message)
+    cli_handle_workflow(
+        ctx,
+        workflow_def,
+        upsert=upsert,
+        upsert_and_submit=submit,
+        args={a[0]: a[1] for a in arg},
+    )

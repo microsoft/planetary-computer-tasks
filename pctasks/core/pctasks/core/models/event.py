@@ -100,7 +100,7 @@ class NotificationConfig(PCBaseModel):
 
 
 class ItemNotificationConfig(NotificationConfig):
-    type = Field(default="Item", const=True)
+    type: str = Field(default="Item", const=True)
     owner: str = MICROSOFT_OWNER
     collection_id: str
     item_id: str

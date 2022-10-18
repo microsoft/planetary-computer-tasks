@@ -11,48 +11,11 @@ from azure.data.tables import (
     generate_account_sas,
 )
 
-from pctasks.core.constants import (
-    DEFAULT_JOB_RUN_RECORD_TABLE_NAME,
-    DEFAULT_TASK_RUN_RECORD_TABLE_NAME,
-    DEFAULT_WORKFLOW_RUN_RECORD_TABLE_NAME,
-)
 from pctasks.core.tables.base import AzureSasCredential
-from pctasks.core.tables.record import (
-    JobRunRecordTable,
-    TaskRunRecordTable,
-    WorkflowRunRecordTable,
-)
 from pctasks.dev.config import get_table_config
 from pctasks.run.settings import RunSettings
 
 exec_settings = RunSettings.get()
-
-
-def get_task_run_record_table() -> TaskRunRecordTable:
-    return TaskRunRecordTable.from_account_key(
-        account_url=exec_settings.tables_account_url,
-        account_name=exec_settings.tables_account_name,
-        account_key=exec_settings.tables_account_key,
-        table_name=DEFAULT_TASK_RUN_RECORD_TABLE_NAME,
-    )
-
-
-def get_job_run_record_table() -> JobRunRecordTable:
-    return JobRunRecordTable.from_account_key(
-        account_url=exec_settings.tables_account_url,
-        account_name=exec_settings.tables_account_name,
-        account_key=exec_settings.tables_account_key,
-        table_name=DEFAULT_JOB_RUN_RECORD_TABLE_NAME,
-    )
-
-
-def get_workflow_run_record_table() -> WorkflowRunRecordTable:
-    return WorkflowRunRecordTable.from_account_key(
-        account_url=exec_settings.tables_account_url,
-        account_name=exec_settings.tables_account_name,
-        account_key=exec_settings.tables_account_key,
-        table_name=DEFAULT_WORKFLOW_RUN_RECORD_TABLE_NAME,
-    )
 
 
 class TempTable:

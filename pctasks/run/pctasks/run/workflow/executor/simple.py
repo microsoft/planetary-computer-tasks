@@ -7,11 +7,11 @@ from pctasks.core.importer import ensure_code, ensure_requirements
 from pctasks.core.models.task import (
     CompletedTaskResult,
     FailedTaskResult,
-    TaskConfig,
+    TaskDefinition,
     TaskResult,
     WaitTaskResult,
 )
-from pctasks.core.models.workflow import JobConfig, WorkflowConfig
+from pctasks.core.models.workflow import JobDefinition, WorkflowDefinition
 from pctasks.core.storage import StorageFactory
 from pctasks.core.utils import environment, map_opt
 from pctasks.run.constants import TASKS_TEMPLATE_PATH
@@ -32,7 +32,7 @@ class SimpleWorkflowExecutor:
 
     def run_task(
         self,
-        task_config: TaskConfig,
+        task_config: TaskDefinition,
         context: TaskContext,
         output_uri: Optional[str] = None,
     ) -> TaskResult:
@@ -119,7 +119,7 @@ class SimpleWorkflowExecutor:
 
     def run_job(
         self,
-        job: JobConfig,
+        job: JobDefinition,
         context: TaskContext,
         previous_job_outputs: Optional[Dict[str, Any]] = None,
         output_uri: Optional[str] = None,
@@ -160,7 +160,7 @@ class SimpleWorkflowExecutor:
 
     def run_workflow(
         self,
-        workflow: WorkflowConfig,
+        workflow: WorkflowDefinition,
         context: Optional[TaskContext] = None,
         output_uri: Optional[str] = None,
         args: Optional[Dict[str, Any]] = None,
@@ -196,7 +196,7 @@ class SimpleWorkflowExecutor:
                     trigger_event=None,
                 )
                 jobs = [
-                    template_job_with_item(base_job, item, i)
+                    template_job_with_item(base_job, item)
                     for i, item in enumerate(items)
                 ]
             else:

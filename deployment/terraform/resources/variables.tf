@@ -82,6 +82,14 @@ variable "stac_db_connection_string" {
   type = string
 }
 
+variable "cosmosdb_account_name" {
+  type = string
+}
+
+variable "cosmosdb_resource_group" {
+  type = string
+}
+
 ## Keyvault
 
 variable "task_sp_tenant_id" {

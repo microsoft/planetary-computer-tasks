@@ -122,17 +122,17 @@ If using `dev-cluster`, you should be able to see the workflow executing in the 
 You can fetch detailed with the workflow using:
 
 ```shell
-> pctasks records fetch workflow ${RUN_ID}
+> pctasks records fetch workflow-run ${RUN_ID}
 ```
 
-You can also list jobs and tasks, e.g.
+You can also list job partitions and tasks, e.g.
 
 ```shell
-> pctasks records list tasks ${RUN_ID} list-logs-job
+> pctasks records list job-partitions ${RUN_ID} list-logs-job
 ```
 
 To get the log file for the task, use:
 
 ```shell
-> pctasks records fetch logs ${RUN_ID} list-logs-job list-logs-task
+> pctasks records fetch log ${RUN_ID} list-logs-job  0 list-logs-task
 ```

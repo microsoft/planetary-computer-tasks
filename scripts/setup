@@ -17,6 +17,10 @@ Sets up this project for development.
 Options:
     --azurite
         Only run the Azurite setup.
+    --cosmos
+        Only run the Cosmos Emulator setup.
+    --reset-cosmos
+        Reset the CosmosDB emulator.
     --no-aux-servers
         Don't build non-essential devevelopment environment servers
     --clear-records
@@ -25,14 +29,25 @@ Options:
 }
 
 AZURITE_ONLY=""
-NO_DEV=""
+COSMOS_ONLY=""
+RESET_COSMOS_DB=""
+NO_AUX=""
 while [[ $# -gt 0 ]]; do case $1 in
     --azurite)
         AZURITE_ONLY=1
         shift
         ;;
+    --cosmos)
+        COSMOS_ONLY=1
+        shift
+        ;;
     --clear-records)
         CLEAR_RECORDS=1
+        shift
+        ;;
+    --reset-cosmos)
+        RESET_COSMOS_DB=1
+        COSMOS_ONLY=1
         shift
         ;;
     --no-aux-servers)
@@ -57,12 +72,22 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         echo "Clearing records from Azurite Tables..."
         docker-compose -f docker-compose.console.yml run --rm \
             dev \
-            pctasks-dev clear-records
+            pctasks-dev azurite clear-records
 
         echo "Records cleared."
-        exit 0;
+        exit 0
     fi
-    if [ -z "${AZURITE_ONLY}" ]; then
+    if [ "${RESET_COSMOS_DB}" ]; then
+        echo "Reset cosmos db..."
+        docker-compose stop cosmosdb
+        docker-compose rm -f cosmosdb
+        docker volume rm pctasks_pctasks-cosmosdb-data
+        docker-compose up -d cosmosdb
+
+        echo "Waiting for CosmosDB emulator to start..."
+        sleep 60  # Wait a while for the emulator to start up
+    fi
+    if [ -z "${AZURITE_ONLY}${COSMOS_ONLY}" ]; then
 
         # Copy secrets template if it doesn't exist
         if [ ! -f dev-secrets.yaml ]; then
@@ -75,7 +100,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
             cp pctasks_frontend/.env.example pctasks_frontend/.env
         fi
 
-        setup_docker_network;
+        setup_docker_network
 
         echo " -- BUILDING CONTAINERS"
         scripts/update ${NO_AUX}
@@ -85,10 +110,26 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
     fi
 
-    echo " -- SETTING UP AZURITE"
-    docker-compose -f docker-compose.console.yml run --rm \
-        dev \
-        pctasks-dev setup-azurite
+    if [ -z "${COSMOS_ONLY}" ]; then
+        docker-compose up -d cosmosdb
+
+        echo " -- SETTING UP AZURITE"
+        docker-compose -f docker-compose.console.yml run --rm \
+            dev \
+            pctasks-dev azurite setup
+    fi
+
+    if [ -z "${AZURITE_ONLY}" ]; then
+
+        echo " -- SETTING UP COSMOSDB EMULATOR"
+        if [ -z $(docker-compose ps -q cosmosdb) ]; then
+            echo "CosmosDB is not running. Starting it..."
+            docker-compose up -d cosmosdb
+        fi
+        docker-compose -f docker-compose.console.yml run --rm \
+            dev \
+            pctasks-dev cosmosdb setup
+    fi
 
     echo "Done."
 

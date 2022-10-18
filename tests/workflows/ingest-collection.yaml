@@ -1,3 +1,4 @@
+id: ingest-collection-test-workflow
 name: Ingest Collection Test Workflow
 dataset: microsoft/test-dataset2
 

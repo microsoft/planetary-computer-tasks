@@ -3,12 +3,10 @@ import os
 from datetime import datetime, timedelta
 from typing import List, Optional
 
-from azure.core.credentials import AzureNamedKeyCredential
-from azure.data.tables import TableSasPermissions, generate_table_sas
 from azure.storage.blob import BlobSasPermissions, generate_blob_sas
 
 from pctasks.core.constants import ENV_VAR_TASK_APPINSIGHTS_KEY
-from pctasks.core.models.config import BlobConfig, ImageConfig, TableSasConfig
+from pctasks.core.models.config import BlobConfig, ImageConfig
 from pctasks.core.models.task import TaskRunConfig, TaskRunMessage
 from pctasks.core.models.tokens import StorageAccountTokens
 from pctasks.core.storage.blob import BlobStorage, BlobUri
@@ -18,9 +16,10 @@ from pctasks.run.secrets.keyvault import KeyvaultSecretsProvider
 from pctasks.run.secrets.local import LocalSecretsProvider
 from pctasks.run.settings import RunSettings
 from pctasks.run.utils import (
-    get_run_log_path,
     get_task_input_path,
+    get_task_log_path,
     get_task_output_path,
+    get_task_status_path,
 )
 
 logger = logging.getLogger(__name__)
@@ -34,6 +33,7 @@ def write_task_run_msg(run_msg: TaskRunMessage, settings: RunSettings) -> BlobCo
     """
     task_input_path = get_task_input_path(
         job_id=run_msg.config.job_id,
+        partition_id=run_msg.config.partition_id,
         task_id=run_msg.config.task_id,
         run_id=run_msg.config.run_id,
     )
@@ -90,6 +90,7 @@ def prepare_task(
 
     target_environment = submit_msg.target_environment
     job_id = submit_msg.job_id
+    partition_id = submit_msg.partition_id
     task_config = submit_msg.config
     task_id = task_config.id
 
@@ -174,28 +175,30 @@ def prepare_task(
 
     # --Handle configuration--
 
-    # Tables
+    # Handle status blob
 
-    tables_cred = AzureNamedKeyCredential(
-        name=settings.tables_account_name, key=settings.tables_account_key
+    task_status_path = get_task_status_path(job_id, partition_id, task_id, run_id)
+    task_status_uri = (
+        f"blob://{settings.blob_account_name}/"
+        f"{settings.task_io_blob_container}/{task_status_path}"
     )
-
-    task_runs_table_sas_token = generate_table_sas(
-        credential=tables_cred,
-        table_name=settings.task_run_record_table_name,
+    log_blob_sas_token = generate_blob_sas(
+        account_name=settings.blob_account_name,
+        account_key=settings.blob_account_key,
+        container_name=settings.log_blob_container,
+        blob_name=task_status_path,
         start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),
-        permission=TableSasPermissions(read=True, write=True, update=True),
+        permission=BlobSasPermissions(write=True),
     )
-
-    task_runs_table_config = TableSasConfig(
-        account_url=settings.tables_account_url,
-        table_name=settings.task_run_record_table_name,
-        sas_token=task_runs_table_sas_token,
+    status_blob_config = BlobConfig(
+        uri=task_status_uri,
+        sas_token=log_blob_sas_token,
+        account_url=settings.blob_account_url,
     )
 
     # Handle log blob
-    log_path = get_run_log_path(job_id, task_id, run_id)
+    log_path = get_task_log_path(job_id, partition_id, task_id, run_id)
     log_uri = (
         f"blob://{settings.blob_account_name}/{settings.log_blob_container}/{log_path}"
     )
@@ -214,7 +217,7 @@ def prepare_task(
 
     # Handle output blob
 
-    output_path = get_task_output_path(job_id, task_id, run_id)
+    output_path = get_task_output_path(job_id, partition_id, task_id, run_id)
     output_uri = (
         f"blob://{settings.blob_account_name}/"
         f"{settings.task_io_blob_container}/{output_path}"
@@ -285,13 +288,14 @@ def prepare_task(
 
     config = TaskRunConfig(
         image=image_config.image,
-        run_id=submit_msg.run_id,
-        job_id=submit_msg.job_id,
-        task_id=submit_msg.config.id,
+        run_id=run_id,
+        job_id=job_id,
+        partition_id=partition_id,
+        task_id=task_id,
         task=task_config.task,
         environment=environment,
         tokens=tokens,
-        task_runs_table_config=task_runs_table_config,
+        status_blob_config=status_blob_config,
         output_blob_config=output_blob_config,
         log_blob_config=log_blob_config,
         code_src_blob_config=code_src_blob_config,

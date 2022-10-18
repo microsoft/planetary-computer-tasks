@@ -214,8 +214,8 @@ class RunLogger:
         )
 
 
-class TaskLogger:
-    """Adds a log handler which will store Task logs in local or blob storage."""
+class StorageLogger:
+    """Adds a log handler which will store logs in local or blob storage."""
 
     def __init__(
         self,
@@ -237,7 +237,7 @@ class TaskLogger:
         self.logger = logger
         self.handler = handler
 
-    def __enter__(self) -> "TaskLogger":
+    def __enter__(self) -> "StorageLogger":
         self.logger.addHandler(self.handler)
         return self
 
@@ -267,7 +267,7 @@ class TaskLogger:
         package: Optional[str] = None,
         level: int = logging.INFO,
         log_format: str = DEFAULT_TASK_LOG_FORMAT,
-    ) -> "TaskLogger":
+    ) -> "StorageLogger":
         log_storage = get_storage(
             os.path.dirname(task_run_config.log_blob_config.uri),
             sas_token=task_run_config.log_blob_config.sas_token,
@@ -277,6 +277,26 @@ class TaskLogger:
         return cls(
             log_storage,
             log_storage.get_path(task_run_config.log_blob_config.uri),
+            package,
+            level,
+            log_format,
+        )
+
+    @classmethod
+    def from_uri(
+        cls,
+        uri: str,
+        package: Optional[str] = None,
+        level: int = logging.INFO,
+        log_format: str = DEFAULT_TASK_LOG_FORMAT,
+    ) -> "StorageLogger":
+        log_storage = get_storage(
+            os.path.dirname(uri),
+        )
+
+        return cls(
+            log_storage,
+            log_storage.get_path(uri),
             package,
             level,
             log_format,

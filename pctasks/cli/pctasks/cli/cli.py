@@ -4,6 +4,7 @@ from functools import lru_cache
 from typing import Any, Optional, Union
 
 import click
+from rich import print as rprint
 
 from pctasks.cli.version import __version__
 from pctasks.core.cli import get_plugin_subcommands
@@ -18,11 +19,16 @@ PCTASKS_COMMAND_ENTRY_POINT_GROUP = "pctasks.commands"
 def cli_print(msg: str = "", nl: bool = True) -> None:
     """Print messages to the console.
 
+    Uses Rich to print, so rich tags are available.
+
     Uses stderr, avoiding stdout which should only
     be used for data output that can be piped to other
     commands.
     """
-    click.echo(msg, err=True, nl=nl)
+    end = "\n"
+    if not nl:
+        end = ""
+    rprint(msg, end=end, file=sys.stderr)
 
 
 def cli_output(output: str) -> None:

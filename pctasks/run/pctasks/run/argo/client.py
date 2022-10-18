@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 import re
@@ -33,8 +32,9 @@ from pctasks.core.constants import (
     AZURITE_HOST_ENV_VAR,
     AZURITE_PORT_ENV_VAR,
     AZURITE_STORAGE_ACCOUNT_ENV_VAR,
+    COSMOSDB_EMULATOR_HOST_ENV_VAR,
 )
-from pctasks.core.models.record import TaskRunStatus
+from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.models.workflow import WorkflowSubmitMessage
 from pctasks.core.storage.blob import BlobStorage, BlobUri
 from pctasks.core.utils import map_opt
@@ -64,7 +64,8 @@ class ArgoClient:
 
     def submit_workflow(
         self,
-        workflow: WorkflowSubmitMessage,
+        submit_msg: WorkflowSubmitMessage,
+        run_id: str,
         run_settings: RunSettings,
         runner_image: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -74,7 +75,7 @@ class ArgoClient:
 
         runner_image = runner_image
 
-        workflow_path = get_workflow_path(workflow.run_id)
+        workflow_path = get_workflow_path(run_id)
         workflow_uri = BlobUri(
             f"blob://{run_settings.blob_account_name}/"
             f"{run_settings.task_io_blob_container}/"
@@ -89,7 +90,7 @@ class ArgoClient:
 
         task_io_storage.write_text(
             workflow_path,
-            workflow.to_yaml(),
+            submit_msg.to_yaml(),
         )
 
         input_blob_sas_token = generate_blob_sas(
@@ -110,6 +111,7 @@ class ArgoClient:
             AZURITE_HOST_ENV_VAR,
             AZURITE_PORT_ENV_VAR,
             AZURITE_STORAGE_ACCOUNT_ENV_VAR,
+            COSMOSDB_EMULATOR_HOST_ENV_VAR,
         ]:
             if env_var in os.environ:
                 env.append(EnvVar(name=env_var, value=os.environ[env_var]))
@@ -122,7 +124,7 @@ class ArgoClient:
                 env.append(EnvVar(name=env_var, value=os.environ[env_var]))
 
         argo_wf_name = "wkflw-" + re.sub(
-            "[^a-z0-9]", "-", workflow.workflow.name.lower()
+            "[^a-z0-9]", "-", submit_msg.workflow.definition.name.lower()
         ).strip("-")
 
         manifest = IoArgoprojWorkflowV1alpha1Workflow(
@@ -249,7 +251,6 @@ class ArgoClient:
         logger.debug(
             f"Polling task: namespace: '{namespace}', name: '{argo_workflow_name}'"
         )
-        logger.debug(f"Task status: \n{json.dumps(status, indent=2)}")
 
         # https://github.com/argoproj/argo-workflows/blob/19eae92db339fa79eb91fb71a50d330a18b09bcf/pkg/apis/workflow/v1alpha1/workflow_phase.go#L15  # noqa: E501
         if phase == "failed" or phase == "error":
@@ -269,7 +270,7 @@ class ArgoClient:
                                 f"Task {argo_workflow_name} can't pull image: "
                                 f"{node['message']}"
                             )
-                            self._terminate_workflow(namespace, argo_workflow_name)
+                            self.terminate_workflow(namespace, argo_workflow_name)
                             return (TaskRunStatus.FAILED, node["message"])
 
             return (TaskRunStatus.RUNNING, None)
@@ -280,7 +281,7 @@ class ArgoClient:
         else:
             return (TaskRunStatus.SUBMITTED, None)
 
-    def _terminate_workflow(self, namespace: str, argo_workflow_name: str) -> None:
+    def terminate_workflow(self, namespace: str, argo_workflow_name: str) -> None:
         self.api_instance.terminate_workflow(
             namespace=namespace,
             name=argo_workflow_name,

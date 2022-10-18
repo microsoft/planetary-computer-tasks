@@ -5,8 +5,9 @@ from uuid import uuid4
 import click
 
 from pctasks.core.context import PCTasksCommandContext
-from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
+from pctasks.core.models.workflow import WorkflowDefinition, WorkflowSubmitMessage
 from pctasks.core.storage import StorageFactory, get_storage_for_file
+from pctasks.core.utils import ignore_ssl_warnings
 from pctasks.run.settings import RunSettings
 from pctasks.run.workflow.executor.remote import RemoteWorkflowExecutor
 from pctasks.run.workflow.executor.simple import SimpleWorkflowExecutor
@@ -30,7 +31,7 @@ def local_cmd(workflow: str, args: List[str], output: Optional[str] = None) -> N
 
     storage, path = get_storage_for_file(workflow)
     workflow_yaml = storage.read_text(path)
-    workflow_config = WorkflowConfig.from_yaml(workflow_yaml)
+    workflow_config = WorkflowDefinition.from_yaml(workflow_yaml)
 
     runner = SimpleWorkflowExecutor()
     runner.run_workflow(
@@ -79,4 +80,10 @@ def remote_cmd(
     if new_id:
         submit_message.run_id = uuid4().hex
 
-    runner.execute_workflow(submit_message)
+    if run_settings.is_cosmosdb_emulator():
+        # Prevent workflow run logs from being overrun by
+        # SSL warnings if using the Cosmos DB emulator
+        with ignore_ssl_warnings():
+            runner.execute_workflow(submit_message)
+    else:
+        runner.execute_workflow(submit_message)

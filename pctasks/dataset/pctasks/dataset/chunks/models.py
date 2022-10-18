@@ -2,7 +2,7 @@ from typing import Dict, List, Optional, Union
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.config import CodeConfig
-from pctasks.core.models.task import TaskConfig
+from pctasks.core.models.task import TaskDefinition
 from pctasks.dataset.chunks.constants import (
     ASSET_CHUNKS_PREFIX,
     CREATE_CHUNKS_TASK_PATH,
@@ -41,7 +41,7 @@ class ChunksOutput(PCBaseModel):
     """List of chunks. Each chunk contain a lists of asset URIs."""
 
 
-class CreateChunksTaskConfig(TaskConfig):
+class CreateChunksTaskConfig(TaskDefinition):
     @classmethod
     def create(
         cls,
@@ -90,7 +90,7 @@ class CreateChunksTaskConfig(TaskConfig):
         )
 
 
-class ListChunksTaskConfig(TaskConfig):
+class ListChunksTaskConfig(TaskDefinition):
     @classmethod
     def create(
         cls,

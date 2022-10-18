@@ -1,6 +1,12 @@
 environment: "staging"
 
 pctasks:
+  cosmosdb:
+    url: ""
+    key: ""
+    dev:
+      enabled: false
+      emulator_host: ""
   server:
     host: "0.0.0.0"
     port: "80"

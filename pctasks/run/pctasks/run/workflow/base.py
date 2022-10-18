@@ -9,5 +9,7 @@ class WorkflowRunner(ABC):
         self.settings = settings
 
     @abstractmethod
-    def submit_workflow(self, workflow: WorkflowSubmitMessage) -> WorkflowSubmitResult:
+    def submit_workflow(
+        self, submit_msg: WorkflowSubmitMessage
+    ) -> WorkflowSubmitResult:
         pass

@@ -4,7 +4,7 @@ from pydantic import validator
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.config import CodeConfig
-from pctasks.core.models.task import TaskConfig
+from pctasks.core.models.task import TaskDefinition
 from pctasks.dataset.chunks.constants import ITEM_CHUNKS_PREFIX
 from pctasks.dataset.chunks.models import ChunkInfo
 from pctasks.dataset.constants import CREATE_ITEMS_TASK_ID
@@ -71,7 +71,7 @@ class CreateItemsOutput(PCBaseModel):
     """NDJSON of Items."""
 
 
-class CreateItemsTaskConfig(TaskConfig):
+class CreateItemsTaskConfig(TaskDefinition):
     @classmethod
     def create(
         cls,

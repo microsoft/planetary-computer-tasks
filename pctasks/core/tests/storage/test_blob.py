@@ -12,7 +12,6 @@ def test_walk():
     with temp_azurite_blob_storage(
         HERE / ".." / "data-files" / "simple-assets"
     ) as storage:
-
         result: Dict[str, Tuple[List[str], List[str]]] = {}
         for root, folders, files in storage.walk():
             result[root] = (folders, files)

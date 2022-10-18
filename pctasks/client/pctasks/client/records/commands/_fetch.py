@@ -7,19 +7,18 @@ from rich.syntax import Syntax
 
 from pctasks.cli.cli import cli_output
 from pctasks.client.client import PCTasksClient
-from pctasks.client.errors import NotFoundError
 from pctasks.client.records.constants import NOT_FOUND_EXIT_CODE
 from pctasks.client.records.context import RecordsCommandContext
 from pctasks.client.settings import ClientSettings
 from pctasks.client.utils import status_emoji
-from pctasks.core.models.api import RecordResponse
+from pctasks.core.models.run import JobPartitionRunRecord, WorkflowRunRecord
 
-T = TypeVar("T", bound=RecordResponse)
+T = TypeVar("T", WorkflowRunRecord, JobPartitionRunRecord)
 
 
-def fetch_record(
+def fetch_run_record(
     ctx: click.Context,
-    fetch: Callable[[PCTasksClient, Console], T],
+    fetch: Callable[[PCTasksClient, Console], Optional[T]],
     status_only: bool = False,
 ) -> int:
     settings = ClientSettings.from_context(ctx.obj)
@@ -28,10 +27,9 @@ def fetch_record(
     records_context: RecordsCommandContext = ctx.obj
     console = Console(stderr=True)
 
-    try:
-        record = fetch(client, console)
-    except NotFoundError as e:
-        console.print(f"[bold red]No record found: {e}")
+    record = fetch(client, console)
+    if not record:
+        console.print("[bold red]No record found.")
         raise Exit(NOT_FOUND_EXIT_CODE)
 
     console.print(
@@ -47,49 +45,71 @@ def fetch_record(
     return 0
 
 
-def fetch_workflow_cmd(
-    ctx: click.Context, run_id: str, dataset: Optional[str], status_only: bool = False
-) -> int:
-    """Fetch a workflow record.
+def fetch_workflow_cmd(ctx: click.Context, workflow_id: str) -> int:
+    """Fetch a workflow run record.
 
     Outputs the YAML of the record to stdout.
     """
-    return fetch_record(
+    settings = ClientSettings.from_context(ctx.obj)
+    client = PCTasksClient(settings)
+
+    records_context: RecordsCommandContext = ctx.obj
+    console = Console(stderr=True)
+
+    record = client.get_workflow(workflow_id)
+    if not record:
+        console.print("[bold red]No record found.")
+        raise Exit(NOT_FOUND_EXIT_CODE)
+
+    if records_context.pretty_print:
+        console.print(Syntax(record.to_yaml(), "yaml"))
+    else:
+        cli_output(record.to_yaml())
+
+    return 0
+
+
+def fetch_workflow_run_cmd(
+    ctx: click.Context, run_id: str, status_only: bool = False
+) -> int:
+    """Fetch a workflow run record.
+
+    Outputs the YAML of the record to stdout.
+    """
+    return fetch_run_record(
         ctx,
-        lambda client, _: client.get_workflow(run_id, dataset),
+        lambda client, _: client.get_workflow_run(run_id),
         status_only=status_only,
     )
 
 
-def fetch_job_cmd(
+def fetch_job_part_cmd(
     ctx: click.Context,
     run_id: str,
     job_id: str,
+    part_id: str,
+    status_only: bool = False,
 ) -> int:
-    """Fetch a job record.
+    """Fetch a job partition run record.
 
     Outputs the YAML of the record to stdout.
     """
 
-    return fetch_record(ctx, lambda client, _: client.get_job(run_id, job_id))
+    return fetch_run_record(
+        ctx,
+        lambda client, _: client.get_job_partition_run(
+            run_id, job_id, partition_id=part_id
+        ),
+        status_only=status_only,
+    )
 
 
-def fetch_task_cmd(
+def fetch_task_log_cmd(
     ctx: click.Context,
     run_id: str,
     job_id: str,
+    partition_id: str,
     task_id: str,
-) -> int:
-    """Fetch a task record.
-
-    Outputs the YAML of the record to stdout.
-    """
-
-    return fetch_record(ctx, lambda client, _: client.get_task(run_id, job_id, task_id))
-
-
-def fetch_logs_cmd(
-    ctx: click.Context, job_id: str, task_id: str, run_id: str, name: Optional[str]
 ) -> int:
     """Fetch a task record.
 
@@ -99,17 +119,15 @@ def fetch_logs_cmd(
     settings = ClientSettings.from_context(ctx.obj)
     client = PCTasksClient(settings)
 
-    logs = client.get_task_logs(run_id, job_id, task_id, log_name=name)
+    log_text = client.get_task_log(run_id, job_id, partition_id, task_id)
 
     console = Console(stderr=True)
-    if not logs:
+    if not log_text:
         console.print("[yellow]No logs found.")
         return NOT_FOUND_EXIT_CODE
 
-    console.print(f"[green]Logs for task {task_id}:")
-
-    for log_name, log_text in logs.items():
-        console.print(f"\n[bold green]{log_name}:")
-        cli_output(log_text)
+    console.print(f"\n[bold green]<LOG for task {task_id}>")
+    cli_output(log_text)
+    console.print("[bold green]</LOG>")
 
     return 0

@@ -7,7 +7,7 @@ from pydantic import Field, validator
 from pctasks.core.constants import MICROSOFT_OWNER
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.event import CloudEvent
-from pctasks.core.models.workflow import WorkflowConfig
+from pctasks.core.models.workflow import WorkflowDefinition
 
 
 class EventFilter(PCBaseModel):
@@ -65,7 +65,7 @@ class EventRegistration(PCBaseModel):
 class BlobTriggerEventRegistration(EventRegistration):
     storage_account: str
     container: str
-    workflow: WorkflowConfig
+    workflow: WorkflowDefinition
 
     def matches(self, event: CloudEvent) -> bool:
         if self.event_type != event.type:

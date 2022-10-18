@@ -1,82 +1,55 @@
-from typing import Optional
-
 import click
-
-from pctasks.client.records.commands.options import opt_all, opt_page, opt_status
 
 
 @click.command("workflows")
-@click.argument("dataset")
-@opt_page
-@opt_all
-@opt_status
-@click.option(
-    "--ids",
-    is_flag=True,
-    help="Print list of workflow run IDs out to stdout.",
-)
 @click.pass_context
-def list_workflows_cmd(
-    ctx: click.Context,
-    dataset: str,
-    page: bool,
-    all: bool,
-    status: Optional[str],
-    ids: bool,
-) -> None:
+def list_workflows_cmd(ctx: click.Context) -> int:
+    """List workflow runs for a workflow."""
     from . import _list
 
-    return _list.list_workflows_cmd(ctx, dataset, page, all, status, ids)
+    return _list.list_workflows_cmd(ctx)
 
 
-@click.command("jobs")
-@click.argument("run_id")
-@opt_page
-@opt_all
-@opt_status
-@click.option(
-    "--ids",
-    is_flag=True,
-    help="Print list of job IDs out to stdout.",
-)
+@click.command("workflow-runs")
+@click.argument("workflow_id")
 @click.pass_context
-def list_jobs_cmd(
-    ctx: click.Context,
-    run_id: str,
-    page: bool,
-    all: bool,
-    status: Optional[str],
-    ids: bool,
-) -> None:
+def list_workflow_runs_cmd(ctx: click.Context, workflow_id: str) -> int:
+    """List workflow runs for a workflow."""
     from . import _list
 
-    return _list.list_jobs_cmd(ctx, run_id, page, all, status, ids)
+    return _list.list_workflow_runs_cmd(ctx, workflow_id)
 
 
-@click.command("tasks")
+@click.command("job-partitions")
 @click.argument("run_id")
 @click.argument("job_id")
-@opt_page
-@opt_all
-@opt_status
-@click.option(
-    "--ids",
-    is_flag=True,
-    help="Print list of task IDs out to stdout.",
-)
 @click.pass_context
-def list_tasks_cmd(
-    ctx: click.Context,
-    run_id: str,
-    job_id: str,
-    page: bool,
-    all: bool,
-    status: Optional[str],
-    ids: bool,
-) -> None:
+def list_job_partition_cmd(ctx: click.Context, run_id: str, job_id: str) -> int:
+    """list a job partition record. Defaults to partition 0 if not specified.
+
+    Outputs the YAML of the record to stdout.
+    """
     from . import _list
 
-    return _list.list_tasks_cmd(ctx, run_id, job_id, page, all, status, ids)
+    return _list.list_job_part_cmd(ctx, run_id, job_id)
+
+
+# @click.command("logs")
+# @click.argument("run_id")
+# @click.argument("job_id")
+# @click.argument("task_id")
+# @click.option("-p", "--partition", "partition_id", default="0", help="Partition ID.")
+# @click.pass_context
+# def list_logs_cmd(
+#     ctx: click.Context, job_id: str, task_id: str, run_id: str, partition_id: str
+# ) -> int:
+#     """list a task record.
+
+#     Outputs the YAML of the record to stdout.
+#     """
+#     from . import _list
+
+#     return _list.list_task_log_cmd(ctx, job_id, task_id, run_id, partition_id)
 
 
 @click.group("list")
@@ -86,5 +59,6 @@ def list_cmd() -> None:
 
 
 list_cmd.add_command(list_workflows_cmd)
-list_cmd.add_command(list_jobs_cmd)
-list_cmd.add_command(list_tasks_cmd)
+list_cmd.add_command(list_workflow_runs_cmd)
+list_cmd.add_command(list_job_partition_cmd)
+# list_cmd.add_command(list_logs_cmd)
