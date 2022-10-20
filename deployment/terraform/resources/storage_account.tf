@@ -8,66 +8,8 @@ resource "azurerm_storage_account" "pctasks" {
 
 # Tables
 
-resource "azurerm_storage_table" "datasets" {
-  name                 = "datasets"
-  storage_account_name = azurerm_storage_account.pctasks.name
-}
-
-resource "azurerm_storage_table" "workflowrungrouprecords" {
-  name                 = "workflowrungrouprecords"
-  storage_account_name = azurerm_storage_account.pctasks.name
-}
-
-resource "azurerm_storage_table" "workflowrunrecords" {
-  name                 = "workflowrunrecords"
-  storage_account_name = azurerm_storage_account.pctasks.name
-}
-
-resource "azurerm_storage_table" "jobrunrecords" {
-  name                 = "jobrunrecords"
-  storage_account_name = azurerm_storage_account.pctasks.name
-}
-
-resource "azurerm_storage_table" "taskrunrecords" {
-  name                 = "taskrunrecords"
-  storage_account_name = azurerm_storage_account.pctasks.name
-}
-
-
 resource "azurerm_storage_table" "imagekeys" {
   name                 = "imagekeys"
-  storage_account_name = azurerm_storage_account.pctasks.name
-}
-
-resource "azurerm_storage_table" "webhooks" {
-  name                 = "webhooks"
-  storage_account_name = azurerm_storage_account.pctasks.name
-}
-
-resource "azurerm_storage_table" "blobtriggerregistrations" {
-  name                 = "blobtriggerregistrations"
-  storage_account_name = azurerm_storage_account.pctasks.name
-}
-
-# Queues
-
-resource "azurerm_storage_queue" "inbox" {
-  name                 = "inbox"
-  storage_account_name = azurerm_storage_account.pctasks.name
-}
-
-resource "azurerm_storage_queue" "workflows" {
-  name                 = "workflows"
-  storage_account_name = azurerm_storage_account.pctasks.name
-}
-
-resource "azurerm_storage_queue" "notifications" {
-  name                 = "notifications"
-  storage_account_name = azurerm_storage_account.pctasks.name
-}
-
-resource "azurerm_storage_queue" "tasksignals" {
-  name                 = "tasksignals"
   storage_account_name = azurerm_storage_account.pctasks.name
 }
 
