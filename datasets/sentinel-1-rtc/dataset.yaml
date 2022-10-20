@@ -1,5 +1,5 @@
-name: sentinel-1-rtc
-image: ${{ args.registry }}/pctasks-task-base:latest
+id: sentinel-1-rtc
+image: ${{ args.registry }}/pctasks-task-base:rob
 
 args:
 - registry

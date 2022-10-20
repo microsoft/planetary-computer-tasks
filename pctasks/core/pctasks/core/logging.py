@@ -289,8 +289,9 @@ class StorageLogger:
         package: Optional[str] = None,
         level: int = logging.INFO,
         log_format: str = DEFAULT_TASK_LOG_FORMAT,
+        log_storage: Optional[Storage] = None,
     ) -> "StorageLogger":
-        log_storage = get_storage(
+        log_storage = log_storage or get_storage(
             os.path.dirname(uri),
         )
 

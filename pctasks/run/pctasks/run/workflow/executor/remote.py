@@ -330,7 +330,7 @@ class RemoteWorkflowExecutor:
         )
         job_part_runs: Dict[str, JobPartitionRunRecord] = {}
 
-        while _jobs_left():
+        while _jobs_left() > 0:
             for job_part_state in job_part_states:
                 try:
                     part_id = (
@@ -468,7 +468,7 @@ class RemoteWorkflowExecutor:
                             job_part_state.status = JobPartitionStateStatus.FAILED
                             job_part_state.current_task = None
 
-                            # Mark this task as failed
+                            # Mark this task as failed (will also fail job part)
 
                             update_task_run_status(
                                 container,
@@ -477,14 +477,6 @@ class RemoteWorkflowExecutor:
                                 TaskRunStatus.FAILED,
                                 errors=errors,
                                 log_uri=task_state.get_log_uri(task_log_storage),
-                            )
-
-                            job_part_state.status = JobPartitionStateStatus.FAILED
-                            failed_job_count += 1
-                            update_job_partition_run_status(
-                                container,
-                                job_part_runs[part_id],
-                                JobPartitionRunStatus.FAILED,
                             )
 
                             logger.warning(f"Job failed: {job_part_state.job_id}")
@@ -550,10 +542,6 @@ class RemoteWorkflowExecutor:
                                         JobPartitionRunStatus.COMPLETED,
                                     )
                                     self.handle_job_part_notifications(job_part_state)
-                                    completed_job_count += 1
-                                    logger.info(
-                                        f"Job completed: {job_part_state.job_id}"
-                                    )
                                 except Exception:
                                     job_part_state.status = (
                                         JobPartitionStateStatus.FAILED
@@ -564,6 +552,8 @@ class RemoteWorkflowExecutor:
                                         job_part_runs[part_id],
                                         JobPartitionRunStatus.FAILED,
                                     )
+                                completed_job_count += 1
+                                logger.info(f"Job completed: {job_part_state.job_id}")
 
                             _report_status()
 
@@ -595,13 +585,16 @@ class RemoteWorkflowExecutor:
             f"blob://{self.config.run_settings.blob_account_name}/"
             f"{self.config.run_settings.log_blob_container}/{log_path}"
         )
+        log_storage = self.config.run_settings.get_log_storage()
 
-        with StorageLogger.from_uri(log_uri):
+        with StorageLogger.from_uri(log_uri, log_storage=log_storage):
 
             logger.info("***********************************")
             logger.info(f"Workflow: {submit_message.workflow.id}")
             logger.info(f"Run Id: {run_id}")
             logger.info("***********************************")
+
+            logger.info(f"Logging to: {log_uri}")
 
             container = WorkflowRunsContainer(
                 WorkflowRunRecord, db=self.config.get_cosmosdb()
@@ -900,8 +893,12 @@ class RemoteWorkflowExecutor:
                                 )
                             job_outputs[job_def.get_id()] = job_output_entry
 
-                        job_run.set_status(JobRunStatus.COMPLETED)
-                        container.put(workflow_run)
+                        update_job_run_status(
+                            container,
+                            workflow_run,
+                            job_def.get_id(),
+                            JobRunStatus.COMPLETED,
+                        )
 
                 if workflow_failed:
                     logger.error("Workflow failed!")

@@ -185,7 +185,7 @@ def prepare_task(
     log_blob_sas_token = generate_blob_sas(
         account_name=settings.blob_account_name,
         account_key=settings.blob_account_key,
-        container_name=settings.log_blob_container,
+        container_name=settings.task_io_blob_container,
         blob_name=task_status_path,
         start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),

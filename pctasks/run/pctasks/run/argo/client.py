@@ -49,6 +49,14 @@ IMAGE_PULL_BACKOFF = "ImagePullBackOff"
 ERR_IMAGE_PULL = "ErrImagePull"
 
 
+def get_pull_policy(image: str) -> str:
+    split_image = image.split(":")
+    if len(split_image) > 1:
+        if split_image[-1].lower().startswith("v") or split_image[-1][:1].isdigit():
+            return "IfNotPresent"
+    return "Always"
+
+
 class ArgoClient:
     def __init__(self, host: str, token: str, namespace: str) -> None:
         self.host = host
@@ -67,13 +75,12 @@ class ArgoClient:
         submit_msg: WorkflowSubmitMessage,
         run_id: str,
         executor_config: WorkflowExecutorConfig,
-        runner_image: Optional[str] = None,
+        runner_image: str,
     ) -> Dict[str, Any]:
         b64encoded_config = b64encode(executor_config.to_yaml().encode("utf-8")).decode(
             "utf-8"
         )
 
-        runner_image = runner_image
         run_settings = executor_config.run_settings
 
         workflow_path = get_workflow_path(run_id)
@@ -137,6 +144,7 @@ class ArgoClient:
                         name="run-workflow",
                         container=Container(
                             image=runner_image,
+                            image_pull_policy=get_pull_policy(runner_image),
                             command=["pctasks"],
                             env=env,
                             args=[
@@ -206,6 +214,7 @@ class ArgoClient:
                         name="run-workflow",
                         container=Container(
                             image=task_image,
+                            image_pull_policy=get_pull_policy(task_image),
                             command=["pctasks"],
                             env=env,
                             args=command_args,
