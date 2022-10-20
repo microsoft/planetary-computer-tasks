@@ -5,8 +5,8 @@ args:
 - registry
 
 code:
-  src: ${{ local.path(./noaa_mrms_qpe.py) }}
-  requirements: ${{ local.path(./requirements.txt) }}
+  src: ${{ local.path(../noaa_mrms_qpe.py) }}
+  requirements: ${{ local.path(../requirements.txt) }}
 
 environment: 
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -15,7 +15,7 @@ environment:
 
 collections:
   - id: noaa-mrms-qpe-1h-pass1
-    template: ${{ local.path(./collection/noaa-mrms-qpe-1h-pass1) }}
+    template: ${{ local.path(../collection/noaa-mrms-qpe-1h-pass1) }}
     class: noaa_mrms_qpe:NoaaMrmsQpeCollection
     asset_storage:
       - uri: blob://mrms/mrms
@@ -31,7 +31,7 @@ collections:
       uri: blob://devstoreaccount1/mrms-etl-data/qpe-1h-pass1/
 
   - id: noaa-mrms-qpe-1h-pass2
-    template: ${{ local.path(./collection/noaa-mrms-qpe-1h-pass2) }}
+    template: ${{ local.path(../collection/noaa-mrms-qpe-1h-pass2) }}
     class: noaa_mrms_qpe:NoaaMrmsQpeCollection
     asset_storage:
       - uri: blob://mrms/mrms
@@ -47,7 +47,7 @@ collections:
       uri: blob://devstoreaccount1/mrms-etl-dataKC/qpe-1h-pass2/
 
   - id: noaa-mrms-qpe-24h-pass2
-    template: ${{ local.path(./collection/noaa-mrms-qpe-24h-pass2) }}
+    template: ${{ local.path(../collection/noaa-mrms-qpe-24h-pass2) }}
     class: noaa_mrms_qpe:NoaaMrmsQpeCollection
     asset_storage:
       - uri: blob://mrms/mrms

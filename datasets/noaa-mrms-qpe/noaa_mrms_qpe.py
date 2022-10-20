@@ -34,6 +34,10 @@ class NoaaMrmsQpeCollection(Collection):
             # create item
             item = create_item(tmp_grib_path, aoi)
 
+            # update roles to be consistent in the PC
+            item.assets["cog"].roles = ["data"]
+            item.assets["grib2"].roles = ["data"]
+
             # upload cog to Azure
             cog_storage = storage_factory.get_storage(f"{COG_CONTAINER}/{path_fragment}/")
             cog_filename = meta.id + ".tif"

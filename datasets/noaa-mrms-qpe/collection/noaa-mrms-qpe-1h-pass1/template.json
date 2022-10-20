@@ -155,8 +155,7 @@
         },
         "grib2": {
             "roles": [
-                "data",
-                "source"
+                "data"
             ],
             "type": "application/wmo-GRIB2",
             "raster:bands": [
@@ -177,11 +176,11 @@
             1
         ],
         "noaa_mrms_qpe:region": [
-          "CONUS",
-          "HAWAII",
-          "GUAM",
-          "ALASKA",
-          "CARIB"
+            "CONUS",
+            "HAWAII",
+            "GUAM",
+            "ALASKA",
+            "CARIB"
         ]
     }
 }
