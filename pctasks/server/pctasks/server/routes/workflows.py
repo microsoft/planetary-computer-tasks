@@ -24,7 +24,7 @@ from pctasks.core.models.workflow import (
 )
 from pctasks.run.settings import RunSettings
 from pctasks.run.workflow import get_workflow_runner
-from pctasks.server.dependencies import PageParams
+from pctasks.server.dependencies import PageParams, SortParams
 from pctasks.server.request import ParsedRequest
 
 logger = logging.getLogger(__name__)
@@ -40,7 +40,9 @@ workflows_router = APIRouter()
     response_model=WorkflowRecordListResponse,
 )
 def list_workflows(
-    request: Request, page_params: PageParams = Depends(PageParams.dependency)
+    request: Request,
+    page_params: PageParams = Depends(PageParams.dependency),
+    sort_params: SortParams = Depends(SortParams.dependency),
 ) -> RecordListResponse[WorkflowRecord]:
     parsed_request = ParsedRequest(request)
 
@@ -49,6 +51,7 @@ def list_workflows(
 
     container = RecordsContainer(WorkflowRecord)
     query = "SELECT * FROM c WHERE c.type = @type"
+    query = sort_params.add_sort(query)
     pages = container.query_paged(
         query=query,
         partition_key=WorkflowRecordType.WORKFLOW,
@@ -123,7 +126,6 @@ def fetch_workflow(request: Request, workflow_id: str) -> WorkflowRecordResponse
             status_code=404, detail=f"Workflow '{workflow_id}' not found"
         )
 
-    logger.info(record.json(indent=2))
     return WorkflowRecordResponse(record=record)
 
 
@@ -148,7 +150,7 @@ async def submit_workflow(
             status_code=404, detail=f"Workflow '{workflow_id}' not found"
         )
 
-    logger.info(f"Workflow: {workflow_id}")
+    logger.info(f"Submitting workflow: {workflow_id}")
     run_id = str(uuid4())
 
     submit_msg = WorkflowSubmitMessage(
@@ -214,6 +216,7 @@ async def fetch_task_log(
 async def list_workflow_runs(
     request: Request,
     workflow_id: str,
+    sort_params: SortParams = Depends(SortParams.dependency),
     page_params: PageParams = Depends(PageParams.dependency),
 ) -> RecordListResponse[WorkflowRunRecord]:
     parsed_request = ParsedRequest(request)
@@ -223,6 +226,7 @@ async def list_workflow_runs(
 
     container = WorkflowsContainer(WorkflowRunRecord)
     query = "SELECT * FROM c WHERE c.workflow_id = @workflow_id AND c.type = @type"
+    query = sort_params.add_sort(query)
     pages = container.query_paged(
         query=query,
         partition_key=workflow_id,

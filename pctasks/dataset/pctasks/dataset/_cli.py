@@ -6,7 +6,7 @@ from pystac.utils import str_to_datetime
 from strictyaml.exceptions import MarkedYAMLError
 
 from pctasks.cli.cli import cli_output
-from pctasks.client.utils import cli_handle_workflow
+from pctasks.client.workflow.commands import cli_handle_workflow
 from pctasks.core.utils import map_opt
 from pctasks.core.yaml import YamlValidationError
 from pctasks.dataset.chunks.models import ChunkOptions

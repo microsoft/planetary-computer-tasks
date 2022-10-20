@@ -17,7 +17,7 @@ from pctasks.core.models.run import (
     WorkflowRunRecord,
 )
 from pctasks.run.settings import RunSettings
-from pctasks.server.dependencies import PageParams
+from pctasks.server.dependencies import PageParams, SortParams
 from pctasks.server.request import ParsedRequest
 
 logger = logging.getLogger(__name__)
@@ -96,6 +96,7 @@ async def list_job_partition_runs(
     run_id: str,
     job_id: str,
     page_params: PageParams = Depends(PageParams.dependency),
+    sort_params: SortParams = Depends(SortParams.dependency),
 ) -> RecordListResponse[JobPartitionRunRecord]:
     parsed_request = ParsedRequest(request)
 
@@ -107,6 +108,7 @@ async def list_job_partition_runs(
         "SELECT * FROM c WHERE c.run_id = @run_id "
         "AND c.job_id = @job_id AND c.type = @type"
     )
+    query = sort_params.add_sort(query)
     pages = container.query_paged(
         query=query,
         partition_key=run_id,

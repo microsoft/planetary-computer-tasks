@@ -5,7 +5,7 @@ from pctasks.core.context import PCTasksCommandContext
 
 
 @dataclass
-class RecordsCommandContext(PCTasksCommandContext):
+class ClientCommandContext(PCTasksCommandContext):
     pretty_print: bool = False
     """Whether to pretty print the output, e.g. syntax highlight YAML."""
 

@@ -7,7 +7,7 @@ from rich.live import Live
 from rich.table import Table
 
 from pctasks.client.client import PCTasksClient
-from pctasks.client.records.constants import NOT_FOUND_EXIT_CODE
+from pctasks.client.constants import NOT_FOUND_EXIT_CODE
 from pctasks.client.settings import ClientSettings
 from pctasks.client.utils import status_emoji
 from pctasks.core.models.run import JobRunStatus

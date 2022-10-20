@@ -134,9 +134,19 @@ class PCTasksClient:
         page_token: Optional[str] = None,
         page_limit: Optional[int] = None,
         max_pages: Optional[int] = None,
+        sort_by: Optional[str] = None,
+        descending: Optional[bool] = None,
     ) -> Iterable[T]:
         result: Optional[RecordListResponse[T]] = None
         page_count = 0
+        params: Dict[str, Any] = {
+            "pageLimit": page_limit or self.settings.default_page_size,
+            "pageToken": page_token,
+        }
+        if sort_by is not None:
+            params["sortBy"] = sort_by
+            if descending is not None:
+                params["desc"] = descending
         while (
             result is None
             or result.next_page_token
@@ -145,10 +155,7 @@ class PCTasksClient:
             resp = self._call_api(
                 "GET",
                 route,
-                params={
-                    "page_limit": page_limit or self.settings.default_page_size,
-                    "page_token": page_token,
-                },
+                params=params,
             )
             result = record_list_response_type.parse_obj(resp)
             yield from result.records
@@ -228,6 +235,8 @@ class PCTasksClient:
         page_limit: Optional[int] = None,
         page_token: Optional[str] = None,
         max_pages: Optional[int] = None,
+        sort_by: Optional[str] = None,
+        descending: Optional[bool] = None,
     ) -> Iterable[WorkflowRecord]:
         route = LIST_WORKFLOWS_ROUTE
         yield from self._yield_page_results(
@@ -236,6 +245,8 @@ class PCTasksClient:
             page_limit=page_limit,
             page_token=page_token,
             max_pages=max_pages,
+            sort_by=sort_by,
+            descending=descending,
         )
 
     def create_workflow(
@@ -389,6 +400,8 @@ class PCTasksClient:
         page_limit: Optional[int] = None,
         page_token: Optional[str] = None,
         max_pages: Optional[int] = None,
+        sort_by: Optional[str] = None,
+        descending: Optional[bool] = None,
     ) -> Iterable[WorkflowRunRecord]:
         route = LIST_WORKFLOW_RUNS_ROUTE.format(workflow_id=workflow_id)
         yield from self._yield_page_results(
@@ -397,6 +410,8 @@ class PCTasksClient:
             page_limit=page_limit,
             page_token=page_token,
             max_pages=max_pages,
+            sort_by=sort_by,
+            descending=descending,
         )
 
     def _upsert_workflow(self, workflow_id: str, workflow: Workflow, verb: str) -> None:
@@ -428,6 +443,16 @@ class PCTasksClient:
                 return None
             raise
 
+    def get_workflow_log(self, run_id: str) -> Optional[str]:
+        route = FETCH_WORKFLOW_RUN_LOG_ROUTE.format(run_id=run_id)
+        try:
+            result = self._call_api_text("GET", route)
+            return result
+        except HTTPError as e:
+            if e.response.status_code == 404:
+                return None
+            raise
+
     def list_job_partition_runs(
         self,
         run_id: str,
@@ -435,6 +460,8 @@ class PCTasksClient:
         page_limit: Optional[int] = None,
         page_token: Optional[str] = None,
         max_pages: Optional[int] = None,
+        sort_by: Optional[str] = None,
+        descending: Optional[bool] = None,
     ) -> Iterable[JobPartitionRunRecord]:
         route = LIST_JOB_PARTITION_RUNS_ROUTE.format(run_id=run_id, job_id=job_id)
         yield from self._yield_page_results(
@@ -443,6 +470,8 @@ class PCTasksClient:
             page_limit=page_limit,
             page_token=page_token,
             max_pages=max_pages,
+            sort_by=sort_by,
+            descending=descending,
         )
 
     def get_job_partition_run(

@@ -4,7 +4,7 @@ from typing import List, Optional
 
 import click
 
-from pctasks.client.utils import cli_handle_workflow
+from pctasks.client.workflow.commands import cli_handle_workflow
 from pctasks.core.constants import DEFAULT_TARGET_ENVIRONMENT
 from pctasks.core.context import PCTasksCommandContext
 from pctasks.core.models.workflow import JobDefinition, WorkflowDefinition

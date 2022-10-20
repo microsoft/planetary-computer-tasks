@@ -6,7 +6,7 @@ from rich.console import Console
 from rich.table import Table
 
 from pctasks.client.client import PCTasksClient
-from pctasks.client.records.constants import NOT_FOUND_EXIT_CODE
+from pctasks.client.constants import NOT_FOUND_EXIT_CODE
 from pctasks.client.settings import ClientSettings
 from pctasks.client.utils import status_emoji
 from pctasks.core.models.run import JobPartitionRunRecord, WorkflowRunRecord
@@ -53,44 +53,21 @@ def list_run_records(
     return 0
 
 
-def list_workflows_cmd(ctx: click.Context) -> int:
-    """Fetch a workflow run record.
-
-    Outputs the YAML of the record to stdout.
-    """
-    settings = ClientSettings.from_context(ctx.obj)
-    client = PCTasksClient(settings)
-    console = Console(stderr=True)
-
-    with console.status("Fetching records...") as fetch_status:
-        fetch_status.update(
-            status="[bold green]Fetching records...",
-            spinner="aesthetic",
-            spinner_style="green",
-        )
-        records = client.list_workflows()
-        if records is None:
-            console.print("[bold red]No records found.")
-            raise Exit(NOT_FOUND_EXIT_CODE)
-        table = Table()
-        table.add_column("id")
-        table.add_column("name")
-
-        for record in records:
-            table.add_row(record.get_id(), record.workflow.definition.name)
-
-    console.print(table)
-    return 0
-
-
-def list_workflow_runs_cmd(ctx: click.Context, workflow_id: str) -> int:
+def list_workflow_runs_cmd(
+    ctx: click.Context,
+    workflow_id: str,
+    sort_by: Optional[str] = None,
+    desc: bool = False,
+) -> int:
     """Fetch a workflow run record.
 
     Outputs the YAML of the record to stdout.
     """
     return list_run_records(
         ctx,
-        lambda client, _: client.list_workflow_runs(workflow_id),
+        lambda client, _: client.list_workflow_runs(
+            workflow_id, sort_by=sort_by, descending=desc
+        ),
     )
 
 
@@ -98,6 +75,8 @@ def list_job_part_cmd(
     ctx: click.Context,
     run_id: str,
     job_id: str,
+    sort_by: Optional[str] = None,
+    desc: bool = False,
 ) -> int:
     """Fetch a job partition run record.
 
@@ -106,35 +85,7 @@ def list_job_part_cmd(
 
     return list_run_records(
         ctx,
-        lambda client, _: client.list_job_partition_runs(run_id, job_id),
+        lambda client, _: client.list_job_partition_runs(
+            run_id, job_id, sort_by=sort_by, descending=desc
+        ),
     )
-
-
-# def fetch_task_log_cmd(
-#     ctx: click.Context,
-#     job_id: str,
-#     part_id: str,
-#     task_id: str,
-#     run_id: str,
-# ) -> int:
-#     """Fetch a task record.
-
-#     Outputs the YAML of the record to stdout.
-#     """
-
-#     settings = ClientSettings.from_context(ctx.obj)
-#     client = PCTasksClient(settings)
-
-#     log_text = client.get_task_log(run_id, job_id, part_id, task_id)
-
-#     console = Console(stderr=True)
-#     if not log_text:
-#         console.print("[yellow]No logs found.")
-#         return NOT_FOUND_EXIT_CODE
-
-#     console.print(f"[green]Logs for task {task_id}:")
-
-#     console.print(f"\n[bold green]Log for task {task_id}:")
-#     cli_output(log_text)
-
-#     return 0
