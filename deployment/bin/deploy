@@ -21,7 +21,6 @@ Options:
     --plan: Only run Terraform plan.
     --skip-tf: Skips terraform apply.
     --tf-only: Only deploy the terraform infrastructure.
-    --initial: Run an initial deploy, required for Function App.
     --functions: Only run function publish, no terraform changes.
     --skip-tf-init: Skip running terrform init.
     --skip-functions: Don't run function publish.
@@ -80,10 +79,6 @@ while [[ "$#" -gt 0 ]]; do case $1 in
         TF_ONLY=1
         shift
         ;;
-    --initial)
-        INITIAL=1
-        shift
-        ;;
     --functions)
         SKIP_TF=1
         FUNCTIONS=1
@@ -139,7 +134,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     require_env "DEPLOY_SECRETS_KV"
     require_env "DEPLOY_SECRETS_KV_SECRET"
 
-    if [ -z "${SKIP_FETCH_TF_VARS}${SKIP_TF}" ]; then
+    if [ -z "${SKIP_FETCH_TF_VARS}${SKIP_TF}${DEV_DEPLOY}" ]; then
 
         if [ -f "${TERRAFORM_DIR}/values.tfvars" ]; then
             mv ${TERRAFORM_DIR}/values.tfvars ${TERRAFORM_DIR}/values.bak.tfvars
@@ -153,8 +148,9 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         VARS_OPT="-var-file=values.tfvars"
     else
         echo "ERROR: You must create a values.tfvars file in ${TERRAFORM_DIR} before deploying"
-        echo "This must be pulled from keyvault, or if --skip-fetch-tf-vars is passed, you must create it manually"
-        echo "See the README in the deployment directory for more information"
+        echo "For non-dev deployments must be pulled from keyvault, or if --skip-fetch-tf-vars is passed"
+        echo "or using a dev deployement, you must create it manually"
+        echo "See the deployment documentation for more information"
         exit 1
     fi
 
@@ -174,23 +170,13 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         fi
 
         if [ "${PLAN_ONLY}" ]; then
-            if [ "${INITIAL}" ]; then
-                echo " !!! Only showing initial Azure Function deployment plan"
-                terraform plan -target=module.resources.azurerm_function_app.pctasks "${VARS_OPT}"
-            else
-                terraform plan "${VARS_OPT}"
-            fi
+            terraform plan "${VARS_OPT}"
             exit 0
         fi
 
-        if [ "${INITIAL}" ]; then
-            echo " !!! Only applying initial Azure Function deployment plan"
-            terraform apply -target=module.resources.azurerm_function_app.rxetl "${VARS_OPT}" "${AUTO_APPROVE_OPT}"
-            exit 0
-        else
-            echo " --- Deploying full infrastructure (--initial must have previously been run)"
-            terraform apply "${VARS_OPT}" "${AUTO_APPROVE_OPT}"
-        fi
+
+        echo " --- Running terraform apply --- "
+        terraform apply "${VARS_OPT}" "${AUTO_APPROVE_OPT}"
     fi
 
     if [ "${TF_ONLY}" ]; then
@@ -300,6 +286,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     export SA_ACCOUNT_KEY=$(tf_output sa_account_key)
     export SA_ACCOUNT_URL=$(tf_output sa_tables_account_url)
     export FUNCTION_APP_NAME=$(tf_output function_app_name)
+    export IMAGE_TAG=$(tf_output pctasks_server_image_tag)
     popd
 
     #########################
@@ -312,7 +299,8 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
             "${ACR_NAME}" \
             "${SA_ACCOUNT_NAME}" \
             "${SA_ACCOUNT_KEY}" \
-            --url "${SA_ACCOUNT_URL}"
+            --url "${SA_ACCOUNT_URL}" \
+            --tag "${IMAGE_TAG}"
     fi
 
     #########################

@@ -4,8 +4,8 @@ module "resources" {
   environment           = var.username
   region                = var.region
 
-  pctasks_server_image_tag = "rob"
-  pctasks_run_image_tag = "rob"
+  pctasks_server_image_tag = var.pctasks_server_image_tag
+  pctasks_run_image_tag = var.pctasks_run_image_tag
 
   batch_default_pool_id = var.batch_default_pool_id
 
@@ -19,9 +19,8 @@ module "resources" {
   task_sp_client_id = var.task_sp_client_id
   task_sp_client_secret = var.task_sp_client_secret
 
-  pctasks_test_kv = "kv-pctaskstest-rob"
-  # Note: this resource group is managed by terraform but contains the manually managed keyvault
-  pctasks_test_kv_resource_group_name = "rg-pctaskstest-rob-westeurope"
+  pctasks_task_kv = var.pctasks_task_kv
+  pctasks_task_kv_resource_group_name = var.pctasks_task_kv_resource_group_name
 
   kv_sp_tenant_id = var.kv_sp_tenant_id
   kv_sp_client_id = var.kv_sp_client_id
@@ -42,8 +41,8 @@ module "resources" {
 
   stac_db_connection_string =  var.stac_db_connection_string
 
-  cosmosdb_account_name = "cdb-pctaskstest-rob"
-  cosmosdb_resource_group = "rg-pctaskstest-rob-westeurope"
+  cosmosdb_account_name = var.cosmosdb_account_name
+  cosmosdb_resource_group = var.cosmosdb_resource_group
 
   cluster_cert_issuer = "letsencrypt"
   cluster_cert_server = "https://acme-v02.api.letsencrypt.org/directory"

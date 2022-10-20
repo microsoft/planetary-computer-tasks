@@ -12,7 +12,11 @@ from pctasks.core.tables.config import ImageKeyEntryTable
 
 
 def setup_storage(
-    acr: str, account_name: str, account_key: str, endpoint_url: Optional[str]
+    acr: str,
+    account_name: str,
+    account_key: str,
+    endpoint_url: Optional[str],
+    image_tag: str,
 ) -> None:
     # Setting up image key table.
     table_name = DEFAULT_IMAGE_KEY_TABLE_NAME
@@ -36,12 +40,12 @@ def setup_storage(
         image_key_table.set_image(
             "ingest",
             ImageConfig(
-                image=f"{acr}.azurecr.io/pctasks-ingest:latest",
+                image=f"{acr}.azurecr.io/pctasks-ingest:{image_tag}",
                 environment=[
                     "DB_CONNECTION_STRING=${{ secrets.pgstac-connection-string }}",
                 ],
                 tags=["batch_pool_id=ingest_pool"],
-            )
+            ),
         )
 
 
@@ -51,6 +55,7 @@ if __name__ == "__main__":
     parser.add_argument("account_name", help="Storage account name.")
     parser.add_argument("account_key", help="Storage account key.")
     parser.add_argument("--url", help="Endpoint URL.")
+    parser.add_argument("--tag", help="Image tag.")
 
     args = parser.parse_args()
-    setup_storage(args.acr, args.account_name, args.account_key, args.url)
+    setup_storage(args.acr, args.account_name, args.account_key, args.url, args.tag)

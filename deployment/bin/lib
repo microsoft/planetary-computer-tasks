@@ -60,6 +60,7 @@ function cluster_login() {
         --resource-group ${RESOURCE_GROUP} \
         --name ${CLUSTER_NAME} \
         --subscription ${ARM_SUBSCRIPTION_ID} \
+         --overwrite-existing \
         --file=kubeconfig
 
     # kubelogin mutates every entry in the kubeconfig

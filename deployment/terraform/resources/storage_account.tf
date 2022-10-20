@@ -87,24 +87,6 @@ resource "azurerm_storage_container" "taskio" {
 
 # Access Policies
 
-resource "azurerm_role_assignment" "function-app-blob-access" {
-  scope                = azurerm_storage_account.pctasks.id
-  role_definition_name = "Storage Blob Data Contributor"
-  principal_id         = azurerm_function_app.pctasks.identity[0].principal_id
-}
-
-resource "azurerm_role_assignment" "function-app-queue-access" {
-  scope                = azurerm_storage_account.pctasks.id
-  role_definition_name = "Storage Queue Data Contributor"
-  principal_id         = azurerm_function_app.pctasks.identity[0].principal_id
-}
-
-resource "azurerm_role_assignment" "function-app-table-access" {
-  scope                = azurerm_storage_account.pctasks.id
-  role_definition_name = "Storage Table Data Contributor"
-  principal_id         = azurerm_function_app.pctasks.identity[0].principal_id
-}
-
 resource "azurerm_role_assignment" "pctasks-server-blob-access" {
   scope                = azurerm_storage_account.pctasks.id
   role_definition_name = "Storage Blob Data Contributor"

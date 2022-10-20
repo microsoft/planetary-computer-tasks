@@ -116,11 +116,11 @@ variable "kv_sp_client_secret" {
   type    = string
 }
 
-variable "pctasks_test_kv" {
+variable "pctasks_task_kv" {
   type = string
 }
 
-variable "pctasks_test_kv_resource_group_name" {
+variable "pctasks_task_kv_resource_group_name" {
   type = string
 }
 

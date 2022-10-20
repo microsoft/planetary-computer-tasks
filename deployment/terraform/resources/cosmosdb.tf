@@ -3,11 +3,35 @@ data "azurerm_cosmosdb_account" "pctasks" {
   resource_group_name = var.cosmosdb_resource_group
 }
 
+# Define the CosmosDB database, containers, stored procedures, triggers, and UDFS
+# This MUST be kept in sync with the scripts contained in deployement/cosmosdb/scripts
+# and with the python code in pctasks.core.cosmos.containers
+
 resource "azurerm_cosmosdb_sql_database" "pctasks" {
-  name                = "pctasks-db"
+  name                = "pctasks"
   resource_group_name = data.azurerm_cosmosdb_account.pctasks.resource_group_name
   account_name        = data.azurerm_cosmosdb_account.pctasks.name
 }
+
+## Workflows
+
+resource "azurerm_cosmosdb_sql_container" "workflows" {
+  name                  = "workflows"
+  resource_group_name   = data.azurerm_cosmosdb_account.pctasks.resource_group_name
+  account_name          = data.azurerm_cosmosdb_account.pctasks.name
+  database_name         = azurerm_cosmosdb_sql_database.pctasks.name
+  partition_key_path    = "/workflow_id"
+}
+
+resource "azurerm_cosmosdb_sql_trigger" "post-all-workflows" {
+  name         = "post-all-workflows"
+  container_id = azurerm_cosmosdb_sql_container.workflows.id
+  body         = file("${path.module}/../../cosmosdb/scripts/triggers/workflows/post-all-workflows.js")
+  operation    = "All"
+  type         = "Post"
+}
+
+## Workflow Runs
 
 resource "azurerm_cosmosdb_sql_container" "workflowruns" {
   name                  = "workflow-runs"
@@ -17,19 +41,32 @@ resource "azurerm_cosmosdb_sql_container" "workflowruns" {
   partition_key_path    = "/run_id"
 }
 
-resource "azurerm_cosmosdb_sql_container" "workflowruns" {
-  name                  = "datasets"
-  resource_group_name   = data.azurerm_cosmosdb_account.pctasks.resource_group_name
-  account_name          = data.azurerm_cosmosdb_account.pctasks.name
-  database_name         = azurerm_cosmosdb_sql_database.pctasks.name
-  partition_key_path    = "/run_id"
+resource "azurerm_cosmosdb_sql_trigger" "post-all-workflowruns" {
+  name         = "post-all-workflowruns"
+  container_id = azurerm_cosmosdb_sql_container.workflowruns.id
+  body         = file("${path.module}/../../cosmosdb/scripts/triggers/workflow-runs/post-all-workflowruns.js")
+  operation    = "All"
+  type         = "Post"
 }
 
-resource "azurerm_cosmosdb_sql_container" "workflows" {
-  name                  = "workflows"
+## Records
+
+resource "azurerm_cosmosdb_sql_container" "records" {
+  name                  = "records"
   resource_group_name   = data.azurerm_cosmosdb_account.pctasks.resource_group_name
   account_name          = data.azurerm_cosmosdb_account.pctasks.name
   database_name         = azurerm_cosmosdb_sql_database.pctasks.name
-  partition_key_path    = "/run_id"
+  partition_key_path    = "/type"
+  partition_key_version = 1
+}
+
+## Leases (for change feed processing)
+
+resource "azurerm_cosmosdb_sql_container" "leases" {
+  name                  = "leases"
+  resource_group_name   = data.azurerm_cosmosdb_account.pctasks.resource_group_name
+  account_name          = data.azurerm_cosmosdb_account.pctasks.name
+  database_name         = azurerm_cosmosdb_sql_database.pctasks.name
+  partition_key_path    = "/id"
   partition_key_version = 1
 }
