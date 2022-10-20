@@ -29,7 +29,7 @@ class MultipleCollections(Exception):
     pass
 
 
-class SplitConfig(PCBaseModel):
+class SplitDefinition(PCBaseModel):
     """Configuration for a split task for a single URI."""
 
     prefix: Optional[str] = None
@@ -81,12 +81,12 @@ class ChunkOptions(PCBaseModel):
 
 class ChunksConfig(PCBaseModel):
     options: ChunkOptions = ChunkOptions()
-    splits: Optional[List[SplitConfig]] = None
+    splits: Optional[List[SplitDefinition]] = None
 
     @validator("splits")
     def _validate_splits(
-        cls, v: Optional[List[SplitConfig]]
-    ) -> Optional[List[SplitConfig]]:
+        cls, v: Optional[List[SplitDefinition]]
+    ) -> Optional[List[SplitDefinition]]:
         if v is None:
             return v
         _prefixes: Set[Optional[str]] = set()
@@ -97,7 +97,7 @@ class ChunksConfig(PCBaseModel):
         return v
 
 
-class StorageConfig(PCBaseModel):
+class StorageDefinition(PCBaseModel):
     chunks: ChunksConfig = ChunksConfig()
     uri: str
     token: Optional[str] = None
@@ -106,12 +106,12 @@ class StorageConfig(PCBaseModel):
         return get_storage(self.uri, sas_token=self.token)
 
 
-class CollectionConfig(PCBaseModel):
+class CollectionDefinition(PCBaseModel):
     id: str
     template: Optional[str] = None
     collection_class: str = Field(alias="class")
-    asset_storage: List[StorageConfig]
-    chunk_storage: StorageConfig
+    asset_storage: List[StorageDefinition]
+    chunk_storage: StorageDefinition
 
     def get_tokens(self) -> Dict[str, StorageAccountTokens]:
         """Collects SAS tokens from any container configs."""
@@ -137,15 +137,17 @@ class CollectionConfig(PCBaseModel):
         allow_population_by_field_name = True
 
 
-class DatasetConfig(PCBaseModel):
+class DatasetDefinition(PCBaseModel):
     id: str
     image: str
     code: Optional[CodeConfig] = None
-    collections: List[CollectionConfig]
+    collections: List[CollectionDefinition]
     args: Optional[List[str]] = None
     environment: Optional[Dict[str, Any]] = None
 
-    def get_collection(self, collection_id: Optional[str] = None) -> CollectionConfig:
+    def get_collection(
+        self, collection_id: Optional[str] = None
+    ) -> CollectionDefinition:
         if collection_id is None:
             if len(self.collections) > 1:
                 raise MultipleCollections(
@@ -164,7 +166,7 @@ class DatasetConfig(PCBaseModel):
                 f"dataset={self.id}, collection_id={collection_id}"
             )
 
-    def template_args(self, args: Dict[str, str]) -> "DatasetConfig":
+    def template_args(self, args: Dict[str, str]) -> "DatasetDefinition":
         return DictTemplater({"args": args}, strict=False).template_model(self)
 
     @validator("id")
@@ -176,7 +178,9 @@ class DatasetConfig(PCBaseModel):
         return v
 
     @validator("collections")
-    def _validate_collections(cls, v: List[CollectionConfig]) -> List[CollectionConfig]:
+    def _validate_collections(
+        cls, v: List[CollectionDefinition]
+    ) -> List[CollectionDefinition]:
         if not v:
             raise ValueError("At least one collection must be defined for the dataset.")
         return v

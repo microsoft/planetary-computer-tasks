@@ -12,7 +12,7 @@ from pctasks.core.utils.template import (
     TemplateValue,
 )
 from pctasks.dataset.constants import DEFAULT_DATASET_YAML_PATH
-from pctasks.dataset.models import DatasetConfig
+from pctasks.dataset.models import DatasetDefinition
 
 
 class PCTemplater(Templater):
@@ -34,7 +34,7 @@ class PCTemplater(Templater):
 
 def template_dataset(
     yaml_str: str, parent_dir: Optional[Union[str, Path]] = None
-) -> DatasetConfig:
+) -> DatasetDefinition:
     dataset_dict = yaml.safe_load(yaml_str)
     if parent_dir:
         root = Path(parent_dir)
@@ -42,12 +42,12 @@ def template_dataset(
         root = Path.cwd()
     templater = MultiTemplater(LocalTemplater(root), PCTemplater())
     dataset_dict = templater.template_dict(dataset_dict)
-    return DatasetConfig.parse_obj(dataset_dict)
+    return DatasetDefinition.parse_obj(dataset_dict)
 
 
 def template_dataset_file(
     path: Optional[Union[str, Path]], args: Optional[Dict[str, str]] = None
-) -> DatasetConfig:
+) -> DatasetDefinition:
     """Read and template a dataset YAML file.
     All local relative paths are relative to the file path.
 

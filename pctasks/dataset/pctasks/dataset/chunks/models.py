@@ -8,7 +8,7 @@ from pctasks.dataset.chunks.constants import (
     CREATE_CHUNKS_TASK_PATH,
 )
 from pctasks.dataset.constants import CREATE_CHUNKS_TASK_ID, LIST_CHUNKS_TASK_ID
-from pctasks.dataset.models import ChunkOptions, CollectionConfig, DatasetConfig
+from pctasks.dataset.models import ChunkOptions, CollectionDefinition, DatasetDefinition
 
 
 class CreateChunksInput(PCBaseModel):
@@ -64,8 +64,8 @@ class CreateChunksTaskConfig(TaskDefinition):
     @classmethod
     def from_collection(
         cls,
-        ds: DatasetConfig,
-        collection: CollectionConfig,
+        ds: DatasetDefinition,
+        collection: CollectionDefinition,
         chunkset_id: str,
         src_uri: str,
         options: Optional[Union[str, ChunkOptions]] = None,
@@ -112,8 +112,8 @@ class ListChunksTaskConfig(TaskDefinition):
     @classmethod
     def from_collection(
         cls,
-        ds: DatasetConfig,
-        collection: CollectionConfig,
+        ds: DatasetDefinition,
+        collection: CollectionDefinition,
         chunkset_id: str,
         all: bool = False,
         environment: Optional[Dict[str, str]] = None,

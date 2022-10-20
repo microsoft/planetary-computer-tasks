@@ -12,7 +12,7 @@ from pctasks.dataset.chunks.models import (
     ListChunksTaskConfig,
 )
 from pctasks.dataset.items.models import CreateItemsOptions, CreateItemsTaskConfig
-from pctasks.dataset.models import ChunkOptions, CollectionConfig, DatasetConfig
+from pctasks.dataset.models import ChunkOptions, CollectionDefinition, DatasetDefinition
 from pctasks.dataset.splits.models import CreateSplitsOptions, CreateSplitsTaskConfig
 from pctasks.ingest.models import IngestNdjsonInput, IngestTaskConfig
 from pctasks.ingest.settings import IngestOptions
@@ -20,8 +20,8 @@ from pctasks.ingest.utils import generate_collection_json
 
 
 def create_chunks_workflow(
-    dataset: DatasetConfig,
-    collection: CollectionConfig,
+    dataset: DatasetDefinition,
+    collection: CollectionDefinition,
     chunkset_id: str,
     create_splits_options: Optional[CreateSplitsOptions] = None,
     chunk_options: Optional[ChunkOptions] = None,
@@ -63,8 +63,11 @@ def create_chunks_workflow(
         ),
     )
 
+    id = f"{collection.id}-create-chunks"
+    if collection.id != dataset.id:
+        id = f"{dataset.id}-{id}"
     return WorkflowDefinition(
-        id=f"{dataset.id}-{collection.id}-create-chunks",
+        id=id,
         name=f"Create chunks for {collection.id}",
         dataset=dataset.id,
         tokens=collection.get_tokens(),
@@ -78,8 +81,8 @@ def create_chunks_workflow(
 
 
 def create_process_items_workflow(
-    dataset: DatasetConfig,
-    collection: CollectionConfig,
+    dataset: DatasetDefinition,
+    collection: CollectionDefinition,
     chunkset_id: str,
     use_existing_chunks: bool = False,
     force: bool = False,
@@ -189,8 +192,11 @@ def create_process_items_workflow(
         ),
     )
 
+    id = f"{collection.id}-process-items"
+    if collection.id != dataset.id:
+        id = f"{dataset.id}-{id}"
     return WorkflowDefinition(
-        id=f"{dataset.id}-{collection.id}-process-items",
+        id=id,
         name=f"Process items for {collection.id}",
         dataset=dataset.id,
         tokens=collection.get_tokens(),
@@ -204,8 +210,8 @@ def create_process_items_workflow(
 
 
 def create_ingest_collection_workflow(
-    dataset: DatasetConfig,
-    collection: CollectionConfig,
+    dataset: DatasetDefinition,
+    collection: CollectionDefinition,
     target: Optional[str] = None,
     tags: Optional[Dict[str, str]] = None,
 ) -> WorkflowDefinition:
@@ -235,8 +241,11 @@ def create_ingest_collection_workflow(
         tags=tags,
     )
 
+    id = f"{collection.id}-ingest-collection"
+    if collection.id != dataset.id:
+        id = f"{dataset.id}-{id}"
     return WorkflowDefinition(
-        id=f"{dataset.id}-{collection.id}-ingest-collection",
+        id=id,
         name=f"Ingest Collection: {collection.id}",
         dataset_id=f"{dataset.id}/{collection.id}",
         target_environment=target,

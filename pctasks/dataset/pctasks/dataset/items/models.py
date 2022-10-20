@@ -8,7 +8,7 @@ from pctasks.core.models.task import TaskDefinition
 from pctasks.dataset.chunks.constants import ITEM_CHUNKS_PREFIX
 from pctasks.dataset.chunks.models import ChunkInfo
 from pctasks.dataset.constants import CREATE_ITEMS_TASK_ID
-from pctasks.dataset.models import CollectionConfig, DatasetConfig
+from pctasks.dataset.models import CollectionDefinition, DatasetDefinition
 
 
 class CreateItemsOptions(PCBaseModel):
@@ -95,8 +95,8 @@ class CreateItemsTaskConfig(TaskDefinition):
     @classmethod
     def from_collection(
         cls,
-        ds: DatasetConfig,
-        collection: CollectionConfig,
+        ds: DatasetDefinition,
+        collection: CollectionDefinition,
         chunkset_id: str,
         asset_chunk_info: ChunkInfo,
         options: Optional[CreateItemsOptions] = None,

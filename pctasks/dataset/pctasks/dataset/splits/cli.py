@@ -4,7 +4,7 @@ from typing import List, Optional, Tuple
 import click
 from strictyaml.exceptions import MarkedYAMLError
 
-from pctasks.client.utils import cli_handle_workflow
+from pctasks.client.workflow.commands import cli_handle_workflow
 from pctasks.client.workflow.options import opt_args
 from pctasks.core.models.workflow import JobDefinition, WorkflowDefinition
 from pctasks.core.yaml import YamlValidationError

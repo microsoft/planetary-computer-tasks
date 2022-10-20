@@ -10,9 +10,9 @@ from pctasks.core.tokens import Tokens
 from pctasks.dataset.items.models import CreateItemsOptions
 from pctasks.dataset.models import (
     ChunkOptions,
-    CollectionConfig,
-    DatasetConfig,
-    StorageConfig,
+    CollectionDefinition,
+    DatasetDefinition,
+    StorageDefinition,
 )
 from pctasks.dataset.splits.models import CreateSplitsOptions
 from pctasks.dataset.template import template_dataset_file
@@ -28,13 +28,13 @@ DATASET_PATH = TESTS_DIR.parent / "dataset.yaml"
 
 
 @pytest.fixture
-def dataset_config() -> DatasetConfig:
+def dataset_config() -> DatasetDefinition:
     test_prefix = "test_prefix"
     ds_config = template_dataset_file(DATASET_PATH)
     ds_config.image = "mock:latest"
     ds_config.args = [test_prefix]
     ds_config.collections[0].asset_storage[0].chunks.options.chunk_length = 2
-    ds_config.collections[0].chunk_storage = StorageConfig(
+    ds_config.collections[0].chunk_storage = StorageDefinition(
         uri=f"blob://devstoreaccount1/test-data/{test_prefix}/chunks",
     )
 
@@ -44,8 +44,8 @@ def dataset_config() -> DatasetConfig:
     return ds_config
 
 
-def test_create_chunks(dataset_config: DatasetConfig) -> None:
-    collection_config: CollectionConfig = dataset_config.collections[0]
+def test_create_chunks(dataset_config: DatasetDefinition) -> None:
+    collection_config: CollectionDefinition = dataset_config.collections[0]
     workflow = create_chunks_workflow(
         dataset=dataset_config,
         collection=collection_config,
@@ -71,10 +71,10 @@ def test_create_chunks(dataset_config: DatasetConfig) -> None:
     )
 
 
-def test_create_items(dataset_config: DatasetConfig) -> None:
+def test_create_items(dataset_config: DatasetDefinition) -> None:
     setup_logging(logging.DEBUG)
 
-    collection_config: CollectionConfig = dataset_config.collections[0]
+    collection_config: CollectionDefinition = dataset_config.collections[0]
     tokens = Tokens(collection_config.get_tokens())
     context = TaskContext(StorageFactory(tokens=tokens), run_id="test-1")
 
