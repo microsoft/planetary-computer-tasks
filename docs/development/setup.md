@@ -83,7 +83,7 @@ Clusters are ephemeral, and can take up significant resources; it is fine to run
 
 ## CosmosDB
 
-The development environmnet uses the [Azure CosmosDB Emulator for Linux](https://learn.microsoft.com/en-us/azure/cosmos-db/linux-emulator?tabs=sql-api%2Cssl-netstd21) through docker-compose. There are scripts for managing the Cosmos DB environment - the emulator can be finicky and refuse to start all partitions sometimes, in which case it should be recreated using:
+The development environment uses the [Azure CosmosDB Emulator for Linux](https://learn.microsoft.com/en-us/azure/cosmos-db/linux-emulator?tabs=sql-api%2Cssl-netstd21) through docker-compose. There are scripts for managing the Cosmos DB environment - the emulator can be finicky and refuse to start all partitions sometimes, in which case it should be recreated using:
 
 ```shell
 scripts/setup --reset-cosmos

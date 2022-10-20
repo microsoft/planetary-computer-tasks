@@ -22,7 +22,7 @@ Triggers are stored in the `scripts/triggers` subdirectory. The file name define
 
 These three pieces of information are separated by a `-` symbol. For instance:
 
-`scripts/triggers/post-all-JobPartitionRun.js` would be a post-trigger that applies to all trigger operations and the trigger ID is `post-all-JobPartitionRun`.
+`scripts/triggers/workflow-runs/post-all-workflowruns.js` would be a post-trigger that applies to all trigger operations on the container `workflow-runs` and the trigger ID is `post-all-workflowruns`.
 
 ### UDFs
 

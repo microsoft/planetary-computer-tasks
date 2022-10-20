@@ -1,3 +1,9 @@
+/*
+* TODO: Fix or remove. This does not differentiate between
+* when a workflow run is updated with a status change or not,
+* so the logic to subtract workflow run counts is not correct.
+*/
+
 function postAllWorkflows() {
     var document = __.response.getBody();
 

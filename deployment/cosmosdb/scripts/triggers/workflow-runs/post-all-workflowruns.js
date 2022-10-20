@@ -1,3 +1,9 @@
+/*
+* TODO: Fix or remove. This does not differentiate between
+* when a job partition run is updated with a status change or not,
+* so the logic to subtract job partition run counts is not correct.
+*/
+
 function postAllWorkflowRuns() {
     var document = __.response.getBody();
 
