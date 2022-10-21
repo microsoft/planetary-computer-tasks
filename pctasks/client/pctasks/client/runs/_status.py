@@ -47,10 +47,12 @@ def workflow_status_cmd(ctx: click.Context, run_id: str, watch: bool = False) ->
                 return 1
             if job_status == JobRunStatus.PENDING:
                 return 2
-            if job_status == JobRunStatus.RUNNING:
+            if job_status == JobRunStatus.COMPLETED:
                 return 3
-            else:
+            if job_status == JobRunStatus.SKIPPED:
                 return 4
+            else:
+                return 5
 
         for job in sorted(workflow.jobs, key=lambda x: _job_status_sort(x.status)):
             _table.add_row(

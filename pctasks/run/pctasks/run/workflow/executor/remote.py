@@ -691,6 +691,19 @@ class RemoteWorkflowExecutor:
 
                     total_job_part_count = len(job_partitions)
 
+                    if total_job_part_count <= 0:
+                        job_outputs[job_id] = []
+                        update_job_run_status(
+                            container,
+                            workflow_run,
+                            job_def.get_id(),
+                            JobRunStatus.SKIPPED,
+                            job_run.add_errors(
+                                [f"Job {job_def.id} has no partitions to run."]
+                            )
+                        )
+                        continue
+
                     job_submit_messages = [
                         JobPartitionSubmitMessage(
                             job_partition=prepared_job,
@@ -803,8 +816,6 @@ class RemoteWorkflowExecutor:
                                 " -  Some (not all) initial tasks "
                                 "submitted successfully."
                             )
-                        else:
-                            logger.info(" -  All initial tasks failed to submit.")
 
                     except Exception as e:
                         logger.exception(e)
@@ -818,6 +829,7 @@ class RemoteWorkflowExecutor:
                         continue
 
                     if not any_submitted:
+                        logger.info(" -  All initial tasks failed to submit.")
                         update_job_run_status(
                             container,
                             workflow_run,
@@ -906,7 +918,7 @@ class RemoteWorkflowExecutor:
                         workflow_failed = True
                     else:
                         if len(job_results) == 1:
-                            job_outputs[job_def.get_id()] = {
+                            job_outputs[job_id] = {
                                 TASKS_TEMPLATE_PATH: job_results[0]
                             }
                         else:
@@ -915,7 +927,7 @@ class RemoteWorkflowExecutor:
                                 job_output_entry.append(
                                     {TASKS_TEMPLATE_PATH: job_result}
                                 )
-                            job_outputs[job_def.get_id()] = job_output_entry
+                            job_outputs[job_id] = job_output_entry
 
                         update_job_run_status(
                             container,

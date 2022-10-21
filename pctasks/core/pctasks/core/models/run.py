@@ -74,6 +74,7 @@ class JobRunStatus(StrEnum):
     RUNNING = "running"
     COMPLETED = "completed"
     FAILED = "failed"
+    SKIPPED = "skipped"
     CANCELLED = "cancelled"
     PENDING = "pending"
 
