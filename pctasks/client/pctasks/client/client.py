@@ -32,6 +32,7 @@ from pctasks.core.models.workflow import (
     WorkflowSubmitMessage,
     WorkflowSubmitResult,
 )
+from pctasks.core.utils.backoff import with_backoff
 
 logger = logging.getLogger(__name__)
 
@@ -65,14 +66,17 @@ class PCTasksClient:
             else os.path.join(self.settings.endpoint, path)
         )
 
-        resp = requests.request(
-            method,
-            url,
-            headers={"X-API-KEY": self.settings.api_key},
-            **kwargs,
-        )
+        def do_request() -> requests.Response:
+            resp = requests.request(
+                method,
+                url,
+                headers={"X-API-KEY": self.settings.api_key},
+                **kwargs,
+            )
+            resp.raise_for_status()
+            return resp
 
-        resp.raise_for_status()
+        resp = with_backoff(do_request)
         return resp.json()
 
     def upload_code(self, local_path: Union[pathlib.Path, str]) -> UploadCodeResult:
