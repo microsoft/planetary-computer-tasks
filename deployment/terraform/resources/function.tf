@@ -37,6 +37,7 @@ resource "azurerm_linux_function_app" "pctasks" {
   functions_extension_version = "~4"
   site_config {
     use_32_bit_worker = false
+    ftps_state        = "Disabled"
     application_stack {
       python_version = "3.8"
     }
