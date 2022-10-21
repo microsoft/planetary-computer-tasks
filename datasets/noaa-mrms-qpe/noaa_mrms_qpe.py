@@ -41,6 +41,17 @@ class NoaaMrmsQpeCollection(Collection):
             # temporary grammar fix
             item.assets["cog"].title = "Processed Cloud Optimized GeoTIFF file"
 
+            # pin custom extension schema to the same release tag as the package
+            schema = (
+                "https://raw.githubusercontent.com/stactools-packages/"
+                "noaa-mrms-qpe/main/extension/schema.json"
+            )
+            pinned_schema = (
+                "https://raw.githubusercontent.com/stactools-packages/"
+                "noaa-mrms-qpe/v0.2.0/extension/schema.json"
+            )
+            item.stac_extensions[item.stac_extensions.index(schema)] = pinned_schema
+
             # upload cog to Azure
             cog_storage = storage_factory.get_storage(f"{COG_CONTAINER}/{path_fragment}/")
             cog_filename = meta.id + ".tif"
