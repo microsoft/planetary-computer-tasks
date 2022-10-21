@@ -42,6 +42,9 @@ module "resources" {
 
   stac_db_connection_string =  var.stac_db_connection_string
 
+  cosmosdb_account_name = var.cosmosdb_account_name
+  cosmosdb_resource_group = var.cosmosdb_resource_group
+
   cluster_cert_issuer = "letsencrypt"
   cluster_cert_server = "https://acme-v02.api.letsencrypt.org/directory"
   aks_node_count = 2
