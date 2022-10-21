@@ -7,5 +7,7 @@ def status_emoji(status: str) -> str:
         return "🏃"
     if status.lower() == "cancelled":
         return "🚫"
+    if status.lower() == "skipped":
+        return "⏭️"
     else:
         return "🕖"
