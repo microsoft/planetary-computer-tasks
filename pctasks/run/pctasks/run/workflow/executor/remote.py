@@ -700,7 +700,7 @@ class RemoteWorkflowExecutor:
                             JobRunStatus.SKIPPED,
                             job_run.add_errors(
                                 [f"Job {job_def.id} has no partitions to run."]
-                            )
+                            ),
                         )
                         continue
 
@@ -918,9 +918,7 @@ class RemoteWorkflowExecutor:
                         workflow_failed = True
                     else:
                         if len(job_results) == 1:
-                            job_outputs[job_id] = {
-                                TASKS_TEMPLATE_PATH: job_results[0]
-                            }
+                            job_outputs[job_id] = {TASKS_TEMPLATE_PATH: job_results[0]}
                         else:
                             job_output_entry: List[Dict[str, Any]] = []
                             for job_result in job_results:
