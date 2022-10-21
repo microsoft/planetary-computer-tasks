@@ -1,4 +1,4 @@
-name: io_lulc
+id: io_lulc
 image: ${{ args.registry }}/pctasks-task-base:latest
 
 args:

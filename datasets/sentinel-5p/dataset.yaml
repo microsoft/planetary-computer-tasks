@@ -1,4 +1,4 @@
-name: sentinel-1-grd
+id: sentinel-1-grd
 collections:
   id: sentinel-1-grd
   containers:
