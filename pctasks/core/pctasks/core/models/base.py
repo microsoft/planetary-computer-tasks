@@ -60,6 +60,7 @@ class PCBaseModel(BaseModel):
 
     class Config:
         exclude_none = True
+        allow_population_by_field_name = True
 
 
 class RunRecordId(PCBaseModel):

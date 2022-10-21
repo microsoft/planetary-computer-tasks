@@ -1,15 +1,9 @@
 import pathlib
 
 from pctasks.client.client import PCTasksClient
-from pctasks.core.constants import MICROSOFT_OWNER
 from pctasks.core.models.config import CodeConfig
-from pctasks.core.models.dataset import DatasetIdentifier
-from pctasks.core.models.task import TaskConfig
-from pctasks.core.models.workflow import (
-    JobConfig,
-    WorkflowConfig,
-    WorkflowSubmitMessage,
-)
+from pctasks.core.models.task import TaskDefinition
+from pctasks.core.models.workflow import JobDefinition, WorkflowDefinition
 from pctasks.dev.blob import get_azurite_code_storage
 from pctasks.dev.test_utils import assert_workflow_is_successful
 
@@ -18,13 +12,14 @@ HERE = pathlib.Path(__file__).parent
 
 def test_client_submit():
     code = HERE.joinpath("data-files", "mycode.py").absolute()
-    workflow = WorkflowConfig(
+    workflow = WorkflowDefinition(
+        workflow_id="unittest-workflow-test_client_submit",
         name="Test Workflow!",
-        dataset=DatasetIdentifier(owner=MICROSOFT_OWNER, name="test-dataset"),
+        dataset_id="test-dataset",
         jobs={
-            "test-job": JobConfig(
+            "test-job": JobDefinition(
                 tasks=[
-                    TaskConfig(
+                    TaskDefinition(
                         id="submit_unit_test",
                         image="pctasks-ingest:latest",
                         code=CodeConfig(src=str(code)),
@@ -36,16 +31,18 @@ def test_client_submit():
         },
     )
 
-    submit_message = WorkflowSubmitMessage(
-        workflow=workflow,
-    )
-
     client = PCTasksClient()
-    submitted_message = client.submit_workflow(submit_message)
+    submit_result = client.upsert_and_submit_workflow(workflow)
 
-    assert_workflow_is_successful(submit_message.run_id)
+    assert_workflow_is_successful(submit_result.run_id, timeout_seconds=60)
 
-    task = submitted_message.workflow.jobs["test-job"].tasks[0]
+    workflow_run = client.get_workflow_run(submit_result.run_id)
+    assert workflow_run
+    workflow_record = client.get_workflow(workflow_run.workflow_id)
+    assert workflow_record
+    workflow = workflow_record.workflow
+
+    task = workflow.definition.jobs["test-job"].tasks[0]
     assert task.code
     assert task.code.src.startswith("blob://devstoreaccount1/code/")
     assert task.code.src.endswith("/mycode.py")

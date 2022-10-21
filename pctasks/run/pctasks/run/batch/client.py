@@ -13,9 +13,9 @@ from azure.batch.custom.custom_errors import CreateTasksErrorException
 from dateutil.tz import tzutc
 from requests import Response
 
-from pctasks.core.models.record import TaskRunStatus
+from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.utils import map_opt
-from pctasks.core.utils.backoff import with_backoff
+from pctasks.core.utils.backoff import is_common_throttle_exception, with_backoff
 from pctasks.run.batch.model import BatchJobInfo
 from pctasks.run.batch.task import BatchTask
 from pctasks.run.batch.utils import make_unique_job_id
@@ -44,6 +44,16 @@ class BatchClient:
     """
 
     _dry_run: bool = False
+
+    def _with_backoff(self, func: Callable[[], Any]) -> Any:
+        def _is_throttle(e: Exception) -> bool:
+            if isinstance(e, batchmodels.BatchErrorException):
+                error: Any = e.error  # Avoid type hinting error
+                if error.code == "OperationTimedOut":
+                    return True
+            return is_common_throttle_exception(e)
+
+        return with_backoff(func, is_throttle=_is_throttle)
 
     @classmethod
     def set_dry_run(cls, v: bool) -> None:
@@ -130,13 +140,15 @@ class BatchClient:
             ),
         )
         logger.info(f"(BATCH CLIENT) Adding BatchJob {job_id}")
-        with_backoff(lambda: self._client.job.add(job_param))
+        self._with_backoff(lambda: self._client.job.add(job_param))
         return job_id
 
     def add_task(self, job_id: str, task: BatchTask) -> None:
         task_params = task.to_params()
         logger.info(f"Adding BatchTask {task.task_id}")
-        with_backoff(lambda: self._client.task.add(job_id=job_id, task=task_params))
+        self._with_backoff(
+            lambda: self._client.task.add(job_id=job_id, task=task_params)
+        )
 
     def add_collection(
         self, job_id: str, tasks: Iterable[BatchTask]
@@ -148,11 +160,14 @@ class BatchClient:
         """
         params = [task.to_params() for task in tasks]
         try:
-            result: batchmodels.TaskAddCollectionResult = with_backoff(
-                lambda: self._client.task.add_collection(
-                    job_id=job_id,
-                    value=params,
-                    threads=self.settings.submit_threads,
+            result: batchmodels.TaskAddCollectionResult = self._with_backoff(
+                lambda: cast(
+                    batchmodels.TaskAddCollectionResult,
+                    self._client.task.add_collection(
+                        job_id=job_id,
+                        value=params,
+                        threads=self.settings.submit_threads,
+                    ),
                 )
             )
             task_results: List[batchmodels.TaskAddResult] = result.value  # type: ignore
@@ -177,7 +192,7 @@ class BatchClient:
         return [r.error for r in task_results]
 
     def get_job_info(self, job_id: str) -> BatchJobInfo:
-        cloud_job = with_backoff(
+        cloud_job = self._with_backoff(
             lambda: cast(batchmodels.CloudJob, self._client.job.get(job_id=job_id))
         )
         tasks: List[batchmodels.CloudTask] = list(self._client.task.list(job_id))
@@ -365,7 +380,7 @@ class BatchClient:
         try:
             job = cast(
                 batchmodels.CloudJob,
-                with_backoff(lambda: self._client.job.get(job_id=job_id)),
+                self._with_backoff(lambda: self._client.job.get(job_id=job_id)),
             )
             task = cast(
                 batchmodels.CloudTask,
@@ -414,7 +429,7 @@ class BatchClient:
         try:
             return cast(
                 batchmodels.PoolInformation,
-                with_backoff(lambda: self._client.pool.get(pool_id)),
+                self._with_backoff(lambda: self._client.pool.get(pool_id)),
             )
         except batchmodels.BatchErrorException as e:
             error: Any = e.error  # Avoid type hinting error
@@ -422,3 +437,8 @@ class BatchClient:
                 return None
             else:
                 raise BatchClientError(error.message.value)
+
+    def terminate_task(self, job_id: str, task_id: str) -> None:
+        self._with_backoff(
+            lambda: self._client.task.terminate(job_id=job_id, task_id=task_id)
+        )

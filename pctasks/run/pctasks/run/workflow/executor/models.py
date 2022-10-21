@@ -5,18 +5,18 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
-from pctasks.core.models.record import TaskRunStatus
+from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.models.task import (
     CompletedTaskResult,
     FailedTaskResult,
-    TaskConfig,
+    TaskDefinition,
     TaskResult,
     WaitTaskResult,
 )
 from pctasks.core.storage.base import Storage
 from pctasks.run.models import (
     FailedTaskSubmitResult,
-    JobSubmitMessage,
+    JobPartitionSubmitMessage,
     PreparedTaskSubmitMessage,
     SuccessfulTaskSubmitResult,
     TaskSubmitMessage,
@@ -34,13 +34,43 @@ class TaskStateStatus(str, Enum):
 
     NEW = "new"
     SUBMITTED = "submitted"
+    RUNNING = "running"
     COMPLETED = "completed"
     FAILED = "failed"
     WAITING = "waiting"
+    CANCELLED = "cancelled"
+
+    @property
+    def is_active(self) -> bool:
+        return self == self.SUBMITTED or self == self.RUNNING
+
+    @classmethod
+    def from_task_run_status(cls, status: TaskRunStatus) -> "TaskStateStatus":
+        if status == TaskRunStatus.RECEIVED:
+            return cls.NEW
+        elif status == TaskRunStatus.SUBMITTED:
+            return cls.SUBMITTED
+        elif status == TaskRunStatus.STARTING:
+            return cls.RUNNING
+        elif status == TaskRunStatus.RUNNING:
+            return cls.RUNNING
+        elif status == TaskRunStatus.COMPLETING:
+            return cls.RUNNING
+        elif status == TaskRunStatus.COMPLETED:
+            return cls.COMPLETED
+        elif status == TaskRunStatus.FAILED:
+            return cls.FAILED
+        elif status == TaskRunStatus.WAITING:
+            return cls.WAITING
+        elif status == TaskRunStatus.CANCELLED:
+            return cls.CANCELLED
+        else:
+            raise ValueError(f"Invalid task status {status}")
 
 
-class JobStateStatus(str, Enum):
+class JobPartitionStateStatus(str, Enum):
     NEW = "new"
+    NOTASKS = "notasks"
     RUNNING = "running"
     SUCCEEDED = "succeeded"
     FAILED = "failed"
@@ -56,6 +86,8 @@ class WaitInfo:
 class TaskState:
     prepared_task: PreparedTaskSubmitMessage
     """The prepared task. Remains fixed"""
+    job_part_run_record_id: str
+
     _status: TaskStateStatus = TaskStateStatus.NEW
     _submit_result: Optional[
         Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]
@@ -68,6 +100,9 @@ class TaskState:
     _poll_count = 0
     _last_poll_time: Optional[float] = None
     _last_check_output_time: Optional[float] = None
+
+    # Time that the status blob was last checked
+    _last_check_status_time: Optional[float] = None
 
     _wait_retries: int = 0
     _wait_info: Optional[WaitInfo] = None
@@ -98,13 +133,15 @@ class TaskState:
     def task_id(self) -> str:
         return self.prepared_task.task_submit_message.config.id
 
-    def change_status(self, status: TaskStateStatus) -> None:
+    def change_status(self, status: TaskStateStatus) -> bool:
         if not self.status == status:
             self._status = status
             self.status_updated = False
+            return True
+        return False
 
     def should_poll(self, wait_duration: float) -> bool:
-        if self.status == TaskStateStatus.SUBMITTED and (
+        if self.status.is_active and (
             self._last_poll_time is None
             or (time.monotonic() - self._last_poll_time) > wait_duration
         ):
@@ -112,9 +149,17 @@ class TaskState:
         return False
 
     def should_check_output(self, wait_duration: float) -> bool:
-        if self.status == TaskStateStatus.SUBMITTED and (
+        if self.status.is_active and (
             self._last_check_output_time is None
             or (time.monotonic() - self._last_check_output_time) > wait_duration
+        ):
+            return True
+        return False
+
+    def should_check_status_blob(self, wait_duration: float) -> bool:
+        if self.status.is_active and (
+            self._last_check_status_time is None
+            or (time.monotonic() - self._last_check_status_time) > wait_duration
         ):
             return True
         return False
@@ -171,7 +216,7 @@ class TaskState:
         self, executor: TaskRunner, storage: Storage, settings: RunSettings
     ) -> None:
         """Poll the task and modify the state accordingly."""
-        if not self.status == TaskStateStatus.SUBMITTED:
+        if not self.status.is_active:
             return
 
         self._last_poll_time = time.monotonic()
@@ -259,6 +304,27 @@ class TaskState:
 
         return False
 
+    def process_status_blob_if_available(self, storage: Storage) -> None:
+        self._last_check_status_time = time.monotonic()
+        path = storage.get_path(
+            self.prepared_task.task_run_message.config.status_blob_config.uri
+        )
+        try:
+            new_status_str = storage.read_text(path)
+            try:
+                new_task_run_status = TaskRunStatus(new_status_str)
+                new_status = TaskStateStatus.from_task_run_status(new_task_run_status)
+            except ValueError:
+                self.set_failed(errors=[f"Invalid status update: {new_status_str}"])
+                return
+
+            # Only allow task to report running or completing
+            if new_status == TaskStateStatus.RUNNING:
+                self.change_status(new_status)
+
+        except FileNotFoundError:
+            pass
+
     def get_log_uri(self, storage: Storage) -> Optional[str]:
         log_uri = self.prepared_task.task_run_message.config.log_blob_config.uri
         path = storage.get_path(log_uri)
@@ -268,22 +334,27 @@ class TaskState:
 
 
 @dataclass
-class JobState:
+class JobPartitionState:
     """The state of an executing PCTasks job.
 
     This class should only be used on a single thread.
     """
 
-    job_submit_message: JobSubmitMessage
-    task_queue: List[TaskConfig]
+    job_part_submit_msg: JobPartitionSubmitMessage
+    job_part_run_record_id: str
+    task_queue: List[TaskDefinition]
     task_outputs: Dict[str, Any] = field(default_factory=dict)
 
     current_task: Optional[TaskState] = None
-    status: JobStateStatus = JobStateStatus.NEW
+    status: JobPartitionStateStatus = JobPartitionStateStatus.NEW
 
     @property
     def job_id(self) -> str:
-        return self.job_submit_message.job_id
+        return self.job_part_submit_msg.job_id
+
+    @property
+    def run_id(self) -> str:
+        return self.job_part_submit_msg.run_id
 
     def prepare_next_task(self, settings: RunSettings) -> None:
         next_task_config = next(iter(self.task_queue), None)
@@ -291,25 +362,27 @@ class JobState:
             copied_task = next_task_config.__class__.parse_obj(next_task_config.dict())
             copied_task.args = template_args(
                 copied_task.args,
-                job_outputs=self.job_submit_message.job_outputs,
+                job_outputs=self.job_part_submit_msg.job_outputs,
                 task_outputs=self.task_outputs,
                 trigger_event=None,
             )
 
             next_task_submit_message = TaskSubmitMessage(
-                dataset=self.job_submit_message.dataset,
-                run_id=self.job_submit_message.run_id,
-                job_id=self.job_submit_message.job_id,
-                tokens=self.job_submit_message.tokens,
+                dataset_id=self.job_part_submit_msg.dataset_id,
+                run_id=self.job_part_submit_msg.run_id,
+                job_id=self.job_part_submit_msg.job_id,
+                partition_id=self.job_part_submit_msg.partition_id,
+                tokens=self.job_part_submit_msg.tokens,
                 config=copied_task,
-                target_environment=self.job_submit_message.target_environment,
+                target_environment=self.job_part_submit_msg.target_environment,
                 instance_id="TODO:REMOVE",
             )
 
             self.current_task = TaskState(
                 prepared_task=prepare_task(
-                    next_task_submit_message, self.job_submit_message.run_id, settings
+                    next_task_submit_message, self.job_part_submit_msg.run_id, settings
                 ),
+                job_part_run_record_id=self.job_part_run_record_id,
             )
         else:
             self.current_task = None
@@ -318,16 +391,20 @@ class JobState:
 
     @classmethod
     def create(
-        cls, job_submit_message: JobSubmitMessage, settings: RunSettings
-    ) -> "JobState":
+        cls,
+        job_part_submit_msg: JobPartitionSubmitMessage,
+        job_part_run_record_id: str,
+        settings: RunSettings,
+    ) -> "JobPartitionState":
         """Creates a JobState from a JobSubmitMessage.
 
         Prepares the first task for execution.
         """
         job_state = cls(
-            job_submit_message=job_submit_message,
+            job_part_submit_msg=job_part_submit_msg,
+            job_part_run_record_id=job_part_run_record_id,
             current_task=None,
-            task_queue=job_submit_message.job.tasks[:],
+            task_queue=job_part_submit_msg.job_partition.definition.tasks[:],
         )
         job_state.prepare_next_task(settings)
         return job_state

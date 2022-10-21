@@ -1,33 +1,24 @@
 from enum import Enum
-from typing import Any, Dict, Optional
+from pathlib import Path
+from typing import Any, Dict, Optional, Union
 from urllib.parse import urlparse
 
 from pydantic import validator
 
 from pctasks.core.constants import (
     DEFAULT_CODE_CONTAINER,
-    DEFAULT_DATASET_TABLE_NAME,
     DEFAULT_IMAGE_KEY_TABLE_NAME,
-    DEFAULT_JOB_RUN_RECORD_TABLE_NAME,
     DEFAULT_LOG_CONTAINER,
     DEFAULT_NOTIFICATIONS_QUEUE_NAME,
     DEFAULT_TASK_IO_CONTAINER,
-    DEFAULT_TASK_RUN_RECORD_TABLE_NAME,
-    DEFAULT_WORKFLOW_RUN_GROUP_RECORD_TABLE_NAME,
-    DEFAULT_WORKFLOW_RUN_RECORD_TABLE_NAME,
 )
+from pctasks.core.cosmos.database import CosmosDBDatabase
+from pctasks.core.cosmos.settings import CosmosDBSettings
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.config import QueueConnStrConfig
 from pctasks.core.settings import PCTasksSettings
 from pctasks.core.storage.blob import BlobStorage
 from pctasks.core.tables.config import ImageKeyEntryTable
-from pctasks.core.tables.dataset import DatasetIdentifierTable
-from pctasks.core.tables.record import (
-    JobRunRecordTable,
-    TaskRunRecordTable,
-    WorkflowRunGroupRecordTable,
-    WorkflowRunRecordTable,
-)
 
 
 class TaskRunnerType(str, Enum):
@@ -65,6 +56,7 @@ class RunSettings(PCTasksSettings):
     max_wait_retries: int = 10
     task_poll_seconds: int = 30
     check_output_seconds: int = 3
+    check_status_blob_seconds: int = 5
 
     # Dev
     local_dev_endpoints_url: Optional[str] = None
@@ -77,13 +69,6 @@ class RunSettings(PCTasksSettings):
     tables_account_name: str
     tables_account_key: str
     image_key_table_name: str = DEFAULT_IMAGE_KEY_TABLE_NAME
-    dataset_table_name: str = DEFAULT_DATASET_TABLE_NAME
-    task_run_record_table_name: str = DEFAULT_TASK_RUN_RECORD_TABLE_NAME
-    job_run_record_table_name: str = DEFAULT_JOB_RUN_RECORD_TABLE_NAME
-    workflow_run_record_table_name: str = DEFAULT_WORKFLOW_RUN_RECORD_TABLE_NAME
-    workflow_run_group_record_table_name: str = (
-        DEFAULT_WORKFLOW_RUN_GROUP_RECORD_TABLE_NAME
-    )
 
     # Blob
     blob_account_url: str
@@ -196,46 +181,6 @@ class RunSettings(PCTasksSettings):
             table_name=self.image_key_table_name,
         )
 
-    def get_dataset_table(self) -> DatasetIdentifierTable:
-        return DatasetIdentifierTable.from_account_key(
-            account_url=self.tables_account_url,
-            account_name=self.tables_account_name,
-            account_key=self.tables_account_key,
-            table_name=self.dataset_table_name,
-        )
-
-    def get_task_run_record_table(self) -> TaskRunRecordTable:
-        return TaskRunRecordTable.from_account_key(
-            account_url=self.tables_account_url,
-            account_name=self.tables_account_name,
-            account_key=self.tables_account_key,
-            table_name=self.task_run_record_table_name,
-        )
-
-    def get_job_run_record_table(self) -> JobRunRecordTable:
-        return JobRunRecordTable.from_account_key(
-            account_url=self.tables_account_url,
-            account_name=self.tables_account_name,
-            account_key=self.tables_account_key,
-            table_name=self.job_run_record_table_name,
-        )
-
-    def get_workflow_run_record_table(self) -> WorkflowRunRecordTable:
-        return WorkflowRunRecordTable.from_account_key(
-            account_url=self.tables_account_url,
-            account_name=self.tables_account_name,
-            account_key=self.tables_account_key,
-            table_name=self.workflow_run_record_table_name,
-        )
-
-    def get_workflow_run_group_record_table(self) -> WorkflowRunGroupRecordTable:
-        return WorkflowRunGroupRecordTable.from_account_key(
-            account_url=self.tables_account_url,
-            account_name=self.tables_account_name,
-            account_key=self.tables_account_key,
-            table_name=self.workflow_run_group_record_table_name,
-        )
-
     def get_task_io_storage(self) -> BlobStorage:
         return BlobStorage.from_account_key(
             f"blob://{self.blob_account_name}/{self.task_io_blob_container}",
@@ -256,3 +201,21 @@ class RunSettings(PCTasksSettings):
             account_key=self.blob_account_key,
             account_url=self.blob_account_url,
         )
+
+
+class WorkflowExecutorConfig(PCBaseModel):
+    run_settings: RunSettings
+    cosmosdb_settings: CosmosDBSettings
+
+    def get_cosmosdb(self) -> CosmosDBDatabase:
+        return CosmosDBDatabase(settings=self.cosmosdb_settings)
+
+    @classmethod
+    def get(
+        cls,
+        profile: Optional[str] = None,
+        settings_file: Optional[Union[str, Path]] = None,
+    ) -> "WorkflowExecutorConfig":
+        run_settings = RunSettings.get(profile, settings_file)
+        cosmosdb_settings = CosmosDBSettings.get(profile, settings_file)
+        return cls(run_settings=run_settings, cosmosdb_settings=cosmosdb_settings)

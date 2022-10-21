@@ -1,3 +1,4 @@
+id: test-foreach-workflow
 name: Test foreach workflow
 dataset: microsoft/test-foreach
 target_environment: staging

@@ -1,7 +1,7 @@
 import logging
 from typing import Any, Dict, List, Union
 
-from pctasks.core.models.record import TaskRunStatus
+from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.utils import map_opt
 from pctasks.run.argo.client import ArgoClient
 from pctasks.run.constants import MAX_MISSING_POLLS
@@ -70,3 +70,9 @@ class ArgoTaskRunner(TaskRunner):
                 task_status=task_status,
                 poll_errors=map_opt(lambda e: [e], error_message),
             )
+
+    def cancel_task(self, runner_id: Dict[str, Any]) -> None:
+        namespace, name = runner_id["namespace"], runner_id["name"]
+        self.argo_client.terminate_workflow(
+            namespace=namespace, argo_workflow_name=name
+        )

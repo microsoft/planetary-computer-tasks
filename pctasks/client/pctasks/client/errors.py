@@ -10,23 +10,33 @@ class NotFoundError(PCTasksError):
     pass
 
 
+class WorkflowRunNotFoundError(NotFoundError):
+    """Raised when a workflow run is not found."""
+
+    pass
+
+
 class WorkflowNotFoundError(NotFoundError):
     """Raised when a workflow is not found."""
 
     pass
 
 
-class JobNotFoundError(NotFoundError):
+class WorkflowExistsError(NotFoundError):
+    """Raised when a workflow exists when it is not expected."""
+
+    pass
+
+
+class JobPartitionRunNotFoundError(NotFoundError):
     """Raised when a job is not found."""
 
     pass
 
 
-class TaskNotFoundError(NotFoundError):
-    """Raised when a task is not found."""
-
+class ConfirmationError(Exception):
     pass
 
 
-class ConfirmationError(Exception):
+class NoWorkflowIDError(Exception):
     pass

@@ -4,7 +4,7 @@ from pydantic import Field, validator
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.event import STACCollectionEventType, STACItemEventType
-from pctasks.core.models.task import TaskConfig
+from pctasks.core.models.task import TaskDefinition
 from pctasks.ingest.constants import (
     COLLECTION_TASK_ID,
     COLLECTIONS_MESSAGE_TYPE,
@@ -87,7 +87,7 @@ class IngestTaskOutput(PCBaseModel):
         return v
 
 
-class IngestTaskConfig(TaskConfig):
+class IngestTaskConfig(TaskDefinition):
     @classmethod
     def create(
         cls,
@@ -99,7 +99,7 @@ class IngestTaskConfig(TaskConfig):
         environment: Optional[Dict[str, str]] = None,
         options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
-    ) -> TaskConfig:
+    ) -> TaskDefinition:
         data = IngestTaskInput(
             content=content,
             options=options or IngestOptions(),
@@ -118,7 +118,7 @@ class IngestTaskConfig(TaskConfig):
                 f"environment[{DB_CONNECTION_STRING_ENV_VAR}]"
             )
 
-        return TaskConfig(
+        return TaskDefinition(
             id=task_id,
             image=None,
             image_key=image_key,
@@ -137,7 +137,7 @@ class IngestTaskConfig(TaskConfig):
         environment: Optional[Dict[str, str]] = None,
         options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
-    ) -> TaskConfig:
+    ) -> TaskDefinition:
         if "collection" not in item:
             raise InvalidSTACException("Item is missing a collection.")
 
@@ -160,7 +160,7 @@ class IngestTaskConfig(TaskConfig):
         environment: Optional[Dict[str, str]] = None,
         options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
-    ) -> TaskConfig:
+    ) -> TaskDefinition:
         if "id" not in collection:
             raise InvalidSTACException("Collection is missing an id.")
 
@@ -183,7 +183,7 @@ class IngestTaskConfig(TaskConfig):
         environment: Optional[Dict[str, str]] = None,
         options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
-    ) -> TaskConfig:
+    ) -> TaskDefinition:
 
         return cls.create(
             task_id=COLLECTION_TASK_ID,
@@ -204,7 +204,7 @@ class IngestTaskConfig(TaskConfig):
         environment: Optional[Dict[str, str]] = None,
         option: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
-    ) -> TaskConfig:
+    ) -> TaskDefinition:
         return cls.create(
             task_id=NDJSON_TASK_ID,
             content=ndjson_data,

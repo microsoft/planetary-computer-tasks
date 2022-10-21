@@ -120,6 +120,20 @@ spec:
             {{- end }}
             {{- end }}
 
+            ### CosmosDB
+
+            - name: PCTASKS_COSMOSDB__URL
+              value: "{{ .Values.pctasks.cosmosdb.url }}"
+            - name: PCTASKS_COSMOSDB__KEY
+              value: "{{ .Values.pctasks.cosmosdb.key }}"
+
+            {{- if .Values.pctasks.cosmosdb.dev.enabled }}
+            - name: COSMOSDB_EMULATOR_HOST
+              value: "{{ .Values.pctasks.cosmosdb.dev.emulator_host }}"
+            - name: PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX
+              value: "{{ .Values.pctasks.cosmosdb.dev.test_container_suffix }}"
+            {{- end }}
+
             ### Queues
             - name: PCTASKS_RUN__NOTIFICATION_QUEUE__QUEUE_NAME
               value: "{{ .Values.pctasks.run.notifications.queue_name }}"

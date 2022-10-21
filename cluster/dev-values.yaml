@@ -3,6 +3,15 @@
 environment: "dev"
 
 pctasks:
+  cosmosdb:
+    # This will get overridden by the scripts/cluster script
+    # if PCTASKS_COSMOSDB__URL and PCTASKS_COSMOSDB__KEY are set
+    url: "https://cosmosdb:8081/"
+    key: "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
+    dev:
+      enabled: true
+      emulator_host: "cosmosdb"
+
   server:
     host: "0.0.0.0"
     port: "80"

@@ -1,7 +1,7 @@
 import json
 from base64 import b64decode, b64encode
 
-from pctasks.core.models.config import BlobConfig, TableSasConfig
+from pctasks.core.models.config import BlobConfig
 from pctasks.core.models.task import TaskRunConfig, TaskRunMessage
 
 
@@ -11,11 +11,14 @@ def test_serialize_task_run_msg():
         config=TaskRunConfig(
             image="ingest",
             job_id="j1",
+            partition_id="0",
             task_id="t1",
             run_id="r1",
             task="pctasks.task.ingest.IngestTask",
-            task_runs_table_config=TableSasConfig(
-                table_name="t1", account_url="http://account.com", sas_token="sas"
+            status_blob_config=BlobConfig(
+                uri="http://account.com",
+                sas_token="sas",
+                account_url="http://account.com",
             ),
             output_blob_config=BlobConfig(
                 uri="http://account.com",

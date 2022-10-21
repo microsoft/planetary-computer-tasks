@@ -1,6 +1,6 @@
 flake8==4.*
 black==22.*
-mypy==0.931
+mypy==0.982
 pytest==6.*
 isort==5.*
 

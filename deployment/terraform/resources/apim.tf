@@ -158,10 +158,43 @@ resource "azurerm_api_management_api_operation" "tasks_post_op" {
   api_name            = azurerm_api_management_api.pctasks.name
   api_management_name = azurerm_api_management.pctasks.name
   resource_group_name = azurerm_resource_group.pctasks.name
-  display_name        = "PC Tasks GET Operation"
+  display_name        = "PC Tasks POST Operation"
   method              = "POST"
   url_template        = "/tasks/*"
   description         = "Calls PC Tasks POST Operation"
+}
+
+resource "azurerm_api_management_api_operation" "tasks_put_op" {
+  operation_id        = "pctasksputop"
+  api_name            = azurerm_api_management_api.pctasks.name
+  api_management_name = azurerm_api_management.pctasks.name
+  resource_group_name = azurerm_resource_group.pctasks.name
+  display_name        = "PC Tasks PUT Operation"
+  method              = "PUT"
+  url_template        = "/tasks/*"
+  description         = "Calls PC Tasks PUT Operation"
+}
+
+resource "azurerm_api_management_api_operation" "tasks_delete_op" {
+  operation_id        = "pctasksdeleteop"
+  api_name            = azurerm_api_management_api.pctasks.name
+  api_management_name = azurerm_api_management.pctasks.name
+  resource_group_name = azurerm_resource_group.pctasks.name
+  display_name        = "PC Tasks DELETE Operation"
+  method              = "DELETE"
+  url_template        = "/tasks/*"
+  description         = "Calls PC Tasks DELETE Operation"
+}
+
+resource "azurerm_api_management_api_operation" "tasks_patch_op" {
+  operation_id        = "pctaskspatchop"
+  api_name            = azurerm_api_management_api.pctasks.name
+  api_management_name = azurerm_api_management.pctasks.name
+  resource_group_name = azurerm_resource_group.pctasks.name
+  display_name        = "PC Tasks PATCH Operation"
+  method              = "PATCH"
+  url_template        = "/tasks/*"
+  description         = "Calls PC Tasks PATCH Operation"
 }
 
 resource "azurerm_api_management_api_operation" "tasks_options_op" {

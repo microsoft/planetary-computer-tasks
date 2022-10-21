@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Union
 
 import requests
 
-from pctasks.core.models.record import TaskRunStatus
+from pctasks.core.models.run import TaskRunStatus
 from pctasks.run.constants import MAX_MISSING_POLLS
 from pctasks.run.models import (
     FailedTaskSubmitResult,
@@ -83,3 +83,7 @@ class LocalTaskRunner(TaskRunner):
         except Exception as e:
             logger.exception(e)
             return TaskPollResult(task_status=TaskRunStatus.FAILED)
+
+    def cancel_task(self, runner_id: Dict[str, Any]) -> None:
+        # No-op
+        pass

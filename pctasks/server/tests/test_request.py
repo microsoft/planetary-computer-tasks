@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 
+from pctasks.core.utils import ignore_ssl_warnings
 from pctasks.server.main import app
 from pctasks.server.request import (
     ACCESS_KEY_HEADER,
@@ -73,12 +74,14 @@ UNAUTHORIZED_REQUESTS = [
 def test_authorized_requests():
     for headers in AUTHORIZED_REQUESTS:
         with TestClient(app) as client:
-            response = client.get("/runs", headers=headers)
-            assert response.status_code == 200
+            with ignore_ssl_warnings():
+                response = client.get("/workflows", headers=headers)
+                assert response.status_code == 200
 
 
 def test_unauthorized_requests():
     for headers in UNAUTHORIZED_REQUESTS:
         with TestClient(app) as client:
-            response = client.get("/runs", headers=headers)
-            assert response.status_code == 401
+            with ignore_ssl_warnings():
+                response = client.get("/workflows", headers=headers)
+                assert response.status_code == 401

@@ -2,10 +2,10 @@ from typing import List
 
 import networkx as nx
 
-from pctasks.core.models.workflow import JobConfig
+from pctasks.core.models.workflow import JobDefinition
 
 
-def sort_jobs(jobs: List[JobConfig]) -> List[JobConfig]:
+def sort_jobs(jobs: List[JobDefinition]) -> List[JobDefinition]:
     G = nx.DiGraph()
 
     for job in jobs:

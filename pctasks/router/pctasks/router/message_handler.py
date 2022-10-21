@@ -1,7 +1,6 @@
 from pctasks.core.constants import (
     EVENTGRID_MESSAGE_TYPE,
     NOTIFICATION_MESSAGE_TYPE,
-    OPERATION_MESSAGE_TYPE,
     WORKFLOW_SUBMIT_MESSAGE_TYPE,
 )
 from pctasks.core.message_handler import TypeMessageHandlers
@@ -16,9 +15,6 @@ HANDLERS = TypeMessageHandlers(
         ),
         NOTIFICATION_MESSAGE_TYPE: ForwardingMessageHandler(
             lambda settings: settings.notification_queue_name
-        ),
-        OPERATION_MESSAGE_TYPE: ForwardingMessageHandler(
-            lambda settings: settings.operations_queue_name
         ),
     }
 )

@@ -30,6 +30,7 @@ def test_foreach_simple_workflow():
     workflow = textwrap.dedent(
         """\
 
+        id: test-foreach-workflow-inline
         name: Test foreach workflow
         dataset: microsoft/test-foreach
         target_environment: staging

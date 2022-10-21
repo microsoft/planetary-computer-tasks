@@ -7,8 +7,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import azure.batch.models as batchmodels
 
-from pctasks.core.models.dataset import DatasetIdentifier
-from pctasks.core.models.record import TaskRunStatus
+from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.utils import map_opt
 from pctasks.run.batch.client import BatchClient
 from pctasks.run.batch.model import BatchTaskId
@@ -58,9 +57,9 @@ def transfer_index(job_id: str, task_id: str) -> Tuple[str, str]:
 
 
 def make_batch_job_prefix(
-    dataset_id: DatasetIdentifier, job_id: str, run_id: str, pool_id: str
+    dataset_id: str, job_id: str, run_id: str, pool_id: str
 ) -> str:
-    return make_valid_batch_id(f"{dataset_id.name}_{job_id}_{run_id}_{pool_id}")
+    return make_valid_batch_id(f"{dataset_id}_{job_id}_{run_id}_{pool_id}")
 
 
 @dataclass(frozen=True)
@@ -116,7 +115,7 @@ class BatchTaskRunner(TaskRunner):
                     )
 
                 batch_job_id = make_batch_job_prefix(
-                    submit_msg.dataset, job_id_for_batch, run_id, pool_id
+                    submit_msg.dataset_id, job_id_for_batch, run_id, pool_id
                 )
 
                 batch_task_id = make_valid_batch_id(task_id_for_batch)
@@ -256,3 +255,10 @@ class BatchTaskRunner(TaskRunner):
                     task_status=task_status,
                     poll_errors=map_opt(lambda e: [e], error_message),
                 )
+
+    def cancel_task(self, runner_id: Dict[str, Any]) -> None:
+        task_id = BatchTaskId.parse_obj(runner_id)
+        with BatchClient(self.settings.batch_settings) as batch_client:
+            batch_client.terminate_task(
+                job_id=task_id.batch_job_id, task_id=task_id.batch_task_id
+            )

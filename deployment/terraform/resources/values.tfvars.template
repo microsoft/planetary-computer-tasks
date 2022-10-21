@@ -71,3 +71,16 @@ stac_db_connection_string = ""
 deploy_secrets_kv_name = ""
 deploy_secrets_kv_rg = ""
 access_key_secret_name = ""
+
+# Key Vault
+# ----------
+# This is the KeyVault that is used to store task secrets
+pctasks_task_kv = ""
+pctasks_task_kv_resource_group_name = ""
+
+# CosmosDB
+# ---------
+# The CosmoDB account that will host PCTasks records
+
+cosmosdb_account_name = ""
+cosmosdb_resource_group = ""

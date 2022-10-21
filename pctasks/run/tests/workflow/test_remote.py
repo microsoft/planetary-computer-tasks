@@ -3,10 +3,20 @@ from typing import Any, Dict, Optional
 from uuid import uuid4
 
 from pctasks.cli.cli import setup_logging
-from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
+from pctasks.core.cosmos.containers.workflow_runs import WorkflowRunsContainer
+from pctasks.core.cosmos.containers.workflows import WorkflowsContainer
+from pctasks.core.cosmos.settings import CosmosDBSettings
+from pctasks.core.models.run import WorkflowRunRecord
+from pctasks.core.models.workflow import (
+    Workflow,
+    WorkflowDefinition,
+    WorkflowRecord,
+    WorkflowSubmitMessage,
+)
+from pctasks.core.utils import ignore_ssl_warnings
 from pctasks.dev.blob import temp_azurite_blob_storage
 from pctasks.dev.test_utils import assert_workflow_is_successful
-from pctasks.run.settings import RunSettings
+from pctasks.run.settings import RunSettings, WorkflowExecutorConfig
 from pctasks.run.workflow.executor.remote import (
     RemoteWorkflowExecutor,
     WorkflowFailedError,
@@ -14,21 +24,41 @@ from pctasks.run.workflow.executor.remote import (
 
 
 def run_workflow(
-    workflow: WorkflowConfig, run_id: str, args: Optional[Dict[str, Any]] = None
+    workflow_def: WorkflowDefinition, run_id: str, args: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     result: Dict[str, Any] = {}
     workflow_failed = False
+    workflow = Workflow.from_definition(workflow_def)
     try:
         submit_message = WorkflowSubmitMessage(
             workflow=workflow, run_id=run_id, args=args
         )
 
-        settings = RunSettings.get()
-        settings = settings.copy(deep=True)
-        settings.task_poll_seconds = 5
-        runner = RemoteWorkflowExecutor(settings)
+        run_settings = RunSettings.get()
+        run_settings = run_settings.copy(deep=True)
+        run_settings.task_poll_seconds = 5
+        cosmosdb_settings = CosmosDBSettings.get()
+        runner = RemoteWorkflowExecutor(
+            WorkflowExecutorConfig(
+                run_settings=run_settings, cosmosdb_settings=cosmosdb_settings
+            )
+        )
 
-        result = runner.execute_workflow(submit_message)
+        with ignore_ssl_warnings():
+            # Make sure the workflow exists in the database
+            workflow_container = WorkflowsContainer(WorkflowRecord)
+            workflow_container.put(
+                WorkflowRecord(workflow=workflow, workflow_id=workflow.id)
+            )
+
+            # Mimic the server and write the workflow run record
+            # before executing workflow
+            workflow_run_container = WorkflowRunsContainer(WorkflowRunRecord)
+            workflow_run_container.put(
+                WorkflowRunRecord.from_submit_message(submit_message)
+            )
+
+            result = runner.execute_workflow(submit_message)
 
     except WorkflowFailedError:
         workflow_failed = True
@@ -48,10 +78,9 @@ def test_remote_processes_job_with_two_tasks():
 args:
 - base_output_dir
 
+id: test-remote-workflow-1
 name: Test workflow for remote runner 1
-dataset:
-  owner: microsoft
-  name: test-remote-1
+dataset: test-remote-dataset-1
 jobs:
   job-1:
     tasks:
@@ -76,7 +105,7 @@ schema_version: 1.0.0
         run_id = uuid4().hex
 
         run_workflow(
-            WorkflowConfig.from_yaml(workflow_yaml),
+            WorkflowDefinition.from_yaml(workflow_yaml),
             run_id=run_id,
             args={"base_output_dir": output_dir},
         )
@@ -94,10 +123,9 @@ def test_remote_processes_dataset_like_workflow():
 args:
 - base_output_dir
 
+id: test-remote-workflow-2
 name: Test workflow for remote runner 1
-dataset:
-  owner: microsoft
-  name: test-remote-1
+dataset: test-remote-dataset-2
 jobs:
   job-1:
     tasks:
@@ -149,7 +177,7 @@ schema_version: 1.0.0
         run_id = uuid4().hex
 
         run_workflow(
-            WorkflowConfig.from_yaml(workflow_yaml),
+            WorkflowDefinition.from_yaml(workflow_yaml),
             run_id=run_id,
             args={"base_output_dir": output_dir},
         )

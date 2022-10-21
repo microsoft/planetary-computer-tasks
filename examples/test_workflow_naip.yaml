@@ -1,0 +1,86 @@
+id: naip-process-items
+name: Process items for naip
+dataset: naip
+tokens: {}
+jobs:
+  create-splits:
+    id: create-splits
+    tasks:
+    - id: create-splits
+      image: pccomponentstest.azurecr.io/pctasks-naip:latest
+      task: pctasks.dataset.splits.task:create_splits_task
+      args:
+        inputs:
+        - uri: blob://naipeuwest/naip
+          splits:
+          - depth: 2
+          chunk_options:
+            chunk_length: 3000
+            extensions:
+            - .tif
+            chunk_file_name: uris-list
+            chunk_extension: .csv
+        options: {}
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+  create-chunks:
+    id: create-chunks
+    tasks:
+    - id: create-chunks
+      image: pccomponentstest.azurecr.io/pctasks-naip:latest
+      task: pctasks.dataset.chunks.task:create_chunks_task
+      args:
+        src_uri: ${{ item.uri }}
+        dst_uri: blob://naipeuwest/naip-etl-data/chunks/2022-05-26_test_chunks2/assets
+        options: ${{ item.chunk_options }}
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+    foreach:
+      items: ${{ jobs.create-splits.tasks.create-splits.output.splits }}
+    needs: create-splits
+  process-chunk:
+    id: process-chunk
+    tasks:
+    - id: create-items
+      image: pccomponentstest.azurecr.io/pctasks-naip:latest
+      task: naip.dataset:Naip.create_items_task
+      args:
+        asset_chunk_info:
+          uri: ${{ item.uri }}
+          chunk_id: ${{ item.chunk_id }}
+        item_chunkset_uri: blob://naipeuwest/naip-etl-data/chunks/2022-05-26_test_chunks2/items
+        options:
+          skip_validation: false
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+    - id: ingest-items
+      image_key: ingest
+      task: pctasks.ingest_task.task:ingest_task
+      args:
+        content:
+          type: Ndjson
+          uris:
+          - tasks.create-items.output.ndjson_uri
+        options:
+          insert_group_size: 5000
+          insert_only: false
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+    foreach:
+      items: ${{ jobs.create-chunks.tasks.create-chunks.output.chunks }}
+    needs: create-chunks
+schema_version: 1.0.0
+
+

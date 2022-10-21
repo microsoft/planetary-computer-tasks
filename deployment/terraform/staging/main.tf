@@ -19,9 +19,9 @@ module "resources" {
   task_sp_client_id = var.task_sp_client_id
   task_sp_client_secret = var.task_sp_client_secret
 
-  pctasks_test_kv = "kv-pctaskstest-staging"
+  pctasks_task_kv = "kv-pctaskstest-staging"
   # Note: this resource group is managed by terraform but contains the manually managed keyvault
-  pctasks_test_kv_resource_group_name = "rg-pctaskstest-staging-westeurope"
+  pctasks_task_kv_resource_group_name = "rg-pctaskstest-staging-westeurope"
 
   kv_sp_tenant_id = var.kv_sp_tenant_id
   kv_sp_client_id = var.kv_sp_client_id
@@ -41,6 +41,9 @@ module "resources" {
   k8s_orchestrator_version = "1.23.5"
 
   stac_db_connection_string =  var.stac_db_connection_string
+
+  cosmosdb_account_name = var.cosmosdb_account_name
+  cosmosdb_resource_group = var.cosmosdb_resource_group
 
   cluster_cert_issuer = "letsencrypt"
   cluster_cert_server = "https://acme-v02.api.letsencrypt.org/directory"

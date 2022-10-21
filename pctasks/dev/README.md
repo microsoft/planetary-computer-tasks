@@ -1,9 +1,7 @@
-# Planetary Computer Tasks: Exec
+# Planetary Computer Tasks: Dev
 
-This component of the PCTasks framework is around executing
-tasks that are submitted to the system. The `exec` library
-contains functionality used to transform submit messages into
-Azure Batch jobs and tasks.
+This component of the PCTasks framework is around working with PCTasks
+in a development environment.
 
 ### Setting up the development environment
 
@@ -34,7 +32,7 @@ export PCTASKS_RUN__BLOB_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ
 You can run
 
 ```
-pctasks-dev setup-azurite
+pctasks-dev azurite setup
 ```
 
 To set up Azurite with the necessary queues, tables and containers for development.

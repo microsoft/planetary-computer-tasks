@@ -1,8 +1,11 @@
 import os
+import warnings
 from contextlib import contextmanager
 from enum import Enum
 from itertools import islice
 from typing import Any, Callable, Generator, Iterable, Iterator, List, Optional, TypeVar
+
+from urllib3.exceptions import InsecureRequestWarning
 
 T = TypeVar("T")
 U = TypeVar("U")
@@ -91,3 +94,14 @@ def environment(**kwargs: str) -> Generator[None, None, None]:
                 del os.environ[key]
             else:
                 os.environ[key] = value
+
+
+@contextmanager
+def ignore_ssl_warnings() -> Generator[None, None, None]:
+    """Temporarily ignore SSL warnings inside the context manager and
+    restore warnings afterwards
+    """
+
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=InsecureRequestWarning)
+        yield

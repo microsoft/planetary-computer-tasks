@@ -1,45 +1,44 @@
 from typing import Any, Dict, List, Optional, Set, Union
-from uuid import uuid4
 
 from pydantic import Field, validator
 
-from pctasks.core.constants import WORKFLOW_SCHEMA_VERSION, WORKFLOW_SUBMIT_MESSAGE_TYPE
-from pctasks.core.models.base import ForeachConfig, PCBaseModel, RunRecordId
-from pctasks.core.models.dataset import DatasetIdentifier
+from pctasks.core.constants import WORKFLOW_SCHEMA_VERSION
+from pctasks.core.models.base import ForeachConfig, PCBaseModel
 from pctasks.core.models.event import CloudEvent, ItemNotificationConfig
-from pctasks.core.models.task import TaskConfig
+from pctasks.core.models.record import Record
+from pctasks.core.models.task import TaskDefinition
 from pctasks.core.models.tokens import StorageAccountTokens
 from pctasks.core.tables.base import InvalidTableKeyError, validate_table_key
 from pctasks.core.utils import StrEnum
 from pctasks.core.utils.template import DictTemplater
 
 
+class WorkflowRecordType(StrEnum):
+    WORKFLOW = "Workflow"
+
+
 class WorkflowArgumentError(Exception):
-    pass
+    def __init__(self, message: str, errors: List[str]):
+        self.errors = errors
+        super().__init__(message)
 
 
-class BlobCreatedTriggerConfig(PCBaseModel):
+class StorageTriggerDefinition(PCBaseModel):
     storage_account: str
     container: str
     matches: Optional[str]
     extensions: Optional[List[str]]
+    aoi: Optional[Dict[str, Any]]
 
 
-class BlobDeletedTriggerConfig(PCBaseModel):
-    storage_account: str
-    container: str
-    matches: Optional[str]
-    extensions: Optional[List[str]]
+class TriggerDefinition(PCBaseModel):
+    storage_event: Optional[StorageTriggerDefinition]
+    schedule: Optional[str]
 
 
-class TriggerConfig(PCBaseModel):
-    blob_created: Optional[BlobCreatedTriggerConfig]
-    blob_deleted: Optional[BlobDeletedTriggerConfig]
-
-
-class JobConfig(PCBaseModel):
+class JobDefinition(PCBaseModel):
     id: Optional[str] = None
-    tasks: List[TaskConfig]
+    tasks: List[TaskDefinition]
 
     foreach: Optional[ForeachConfig] = None
 
@@ -83,15 +82,15 @@ class JobConfig(PCBaseModel):
         return self.needs
 
 
-class WorkflowConfig(PCBaseModel):
+class WorkflowDefinition(PCBaseModel):
+    workflow_id: Optional[str] = Field(default=None, alias="id")
     name: str
-    dataset: Union[DatasetIdentifier, str]
-    group_id: Optional[str] = None
+    dataset_id: str = Field(alias="dataset")
     tokens: Optional[Dict[str, StorageAccountTokens]] = None
     target_environment: Optional[str] = None
     args: Optional[List[str]] = None
-    jobs: Dict[str, JobConfig]
-    on: Optional[TriggerConfig] = None
+    jobs: Dict[str, JobDefinition]
+    on: Optional[TriggerDefinition] = None
 
     schema_version: str = Field(default=WORKFLOW_SCHEMA_VERSION, const=True)
 
@@ -102,26 +101,15 @@ class WorkflowConfig(PCBaseModel):
                 job.id = id
 
     @validator("jobs")
-    def _validate_jobs(cls, v: Dict[str, JobConfig]) -> Dict[str, JobConfig]:
+    def _validate_jobs(cls, v: Dict[str, JobDefinition]) -> Dict[str, JobDefinition]:
         for job_id in v:
             # Only validate if job_id is set to None
             # Otherwise job validator will catch the error
             if not v[job_id].id:
-                JobConfig.validate_job_id(job_id)
+                JobDefinition.validate_job_id(job_id)
         return v
 
-    @validator("dataset")
-    def _validate_dataset(cls, v: Any) -> DatasetIdentifier:
-        if isinstance(v, str):
-            return DatasetIdentifier.from_string(v)
-        return v
-
-    def get_dataset_id(self) -> DatasetIdentifier:
-        if isinstance(self.dataset, str):
-            return DatasetIdentifier.from_string(self.dataset)
-        return self.dataset
-
-    def template_args(self, args: Optional[Dict[str, Any]]) -> "WorkflowConfig":
+    def template_args(self, args: Optional[Dict[str, Any]]) -> "WorkflowDefinition":
         return DictTemplater({"args": args}, strict=False).template_model(self)
 
     def get_argument_errors(
@@ -149,27 +137,76 @@ class WorkflowConfig(PCBaseModel):
             return None
 
 
+class Workflow(PCBaseModel):
+    id: str
+    definition: WorkflowDefinition
+
+    @property
+    def dataset_id(self) -> str:
+        return self.definition.dataset_id
+
+    @classmethod
+    def from_definition(
+        cls, definition: WorkflowDefinition, id: Optional[str] = None
+    ) -> "Workflow":
+        id = id or definition.workflow_id
+        if not id:
+            raise ValueError(
+                "Workflow ID not set in definition and none supplied as an argument."
+            )
+
+        return cls(id=id, definition=definition)
+
+
+class WorkflowRecord(Record):
+    type: str = Field(default=WorkflowRecordType.WORKFLOW, const=True)
+    workflow_id: str
+    workflow: Workflow
+
+    log_uri: Optional[str] = None
+
+    # Status -> count
+    workflow_run_counts: Dict[str, int] = Field(default_factory=dict)
+
+    def get_id(self) -> str:
+        return self.workflow_id
+
+    @classmethod
+    def from_workflow(cls, workflow: Workflow) -> "WorkflowRecord":
+        return cls(workflow_id=workflow.id, workflow=workflow)
+
+
 class WorkflowSubmitMessage(PCBaseModel):
-    workflow: WorkflowConfig
-    run_id: str = Field(default_factory=lambda: uuid4().hex)
+    run_id: str
+    workflow: Workflow
     trigger_event: Optional[CloudEvent] = None
-    type: str = Field(default=WORKFLOW_SUBMIT_MESSAGE_TYPE, const=True)
     args: Optional[Dict[str, Any]] = None
 
-    def get_run_record_id(self) -> RunRecordId:
-        return RunRecordId(run_id=self.run_id, dataset_id=str(self.workflow.dataset))
-
-    def get_workflow_with_templated_args(self) -> WorkflowConfig:
+    def get_workflow_with_templated_args(self) -> Workflow:
         if self.args is None:
             return self.workflow
-        return self.workflow.template_args(self.args)
+        return self.workflow.copy(
+            update={"definition": self.workflow.definition.template_args(self.args)}
+        )
 
     def ensure_args_match(self) -> None:
         """Raise exception if args don't match the workflow args."""
-        errors = self.workflow.get_argument_errors(self.args)
+        errors = self.workflow.definition.get_argument_errors(self.args)
 
         if errors:
-            raise WorkflowArgumentError(f"Argument errors: {';'.join(errors)}")
+            raise WorkflowArgumentError(f"Argument errors: {';'.join(errors)}", errors)
+
+
+class WorkflowSubmitRequest(PCBaseModel):
+    trigger_event: Optional[CloudEvent] = None
+    args: Optional[Dict[str, Any]] = None
+
+    def ensure_args_match(self, workflow_definition: WorkflowDefinition) -> None:
+        """Raise exception if args don't match the workflow args."""
+        errors = workflow_definition.get_argument_errors(self.args)
+
+        if errors:
+            raise WorkflowArgumentError(f"Argument errors: {';'.join(errors)}", errors)
 
 
 class WorkflowRunStatus(StrEnum):
@@ -186,7 +223,6 @@ class WorkflowSubmitResult(PCBaseModel):
     Returned from the API, consumed by the submit client.
     """
 
-    dataset: DatasetIdentifier
     run_id: str
     status: WorkflowRunStatus
     errors: Optional[List[str]] = None

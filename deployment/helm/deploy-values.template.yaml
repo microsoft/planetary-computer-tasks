@@ -1,6 +1,10 @@
 environment: "test"
 
 pctasks:
+  cosmosdb:
+    url: "{{ tf.cosmosdb_url }}"
+    key: "{{ tf.cosmosdb_key }}"
+
   server:
     host: "0.0.0.0"
     port: "80"

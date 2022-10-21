@@ -94,6 +94,14 @@ variable "kv_sp_client_secret" {
   type    = string
 }
 
+variable "pctasks_task_kv" {
+  type = string
+}
+
+variable "pctasks_task_kv_resource_group_name" {
+  type = string
+}
+
 variable "deploy_secrets_kv_name" {
   type    = string
 }
@@ -121,6 +129,16 @@ variable "stac_db_connection_string" {
 variable "pctasks_server_sp_tenant_id" {
   type    = string
 }
+
+variable "cosmosdb_account_name" {
+  type = string
+}
+
+variable "cosmosdb_resource_group" {
+  type = string
+}
+
+## PCTasks Server
 
 variable "pctasks_server_sp_client_id" {
   type    = string

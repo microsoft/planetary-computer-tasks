@@ -2,12 +2,12 @@ from typing import Dict, List, Optional
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.config import CodeConfig
-from pctasks.core.models.task import TaskConfig
+from pctasks.core.models.task import TaskDefinition
 from pctasks.dataset.models import (
     ChunkOptions,
-    CollectionConfig,
-    DatasetConfig,
-    SplitConfig,
+    CollectionDefinition,
+    DatasetDefinition,
+    SplitDefinition,
 )
 from pctasks.dataset.splits.constants import (
     CREATE_SPLITS_TASK_ID,
@@ -23,7 +23,7 @@ class SplitInput(PCBaseModel):
     """Configuration for a split task for a single URI."""
 
     uri: str
-    splits: Optional[List[SplitConfig]] = None
+    splits: Optional[List[SplitDefinition]] = None
     sas_token: Optional[str] = None
     chunk_options: ChunkOptions
     """Chunk options for the split."""
@@ -50,7 +50,7 @@ class CreateSplitsOutput(PCBaseModel):
     splits: List[SplitTarget]
 
 
-class CreateSplitsTaskConfig(TaskConfig):
+class CreateSplitsTaskConfig(TaskDefinition):
     @classmethod
     def create(
         cls,
@@ -74,8 +74,8 @@ class CreateSplitsTaskConfig(TaskConfig):
     @classmethod
     def from_collection(
         cls,
-        ds: DatasetConfig,
-        collection: CollectionConfig,
+        ds: DatasetDefinition,
+        collection: CollectionDefinition,
         options: Optional[CreateSplitsOptions] = None,
         chunk_options: Optional[ChunkOptions] = None,
         environment: Optional[Dict[str, str]] = None,

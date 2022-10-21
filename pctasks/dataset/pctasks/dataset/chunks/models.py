@@ -2,13 +2,13 @@ from typing import Dict, List, Optional, Union
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.config import CodeConfig
-from pctasks.core.models.task import TaskConfig
+from pctasks.core.models.task import TaskDefinition
 from pctasks.dataset.chunks.constants import (
     ASSET_CHUNKS_PREFIX,
     CREATE_CHUNKS_TASK_PATH,
 )
 from pctasks.dataset.constants import CREATE_CHUNKS_TASK_ID, LIST_CHUNKS_TASK_ID
-from pctasks.dataset.models import ChunkOptions, CollectionConfig, DatasetConfig
+from pctasks.dataset.models import ChunkOptions, CollectionDefinition, DatasetDefinition
 
 
 class CreateChunksInput(PCBaseModel):
@@ -41,7 +41,7 @@ class ChunksOutput(PCBaseModel):
     """List of chunks. Each chunk contain a lists of asset URIs."""
 
 
-class CreateChunksTaskConfig(TaskConfig):
+class CreateChunksTaskConfig(TaskDefinition):
     @classmethod
     def create(
         cls,
@@ -64,8 +64,8 @@ class CreateChunksTaskConfig(TaskConfig):
     @classmethod
     def from_collection(
         cls,
-        ds: DatasetConfig,
-        collection: CollectionConfig,
+        ds: DatasetDefinition,
+        collection: CollectionDefinition,
         chunkset_id: str,
         src_uri: str,
         options: Optional[Union[str, ChunkOptions]] = None,
@@ -90,7 +90,7 @@ class CreateChunksTaskConfig(TaskConfig):
         )
 
 
-class ListChunksTaskConfig(TaskConfig):
+class ListChunksTaskConfig(TaskDefinition):
     @classmethod
     def create(
         cls,
@@ -112,8 +112,8 @@ class ListChunksTaskConfig(TaskConfig):
     @classmethod
     def from_collection(
         cls,
-        ds: DatasetConfig,
-        collection: CollectionConfig,
+        ds: DatasetDefinition,
+        collection: CollectionDefinition,
         chunkset_id: str,
         all: bool = False,
         environment: Optional[Dict[str, str]] = None,

@@ -1,12 +1,12 @@
 data "azurerm_key_vault" "pctasks" {
-  name                = var.pctasks_test_kv
-  resource_group_name = var.pctasks_test_kv_resource_group_name
+  name                = var.pctasks_task_kv
+  resource_group_name = var.pctasks_task_kv_resource_group_name
 }
 
 resource "azurerm_key_vault_access_policy" "function_app" {
   key_vault_id = data.azurerm_key_vault.pctasks.id
-  tenant_id    = azurerm_function_app.pctasks.identity.0.tenant_id
-  object_id    = azurerm_function_app.pctasks.identity.0.principal_id
+  tenant_id    = azurerm_linux_function_app.pctasks.identity.0.tenant_id
+  object_id    = azurerm_linux_function_app.pctasks.identity.0.principal_id
 
   secret_permissions = [
     "Get", "List"

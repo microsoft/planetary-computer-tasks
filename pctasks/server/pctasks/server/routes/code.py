@@ -4,7 +4,7 @@ import logging
 from fastapi import APIRouter, HTTPException, Request, UploadFile
 from fastapi.responses import ORJSONResponse
 
-from pctasks.core.models.api import UploadCodeResult
+from pctasks.core.models.response import UploadCodeResult
 from pctasks.run.settings import RunSettings
 from pctasks.server.request import ParsedRequest
 

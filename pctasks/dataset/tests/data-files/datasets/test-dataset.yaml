@@ -1,4 +1,4 @@
-name: dataset-test
+id: dataset-test
 image: mock:latest
 code:
   src: ${{ local.path(mycode.py) }}

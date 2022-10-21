@@ -1,6 +1,5 @@
 from pctasks.core.models.config import ImageConfig
-from pctasks.core.models.dataset import DatasetIdentifier
-from pctasks.core.models.task import TaskConfig
+from pctasks.core.models.task import TaskDefinition
 from pctasks.core.tables.config import ImageKeyEntryTable
 from pctasks.dev.secrets import TempSecrets
 from pctasks.dev.tables import TempTable
@@ -44,12 +43,13 @@ def test_image_key_environment_merged():
             run_id = "test_run_id"
 
             submit_msg = TaskSubmitMessage(
-                dataset=DatasetIdentifier(name="test-dataset-id"),
+                dataset_id="test-dataset-id",
                 instance_id="test_instance_id",
                 job_id="job-id",
+                partition_id="0",
                 run_id=run_id,
                 target_environment=target_environment,
-                config=TaskConfig(
+                config=TaskDefinition(
                     id="messages_unit_test",
                     image_key="test-image-key",
                     args={"one": "two"},

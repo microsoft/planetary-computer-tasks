@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional, TypeVar
 
 from pctasks.core.models.base import ForeachConfig
 from pctasks.core.models.event import NotificationConfig
-from pctasks.core.models.workflow import JobConfig
+from pctasks.core.models.workflow import JobDefinition
 from pctasks.core.utils import completely_flatten
 from pctasks.core.utils.template import (
     DictTemplater,
@@ -85,14 +85,11 @@ class ItemTemplater(Templater):
         return None
 
 
-def template_job_with_item(
-    job: JobConfig, item: TemplateValue, index: int
-) -> JobConfig:
+def template_job_with_item(job: JobDefinition, item: TemplateValue) -> JobDefinition:
     if isinstance(item, dict):
         result = DictTemplater({"item": item}).template_model(job)
     else:
         result = ItemTemplater(item).template_model(job)
-    result.id = f"{job.id}[{index}]"
     return result
 
 

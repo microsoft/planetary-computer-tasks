@@ -25,3 +25,7 @@ class TaskRunner(ABC):
         self, runner_id: Dict[str, Any], previous_poll_count: int
     ) -> TaskPollResult:
         pass
+
+    @abstractmethod
+    def cancel_task(self, runner_id: Dict[str, Any]) -> None:
+        pass

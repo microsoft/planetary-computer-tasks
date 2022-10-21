@@ -3,8 +3,8 @@ from typing import List, Optional, Tuple
 
 import click
 
-from pctasks.client.submit.options import opt_args
-from pctasks.dataset.utils import opt_collection, opt_ds_config, opt_submit
+from pctasks.client.workflow.options import opt_args
+from pctasks.dataset.utils import opt_collection, opt_ds_config, opt_submit, opt_upsert
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +33,7 @@ def dataset_cmd(ctx: click.Context) -> None:
     help="The target environment to process the items in.",
 )
 @opt_submit
+@opt_upsert
 @click.pass_context
 def create_chunks_cmd(
     ctx: click.Context,
@@ -44,11 +45,16 @@ def create_chunks_cmd(
     limit: Optional[int] = None,
     target: Optional[str] = None,
     submit: bool = False,
+    upsert: bool = False,
 ) -> None:
     """Creates workflow to generate asset chunks for bulk processing.
 
-    Output: If -s is present, will print the run ID to stdout. Otherwise,
-    will print the workflow yaml.
+    Use -u or --upsert to upsert the workflow through the API.
+    Use -s or --submit to upsert and submit the workflow through the API.
+
+    Output: If neither -u or -s is present, Will print the workflow yaml.
+    If -u is present, will print the workflow ID to stdout.
+    If -s is present, will print the run ID to stdout.
     """
     from . import _cli
 
@@ -61,6 +67,7 @@ def create_chunks_cmd(
         since=since,
         limit=limit,
         submit=submit,
+        upsert=upsert,
         target=target,
     )
 
@@ -89,6 +96,7 @@ def create_chunks_cmd(
     help=("Only process files that have been modified at or after this datetime."),
 )
 @opt_submit
+@opt_upsert
 @click.pass_context
 def process_items_cmd(
     ctx: click.Context,
@@ -102,6 +110,7 @@ def process_items_cmd(
     since: Optional[str] = None,
     limit: Optional[int] = None,
     submit: bool = False,
+    upsert: bool = False,
 ) -> None:
     """Generate the workflow to create and ingest items.
 
@@ -109,8 +118,12 @@ def process_items_cmd(
     submit a workflow to process into items and ingest into
     the database.
 
-    Output: If -s is present, will print the run ID to stdout. Otherwise,
-    will print the workflow yaml.
+    Use -u or --upsert to upsert the workflow through the API.
+    Use -s or --submit to upsert and submit the workflow through the API.
+
+    Output: If neither -u or -s is present, Will print the workflow yaml.
+    If -u is present, will print the workflow ID to stdout.
+    If -s is present, will print the run ID to stdout.
     """
     from . import _cli
 
@@ -126,6 +139,7 @@ def process_items_cmd(
         since=since,
         limit=limit,
         submit=submit,
+        upsert=upsert,
     )
 
 
@@ -139,6 +153,7 @@ def process_items_cmd(
     help="The target environment to process the items in.",
 )
 @opt_submit
+@opt_upsert
 @click.pass_context
 def ingest_collection_cmd(
     ctx: click.Context,
@@ -147,6 +162,7 @@ def ingest_collection_cmd(
     arg: List[Tuple[str, str]] = [],
     target: Optional[str] = None,
     submit: bool = False,
+    upsert: bool = False,
 ) -> None:
     """Generate the workflow to ingest a collection.
 
@@ -154,13 +170,23 @@ def ingest_collection_cmd(
     specified by the "template" property of the collection
     configuration of the dataset YAML.
 
-    Output: If -s is present, will print the run ID to stdout. Otherwise,
-    will print the workflow yaml.
+    Use -u or --upsert to upsert the workflow through the API.
+    Use -s or --submit to upsert and submit the workflow through the API.
+
+    Output: If neither -u or -s is present, Will print the workflow yaml.
+    If -u is present, will print the workflow ID to stdout.
+    If -s is present, will print the run ID to stdout.
     """
     from . import _cli
 
     return _cli.ingest_collection_cmd(
-        ctx, dataset, collection, arg=arg, target=target, submit=submit
+        ctx,
+        dataset,
+        collection,
+        arg=arg,
+        target=target,
+        submit=submit,
+        upsert=upsert,
     )
 
 

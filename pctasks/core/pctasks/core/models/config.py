@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 from pydantic import validator
 
 from pctasks.core.models.base import PCBaseModel
-from pctasks.core.storage.blob import BlobUri
+from pctasks.core.storage.blob import BlobStorage, BlobUri
 
 
 class QueueSasConfig(PCBaseModel):
@@ -40,6 +40,11 @@ class BlobConfig(PCBaseModel):
     account_url: Optional[str]
     uri: str
     sas_token: str
+
+    def get_storage(self) -> BlobStorage:
+        return BlobStorage.from_uri(
+            BlobUri(self.uri).base_uri,
+        )
 
 
 class ImageConfig(PCBaseModel):

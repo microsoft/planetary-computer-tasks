@@ -3,11 +3,10 @@ import os
 from importlib.metadata import EntryPoint
 
 from pctasks.core.importer import ensure_code, ensure_requirements
-from pctasks.core.logging import RunLogger, TaskLogger
-from pctasks.core.models.record import TaskRunStatus
+from pctasks.core.logging import StorageLogger
+from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.models.task import TaskResult, TaskRunMessage
 from pctasks.core.storage.blob import BlobStorage, BlobUri
-from pctasks.core.tables.record import TaskRunRecordTable
 from pctasks.core.utils import environment
 from pctasks.task.context import TaskContext
 from pctasks.task.settings import TaskSettings
@@ -29,13 +28,7 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
 
     task_settings = TaskSettings.get()
 
-    event_logger = RunLogger(
-        task_config.get_run_record_id(),
-        app_insights_key=task_config.event_logger_app_insights_key,
-    )
-    event_logger.log_event(TaskRunStatus.RECEIVED)
-
-    with TaskLogger.from_task_run_config(task_config):
+    with StorageLogger.from_task_run_config(task_config):
 
         logger.info(" === PCTasks ===")
         logger.info(f"  == {task_config.get_run_record_id()} ")
@@ -57,6 +50,14 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
                 sas_token=output_blob_config.sas_token,
                 account_url=output_blob_config.account_url,
             )
+
+            status_blob_uri = BlobUri(task_config.status_blob_config.uri)
+            status_storage = BlobStorage.from_uri(
+                blob_uri=status_blob_uri.base_uri,
+                sas_token=task_config.status_blob_config.sas_token,
+                account_url=task_config.status_blob_config.account_url,
+            )
+            status_path = status_storage.get_path(str(status_blob_uri))
 
             code_requirements_blob_config = task_config.code_requirements_blob_config
             if code_requirements_blob_config:
@@ -91,83 +92,65 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
                 )
                 ensure_code(code_path, code_storage, target_dir=task_settings.code_dir)
 
-            with TaskRunRecordTable.from_sas_token(
-                account_url=task_config.task_runs_table_config.account_url,
-                sas_token=task_config.task_runs_table_config.sas_token,
-                table_name=task_config.task_runs_table_config.table_name,
-            ) as runs_table:
-                task_run = runs_table.get_record(task_config.get_run_record_id())
-                if task_run is None:
-                    raise ValueError(
-                        "Could not find task run for "
-                        f"job_id={task_config.job_id} "
-                        f"run_id={task_config.run_id} "
-                        f"task_id={task_config.task_id}"
+            def update_status(status: TaskRunStatus) -> None:
+                status_storage.write_text(status_path, status.value)
+
+            update_status(TaskRunStatus.RUNNING)
+
+            try:
+                task_path = task_config.task
+
+                entrypoint = EntryPoint("", task_path, "")
+                try:
+                    task = entrypoint.load()
+                    if callable(task):
+                        task = task()
+                except Exception as e:
+                    raise TaskLoadError(f"Failed to load task: {task_path}") from e
+
+                if not isinstance(task, Task):
+                    raise TaskLoadError(
+                        f"{task_path} of type {type(task)} {task} "
+                        f"is not an instance of {Task}"
                     )
 
-                def update_status(status: TaskRunStatus) -> None:
-                    assert task_run
-                    assert runs_table
-                    task_run.update_status(status)
-                    runs_table.update_record(task_run)
-                    event_logger.log_event(status)
+                # Set environment variables
+                if task_config.environment:
+                    logger.info(
+                        "  Using the following environment variables "
+                        "from task configuration:"
+                    )
+                    logger.info("    " + ",".join(task_config.environment.keys()))
 
-                update_status(TaskRunStatus.STARTING)
-
-                try:
-                    task_path = task_config.task
-
-                    entrypoint = EntryPoint("", task_path, "")
-                    try:
-                        task = entrypoint.load()
-                        if callable(task):
-                            task = task()
-                    except Exception as e:
-                        raise TaskLoadError(f"Failed to load task: {task_path}") from e
-
-                    if not isinstance(task, Task):
-                        raise TaskLoadError(
-                            f"{task_path} of type {type(task)} {task} "
-                            f"is not an instance of {Task}"
+                with environment(**(task_config.environment or {})):
+                    missing_env = []
+                    for env_var in task.get_required_environment_variables():
+                        if env_var not in os.environ:
+                            missing_env.append(env_var)
+                    if missing_env:
+                        missing_env_str = ", ".join(f'"{e}"' for e in missing_env)
+                        raise MissingEnvironmentError(
+                            "The task cannot run due to the following "
+                            f"missing environment variables: {missing_env_str}"
                         )
 
-                    # Set environment variables
-                    if task_config.environment:
-                        logger.info(
-                            "  Using the following environment variables "
-                            "from task configuration:"
-                        )
-                        logger.info("    " + ",".join(task_config.environment.keys()))
+                    logger.info("  -- PCTasks: Running task...")
+                    result = task.parse_and_run(task_data, task_context)
 
-                    with environment(**(task_config.environment or {})):
-                        missing_env = []
-                        for env_var in task.get_required_environment_variables():
-                            if env_var not in os.environ:
-                                missing_env.append(env_var)
-                        if missing_env:
-                            missing_env_str = ", ".join(f'"{e}"' for e in missing_env)
-                            raise MissingEnvironmentError(
-                                "The task cannot run due to the following "
-                                f"missing environment variables: {missing_env_str}"
-                            )
+                logger.info("  -- PCTasks: Handling task result...")
 
-                        update_status(TaskRunStatus.RUNNING)
-                        logger.info("  -- PCTasks: Running task...")
-                        result = task.parse_and_run(task_data, task_context)
+                # Write output to blob storage
+                output_storage.write_text(output_path, result.json(indent=2))
 
-                    logger.info("  -- PCTasks: Handling task result...")
+                logger.info(" === PCTasks: Task completed! ===")
 
-                    # Write output to blob storage
-                    output_storage.write_text(output_path, result.json(indent=2))
+                update_status(TaskRunStatus.COMPLETING)
 
-                    update_status(TaskRunStatus.COMPLETED)
-                    logger.info(" === PCTasks: Task completed! ===")
+                return result
 
-                    return result
-
-                except Exception:
-                    update_status(TaskRunStatus.FAILED)
-                    raise
+            except Exception:
+                update_status(TaskRunStatus.FAILED)
+                raise
 
         except Exception as e:
             logger.info(" === PCTasks: Task Failed! ===")

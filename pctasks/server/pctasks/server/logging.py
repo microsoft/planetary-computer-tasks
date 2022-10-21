@@ -1,6 +1,6 @@
 import logging
 import sys
-from typing import Optional
+from typing import Optional, Tuple, cast
 from urllib.parse import urlparse
 
 from fastapi import Request
@@ -8,6 +8,21 @@ from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 import pctasks.server
 from pctasks.server.settings import ServerSettings
+
+
+# Prevent successful health check pings from being logged
+class HealthCheckFilter(logging.Filter):
+    def filter(self, record: logging.LogRecord) -> bool:
+        if not record.args or len(record.args) != 5:
+            return True
+
+        args = cast(Tuple[str, str, str, str, int], record.args)
+        endpoint = args[2]
+        status = args[4]
+        if endpoint.endswith("/_mgmt/ping") and status == 200:
+            return False
+
+        return True
 
 
 # Custom filter that outputs custom_dimensions, only if present
@@ -40,6 +55,9 @@ class CustomDimensionsFilter(logging.Filter):
 # custom_dimensions to Application Insights
 def init_logging(service_name: str) -> None:
     settings = ServerSettings.get()
+
+    # Exclude health check endpoint pings from the uvicorn logs
+    logging.getLogger("uvicorn.access").addFilter(HealthCheckFilter())
 
     # Setup logging
     log_level = logging.DEBUG if settings.dev else logging.INFO
