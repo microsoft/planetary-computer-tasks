@@ -91,7 +91,7 @@ If you experience issues with the above step, take a look at some of these commo
 Using the run ID from the previous step, you can watch the execution status of the workflow using:
 
 ```shell
-> pctasks records status workflow --watch ${RUN_ID}
+> pctasks runs status --watch ${RUN_ID}
 ```
 
 This may return instantly, since the workflow should run quickly. However you can use this command with the `--watch` option to poll the API for status and update the console until the job completes.
@@ -122,17 +122,17 @@ If using `dev-cluster`, you should be able to see the workflow executing in the 
 You can fetch detailed with the workflow using:
 
 ```shell
-> pctasks records fetch workflow-run ${RUN_ID}
+> pctasks runs get workflow ${RUN_ID}
 ```
 
 You can also list job partitions and tasks, e.g.
 
 ```shell
-> pctasks records list job-partitions ${RUN_ID} list-logs-job
+> pctasks runs list partitions ${RUN_ID} list-logs-job
 ```
 
 To get the log file for the task, use:
 
 ```shell
-> pctasks records fetch log ${RUN_ID} list-logs-job  0 list-logs-task
+> pctasks runs get task-log ${RUN_ID} list-logs-job list-logs-task --partition 0
 ```

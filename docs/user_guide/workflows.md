@@ -1,30 +1,32 @@
 # Workflows
 
-Workflows are the core unit of work executed by PCTasks. Workflows can execute one or many tasks. A workflow is configured through YAML
-or by constructing Pydantic models in Python code. Workflows are submitted to the PCTasks API. Upon submission, a workflow can
+Workflows are the core unit of work executed by PCTasks. Workflows can execute one or many tasks. A workflow is defined through YAML
+or by constructing Pydantic models in Python code. Workflows are created, updated, and submitted to the PCTasks API. Upon submission, a workflow can
 be assigned values for arguments or a a trigger event, either of which can be used to provide values for templates inside the
-workflow configuration. When a workflow is run, it is assigned a "Run ID", which is the unique identifier that can be used to
+workflow definition. When a workflow is run, it is assigned a "Run ID", which is the unique identifier that can be used to
 interact with that specific instantiation of a workflow run.
 
 Note that the layout and language of PCTasks workflows is heavily based on [GitHub Actions](https://docs.github.com/en/actions/using-workflows/about-workflows), and many GitHub Actions concepts are reflected in PCTasks.
 
-## Workflow configuration
+## Workflow definition
 
-A workflow configuration defines everything that PCTasks needs to know in order to execute a workflow, with the exception of argument values or trigger events, which are defined at the time of submitting the workflow. See the [examples](https://github.com/microsoft/planetary-computer-tasks/tree/main/examples) in the PCTasks GitHub repository for
-examples of workflow configurations.
+A workflow definition defines everything that PCTasks needs to know in order to execute a workflow, with the exception of argument values or trigger events, which are defined at the time of submitting the workflow. See the [examples](https://github.com/microsoft/planetary-computer-tasks/tree/main/examples) in the PCTasks GitHub repository for
+examples of workflow definitions.
 
 The following configuration can be defined at the workflow level:
 
+### id
+
+OPTIONAL. The workflow ID. If not provided, you will need to provide the ID upon creating, updating or submitting the workflow
+
 ### dataset
 
-REQUIRED. Defines the dataset this workflow pertains to. The dataset identifier is in the format `{owner}/{dataset}`.
+REQUIRED. The dataset_id for the dataset this workflow pertains to.
 
 Example:
 ```yaml
-dataset: microsoft/goes-r
+dataset: goes-r
 ```
-
-_Note:_ The `owner` component of the ID is a placeholder, and all current datasets should have owner `microsoft`.
 
 (arguments)=
 ### args
@@ -56,7 +58,7 @@ tokens:
       sentinel2-l2: ${{ pc.get_token(sentinel2l2a01, sentinel2-l2) }}
 ```
 
-## Jobs configuration
+## Jobs definition
 
 Jobs are simply groups of tasks that get executed in sequence.
 
@@ -99,7 +101,7 @@ example, there would be no `job2`, but instead a set of jobs named `job2[0]`, `j
 sub-jobs execute as if they were a distinct PCTasks job after being templated with the `foreach`.
 
 
-## Task configuration
+## Task definition
 
 Tasks are the core unit of work for PCTasks. Workflows and Jobs are really containers that organize Tasks, which is
 what defines the actual code to be executed in the system.
@@ -119,7 +121,7 @@ jobs:
 
 ### task
 
-The `task` property of a task configuration is what determines the code that will be executed when running the task.
+The `task` property of a task definition is what determines the code that will be executed when running the task.
 It is a "task path" that points to a instance of a subclass of [](../reference/generated/pctasks.task.task.Task), or do a callable (e.g. a function)
 that returns a Task instance.
 

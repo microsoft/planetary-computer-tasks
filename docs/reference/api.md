@@ -46,3 +46,15 @@ The `pctasks.dataset` package provides functionality for defining PCTasks workfl
 
    pctasks.dataset.collection.Collection
 ```
+
+## `pctasks.client`
+
+The `pctasks.client` package provides functionality for interacting with the PCTasks API
+
+```{eval-rst}
+.. autosummary::
+   :toctree: ./generated/
+   :recursive:
+
+   pctasks.client.client.PCTasksClient
+```
