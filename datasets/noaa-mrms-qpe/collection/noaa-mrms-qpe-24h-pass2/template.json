@@ -151,7 +151,7 @@
                     "data_type": "float64"
                 }
             ],
-            "title": "Processed Cloud-optimized GeoTiff file"
+            "title": "Processed Cloud Optimized GeoTIFF file"
         },
         "grib2": {
             "roles": [

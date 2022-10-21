@@ -38,6 +38,9 @@ class NoaaMrmsQpeCollection(Collection):
             item.assets["cog"].roles = ["data"]
             item.assets["grib2"].roles = ["data"]
 
+            # temporary grammar fix
+            item.assets["cog"].title = "Processed Cloud Optimized GeoTIFF file"
+
             # upload cog to Azure
             cog_storage = storage_factory.get_storage(f"{COG_CONTAINER}/{path_fragment}/")
             cog_filename = meta.id + ".tif"

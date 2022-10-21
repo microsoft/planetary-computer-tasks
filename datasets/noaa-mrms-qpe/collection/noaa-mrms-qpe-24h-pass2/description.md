@@ -2,4 +2,4 @@ The [Multi-Radar Multi-Sensor (MRMS) Quantitative Precipitation Estimation (QPE)
 
 MRMS QPE is available as a "Pass 1" or "Pass 2" product. The Pass 1 product is available with a 60-minute latency and includes 60-65% of gauges. The Pass 2 product has a higher latency of 120 minutes, but includes 99% of gauges. The Pass 1 and Pass 2 products are broken into 1-, 3-, 6-, 12-, 24-, 48-, and 72-hour accumulation sub-products.
 
-This Collection contains the **24-Hour Pass 2** sub-product, i.e., 24-hour cumulative precipitation accumulation with a 2-hour latency. The data in this Collection is available in [cloud-optimized GeoTiff](https://www.cogeo.org/) format as well as the original source GRIB2 format files.
+This Collection contains the **24-Hour Pass 2** sub-product, i.e., 24-hour cumulative precipitation accumulation with a 2-hour latency. The data in this Collection is available in [Cloud Optimized GeoTIFF](https://www.cogeo.org/) format as well as the original source GRIB2 format files.
