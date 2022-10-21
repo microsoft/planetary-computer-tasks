@@ -42,9 +42,9 @@ def get_job_partition_cmd(
 @click.argument("run_id")
 @click.pass_context
 def get_workflow_log_cmd(ctx: click.Context, run_id: str) -> int:
-    """Fetch a task record.
+    """Fetch a run log.
 
-    Outputs the YAML of the record to stdout.
+    Outputs the text of the workflow run log to stdout.
     """
     from . import _get
 
@@ -60,9 +60,9 @@ def get_workflow_log_cmd(ctx: click.Context, run_id: str) -> int:
 def get_task_log_cmd(
     ctx: click.Context, job_id: str, task_id: str, run_id: str, partition_id: str
 ) -> int:
-    """Fetch a task record.
+    """Fetch a task log.
 
-    Outputs the YAML of the record to stdout.
+    Outputs the text of the task run log to stdout.
     """
     from . import _get
 
