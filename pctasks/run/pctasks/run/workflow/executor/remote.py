@@ -275,7 +275,11 @@ class RemoteWorkflowExecutor:
         submit_result: Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult],
         container: Optional[WorkflowRunsContainer[JobPartitionRunRecord]] = None,
         job_part_run: Optional[JobPartitionRunRecord] = None,
-    ) -> bool:
+    ) -> TaskRunStatus:
+        """Updates a task state and task run status based on the submit result.
+
+        Returns the resulting task run status.
+        """
         container = container or WorkflowRunsContainer(
             JobPartitionRunRecord, db=self.config.get_cosmosdb()
         )
@@ -292,7 +296,7 @@ class RemoteWorkflowExecutor:
                     TaskRunStatus.FAILED,
                     errors=["Task failed to submit."] + submit_result.errors,
                 )
-                return True
+                return TaskRunStatus.FAILED
             else:
                 update_task_run_status(
                     container,
@@ -300,12 +304,16 @@ class RemoteWorkflowExecutor:
                     task_state.task_id,
                     TaskRunStatus.SUBMITTED,
                 )
-                return False
+                return TaskRunStatus.SUBMITTED
         else:
-            return True
+            return TaskRunStatus.FAILED
 
-    def complete_jobs(
-        self, run_id: str, group_id: str, job_part_states: List[JobPartitionState]
+    def complete_job_partitions(
+        self,
+        run_id: str,
+        job_id: str,
+        part_id: str,
+        job_part_states: List[JobPartitionState],
     ) -> List[Dict[str, Any]]:
         """Complete job partitions and return the results.
 
@@ -319,7 +327,7 @@ class RemoteWorkflowExecutor:
         total_job_count = len(job_part_states)
         _jobs_left = lambda: total_job_count - completed_job_count - failed_job_count
         _report_status = lambda: logger.info(
-            f"{group_id} status: "
+            f"{job_id} {part_id} status: "
             f"{completed_job_count} completed, "
             f"{failed_job_count} failed, "
             f"{_jobs_left()} remaining"
@@ -333,9 +341,6 @@ class RemoteWorkflowExecutor:
         while _jobs_left() > 0:
             for job_part_state in job_part_states:
                 try:
-                    part_id = (
-                        job_part_state.job_part_submit_msg.job_partition.partition_id
-                    )
                     if job_part_state.status == JobPartitionStateStatus.NEW:
                         job_part_state.status = JobPartitionStateStatus.RUNNING
 
@@ -479,7 +484,10 @@ class RemoteWorkflowExecutor:
                                 log_uri=task_state.get_log_uri(task_log_storage),
                             )
 
-                            logger.warning(f"Job failed: {job_part_state.job_id}")
+                            logger.warning(
+                                "Job partition failed: "
+                                f"{job_part_state.job_id}:{part_id}"
+                            )
 
                             _report_status()
 
@@ -553,7 +561,7 @@ class RemoteWorkflowExecutor:
                                         JobPartitionRunStatus.FAILED,
                                     )
                                 completed_job_count += 1
-                                logger.info(f"Job completed: {job_part_state.job_id}")
+                                logger.info(f"Job completed: {job_id}")
 
                             _report_status()
 
@@ -563,7 +571,7 @@ class RemoteWorkflowExecutor:
 
             time.sleep(0.25 + ((random.randint(0, 10) / 100) - 0.05))
 
-        logger.info(f"Task group {group_id} completed!")
+        logger.info(f"Task group {part_id} completed!")
 
         return [job_state.task_outputs for job_state in job_part_states]
 
@@ -623,7 +631,9 @@ class RemoteWorkflowExecutor:
                     # through the task pool, submit all initial
                     # tasks, and then wait for all tasks to complete
 
-                    job_run = workflow_run.get_job_run(job_def.get_id())
+                    job_id = job_def.get_id()
+                    job_run = workflow_run.get_job_run(job_id)
+
                     if not job_run:
                         raise WorkflowRunRecordError(
                             f"Job run {job_def.get_id()} not found."
@@ -758,8 +768,7 @@ class RemoteWorkflowExecutor:
                     logger.info(" - Submitting initial tasks...")
                     submit_results = self.executor.submit_tasks(initial_tasks)
 
-                    logger.info(" -  Initial tasks submitted.")
-                    submit_failed = False
+                    logger.info(" -  Initial tasks submitted, checking status...")
 
                     try:
 
@@ -770,19 +779,33 @@ class RemoteWorkflowExecutor:
                                     SuccessfulTaskSubmitResult, FailedTaskSubmitResult
                                 ],
                             ]
-                        ) -> bool:
+                        ) -> TaskRunStatus:
                             jps, submit_result = tup
                             assert jps.current_task
                             return self.update_submit_result(
                                 jps.current_task, submit_result
                             )
 
-                        submit_failed = any(
-                            pool.map(
-                                _update_submit_results,
-                                zip(job_part_states, submit_results),
+                        any_submitted = False
+                        all_submitted = True
+                        for submitted in pool.map(
+                            _update_submit_results,
+                            zip(job_part_states, submit_results),
+                        ):
+                            _this_task_submitted = submitted == TaskRunStatus.SUBMITTED
+                            any_submitted = any_submitted or _this_task_submitted
+                            all_submitted = all_submitted and _this_task_submitted
+
+                        if all_submitted:
+                            logger.info(" -  All initial tasks submitted successfully.")
+                        elif any_submitted:
+                            logger.info(
+                                " -  Some (not all) initial tasks "
+                                "submitted successfully."
                             )
-                        )
+                        else:
+                            logger.info(" -  All initial tasks failed to submit.")
+
                     except Exception as e:
                         logger.exception(e)
                         update_job_run_status(
@@ -794,7 +817,7 @@ class RemoteWorkflowExecutor:
                         workflow_failed = True
                         continue
 
-                    if submit_failed:
+                    if not any_submitted:
                         update_job_run_status(
                             container,
                             workflow_run,
@@ -830,8 +853,9 @@ class RemoteWorkflowExecutor:
 
                     job_part_futures = {
                         pool.submit(
-                            self.complete_jobs,
+                            self.complete_job_partitions,
                             run_id,
+                            job_id,
                             f"job-part-group-{group_num}",
                             job_state_group,
                         ): job_state_group
@@ -867,7 +891,7 @@ class RemoteWorkflowExecutor:
                                 job_results.append(job_part_state.task_outputs)
 
                         logger.info(
-                            "Jobs progress: "
+                            f"Job {job_id} partition progress: "
                             f"({job_done_count}/{total_job_part_count})"
                         )
 
