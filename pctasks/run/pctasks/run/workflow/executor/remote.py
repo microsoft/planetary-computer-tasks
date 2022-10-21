@@ -698,9 +698,7 @@ class RemoteWorkflowExecutor:
                             workflow_run,
                             job_def.get_id(),
                             JobRunStatus.SKIPPED,
-                            job_run.add_errors(
-                                [f"Job {job_def.id} has no partitions to run."]
-                            ),
+                            errors=[f"Job {job_def.id} has no partitions to run."],
                         )
                         continue
 
