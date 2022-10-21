@@ -44,10 +44,10 @@ logger = logging.getLogger(__name__)
 T = TypeVar("T", bound=Record)
 
 # Submit
-UPLOAD_CODE_ROUTE = "code/upload/"
+UPLOAD_CODE_ROUTE = "code/upload"
 
 # Workflow
-LIST_WORKFLOWS_ROUTE = "workflows/"  # GET
+LIST_WORKFLOWS_ROUTE = "workflows"  # GET
 WORKFLOW_ROUTE = "workflows/{workflow_id}"  # POST / GET / PUT / DELETE
 SUBMIT_WORKFLOW_ROUTE = "workflows/{workflow_id}/submit"  # POST
 LIST_WORKFLOW_RUNS_ROUTE = "workflows/{workflow_id}/runs"  # GET
