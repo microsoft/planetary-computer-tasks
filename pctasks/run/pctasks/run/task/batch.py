@@ -1,9 +1,8 @@
 import logging
-import re
 from collections import defaultdict
 from dataclasses import dataclass
 from threading import Lock
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Union
 
 import azure.batch.models as batchmodels
 
@@ -39,21 +38,13 @@ def get_pool_id(tags: Optional[Dict[str, str]], batch_settings: BatchSettings) -
     return (tags or {}).get(BATCH_POOL_ID_TAG, batch_settings.default_pool_id)
 
 
-def transfer_index(job_id: str, task_id: str) -> Tuple[str, str]:
-    """Transfer an index from a job id to the task id.
+def create_batch_task_id(part_id: str, task_id: str) -> str:
+    """Create a Batch task ID from a partition ID and a task ID.
 
-    Job IDs can have indexes when created from a
-    list through foreach. We want to submit tasks
-    for these types of jobs to the same Azure Batch
-    job, so remove the index when creating the Azure Batch
-    job name, and transfer it to the task id.
+    Create unique batch task ids for a partition by including the partition
+    ID into the task ID.
     """
-    m = re.search(r"\[(\d+)\]", job_id)
-    if m:
-        result_job_id = re.sub(r"\[\d+\]", "", job_id)
-        result_task_id = f"{task_id}_{m.group(1)}"
-        return (result_job_id, result_task_id)
-    return (job_id, task_id)
+    return f"{task_id}:{part_id}"
 
 
 def make_batch_job_prefix(
@@ -91,12 +82,13 @@ class BatchTaskRunner(TaskRunner):
                 submit_msg = prepared_task.task_submit_message
                 run_id = submit_msg.run_id
                 job_id = submit_msg.job_id
+                part_id = submit_msg.partition_id
                 task_id = submit_msg.config.id
                 run_msg = prepared_task.task_run_message
                 task_input_blob_config = prepared_task.task_input_blob_config
                 task_tags = prepared_task.task_tags
 
-                job_id_for_batch, task_id_for_batch = transfer_index(job_id, task_id)
+                task_id_for_batch = create_batch_task_id(part_id, task_id)
 
                 pool_id = get_pool_id(task_tags, self.settings.batch_settings)
 
@@ -115,7 +107,7 @@ class BatchTaskRunner(TaskRunner):
                     )
 
                 batch_job_id = make_batch_job_prefix(
-                    submit_msg.dataset_id, job_id_for_batch, run_id, pool_id
+                    submit_msg.dataset_id, job_id, run_id, pool_id
                 )
 
                 batch_task_id = make_valid_batch_id(task_id_for_batch)
