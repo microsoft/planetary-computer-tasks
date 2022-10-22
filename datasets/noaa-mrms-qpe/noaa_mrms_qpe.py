@@ -10,7 +10,8 @@ from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
 
-COG_CONTAINER = "blob://mrms/mrms-cogs"
+# COG_CONTAINER = "blob://mrms/mrms-cogs"
+COG_CONTAINER = "blob://devstoreaccount1/mrms-cogs"
 
 
 class NoaaMrmsQpeCollection(Collection):
@@ -40,16 +41,12 @@ class NoaaMrmsQpeCollection(Collection):
             # temporary grammar fix
             item.assets["cog"].title = "Processed Cloud Optimized GeoTIFF file"
 
-            # pin custom extension schema to the same release tag as the package
+            # custom extension schema points to the main branch, which could change
             schema = (
                 "https://raw.githubusercontent.com/stactools-packages/"
                 "noaa-mrms-qpe/main/extension/schema.json"
             )
-            pinned_schema = (
-                "https://raw.githubusercontent.com/stactools-packages/"
-                "noaa-mrms-qpe/v0.2.0/extension/schema.json"
-            )
-            item.stac_extensions[item.stac_extensions.index(schema)] = pinned_schema
+            item.stac_extensions.remove(schema)
 
             # upload cog to Azure
             cog_storage = storage_factory.get_storage(f"{COG_CONTAINER}/{path_fragment}/")

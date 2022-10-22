@@ -1,4 +1,4 @@
-name: noaa_mrms_qpe
+id: noaa_mrms_qpe
 image: ${{ args.registry }}/pctasks-task-base:latest
 
 args:
