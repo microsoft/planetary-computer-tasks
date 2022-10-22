@@ -1,4 +1,4 @@
-name: goes_cmi
+id: goes_cmi
 image: ${{ args.registry }}/pctasks-task-base:latest
 
 args:

@@ -57,7 +57,7 @@
     "assets": {
         "thumbnail": {
             "title": "GOES CMIP",
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/goes-cmi.png",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/goes-cmi-thumb.png",
             "media_type": "image/png"
         },
         "geoparquet-items": {

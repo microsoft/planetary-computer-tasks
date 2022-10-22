@@ -1,4 +1,4 @@
-name: goes_glm
+id: goes_glm
 image: ${{ args.registry }}/pctasks-task-base:latest
 
 args:
