@@ -10,8 +10,7 @@ from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
 
-# COG_CONTAINER = "blob://mrms/mrms-cogs"
-COG_CONTAINER = "blob://devstoreaccount1/mrms-cogs"
+COG_CONTAINER = "blob://mrms/mrms-cogs"
 
 
 class NoaaMrmsQpeCollection(Collection):
