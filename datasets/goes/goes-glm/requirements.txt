@@ -1,1 +1,1 @@
-git+https://github.com/stactools-packages/goes-glm.git@7ed673e5748355631b81ab6c3689a67e0255de8e
+stactools-goes-glm == 0.2.1
