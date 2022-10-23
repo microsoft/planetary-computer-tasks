@@ -22,14 +22,14 @@ collections:
         token: ${{ pc.get_token(goeseuwest, noaa-goes16) }}
         chunks:
           options:
-            name_starts_with: GLM-L2-LCFA/2022/190/
+            name_starts_with: GLM-L2-LCFA/
             ends_with: .nc
             chunk_length: 30
       - uri: blob://goeseuwest/noaa-goes17/
         token: ${{ pc.get_token(goeseuwest, noaa-goes17) }}
         chunks:
           options:
-            name_starts_with: GLM-L2-LCFA/2022/190/
+            name_starts_with: GLM-L2-LCFA/
             ends_with: .nc
             chunk_length: 30
     chunk_storage:
