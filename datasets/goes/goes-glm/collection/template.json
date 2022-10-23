@@ -124,7 +124,7 @@
         }
     },
     "item_assets": {
-        "geoparquet_events": {
+        "events": {
             "type": "application/x-parquet",
             "title": "Processed GeoParquet file for events",
             "table:primary_geometry": "geometry",
@@ -163,7 +163,7 @@
                 "data"
             ]
         },
-        "geoparquet_flashes": {
+        "flashes": {
             "type": "application/x-parquet",
             "title": "Processed GeoParquet file for flashes",
             "table:primary_geometry": "geometry",
@@ -235,7 +235,7 @@
                 "data"
             ]
         },
-        "geoparquet_groups": {
+        "groups": {
             "type": "application/x-parquet",
             "title": "Processed GeoParquet file for groups",
             "table:primary_geometry": "geometry",

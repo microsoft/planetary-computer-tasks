@@ -43,12 +43,14 @@ class GoesGlmCollection(Collection):
             item.assets["netcdf"] = pystac.Asset.from_dict(netcdf_asset_dict)
             item.stac_extensions.remove(DATACUBE_EXTENSION)
 
+            # asset name preference: remove the "geoparquet_" prefix
             # update roles to be consistent in the PC
             for suffix in ["events", "flashes", "groups"]:
-                item.assets[f"geoparquet_{suffix}"].roles = ["data"]
+                item.assets[suffix] = item.assets.pop(f"geoparquet_{suffix}")
+                item.assets[suffix].roles = ["data"]
             item.assets["netcdf"].roles = ["data"]
 
-            # grammar fix
+            # grammar preference
             item.assets["netcdf"].title = "Original NetCDF4 file"
 
             # upload geoparquets; update geoparquet and netcdf asset hrefs
