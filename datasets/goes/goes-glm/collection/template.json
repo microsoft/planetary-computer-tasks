@@ -54,19 +54,26 @@
     "msft:group_id": "goes",
     "providers": [
         {
-            "name": "DOC/NOAA/NESDIS",
-            "description": "Provided by:\n\n* U.S. Department of Commerce\n* National Oceanic and Atmospheric Administration\n* National Environmental Satellite, Data, and Information Services",
+            "name": "NASA",
             "roles": [
+                "producer"
+            ],
+            "url": "https://www.nasa.gov/content/goes"
+        },
+        {
+            "name": "NOAA",
+            "roles": [
+                "processor",
                 "producer",
                 "licensor"
             ],
-            "url": "https://www.goes.noaa.gov"
+            "url": "https://www.goes-r.gov/"
         },
         {
             "name": "Microsoft",
             "roles": [
-                "processor",
-                "host"
+                "host",
+                "processor"
             ],
             "url": "https://planetarycomputer.microsoft.com"
         }
