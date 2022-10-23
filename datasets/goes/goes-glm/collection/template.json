@@ -296,7 +296,7 @@
         },
         "netcdf": {
             "type": "application/netcdf",
-            "title": "Original netCDF 4 file",
+            "title": "Original NetCDF4 file",
             "roles": [
                 "data"
             ]

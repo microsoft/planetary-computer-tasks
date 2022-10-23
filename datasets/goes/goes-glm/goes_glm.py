@@ -48,6 +48,9 @@ class GoesGlmCollection(Collection):
                 item.assets[f"geoparquet_{suffix}"].roles = ["data"]
             item.assets["netcdf"].roles = ["data"]
 
+            # grammar fix
+            item.assets["netcdf"].title = "Original NetCDF4 file"
+
             # upload geoparquets; update geoparquet and netcdf asset hrefs
             parquet_storage = storage_factory.get_storage(f"{GEOPARQUET_CONTAINER}")
             for tmp_name, tmp_path in tmp_parquets.items():
