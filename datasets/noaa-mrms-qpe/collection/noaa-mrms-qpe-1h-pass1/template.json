@@ -1,0 +1,185 @@
+{
+    "stac_version": "1.0.0",
+    "type": "Collection",
+    "id": "noaa-mrms-qpe-1h-pass1",
+    "title": "NOAA MRMS QPE 1-Hour Pass 1",
+    "description": "{{ collection.description }}",
+    "license": "proprietary",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://www.nssl.noaa.gov/projects/mrms/nmq_data_policy_OGCrevised.pdf",
+            "type": "application/pdf",
+            "title": "MRMS Dataset Sharing Policy"
+        },
+        {
+            "rel": "about",
+            "href": "https://mrms.nssl.noaa.gov",
+            "type": "text/html",
+            "title": "MRMS Homepage"
+        },
+        {
+            "rel": "about",
+            "href": "https://vlab.noaa.gov/web/wdtd/-/multi-sensor-qpe-1?selectedFolder=9234881",
+            "type": "text/html",
+            "title": "MRMS QPE Technical Product Guide"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/raster/v1.1.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+    ],
+    "keywords": [
+        "NOAA",
+        "MRMS",
+        "QPE",
+        "Precipitation",
+        "Weather",
+        "United States",
+        "Guam",
+        "Caribbean"
+    ],
+    "msft:short_description": "Integrated multi-sensor cumulative precipation estimate for the past hour with a 1-hour latency.",
+    "msft:storage_account": "mrms",
+    "msft:container": "mrms-cogs",
+    "msft:group_id": "noaa-mrms-qpe",
+    "providers": [
+        {
+            "name": "NOAA National Severe Storms Laboratory",
+            "roles": [
+                "producer",
+                "licensor"
+            ],
+            "url": "https://www.nssl.noaa.gov/projects/mrms"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "processor",
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "title": "NOAA MRMS QPE 1-Hour Pass 1 Thumbnail",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-mrms-qpe-1h-pass1-thumb.png",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/noaa-mrms-qpe-1h-pass1.parquet",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "QS"
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            }
+        } 
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -176.0,
+                    9.0,
+                    150.0,
+                    72.0
+                ],
+                [
+                    -130.0,
+                    20.0,
+                    -60.0,
+                    55.0
+                ],
+                [
+                    -164.0,
+                    15.0,
+                    -151.0,
+                    26.0
+                ],
+                [
+                    140.0,
+                    9.0,
+                    150.0,
+                    18.0
+                ],
+                [
+                    -176.0,
+                    50.0,
+                    -126.0,
+                    72.0
+                ],
+                [
+                    -90.0,
+                    10.0,
+                    -60.0,
+                    25.0
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2022-07-21T20:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "item_assets": {
+        "cog": {
+            "roles": [
+                "data"
+            ],
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "raster:bands": [
+                {
+                    "spatial_resolution": 1000,
+                    "unit": "mm",
+                    "data_type": "float64"
+                }
+            ],
+            "title": "Processed Cloud Optimized GeoTIFF file"
+        },
+        "grib2": {
+            "roles": [
+                "data"
+            ],
+            "type": "application/wmo-GRIB2",
+            "raster:bands": [
+                {
+                    "spatial_resolution": 1000,
+                    "unit": "mm",
+                    "data_type": "float64"
+                }
+            ],
+            "title": "Original GRIB2 file"
+        }
+    },
+    "summaries": {
+        "noaa_mrms_qpe:pass": [
+            1
+        ],
+        "noaa_mrms_qpe:period": [
+            1
+        ],
+        "noaa_mrms_qpe:region": [
+            "CONUS",
+            "HAWAII",
+            "GUAM",
+            "ALASKA",
+            "CARIB"
+        ]
+    }
+}
