@@ -1,12 +1,12 @@
-name: goes_glm
+id: goes_glm
 image: ${{ args.registry }}/pctasks-task-base:latest
 
 args:
 - registry
 
 code:
-  src: ${{ local.path(./goes_glm.py) }}
-  requirements: ${{ local.path(./requirements.txt) }}
+  src: ${{ local.path(../goes_glm.py) }}
+  requirements: ${{ local.path(../requirements.txt) }}
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -15,19 +15,21 @@ environment:
 
 collections:
   - id: goes-glm
-    template: ${{ local.path(./collection) }}
+    template: ${{ local.path(../collection) }}
     class: goes_glm:GoesGlmCollection
     asset_storage:
-      - uri: blob://devstoreaccount1/noaa-goes16/
+      - uri: blob://goeseuwest/noaa-goes16/
+        token: ${{ pc.get_token(goeseuwest, noaa-goes16) }}
         chunks:
           options:
-            name_starts_with: GLM-L2-LCFA/
+            name_starts_with: GLM-L2-LCFA/2022/190/
             ends_with: .nc
             chunk_length: 2
-      - uri: blob://devstoreaccount1/noaa-goes17/
+      - uri: blob://goeseuwest/noaa-goes17/
+        token: ${{ pc.get_token(goeseuwest, noaa-goes17) }}
         chunks:
           options:
-            name_starts_with: GLM-L2-LCFA/
+            name_starts_with: GLM-L2-LCFA/2022/190/
             ends_with: .nc
             chunk_length: 2
     chunk_storage:

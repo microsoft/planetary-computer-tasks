@@ -14,11 +14,9 @@ from pctasks.dataset.collection import Collection
 GEOPARQUET_CONTAINER = "blob://goeseuwest/noaa-goes-geoparquet/"
 
 # The original GOES ETL code indicates duplicate assets. Is there a way to
-# handle duplicate assets in pctasks? Default item ingest is an upsert, so
-# the ingest should not fail even with duplicates, but no logic is applied to
-# decide which duplicate asset/item to ingest. Should we run with --insert-only,
-# which will fail for conflicting items, so we can detect if duplicate assets
-# exist in the GLM source data?
+# handle duplicate assets in pctasks? -We should probably ingest items with
+# an "insert" rather than "upsert" action so it fails if duplicate source
+# data assets exist.
 
 
 class GoesGlmCollection(Collection):
@@ -44,6 +42,11 @@ class GoesGlmCollection(Collection):
             netcdf_asset_dict.pop("cube:variables")
             item.assets["netcdf"] = pystac.Asset.from_dict(netcdf_asset_dict)
             item.stac_extensions.remove(DATACUBE_EXTENSION)
+
+            # update roles to be consistent in the PC
+            for suffix in ["events", "flashes", "groups"]:
+                item.assets[f"geoparquet_{suffix}"].roles = ["data"]
+            item.assets["netcdf"].roles = ["data"]
 
             # upload geoparquets; update geoparquet and netcdf asset hrefs
             parquet_storage = storage_factory.get_storage(f"{GEOPARQUET_CONTAINER}")

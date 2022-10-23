@@ -160,8 +160,7 @@
                 }
             ],
             "roles": [
-                "data",
-                "cloud-optimized"
+                "data"
             ]
         },
         "geoparquet_flashes": {
@@ -233,8 +232,7 @@
                 }
             ],
             "roles": [
-                "data",
-                "cloud-optimized"
+                "data"
             ]
         },
         "geoparquet_groups": {
@@ -293,16 +291,14 @@
                 }
             ],
             "roles": [
-                "data",
-                "cloud-optimized"
+                "data"
             ]
         },
         "netcdf": {
             "type": "application/netcdf",
             "title": "Original netCDF 4 file",
             "roles": [
-                "data",
-                "source"
+                "data"
             ]
         }
     },

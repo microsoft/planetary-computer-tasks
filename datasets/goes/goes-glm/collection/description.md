@@ -8,4 +8,4 @@ The GLM data product consists of a hierarchy of earth-located lightning radiant 
 
 The product includes the relationship among lightning events, groups, and flashes, and the area coverage of lightning groups and flashes. The product also includes processing and data quality metadata, and satellite state and location information. 
 
-GLM L2 data is provided in tabular ([GeoParquet](https://github.com/opengeospatial/geoparquet)) and original source (NetCDF) formats.
+This Collection contains GLM L2 data in tabular ([GeoParquet](https://github.com/opengeospatial/geoparquet)) format and the original source NetCDF format. The NetCDF files are delivered to Azure as part of the [NOAA Open Data Dissemination (NODD) Program](https://www.noaa.gov/information-technology/open-data-dissemination).
