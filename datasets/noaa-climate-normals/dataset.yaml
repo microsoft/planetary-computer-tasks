@@ -1,0 +1,60 @@
+id: noaa_climate_normals
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./noaa_climate_normals.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+
+environment: 
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: noaa-climate-normals-gridded
+    template: ${{ local.path(./collection/noaa-climate-normals-gridded) }}
+    class: noaa_climate_normals:NoaaClimateNormalsCollection
+    asset_storage:
+      - uri: blob://noaanormals/gridded
+        token: ${{ pc.get_token(noaanormals, gridded) }}
+        chunks:
+          options:
+            name_starts_with: prcp
+            extensions: [.nc]
+            chunk_length: 1
+          splits:
+            - depth: 2
+    chunk_storage:
+      uri: blob://noaanormals/noaanormals-etl-data/gridded/
+
+  - id: noaa-climate-normals-netcdf
+    template: ${{ local.path(./collection/noaa-climate-normals-netcdf) }}
+    class: noaa_climate_normals:NoaaClimateNormalsCollection
+    asset_storage:
+      - uri: blob://noaanormals/netcdf
+        token: ${{ pc.get_token(noaanormals, netcdf) }}
+        chunks:
+          options:
+            extensions: [.nc]
+            chunk_length: 12
+    chunk_storage:
+      uri: blob://noaanormals/noaanormals-etl-data/netcdf/
+
+  - id: noaa-climate-normals-tabular
+    template: ${{ local.path(./collection/noaa-climate-normals-tabular) }}
+    class: noaa_climate_normals:NoaaClimateNormalsCollection
+    asset_storage:
+      - uri: blob://noaanormals/climate-normals
+        token: ${{ pc.get_token(noaanormals, climate-normals) }}
+        chunks:
+          options:
+            list_folders: true
+            ends_with: access
+            chunk_length: 1
+          splits:
+            - depth: 2
+    chunk_storage:
+      uri: blob://noaanormals/noaanormals-etl-data/tabular/
