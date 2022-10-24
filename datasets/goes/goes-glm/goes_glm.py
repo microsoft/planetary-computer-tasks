@@ -36,21 +36,22 @@ class GoesGlmCollection(Collection):
             item = stac.create_item(tmp_nc_asset_path)
             tmp_parquets = {f.name: f.as_posix() for f in tmp_dir.glob("*.parquet")}
 
-            # slim down the source netcdf asset
+            # preference: slim down the source netcdf asset
             netcdf_asset_dict = item.assets["netcdf"].to_dict()
             netcdf_asset_dict.pop("cube:dimensions")
             netcdf_asset_dict.pop("cube:variables")
             item.assets["netcdf"] = pystac.Asset.from_dict(netcdf_asset_dict)
             item.stac_extensions.remove(DATACUBE_EXTENSION)
 
-            # asset name preference: remove the "geoparquet_" prefix
-            # update roles to be consistent in the PC
             for suffix in ["events", "flashes", "groups"]:
+                # preference: remove the "geoparquet_" prefix from asset names
                 item.assets[suffix] = item.assets.pop(f"geoparquet_{suffix}")
+                # preference: remove "cloud-optimized" role to be consistent in the PC
                 item.assets[suffix].roles = ["data"]
+            # preference: remove "source" role to be consistent in the PC
             item.assets["netcdf"].roles = ["data"]
 
-            # grammar preference
+            # preference: netCDF 4 to NetCDF4
             item.assets["netcdf"].title = "Original NetCDF4 file"
 
             # upload geoparquets; update geoparquet and netcdf asset hrefs
@@ -62,9 +63,9 @@ class GoesGlmCollection(Collection):
                 )
                 parquet_storage.upload_file(tmp_path, upload_path)
 
-                asset_key = f"geoparquet_{tmp_name[0:-8]}"
+                asset_key = tmp_name[0:-8]
                 item.assets[asset_key].href = parquet_storage.get_url(upload_path)
 
-                item.assets["netcdf"].href = nc_storage.get_url(nc_asset_path)
+            item.assets["netcdf"].href = nc_storage.get_url(nc_asset_path)
 
         return [item]
