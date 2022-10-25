@@ -3,7 +3,10 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import ORJSONResponse, PlainTextResponse
 
-from pctasks.core.cosmos.containers.workflow_runs import AsyncWorkflowRunsContainer
+from pctasks.core.cosmos.containers.workflow_runs import (
+    AsyncWorkflowRunsContainer,
+    WorkflowRunsContainer,
+)
 from pctasks.core.models.response import (
     JobPartitionRunRecordListResponse,
     JobPartitionRunRecordResponse,
@@ -24,6 +27,9 @@ logger = logging.getLogger(__name__)
 
 
 runs_router = APIRouter()
+
+# TODO: Make list operations use async client after
+# https://github.com/Azure/azure-sdk-for-python/issues/25104 is resolved.
 
 
 @runs_router.get(
@@ -103,7 +109,7 @@ async def list_job_partition_runs(
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    async with AsyncWorkflowRunsContainer(JobPartitionRunRecord) as container:
+    with WorkflowRunsContainer(JobPartitionRunRecord) as container:
         query = (
             "SELECT * FROM c WHERE c.run_id = @run_id "
             "AND c.job_id = @job_id AND c.type = @type"
@@ -121,7 +127,7 @@ async def list_job_partition_runs(
             },
         )
 
-        return JobPartitionRunRecordListResponse.from_pages([p async for p in pages])
+        return JobPartitionRunRecordListResponse.from_pages(pages)
 
 
 @runs_router.get(

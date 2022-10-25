@@ -6,7 +6,10 @@ from fastapi.responses import ORJSONResponse
 
 from pctasks.core.cosmos.containers.records import AsyncRecordsContainer
 from pctasks.core.cosmos.containers.workflow_runs import AsyncWorkflowRunsContainer
-from pctasks.core.cosmos.containers.workflows import AsyncWorkflowsContainer
+from pctasks.core.cosmos.containers.workflows import (
+    AsyncWorkflowsContainer,
+    WorkflowsContainer,
+)
 from pctasks.core.models.response import (
     RecordListResponse,
     WorkflowRecordListResponse,
@@ -31,6 +34,9 @@ logger = logging.getLogger(__name__)
 
 
 workflows_router = APIRouter()
+
+# TODO: Make list operations use async client after
+# https://github.com/Azure/azure-sdk-for-python/issues/25104 is resolved.
 
 
 @workflows_router.get(
@@ -199,7 +205,7 @@ async def list_workflow_runs(
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    async with AsyncWorkflowsContainer(WorkflowRunRecord) as container:
+    with WorkflowsContainer(WorkflowRunRecord) as container:
         query = "SELECT * FROM c WHERE c.workflow_id = @workflow_id AND c.type = @type"
         query = sort_params.add_sort(query)
         pages = container.query_paged(
@@ -210,4 +216,4 @@ async def list_workflow_runs(
             parameters={"workflow_id": workflow_id, "type": RunRecordType.WORKFLOW_RUN},
         )
 
-        return WorkflowRunRecordListResponse.from_pages([p async for p in pages])
+        return WorkflowRunRecordListResponse.from_pages(pages)
