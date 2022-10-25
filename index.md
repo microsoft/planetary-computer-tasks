@@ -2,9 +2,11 @@
 layout: default
 ---
 
-## Getting Started
+# Getting Started
 
 {{ site.description }}
+
+## Helm Repository
 
 You can add this repository to your local helm configuration as follows :
 
@@ -13,7 +15,7 @@ $ helm repo add {{ site.repo_name }} {{ site.url }}
 $ helm repo update
 ```
 
-## Charts
+### Charts
 
 {% comment %}[0] and [1] below represent key and value{% endcomment %}
 {% for helm_chart in site.data.index.entries %}
@@ -42,4 +44,18 @@ $ helm install --version {{ latest_chart.version }} myrelease {{ site.repo_name 
 | [{{ chart.name }}-{{ chart.version }}]({{ chart.urls[0] }}) |{% for dep in chart.dependencies %} {{ dep.version | capitalize }} |{% endfor %} {{ chart.appVersion }} | {{ chart.created | date_to_long_string }} |
 {% endfor -%}
 
+{% endfor %}
+
+## Function packages
+
+### {{ site.data.func-index.name }}
+
+{{ site.data.func-index.description }}
+
+Last updated: {{ site.data.func-index.generated | date_to_long_string }}
+
+| Package | Version | Date |
+|---------|---------|------|
+{% for package in site.data.func-index.packages | sort: 'created' | reverse -%}
+| [{{ package.name }}]({{ package.url }}) | {{ package.version }} | {{ package.created | date_to_long_string }} |
 {% endfor %}

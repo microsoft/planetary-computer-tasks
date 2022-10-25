@@ -1,0 +1,13 @@
+# Jekyll
+Gemfile
+Gemfile.lock
+_site/
+
+# Config
+.venv
+*.env
+
+# main branch folders
+deployment/
+pctasks/
+pctasks_funcs/
