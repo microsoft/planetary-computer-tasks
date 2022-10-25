@@ -47,10 +47,9 @@ def create_batch_task_id(part_id: str, task_id: str) -> str:
     return f"{task_id}:{part_id}"
 
 
-def make_batch_job_prefix(
-    dataset_id: str, job_id: str, run_id: str, pool_id: str
-) -> str:
-    return make_valid_batch_id(f"{dataset_id}_{job_id}_{run_id}_{pool_id}")
+def make_batch_job_id(dataset_id: str, job_id: str, run_id: str, pool_id: str) -> str:
+    job_id = f"{dataset_id}:{job_id}:{run_id}:{pool_id}"
+    return make_valid_batch_id(job_id)
 
 
 @dataclass(frozen=True)
@@ -83,7 +82,7 @@ class BatchTaskRunner(TaskRunner):
                 run_id = submit_msg.run_id
                 job_id = submit_msg.job_id
                 part_id = submit_msg.partition_id
-                task_id = submit_msg.config.id
+                task_id = submit_msg.definition.id
                 run_msg = prepared_task.task_run_message
                 task_input_blob_config = prepared_task.task_input_blob_config
                 task_tags = prepared_task.task_tags
@@ -106,7 +105,7 @@ class BatchTaskRunner(TaskRunner):
                         ["--account-url", task_input_blob_config.account_url]
                     )
 
-                batch_job_id = make_batch_job_prefix(
+                batch_job_id = make_batch_job_id(
                     submit_msg.dataset_id, job_id, run_id, pool_id
                 )
 
@@ -144,12 +143,22 @@ class BatchTaskRunner(TaskRunner):
                         # Try twice in case job completes before we can submit tasks
                         while not task_submitted and retry_count <= 1:
                             try:
+                                existing_jobs = batch_client.list_jobs(batch_job_id)
+                                existing_job = False
+                                if len(existing_jobs) > 0:
+                                    for job in existing_jobs:
+                                        if job.state == batchmodels.JobState.active:
+                                            batch_job_id = job.id
+                                            existing_job = True
+                                            break
+                                    if not existing_job:
+                                        # Create a job ID that doesn't clash
+                                        # with an existing job
+                                        batch_job_id = make_valid_batch_id(
+                                            f"{batch_job_id}:{len(existing_jobs)}"
+                                        )
 
-                                existing_batch_job_id = batch_client.find_active_job(
-                                    batch_job_id
-                                )
-
-                                if not existing_batch_job_id:
+                                if not existing_job:
                                     # Create the job
                                     if not batch_client.get_pool(pool_id):
                                         raise BatchTaskRunnerError(
@@ -164,10 +173,8 @@ class BatchTaskRunner(TaskRunner):
 
                                 else:
                                     logger.info(
-                                        "Found existing batch job "
-                                        f"{existing_batch_job_id}."
+                                        "Found existing batch job " f"{batch_job_id}."
                                     )
-                                    batch_job_id = existing_batch_job_id
 
                                 # Submit the tasks
                                 task_errors = batch_client.add_collection(
@@ -199,6 +206,7 @@ class BatchTaskRunner(TaskRunner):
 
                             except batchmodels.BatchErrorException as e:
                                 logger.exception(e)
+                                logger.warning("RETRYING BATCH JOB SUBMIT...")
                                 error: Any = e.error  # Avoid type hinting error
                                 if error.code == "JobCompleted":
                                     if retry_count > 1:

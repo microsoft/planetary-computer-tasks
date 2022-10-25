@@ -131,7 +131,7 @@ class TaskState:
 
     @property
     def task_id(self) -> str:
-        return self.prepared_task.task_submit_message.config.id
+        return self.prepared_task.task_submit_message.definition.id
 
     def change_status(self, status: TaskStateStatus) -> bool:
         if not self.status == status:
@@ -190,11 +190,16 @@ class TaskState:
         self._wait_info = None
         if self.submit_result:
             raise Exception(
-                f"Task {self.prepared_task.task_submit_message.config.id} "
+                f"Task {self.prepared_task.task_submit_message.definition.id} "
                 "already submitted "
                 f"for job {self.job_id}"
             )
-        self.set_submitted(executor.submit_tasks([self.prepared_task])[0])
+
+        try:
+            submit_result = executor.submit_tasks([self.prepared_task])
+            self.set_submitted(submit_result[0])
+        except Exception as e:
+            self.set_submitted(FailedTaskSubmitResult(errors=[str(e)]))
 
     def set_failed(self, errors: List[str]) -> None:
         self.change_status(TaskStateStatus.FAILED)
@@ -373,7 +378,7 @@ class JobPartitionState:
                 job_id=self.job_part_submit_msg.job_id,
                 partition_id=self.job_part_submit_msg.partition_id,
                 tokens=self.job_part_submit_msg.tokens,
-                config=copied_task,
+                definition=copied_task,
                 target_environment=self.job_part_submit_msg.target_environment,
                 instance_id="TODO:REMOVE",
             )
