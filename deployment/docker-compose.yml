@@ -18,6 +18,11 @@ services:
       - AZURE_CLIENT_ID=${AZURE_CLIENT_ID}
       - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
 
+      # Used in function deployment injected by GH Actions
+      - GITHUB_TOKEN
+      - GITHUB_REPOSITORY
+      - GITHUB_ACTOR
+
     working_dir: /opt/src/deployment
     volumes:
       - ../deployment:/opt/src/deployment

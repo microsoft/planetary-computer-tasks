@@ -88,6 +88,7 @@ class RunSettings(PCTasksSettings):
     argo_host: Optional[str] = None
     argo_token: Optional[str] = None
     argo_namespace: str = "argo"
+    argo_node_group: Optional[str] = None
     workflow_runner_image: Optional[str] = None
 
     # KeyVault

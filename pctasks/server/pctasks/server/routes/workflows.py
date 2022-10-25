@@ -2,11 +2,14 @@ import logging
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.responses import ORJSONResponse, PlainTextResponse
+from fastapi.responses import ORJSONResponse
 
-from pctasks.core.cosmos.containers.records import RecordsContainer
-from pctasks.core.cosmos.containers.workflow_runs import WorkflowRunsContainer
-from pctasks.core.cosmos.containers.workflows import WorkflowsContainer
+from pctasks.core.cosmos.containers.records import AsyncRecordsContainer
+from pctasks.core.cosmos.containers.workflow_runs import AsyncWorkflowRunsContainer
+from pctasks.core.cosmos.containers.workflows import (
+    AsyncWorkflowsContainer,
+    WorkflowsContainer,
+)
 from pctasks.core.models.response import (
     RecordListResponse,
     WorkflowRecordListResponse,
@@ -18,11 +21,11 @@ from pctasks.core.models.workflow import (
     Workflow,
     WorkflowRecord,
     WorkflowRecordType,
+    WorkflowRunStatus,
     WorkflowSubmitMessage,
     WorkflowSubmitRequest,
     WorkflowSubmitResult,
 )
-from pctasks.run.settings import RunSettings
 from pctasks.run.workflow import get_workflow_runner
 from pctasks.server.dependencies import PageParams, SortParams
 from pctasks.server.request import ParsedRequest
@@ -32,6 +35,9 @@ logger = logging.getLogger(__name__)
 
 workflows_router = APIRouter()
 
+# TODO: Make list operations use async client after
+# https://github.com/Azure/azure-sdk-for-python/issues/25104 is resolved.
+
 
 @workflows_router.get(
     "/",
@@ -39,7 +45,7 @@ workflows_router = APIRouter()
     response_class=ORJSONResponse,
     response_model=WorkflowRecordListResponse,
 )
-def list_workflows(
+async def list_workflows(
     request: Request,
     page_params: PageParams = Depends(PageParams.dependency),
     sort_params: SortParams = Depends(SortParams.dependency),
@@ -49,18 +55,18 @@ def list_workflows(
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    container = RecordsContainer(WorkflowRecord)
-    query = "SELECT * FROM c WHERE c.type = @type"
-    query = sort_params.add_sort(query)
-    pages = container.query_paged(
-        query=query,
-        partition_key=WorkflowRecordType.WORKFLOW,
-        page_size=page_params.limit,
-        continuation_token=page_params.token,
-        parameters={"type": WorkflowRecordType.WORKFLOW},
-    )
+    async with AsyncRecordsContainer(WorkflowRecord) as container:
+        query = "SELECT * FROM c WHERE c.type = @type"
+        query = sort_params.add_sort(query)
+        pages = container.query_paged(
+            query=query,
+            partition_key=WorkflowRecordType.WORKFLOW,
+            page_size=page_params.limit,
+            continuation_token=page_params.token,
+            parameters={"type": WorkflowRecordType.WORKFLOW},
+        )
 
-    return WorkflowRecordListResponse.from_pages(pages)
+        return WorkflowRecordListResponse.from_pages([p async for p in pages])
 
 
 @workflows_router.post(
@@ -68,7 +74,7 @@ def list_workflows(
     summary="Create a workflow.",
     response_class=ORJSONResponse,
 )
-def create_workflow(request: Request, workflow: Workflow) -> ORJSONResponse:
+async def create_workflow(request: Request, workflow: Workflow) -> ORJSONResponse:
     parsed_request = ParsedRequest(request)
 
     if not parsed_request.is_authenticated:
@@ -76,11 +82,13 @@ def create_workflow(request: Request, workflow: Workflow) -> ORJSONResponse:
 
     record = WorkflowRecord(workflow_id=workflow.id, workflow=workflow)
 
-    container = WorkflowsContainer(WorkflowRecord)
-    if container.get(workflow.id, partition_key=workflow.id):
-        raise HTTPException(status_code=409, detail="Workflow already exists")
+    async with AsyncWorkflowsContainer(WorkflowRecord) as container:
+        existing = await container.get(workflow.id, partition_key=workflow.id)
+        if existing:
+            raise HTTPException(status_code=409, detail="Workflow already exists")
 
-    container.put(record)
+        await container.put(record)
+
     return ORJSONResponse({"workflow_id": workflow.id})
 
 
@@ -89,7 +97,7 @@ def create_workflow(request: Request, workflow: Workflow) -> ORJSONResponse:
     summary="Update a workflow.",
     response_class=ORJSONResponse,
 )
-def update_workflow(request: Request, workflow: Workflow) -> ORJSONResponse:
+async def update_workflow(request: Request, workflow: Workflow) -> ORJSONResponse:
     parsed_request = ParsedRequest(request)
 
     if not parsed_request.is_authenticated:
@@ -97,13 +105,15 @@ def update_workflow(request: Request, workflow: Workflow) -> ORJSONResponse:
 
     record = WorkflowRecord(workflow_id=workflow.id, workflow=workflow)
 
-    container = WorkflowsContainer(WorkflowRecord)
-    if not container.get(workflow.id, partition_key=workflow.id):
-        raise HTTPException(
-            status_code=404, detail=f"Workflow '{workflow.id}' not found"
-        )
+    async with AsyncWorkflowsContainer(WorkflowRecord) as container:
+        existing = await container.get(workflow.id, partition_key=workflow.id)
+        if not existing:
+            raise HTTPException(
+                status_code=404, detail=f"Workflow '{workflow.id}' not found"
+            )
 
-    container.put(record)
+        await container.put(record)
+
     return ORJSONResponse({"workflow_id": workflow.id})
 
 
@@ -113,14 +123,15 @@ def update_workflow(request: Request, workflow: Workflow) -> ORJSONResponse:
     response_class=ORJSONResponse,
     response_model=WorkflowRecordResponse,
 )
-def fetch_workflow(request: Request, workflow_id: str) -> WorkflowRecordResponse:
+async def fetch_workflow(request: Request, workflow_id: str) -> WorkflowRecordResponse:
     parsed_request = ParsedRequest(request)
 
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    container = WorkflowsContainer(WorkflowRecord)
-    record = container.get(workflow_id, partition_key=workflow_id)
+    async with AsyncWorkflowsContainer(WorkflowRecord) as container:
+        record = await container.get(workflow_id, partition_key=workflow_id)
+
     if record is None:
         raise HTTPException(
             status_code=404, detail=f"Workflow '{workflow_id}' not found"
@@ -143,12 +154,12 @@ async def submit_workflow(
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    container = WorkflowsContainer(WorkflowRecord)
-    workflow_record = container.get(workflow_id, partition_key=workflow_id)
-    if not workflow_record:
-        raise HTTPException(
-            status_code=404, detail=f"Workflow '{workflow_id}' not found"
-        )
+    async with AsyncWorkflowsContainer(WorkflowRecord) as container:
+        workflow_record = await container.get(workflow_id, partition_key=workflow_id)
+        if not workflow_record:
+            raise HTTPException(
+                status_code=404, detail=f"Workflow '{workflow_id}' not found"
+            )
 
     logger.info(f"Submitting workflow: {workflow_id}")
     run_id = str(uuid4())
@@ -162,49 +173,19 @@ async def submit_workflow(
 
     workflow_runner = get_workflow_runner()
 
-    workflow_runs = WorkflowRunsContainer(WorkflowRunRecord)
-    workflow_runs.put(WorkflowRunRecord.from_submit_message(submit_msg))
+    async with AsyncWorkflowRunsContainer(WorkflowRunRecord) as workflow_runs:
+        await workflow_runs.put(WorkflowRunRecord.from_submit_message(submit_msg))
 
-    submit_result = workflow_runner.submit_workflow(submit_msg)
-
-    return submit_result
-
-
-@workflows_router.get(
-    "/{run_id}/log",
-    summary="Fetch log of a workflow run.",
-    response_class=PlainTextResponse,
-)
-async def fetch_task_log(
-    request: Request, run_id: str, job_id: str, partition_id: str, task_id: str
-) -> PlainTextResponse:
-    parsed_request = ParsedRequest(request)
-
-    if not parsed_request.is_authenticated:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
-    workflow_runs = WorkflowRunsContainer(WorkflowRunRecord)
-    record = workflow_runs.get(
-        run_id,
-        partition_key=run_id,
-    )
-
-    if not record:
-        raise HTTPException(status_code=404, detail="Workflow run record not found")
-
-    log_uri = record.log_uri
-
-    if not log_uri:
-        raise HTTPException(status_code=404, detail="Log URI not set on workflow run")
-
-    run_settings = RunSettings.get()
-
-    log_storage = run_settings.get_log_storage()
-    log_path = log_storage.get_path(log_uri)
-    if not log_storage.file_exists(log_path):
-        raise HTTPException(status_code=404, detail="Log file not found at record URI")
-
-    return PlainTextResponse(content=log_storage.read_text(log_path))
+        try:
+            submit_result = workflow_runner.submit_workflow(submit_msg)
+            return submit_result
+        except Exception as e:
+            logger.exception(e)
+            r = await workflow_runs.get(run_id, partition_key=run_id)
+            if r:
+                r.set_status(WorkflowRunStatus.FAILED)
+                await workflow_runs.put(r)
+            raise
 
 
 @workflows_router.get(
@@ -224,15 +205,15 @@ async def list_workflow_runs(
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    container = WorkflowsContainer(WorkflowRunRecord)
-    query = "SELECT * FROM c WHERE c.workflow_id = @workflow_id AND c.type = @type"
-    query = sort_params.add_sort(query)
-    pages = container.query_paged(
-        query=query,
-        partition_key=workflow_id,
-        page_size=page_params.limit,
-        continuation_token=page_params.token,
-        parameters={"workflow_id": workflow_id, "type": RunRecordType.WORKFLOW_RUN},
-    )
+    with WorkflowsContainer(WorkflowRunRecord) as container:
+        query = "SELECT * FROM c WHERE c.workflow_id = @workflow_id AND c.type = @type"
+        query = sort_params.add_sort(query)
+        pages = container.query_paged(
+            query=query,
+            partition_key=workflow_id,
+            page_size=page_params.limit,
+            continuation_token=page_params.token,
+            parameters={"workflow_id": workflow_id, "type": RunRecordType.WORKFLOW_RUN},
+        )
 
-    return WorkflowRunRecordListResponse.from_pages(pages)
+        return WorkflowRunRecordListResponse.from_pages(pages)

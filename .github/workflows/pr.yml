@@ -38,7 +38,9 @@ jobs:
         if: ${{ github.base_ref  == 'main' }}
 
       - name: Install Helm
-        uses: azure/setup-helm@v1
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.8.2
         if: ${{ github.base_ref  == 'main' }}
 
       - name: Setup cluster

@@ -8,12 +8,13 @@ resource "azurerm_public_ip" "pctasks" {
 
   tags = {
     environment = var.environment
+  }
 
-    # This has to be manually changed during deployes
-    # If you let terraform delete it it can break the DNS linkage.
-    # See https://github.com/terraform-providers/terraform-provider-azurerm/issues/7034
-    # and https://github.com/terraform-providers/terraform-provider-azurerm/pull/11020#issuecomment-802606941
-
-    # k8s-azure-dns-label-service = "pc/nginx-ingress-ingress-nginx-controller"
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to tags, e.g. because a management agent
+      # updates these based on some ruleset managed elsewhere.
+      tags,
+    ]
   }
 }

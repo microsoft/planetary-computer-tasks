@@ -1,28 +1,52 @@
-from typing import Dict, Optional, TypeVar
+from dataclasses import dataclass
+from typing import Optional
 
 from azure.cosmos import ContainerProxy, CosmosClient, DatabaseProxy
-from pydantic import BaseModel
+from azure.cosmos.aio import ContainerProxy as AsyncContainerProxy
+from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
+from azure.cosmos.aio import DatabaseProxy as AsyncDatabaseProxy
 
 from pctasks.core.cosmos.settings import CosmosDBSettings
 
-T = TypeVar("T", bound=BaseModel)
+
+@dataclass
+class CosmosDBClients:
+    service: CosmosClient
+    database: DatabaseProxy
+    container: ContainerProxy
+
+    def close(self) -> None:
+        self.service.__exit__()
+
+
+@dataclass
+class AsyncCosmosDBClients:
+    service: AsyncCosmosClient
+    database: AsyncDatabaseProxy
+    container: AsyncContainerProxy
+
+    async def close(self) -> None:
+        await self.service.__aexit__()
 
 
 class CosmosDBDatabase:
     settings: CosmosDBSettings
     client: CosmosClient
     db: DatabaseProxy
-    _container_clients: Dict[str, ContainerProxy]
 
     def __init__(self, settings: Optional[CosmosDBSettings] = None) -> None:
         if not settings:
             settings = CosmosDBSettings.get()
         self.settings = settings
-        self.client = self.settings.get_client()
-        self.db = self.client.get_database_client(settings.database)
-        self._container_clients: Dict[str, ContainerProxy] = {}
 
-    def get_container_client(self, name: str) -> ContainerProxy:
-        if name not in self._container_clients:
-            self._container_clients[name] = self.db.get_container_client(name)
-        return self._container_clients[name]
+    def create_clients(self, container_name: str) -> CosmosDBClients:
+        client = self.settings.get_client()
+        db = client.get_database_client(self.settings.database)
+        container = db.get_container_client(container_name)
+        return CosmosDBClients(client, db, container)
+
+    def create_async_clients(self, container_name: str) -> AsyncCosmosDBClients:
+        client = self.settings.get_async_client()
+        db = client.get_database_client(self.settings.database)
+        container = db.get_container_client(container_name)
+        return AsyncCosmosDBClients(client, db, container)

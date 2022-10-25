@@ -94,6 +94,7 @@ class PCTasksClient:
                 method,
                 url,
                 headers={"X-API-KEY": self.settings.api_key},
+                params=params,
                 **kwargs,
             )
             resp.raise_for_status()
@@ -164,6 +165,7 @@ class PCTasksClient:
             yield from result.records
             page_count += 1
             page_token = result.next_page_token
+            params["pageToken"] = page_token
 
     # ## CODE ##
 

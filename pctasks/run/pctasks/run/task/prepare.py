@@ -1,7 +1,7 @@
 import logging
 import os
 from datetime import datetime, timedelta
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from azure.storage.blob import BlobSasPermissions, generate_blob_sas
 
@@ -10,6 +10,9 @@ from pctasks.core.models.config import BlobConfig, ImageConfig
 from pctasks.core.models.task import TaskRunConfig, TaskRunMessage
 from pctasks.core.models.tokens import StorageAccountTokens
 from pctasks.core.storage.blob import BlobStorage, BlobUri
+from pctasks.core.utils.backoff import with_backoff
+from pctasks.core.utils.template import PCTemplater
+from pctasks.run.errors import TaskPreparationError
 from pctasks.run.models import PreparedTaskSubmitMessage, TaskSubmitMessage
 from pctasks.run.secrets.base import SecretsProvider
 from pctasks.run.secrets.keyvault import KeyvaultSecretsProvider
@@ -91,18 +94,18 @@ def prepare_task(
     target_environment = submit_msg.target_environment
     job_id = submit_msg.job_id
     partition_id = submit_msg.partition_id
-    task_config = submit_msg.config
-    task_id = task_config.id
+    task_def = submit_msg.definition
+    task_id = task_def.id
 
     event_logger_app_insights_key = os.environ.get(ENV_VAR_TASK_APPINSIGHTS_KEY)
 
-    environment = submit_msg.config.environment
-    task_tags = submit_msg.config.tags
+    environment = submit_msg.definition.environment
+    task_tags = submit_msg.definition.tags
 
     # --Handle image key--
 
-    if not task_config.image:
-        image_key = task_config.image_key
+    if not task_def.image:
+        image_key = task_def.image_key
         if not image_key:
             # Should have been handled by model validation
             raise ValueError("Must specify either image_key or image.")
@@ -150,7 +153,7 @@ def prepare_task(
             logger.info("Setting image key tags as task tags.")
             task_tags = image_config.get_tags()
     else:
-        image_config = ImageConfig(image=task_config.image)
+        image_config = ImageConfig(image=task_def.image)
 
     # --Handle secrets--
 
@@ -166,10 +169,19 @@ def prepare_task(
 
         tokens = submit_msg.tokens
         if tokens:
+
+            def _transform_tokens(tokens: Dict[str, Any]) -> Dict[str, Any]:
+                tks = secrets_provider.substitute_secrets(tokens)
+                try:
+                    tks = with_backoff(lambda: PCTemplater().template_dict(tks))
+                except Exception as e:
+                    raise TaskPreparationError(
+                        f"Failed to fetch SAS tokens from the Planetary Computer: {e}"
+                    ) from e
+                return tks
+
             tokens = {
-                account: StorageAccountTokens(
-                    **secrets_provider.substitute_secrets(v.dict())
-                )
+                account: StorageAccountTokens(**_transform_tokens(tokens=v.dict()))
                 for account, v in tokens.items()
             }
 
@@ -242,7 +254,7 @@ def prepare_task(
     code_requirements_blob_config: Optional[BlobConfig] = None
     code_pip_options: Optional[List[str]] = None
 
-    code_config = task_config.code
+    code_config = task_def.code
     if code_config:
         code_uri = code_config.src
         code_path = code_config.get_src_path()
@@ -292,7 +304,7 @@ def prepare_task(
         job_id=job_id,
         partition_id=partition_id,
         task_id=task_id,
-        task=task_config.task,
+        task=task_def.task,
         environment=environment,
         tokens=tokens,
         status_blob_config=status_blob_config,
@@ -304,7 +316,7 @@ def prepare_task(
         event_logger_app_insights_key=event_logger_app_insights_key,
     )
 
-    run_msg = TaskRunMessage(args=task_config.args, config=config)
+    run_msg = TaskRunMessage(args=task_def.args, config=config)
 
     task_input_blob_config = write_task_run_msg(run_msg, settings)
 

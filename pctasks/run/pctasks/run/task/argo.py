@@ -40,7 +40,7 @@ class ArgoTaskRunner(TaskRunner):
         results: List[Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]] = []
         for prepared_task in prepared_tasks:
             try:
-                task_id = self.argo_client.submit_task(prepared_task)
+                task_id = self.argo_client.submit_task(prepared_task, self.settings)
                 results.append(SuccessfulTaskSubmitResult(task_runner_id=task_id))
             except Exception as e:
                 logger.exception(e)

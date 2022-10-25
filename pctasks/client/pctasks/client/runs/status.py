@@ -9,10 +9,16 @@ import click
     "-w",
     "--watch",
     is_flag=True,
-    help="Watch the status of the workflow, refreshing every second",
+    help=(
+        "Watch the status of the workflow, refreshing every 10 seconds. "
+        "or the rate determined by --poll-rate"
+    ),
 )
+@click.option("-r", "--poll-rate", type=int, default=10, help="Poll rate in seconds")
 @click.pass_context
-def status_cmd(ctx: click.Context, run_id: Optional[str], watch: bool) -> None:
+def status_cmd(
+    ctx: click.Context, run_id: Optional[str], watch: bool, poll_rate: int
+) -> None:
     """Fetch a workflow status
 
     RUN_ID can be supplied as a command line argument or as stdin.
@@ -24,4 +30,4 @@ def status_cmd(ctx: click.Context, run_id: Optional[str], watch: bool) -> None:
     if not run_id:
         raise click.UsageError("Missing RUN_ID")
 
-    ctx.exit(_status.workflow_status_cmd(ctx, run_id, watch))
+    ctx.exit(_status.workflow_status_cmd(ctx, run_id, watch=watch, poll_rate=poll_rate))

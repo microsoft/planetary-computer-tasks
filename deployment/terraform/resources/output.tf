@@ -155,6 +155,10 @@ output "pctasks_server_sp_client_secret" {
   sensitive = true
 }
 
+output "argo_wf_node_group_name" {
+  value = var.argo_wf_node_group_name
+}
+
 ## CosmosDB
 
 output "cosmosdb_url" {

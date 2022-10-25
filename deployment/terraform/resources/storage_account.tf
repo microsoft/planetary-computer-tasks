@@ -27,6 +27,12 @@ resource "azurerm_storage_container" "taskio" {
   container_access_type = "private"
 }
 
+resource "azurerm_storage_container" "code" {
+  name                  = "code"
+  storage_account_name  = azurerm_storage_account.pctasks.name
+  container_access_type = "private"
+}
+
 # Access Policies
 
 resource "azurerm_role_assignment" "pctasks-server-blob-access" {
