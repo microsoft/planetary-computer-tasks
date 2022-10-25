@@ -46,14 +46,15 @@ def test_container_transforms_models():
     ) as db:
         original = MockModel(id="1", name="one")
         container = MockContainer(db=db)
-        container.put(original)
-        result = container.get(id="1", partition_key="1")
+        with container:
+            container.put(original)
+            result = container.get(id="1", partition_key="1")
 
-        assert result == original
-        for item, model in container._items_to_models:
-            assert item["mock_id"] == item["id"]
-            assert item["id"] == model.id
+            assert result == original
+            for item, model in container._items_to_models:
+                assert item["mock_id"] == item["id"]
+                assert item["id"] == model.id
 
-        for model, item in container._models_to_items:
-            assert item["mock_id"] == item["id"]
-            assert item["id"] == model.id
+            for model, item in container._models_to_items:
+                assert item["mock_id"] == item["id"]
+                assert item["id"] == model.id

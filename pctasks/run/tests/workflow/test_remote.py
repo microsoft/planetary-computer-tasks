@@ -46,17 +46,17 @@ def run_workflow(
 
         with ignore_ssl_warnings():
             # Make sure the workflow exists in the database
-            workflow_container = WorkflowsContainer(WorkflowRecord)
-            workflow_container.put(
-                WorkflowRecord(workflow=workflow, workflow_id=workflow.id)
-            )
+            with WorkflowsContainer(WorkflowRecord) as workflow_container:
+                workflow_container.put(
+                    WorkflowRecord(workflow=workflow, workflow_id=workflow.id)
+                )
 
             # Mimic the server and write the workflow run record
             # before executing workflow
-            workflow_run_container = WorkflowRunsContainer(WorkflowRunRecord)
-            workflow_run_container.put(
-                WorkflowRunRecord.from_submit_message(submit_message)
-            )
+            with WorkflowRunsContainer(WorkflowRunRecord) as workflow_run_container:
+                workflow_run_container.put(
+                    WorkflowRunRecord.from_submit_message(submit_message)
+                )
 
             result = runner.execute_workflow(submit_message)
 

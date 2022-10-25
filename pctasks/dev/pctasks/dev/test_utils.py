@@ -130,7 +130,7 @@ def wait_for_test_workflow_run(
         except NotFoundError:
             pass
 
-        time.sleep(1)
+        time.sleep(5)
         tok = time.perf_counter()
 
     if workflow_run:

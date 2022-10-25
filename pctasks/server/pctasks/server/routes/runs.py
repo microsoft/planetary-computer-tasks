@@ -3,7 +3,7 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import ORJSONResponse, PlainTextResponse
 
-from pctasks.core.cosmos.containers.workflow_runs import WorkflowRunsContainer
+from pctasks.core.cosmos.containers.workflow_runs import AsyncWorkflowRunsContainer
 from pctasks.core.models.response import (
     JobPartitionRunRecordListResponse,
     JobPartitionRunRecordResponse,
@@ -41,8 +41,8 @@ async def fetch_workflow_run(
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    container = WorkflowRunsContainer(WorkflowRunRecord)
-    record = container.get(run_id, partition_key=run_id)
+    async with AsyncWorkflowRunsContainer(WorkflowRunRecord) as container:
+        record = await container.get(run_id, partition_key=run_id)
 
     if not record:
         raise HTTPException(status_code=404, detail="Not found")
@@ -64,8 +64,8 @@ async def fetch_workflow_run_log(
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    container = WorkflowRunsContainer(WorkflowRunRecord)
-    record = container.get(run_id, partition_key=run_id)
+    async with AsyncWorkflowRunsContainer(WorkflowRunRecord) as container:
+        record = await container.get(run_id, partition_key=run_id)
 
     if not record:
         raise HTTPException(status_code=404, detail="Not found")
@@ -103,25 +103,25 @@ async def list_job_partition_runs(
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    container = WorkflowRunsContainer(JobPartitionRunRecord)
-    query = (
-        "SELECT * FROM c WHERE c.run_id = @run_id "
-        "AND c.job_id = @job_id AND c.type = @type"
-    )
-    query = sort_params.add_sort(query)
-    pages = container.query_paged(
-        query=query,
-        partition_key=run_id,
-        page_size=page_params.limit,
-        continuation_token=page_params.token,
-        parameters={
-            "run_id": run_id,
-            "job_id": job_id,
-            "type": RunRecordType.JOB_PARTITION_RUN,
-        },
-    )
+    async with AsyncWorkflowRunsContainer(JobPartitionRunRecord) as container:
+        query = (
+            "SELECT * FROM c WHERE c.run_id = @run_id "
+            "AND c.job_id = @job_id AND c.type = @type"
+        )
+        query = sort_params.add_sort(query)
+        pages = container.query_paged(
+            query=query,
+            partition_key=run_id,
+            page_size=page_params.limit,
+            continuation_token=page_params.token,
+            parameters={
+                "run_id": run_id,
+                "job_id": job_id,
+                "type": RunRecordType.JOB_PARTITION_RUN,
+            },
+        )
 
-    return JobPartitionRunRecordListResponse.from_pages(pages)
+        return JobPartitionRunRecordListResponse.from_pages([p async for p in pages])
 
 
 @runs_router.get(
@@ -138,11 +138,11 @@ async def fetch_job_partition_run(
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    workflow_runs = WorkflowRunsContainer(JobPartitionRunRecord)
-    record = workflow_runs.get(
-        JobPartitionRunRecord.id_from(run_id, job_id, partition_id),
-        partition_key=run_id,
-    )
+    async with AsyncWorkflowRunsContainer(JobPartitionRunRecord) as container:
+        record = await container.get(
+            JobPartitionRunRecord.id_from(run_id, job_id, partition_id),
+            partition_key=run_id,
+        )
 
     if not record:
         raise HTTPException(status_code=404, detail="Not found")
@@ -163,11 +163,11 @@ async def fetch_task_log(
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    workflow_runs = WorkflowRunsContainer(JobPartitionRunRecord)
-    record = workflow_runs.get(
-        JobPartitionRunRecord.id_from(run_id, job_id, partition_id),
-        partition_key=run_id,
-    )
+    async with AsyncWorkflowRunsContainer(JobPartitionRunRecord) as container:
+        record = await container.get(
+            JobPartitionRunRecord.id_from(run_id, job_id, partition_id),
+            partition_key=run_id,
+        )
 
     if not record:
         raise HTTPException(status_code=404, detail="Job partition record not found")

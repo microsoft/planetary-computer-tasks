@@ -4,6 +4,7 @@ from typing import Any, Dict, Optional
 from urllib.parse import urlparse
 
 from azure.cosmos import CosmosClient
+from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.identity import DefaultAzureCredential
 from pydantic import validator
 
@@ -132,5 +133,26 @@ class CosmosDBSettings(PCTasksSettings):
             assert self.url
             credential = self.key or DefaultAzureCredential()
             return CosmosClient(
+                self.url, credential=credential, connection_verify=connection_verify
+            )
+
+    def get_async_client(self) -> AsyncCosmosClient:
+        # If this is the emulator, don't verify the connection SSL cert
+        connection_verify = True
+        emulator_host = os.environ.get(COSMOSDB_EMULATOR_HOST_ENV_VAR)
+        if emulator_host:
+            if self.url:
+                connection_verify = urlparse(self.url).hostname != emulator_host
+            elif self.connection_string:
+                connection_verify = f"//{emulator_host}:" not in self.connection_string
+        if self.connection_string:
+            return AsyncCosmosClient.from_connection_string(
+                self.connection_string, connection_verify=connection_verify
+            )
+        else:
+            self.ensure_valid_connection_info()
+            assert self.url
+            credential = self.key or DefaultAzureCredential()
+            return AsyncCosmosClient(
                 self.url, credential=credential, connection_verify=connection_verify
             )
