@@ -14,7 +14,9 @@ from pctasks.core.models.run import JobRunStatus
 from pctasks.core.models.workflow import WorkflowRunStatus
 
 
-def workflow_status_cmd(ctx: click.Context, run_id: str, watch: bool = False) -> int:
+def workflow_status_cmd(
+    ctx: click.Context, run_id: str, watch: bool = False, poll_rate: int = 10
+) -> int:
     """Show status of a workflow, including all jobs and tasks."""
     client = PCTasksClient(ClientSettings.from_context(ctx.obj))
 
@@ -87,7 +89,7 @@ def workflow_status_cmd(ctx: click.Context, run_id: str, watch: bool = False) ->
     if not watch:
         console.print(table)
     else:
-        with Live(table, refresh_per_second=1) as live:
+        with Live(table, refresh_per_second=poll_rate) as live:
             while not is_complete:
                 table, is_complete = get_table()
                 live.update(table)
