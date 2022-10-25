@@ -5,8 +5,8 @@ args:
 - registry
 
 code:
-  src: ${{ local.path(./noaa_climate_normals.py) }}
-  requirements: ${{ local.path(./requirements.txt) }}
+  src: ${{ local.path(../noaa_climate_normals.py) }}
+  requirements: ${{ local.path(../requirements.txt) }}
 
 environment: 
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -15,11 +15,10 @@ environment:
 
 collections:
   - id: noaa-climate-normals-tabular
-    template: ${{ local.path(./collection/noaa-climate-normals-tabular) }}
+    template: ${{ local.path(../collection/noaa-climate-normals-tabular) }}
     class: noaa_climate_normals:NoaaClimateNormalsTabular
     asset_storage:
-      - uri: blob://noaanormals/climate-normals
-        token: sv=2021-08-06&st=2022-10-24T18%3A58%3A24Z&se=2022-10-25T18%3A58%3A24Z&sr=c&sp=rl&sig=PYR7f2NlFoB%2BXtDnkT6InC4KX%2FuHDbiJ1W7929ckYJQ%3D
+      - uri: blob://devstoreaccount1/climate-normals
         chunks:
           options:
             name_starts_with: access/
@@ -29,5 +28,4 @@ collections:
           splits:
             - depth: 2
     chunk_storage:
-      uri: blob://noaanormals/climate-normals-etl-data/tabular/
-      token: sv=2021-08-06&st=2022-10-24T19%3A37%3A51Z&se=2022-10-25T19%3A37%3A51Z&sr=c&sp=racwdxltf&sig=wD9bJNZwtY6SGIPnqYJGVH%2BoLptvO4JjcqMkBe5PQQc%3D
+      uri: blob://devstoreaccount1/noaanormals-etl-data/tabular/
