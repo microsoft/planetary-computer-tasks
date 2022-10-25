@@ -17,6 +17,7 @@ T = TypeVar("T", WorkflowRunRecord, JobPartitionRunRecord)
 def list_run_records(
     ctx: click.Context,
     list: Callable[[PCTasksClient, Console], Optional[Iterable[T]]],
+    include_timestamp: bool = False,
 ) -> int:
     settings = ClientSettings.from_context(ctx.obj)
     client = PCTasksClient(settings)
@@ -31,9 +32,16 @@ def list_run_records(
         _table = Table()
         _table.add_column("")
         _table.add_column("status")
+        if include_timestamp:
+            _table.add_column("created")
 
         for record in records:
-            _table.add_row(record.get_id(), status_entry(record.status))
+            assert record.created
+            _table.add_row(
+                record.get_id(),
+                status_entry(record.status),
+                record.created.strftime("%Y-%m-%d %H:%M"),
+            )
 
         return _table
 
@@ -68,6 +76,7 @@ def list_workflow_runs_cmd(
         lambda client, _: client.list_workflow_runs(
             workflow_id, sort_by=sort_by, descending=desc
         ),
+        include_timestamp=True,
     )
 
 
