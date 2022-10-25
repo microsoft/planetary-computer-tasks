@@ -1,1 +1,1 @@
-stactools-noaa-mrms-qpe == 0.2.0
+git+https://github.com/stactools-packages/noaa-mrms-qpe.git@38b86ba2570f08e0c81f522aa2d44201d24fbce1

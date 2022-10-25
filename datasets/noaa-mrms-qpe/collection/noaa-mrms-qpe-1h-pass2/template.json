@@ -27,7 +27,8 @@
     ],
     "stac_extensions": [
         "https://stac-extensions.github.io/raster/v1.1.0/schema.json",
-        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/noaa-mrms-qpe/v1.0.0/schema.json"
     ],
     "keywords": [
         "NOAA",
