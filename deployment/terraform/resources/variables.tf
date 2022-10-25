@@ -158,6 +158,11 @@ variable "pctasks_server_sp_object_id" {
   type    = string
 }
 
+variable "argo_wf_node_group_name"{
+  type = string
+  default ="argo-workflows"
+}
+
 # ---------------
 # Local variables
 

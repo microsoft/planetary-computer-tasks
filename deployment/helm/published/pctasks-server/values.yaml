@@ -148,6 +148,9 @@ pctasks:
       token: ""
       namespace: "argo"
       workflow_runner_image: ""
+      node_affinity:
+        enabled: false
+        node_group: ""
 
     keyvault:
       enabled: true
