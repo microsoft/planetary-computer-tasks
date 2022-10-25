@@ -1,5 +1,15 @@
 #!/bin/bash
 
+function require_env() {
+    v=$(eval echo \$${1})
+
+    if [[ -z ${v} ]]; then
+        echo "${1} must be set as environment variable" >&2
+        echo "Check deployment/docker-compose.yml for host environment requirements" >&2
+        exit 1
+    fi
+}
+
 function setup_env() {
 
     # Directory for rendered values and templates

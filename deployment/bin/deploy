@@ -30,16 +30,6 @@ Options:
 "
 }
 
-function require_env() {
-    v=$(eval echo \$${1})
-
-    if [[ -z ${v} ]]; then
-        echo "${1} must be set as environment variable" >&2
-        echo "Check deployment/docker-compose.yml for host environment requirements" >&2
-        exit 1
-    fi
-}
-
 require_env "ARM_SUBSCRIPTION_ID"
 require_env "ARM_TENANT_ID"
 require_env "ARM_CLIENT_ID"
