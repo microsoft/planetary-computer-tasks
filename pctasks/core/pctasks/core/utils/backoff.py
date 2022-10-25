@@ -57,7 +57,7 @@ def get_exception_status_code(e: Exception) -> Optional[int]:
 
 def is_common_throttle_exception(e: Exception) -> bool:
     status_code = get_exception_status_code(e)
-    if status_code is not None and (status_code == 503 or status_code == 429):
+    if status_code is not None and status_code in (502, 503, 429):
         return True
 
     if "connection reset by peer" in str(e).lower():
