@@ -26,6 +26,13 @@ from argo_workflows.model.io_argoproj_workflow_v1alpha1_workflow_terminate_reque
     IoArgoprojWorkflowV1alpha1WorkflowTerminateRequest,
 )
 from argo_workflows.model.object_meta import ObjectMeta
+from argo_workflows.models import (
+    Affinity,
+    NodeAffinity,
+    NodeSelector,
+    NodeSelectorRequirement,
+    NodeSelectorTerm,
+)
 from azure.storage.blob import BlobSasPermissions, generate_blob_sas
 
 from pctasks.core.constants import (
@@ -40,7 +47,7 @@ from pctasks.core.storage.blob import BlobStorage, BlobUri
 from pctasks.core.utils import map_opt
 from pctasks.run.models import PreparedTaskSubmitMessage
 from pctasks.run.secrets.local import LOCAL_ENV_SECRETS_PREFIX
-from pctasks.run.settings import WorkflowExecutorConfig
+from pctasks.run.settings import RunSettings, WorkflowExecutorConfig
 from pctasks.run.utils import get_workflow_path
 
 logger = logging.getLogger(__name__)
@@ -69,6 +76,27 @@ class ArgoClient:
             api_client=api_client
         )
         self.namespace = namespace
+
+    def _get_affinity(self, run_settings: RunSettings) -> Optional[Affinity]:
+        if run_settings.argo_node_group:
+            return Affinity(
+                node_affinity=NodeAffinity(
+                    required_during_scheduling_ignored_during_execution=NodeSelector(
+                        node_selector_terms=[
+                            NodeSelectorTerm(
+                                match_expressions=[
+                                    NodeSelectorRequirement(
+                                        key="node_group",
+                                        operator="In",
+                                        values=[run_settings.argo_node_group],
+                                    )
+                                ]
+                            )
+                        ]
+                    )
+                )
+            )
+        return None
 
     def submit_workflow(
         self,
@@ -131,40 +159,58 @@ class ArgoClient:
             ]:
                 env.append(EnvVar(name=env_var, value=os.environ[env_var]))
 
-        argo_wf_name = "wkflw-" + re.sub(
-            "[^a-z0-9]", "-", submit_msg.workflow.definition.name.lower()
-        ).strip("-")
-
-        manifest = IoArgoprojWorkflowV1alpha1Workflow(
-            metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
-            spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
-                entrypoint="run-workflow",
-                templates=[
-                    IoArgoprojWorkflowV1alpha1Template(
-                        name="run-workflow",
-                        container=Container(
-                            image=runner_image,
-                            image_pull_policy=get_pull_policy(runner_image),
-                            command=["pctasks"],
-                            env=env,
-                            args=[
-                                "-v",
-                                "run",
-                                "remote",
-                                str(workflow_uri),
-                                "--sas",
-                                input_blob_sas_token,
-                                "--settings",
-                                b64encoded_config,
-                            ],
-                        ),
-                    )
-                ],
-            ),
+        argo_wf_name = (
+            "wkflw-"
+            + re.sub("[^a-z0-9]", "-", submit_msg.workflow.id).strip("-")
+            + "-"
+            + run_id
         )
+
+        templates = [
+            IoArgoprojWorkflowV1alpha1Template(
+                name="run-workflow",
+                container=Container(
+                    image=runner_image,
+                    image_pull_policy=get_pull_policy(runner_image),
+                    command=["pctasks"],
+                    env=env,
+                    args=[
+                        "-v",
+                        "run",
+                        "remote",
+                        str(workflow_uri),
+                        "--sas",
+                        input_blob_sas_token,
+                        "--settings",
+                        b64encoded_config,
+                    ],
+                ),
+            )
+        ]
+
+        affinity = self._get_affinity(run_settings)
+
+        if affinity:
+            manifest = IoArgoprojWorkflowV1alpha1Workflow(
+                metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
+                spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
+                    entrypoint="run-workflow",
+                    templates=templates,
+                    affinity=affinity,
+                ),
+            )
+        else:
+            manifest = IoArgoprojWorkflowV1alpha1Workflow(
+                metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
+                spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
+                    entrypoint="run-workflow",
+                    templates=templates,
+                ),
+            )
+
         api_client = argo_workflows.ApiClient(self.configuration)
         api_instance = workflow_service_api.WorkflowServiceApi(api_client=api_client)
-
+        logger.info(f"Submitting workflow {argo_wf_name} to Argo...")
         api_response = api_instance.create_workflow(
             namespace=self.namespace,
             body=IoArgoprojWorkflowV1alpha1WorkflowCreateRequest(workflow=manifest),
@@ -172,11 +218,13 @@ class ArgoClient:
         )
         return api_response.to_dict()
 
-    def submit_task(self, prepared_task: PreparedTaskSubmitMessage) -> Dict[str, Any]:
+    def submit_task(
+        self, prepared_task: PreparedTaskSubmitMessage, run_settings: RunSettings
+    ) -> Dict[str, Any]:
 
         submit_msg = prepared_task.task_submit_message
         job_id = submit_msg.job_id
-        task_id = submit_msg.config.id
+        task_id = submit_msg.definition.id
         run_msg = prepared_task.task_run_message
         task_input_blob_config = prepared_task.task_input_blob_config
         task_image = run_msg.config.image
@@ -205,24 +253,36 @@ class ArgoClient:
             if env_var in os.environ:
                 env.append(EnvVar(name=env_var, value=os.environ[env_var]))
 
-        manifest = IoArgoprojWorkflowV1alpha1Workflow(
-            metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
-            spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
-                entrypoint="run-workflow",
-                templates=[
-                    IoArgoprojWorkflowV1alpha1Template(
-                        name="run-workflow",
-                        container=Container(
-                            image=task_image,
-                            image_pull_policy=get_pull_policy(task_image),
-                            command=["pctasks"],
-                            env=env,
-                            args=command_args,
-                        ),
-                    )
-                ],
-            ),
-        )
+        templates = [
+            IoArgoprojWorkflowV1alpha1Template(
+                name="run-workflow",
+                container=Container(
+                    image=task_image,
+                    image_pull_policy=get_pull_policy(task_image),
+                    command=["pctasks"],
+                    env=env,
+                    args=command_args,
+                ),
+            )
+        ]
+
+        affinity = self._get_affinity(run_settings)
+
+        if affinity:
+            manifest = IoArgoprojWorkflowV1alpha1Workflow(
+                metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
+                spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
+                    entrypoint="run-workflow", templates=templates, affinity=affinity
+                ),
+            )
+        else:
+            manifest = IoArgoprojWorkflowV1alpha1Workflow(
+                metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
+                spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
+                    entrypoint="run-workflow",
+                    templates=templates,
+                ),
+            )
 
         api_response = self.api_instance.create_workflow(
             namespace=self.namespace,
