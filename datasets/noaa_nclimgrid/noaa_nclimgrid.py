@@ -61,6 +61,8 @@ class NoaaNclimgridCollection(Collection):
                     cog_storage.upload_file(local_cogs[cog_filename], cog_filename)
 
                     item.assets[var].href = cog_storage.get_url(cog_filename)
-                    item.assets[f"{var}_source"].href = all_nc_urls[var]
+                    # preference: drop the reference to the source NetCDF
+                    # TODO: Add source NetCDF collections and link with via
+                    item.assets.pop(f"{var}_source", None)
 
         return items
