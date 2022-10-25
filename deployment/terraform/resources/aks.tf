@@ -8,11 +8,10 @@ resource "azurerm_kubernetes_cluster" "pctasks" {
 
 
   default_node_pool {
-    name           = "agentpool"
-    vm_size        = "Standard_DS2_v2"
-    node_count     = var.aks_node_count
-    vnet_subnet_id = azurerm_subnet.k8snode_subnet.id
-    orchestrator_version = var.k8s_orchestrator_version
+    name                 = "agentpool"
+    vm_size              = "Standard_DS2_v2"
+    node_count           = var.aks_node_count
+    vnet_subnet_id       = azurerm_subnet.k8snode_subnet.id
   }
 
   identity {

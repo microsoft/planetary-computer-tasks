@@ -21,12 +21,11 @@ resource "azurerm_linux_function_app" "pctasks" {
   }
 
   app_settings = {
-    "ENABLE_ORYX_BUILD"                  = "true",
-    "SCM_DO_BUILD_DURING_DEPLOYMENT"     = "true",
-    "APP_INSIGHTS_IKEY"                  = azurerm_application_insights.pctasks.instrumentation_key,
-    "APPINSIGHTS_INSTRUMENTATIONKEY"     = azurerm_application_insights.pctasks.instrumentation_key,
-    "AzureStorageQueuesConnectionString" = azurerm_storage_account.pctasks.primary_connection_string,
-    "AzureWebJobsDisableHomepage"        = true,
+    "ENABLE_ORYX_BUILD"                     = "true",
+    "SCM_DO_BUILD_DURING_DEPLOYMENT"        = "true",
+    "PCTASK_APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.pctasks.instrumentation_key,
+    "AzureStorageQueuesConnectionString"    = azurerm_storage_account.pctasks.primary_connection_string,
+    "AzureWebJobsDisableHomepage"           = true,
 
     "PCTASKS_COSMOSDB__URL" = data.azurerm_cosmosdb_account.pctasks.endpoint,
     "PCTASKS_COSMOSDB__KEY" = data.azurerm_cosmosdb_account.pctasks.primary_key,
@@ -38,8 +37,18 @@ resource "azurerm_linux_function_app" "pctasks" {
   site_config {
     use_32_bit_worker = false
     ftps_state        = "Disabled"
+    application_insights_key = azurerm_application_insights.pctasks.instrumentation_key
+
     application_stack {
       python_version = "3.8"
     }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to tags, e.g. because a management agent
+      # updates these based on some ruleset managed elsewhere.
+      tags,
+    ]
   }
 }
