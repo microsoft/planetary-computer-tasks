@@ -49,7 +49,7 @@ def test_image_key_environment_merged():
                 partition_id="0",
                 run_id=run_id,
                 target_environment=target_environment,
-                config=TaskDefinition(
+                definition=TaskDefinition(
                     id="messages_unit_test",
                     image_key="test-image-key",
                     args={"one": "two"},

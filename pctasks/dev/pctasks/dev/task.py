@@ -18,6 +18,7 @@ class TestTaskOptions(PCBaseModel):
 
 class TestTaskInput(PCBaseModel):
     uri: Optional[str] = None
+    check_exists_uri: Optional[str] = None
     output_dir: str
     options = TestTaskOptions()
 
@@ -62,6 +63,16 @@ class TestTask(Task[TestTaskInput, TestTaskOutput]):
                 pass
         else:
             output_base_name = "test-output"
+
+        if input.check_exists_uri:
+            (
+                check_exists_storage,
+                check_exists_path,
+            ) = context.storage_factory.get_storage_for_file(input.check_exists_uri)
+            if not check_exists_storage.file_exists(check_exists_path):
+                raise Exception(
+                    f"Check exists file {input.check_exists_uri} does not exist."
+                )
 
         outputs: List[str] = []
         output_storage = context.storage_factory.get_storage(input.output_dir)

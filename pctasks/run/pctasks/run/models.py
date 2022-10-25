@@ -29,7 +29,7 @@ class TaskSubmitMessage(PCBaseModel):
     run_id: str
     job_id: str
     partition_id: str
-    config: TaskDefinition
+    definition: TaskDefinition
     tags: Optional[Dict[str, str]] = None
     target_environment: Optional[str] = None
     related_tasks: Optional[List[Tuple[str, str]]] = None
@@ -42,7 +42,7 @@ class TaskSubmitMessage(PCBaseModel):
             dataset_id=self.dataset_id,
             run_id=self.run_id,
             job_id=self.job_id,
-            task_id=self.config.id,
+            task_id=self.definition.id,
         )
 
 

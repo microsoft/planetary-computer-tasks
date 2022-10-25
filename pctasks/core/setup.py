@@ -19,6 +19,7 @@ install_requires = [
     "opencensus-ext-logging==0.1.1",
     "pyyaml>=5.3",
     "aiohttp==3.8.*",
+    "planetary-computer>=0.4.0"
 ]
 
 extra_reqs = {

@@ -187,3 +187,43 @@ schema_version: 1.0.0
         )
 
         assert len(last_task_output_paths) == 4
+
+
+def test_remote_processes_job_with_pc_sas_token():
+    setup_logging(logging.INFO)
+    workflow_yaml = """
+args:
+- base_output_dir
+
+tokens:
+  ai4edataeuwest:
+    containers:
+      io-lulc:
+        token: ${{ pc.get_token(ai4edataeuwest, io-lulc) }}
+
+id: test-remote-workflow-1
+name: Test workflow for remote runner 1
+dataset: test-remote-dataset-1
+jobs:
+  job-1:
+    tasks:
+    - id: task-1
+      image: mock:latest
+      task: pctasks.dev.task:test_task
+      args:
+        check_exists_uri: blob://ai4edataeuwest/io-lulc/nine-class/01C_20170101-20180101.tif
+        output_dir: "${{ args.base_output_dir }}/job-1-task-1"
+      schema_version: 1.0.0
+    needs: create-chunks
+schema_version: 1.0.0
+"""  # noqa: E501
+    with temp_azurite_blob_storage() as storage:
+        output_dir = storage.get_uri()
+        run_id = uuid4().hex
+
+        # Workflow will fail if the SAS token is invalid.
+        run_workflow(
+            WorkflowDefinition.from_yaml(workflow_yaml),
+            run_id=run_id,
+            args={"base_output_dir": output_dir},
+        )
