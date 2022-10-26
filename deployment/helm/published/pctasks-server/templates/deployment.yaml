@@ -56,8 +56,6 @@ spec:
               value: "{{ .Values.pctasks.server.dev.api_key }}"
             - name: PCTASKS_SERVER__DEV_AUTH_TOKEN
               value: "{{ .Values.pctasks.server.dev.auth_token }}"
-            - name: PCTASKS_SERVER__RECORD_TABLES__CONNECTION_STRING
-              value: "{{ .Values.pctasks.run.tables.connection_string }}"
 
             {{- if .Values.pctasks.server.access_key.enabled }}
             - name: PCTASKS_SERVER__ACCESS_KEY

@@ -60,8 +60,6 @@ services:
       - PCTASKS_SERVER__DEV_API_KEY=hunter2
       - PCTASKS_SERVER__DEV_AUTH_TOKEN=Bearer hunter2
 
-      - PCTASKS_SERVER__RECORD_TABLES__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://azurite:10002/devstoreaccount1;
-
       # Dev storage settings
       - AZURITE_HOST=azurite
       - AZURITE_PORT=10000
