@@ -161,6 +161,7 @@ class BatchClient:
         pool_id: Optional[str] = None,
         make_unique: bool = False,
         max_retry_count: int = 0,
+        terminate_on_tasks_complete: bool = True,
     ) -> str:
         client = self._ensure_client()
 
@@ -174,10 +175,14 @@ class BatchClient:
 
         pool_info = batchmodels.PoolInformation(pool_id=pool_id)
 
+        on_all_tasks_complete = batchmodels.OnAllTasksComplete.terminate_job
+        if not terminate_on_tasks_complete:
+            on_all_tasks_complete = batchmodels.OnAllTasksComplete.no_action
+
         job_param = batchmodels.JobAddParameter(
             id=job_id,
             pool_info=pool_info,
-            on_all_tasks_complete=batchmodels.OnAllTasksComplete.terminate_job,
+            on_all_tasks_complete=on_all_tasks_complete,
             constraints=batchmodels.JobConstraints(
                 max_task_retry_count=max_retry_count
             ),
@@ -488,6 +493,24 @@ class BatchClient:
                 return None
             else:
                 raise BatchClientError(error.message.value)
+
+    def terminate_job(self, job_id: str) -> None:
+        client = self._ensure_client()
+
+        def _terminate():
+            try:
+                client.job.terminate(job_id=job_id)
+            except batchmodels.BatchErrorException as e:
+                error: Any = e.error  # Avoid type hinting error
+                if error.code == "JobNotFound":
+                    logger.warning(f"Job {job_id} not found - skipping termination")
+                    return
+                if error.code == "JobTerminating":
+                    return
+                if error.code == "JobCompleted":
+                    return
+
+        self._with_backoff(_terminate)
 
     def terminate_task(self, job_id: str, task_id: str) -> None:
         client = self._ensure_client()

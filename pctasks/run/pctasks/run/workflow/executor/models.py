@@ -364,6 +364,15 @@ class JobPartitionState:
     def prepare_next_task(self, settings: RunSettings) -> None:
         next_task_config = next(iter(self.task_queue), None)
         if next_task_config:
+            task_data = self.job_part_submit_msg.job_partition.task_data.get(
+                next_task_config.id
+            )
+            if not task_data:
+                raise Exception(
+                    "Task preparation failed due to internal runner error. "
+                    f"Task data not found for task {next_task_config.id}"
+                )
+
             copied_task = next_task_config.__class__.parse_obj(next_task_config.dict())
             copied_task.args = template_args(
                 copied_task.args,
@@ -380,12 +389,14 @@ class JobPartitionState:
                 tokens=self.job_part_submit_msg.tokens,
                 definition=copied_task,
                 target_environment=self.job_part_submit_msg.target_environment,
-                instance_id="TODO:REMOVE",
             )
 
             self.current_task = TaskState(
                 prepared_task=prepare_task(
-                    next_task_submit_message, self.job_part_submit_msg.run_id, settings
+                    next_task_submit_message,
+                    self.job_part_submit_msg.run_id,
+                    task_data=task_data,
+                    settings=settings,
                 ),
                 job_part_run_record_id=self.job_part_run_record_id,
             )

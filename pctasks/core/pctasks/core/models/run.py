@@ -79,11 +79,6 @@ class JobRunStatus(StrEnum):
     PENDING = "pending"
 
 
-class JobPartition(PCBaseModel):
-    definition: JobDefinition
-    partition_id: str
-
-
 class StatusHistoryEntry(PCBaseModel):
     status: str
     timestamp: datetime
@@ -167,14 +162,14 @@ class JobPartitionRunRecord(RunRecord):
         return None
 
     @classmethod
-    def from_job_partition(
+    def from_definition(
         cls,
-        job_partition: JobPartition,
+        partition_id: str,
+        job_definition: JobDefinition,
         run_id: str,
         status: JobPartitionRunStatus = JobPartitionRunStatus.PENDING,
     ) -> "JobPartitionRunRecord":
-        job_id = job_partition.definition.get_id()
-        partition_id = job_partition.partition_id
+        job_id = job_definition.get_id()
         return cls(
             status=status,
             run_id=run_id,
@@ -182,7 +177,7 @@ class JobPartitionRunRecord(RunRecord):
             partition_id=partition_id,
             tasks=[
                 TaskRunRecord.from_task_definition(task, run_id, job_id, partition_id)
-                for task in job_partition.definition.tasks
+                for task in job_definition.tasks
             ],
         )
 

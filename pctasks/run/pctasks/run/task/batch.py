@@ -4,9 +4,8 @@ from dataclasses import dataclass
 from threading import Lock
 from typing import Any, Dict, List, Optional, Union
 
-import azure.batch.models as batchmodels
-
 from pctasks.core.models.run import TaskRunStatus
+from pctasks.core.models.task import TaskDefinition
 from pctasks.core.utils import map_opt
 from pctasks.run.batch.client import BatchClient
 from pctasks.run.batch.model import BatchTaskId
@@ -25,6 +24,8 @@ from pctasks.run.task.base import TaskRunner
 logger = logging.getLogger(__name__)
 
 BATCH_POOL_ID_TAG = "batch_pool_id"
+
+JOB_ID_KEY = "job_id"
 
 
 class BatchTaskRunnerError(Exception):
@@ -65,6 +66,31 @@ class BatchTaskInfo:
 
 
 class BatchTaskRunner(TaskRunner):
+    def prepare_task_info(
+        self,
+        dataset_id: str,
+        run_id: str,
+        job_id: str,
+        task_def: TaskDefinition,
+        image: str,
+        task_tags: Optional[Dict[str, str]],
+    ) -> Dict[str, Any]:
+        pool_id = get_pool_id(task_tags, self.settings.batch_settings)
+        batch_job_id = make_batch_job_id(dataset_id, job_id, run_id, pool_id)
+        with BatchClient(self.settings.batch_settings) as batch_client:
+            existing_job = batch_client.get_job(batch_job_id)
+            if not existing_job:
+                if not batch_client.get_pool(pool_id):
+                    raise BatchTaskRunnerError(f"Batch pool {pool_id} not found.")
+
+                batch_job_id = batch_client.add_job(
+                    job_id=batch_job_id,
+                    pool_id=pool_id,
+                    make_unique=False,
+                    terminate_on_tasks_complete=False,
+                )
+        return {JOB_ID_KEY: batch_job_id}
+
     def submit_tasks(
         self, prepared_tasks: List[PreparedTaskSubmitMessage]
     ) -> List[Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]]:
@@ -79,13 +105,13 @@ class BatchTaskRunner(TaskRunner):
 
             for i, prepared_task in enumerate(prepared_tasks):
                 submit_msg = prepared_task.task_submit_message
-                run_id = submit_msg.run_id
-                job_id = submit_msg.job_id
+                # run_id = submit_msg.run_id
+                # job_id = submit_msg.job_id
                 part_id = submit_msg.partition_id
                 task_id = submit_msg.definition.id
                 run_msg = prepared_task.task_run_message
                 task_input_blob_config = prepared_task.task_input_blob_config
-                task_tags = prepared_task.task_tags
+                task_tags = prepared_task.task_data.tags
 
                 task_id_for_batch = create_batch_task_id(part_id, task_id)
 
@@ -105,9 +131,7 @@ class BatchTaskRunner(TaskRunner):
                         ["--account-url", task_input_blob_config.account_url]
                     )
 
-                batch_job_id = make_batch_job_id(
-                    submit_msg.dataset_id, job_id, run_id, pool_id
-                )
+                batch_job_id = prepared_task.task_data.runner_info[JOB_ID_KEY]
 
                 batch_task_id = make_valid_batch_id(task_id_for_batch)
 
@@ -135,88 +159,35 @@ class BatchTaskRunner(TaskRunner):
                 batch_job_id = batch_job_info.job_prefix
                 pool_id = batch_job_info.pool_id
 
-                retry_count = 0
-                task_submitted = False
-
                 try:
+                    # Lock to decrease pressure on Azure Batch API
                     with job_locks[batch_job_id]:
-                        # Try twice in case job completes before we can submit tasks
-                        while not task_submitted and retry_count <= 1:
-                            try:
-                                existing_jobs = batch_client.list_jobs(batch_job_id)
-                                existing_job = False
-                                if len(existing_jobs) > 0:
-                                    for job in existing_jobs:
-                                        if job.state == batchmodels.JobState.active:
-                                            batch_job_id = job.id
-                                            existing_job = True
-                                            break
-                                    if not existing_job:
-                                        # Create a job ID that doesn't clash
-                                        # with an existing job
-                                        batch_job_id = make_valid_batch_id(
-                                            f"{batch_job_id}:{len(existing_jobs)}"
-                                        )
 
-                                if not existing_job:
-                                    # Create the job
-                                    if not batch_client.get_pool(pool_id):
-                                        raise BatchTaskRunnerError(
-                                            f"Batch pool {pool_id} not found."
-                                        )
+                        # Submit the tasks
+                        task_errors = batch_client.add_collection(
+                            batch_job_id,
+                            [i.task for i in batch_task_infos],
+                        )
 
-                                    batch_job_id = batch_client.add_job(
-                                        job_id=batch_job_id,
-                                        pool_id=pool_id,
-                                        make_unique=False,
-                                    )
-
-                                else:
-                                    logger.info(
-                                        "Found existing batch job " f"{batch_job_id}."
-                                    )
-
-                                # Submit the tasks
-                                task_errors = batch_client.add_collection(
-                                    batch_job_id,
-                                    [i.task for i in batch_task_infos],
+                        # Process the results from Azure Batch
+                        for i, task_error in enumerate(task_errors):
+                            batch_task_info = batch_task_infos[i]
+                            task_id = batch_task_info.task.task_id
+                            if task_error:
+                                err: Any = task_error.message
+                                error_msg = err.value
+                                submit_results[
+                                    batch_task_info.index
+                                ] = FailedTaskSubmitResult(errors=[error_msg])
+                            else:
+                                submit_results[
+                                    batch_task_info.index
+                                ] = SuccessfulTaskSubmitResult(
+                                    task_runner_id=BatchTaskId(
+                                        batch_job_id=batch_job_id,
+                                        batch_task_id=task_id,
+                                    ).dict(),
                                 )
-
-                                task_submitted = True
-
-                                # Process the results from Azure Batch
-                                for i, task_error in enumerate(task_errors):
-                                    batch_task_info = batch_task_infos[i]
-                                    task_id = batch_task_info.task.task_id
-                                    if task_error:
-                                        err: Any = task_error.message
-                                        error_msg = err.value
-                                        submit_results[
-                                            batch_task_info.index
-                                        ] = FailedTaskSubmitResult(errors=[error_msg])
-                                    else:
-                                        submit_results[
-                                            batch_task_info.index
-                                        ] = SuccessfulTaskSubmitResult(
-                                            task_runner_id=BatchTaskId(
-                                                batch_job_id=batch_job_id,
-                                                batch_task_id=task_id,
-                                            ).dict(),
-                                        )
-
-                            except batchmodels.BatchErrorException as e:
-                                logger.exception(e)
-                                logger.warning("RETRYING BATCH JOB SUBMIT...")
-                                error: Any = e.error  # Avoid type hinting error
-                                if error.code == "JobCompleted":
-                                    if retry_count > 1:
-                                        raise
-                                    retry_count += 1
-                                else:
-                                    raise
-
-                    if not batch_job_id:
-                        raise BatchTaskRunnerError("Failed to create batch job.")
 
                 except Exception as e:
                     logger.exception(e)
@@ -262,3 +233,12 @@ class BatchTaskRunner(TaskRunner):
             batch_client.terminate_task(
                 job_id=task_id.batch_job_id, task_id=task_id.batch_task_id
             )
+
+    def cleanup(self, task_infos: Dict[str, Dict[str, Any]]) -> None:
+        job_ids = set()
+        for info in task_infos.values():
+            job_ids.add(info[JOB_ID_KEY])
+        if job_ids:
+            with BatchClient(self.settings.batch_settings) as batch_client:
+                for job_id in job_ids:
+                    batch_client.terminate_job(job_id=job_id)
