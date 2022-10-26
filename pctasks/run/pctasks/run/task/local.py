@@ -100,5 +100,5 @@ class LocalTaskRunner(TaskRunner):
         # No-op
         pass
 
-    def cleanup(self, task_infos: Dict[str, Dict[str, Any]]) -> None:
+    def cleanup(self, task_infos: List[Dict[str, Any]]) -> None:
         pass

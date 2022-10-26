@@ -117,7 +117,7 @@ class HandleTaskResultMessage(PCBaseModel):
 class JobPartition(PCBaseModel):
     definition: JobDefinition
     partition_id: str
-    task_data: Dict[str, PreparedTaskData]
+    task_data: List[PreparedTaskData]
 
 
 class JobPartitionSubmitMessage(PCBaseModel):

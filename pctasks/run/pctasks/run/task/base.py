@@ -44,10 +44,10 @@ class TaskRunner(ABC):
         pass
 
     @abstractmethod
-    def cleanup(self, task_infos: Dict[str, Dict[str, Any]]) -> None:
+    def cleanup(self, task_infos: List[Dict[str, Any]]) -> None:
         """Performs any cleanup after tasks have finished running.
 
-        task_infos is a dictionary of task IDs to task info dictionaries
+        task_infos is a list of dictionaries
         that were returned by prepare_task_info.
         """
         pass

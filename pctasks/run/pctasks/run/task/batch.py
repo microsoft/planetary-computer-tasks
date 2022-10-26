@@ -234,9 +234,9 @@ class BatchTaskRunner(TaskRunner):
                 job_id=task_id.batch_job_id, task_id=task_id.batch_task_id
             )
 
-    def cleanup(self, task_infos: Dict[str, Dict[str, Any]]) -> None:
+    def cleanup(self, task_infos: List[Dict[str, Any]]) -> None:
         job_ids = set()
-        for info in task_infos.values():
+        for info in task_infos:
             job_ids.add(info[JOB_ID_KEY])
         if job_ids:
             with BatchClient(self.settings.batch_settings) as batch_client:

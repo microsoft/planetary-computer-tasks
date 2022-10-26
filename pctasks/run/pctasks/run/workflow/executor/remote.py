@@ -681,18 +681,20 @@ class RemoteWorkflowExecutor:
 
                         # Prepare task data
                         logger.info(f"Preparing task data for job: {job_id}")
-                        task_data: Dict[str, PreparedTaskData] = {}
+                        task_data: List[PreparedTaskData] = []
                         try:
                             for task in job_def.tasks:
-                                task_data[task.id] = prepare_task_data(
-                                    dataset_id,
-                                    run_id,
-                                    job_id,
-                                    task,
-                                    settings=run_settings,
-                                    tokens=workflow.definition.tokens,
-                                    target_environment=target_env,
-                                    task_runner=self.executor,
+                                task_data.append(
+                                    prepare_task_data(
+                                        dataset_id,
+                                        run_id,
+                                        job_id,
+                                        task,
+                                        settings=run_settings,
+                                        tokens=workflow.definition.tokens,
+                                        target_environment=target_env,
+                                        task_runner=self.executor,
+                                    )
                                 )
                         except Exception as e:
                             logger.error(f"Failed to prepare task data: {e}")
@@ -700,9 +702,7 @@ class RemoteWorkflowExecutor:
                             logger.info(
                                 f"...cleaning up based on task data for job: {job_id}"
                             )
-                            self.executor.cleanup(
-                                {k: v.runner_info for k, v in task_data.items()}
-                            )
+                            self.executor.cleanup([d.runner_info for d in task_data])
                             job_run.add_errors(
                                 [
                                     f"Job {job_def.id} failed during task data prep:",
@@ -751,10 +751,7 @@ class RemoteWorkflowExecutor:
                             logger.info(
                                 f"...cleaning up based on task data for job: {job_id}"
                             )
-                            self.executor.cleanup(
-                                {k: v.runner_info for k, v in task_data.items()}
-                            )
-                            logger.exception(e)
+                            self.executor.cleanup([d.runner_info for d in task_data])
                             job_run.add_errors(
                                 [f"Job {job_def.id} failed during templating.:", str(e)]
                             )
@@ -771,6 +768,11 @@ class RemoteWorkflowExecutor:
 
                         if total_job_part_count <= 0:
                             job_outputs[job_id] = []
+                            logger.warning(f"No tasks, skipping job {job_id}")
+                            logger.info(
+                                f"...cleaning up based on task data for job: {job_id}"
+                            )
+                            self.executor.cleanup([d.runner_info for d in task_data])
                             update_job_run_status(
                                 container,
                                 workflow_run,
@@ -810,9 +812,7 @@ class RemoteWorkflowExecutor:
                             logger.info(
                                 f"...cleaning up based on task data for job: {job_id}"
                             )
-                            self.executor.cleanup(
-                                {k: v.runner_info for k, v in task_data.items()}
-                            )
+                            self.executor.cleanup([d.runner_info for d in task_data])
                             logger.exception(e)
                             update_job_run_status(
                                 container,
@@ -848,9 +848,7 @@ class RemoteWorkflowExecutor:
                             logger.info(
                                 f"...cleaning up based on task data for job: {job_id}"
                             )
-                            self.executor.cleanup(
-                                {k: v.runner_info for k, v in task_data.items()}
-                            )
+                            self.executor.cleanup([d.runner_info for d in task_data])
 
                             # Fail job, update all task records to cancelled or failed.
                             update_job_run_status(
@@ -937,9 +935,7 @@ class RemoteWorkflowExecutor:
                             logger.info(
                                 f"...cleaning up based on task data for job: {job_id}"
                             )
-                            self.executor.cleanup(
-                                {k: v.runner_info for k, v in task_data.items()}
-                            )
+                            self.executor.cleanup([d.runner_info for d in task_data])
                             update_job_run_status(
                                 container,
                                 workflow_run,
@@ -954,9 +950,7 @@ class RemoteWorkflowExecutor:
                             logger.info(
                                 f"...cleaning up based on task data for job: {job_id}"
                             )
-                            self.executor.cleanup(
-                                {k: v.runner_info for k, v in task_data.items()}
-                            )
+                            self.executor.cleanup([d.runner_info for d in task_data])
                             update_job_run_status(
                                 container,
                                 workflow_run,
@@ -1076,9 +1070,7 @@ class RemoteWorkflowExecutor:
                         logger.info(
                             f"...cleaning up based on task data for job: {job_id}"
                         )
-                        self.executor.cleanup(
-                            {k: v.runner_info for k, v in task_data.items()}
-                        )
+                        self.executor.cleanup([d.runner_info for d in task_data])
 
                     if workflow_failed:
                         logger.error("Workflow failed!")

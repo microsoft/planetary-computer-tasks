@@ -89,5 +89,5 @@ class ArgoTaskRunner(TaskRunner):
             namespace=namespace, argo_workflow_name=name
         )
 
-    def cleanup(self, task_infos: Dict[str, Dict[str, Any]]) -> None:
+    def cleanup(self, task_infos: List[Dict[str, Any]]) -> None:
         pass
