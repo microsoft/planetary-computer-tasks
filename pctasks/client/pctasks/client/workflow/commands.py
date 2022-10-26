@@ -272,5 +272,7 @@ def cli_handle_workflow(
             cli_output(workflow_id)
             return 0
     else:
+        if workflow_id:
+            workflow_def = workflow_def.copy(update={"workflow_id": workflow_id})
         cli_output(workflow_def.to_yaml())
         return 0
