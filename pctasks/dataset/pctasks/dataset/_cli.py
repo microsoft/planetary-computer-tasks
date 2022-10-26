@@ -2,10 +2,11 @@ import logging
 from typing import List, Optional, Tuple
 
 import click
+from pctasks.dataset.models import MultipleCollectionsError
 from pystac.utils import str_to_datetime
 from strictyaml.exceptions import MarkedYAMLError
 
-from pctasks.cli.cli import cli_output
+from pctasks.cli.cli import cli_output, cli_print
 from pctasks.client.workflow.commands import cli_handle_workflow
 from pctasks.core.utils import map_opt
 from pctasks.core.yaml import YamlValidationError
@@ -20,6 +21,13 @@ from pctasks.dataset.workflow import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def _handle_multiple_collections(e):
+    cli_print("[bold yellow]Multiple Collections Found[/bold yellow]:")
+    for c in e.collection_ids:
+        cli_print(f" - {c}")
+    raise click.UsageError("Please specify which collection using --collection")
 
 
 def create_chunks_cmd(
@@ -53,7 +61,10 @@ def create_chunks_cmd(
     if not ds_config:
         raise click.ClickException("No dataset config found.")
 
-    collection_config = ds_config.get_collection(collection)
+    try:
+        collection_config = ds_config.get_collection(collection)
+    except MultipleCollectionsError as e:
+        _handle_multiple_collections(e)
 
     workflow_def = create_chunks_workflow(
         dataset=ds_config,
@@ -110,7 +121,10 @@ def process_items_cmd(
     if not ds_config:
         raise click.ClickException("No dataset config found.")
 
-    collection_config = ds_config.get_collection(collection)
+    try:
+        collection_config = ds_config.get_collection(collection)
+    except MultipleCollectionsError as e:
+        _handle_multiple_collections(e)
 
     workflow_def = create_process_items_workflow(
         dataset=ds_config,
@@ -167,7 +181,10 @@ def ingest_collection_cmd(
     if not ds_config:
         raise click.ClickException("No dataset config found.")
 
-    collection_config = ds_config.get_collection(collection)
+    try:
+        collection_config = ds_config.get_collection(collection)
+    except MultipleCollectionsError as e:
+        _handle_multiple_collections(e)
 
     if not collection_config.template:
         raise click.ClickException(
