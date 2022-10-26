@@ -8,7 +8,7 @@ with open("README.md") as f:
 install_requires = [
     "pctasks.task>=0.1.0",
     "pctasks.ingest>=0.1.0",
-    "pypgstac[psycopg]==0.6.6",
+    "pypgstac[psycopg]==0.6.9",
     "pystac==1.*",
     "smart-open==4.2.0",
     "orjson>=3.5.2",

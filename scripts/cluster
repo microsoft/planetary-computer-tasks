@@ -145,6 +145,7 @@ function update_cluster() {
 
     COSMOSDB_VARS=""
     if [ "${PCTASKS_COSMOSDB__URL}" ]; then
+        require_env "PCTASKS_COSMOSDB__KEY";
         COSMOSDB_VARS="--set pctasks.cosmosdb.url=${PCTASKS_COSMOSDB__URL} \
             --set pctasks.cosmosdb.key=${PCTASKS_COSMOSDB__KEY}"
     fi
@@ -152,6 +153,39 @@ function update_cluster() {
     if [ "${PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX}" ]; then
         COSMOSDB_VARS="${COSMOSDB_VARS} \
             --set pctasks.cosmosdb.dev.test_container_suffix=${PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX}"
+    fi
+
+    BATCH_VARS=""
+    if [ "${PCTASKS_RUN__BATCH_URL}" ]; then
+        require_env "PCTASKS_RUN__BATCH_KEY";
+        require_env "PCTASKS_RUN__BATCH_DEFAULT_POOL_ID";
+        BATCH_VARS="--set pctasks.run.task_runner_type=batch \
+            --set pctasks.run.batch.enabled=true \
+            --set pctasks.run.batch.url=${PCTASKS_RUN__BATCH_URL} \
+            --set pctasks.run.batch.key=${PCTASKS_RUN__BATCH_KEY} \
+            --set pctasks.run.batch.default_pool_id=${PCTASKS_RUN__BATCH_DEFAULT_POOL_ID}"
+    fi
+
+    KV_VARS=""
+    if [ "${PCTASKS_RUN__KEYVAULT_URL}" ]; then
+        require_env "AZURE_TENANT_ID";
+        require_env "AZURE_CLIENT_ID";
+        require_env "AZURE_CLIENT_SECRET";
+        KV_VARS="--set pctasks.run.dev.secrets.enabled=false \
+           --set pctasks.run.keyvault.enabled=true \
+           --set pctasks.run.keyvault.url=${PCTASKS_RUN__KEYVAULT_URL} \
+           --set pctasks.run.keyvault.sp_tenant_id=${AZURE_TENANT_ID} \
+           --set pctasks.run.keyvault.sp_client_id=${AZURE_CLIENT_ID} \
+           --set pctasks.run.keyvault.sp_client_secret=${AZURE_CLIENT_SECRET}"
+    fi
+
+    BLOB_VARS=""
+    if [ "${PCTASKS_RUN__BLOB_ACCOUNT_NAME}" ]; then
+        require_env "PCTASKS_RUN__BLOB_ACCOUNT_URL";
+        require_env "PCTASKS_RUN__BLOB_ACCOUNT_KEY";
+        BLOB_VARS="--set pctasks.run.blob.account_name=${PCTASKS_RUN__BLOB_ACCOUNT_NAME} \
+            --set pctasks.run.blob.account_url=${PCTASKS_RUN__BLOB_ACCOUNT_URL} \
+            --set pctasks.run.blob.account_key=${PCTASKS_RUN__BLOB_ACCOUNT_KEY}"
     fi
 
     # Set pctasks.deploy.podAnnotations.updated to force a new deployment
@@ -162,7 +196,7 @@ function update_cluster() {
         -f cluster/dev-values.yaml \
         --create-namespace \
         --set pctasks.server.deploy.podAnnotations.updated="$(date)" \
-        --set pctasks.run.argo.token="${ARGO_TOKEN}" ${COSMOSDB_VARS}
+        --set pctasks.run.argo.token="${ARGO_TOKEN}" ${COSMOSDB_VARS} ${BATCH_VARS} ${KV_VARS} ${BLOB_VARS}
 
     echo "Installing ingress-nginx..."
     # TODO: Move to helm chart
@@ -175,14 +209,14 @@ function update_cluster() {
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${SETUP}" ]; then
-        create_cluster;
-        update_registry;
-        update_cluster;
+        create_cluster
+        update_registry
+        update_cluster
     fi
 
     if [ "${UPDATE}" ]; then
-        update_registry;
-        update_cluster;
+        update_registry
+        update_cluster
     fi
 
     if [ "${GET_ARGO_TOKEN}" ]; then
@@ -196,8 +230,8 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${RECREATE}" ]; then
         echo " -- RECREATING KIND CLUSTER"
         kind delete cluster --name ${KIND_CLUSTER_NAME}
-        create_cluster;
-        update_cluster;
+        create_cluster
+        update_cluster
     fi
 
     if [ "${DELETE}" ]; then

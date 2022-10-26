@@ -14,19 +14,27 @@ from pctasks.core.utils.template import DictTemplater
 from pctasks.dataset.constants import DEFAULT_CHUNK_LENGTH
 
 
-class CollectionNotFound(Exception):
+class CollectionNotFoundError(Exception):
     """Raised if the requested collection is not found"""
 
     pass
 
 
-class MultipleCollections(Exception):
+class MultipleCollectionsError(Exception):
     """Raised if there are multiple collections in a dataset.
 
     The user asked for the "default" collection.
     """
 
-    pass
+    def __init__(self, dataset_id: str, collection_ids: List[str]):
+        self.dataset_id = dataset_id
+        self.collection_ids = collection_ids
+        super().__init__(
+            "Multiple collections for dataset, "
+            "cannot return default collection id: "
+            f"dataset={dataset_id}, "
+            f"collections={collection_ids}"
+        )
 
 
 class SplitDefinition(PCBaseModel):
@@ -150,18 +158,15 @@ class DatasetDefinition(PCBaseModel):
     ) -> CollectionDefinition:
         if collection_id is None:
             if len(self.collections) > 1:
-                raise MultipleCollections(
-                    "Multiple collections for dataset, "
-                    "cannot return default collection id: "
-                    f"dataset={self.id}, "
-                    f"collections={[c.id for c in self.collections]}"
+                raise MultipleCollectionsError(
+                    self.id, [c.id for c in self.collections]
                 )
             return self.collections[0]
         else:
             for collection in self.collections:
                 if collection.id == collection_id:
                     return collection
-            raise CollectionNotFound(
+            raise CollectionNotFoundError(
                 f"Collection not found for dataset: "
                 f"dataset={self.id}, collection_id={collection_id}"
             )

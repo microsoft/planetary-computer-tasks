@@ -10,7 +10,6 @@ from pctasks.core.cosmos.containers.workflow_runs import WorkflowRunsContainer
 from pctasks.core.logging import StorageLogger
 from pctasks.core.models.event import NotificationSubmitMessage
 from pctasks.core.models.run import (
-    JobPartition,
     JobPartitionRunRecord,
     JobPartitionRunStatus,
     JobRunStatus,
@@ -27,12 +26,15 @@ from pctasks.run.dag import sort_jobs
 from pctasks.run.errors import WorkflowRunRecordError
 from pctasks.run.models import (
     FailedTaskSubmitResult,
+    JobPartition,
     JobPartitionSubmitMessage,
+    PreparedTaskData,
     PreparedTaskSubmitMessage,
     SuccessfulTaskSubmitResult,
 )
 from pctasks.run.settings import WorkflowExecutorConfig
 from pctasks.run.task import get_task_runner
+from pctasks.run.task.prepare import prepare_task_data
 from pctasks.run.template import (
     template_foreach,
     template_job_with_item,
@@ -185,8 +187,9 @@ class RemoteWorkflowExecutor:
         self, submit_msg: JobPartitionSubmitMessage
     ) -> JobPartitionState:
         """Create a job state from a job submit message."""
-        job_partition_run = JobPartitionRunRecord.from_job_partition(
-            submit_msg.job_partition,
+        job_partition_run = JobPartitionRunRecord.from_definition(
+            submit_msg.job_partition.partition_id,
+            submit_msg.job_partition.definition,
             submit_msg.run_id,
             status=JobPartitionRunStatus.RUNNING,
         )
@@ -310,7 +313,7 @@ class RemoteWorkflowExecutor:
         self,
         run_id: str,
         job_id: str,
-        part_id: str,
+        group_id: str,
         job_part_states: List[JobPartitionState],
     ) -> List[Dict[str, Any]]:
         """Complete job partitions and return the results.
@@ -325,7 +328,7 @@ class RemoteWorkflowExecutor:
         total_job_count = len(job_part_states)
         _jobs_left = lambda: total_job_count - completed_job_count - failed_job_count
         _report_status = lambda: logger.info(
-            f"{job_id} {part_id} status: "
+            f"{job_id} {group_id} status: "
             f"{completed_job_count} completed, "
             f"{failed_job_count} failed, "
             f"{_jobs_left()} remaining"
@@ -338,7 +341,7 @@ class RemoteWorkflowExecutor:
 
             while _jobs_left() > 0:
                 for job_part_state in job_part_states:
-
+                    part_id = job_part_state.job_part_submit_msg.partition_id
                     # For each job partition in this group, process
                     # the status of the current task.
 
@@ -503,8 +506,8 @@ class RemoteWorkflowExecutor:
                             elif task_state.status == TaskStateStatus.COMPLETED:
 
                                 logger.info(
-                                    f"Task completed: {job_part_state.job_id} "
-                                    f"- {task_state.task_id}"
+                                    f"Task completed: {job_part_state.job_id}:{part_id}"
+                                    f":{task_state.task_id}"
                                 )
                                 if not isinstance(
                                     task_state.task_result, CompletedTaskResult
@@ -575,7 +578,9 @@ class RemoteWorkflowExecutor:
                                             JobPartitionRunStatus.FAILED,
                                         )
                                     completed_job_count += 1
-                                    logger.info(f"Job completed: {job_id}")
+                                    logger.info(
+                                        f"Job partition completed: {job_id}:{part_id}"
+                                    )
 
                                 _report_status()
 
@@ -585,7 +590,7 @@ class RemoteWorkflowExecutor:
 
                 time.sleep(0.25 + ((random.randint(0, 10) / 100) - 0.05))
 
-            logger.info(f"Task group {part_id} completed!")
+            logger.info(f"Partition group {group_id} completed!")
 
             return [job_state.task_outputs for job_state in job_part_states]
 
@@ -597,6 +602,8 @@ class RemoteWorkflowExecutor:
         workflow = submit_message.get_workflow_with_templated_args()
         trigger_event = map_opt(lambda e: e.dict(), submit_message.trigger_event)
         run_id = submit_message.run_id
+        dataset_id = submit_message.workflow.definition.dataset_id
+        target_env = workflow.definition.target_environment
 
         run_settings = self.config.run_settings
         pool = futures.ThreadPoolExecutor(
@@ -673,6 +680,46 @@ class RemoteWorkflowExecutor:
                         )
 
                         job_partitions: List[JobPartition]
+
+                        # Prepare task data
+                        logger.info(f"Preparing task data for job: {job_id}")
+                        task_data: List[PreparedTaskData] = []
+                        try:
+                            for task in job_def.tasks:
+                                task_data.append(
+                                    prepare_task_data(
+                                        dataset_id,
+                                        run_id,
+                                        job_id,
+                                        task,
+                                        settings=run_settings,
+                                        tokens=workflow.definition.tokens,
+                                        target_environment=target_env,
+                                        task_runner=self.executor,
+                                    )
+                                )
+                        except Exception as e:
+                            logger.error(f"Failed to prepare task data: {e}")
+                            logger.exception(e)
+                            logger.info(
+                                f"...cleaning up based on task data for job: {job_id}"
+                            )
+                            self.executor.cleanup([d.runner_info for d in task_data])
+                            job_run.add_errors(
+                                [
+                                    f"Job {job_def.id} failed during task data prep:",
+                                    str(e),
+                                ]
+                            )
+                            update_job_run_status(
+                                container,
+                                workflow_run,
+                                job_def.get_id(),
+                                JobRunStatus.FAILED,
+                            )
+                            workflow_failed = True
+                            continue
+
                         try:
                             if job_def.foreach:
                                 items = template_foreach(
@@ -686,6 +733,7 @@ class RemoteWorkflowExecutor:
                                             job_def, item
                                         ),
                                         partition_id=str(i),
+                                        task_data=task_data,
                                     )
                                     for i, item in enumerate(items)
                                 ]
@@ -693,10 +741,19 @@ class RemoteWorkflowExecutor:
                                 logger.info(msg)
                             else:
                                 job_partitions = [
-                                    JobPartition(definition=job_def, partition_id="0")
+                                    JobPartition(
+                                        definition=job_def,
+                                        partition_id="0",
+                                        task_data=task_data,
+                                    )
                                 ]
                         except Exception as e:
+                            logger.error(f"Failed to template job partitions: {e}")
                             logger.exception(e)
+                            logger.info(
+                                f"...cleaning up based on task data for job: {job_id}"
+                            )
+                            self.executor.cleanup([d.runner_info for d in task_data])
                             job_run.add_errors(
                                 [f"Job {job_def.id} failed during templating.:", str(e)]
                             )
@@ -713,6 +770,11 @@ class RemoteWorkflowExecutor:
 
                         if total_job_part_count <= 0:
                             job_outputs[job_id] = []
+                            logger.warning(f"No tasks, skipping job {job_id}")
+                            logger.info(
+                                f"...cleaning up based on task data for job: {job_id}"
+                            )
+                            self.executor.cleanup([d.runner_info for d in task_data])
                             update_job_run_status(
                                 container,
                                 workflow_run,
@@ -722,7 +784,6 @@ class RemoteWorkflowExecutor:
                             )
                             continue
 
-                        target_environment = workflow.definition.target_environment
                         job_part_submit_msgs = [
                             JobPartitionSubmitMessage(
                                 job_partition=prepared_job,
@@ -731,7 +792,7 @@ class RemoteWorkflowExecutor:
                                 job_id=prepared_job.definition.get_id(),
                                 partition_id=prepared_job.partition_id,
                                 tokens=workflow.definition.tokens,
-                                target_environment=target_environment,
+                                target_environment=target_env,
                                 job_outputs=job_outputs,
                                 trigger_event=trigger_event,
                             )
@@ -748,6 +809,12 @@ class RemoteWorkflowExecutor:
                                 )
                             )
                         except Exception as e:
+                            logger.error(f"Failed to prepare job partitions: {e}")
+                            logger.exception(e)
+                            logger.info(
+                                f"...cleaning up based on task data for job: {job_id}"
+                            )
+                            self.executor.cleanup([d.runner_info for d in task_data])
                             logger.exception(e)
                             update_job_run_status(
                                 container,
@@ -778,6 +845,12 @@ class RemoteWorkflowExecutor:
                                 )
                             except Exception as e:
                                 logger.exception(e)
+
+                            logger.warning(f" - Job {job_id} has no tasks to run.")
+                            logger.info(
+                                f"...cleaning up based on task data for job: {job_id}"
+                            )
+                            self.executor.cleanup([d.runner_info for d in task_data])
 
                             # Fail job, update all task records to cancelled or failed.
                             update_job_run_status(
@@ -859,7 +932,12 @@ class RemoteWorkflowExecutor:
                                 )
 
                         except Exception as e:
+                            logger.error(f"Failed to update task status: {e}")
                             logger.exception(e)
+                            logger.info(
+                                f"...cleaning up based on task data for job: {job_id}"
+                            )
+                            self.executor.cleanup([d.runner_info for d in task_data])
                             update_job_run_status(
                                 container,
                                 workflow_run,
@@ -870,7 +948,11 @@ class RemoteWorkflowExecutor:
                             continue
 
                         if not any_submitted:
-                            logger.info(" -  All initial tasks failed to submit.")
+                            logger.error(" -  All initial tasks failed to submit.")
+                            logger.info(
+                                f"...cleaning up based on task data for job: {job_id}"
+                            )
+                            self.executor.cleanup([d.runner_info for d in task_data])
                             update_job_run_status(
                                 container,
                                 workflow_run,
@@ -986,6 +1068,11 @@ class RemoteWorkflowExecutor:
                                 job_def.get_id(),
                                 JobRunStatus.COMPLETED,
                             )
+
+                        logger.info(
+                            f"...cleaning up based on task data for job: {job_id}"
+                        )
+                        self.executor.cleanup([d.runner_info for d in task_data])
 
                     if workflow_failed:
                         logger.error("Workflow failed!")

@@ -1,0 +1,826 @@
+{
+    "stac_version": "1.0.0",
+    "type": "Collection",
+    "id": "goes-cmi",
+    "title": "GOES-R Cloud & Moisture Imagery",
+    "description": "{{ collection.description }}",
+    "license": "proprietary",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://www.nesdisia.noaa.gov/policy.html",
+            "title": "Public Domain"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "keywords": [
+        "GOES",
+        "NOAA",
+        "NASA",
+        "Satellite",
+        "Cloud",
+        "Moisture"
+    ],
+    "msft:short_description": "High temporal cadence cloud and moisture imagery over the Western Hemisphere from the Advanced Baseline Imager (ABI) instrument.",
+    "msft:storage_account": "goeseuwest",
+    "msft:container": "noaa-goes-cogs",
+    "msft:group_id": "goes",
+    "providers": [
+        {
+            "name": "NASA",
+            "roles": [
+                "producer"
+            ],
+            "url": "https://www.nasa.gov/content/goes"
+        },
+        {
+            "name": "NOAA",
+            "roles": [
+                "processor",
+                "producer",
+                "licensor"
+            ],
+            "url": "https://www.goes-r.gov/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "title": "GOES CMIP",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/goes-cmi-thumb.png",
+            "media_type": "image/png"
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/goes-cmi.parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "W-MON"
+            }
+        }
+    },
+    "summaries": {
+        "platform": [
+            "GOES-16",
+            "GOES-17"
+        ],
+        "instruments": [
+            "ABI"
+        ],
+        "goes:image-type": [
+            "FULL DISK",
+            "CONUS",
+            "MESOSCALE"
+        ],
+        "goes:mode": [
+            "3",
+            "4",
+            "6"
+        ],
+        "goes:processing-level": [
+            "L2"
+        ]
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180.0,
+                    -81.33,
+                    6.3,
+                    81.33
+                ],
+                [
+                    141.7,
+                    -81.33,
+                    180.0,
+                    81.33
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2017-02-28T00:16:52Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "item_assets": {
+        "MCMIP-nc": {
+            "type": "application/netcdf",
+            "title": "Cloud and Moisture Imagery - Multiband",
+            "description": "The Cloud and Moisture Imagery product contains one or more Earth-view images with pixel values identifying 'brightness values' that are scaled to support visual analysis.",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 1",
+                    "common_name": "blue",
+                    "description": "Daytime aerosol over land, coastal water mapping",
+                    "center_wavelength": 0.47
+                },
+                {
+                    "name": "ABI Band 2",
+                    "common_name": "red",
+                    "description": "Daytime clouds, fog, insolation, winds",
+                    "center_wavelength": 0.64
+                },
+                {
+                    "name": "ABI Band 3",
+                    "common_name": "nir09",
+                    "description": "Daytime vegetation, burn scar, aerosol over water, winds",
+                    "center_wavelength": 0.87
+                },
+                {
+                    "name": "ABI Band 4",
+                    "common_name": "cirrus",
+                    "description": "Daytime cirrus cloud",
+                    "center_wavelength": 1.38
+                },
+                {
+                    "name": "ABI Band 5",
+                    "common_name": "swir16",
+                    "description": "Daytime cloud-top phase and particle size, snow",
+                    "center_wavelength": 1.61
+                },
+                {
+                    "name": "ABI Band 6",
+                    "common_name": "swir22",
+                    "description": "Daytime land, cloud properties, particle size, vegetation, snow",
+                    "center_wavelength": 2.25
+                },
+                {
+                    "name": "ABI Band 7",
+                    "description": "Surface and cloud, fog at night, fire, winds",
+                    "center_wavelength": 3.89
+                },
+                {
+                    "name": "ABI Band 8",
+                    "description": "High-level atmospheric water vapor, winds, rainfall",
+                    "center_wavelength": 6.17
+                },
+                {
+                    "name": "ABI Band 9",
+                    "description": "Midlevel atmospheric water vapor, winds, rainfall",
+                    "center_wavelength": 6.93
+                },
+                {
+                    "name": "ABI Band 10",
+                    "description": "Lower-level water vapor, winds, and silicon dioxide",
+                    "center_wavelength": 7.34
+                },
+                {
+                    "name": "ABI Band 11",
+                    "description": "Total water for stability, cloud phase, dust, silicon dioxide, rainfall",
+                    "center_wavelength": 8.44
+                },
+                {
+                    "name": "ABI Band 12",
+                    "description": "Total ozone, turbulence, winds",
+                    "center_wavelength": 9.61
+                },
+                {
+                    "name": "ABI Band 13",
+                    "description": "Surface and clouds",
+                    "center_wavelength": 10.33
+                },
+                {
+                    "name": "ABI Band 14",
+                    "description": "Imagery, sea surface temperature, clouds, rainfall",
+                    "center_wavelength": 11.19
+                },
+                {
+                    "name": "ABI Band 15",
+                    "description": "Total water, volcanic ash, sea surface temperature",
+                    "center_wavelength": 12.27
+                },
+                {
+                    "name": "ABI Band 16",
+                    "description": "Air temperature, cloud heights",
+                    "center_wavelength": 13.27
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "CMIP_C01-nc": {
+            "type": "application/netcdf",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 01",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 1",
+                    "common_name": "blue",
+                    "description": "Daytime aerosol over land, coastal water mapping",
+                    "center_wavelength": 0.47
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "CMIP_C02-nc": {
+            "type": "application/netcdf",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 02",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 2",
+                    "common_name": "red",
+                    "description": "Daytime clouds, fog, insolation, winds",
+                    "center_wavelength": 0.64
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "CMIP_C03-nc": {
+            "type": "application/netcdf",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 03",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 3",
+                    "common_name": "nir09",
+                    "description": "Daytime vegetation, burn scar, aerosol over water, winds",
+                    "center_wavelength": 0.87
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "CMIP_C04-nc": {
+            "type": "application/netcdf",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 04",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 4",
+                    "common_name": "cirrus",
+                    "description": "Daytime cirrus cloud",
+                    "center_wavelength": 1.38
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "CMIP_C05-nc": {
+            "type": "application/netcdf",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 05",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 5",
+                    "common_name": "swir16",
+                    "description": "Daytime cloud-top phase and particle size, snow",
+                    "center_wavelength": 1.61
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "CMIP_C06-nc": {
+            "type": "application/netcdf",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 06",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 6",
+                    "common_name": "swir22",
+                    "description": "Daytime land, cloud properties, particle size, vegetation, snow",
+                    "center_wavelength": 2.25
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "CMIP_C07-nc": {
+            "type": "application/netcdf",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 07",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 7",
+                    "description": "Surface and cloud, fog at night, fire, winds",
+                    "center_wavelength": 3.89
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "CMIP_C08-nc": {
+            "type": "application/netcdf",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 08",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 8",
+                    "description": "High-level atmospheric water vapor, winds, rainfall",
+                    "center_wavelength": 6.17
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "CMIP_C09-nc": {
+            "type": "application/netcdf",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 09",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 9",
+                    "description": "Midlevel atmospheric water vapor, winds, rainfall",
+                    "center_wavelength": 6.93
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "CMIP_C10-nc": {
+            "type": "application/netcdf",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 10",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 10",
+                    "description": "Lower-level water vapor, winds, and silicon dioxide",
+                    "center_wavelength": 7.34
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "CMIP_C11-nc": {
+            "type": "application/netcdf",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 11",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 11",
+                    "description": "Total water for stability, cloud phase, dust, silicon dioxide, rainfall",
+                    "center_wavelength": 8.44
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "CMIP_C12-nc": {
+            "type": "application/netcdf",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 12",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 12",
+                    "description": "Total ozone, turbulence, winds",
+                    "center_wavelength": 9.61
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "CMIP_C13-nc": {
+            "type": "application/netcdf",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 13",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 13",
+                    "description": "Surface and clouds",
+                    "center_wavelength": 10.33
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "CMIP_C14-nc": {
+            "type": "application/netcdf",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 14",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 14",
+                    "description": "Imagery, sea surface temperature, clouds, rainfall",
+                    "center_wavelength": 11.19
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "CMIP_C15-nc": {
+            "type": "application/netcdf",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 15",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 15",
+                    "description": "Total water, volcanic ash, sea surface temperature",
+                    "center_wavelength": 12.27
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "CMIP_C16-nc": {
+            "type": "application/netcdf",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 16",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 16",
+                    "description": "Air temperature, cloud heights",
+                    "center_wavelength": 13.27
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "C01_1km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 01 (full resolution)",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 1",
+                    "common_name": "blue",
+                    "description": "Daytime aerosol over land, coastal water mapping",
+                    "center_wavelength": 0.47
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "C01_DQF_1km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 01 (full resolution)",
+            "roles": [
+                "quality-mask"
+            ]
+        },
+        "C01_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 01",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 1",
+                    "common_name": "blue",
+                    "description": "Daytime aerosol over land, coastal water mapping",
+                    "center_wavelength": 0.47
+                }
+            ]
+        },
+        "C01_DQF_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 01"
+        },
+        "C01_2km_wm": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 01, Web Mercator",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 1",
+                    "common_name": "blue",
+                    "description": "Daytime aerosol over land, coastal water mapping",
+                    "center_wavelength": 0.47
+                }
+            ]
+        },
+        "C02_0.5km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 02 (full resolution)",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 2",
+                    "common_name": "red",
+                    "description": "Daytime clouds, fog, insolation, winds",
+                    "center_wavelength": 0.64
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "C02_DQF_0.5km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 02 (full resolution)",
+            "roles": [
+                "quality-mask"
+            ]
+        },
+        "C02_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 02",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 2",
+                    "common_name": "red",
+                    "description": "Daytime clouds, fog, insolation, winds",
+                    "center_wavelength": 0.64
+                }
+            ]
+        },
+        "C02_DQF_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 02"
+        },
+        "C02_2km_wm": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 02, Web Mercator",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 2",
+                    "common_name": "red",
+                    "description": "Daytime clouds, fog, insolation, winds",
+                    "center_wavelength": 0.64
+                }
+            ]
+        },
+        "C03_1km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 03 (full resolution)",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 3",
+                    "common_name": "nir09",
+                    "description": "Daytime vegetation, burn scar, aerosol over water, winds",
+                    "center_wavelength": 0.87
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "C03_DQF_1km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 03 (full resolution)",
+            "roles": [
+                "quality-mask"
+            ]
+        },
+        "C03_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 03",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 3",
+                    "common_name": "nir09",
+                    "description": "Daytime vegetation, burn scar, aerosol over water, winds",
+                    "center_wavelength": 0.87
+                }
+            ]
+        },
+        "C03_DQF_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 03"
+        },
+        "C03_2km_wm": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 03, Web Mercator",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 3",
+                    "common_name": "nir09",
+                    "description": "Daytime vegetation, burn scar, aerosol over water, winds",
+                    "center_wavelength": 0.87
+                }
+            ]
+        },
+        "C04_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 04",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 4",
+                    "common_name": "cirrus",
+                    "description": "Daytime cirrus cloud",
+                    "center_wavelength": 1.38
+                }
+            ]
+        },
+        "C04_DQF_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 04"
+        },
+        "C05_1km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 05 (full resolution)",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 5",
+                    "common_name": "swir16",
+                    "description": "Daytime cloud-top phase and particle size, snow",
+                    "center_wavelength": 1.61
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "C05_DQF_1km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 05 (full resolution)",
+            "roles": [
+                "quality-mask"
+            ]
+        },
+        "C05_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 05",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 5",
+                    "common_name": "swir16",
+                    "description": "Daytime cloud-top phase and particle size, snow",
+                    "center_wavelength": 1.61
+                }
+            ]
+        },
+        "C05_DQF_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 05"
+        },
+        "C06_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery reflectance factor - Band 06",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 6",
+                    "common_name": "swir22",
+                    "description": "Daytime land, cloud properties, particle size, vegetation, snow",
+                    "center_wavelength": 2.25
+                }
+            ]
+        },
+        "C06_DQF_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 06"
+        },
+        "C07_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 07",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 7",
+                    "description": "Surface and cloud, fog at night, fire, winds",
+                    "center_wavelength": 3.89
+                }
+            ]
+        },
+        "C07_DQF_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 07"
+        },
+        "C08_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 08",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 8",
+                    "description": "High-level atmospheric water vapor, winds, rainfall",
+                    "center_wavelength": 6.17
+                }
+            ]
+        },
+        "C08_DQF_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 08"
+        },
+        "C09_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 09",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 9",
+                    "description": "Midlevel atmospheric water vapor, winds, rainfall",
+                    "center_wavelength": 6.93
+                }
+            ]
+        },
+        "C09_DQF_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 09"
+        },
+        "C10_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 10",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 10",
+                    "description": "Lower-level water vapor, winds, and silicon dioxide",
+                    "center_wavelength": 7.34
+                }
+            ]
+        },
+        "C10_DQF_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 10"
+        },
+        "C11_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 11",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 11",
+                    "description": "Total water for stability, cloud phase, dust, silicon dioxide, rainfall",
+                    "center_wavelength": 8.44
+                }
+            ]
+        },
+        "C11_DQF_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 11"
+        },
+        "C12_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 12",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 12",
+                    "description": "Total ozone, turbulence, winds",
+                    "center_wavelength": 9.61
+                }
+            ]
+        },
+        "C12_DQF_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 12"
+        },
+        "C13_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 13",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 13",
+                    "description": "Surface and clouds",
+                    "center_wavelength": 10.33
+                }
+            ]
+        },
+        "C13_DQF_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 13"
+        },
+        "C14_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 14",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 14",
+                    "description": "Imagery, sea surface temperature, clouds, rainfall",
+                    "center_wavelength": 11.19
+                }
+            ]
+        },
+        "C14_DQF_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 14"
+        },
+        "C15_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 15",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 15",
+                    "description": "Total water, volcanic ash, sea surface temperature",
+                    "center_wavelength": 12.27
+                }
+            ]
+        },
+        "C15_DQF_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 15"
+        },
+        "C16_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery brightness temperature at top of atmosphere - Band 16",
+            "eo:bands": [
+                {
+                    "name": "ABI Band 16",
+                    "description": "Air temperature, cloud heights",
+                    "center_wavelength": 13.27
+                }
+            ]
+        },
+        "C16_DQF_2km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Cloud and Moisture Imagery data quality flags - Band 16"
+        }
+    }
+}
