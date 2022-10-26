@@ -33,6 +33,7 @@ def create_chunks_cmd(
     submit: bool = False,
     upsert: bool = False,
     target: Optional[str] = None,
+    workflow_id: Optional[str] = None,
 ) -> None:
     """Creates workflow to generate asset chunks for bulk processing.
 
@@ -66,6 +67,7 @@ def create_chunks_cmd(
     cli_handle_workflow(
         ctx,
         workflow_def,
+        workflow_id=workflow_id,
         upsert=upsert,
         upsert_and_submit=submit,
         args={a[0]: a[1] for a in arg},
@@ -85,6 +87,7 @@ def process_items_cmd(
     limit: Optional[int] = None,
     submit: bool = False,
     upsert: bool = False,
+    workflow_id: Optional[str] = None,
 ) -> None:
     """Generate the workflow to create and ingest items.
 
@@ -126,6 +129,7 @@ def process_items_cmd(
     cli_handle_workflow(
         ctx,
         workflow_def,
+        workflow_id=workflow_id,
         upsert=upsert,
         upsert_and_submit=submit,
         args={a[0]: a[1] for a in arg},
@@ -140,6 +144,7 @@ def ingest_collection_cmd(
     target: Optional[str] = None,
     submit: bool = False,
     upsert: bool = False,
+    workflow_id: Optional[str] = None,
 ) -> None:
     """Generate the workflow to ingest a collection.
 
@@ -179,6 +184,7 @@ def ingest_collection_cmd(
     cli_handle_workflow(
         ctx,
         workflow_def,
+        workflow_id=workflow_id,
         upsert=upsert,
         upsert_and_submit=submit,
         args={a[0]: a[1] for a in arg},

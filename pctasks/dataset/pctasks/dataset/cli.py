@@ -4,7 +4,13 @@ from typing import List, Optional, Tuple
 import click
 
 from pctasks.client.workflow.options import opt_args
-from pctasks.dataset.utils import opt_collection, opt_ds_config, opt_submit, opt_upsert
+from pctasks.dataset.utils import (
+    opt_collection,
+    opt_ds_config,
+    opt_submit,
+    opt_upsert,
+    opt_workflow_id,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +40,7 @@ def dataset_cmd(ctx: click.Context) -> None:
 )
 @opt_submit
 @opt_upsert
+@opt_workflow_id
 @click.pass_context
 def create_chunks_cmd(
     ctx: click.Context,
@@ -46,6 +53,7 @@ def create_chunks_cmd(
     target: Optional[str] = None,
     submit: bool = False,
     upsert: bool = False,
+    workflow_id: Optional[str] = None,
 ) -> None:
     """Creates workflow to generate asset chunks for bulk processing.
 
@@ -69,6 +77,7 @@ def create_chunks_cmd(
         submit=submit,
         upsert=upsert,
         target=target,
+        workflow_id=workflow_id,
     )
 
 
@@ -97,6 +106,7 @@ def create_chunks_cmd(
 )
 @opt_submit
 @opt_upsert
+@opt_workflow_id
 @click.pass_context
 def process_items_cmd(
     ctx: click.Context,
@@ -111,6 +121,7 @@ def process_items_cmd(
     limit: Optional[int] = None,
     submit: bool = False,
     upsert: bool = False,
+    workflow_id: Optional[str] = None,
 ) -> None:
     """Generate the workflow to create and ingest items.
 
@@ -140,6 +151,7 @@ def process_items_cmd(
         limit=limit,
         submit=submit,
         upsert=upsert,
+        workflow_id=workflow_id,
     )
 
 
@@ -154,6 +166,7 @@ def process_items_cmd(
 )
 @opt_submit
 @opt_upsert
+@opt_workflow_id
 @click.pass_context
 def ingest_collection_cmd(
     ctx: click.Context,
@@ -163,6 +176,7 @@ def ingest_collection_cmd(
     target: Optional[str] = None,
     submit: bool = False,
     upsert: bool = False,
+    workflow_id: Optional[str] = None,
 ) -> None:
     """Generate the workflow to ingest a collection.
 
@@ -187,6 +201,7 @@ def ingest_collection_cmd(
         target=target,
         submit=submit,
         upsert=upsert,
+        workflow_id=workflow_id,
     )
 
 
