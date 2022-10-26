@@ -29,6 +29,7 @@ def ingest_ndjson_cmd(
     owner: str,
     submit: bool,
     limit: Optional[int],
+    workflow_id: Optional[str] = None,
 ) -> None:
     """Ingest Items from a folder of Ndjsons.
 
@@ -78,7 +79,7 @@ def ingest_ndjson_cmd(
         },
     )
 
-    cli_handle_workflow(ctx, workflow_def=workflow, args=None)
+    cli_handle_workflow(ctx, workflow_def=workflow, args=None, workflow_id=workflow_id)
 
 
 def ingest_collection_cmd(
