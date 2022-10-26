@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Union
-from pctasks.core.models.task import TaskDefinition
 
+from pctasks.core.models.task import TaskDefinition
 from pctasks.run.models import (
     FailedTaskSubmitResult,
     PreparedTaskSubmitMessage,

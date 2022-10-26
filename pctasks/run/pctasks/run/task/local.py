@@ -1,10 +1,11 @@
 import json
 import logging
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 import requests
 
 from pctasks.core.models.run import TaskRunStatus
+from pctasks.core.models.task import TaskDefinition
 from pctasks.run.constants import MAX_MISSING_POLLS
 from pctasks.run.models import (
     FailedTaskSubmitResult,
@@ -27,13 +28,24 @@ class LocalTaskRunner(TaskRunner):
     def __init__(self, local_dev_endpoints_url: str):
         self.local_dev_endpoints_url = local_dev_endpoints_url
 
+    def prepare_task_info(
+        self,
+        dataset_id: str,
+        run_id: str,
+        job_id: str,
+        task_def: TaskDefinition,
+        image: str,
+        task_tags: Optional[Dict[str, str]],
+    ) -> Dict[str, Any]:
+        return {}
+
     def submit_tasks(
         self, prepared_tasks: List[PreparedTaskSubmitMessage]
     ) -> List[Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]]:
         results: List[Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]] = []
         for prepared_task in prepared_tasks:
             task_input_blob_config = prepared_task.task_input_blob_config
-            task_tags = prepared_task.task_tags
+            task_tags = prepared_task.task_data.tags
             args = [
                 "task",
                 "run",
@@ -86,4 +98,7 @@ class LocalTaskRunner(TaskRunner):
 
     def cancel_task(self, runner_id: Dict[str, Any]) -> None:
         # No-op
+        pass
+
+    def cleanup(self, task_infos: Dict[str, Dict[str, Any]]) -> None:
         pass

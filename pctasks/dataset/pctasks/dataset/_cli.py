@@ -2,7 +2,6 @@ import logging
 from typing import List, Optional, Tuple
 
 import click
-from pctasks.dataset.models import MultipleCollectionsError
 from pystac.utils import str_to_datetime
 from strictyaml.exceptions import MarkedYAMLError
 
@@ -12,6 +11,7 @@ from pctasks.core.utils import map_opt
 from pctasks.core.yaml import YamlValidationError
 from pctasks.dataset.chunks.models import ChunkOptions
 from pctasks.dataset.constants import DEFAULT_DATASET_YAML_PATH
+from pctasks.dataset.models import MultipleCollectionsError
 from pctasks.dataset.splits.models import CreateSplitsOptions
 from pctasks.dataset.template import template_dataset_file
 from pctasks.dataset.workflow import (
@@ -23,11 +23,11 @@ from pctasks.dataset.workflow import (
 logger = logging.getLogger(__name__)
 
 
-def _handle_multiple_collections(e):
+def _handle_multiple_collections(e: MultipleCollectionsError) -> Exception:
     cli_print("[bold yellow]Multiple Collections Found[/bold yellow]:")
     for c in e.collection_ids:
         cli_print(f" - {c}")
-    raise click.UsageError("Please specify which collection using --collection")
+    return click.UsageError("Please specify which collection using --collection")
 
 
 def create_chunks_cmd(
@@ -64,7 +64,7 @@ def create_chunks_cmd(
     try:
         collection_config = ds_config.get_collection(collection)
     except MultipleCollectionsError as e:
-        _handle_multiple_collections(e)
+        raise _handle_multiple_collections(e)
 
     workflow_def = create_chunks_workflow(
         dataset=ds_config,
@@ -124,7 +124,7 @@ def process_items_cmd(
     try:
         collection_config = ds_config.get_collection(collection)
     except MultipleCollectionsError as e:
-        _handle_multiple_collections(e)
+        raise _handle_multiple_collections(e)
 
     workflow_def = create_process_items_workflow(
         dataset=ds_config,
@@ -184,7 +184,7 @@ def ingest_collection_cmd(
     try:
         collection_config = ds_config.get_collection(collection)
     except MultipleCollectionsError as e:
-        _handle_multiple_collections(e)
+        raise _handle_multiple_collections(e)
 
     if not collection_config.template:
         raise click.ClickException(

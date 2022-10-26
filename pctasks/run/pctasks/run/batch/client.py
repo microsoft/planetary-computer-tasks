@@ -497,7 +497,7 @@ class BatchClient:
     def terminate_job(self, job_id: str) -> None:
         client = self._ensure_client()
 
-        def _terminate():
+        def _terminate() -> None:
             try:
                 client.job.terminate(job_id=job_id)
             except batchmodels.BatchErrorException as e:
