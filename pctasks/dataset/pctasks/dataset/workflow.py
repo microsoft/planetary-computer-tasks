@@ -93,6 +93,7 @@ def create_process_items_workflow(
     ingest_options: Optional[IngestOptions] = None,
     target: Optional[str] = None,
     tags: Optional[Dict[str, str]] = None,
+    is_update_workflow: bool = False,
 ) -> WorkflowDefinition:
 
     chunks_job_id: str
@@ -195,7 +196,7 @@ def create_process_items_workflow(
     id = f"{collection.id}-process-items"
     if collection.id != dataset.id:
         id = f"{dataset.id}-{id}"
-    return WorkflowDefinition(
+    workflow_definition = WorkflowDefinition(
         id=id,
         name=f"Process items for {collection.id}",
         dataset=dataset.id,
@@ -207,6 +208,14 @@ def create_process_items_workflow(
         },
         target_environment=target,
     )
+
+    if is_update_workflow:
+        workflow_definition.args.append("since")
+        workflow_definition.jobs["create-splits"].tasks[0].args["inputs"][0][
+            "chunk_options"
+        ]["since"] = "${{ args.since }}"
+
+    return workflow_definition
 
 
 def create_ingest_collection_workflow(

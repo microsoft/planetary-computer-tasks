@@ -99,6 +99,7 @@ def process_items_cmd(
     submit: bool = False,
     upsert: bool = False,
     workflow_id: Optional[str] = None,
+    is_update_workflow: bool = False,
 ) -> None:
     """Generate the workflow to create and ingest items.
 
@@ -138,6 +139,7 @@ def process_items_cmd(
         ingest_options=None,
         target=target,
         tags=None,
+        is_update_workflow=is_update_workflow,
     )
 
     cli_handle_workflow(
