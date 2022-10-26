@@ -135,6 +135,7 @@
         "geoparquet_events": {
             "type": "application/x-parquet",
             "title": "Processed GeoParquet file for events",
+            "description": "Table of events: an occurrence of a single pixel exceeding the background threshold during a single frame.",
             "table:primary_geometry": "geometry",
             "table:columns": [
                 {
@@ -174,6 +175,7 @@
         "geoparquet_flashes": {
             "type": "application/x-parquet",
             "title": "Processed GeoParquet file for flashes",
+            "description": "Table of flashes: a collection of one or more lightning groups that satisfy temporal and spatial coincidence thresholds.",
             "table:primary_geometry": "geometry",
             "table:columns": [
                 {
@@ -246,6 +248,7 @@
         "geoparquet_groups": {
             "type": "application/x-parquet",
             "title": "Processed GeoParquet file for groups",
+            "description": "Table of groups: a collection of one or more lightning events that satisfy temporal and spatial coincidence thresholds.",
             "table:primary_geometry": "geometry",
             "table:columns": [
                 {
