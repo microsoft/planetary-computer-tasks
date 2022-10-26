@@ -29,5 +29,5 @@ collections:
           splits:
             - depth: 2
     chunk_storage:
-      uri: blob://noaanormals/climate-normals-etl-data/tabular/
+      uri: blob://noaanormals/normals-etl-data/tabular/
       token: sv=2021-08-06&st=2022-10-24T19%3A37%3A51Z&se=2022-10-25T19%3A37%3A51Z&sr=c&sp=racwdxltf&sig=wD9bJNZwtY6SGIPnqYJGVH%2BoLptvO4JjcqMkBe5PQQc%3D

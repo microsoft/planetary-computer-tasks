@@ -41,7 +41,7 @@
         "Climatology",
         "CONUS"
     ],
-    "msft:short_description": "Climate Normals at U.S. weather station locations for multiple time periods and frequencies.",
+    "msft:short_description": "Climate Normals for the United States.",
     "msft:storage_account": "noaanormals",
     "msft:container": "climate-normals-geoparquet",
     "msft:group_id": "noaa-climate-normals",

@@ -1,0 +1,132 @@
+{
+    "stac_version": "1.0.0",
+    "type": "Collection",
+    "id": "noaa-climate-normals-netcdf",
+    "title": "NOAA U.S. Gridded Climate Normals (NetCDF)",
+    "description": "{{ collection.description }}",
+    "license": "proprietary",
+    "links": [
+        {
+            "rel": "about",
+            "href": "https://www.ncei.noaa.gov/products/land-based-station/us-climate-normals",
+            "type": "text/html",
+            "title": "NOAA U.S. Climate Normals Landing Page"
+        },
+        {
+            "rel": "license",
+            "href": "https://www.noaa.gov/information-technology/open-data-dissemination",
+            "type": "text/html",
+            "title": "NOAA Open Data Dissemination"
+        },
+        {
+            "rel": "about",
+            "href": "https://www.ncei.noaa.gov/sites/default/files/2022-04/Readme_Monthly_Gridded_Normals.pdf",
+            "type": "application/pdf",
+            "title": "Readme for Monthly Gridded Normals"
+        },
+        {
+            "rel": "about",
+            "href": "https://www.ncei.noaa.gov/sites/default/files/2022-04/Documentation_Monthly_Gridded_Normals.pdf",
+            "type": "application/pdf",
+            "title": "Documentation for Monthly Gridded Normals"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+    ],
+    "keywords": [
+        "NOAA",
+        "Climate Normals",
+        "Air Temperature",
+        "Precipitation",
+        "Surface Observations",
+        "Climatology",
+        "CONUS"
+    ],
+    "msft:short_description": "Gridded Climate Normals for the continental United States in NetCDF format.",
+    "msft:storage_account": "noaanormals",
+    "msft:container": "gridded-normals",
+    "msft:group_id": "noaa-climate-normals",
+    "providers": [
+        {
+            "name": "NOAA National Centers for Environmental Information",
+            "roles": [
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://www.ncei.noaa.gov/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "title": "NetCDF NOAA Climate Normals Thumbnail",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-climate-normals-netcdf-thumb.png",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/noaa-climate-normals-netcdf.parquet",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            }
+        } 
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -124.708333,
+                    24.541666,
+                    -66.999995,
+                    49.375001
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "1991-01-01T00:00:00Z",
+                    "2020-12-31T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "item_assets": {
+        "netcdf": {
+            "type": "application/netcdf",
+            "roles": [
+                "data"
+            ]
+        }
+    },
+    "summaries": {
+        "frequency": [
+            "daily",
+            "monthly"
+        ],
+        "period": [
+            "1901-2000",
+            "1991-2020",
+            "2006-2020"
+        ]
+    }
+}
