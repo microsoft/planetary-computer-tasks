@@ -1,0 +1,345 @@
+{
+    "stac_version": "1.0.0",
+    "type": "Collection",
+    "id": "goes-glm",
+    "title": "GOES-R Lightning Detection",
+    "description": "{{ collection.description }}",
+    "license": "proprietary",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C01527",
+            "title": "License"
+        },
+        {
+            "rel": "about",
+            "href": "https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C01527",
+            "type": "text/html",
+            "title": "Product Landing Page"
+        },
+        {
+            "rel": "about",
+            "href": "https://www.goes-r.gov/users/docs/PUG-main-vol1.pdf",
+            "type": "application/pdf",
+            "title": "Product Definition and Users' Guide (PUG) Vol.1 Main"
+        },
+        {
+            "rel": "about",
+            "href": "https://www.goes-r.gov/products/docs/PUG-L2+-vol5.pdf",
+            "type": "application/pdf",
+            "title": "Product Definition and Users' Guide (PUG) Vol.5 Level 2+ Products"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.7289/V5KH0KK6"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/goes/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/processing/v1.1.0/schema.json",
+        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+    ],
+    "keywords": [
+        "GOES",
+        "NOAA",
+        "NASA",
+        "Satellite",
+        "Lightning",
+        "Weather"
+    ],
+    "msft:short_description": "Continuous lightning detection over the Western Hemisphere from the Geostationary Lightning Mapper (GLM) instrument.",
+    "msft:storage_account": "goeseuwest",
+    "msft:container": "noaa-goes-geoparquet",
+    "msft:group_id": "goes",
+    "providers": [
+        {
+            "name": "NASA",
+            "roles": [
+                "producer"
+            ],
+            "url": "https://www.nasa.gov/content/goes"
+        },
+        {
+            "name": "NOAA",
+            "roles": [
+                "processor",
+                "producer",
+                "licensor"
+            ],
+            "url": "https://www.goes-r.gov/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "title": "GOES GLM Thumbnail",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/goes-glm-thumb.png",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/goes-glm.parquet",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "QS"
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            }
+        }
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180.0,
+                    -66.56,
+                    -8.44,
+                    66.56
+                ],
+                [
+                    156.44,
+                    -66.56,
+                    180.0,
+                    66.56
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2018-02-13T16:10:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "item_assets": {
+        "geoparquet_events": {
+            "type": "application/x-parquet",
+            "title": "Processed GeoParquet file for events",
+            "description": "Table of events: an occurrence of a single pixel exceeding the background threshold during a single frame.",
+            "table:primary_geometry": "geometry",
+            "table:columns": [
+                {
+                    "name": "geometry",
+                    "type": "point"
+                },
+                {
+                    "name": "id",
+                    "type": "int32",
+                    "description": "product-unique lightning event identifier"
+                },
+                {
+                    "name": "time",
+                    "type": "datetime"
+                },
+                {
+                    "name": "time_offset",
+                    "type": "int16",
+                    "description": "GLM L2+ Lightning Detection: event's time of occurrence"
+                },
+                {
+                    "name": "energy",
+                    "type": "int16",
+                    "description": "GLM L2+ Lightning Detection: event radiant energy",
+                    "unit": "J"
+                },
+                {
+                    "name": "parent_group_id",
+                    "type": "int32",
+                    "description": "product-unique lightning group identifier for one or more events"
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "geoparquet_groups": {
+            "type": "application/x-parquet",
+            "title": "Processed GeoParquet file for groups",
+            "description": "Table of groups: a collection of one or more lightning events that satisfy temporal and spatial coincidence thresholds.",
+            "table:primary_geometry": "geometry",
+            "table:columns": [
+                {
+                    "name": "geometry",
+                    "type": "point"
+                },
+                {
+                    "name": "id",
+                    "type": "int32",
+                    "description": "product-unique lightning group identifier"
+                },
+                {
+                    "name": "time",
+                    "type": "datetime"
+                },
+                {
+                    "name": "time_offset",
+                    "type": "int16",
+                    "description": "GLM L2+ Lightning Detection: mean time of group's constituent events' times of occurrence"
+                },
+                {
+                    "name": "frame_time",
+                    "type": "datetime"
+                },
+                {
+                    "name": "frame_time_offset",
+                    "type": "int16",
+                    "description": "GLM L2+ Lightning Detection: mean time of group's constituent events' times of occurrence"
+                },
+                {
+                    "name": "area",
+                    "type": "int16",
+                    "description": "GLM L2+ Lightning Detection: group area coverage (pixels containing at least one constituent event only)",
+                    "unit": "m2"
+                },
+                {
+                    "name": "energy",
+                    "type": "int16",
+                    "description": "GLM L2+ Lightning Detection: group radiant energy",
+                    "unit": "J"
+                },
+                {
+                    "name": "quality_flag",
+                    "type": "int16",
+                    "description": "GLM L2+ Lightning Detection: group data quality flags"
+                },
+                {
+                    "name": "parent_flash_id",
+                    "type": "int16",
+                    "description": "product-unique lightning flash identifier for one or more groups"
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "geoparquet_flashes": {
+            "type": "application/x-parquet",
+            "title": "Processed GeoParquet file for flashes",
+            "description": "Table of flashes: a collection of one or more lightning groups that satisfy temporal and spatial coincidence thresholds.",
+            "table:primary_geometry": "geometry",
+            "table:columns": [
+                {
+                    "name": "geometry",
+                    "type": "point"
+                },
+                {
+                    "name": "id",
+                    "type": "int16",
+                    "description": "product-unique lightning flash identifier"
+                },
+                {
+                    "name": "time_of_first_event",
+                    "type": "datetime"
+                },
+                {
+                    "name": "time_offset_of_first_event",
+                    "type": "int16",
+                    "description": "GLM L2+ Lightning Detection: time of occurrence of first constituent event in flash"
+                },
+                {
+                    "name": "time_of_last_event",
+                    "type": "datetime"
+                },
+                {
+                    "name": "time_offset_of_last_event",
+                    "type": "int16",
+                    "description": "GLM L2+ Lightning Detection: time of occurrence of last constituent event in flash"
+                },
+                {
+                    "name": "frame_time_of_first_event",
+                    "type": "datetime"
+                },
+                {
+                    "name": "frame_time_offset_of_first_event",
+                    "type": "int16",
+                    "description": "GLM L2+ Lightning Detection: time of occurrence of first constituent event in flash"
+                },
+                {
+                    "name": "frame_time_of_last_event",
+                    "type": "datetime"
+                },
+                {
+                    "name": "frame_time_offset_of_last_event",
+                    "type": "int16",
+                    "description": "GLM L2+ Lightning Detection: time of occurrence of last constituent event in flash"
+                },
+                {
+                    "name": "area",
+                    "type": "int16",
+                    "description": "GLM L2+ Lightning Detection: flash area coverage (pixels containing at least one constituent event only)",
+                    "unit": "m2"
+                },
+                {
+                    "name": "energy",
+                    "type": "int16",
+                    "description": "GLM L2+ Lightning Detection: flash radiant energy",
+                    "unit": "J"
+                },
+                {
+                    "name": "quality_flag",
+                    "type": "int16",
+                    "description": "GLM L2+ Lightning Detection: flash data quality flags"
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "netcdf": {
+            "type": "application/netcdf",
+            "title": "Original NetCDF4 file",
+            "roles": [
+                "data"
+            ]
+        }
+    },
+    "summaries": {
+        "mission": [
+            "GOES"
+        ],
+        "constellation": [
+            "GOES"
+        ],
+        "platform": [
+            "GOES-16",
+            "GOES-17"
+        ],
+        "instruments": [
+            "FM1",
+            "FM2"
+        ],
+        "gsd": [
+            8000
+        ],
+        "processing:level": [
+            "L2"
+        ],
+        "goes:orbital-slot": [
+            "West",
+            "East",
+            "Test"
+        ]
+    },
+    "sci:doi": "10.7289/V5KH0KK6",
+    "sci:citation": "GOES-R Algorithm Working Group and GOES-R Series Program, (2018): NOAA GOES-R Series Geostationary Lightning Mapper (GLM) Level 2 Lightning Detection: Events, Groups, and Flashes. NOAA National Centers for Environmental Information. doi:10.7289/V5KH0KK6."
+}
