@@ -15,7 +15,7 @@ services:
 
   database:
     container_name: pctasks-database
-    image: ghcr.io/stac-utils/pgstac:v0.6.6
+    image: ghcr.io/stac-utils/pgstac:v0.6.9
     environment:
       - POSTGRES_USER=username
       - POSTGRES_PASSWORD=password
@@ -56,11 +56,13 @@ services:
       - APP_PORT=8511
       - WEB_CONCURRENCY=1
 
+      - AZURE_TENANT_ID
+      - AZURE_CLIENT_ID
+      - AZURE_CLIENT_SECRET
+
       - PCTASKS_SERVER__DEV=true
       - PCTASKS_SERVER__DEV_API_KEY=hunter2
       - PCTASKS_SERVER__DEV_AUTH_TOKEN=Bearer hunter2
-
-      - PCTASKS_SERVER__RECORD_TABLES__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://azurite:10002/devstoreaccount1;
 
       # Dev storage settings
       - AZURITE_HOST=azurite
@@ -73,10 +75,19 @@ services:
       # Run settings #######################################################
 
       # Dev executor settings
-      - PCTASKS_RUN__TASK_RUNNER_TYPE=local
+      - PCTASKS_RUN__TASK_RUNNER_TYPE=${PCTASKS_RUN__TASK_RUNNER_TYPE:-local}
       - PCTASKS_RUN__LOCAL_DEV_ENDPOINTS_URL=http://local-dev-endpoints:8512
-      - PCTASKS_RUN__LOCAL_SECRETS=true
+      - PCTASKS_RUN__LOCAL_SECRETS=${PCTASKS_RUN__LOCAL_SECRETS:-true}
       - PCTASKS_RUN__WORKFLOW_RUNNER_TYPE=local
+
+      ## Azure Batch
+
+      - PCTASKS_RUN__BATCH_URL
+      - PCTASKS_RUN__BATCH_KEY
+      - PCTASKS_RUN__BATCH_DEFAULT_POOL_ID
+
+      ## Key Vault
+      - PCTASKS_RUN__KEYVAULT_URL
 
       ## Azure Storage
 

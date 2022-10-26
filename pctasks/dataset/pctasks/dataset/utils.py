@@ -43,3 +43,12 @@ def opt_submit(fn: Callable[..., Any]) -> Callable[..., Any]:
     _opt = click.option("-s", "--submit", is_flag=True, help="Submit the workflow.")
     _opt(fn)
     return fn
+
+
+def opt_workflow_id(fn: Callable[..., Any]) -> Callable[..., Any]:
+    _opt = click.option(
+        "--workflow-id",
+        help=("Workflow ID to use instead of default."),
+    )
+    _opt(fn)
+    return fn

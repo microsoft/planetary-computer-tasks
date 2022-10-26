@@ -35,8 +35,6 @@ services:
       # Local secrets provider secrets
       - SECRETS_DB_CONNECTION_STRING=postgresql://username:password@database:5432/postgis
 
-      - PCTASKS_SERVER__RECORD_TABLES__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://azurite:10002/devstoreaccount1;
-
       # Run settings #######################################################
 
       ## Azure Storage
