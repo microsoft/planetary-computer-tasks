@@ -15,7 +15,7 @@ services:
 
   database:
     container_name: pctasks-database
-    image: ghcr.io/stac-utils/pgstac:v0.6.6
+    image: ghcr.io/stac-utils/pgstac:v0.6.9
     environment:
       - POSTGRES_USER=username
       - POSTGRES_PASSWORD=password
