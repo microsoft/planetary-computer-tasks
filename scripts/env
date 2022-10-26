@@ -39,3 +39,12 @@ function setup_docker_network() {
                 pctasks-network
         fi
 }
+
+function require_env() {
+    v=$(eval echo \$${1})
+
+    if [[ -z ${v} ]]; then
+        echo "${1} must be set as environment variable" >&2
+        exit 1
+    fi
+}
