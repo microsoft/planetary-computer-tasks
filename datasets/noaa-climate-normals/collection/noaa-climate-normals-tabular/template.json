@@ -2,7 +2,7 @@
     "stac_version": "1.0.0",
     "type": "Collection",
     "id": "noaa-climate-normals-tabular",
-    "title": "Tabular U.S. Climate Normals",
+    "title": "NOAA U.S. Tabular Climate Normals",
     "description": "{{ collection.description }}",
     "license": "proprietary",
     "links": [
@@ -41,7 +41,7 @@
         "Climatology",
         "CONUS"
     ],
-    "msft:short_description": "Climate Normals for the United States.",
+    "msft:short_description": "The NOAA U.S. Tabular Climate Normals includes annual/seasonal, monthly, daily, and hourly products for the conventional 30-year (1991-2020), legacy 30-year (1981-2010), and supplemental 15-year (2006-2020) time-periods.",
     "msft:storage_account": "noaanormals",
     "msft:container": "climate-normals-geoparquet",
     "msft:group_id": "noaa-climate-normals",
@@ -66,7 +66,7 @@
     ],
     "assets": {
         "thumbnail": {
-            "title": "Tabular NOAA Climate Normals Thumbnail",
+            "title": "NOAA U.S. Tabular Climate Normals Thumbnail",
             "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-climate-normals-tabular-thumb.png",
             "type": "image/png",
             "roles": [
@@ -104,7 +104,7 @@
             "interval": [
                 [
                     "1981-01-01T00:00:00Z",
-                    "2010-12-31T23:59:59Z"
+                    "2020-12-31T23:59:59Z"
                 ]
             ]
         }

@@ -43,7 +43,7 @@
         "Climatology",
         "CONUS"
     ],
-    "msft:short_description": "Gridded Climate Normals for the continental United States in NetCDF format.",
+    "msft:short_description": "The NOAA U.S. Gridded Climate Normals (NetCDF) Collection contains the original NetCDF files. This Collection includes 1) annual, seasonal, and monthly data for the 100, 30, and 15-year time-periods (1901-2000, 1991-2020, 2006-2020) and 2) daily data for the 30 and 15-year time-periods (1991-2020, 2006-2020).",
     "msft:storage_account": "noaanormals",
     "msft:container": "gridded-normals",
     "msft:group_id": "noaa-climate-normals",
@@ -67,7 +67,7 @@
     ],
     "assets": {
         "thumbnail": {
-            "title": "NetCDF NOAA Climate Normals Thumbnail",
+            "title": "NOAA U.S. Gridded Climate Normals (NetCDF) Thumbnail",
             "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-climate-normals-netcdf-thumb.png",
             "type": "image/png",
             "roles": [
@@ -104,7 +104,7 @@
         "temporal": {
             "interval": [
                 [
-                    "1991-01-01T00:00:00Z",
+                    "1901-01-01T00:00:00Z",
                     "2020-12-31T00:00:00Z"
                 ]
             ]
