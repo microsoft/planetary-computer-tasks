@@ -262,6 +262,9 @@ def cli_handle_workflow(
     if not client:
         client = PCTasksClient(settings=ClientSettings.from_context(ctx.obj))
 
+    if workflow_id:
+        workflow_def = workflow_def.copy(update={"workflow_id": workflow_id})
+
     if upsert or upsert_and_submit:
         cli_print(f"[green]  Saving {workflow_id}...[/green]")
         client.upsert_workflow(workflow_def)
@@ -272,7 +275,5 @@ def cli_handle_workflow(
             cli_output(workflow_id)
             return 0
     else:
-        if workflow_id:
-            workflow_def = workflow_def.copy(update={"workflow_id": workflow_id})
         cli_output(workflow_def.to_yaml())
         return 0
