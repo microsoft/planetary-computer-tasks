@@ -1,7 +1,8 @@
 import logging
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from pctasks.core.models.run import TaskRunStatus
+from pctasks.core.models.task import TaskDefinition
 from pctasks.core.utils import map_opt
 from pctasks.run.argo.client import ArgoClient
 from pctasks.run.constants import MAX_MISSING_POLLS
@@ -33,6 +34,17 @@ class ArgoTaskRunner(TaskRunner):
         self.argo_client = ArgoClient(
             host=argo_host, token=argo_token, namespace=settings.argo_namespace
         )
+
+    def prepare_task_info(
+        self,
+        dataset_id: str,
+        run_id: str,
+        job_id: str,
+        task_def: TaskDefinition,
+        image: str,
+        task_tags: Optional[Dict[str, str]],
+    ) -> Dict[str, Any]:
+        return {}
 
     def submit_tasks(
         self, prepared_tasks: List[PreparedTaskSubmitMessage]
@@ -76,3 +88,6 @@ class ArgoTaskRunner(TaskRunner):
         self.argo_client.terminate_workflow(
             namespace=namespace, argo_workflow_name=name
         )
+
+    def cleanup(self, task_infos: List[Dict[str, Any]]) -> None:
+        pass

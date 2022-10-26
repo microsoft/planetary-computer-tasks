@@ -50,7 +50,7 @@ configure() {
     git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
     if [[ -z ${GITHUB_REPOSITORY} ]]; then
-        GITHUB_REPOSITORY="microsoft/planetary-computer-apis"
+        GITHUB_REPOSITORY="microsoft/planetary-computer-tasks"
     fi
 
     OWNER=$(cut -d '/' -f 1 <<< "$GITHUB_REPOSITORY")

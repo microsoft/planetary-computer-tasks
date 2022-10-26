@@ -161,6 +161,7 @@ class BatchClient:
         pool_id: Optional[str] = None,
         make_unique: bool = False,
         max_retry_count: int = 0,
+        terminate_on_tasks_complete: bool = True,
     ) -> str:
         client = self._ensure_client()
 
@@ -174,10 +175,14 @@ class BatchClient:
 
         pool_info = batchmodels.PoolInformation(pool_id=pool_id)
 
+        on_all_tasks_complete = batchmodels.OnAllTasksComplete.terminate_job
+        if not terminate_on_tasks_complete:
+            on_all_tasks_complete = batchmodels.OnAllTasksComplete.no_action
+
         job_param = batchmodels.JobAddParameter(
             id=job_id,
             pool_info=pool_info,
-            on_all_tasks_complete=batchmodels.OnAllTasksComplete.terminate_job,
+            on_all_tasks_complete=on_all_tasks_complete,
             constraints=batchmodels.JobConstraints(
                 max_task_retry_count=max_retry_count
             ),
@@ -420,17 +425,11 @@ class BatchClient:
         If the task isn't found, returns None.
         If the is errored, will try to return the error message in
         the second tuple element.
-        If the job is completed but the task is still running, will
-        consider the task failed.
         Otherwise, returns the status as the first tuple element.
         """
         client = self._ensure_client()
 
         try:
-            job = cast(
-                batchmodels.CloudJob,
-                self._with_backoff(lambda: client.job.get(job_id=job_id)),
-            )
             task = cast(
                 batchmodels.CloudTask,
                 client.task.get(job_id=job_id, task_id=task_id),
@@ -444,10 +443,8 @@ class BatchClient:
             else:
                 raise BatchClientError(error.message.value)
 
-        logger.debug(f"BATCH JOB STATUS: {job.state}")
         logger.debug(f"BATCH TASK STATUS: {task.state}")
 
-        job_state = cast(batchmodels.JobState, job.state)
         task_state = cast(batchmodels.TaskState, task.state)
         execution_info = cast(batchmodels.TaskExecutionInformation, task.execution_info)
         if task_state == batchmodels.TaskState.completed:
@@ -460,8 +457,6 @@ class BatchClient:
                 )
             else:
                 return (TaskRunStatus.COMPLETED, None)
-        if job_state == batchmodels.JobState.completed:
-            return (TaskRunStatus.FAILED, "Job completed before task completed")
         if task_state == batchmodels.TaskState.active:
             return (TaskRunStatus.PENDING, None)
         if task_state == batchmodels.TaskState.preparing:
@@ -488,6 +483,24 @@ class BatchClient:
                 return None
             else:
                 raise BatchClientError(error.message.value)
+
+    def terminate_job(self, job_id: str) -> None:
+        client = self._ensure_client()
+
+        def _terminate() -> None:
+            try:
+                client.job.terminate(job_id=job_id)
+            except batchmodels.BatchErrorException as e:
+                error: Any = e.error  # Avoid type hinting error
+                if error.code == "JobNotFound":
+                    logger.warning(f"Job {job_id} not found - skipping termination")
+                    return
+                if error.code == "JobTerminating":
+                    return
+                if error.code == "JobCompleted":
+                    return
+
+        self._with_backoff(_terminate)
 
     def terminate_task(self, job_id: str, task_id: str) -> None:
         client = self._ensure_client()

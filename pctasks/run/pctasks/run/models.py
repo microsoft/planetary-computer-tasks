@@ -6,7 +6,7 @@ from pydantic import Field
 from pctasks.core.constants import TASK_SUBMIT_MESSAGE_TYPE
 from pctasks.core.models.base import PCBaseModel, RunRecordId
 from pctasks.core.models.config import BlobConfig
-from pctasks.core.models.run import JobPartition, TaskRunStatus
+from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.models.task import (
     CompletedTaskResult,
     FailedTaskResult,
@@ -16,15 +16,13 @@ from pctasks.core.models.task import (
     WaitTaskResult,
 )
 from pctasks.core.models.tokens import StorageAccountTokens
-from pctasks.core.models.workflow import WorkflowSubmitMessage
+from pctasks.core.models.workflow import JobDefinition, WorkflowSubmitMessage
 from pctasks.core.utils import StrEnum
 
 logger = logging.getLogger(__name__)
 
 
 class TaskSubmitMessage(PCBaseModel):
-    instance_id: Optional[str]
-    """The instance ID of the task orchestrator."""
     dataset_id: str
     run_id: str
     job_id: str
@@ -46,11 +44,19 @@ class TaskSubmitMessage(PCBaseModel):
         )
 
 
+class PreparedTaskData(PCBaseModel):
+    image: str
+    environment: Optional[Dict[str, str]]
+    tags: Optional[Dict[str, str]]
+    tokens: Optional[Dict[str, StorageAccountTokens]]
+    runner_info: Dict[str, Any]
+
+
 class PreparedTaskSubmitMessage(PCBaseModel):
     task_submit_message: TaskSubmitMessage
     task_run_message: TaskRunMessage
     task_input_blob_config: BlobConfig
-    task_tags: Optional[Dict[str, str]] = None
+    task_data: PreparedTaskData
 
 
 class PreparedWorkflowSubmitMessage(PCBaseModel):
@@ -106,6 +112,12 @@ class HandleTaskResultMessage(PCBaseModel):
     errors: Optional[List[str]] = None
     log_uri: str
     """The URI of the task log file."""
+
+
+class JobPartition(PCBaseModel):
+    definition: JobDefinition
+    partition_id: str
+    task_data: List[PreparedTaskData]
 
 
 class JobPartitionSubmitMessage(PCBaseModel):
