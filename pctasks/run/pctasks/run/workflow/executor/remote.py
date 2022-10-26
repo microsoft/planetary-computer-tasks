@@ -313,7 +313,7 @@ class RemoteWorkflowExecutor:
         self,
         run_id: str,
         job_id: str,
-        part_id: str,
+        group_id: str,
         job_part_states: List[JobPartitionState],
     ) -> List[Dict[str, Any]]:
         """Complete job partitions and return the results.
@@ -328,7 +328,7 @@ class RemoteWorkflowExecutor:
         total_job_count = len(job_part_states)
         _jobs_left = lambda: total_job_count - completed_job_count - failed_job_count
         _report_status = lambda: logger.info(
-            f"{job_id} {part_id} status: "
+            f"{job_id} {group_id} status: "
             f"{completed_job_count} completed, "
             f"{failed_job_count} failed, "
             f"{_jobs_left()} remaining"
@@ -341,7 +341,7 @@ class RemoteWorkflowExecutor:
 
             while _jobs_left() > 0:
                 for job_part_state in job_part_states:
-
+                    part_id = job_part_state.job_part_submit_msg.partition_id
                     # For each job partition in this group, process
                     # the status of the current task.
 
@@ -506,8 +506,8 @@ class RemoteWorkflowExecutor:
                             elif task_state.status == TaskStateStatus.COMPLETED:
 
                                 logger.info(
-                                    f"Task completed: {job_part_state.job_id} "
-                                    f"- {task_state.task_id}"
+                                    f"Task completed: {job_part_state.job_id}:{part_id}"
+                                    f":{task_state.task_id}"
                                 )
                                 if not isinstance(
                                     task_state.task_result, CompletedTaskResult
@@ -578,7 +578,9 @@ class RemoteWorkflowExecutor:
                                             JobPartitionRunStatus.FAILED,
                                         )
                                     completed_job_count += 1
-                                    logger.info(f"Job completed: {job_id}")
+                                    logger.info(
+                                        f"Job partition completed: {job_id}:{part_id}"
+                                    )
 
                                 _report_status()
 
@@ -588,7 +590,7 @@ class RemoteWorkflowExecutor:
 
                 time.sleep(0.25 + ((random.randint(0, 10) / 100) - 0.05))
 
-            logger.info(f"Task group {part_id} completed!")
+            logger.info(f"Partition group {group_id} completed!")
 
             return [job_state.task_outputs for job_state in job_part_states]
 
