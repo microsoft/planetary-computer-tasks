@@ -2,7 +2,7 @@
     "stac_version": "1.0.0",
     "type": "Collection",
     "id": "noaa-climate-normals-netcdf",
-    "title": "NOAA U.S. Gridded Climate Normals (NetCDF)",
+    "title": "NOAA US Gridded Climate Normals (NetCDF)",
     "description": "{{ collection.description }}",
     "license": "proprietary",
     "links": [
@@ -43,7 +43,7 @@
         "Climatology",
         "CONUS"
     ],
-    "msft:short_description": "The NOAA U.S. Gridded Climate Normals (NetCDF) Collection contains the original NetCDF files. This Collection includes 1) annual, seasonal, and monthly data for the 100, 30, and 15-year time-periods (1901-2000, 1991-2020, 2006-2020) and 2) daily data for the 30 and 15-year time-periods (1991-2020, 2006-2020).",
+    "msft:short_description": "Gridded Climate Normals for the contiguous United States in the original NetCDF format provided by NOAA's National Centers for Environmental Information.",
     "msft:storage_account": "noaanormals",
     "msft:container": "gridded-normals",
     "msft:group_id": "noaa-climate-normals",

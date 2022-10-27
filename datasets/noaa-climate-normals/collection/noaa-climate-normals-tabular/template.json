@@ -2,7 +2,7 @@
     "stac_version": "1.0.0",
     "type": "Collection",
     "id": "noaa-climate-normals-tabular",
-    "title": "NOAA U.S. Tabular Climate Normals",
+    "title": "NOAA US Tabular Climate Normals",
     "description": "{{ collection.description }}",
     "license": "proprietary",
     "links": [
@@ -41,7 +41,7 @@
         "Climatology",
         "CONUS"
     ],
-    "msft:short_description": "The NOAA U.S. Tabular Climate Normals includes annual/seasonal, monthly, daily, and hourly products for the conventional 30-year (1991-2020), legacy 30-year (1981-2010), and supplemental 15-year (2006-2020) time-periods.",
+    "msft:short_description": "Tabular Climate Normal data for over 15,000 United States weather station locations in GeoParquet format.",
     "msft:storage_account": "noaanormals",
     "msft:container": "climate-normals-geoparquet",
     "msft:group_id": "noaa-climate-normals",

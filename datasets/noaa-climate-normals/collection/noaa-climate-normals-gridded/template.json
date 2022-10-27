@@ -44,7 +44,7 @@
         "Climatology",
         "CONUS"
     ],
-    "msft:short_description": "The NOAA U.S. Gridded Climate Normals (Cloud-Optimized GeoTIFF) Collection contains Cloud-Optimized GeoTIFFs (COGs) created from the original NetCDF files provided by NOAA's National Centers for Environmental Information. This Collection includes 1) annual, seasonal, and monthly data for the 100, 30, and 15-year time-periods (1901-2000, 1991-2020, 2006-2020) and 2) daily data for the 30 and 15-year time-periods (1991-2020, 2006-2020).",
+    "msft:short_description": "Gridded Climate Normals for the contiguous United States in Cloud Optimized GeoTIFF (COG) format.",
     "msft:storage_account": "noaanormals",
     "msft:container": "gridded-normals-cogs",
     "msft:group_id": "noaa-climate-normals",
