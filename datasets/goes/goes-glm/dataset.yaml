@@ -1,5 +1,5 @@
 id: goes_glm
-image: ${{ args.registry }}/pctasks-goes-glm:2022.10.27.0
+image: ${{ args.registry }}/pctasks-goes-glm:2022.10.27.1
 
 args:
 - registry
@@ -23,7 +23,7 @@ collections:
         chunks:
           options:
             ends_with: .nc
-            chunk_length: 100000
+            chunk_length: 25000
           splits:
             - prefix: GLM-L2-LCFA/
               depth: 2
@@ -32,7 +32,7 @@ collections:
         chunks:
           options:
             ends_with: .nc
-            chunk_length: 100000
+            chunk_length: 25000
           splits:
             - prefix: GLM-L2-LCFA/
               depth: 2

@@ -1,4 +1,6 @@
 import os
+import sys
+import logging
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Union
@@ -17,6 +19,12 @@ GEOPARQUET_CONTAINER = "blob://goeseuwest/noaa-goes-geoparquet/"
 # handle duplicate assets in pctasks? -We should probably ingest items with
 # an "insert" rather than "upsert" action so it fails if duplicate source
 # data assets exist.
+
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler(stream=sys.stderr)
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
+handler.setLevel(logging.INFO)
 
 
 class GoesGlmCollection(Collection):
@@ -55,6 +63,8 @@ class GoesGlmCollection(Collection):
             except FileNotFoundError:
                 geoparquet_hrefs = {}
 
+            logger = logging.getLogger(__name__)
+            logger.info("Processing asset_href=%s has_geoparquet=%s", asset_uri, bool(geoparquet_hrefs))
             # create item and geoparquet files (saved to same directory as the nc file)
             item = stac.create_item(tmp_nc_asset_path, geoparquet_hrefs=geoparquet_hrefs)
             tmp_parquets = {f.name: f.as_posix() for f in tmp_dir.glob("*.parquet")}
