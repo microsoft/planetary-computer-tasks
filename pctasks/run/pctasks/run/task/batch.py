@@ -3,7 +3,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from itertools import groupby
 from threading import Lock
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.models.task import TaskDefinition
@@ -203,8 +203,8 @@ class BatchTaskRunner(TaskRunner):
     def get_failed_tasks(
         self,
         runner_ids: Dict[str, Dict[str, Dict[str, Any]]],
-    ) -> Dict[str, Set[str]]:
-        result: Dict[str, Set[str]] = defaultdict(set)
+    ) -> Dict[str, Dict[str, str]]:
+        result: Dict[str, Dict[str, str]] = defaultdict(dict)
         for job_id, task_ids in groupby(
             [
                 (BatchTaskId.parse_obj(batch_id), (partition_id, task_id))
@@ -218,9 +218,11 @@ class BatchTaskRunner(TaskRunner):
                 for batch_id, (partition_id, task_id) in task_ids
             }
             with BatchClient(self.settings.batch_settings) as batch_client:
-                for batch_task_id in batch_client.get_failed_tasks(job_id):
+                for batch_task_id, error_message in batch_client.get_failed_tasks(
+                    job_id
+                ).items():
                     partition_id, task_id = indexed_task_ids[batch_task_id]
-                    result[partition_id].add(task_id)
+                    result[partition_id][task_id] = error_message
 
         return result
 

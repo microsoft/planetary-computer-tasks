@@ -1,5 +1,6 @@
 import logging
-from typing import Any, Dict, List, Optional, Set, Union
+from collections import defaultdict
+from typing import Any, Dict, List, Optional, Union
 
 from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.models.task import TaskDefinition
@@ -86,18 +87,22 @@ class ArgoTaskRunner(TaskRunner):
     def get_failed_tasks(
         self,
         runner_ids: Dict[str, Dict[str, Dict[str, Any]]],
-    ) -> Dict[str, Set[str]]:
+    ) -> Dict[str, Dict[str, str]]:
         # TODO: Optimize implementation
-        return {
-            partition_id: set(
-                [
-                    task_id
-                    for task_id, runner_id in task_map.items()
-                    if self.poll_task(runner_id, 0).task_status == TaskRunStatus.FAILED
-                ]
-            )
-            for partition_id, task_map in runner_ids.items()
-        }
+        result: Dict[str, Dict[str, str]] = defaultdict(dict)
+
+        for partition_id in runner_ids:
+            for task_id, runner_id in runner_ids[partition_id].items():
+                poll_result = self.poll_task(runner_id, 0)
+                if poll_result.task_status == TaskRunStatus.FAILED:
+                    error = (
+                        poll_result.poll_errors[0]
+                        if poll_result.poll_errors
+                        else "Argo task failed."
+                    )
+                    result[partition_id][task_id] = error
+
+        return result
 
     def cancel_task(self, runner_id: Dict[str, Any]) -> None:
         namespace, name = runner_id["namespace"], runner_id["name"]

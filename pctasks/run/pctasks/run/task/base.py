@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any, Dict, List, Optional, Union
 
 from pctasks.core.models.task import TaskDefinition
 from pctasks.run.models import (
@@ -43,13 +43,14 @@ class TaskRunner(ABC):
     def get_failed_tasks(
         self,
         runner_ids: Dict[str, Dict[str, Dict[str, Any]]],
-    ) -> Dict[str, Set[str]]:
+    ) -> Dict[str, Dict[str, str]]:
         """Finds failed tasks.
 
         runner_ids is a dictionary of partition IDs to a
         dictionary of task IDs to runner IDs.
 
-        Returns a dictionary of partition IDs to a set of failed task IDs.
+        Returns a dictionary of partition IDs to a
+        map of failed task IDs to error messages.
         """
         pass
 

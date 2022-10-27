@@ -3,7 +3,7 @@ import math
 import random
 import time
 from concurrent import futures
-from typing import Any, Dict, Iterable, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
 from pctasks.core.cosmos.container import CosmosDBContainer
 from pctasks.core.cosmos.containers.workflow_runs import WorkflowRunsContainer
@@ -333,7 +333,7 @@ class RemoteWorkflowExecutor:
         )
 
         _last_runner_poll_time: float = time.monotonic()
-        runner_failed_tasks: Dict[str, Set[str]] = {}
+        runner_failed_tasks: Dict[str, Dict[str, str]] = {}
 
         with WorkflowRunsContainer(
             JobPartitionRunRecord, db=self.config.get_cosmosdb()
@@ -399,8 +399,12 @@ class RemoteWorkflowExecutor:
                                     task_io_storage
                                 )
 
-                            if task_state.task_id in runner_failed_tasks:
-                                task_state.set_failed(["Task runner reported failure."])
+                            if part_id in runner_failed_tasks:
+                                if task_state.task_id in runner_failed_tasks[part_id]:
+                                    error_msg = runner_failed_tasks[part_id][
+                                        task_state.task_id
+                                    ]
+                                    task_state.set_failed([error_msg])
 
                             #
                             # Act on task state
