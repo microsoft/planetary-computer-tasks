@@ -25,6 +25,15 @@ class GoesGlmCollection(Collection):
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
         nc_storage, nc_asset_path = storage_factory.get_storage_for_file(asset_uri)
+        parquet_storage = storage_factory.get_storage(f"{GEOPARQUET_CONTAINER}")
+
+        satellite_number = nc_asset_path.split("/")[-1][16:18]
+        p = Path(nc_asset_path)
+        parquet_upload_paths = {}
+        KINDS = ["events", "groups", "flashes"]
+        for kind in KINDS:
+            path = f"goes-{satellite_number}/" + str(p.with_name(p.stem + f"_{kind}.parquet"))
+            parquet_upload_paths[kind] = path
 
         # download the netcdf
         with TemporaryDirectory() as tmp:
@@ -32,8 +41,22 @@ class GoesGlmCollection(Collection):
             tmp_nc_asset_path = Path(tmp_dir, Path(nc_asset_path).name)
             nc_storage.download_file(nc_asset_path, tmp_nc_asset_path)
 
+            try:
+                geoparquet_hrefs = {}
+                geoparquet_paths = {
+                    kind: Path(tmp_dir, Path(parquet_upload_paths[kind]).name)
+                    for kind in KINDS
+                }
+                for kind in KINDS:
+                    href = str(geoparquet_paths[kind])
+                    parquet_storage.download_file(parquet_upload_paths[kind], href)
+                    geoparquet_hrefs[f"geoparquet_{kind}"] = href
+
+            except FileNotFoundError:
+                geoparquet_hrefs = {}
+
             # create item and geoparquet files (saved to same directory as the nc file)
-            item = stac.create_item(tmp_nc_asset_path)
+            item = stac.create_item(tmp_nc_asset_path, geoparquet_hrefs=geoparquet_hrefs)
             tmp_parquets = {f.name: f.as_posix() for f in tmp_dir.glob("*.parquet")}
 
             # preference: slim down the source netcdf asset
@@ -55,15 +78,18 @@ class GoesGlmCollection(Collection):
             # upload geoparquets; update geoparquet and netcdf asset hrefs
             parquet_storage = storage_factory.get_storage(f"{GEOPARQUET_CONTAINER}")
             satellite_number = item.properties["platform"][-2:]
-            for tmp_name, tmp_path in tmp_parquets.items():
-                upload_path = (
-                    f"goes-{satellite_number}/{os.path.splitext(nc_asset_path)[0]}_{tmp_name}"
-                )
-                parquet_storage.upload_file(tmp_path, upload_path)
+            
+            if not geoparquet_hrefs:
+                # only upload the geoparquet files if we generated them.
+                for tmp_name, tmp_path in tmp_parquets.items():
+                    upload_path = (
+                        f"goes-{satellite_number}/{os.path.splitext(nc_asset_path)[0]}_{tmp_name}"
+                    )
+                    parquet_storage.upload_file(tmp_path, upload_path)
 
-                key = f"geoparquet_{tmp_name[:-8]}"
-                item.assets[key].href = parquet_storage.get_url(upload_path)
+                    key = f"geoparquet_{tmp_name[:-8]}"
+                    item.assets[key].href = parquet_storage.get_url(upload_path)
 
-            item.assets["netcdf"].href = nc_storage.get_url(nc_asset_path)
+                item.assets["netcdf"].href = nc_storage.get_url(nc_asset_path)
 
         return [item]
