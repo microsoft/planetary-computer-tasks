@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+import time
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Union
@@ -32,6 +33,7 @@ class GoesGlmCollection(Collection):
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
+        t0 = time.time()
         nc_storage, nc_asset_path = storage_factory.get_storage_for_file(asset_uri)
         parquet_storage = storage_factory.get_storage(f"{GEOPARQUET_CONTAINER}")
 
@@ -65,12 +67,6 @@ class GoesGlmCollection(Collection):
             except FileNotFoundError:
                 geoparquet_hrefs = {}
 
-            logger = logging.getLogger(__name__)
-            logger.info(
-                "Processing asset_href=%s has_geoparquet=%s",
-                asset_uri,
-                bool(geoparquet_hrefs),
-            )
             # create item and geoparquet files (saved to same directory as the nc file)
             item = stac.create_item(
                 tmp_nc_asset_path, geoparquet_hrefs=geoparquet_hrefs
@@ -98,7 +94,10 @@ class GoesGlmCollection(Collection):
             satellite_number = item.properties["platform"][-2:]
 
             for tmp_name, tmp_path in tmp_parquets.items():
-                upload_path = f"goes-{satellite_number}/{os.path.splitext(nc_asset_path)[0]}_{tmp_name}"
+                # upload_path = f"goes-{satellite_number}/{os.path.splitext(nc_asset_path)[0]}_{tmp_name}"
+                part = nc_asset_path.rsplit("/", 1)[0]
+                upload_path = f"goes-{satellite_number}/{part}/{tmp_name}"
+
                 # only upload the geoparquet files if we generated them.
                 if not geoparquet_hrefs:
                     parquet_storage.upload_file(tmp_path, upload_path)
@@ -106,5 +105,12 @@ class GoesGlmCollection(Collection):
                 item.assets[key].href = parquet_storage.get_url(upload_path)
 
             item.assets["netcdf"].href = nc_storage.get_url(nc_asset_path)
+
+        logger.info(
+            "Processing asset_href=%s has_geoparquet=%s seconds=%s",
+            asset_uri,
+            bool(geoparquet_hrefs),
+            round(time.time() - t0, 2),
+        )
 
         return [item]
