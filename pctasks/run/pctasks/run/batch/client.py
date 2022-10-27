@@ -469,6 +469,25 @@ class BatchClient:
         else:
             return (TaskRunStatus.SUBMITTED, None)
 
+    def get_failed_tasks(self, job_id: str) -> List[str]:
+        client = self._ensure_client()
+        completed_tasks = client.task.list(
+            job_id,
+            task_list_options=batchmodels.TaskListOptions(
+                filter="state eq 'completed'"
+            ),
+        )
+        result = []
+        for task in completed_tasks:
+            t = cast(batchmodels.CloudTask, task)
+            execution_info = cast(
+                batchmodels.TaskExecutionInformation,
+                t.execution_info,
+            )
+            if execution_info.exit_code != 0:
+                result.append(t.id)
+        return result
+
     def get_pool(self, pool_id: str) -> Optional[batchmodels.PoolInformation]:
         client = self._ensure_client()
 

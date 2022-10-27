@@ -332,14 +332,40 @@ class RemoteWorkflowExecutor:
             f"{_jobs_left()} remaining"
         )
 
+        _last_runner_poll_time: float = time.monotonic()
+        runner_failed_tasks: Dict[str, Set[str]] = {}
+
         with WorkflowRunsContainer(
             JobPartitionRunRecord, db=self.config.get_cosmosdb()
         ) as container:
-            job_part_runs: Dict[str, JobPartitionRunRecord] = {}
-
             while _jobs_left() > 0:
+                # Check the task runner for any failed tasks.
+                if (
+                    time.monotonic() - _last_runner_poll_time
+                    > self.config.run_settings.task_poll_seconds
+                ):
+                    logger.info("Polling task runner for failed tasks...")
+                    current_tasks = {
+                        jps.partition_id: {
+                            jps.current_task.task_id: jps.current_task.task_runner_id
+                        }
+                        for jps in job_part_states
+                        if jps.current_task and jps.current_task.task_runner_id
+                    }
+
+                    runner_failed_tasks = self.task_runner.get_failed_tasks(
+                        current_tasks
+                    )
+                    _last_runner_poll_time = time.monotonic()
+                    total_failed = [len(ts) for ts in runner_failed_tasks.values()]
+                    if total_failed:
+                        logger.info(f"  - {sum(total_failed)} failed tasks found.")
+                    else:
+                        logger.info("  - No failed tasks found.")
+
                 for job_part_state in job_part_states:
                     part_id = job_part_state.job_part_submit_msg.partition_id
+
                     # For each job partition in this group, process
                     # the status of the current task.
 
@@ -373,20 +399,8 @@ class RemoteWorkflowExecutor:
                                     task_io_storage
                                 )
 
-                            # If not completed through output or status update,
-                            # poll the executor in case of other failure.
-                            if task_state.should_poll(
-                                self.config.run_settings.task_poll_seconds
-                            ):
-                                logger.debug(
-                                    f" ~ Polling {job_part_state.job_id}:"
-                                    f"{task_state.task_id}"
-                                )
-                                task_state.poll(
-                                    self.executor,
-                                    task_io_storage,
-                                    self.config.run_settings,
-                                )
+                            if task_state.task_id in runner_failed_tasks:
+                                task_state.set_failed(["Task runner reported failure."])
 
                             #
                             # Act on task state

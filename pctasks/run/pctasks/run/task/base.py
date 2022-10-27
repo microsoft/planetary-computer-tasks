@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Set, Union
 
 from pctasks.core.models.task import TaskDefinition
 from pctasks.run.models import (
@@ -37,6 +37,20 @@ class TaskRunner(ABC):
     def poll_task(
         self, runner_id: Dict[str, Any], previous_poll_count: int
     ) -> TaskPollResult:
+        pass
+
+    @abstractmethod
+    def get_failed_tasks(
+        self,
+        runner_ids: Dict[str, Dict[str, Dict[str, Any]]],
+    ) -> Dict[str, Set[str]]:
+        """Finds failed tasks.
+
+        runner_ids is a dictionary of partition IDs to a
+        dictionary of task IDs to runner IDs.
+
+        Returns a dictionary of partition IDs to a set of failed task IDs.
+        """
         pass
 
     @abstractmethod

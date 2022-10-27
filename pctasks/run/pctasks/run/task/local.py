@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Set, Union
 
 import requests
 
@@ -95,6 +95,21 @@ class LocalTaskRunner(TaskRunner):
         except Exception as e:
             logger.exception(e)
             return TaskPollResult(task_status=TaskRunStatus.FAILED)
+
+    def get_failed_tasks(
+        self,
+        runner_ids: Dict[str, Dict[str, Dict[str, Any]]],
+    ) -> Dict[str, Set[str]]:
+        return {
+            partition_id: set(
+                [
+                    task_id
+                    for task_id, runner_id in task_map.items()
+                    if self.poll_task(runner_id, 0).task_status == TaskRunStatus.FAILED
+                ]
+            )
+            for partition_id, task_map in runner_ids.items()
+        }
 
     def cancel_task(self, runner_id: Dict[str, Any]) -> None:
         # No-op
