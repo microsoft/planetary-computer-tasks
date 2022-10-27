@@ -2,7 +2,7 @@
     "stac_version": "1.0.0",
     "type": "Collection",
     "id": "noaa-climate-normals-gridded",
-    "title": "NOAA U.S. Gridded Climate Normals (Cloud-Optimized GeoTIFF)",
+    "title": "NOAA US Gridded Climate Normals (Cloud-Optimized GeoTIFF)",
     "description": "{{ collection.description }}",
     "license": "proprietary",
     "links": [

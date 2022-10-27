@@ -110,10 +110,13 @@
         }
     },
     "item_assets": {
-        "parquet": {
+        "geoparquet": {
             "type": "application/x-parquet",
             "title": "GeoParquet for all stations",
             "table:primary_geometry": "geometry",
+            "table:storage_options": {
+                "account_name": "noaanormals"
+            },
             "roles": [
                 "data"
             ]

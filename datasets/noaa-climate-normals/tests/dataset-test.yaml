@@ -18,24 +18,23 @@ collections:
     template: ${{ local.path(../collection/noaa-climate-normals-tabular) }}
     class: noaa_climate_normals:NoaaClimateNormalsTabular
     asset_storage:
-      - uri: blob://devstoreaccount1/climate-normals
+      - uri: blob://e84ai4earth/climate-normals
         chunks:
           options:
-            name_starts_with: access/
+            name_starts_with: access
             extensions: [.csv]
             chunk_length: 1
             limit: 1
           splits:
             - depth: 2
     chunk_storage:
-      uri: blob://devstoreaccount1/noaanormals-etl-data/tabular/
+      uri: blob://noaanormals/normals-etl-data/tabular/
 
   - id: noaa-climate-normals-netcdf
     template: ${{ local.path(../collection/noaa-climate-normals-netcdf) }}
     class: noaa_climate_normals:NoaaClimateNormalsNetcdf
     asset_storage:
       - uri: blob://noaanormals/gridded-normals
-        token: ${{ pc.get_token(noaanormals, gridded-normals) }}
         chunks:
           options:
             extensions: [.nc]
@@ -46,8 +45,7 @@ collections:
     template: ${{ local.path(../collection/noaa-climate-normals-gridded) }}
     class: noaa_climate_normals:NoaaClimateNormalsGridded
     asset_storage:
-      - uri: blob://noaanormals/gridded-normals
-        token: ${{ pc.get_token(noaanormals, gridded-normals) }}
+      - uri: blob://e84ai4earth/gridded-normals
         chunks:
           options:
             extensions: [.nc]
