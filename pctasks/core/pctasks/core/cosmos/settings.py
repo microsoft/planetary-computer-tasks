@@ -39,6 +39,8 @@ class CosmosDBSettings(PCTasksSettings):
     workflow_runs_container_name: str = DEFAULT_WORKFLOW_RUNS_CONTAINER
     records_container_name: str = DEFAULT_RECORDS_CONTAINER
 
+    max_bulk_put_size: int = 250
+
     def get_workflows_container_name(self) -> str:
         if self.test_container_suffix:
             return f"tmp-{self.workflows_container_name}-{self.test_container_suffix}"

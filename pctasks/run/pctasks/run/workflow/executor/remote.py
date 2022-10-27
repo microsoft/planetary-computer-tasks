@@ -3,7 +3,7 @@ import math
 import random
 import time
 from concurrent import futures
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, List, Optional, Set, Tuple, Union
 
 from pctasks.core.cosmos.container import CosmosDBContainer
 from pctasks.core.cosmos.containers.workflow_runs import WorkflowRunsContainer
@@ -120,15 +120,14 @@ def update_job_run_status(
 
 def update_job_partition_run_status(
     container: CosmosDBContainer[JobPartitionRunRecord],
-    job_partition_run: JobPartitionRunRecord,
+    run_id: str,
+    job_partition_run_id: str,
     status: JobPartitionRunStatus,
 ) -> None:
-    record = container.get(
-        job_partition_run.get_id(), partition_key=job_partition_run.run_id
-    )
+    record = container.get(job_partition_run_id, partition_key=run_id)
     if not record:
         raise WorkflowRunRecordError(
-            f"Job Partition run record not found: {job_partition_run.get_id()}"
+            f"Job Partition run record not found: {job_partition_run_id}"
         )
     if record.status != status:
         record.set_status(status)
@@ -137,24 +136,23 @@ def update_job_partition_run_status(
 
 def update_task_run_status(
     container: CosmosDBContainer[JobPartitionRunRecord],
-    job_partition_run: JobPartitionRunRecord,
+    run_id: str,
+    job_partition_run_id: str,
     task_id: str,
     status: TaskRunStatus,
     errors: Optional[List[str]] = None,
     log_uri: Optional[str] = None,
 ) -> None:
-    record = container.get(
-        job_partition_run.get_id(), partition_key=job_partition_run.run_id
-    )
+    record = container.get(job_partition_run_id, partition_key=run_id)
     if not record:
         raise WorkflowRunRecordError(
-            f"Job Partition run record not found: {job_partition_run.get_id()}"
+            f"Job Partition run record not found: {job_partition_run_id}"
         )
 
     task_run = record.get_task(task_id)
     if not task_run:
         raise WorkflowRunRecordError(
-            f"Task run not found: {job_partition_run.get_id()} {task_id}"
+            f"Task run not found: {job_partition_run_id} {task_id}"
         )
     if task_run.status != status:
         task_run.set_status(status)
@@ -181,47 +179,49 @@ class RemoteWorkflowExecutor:
 
     def __init__(self, settings: Optional[WorkflowExecutorConfig] = None) -> None:
         self.config = settings or WorkflowExecutorConfig.get()
-        self.executor = get_task_runner(self.config.run_settings)
+        self.task_runner = get_task_runner(self.config.run_settings)
 
-    def create_job_partition_state(
-        self, submit_msg: JobPartitionSubmitMessage
-    ) -> JobPartitionState:
-        """Create a job state from a job submit message."""
-        job_partition_run = JobPartitionRunRecord.from_definition(
-            submit_msg.job_partition.partition_id,
-            submit_msg.job_partition.definition,
-            submit_msg.run_id,
-            status=JobPartitionRunStatus.RUNNING,
-        )
-
-        with WorkflowRunsContainer(
-            JobPartitionRunRecord, db=self.config.get_cosmosdb()
-        ) as container:
-
+    def create_job_partition_states(
+        self, submit_msgs: Iterable[JobPartitionSubmitMessage]
+    ) -> List[JobPartitionState]:
+        records: List[JobPartitionRunRecord] = []
+        states: List[JobPartitionState] = []
+        for submit_msg in submit_msgs:
+            job_partition_run = JobPartitionRunRecord.from_definition(
+                submit_msg.job_partition.partition_id,
+                submit_msg.job_partition.definition,
+                submit_msg.run_id,
+                status=JobPartitionRunStatus.RUNNING,
+            )
             job_partition_state = JobPartitionState.create(
                 submit_msg,
                 job_part_run_record_id=job_partition_run.get_id(),
                 settings=self.config.run_settings,
             )
+            if job_partition_state.current_task:
+                task_state = job_partition_state.current_task
+                task_run = job_partition_run.get_task(task_state.task_id)
+                if not task_run:
+                    job_partition_run.status = JobPartitionRunStatus.FAILED
+                    raise WorkflowRunRecordError(
+                        f"Task {task_state.task_id} not found in "
+                        f"job partition {job_partition_run.get_id()}"
+                    )
+                task_run.status = TaskRunStatus.SUBMITTING
+            else:
+                job_partition_run.set_status(JobPartitionRunStatus.FAILED)
+                job_partition_state.status = JobPartitionStateStatus.NOTASKS
 
-            try:
-                if job_partition_state.current_task:
-                    task_state = job_partition_state.current_task
-                    task_run = job_partition_run.get_task(task_state.task_id)
-                    if not task_run:
-                        job_partition_run.status = JobPartitionRunStatus.FAILED
-                        raise WorkflowRunRecordError(
-                            f"Task {task_state.task_id} not found in "
-                            f"job partition {job_partition_run.get_id()}"
-                        )
-                    task_run.status = TaskRunStatus.SUBMITTING
-                else:
-                    job_partition_run.set_status(JobPartitionRunStatus.FAILED)
-                    job_partition_state.status = JobPartitionStateStatus.NOTASKS
-            finally:
-                container.put(job_partition_run)
+            records.append(job_partition_run)
+            states.append(job_partition_state)
 
-            return job_partition_state
+        # Bulk insert job partition run records
+        with WorkflowRunsContainer(
+            JobPartitionRunRecord, db=self.config.get_cosmosdb()
+        ) as container:
+            container.bulk_put(records)
+
+        return states
 
     def send_notification(
         self, notification_submit_message: NotificationSubmitMessage
@@ -278,36 +278,34 @@ class RemoteWorkflowExecutor:
         task_state: TaskState,
         submit_result: Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult],
         container: CosmosDBContainer[JobPartitionRunRecord],
-        job_part_run: Optional[JobPartitionRunRecord] = None,
+        run_id: str,
+        job_partition_run_id: str,
     ) -> TaskRunStatus:
         """Updates a task state and task run status based on the submit result.
 
         Returns the resulting task run status.
         """
-        job_part_run = job_part_run or container.get(
-            task_state.job_part_run_record_id, partition_key=task_state.run_id
-        )
         task_state.set_submitted(submit_result)
-        if job_part_run:
-            if isinstance(submit_result, FailedTaskSubmitResult):
-                update_task_run_status(
-                    container,
-                    job_part_run,
-                    task_state.task_id,
-                    TaskRunStatus.FAILED,
-                    errors=["Task failed to submit."] + submit_result.errors,
-                )
-                return TaskRunStatus.FAILED
-            else:
-                update_task_run_status(
-                    container,
-                    job_part_run,
-                    task_state.task_id,
-                    TaskRunStatus.SUBMITTED,
-                )
-                return TaskRunStatus.SUBMITTED
-        else:
+
+        if isinstance(submit_result, FailedTaskSubmitResult):
+            update_task_run_status(
+                container,
+                run_id=run_id,
+                job_partition_run_id=job_partition_run_id,
+                task_id=task_state.task_id,
+                status=TaskRunStatus.FAILED,
+                errors=["Task failed to submit."] + submit_result.errors,
+            )
             return TaskRunStatus.FAILED
+        else:
+            update_task_run_status(
+                container,
+                run_id=run_id,
+                job_partition_run_id=job_partition_run_id,
+                task_id=task_state.task_id,
+                status=TaskRunStatus.SUBMITTED,
+            )
+            return TaskRunStatus.SUBMITTED
 
     def complete_job_partitions(
         self,
@@ -346,24 +344,10 @@ class RemoteWorkflowExecutor:
                     # the status of the current task.
 
                     try:
-                        if job_part_state.status == JobPartitionStateStatus.NEW:
-                            job_part_state.status = JobPartitionStateStatus.RUNNING
-
-                            # Job Partition Run already set to status running.
-                            # Record the job part run here for later updates.
-                            job_part_run = container.get(
-                                job_part_state.job_part_run_record_id,
-                                partition_key=run_id,
-                            )
-                            if not job_part_run:
-                                raise WorkflowRunRecordError(
-                                    "Job partition run not found: "
-                                    f"{job_part_state.job_part_run_record_id}"
-                                )
-                            job_part_runs[part_id] = job_part_run
-
                         if job_part_state.current_task:
+
                             task_state = job_part_state.current_task
+                            part_run_record_id = job_part_state.job_part_run_record_id
 
                             #
                             # Update task state
@@ -414,12 +398,13 @@ class RemoteWorkflowExecutor:
 
                                 update_task_run_status(
                                     container,
-                                    job_part_runs[part_id],
-                                    task_state.task_id,
-                                    TaskRunStatus.SUBMITTING,
+                                    run_id=run_id,
+                                    job_partition_run_id=part_run_record_id,
+                                    task_id=task_state.task_id,
+                                    status=TaskRunStatus.SUBMITTING,
                                 )
 
-                                job_part_state.current_task.submit(self.executor)
+                                job_part_state.current_task.submit(self.task_runner)
                                 submit_result = (
                                     job_part_state.current_task.submit_result
                                 )
@@ -432,7 +417,8 @@ class RemoteWorkflowExecutor:
                                     task_state,
                                     submit_result,
                                     container,
-                                    job_part_runs[part_id],
+                                    run_id=run_id,
+                                    job_partition_run_id=part_run_record_id,
                                 )
 
                             elif task_state.status == TaskStateStatus.SUBMITTED:
@@ -446,9 +432,10 @@ class RemoteWorkflowExecutor:
                                 if not task_state.status_updated:
                                     update_task_run_status(
                                         container,
-                                        job_part_runs[part_id],
-                                        task_state.task_id,
-                                        TaskRunStatus.RUNNING,
+                                        run_id=run_id,
+                                        job_partition_run_id=part_run_record_id,
+                                        task_id=task_state.task_id,
+                                        status=TaskRunStatus.RUNNING,
                                     )
                                     task_state.status_updated = True
 
@@ -460,9 +447,10 @@ class RemoteWorkflowExecutor:
                                 if not task_state.status_updated:
                                     update_task_run_status(
                                         container,
-                                        job_part_runs[part_id],
-                                        task_state.task_id,
-                                        TaskRunStatus.WAITING,
+                                        run_id=run_id,
+                                        job_partition_run_id=part_run_record_id,
+                                        task_id=task_state.task_id,
+                                        status=TaskRunStatus.WAITING,
                                     )
                                     task_state.status_updated = True
 
@@ -489,9 +477,10 @@ class RemoteWorkflowExecutor:
 
                                 update_task_run_status(
                                     container,
-                                    job_part_runs[part_id],
-                                    task_state.task_id,
-                                    TaskRunStatus.FAILED,
+                                    run_id=run_id,
+                                    job_partition_run_id=part_run_record_id,
+                                    task_id=task_state.task_id,
+                                    status=TaskRunStatus.FAILED,
                                     errors=errors,
                                     log_uri=task_state.get_log_uri(task_log_storage),
                                 )
@@ -527,9 +516,10 @@ class RemoteWorkflowExecutor:
 
                                 update_task_run_status(
                                     container,
-                                    job_part_runs[part_id],
-                                    task_state.task_id,
-                                    TaskRunStatus.COMPLETED,
+                                    run_id=run_id,
+                                    job_partition_run_id=part_run_record_id,
+                                    task_id=task_state.task_id,
+                                    status=TaskRunStatus.COMPLETED,
                                     log_uri=task_state.get_log_uri(task_log_storage),
                                 )
 
@@ -545,8 +535,9 @@ class RemoteWorkflowExecutor:
                                     failed_job_count += 1
                                     update_job_partition_run_status(
                                         container,
-                                        job_part_runs[part_id],
-                                        JobPartitionRunStatus.FAILED,
+                                        run_id=run_id,
+                                        job_partition_run_id=part_run_record_id,
+                                        status=JobPartitionRunStatus.FAILED,
                                     )
 
                                 # Handle job completion
@@ -561,8 +552,9 @@ class RemoteWorkflowExecutor:
                                         )
                                         update_job_partition_run_status(
                                             container,
-                                            job_part_runs[part_id],
-                                            JobPartitionRunStatus.COMPLETED,
+                                            run_id=run_id,
+                                            job_partition_run_id=part_run_record_id,
+                                            status=JobPartitionRunStatus.COMPLETED,
                                         )
                                         self.handle_job_part_notifications(
                                             job_part_state
@@ -574,8 +566,9 @@ class RemoteWorkflowExecutor:
                                         failed_job_count += 1
                                         update_job_partition_run_status(
                                             container,
-                                            job_part_runs[part_id],
-                                            JobPartitionRunStatus.FAILED,
+                                            run_id=run_id,
+                                            job_partition_run_id=part_run_record_id,
+                                            status=JobPartitionRunStatus.FAILED,
                                         )
                                     completed_job_count += 1
                                     logger.info(
@@ -695,7 +688,7 @@ class RemoteWorkflowExecutor:
                                         settings=run_settings,
                                         tokens=workflow.definition.tokens,
                                         target_environment=target_env,
-                                        task_runner=self.executor,
+                                        task_runner=self.task_runner,
                                     )
                                 )
                         except Exception as e:
@@ -704,7 +697,7 @@ class RemoteWorkflowExecutor:
                             logger.info(
                                 f"...cleaning up based on task data for job: {job_id}"
                             )
-                            self.executor.cleanup([d.runner_info for d in task_data])
+                            self.task_runner.cleanup([d.runner_info for d in task_data])
                             job_run.add_errors(
                                 [
                                     f"Job {job_def.id} failed during task data prep:",
@@ -753,7 +746,7 @@ class RemoteWorkflowExecutor:
                             logger.info(
                                 f"...cleaning up based on task data for job: {job_id}"
                             )
-                            self.executor.cleanup([d.runner_info for d in task_data])
+                            self.task_runner.cleanup([d.runner_info for d in task_data])
                             job_run.add_errors(
                                 [f"Job {job_def.id} failed during templating.:", str(e)]
                             )
@@ -774,7 +767,7 @@ class RemoteWorkflowExecutor:
                             logger.info(
                                 f"...cleaning up based on task data for job: {job_id}"
                             )
-                            self.executor.cleanup([d.runner_info for d in task_data])
+                            self.task_runner.cleanup([d.runner_info for d in task_data])
                             update_job_run_status(
                                 container,
                                 workflow_run,
@@ -783,6 +776,8 @@ class RemoteWorkflowExecutor:
                                 errors=[f"Job {job_def.id} has no partitions to run."],
                             )
                             continue
+
+                        # ## CREATE JOB PARTITIONS
 
                         job_part_submit_msgs = [
                             JobPartitionSubmitMessage(
@@ -801,12 +796,10 @@ class RemoteWorkflowExecutor:
 
                         # Create job states, prepare first tasks.
                         logger.info(" - Preparing jobs...")
+
                         try:
-                            job_part_states = list(
-                                pool.map(
-                                    self.create_job_partition_state,
-                                    job_part_submit_msgs,
-                                )
+                            job_part_states = self.create_job_partition_states(
+                                job_part_submit_msgs
                             )
                         except Exception as e:
                             logger.error(f"Failed to prepare job partitions: {e}")
@@ -814,7 +807,7 @@ class RemoteWorkflowExecutor:
                             logger.info(
                                 f"...cleaning up based on task data for job: {job_id}"
                             )
-                            self.executor.cleanup([d.runner_info for d in task_data])
+                            self.task_runner.cleanup([d.runner_info for d in task_data])
                             logger.exception(e)
                             update_job_run_status(
                                 container,
@@ -850,7 +843,7 @@ class RemoteWorkflowExecutor:
                             logger.info(
                                 f"...cleaning up based on task data for job: {job_id}"
                             )
-                            self.executor.cleanup([d.runner_info for d in task_data])
+                            self.task_runner.cleanup([d.runner_info for d in task_data])
 
                             # Fail job, update all task records to cancelled or failed.
                             update_job_run_status(
@@ -861,6 +854,8 @@ class RemoteWorkflowExecutor:
                             )
                             workflow_failed = True
                             continue
+
+                        # ## SUBMIT INITIAL TASKS
 
                         initial_tasks: List[PreparedTaskSubmitMessage] = []
                         for job_part_state in job_part_states:
@@ -878,7 +873,7 @@ class RemoteWorkflowExecutor:
                                 Union[
                                     SuccessfulTaskSubmitResult, FailedTaskSubmitResult
                                 ]
-                            ] = self.executor.submit_tasks(initial_tasks)
+                            ] = self.task_runner.submit_tasks(initial_tasks)
                         except Exception as e:
                             submit_results = [
                                 FailedTaskSubmitResult(errors=[str(e)])
@@ -907,6 +902,8 @@ class RemoteWorkflowExecutor:
                                         jps.current_task,
                                         submit_result,
                                         container=container,
+                                        run_id=jps.run_id,
+                                        job_partition_run_id=jps.job_part_run_record_id,
                                     )
 
                             any_submitted = False
@@ -937,7 +934,7 @@ class RemoteWorkflowExecutor:
                             logger.info(
                                 f"...cleaning up based on task data for job: {job_id}"
                             )
-                            self.executor.cleanup([d.runner_info for d in task_data])
+                            self.task_runner.cleanup([d.runner_info for d in task_data])
                             update_job_run_status(
                                 container,
                                 workflow_run,
@@ -952,7 +949,7 @@ class RemoteWorkflowExecutor:
                             logger.info(
                                 f"...cleaning up based on task data for job: {job_id}"
                             )
-                            self.executor.cleanup([d.runner_info for d in task_data])
+                            self.task_runner.cleanup([d.runner_info for d in task_data])
                             update_job_run_status(
                                 container,
                                 workflow_run,
@@ -964,6 +961,8 @@ class RemoteWorkflowExecutor:
                             )
                             workflow_failed = True
                             continue
+
+                        # ## MONITOR GROUPED JOB PARTITIONS
 
                         # Split the job partitions into groups
                         # based on number of threads
@@ -1040,6 +1039,8 @@ class RemoteWorkflowExecutor:
                                 f"({job_done_count}/{total_job_part_count})"
                             )
 
+                        # ## PROCESS JOB PARTITION RESULTS
+
                         if job_failed:
                             update_job_run_status(
                                 container,
@@ -1072,7 +1073,7 @@ class RemoteWorkflowExecutor:
                         logger.info(
                             f"...cleaning up based on task data for job: {job_id}"
                         )
-                        self.executor.cleanup([d.runner_info for d in task_data])
+                        self.task_runner.cleanup([d.runner_info for d in task_data])
 
                     if workflow_failed:
                         logger.error("Workflow failed!")

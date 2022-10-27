@@ -359,6 +359,10 @@ class JobPartitionState:
         return self.job_part_submit_msg.job_id
 
     @property
+    def partition_id(self) -> str:
+        return self.job_part_submit_msg.partition_id
+
+    @property
     def run_id(self) -> str:
         return self.job_part_submit_msg.run_id
 
