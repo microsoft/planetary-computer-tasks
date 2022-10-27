@@ -74,7 +74,7 @@ class NoaaClimateNormalsTabular(Collection):
             )
 
             # add table:storage_options to asset
-            item.assets["geoparquet"]["table:storage_options"] = {
+            item.assets["geoparquet"].extra_fields["table:storage_options"] = {
                 "account_name": "noaanormals"
             }
 
