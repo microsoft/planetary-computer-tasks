@@ -6,7 +6,7 @@ args:
 
 code:
   src: ${{ local.path(./goes_glm.py) }}
-  requirements: ${{ local.path(./requirements.txt) }}
+  # requirements: ${{ local.path(./requirements.txt) }}
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -22,19 +22,20 @@ collections:
         token: ${{ pc.get_token(goeseuwest, noaa-goes16) }}
         chunks:
           options:
-            name_starts_with: GLM-L2-LCFA/
             ends_with: .nc
             chunk_length: 30
           splits:
-            - depth: 2
+            - prefix: GLM-L2-LCFA/
+              depth: 2
       - uri: blob://goeseuwest/noaa-goes17/
         token: ${{ pc.get_token(goeseuwest, noaa-goes17) }}
         chunks:
           options:
-            name_starts_with: GLM-L2-LCFA/
             ends_with: .nc
             chunk_length: 30
           splits:
-            - depth: 2
+            - prefix: GLM-L2-LCFA/
+              depth: 2
+
     chunk_storage:
       uri: blob://goeseuwest/noaa-goes-etl-data/pctasks/glm/
