@@ -2,7 +2,7 @@ The [NOAA United States Climate Normals](https://www.ncei.noaa.gov/products/land
 
 NOAA produces Climate Normals in accordance with the [World Meteorological Organization](https://public.wmo.int/en) (WMO), of which the United States is a member. The WMO requires each member nation to compute 30-year meteorological quantity averages at least every 30 years, and recommends an update each decade, in part to incorporate newer weather stations. The 1991–2020 U.S. Climate Normals are the latest in a series of decadal normals first produced in the 1950s. 
 
-This Collection contains tabular format weather variable data for individual weather stations. Normals are provided for annual/seasonal, monthly, daily, and hourly frequencies for the following time periods:
+This Collection contains tabular weather variable data at weather station locations in GeoParquet format. Data are provided for annual/seasonal, monthly, daily, and hourly frequencies for the following time periods:
 
 - Conventional 30-year normals (1991–2020)
 - Legacy 30-year normals (1981–2010)
