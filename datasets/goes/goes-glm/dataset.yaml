@@ -23,7 +23,7 @@ collections:
         chunks:
           options:
             ends_with: .nc
-            chunk_length: 500
+            chunk_length: 100000
           splits:
             - prefix: GLM-L2-LCFA/
               depth: 2
@@ -32,7 +32,7 @@ collections:
         chunks:
           options:
             ends_with: .nc
-            chunk_length: 500
+            chunk_length: 100000
           splits:
             - prefix: GLM-L2-LCFA/
               depth: 2

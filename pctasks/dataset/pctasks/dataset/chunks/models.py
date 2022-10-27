@@ -97,12 +97,14 @@ class ListChunksTaskConfig(TaskDefinition):
         image: str,
         args: ListChunksInput,
         task: str = CREATE_CHUNKS_TASK_PATH,
+        code: Optional[CodeConfig] = None,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> "ListChunksTaskConfig":
         return ListChunksTaskConfig(
             id=LIST_CHUNKS_TASK_ID,
             image=image,
+            code=code,
             args=args.dict(),
             task=task,
             environment=environment,
@@ -126,6 +128,7 @@ class ListChunksTaskConfig(TaskDefinition):
 
         return cls.create(
             image=ds.image,
+            code=ds.code,
             args=ListChunksInput(chunkset_uri=chunkset_uri, all=all),
             task=f"{collection.collection_class}.create_chunks_task",
             environment=environment,
