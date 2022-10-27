@@ -6,6 +6,7 @@ from pctasks.core.models.task import TaskDefinition
 from pctasks.dataset.chunks.constants import (
     ASSET_CHUNKS_PREFIX,
     CREATE_CHUNKS_TASK_PATH,
+    LIST_CHUNKS_TASK_PATH,
 )
 from pctasks.dataset.constants import CREATE_CHUNKS_TASK_ID, LIST_CHUNKS_TASK_ID
 from pctasks.dataset.models import ChunkOptions, CollectionDefinition, DatasetDefinition
@@ -96,7 +97,7 @@ class ListChunksTaskConfig(TaskDefinition):
         cls,
         image: str,
         args: ListChunksInput,
-        task: str = CREATE_CHUNKS_TASK_PATH,
+        task: str = LIST_CHUNKS_TASK_PATH,
         code: Optional[CodeConfig] = None,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
