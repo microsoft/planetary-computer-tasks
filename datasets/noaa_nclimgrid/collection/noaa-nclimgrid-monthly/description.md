@@ -6,3 +6,7 @@ This Collection contains **Monthly** data. See the journal publication ["Improve
 
 Users of all NClimGrid data product should be aware that [NOAA advertises](https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332) that:
 >"On an annual basis, approximately one year of 'final' NClimGrid data is submitted to replace the initially supplied 'preliminary' data for the same time period. Users should be sure to ascertain which level of data is required for their research."
+
+The source NetCDF files are delivered to Azure as part of the [NOAA Open Data Dissemination (NODD) Program](https://www.noaa.gov/information-technology/open-data-dissemination).
+
+*Note*: The Planetary Computer currently has STAC metadata for just the monthly collection. We'll have STAC metadata for daily data in our next release. In the meantime, you can access the daily NetCDF data directly from Blob Storage using the storage container at `https://nclimgridwesteurope.blob.core.windows.net/nclimgrid`. See https://planetarycomputer.microsoft.com/docs/concepts/data-catalog/#access-patterns for more.*

@@ -164,38 +164,6 @@
                     "spatial_resolution": 5000
                 }
             ]
-        },
-        "prcp_source": {
-            "type": "application/netcdf",
-            "roles": [
-                "data",
-                "source"
-            ],
-            "title": "Daily Precipitation Source Data"
-        },
-        "tavg_source": {
-            "type": "application/netcdf",
-            "roles": [
-                "data",
-                "source"
-            ],
-            "title": "Daily Average Temperature Source Data"
-        },
-        "tmax_source": {
-            "type": "application/netcdf",
-            "roles": [
-                "data",
-                "source"
-            ],
-            "title": "Daily Maximmum Temperature Source Data"
-        },
-        "tmin_source": {
-            "type": "application/netcdf",
-            "roles": [
-                "data",
-                "source"
-            ],
-            "title": "Daily Minimum Temperature Source Data"
         }
     }
 }

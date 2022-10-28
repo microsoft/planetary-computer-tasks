@@ -41,7 +41,9 @@ class NoaaNclimgridCollection(Collection):
                 all_nc_urls[var] = nc_storage.get_url(nc_path)
 
             # create items and cogs
-            items, _ = create_items(tmp_nc_path, tmp_cog_dir, nc_assets=True)
+            # explicitly do *not* include the source NetCDF assets.
+            # We'll include those in a separate collection later and link to them.
+            items, _ = create_items(tmp_nc_path, tmp_cog_dir, nc_assets=False)
 
             local_cogs = {f.name: f.as_posix() for f in tmp_cog_dir.glob("*.tif")}
             if len(local_cogs) != len(items) * 4:
@@ -61,6 +63,5 @@ class NoaaNclimgridCollection(Collection):
                     cog_storage.upload_file(local_cogs[cog_filename], cog_filename)
 
                     item.assets[var].href = cog_storage.get_url(cog_filename)
-                    item.assets[f"{var}_source"].href = all_nc_urls[var]
 
         return items
