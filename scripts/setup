@@ -18,7 +18,7 @@ Options:
     --azurite
         Only run the Azurite setup.
     --cosmos
-        Only run the Cosmos Emulator setup.
+        Only run the CosmosDB setup.
     --reset-cosmos
         Reset the CosmosDB emulator.
     --rm-test-containers

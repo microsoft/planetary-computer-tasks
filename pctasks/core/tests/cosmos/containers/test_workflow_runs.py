@@ -1,4 +1,8 @@
-from pctasks.core.cosmos.containers.workflow_runs import WorkflowRunsContainer
+from typing import Any, List, Optional, Type
+
+from pctasks.core.cosmos.containers.workflow_runs import T, WorkflowRunsContainer
+from pctasks.core.cosmos.database import CosmosDBDatabase
+from pctasks.core.cosmos.settings import CosmosDBSettings
 from pctasks.core.models.run import (
     JobPartitionRunRecord,
     JobPartitionRunStatus,
@@ -11,6 +15,23 @@ from pctasks.core.models.run import (
 )
 from pctasks.core.models.workflow import WorkflowRunStatus
 from pctasks.dev.cosmosdb import temp_cosmosdb_if_emulator
+
+
+class MockWorkflowRunsContainer(WorkflowRunsContainer[T]):
+    """Mock to count the number of times put is called."""
+
+    def __init__(
+        self,
+        model_type: Type[T],
+        db: Optional[CosmosDBDatabase] = None,
+        settings: Optional[CosmosDBSettings] = None,
+    ) -> None:
+        self.put_count = 0
+        super().__init__(model_type, db, settings)
+
+    def put(self, *args: Any, **kwargs: Any):
+        self.put_count += 1
+        return super().put(*args, **kwargs)
 
 
 def test_job_part_pagination():
@@ -135,3 +156,69 @@ def test_job_part_pagination():
                 job_run = fetch_job_run()
                 assert job_run.job_partition_counts[JobPartitionRunStatus.PENDING] == 0
                 assert job_run.job_partition_counts[JobPartitionRunStatus.RUNNING] == 2
+
+
+def test_job_part_bulk_put():
+    run_id = "test-run"
+    job_id = "test-job"
+    dataset_id = "test-dataset"
+    with temp_cosmosdb_if_emulator() as db:
+        workflow_run = WorkflowRunRecord(
+            workflow_id="test-workflow",
+            run_id=run_id,
+            dataset_id=dataset_id,
+            status=WorkflowRunStatus.RUNNING,
+            jobs=[
+                JobRunRecord(status=JobRunStatus.RUNNING, run_id=run_id, job_id=job_id)
+            ],
+        )
+
+        with WorkflowRunsContainer(WorkflowRunRecord, db=db) as workflow_runs:
+            workflow_runs.put(workflow_run)
+
+            assert workflow_runs.get(run_id, partition_key=run_id)
+
+            job_parts: List[JobPartitionRunRecord] = []
+            for i in range(100):
+                job_parts.append(
+                    JobPartitionRunRecord(
+                        job_id=job_id,
+                        status=JobPartitionRunStatus.RUNNING,
+                        run_id=run_id,
+                        partition_id=str(i),
+                        tasks=[
+                            TaskRunRecord(
+                                status=TaskRunStatus.RUNNING,
+                                run_id=run_id,
+                                job_id=job_id,
+                                partition_id=str(i),
+                                task_id="test-task",
+                            )
+                        ],
+                    ),
+                )
+
+            mock_job_partition_runs = MockWorkflowRunsContainer(
+                JobPartitionRunRecord, db=db
+            )
+            with mock_job_partition_runs:
+                mock_job_partition_runs.bulk_put(job_parts)
+
+                pages = list(
+                    mock_job_partition_runs.query_paged(
+                        partition_key=run_id,
+                        query=(
+                            "SELECT * FROM c WHERE c.job_id = @job_id "
+                            "and c.type = @type"
+                        ),
+                        parameters={
+                            "@job_id": job_id,
+                            "type": RunRecordType.JOB_PARTITION_RUN,
+                        },
+                        page_size=50,
+                    )
+                )
+
+                assert len(pages) == 2
+
+            assert mock_job_partition_runs.put_count == 0

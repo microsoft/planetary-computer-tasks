@@ -93,6 +93,7 @@ class TaskState:
         Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]
     ] = None
     _task_result: Optional[TaskResult] = None
+    _task_runner_id: Optional[Dict[str, Any]] = None
 
     status_updated: bool = False
     """True if task record has been updated to current status"""
@@ -132,6 +133,10 @@ class TaskState:
     @property
     def task_id(self) -> str:
         return self.prepared_task.task_submit_message.definition.id
+
+    @property
+    def task_runner_id(self) -> Optional[Dict[str, Any]]:
+        return self._task_runner_id
 
     def change_status(self, status: TaskStateStatus) -> bool:
         if not self.status == status:
@@ -213,6 +218,7 @@ class TaskState:
         self._submit_result = submit_result
 
         if isinstance(submit_result, SuccessfulTaskSubmitResult):
+            self._task_runner_id = submit_result.task_runner_id
             self.change_status(TaskStateStatus.SUBMITTED)
         else:
             self.set_failed(submit_result.errors)
@@ -357,6 +363,10 @@ class JobPartitionState:
     @property
     def job_id(self) -> str:
         return self.job_part_submit_msg.job_id
+
+    @property
+    def partition_id(self) -> str:
+        return self.job_part_submit_msg.partition_id
 
     @property
     def run_id(self) -> str:

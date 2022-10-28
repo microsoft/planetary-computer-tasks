@@ -40,6 +40,21 @@ class TaskRunner(ABC):
         pass
 
     @abstractmethod
+    def get_failed_tasks(
+        self,
+        runner_ids: Dict[str, Dict[str, Dict[str, Any]]],
+    ) -> Dict[str, Dict[str, str]]:
+        """Finds failed tasks.
+
+        runner_ids is a dictionary of partition IDs to a
+        dictionary of task IDs to runner IDs.
+
+        Returns a dictionary of partition IDs to a
+        map of failed task IDs to error messages.
+        """
+        pass
+
+    @abstractmethod
     def cancel_task(self, runner_id: Dict[str, Any]) -> None:
         pass
 
