@@ -131,7 +131,7 @@ class ListChunksTaskConfig(TaskDefinition):
             image=ds.image,
             code=ds.code,
             args=ListChunksInput(chunkset_uri=chunkset_uri, all=all),
-            task=f"{collection.collection_class}.create_chunks_task",
+            task=LIST_CHUNKS_TASK_PATH,
             environment=environment,
             tags=tags,
         )
