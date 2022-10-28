@@ -40,7 +40,7 @@
         "Guam",
         "Caribbean"
     ],
-    "msft:short_description": "Integrated multi-sensor cumulative precipation estimate for the past hour with a 2-hour latency.",
+    "msft:short_description": "Integrated multi-sensor cumulative precipitation estimate for the past hour with a 2-hour latency.",
     "msft:storage_account": "mrms",
     "msft:container": "mrms-cogs",
     "msft:group_id": "noaa-mrms-qpe",
