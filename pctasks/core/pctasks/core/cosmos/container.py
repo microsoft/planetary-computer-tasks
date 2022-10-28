@@ -1,5 +1,7 @@
+import logging
 from abc import ABC, abstractmethod
 from enum import Enum
+from itertools import groupby
 from typing import (
     Any,
     AsyncIterable,
@@ -33,12 +35,16 @@ from pctasks.core.cosmos.page import Page
 from pctasks.core.cosmos.settings import CosmosDBSettings
 from pctasks.core.models.run import Record
 from pctasks.core.models.utils import tzutc_now
+from pctasks.core.utils import grouped
 
 T = TypeVar("T", bound=Record)
+
+logger = logging.getLogger(__name__)
 
 
 class ContainerOperation(Enum):
     PUT = "PUT"
+    BULK_PUT = "BULK_PUT"
     GET = "GET"
     QUERY = "QUERY"
 
@@ -72,6 +78,7 @@ class BaseCosmosDBContainer(Generic[T], ABC):
                 settings = CosmosDBSettings.get()
         if not db:
             db = CosmosDBDatabase(settings)
+        self.settings = settings
         self.db = db
         self.partition_key = partition_key
         self.model_type = model_type
@@ -104,7 +111,7 @@ class BaseCosmosDBContainer(Generic[T], ABC):
         """Transform a cosmosdb item (dict) into a model."""
         return model_type.parse_obj(item)
 
-    def _put_prep(self, model: T) -> Tuple[Dict[str, Any], Optional[str]]:
+    def _prepare_put_item(self, model: T) -> Dict[str, Any]:
         # Set created or updated time
         if not model.created:
             model.created = tzutc_now()
@@ -118,14 +125,35 @@ class BaseCosmosDBContainer(Generic[T], ABC):
         if "id" not in item:
             item["id"] = model.get_id()
 
-        # If a stored procedure is defined for this operation, use it
+        return item
+
+    def _get_put_stored_proc(self, model: T) -> Optional[str]:
         stored_proc: Optional[str] = None
         if self.stored_procedures:
             stored_proc = self.stored_procedures.get(ContainerOperation.PUT, {}).get(
                 type(model)
             )
 
-        return item, stored_proc
+        return stored_proc
+
+    def _get_bulk_put_stored_proc(self, model: T) -> Optional[str]:
+        stored_proc: Optional[str] = None
+        if self.stored_procedures:
+            stored_proc = self.stored_procedures.get(
+                ContainerOperation.BULK_PUT, {}
+            ).get(type(model))
+
+        return stored_proc
+
+    def _group_for_bulk_put(
+        self, models: Iterable[T]
+    ) -> Iterable[Tuple[str, List[Dict[str, Any]]]]:
+        by_partition_key = groupby(models, key=self.get_partition_key)
+        for partition_key, partition_models in by_partition_key:
+            items = [self._prepare_put_item(model) for model in partition_models]
+            # Bulk put the items in groups of the max size
+            for item_group in grouped(items, self.settings.max_bulk_put_size):
+                yield partition_key, list(item_group)
 
     def _query_prep(
         self, query: str, parameters: Optional[Dict[str, Any]] = None
@@ -187,12 +215,13 @@ class CosmosDBContainer(BaseCosmosDBContainer[T], ABC):
         return self.cosmos_clients.container
 
     def put(self, model: T) -> None:
-        item, stored_proc = self._put_prep(model)
+        item = self._prepare_put_item(model)
+        stored_proc = self._get_put_stored_proc(model)
 
         if stored_proc:
             partition_key = self.get_partition_key(model)
             self._container_client.scripts.execute_stored_procedure(
-                stored_proc, partition_key=partition_key, parameters=[item]
+                stored_proc, partition_key=partition_key, params=[item]
             )
         else:
             # Otherwise upsert the item
@@ -205,6 +234,26 @@ class CosmosDBContainer(BaseCosmosDBContainer[T], ABC):
                     ContainerOperation.PUT, TriggerType.POST
                 ),
             )
+
+    def bulk_put(self, models: Iterable[T]) -> None:
+        if not models:
+            return
+        models = list(models)
+        stored_proc = self._get_bulk_put_stored_proc(models[0])
+        if not stored_proc:
+            logger.warning(
+                f"No bulk put stored procedure for {self.name} "
+                f"and model {type(models[0])}. Falling back to individual puts."
+            )
+            for model in models:
+                self.put(model)
+        else:
+            for partition_key, item_group in self._group_for_bulk_put(models):
+                self._container_client.scripts.execute_stored_procedure(
+                    stored_proc,
+                    partition_key=partition_key,
+                    params=[list(item_group)],
+                )
 
     def get(self, id: str, partition_key: str) -> Optional[T]:
         try:
@@ -314,12 +363,13 @@ class AsyncCosmosDBContainer(BaseCosmosDBContainer[T], ABC):
         return self.cosmos_clients.container
 
     async def put(self, model: T) -> None:
-        item, stored_proc = self._put_prep(model)
+        item = self._prepare_put_item(model)
+        stored_proc = self._get_put_stored_proc(model)
 
         if stored_proc:
             partition_key = self.get_partition_key(model)
             await self._container_client.scripts.execute_stored_procedure(
-                stored_proc, partition_key=partition_key, parameters=[item]
+                stored_proc, partition_key=partition_key, params=[item]
             )
         else:
             # Otherwise upsert the item
@@ -332,6 +382,26 @@ class AsyncCosmosDBContainer(BaseCosmosDBContainer[T], ABC):
                     ContainerOperation.PUT, TriggerType.POST
                 ),
             )
+
+    async def bulk_put(self, models: Iterable[T]) -> None:
+        if not models:
+            return
+        models = list(models)
+        stored_proc = self._get_bulk_put_stored_proc(models[0])
+        if not stored_proc:
+            logger.warning(
+                f"No bulk put stored procedure for {self.name} "
+                f"and model {type(models[0])}. Falling back to individual puts."
+            )
+            for model in models:
+                await self.put(model)
+        else:
+            for partition_key, item_group in self._group_for_bulk_put(models):
+                await self._container_client.scripts.execute_stored_procedure(
+                    stored_proc,
+                    partition_key=partition_key,
+                    params=[list(item_group)],
+                )
 
     async def get(self, id: str, partition_key: str) -> Optional[T]:
         try:

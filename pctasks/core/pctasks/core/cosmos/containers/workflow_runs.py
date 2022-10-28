@@ -17,7 +17,11 @@ T = TypeVar("T", WorkflowRunRecord, JobPartitionRunRecord)
 
 PARTITION_KEY = "/run_id"
 
-STORED_PROCEDURES: Dict[ContainerOperation, Dict[Type[BaseModel], str]] = {}
+STORED_PROCEDURES: Dict[ContainerOperation, Dict[Type[BaseModel], str]] = {
+    ContainerOperation.BULK_PUT: {
+        JobPartitionRunRecord: "bulkput-workflowruns",
+    }
+}
 
 TRIGGERS: Dict[ContainerOperation, Dict[TriggerType, str]] = {
     ContainerOperation.PUT: {TriggerType.POST: "post-all-workflowruns"}

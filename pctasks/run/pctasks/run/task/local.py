@@ -1,5 +1,6 @@
 import json
 import logging
+from collections import defaultdict
 from typing import Any, Dict, List, Optional, Union
 
 import requests
@@ -95,6 +96,26 @@ class LocalTaskRunner(TaskRunner):
         except Exception as e:
             logger.exception(e)
             return TaskPollResult(task_status=TaskRunStatus.FAILED)
+
+    def get_failed_tasks(
+        self,
+        runner_ids: Dict[str, Dict[str, Dict[str, Any]]],
+    ) -> Dict[str, Dict[str, str]]:
+        # TODO: Optimize implementation
+        result: Dict[str, Dict[str, str]] = defaultdict(dict)
+
+        for partition_id in runner_ids:
+            for task_id, runner_id in runner_ids[partition_id].items():
+                poll_result = self.poll_task(runner_id, 0)
+                if poll_result.task_status == TaskRunStatus.FAILED:
+                    error = (
+                        poll_result.poll_errors[0]
+                        if poll_result.poll_errors
+                        else "Local task failed."
+                    )
+                    result[partition_id][task_id] = error
+
+        return result
 
     def cancel_task(self, runner_id: Dict[str, Any]) -> None:
         # No-op

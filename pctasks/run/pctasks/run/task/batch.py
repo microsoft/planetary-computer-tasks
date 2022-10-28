@@ -1,8 +1,9 @@
 import logging
 from collections import defaultdict
 from dataclasses import dataclass
+from itertools import groupby
 from threading import Lock
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.models.task import TaskDefinition
@@ -198,6 +199,32 @@ class BatchTaskRunner(TaskRunner):
                         )
 
         return [submit_results[i] for i in sorted(submit_results)]
+
+    def get_failed_tasks(
+        self,
+        runner_ids: Dict[str, Dict[str, Dict[str, Any]]],
+    ) -> Dict[str, Dict[str, str]]:
+        result: Dict[str, Dict[str, str]] = defaultdict(dict)
+        for job_id, task_ids in groupby(
+            [
+                (BatchTaskId.parse_obj(batch_id), (partition_id, task_id))
+                for partition_id, task_map in runner_ids.items()
+                for task_id, batch_id in task_map.items()
+            ],
+            lambda x: x[0].batch_job_id,
+        ):
+            indexed_task_ids: Dict[str, Tuple[str, str]] = {
+                batch_id.batch_task_id: (partition_id, task_id)
+                for batch_id, (partition_id, task_id) in task_ids
+            }
+            with BatchClient(self.settings.batch_settings) as batch_client:
+                for batch_task_id, error_message in batch_client.get_failed_tasks(
+                    job_id
+                ).items():
+                    partition_id, task_id = indexed_task_ids[batch_task_id]
+                    result[partition_id][task_id] = error_message
+
+        return result
 
     def poll_task(
         self,

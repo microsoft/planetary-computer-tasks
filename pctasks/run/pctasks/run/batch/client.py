@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime, timedelta
-from typing import Any, Callable, Iterable, List, Optional, Tuple, cast
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, cast
 
 import azure.batch.batch_auth as batchauth
 import azure.batch.models as batchmodels
@@ -66,6 +66,7 @@ class BatchClient:
 
     def __init__(self, settings: BatchSettings):
         self.settings = settings
+        self._client: Optional[BatchServiceClient] = None
 
         self.credentials = batchauth.SharedKeyCredentials(
             self.settings.get_batch_name(), self.settings.key
@@ -468,6 +469,29 @@ class BatchClient:
             return (TaskRunStatus.RUNNING, None)
         else:
             return (TaskRunStatus.SUBMITTED, None)
+
+    def get_failed_tasks(self, job_id: str) -> Dict[str, str]:
+        client = self._ensure_client()
+        completed_tasks = client.task.list(
+            job_id,
+            task_list_options=batchmodels.TaskListOptions(
+                filter="state eq 'completed'"
+            ),
+        )
+        result: Dict[str, str] = {}
+        for task in completed_tasks:
+            t = cast(batchmodels.CloudTask, task)
+            execution_info = cast(
+                batchmodels.TaskExecutionInformation,
+                t.execution_info,
+            )
+            if execution_info.result == batchmodels.TaskExecutionResult.failure:
+                if execution_info.failure_info and execution_info.failure_info.message:
+                    result[t.id] = execution_info.failure_info.message
+                else:
+                    result[t.id] = "Azure Batch task failed without error message"
+
+        return result
 
     def get_pool(self, pool_id: str) -> Optional[batchmodels.PoolInformation]:
         client = self._ensure_client()

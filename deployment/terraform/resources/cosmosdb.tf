@@ -49,6 +49,16 @@ resource "azurerm_cosmosdb_sql_trigger" "post-all-workflowruns" {
   type         = "Post"
 }
 
+resource "azurerm_cosmosdb_sql_stored_procedure" "bulkput-workflowruns" {
+  name         = "bulkput-workflowruns"
+  resource_group_name = data.azurerm_cosmosdb_account.pctasks.resource_group_name
+  account_name        = data.azurerm_cosmosdb_account.pctasks.name
+  database_name       = azurerm_cosmosdb_sql_database.pctasks.name
+  container_name      = azurerm_cosmosdb_sql_container.workflowruns.name
+
+  body         = file("${path.module}/../../cosmosdb/scripts/stored_procs/workflow-runs/bulkput-workflowruns.js")
+}
+
 ## Records
 
 resource "azurerm_cosmosdb_sql_container" "records" {
