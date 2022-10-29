@@ -45,16 +45,20 @@ class NoaaClimateNormalsTabular(Collection):
 
         csv_storage = storage_factory.get_storage("/".join(uri_parts[:-1]))
         csv_paths = list(csv_storage.list_files(extensions=[".csv"]))
-        csv_urls = [csv_storage.get_url(csv_path) for csv_path in csv_paths]
 
         with TemporaryDirectory() as tmp_dir:
+            # download the csv files
+            tmp_csv_paths = []
+            for csv_path in csv_paths:
+                tmp_csv_paths.append(Path(tmp_dir, csv_path))
+                csv_storage.download_file(csv_path, tmp_csv_paths[-1])
+
             # create item and geoparquet
             item = tabular_create_item(
-                csv_hrefs=csv_urls,
+                csv_hrefs=tmp_csv_paths,
                 frequency=frequency,
                 period=period,
                 parquet_dir=tmp_dir,
-                read_href_modifier=csv_storage.sign,
             )
 
             geoparquet_filename = (
