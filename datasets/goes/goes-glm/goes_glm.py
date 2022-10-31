@@ -1,5 +1,4 @@
 import sys
-import logging
 import time
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -19,13 +18,6 @@ GEOPARQUET_CONTAINER = "blob://goeseuwest/noaa-goes-geoparquet/"
 # handle duplicate assets in pctasks? -We should probably ingest items with
 # an "insert" rather than "upsert" action so it fails if duplicate source
 # data assets exist.
-
-logger = logging.getLogger(__name__)
-handler = logging.StreamHandler(stream=sys.stderr)
-logger.addHandler(handler)
-logger.setLevel(logging.INFO)
-handler.setLevel(logging.INFO)
-
 
 class GoesGlmCollection(Collection):
     @classmethod
@@ -57,11 +49,5 @@ class GoesGlmCollection(Collection):
 
         # Update with remote URL
         item.assets["netcdf"].href = nc_storage.get_url(nc_asset_path)
-
-        logger.info(
-            "Processing asset_href=%s seconds=%s",
-            asset_uri,
-            round(time.time() - t0, 2),
-        )
 
         return [item]

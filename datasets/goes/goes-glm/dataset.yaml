@@ -6,6 +6,7 @@ args:
 
 code:
   src: ${{ local.path(./goes_glm.py) }}
+  # This requirements.txt is used in the Dockerfile.
   # requirements: ${{ local.path(./requirements.txt) }}
 
 environment:
