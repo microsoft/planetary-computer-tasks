@@ -1,5 +1,5 @@
 id: goes_glm
-image: ${{ args.registry }}/pctasks-goes-glm:2022.10.27.3
+image: ${{ args.registry }}/pctasks-goes-glm:2022.10.31.0
 
 args:
 - registry
