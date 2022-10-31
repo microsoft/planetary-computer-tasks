@@ -165,38 +165,6 @@
                     "spatial_resolution": 5000
                 }
             ]
-        },
-        "prcp_source": {
-            "type": "application/netcdf",
-            "roles": [
-                "data",
-                "source"
-            ],
-            "title": "Monthly Precipitation Source Data"
-        },
-        "tavg_source": {
-            "type": "application/netcdf",
-            "roles": [
-                "data",
-                "source"
-            ],
-            "title": "Monthly Average Temperature Source Data"
-        },
-        "tmax_source": {
-            "type": "application/netcdf",
-            "roles": [
-                "data",
-                "source"
-            ],
-            "title": "Monthly Maximmum Temperature Source Data"
-        },
-        "tmin_source": {
-            "type": "application/netcdf",
-            "roles": [
-                "data",
-                "source"
-            ],
-            "title": "Monthly Minimum Temperature Source Data"
         }
     },
     "sci:doi": "10.7289/V5SX6B56",
