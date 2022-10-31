@@ -1,5 +1,5 @@
 id: goes_cmi
-image: ${{ args.registry }}/pctasks-task-base:latest
+image: ${{ args.registry }}/pctasks-goes-glm:latest
 
 args:
 - registry

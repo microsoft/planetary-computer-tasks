@@ -42,6 +42,7 @@ from pctasks.ingest.constants import DEFAULT_INSERT_GROUP_SIZE
 @click.option("--matches", help="Only include files that match this regex.")
 @click.option("--limit", type=int, help="Limit the number of ndjson files to ingest.")
 @click.option("-s", "--submit", is_flag=True, help="Submit the workflow.")
+@click.option("--workflow-id", help="Workflow ID")
 @click.pass_context
 def ingest_ndjson_cmd(
     ctx: click.Context,
@@ -59,6 +60,7 @@ def ingest_ndjson_cmd(
     owner: str,
     submit: bool,
     limit: Optional[int],
+    workflow_id: Optional[str] = None,
 ) -> None:
     """Ingest Items from a folder of Ndjsons.
 
@@ -86,6 +88,7 @@ def ingest_ndjson_cmd(
         owner,
         submit,
         limit,
+        workflow_id=workflow_id,
     )
 
 

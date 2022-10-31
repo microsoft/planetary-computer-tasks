@@ -1,12 +1,13 @@
 id: goes_glm
-image: ${{ args.registry }}/pctasks-task-base:latest
+image: ${{ args.registry }}/pctasks-goes-glm:2022.10.31.0
 
 args:
 - registry
 
 code:
   src: ${{ local.path(./goes_glm.py) }}
-  requirements: ${{ local.path(./requirements.txt) }}
+  # This requirements.txt is used in the Dockerfile.
+  # requirements: ${{ local.path(./requirements.txt) }}
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -22,15 +23,20 @@ collections:
         token: ${{ pc.get_token(goeseuwest, noaa-goes16) }}
         chunks:
           options:
-            name_starts_with: GLM-L2-LCFA/
             ends_with: .nc
-            chunk_length: 30
+            chunk_length: 10000
+          splits:
+            - prefix: GLM-L2-LCFA/
+              depth: 2
       - uri: blob://goeseuwest/noaa-goes17/
         token: ${{ pc.get_token(goeseuwest, noaa-goes17) }}
         chunks:
           options:
-            name_starts_with: GLM-L2-LCFA/
             ends_with: .nc
-            chunk_length: 30
+            chunk_length: 10000
+          splits:
+            - prefix: GLM-L2-LCFA/
+              depth: 2
+
     chunk_storage:
       uri: blob://goeseuwest/noaa-goes-etl-data/pctasks/glm/

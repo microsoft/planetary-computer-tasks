@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Union
@@ -33,37 +32,20 @@ class GoesGlmCollection(Collection):
             nc_storage.download_file(nc_asset_path, tmp_nc_asset_path)
 
             # create item and geoparquet files (saved to same directory as the nc file)
-            item = stac.create_item(tmp_nc_asset_path)
-            tmp_parquets = {f.name: f.as_posix() for f in tmp_dir.glob("*.parquet")}
+            item = stac.create_item(tmp_nc_asset_path, nogeoparquet=True)
 
-            # preference: slim down the source netcdf asset
-            netcdf_asset_dict = item.assets["netcdf"].to_dict()
-            netcdf_asset_dict.pop("cube:dimensions")
-            netcdf_asset_dict.pop("cube:variables")
-            item.assets["netcdf"] = pystac.Asset.from_dict(netcdf_asset_dict)
-            item.stac_extensions.remove(DATACUBE_EXTENSION)
+        # preference: slim down the source netcdf asset
+        netcdf_asset_dict = item.assets["netcdf"].to_dict()
+        netcdf_asset_dict.pop("cube:dimensions")
+        netcdf_asset_dict.pop("cube:variables")
+        item.assets["netcdf"] = pystac.Asset.from_dict(netcdf_asset_dict)
+        item.stac_extensions.remove(DATACUBE_EXTENSION)
+        item.assets["netcdf"].roles = ["data"]
 
-            # preference: remove "cloud-optimized" role to be consistent in the PC
-            for key_suffix in ["events", "flashes", "groups"]:
-                item.assets[f"geoparquet_{key_suffix}"].roles = ["data"]
-            # preference: remove "source" role to be consistent in the PC
-            item.assets["netcdf"].roles = ["data"]
+        # preference: netCDF 4 to NetCDF4
+        item.assets["netcdf"].title = "Original NetCDF4 file"
 
-            # preference: netCDF 4 to NetCDF4
-            item.assets["netcdf"].title = "Original NetCDF4 file"
-
-            # upload geoparquets; update geoparquet and netcdf asset hrefs
-            parquet_storage = storage_factory.get_storage(f"{GEOPARQUET_CONTAINER}")
-            satellite_number = item.properties["platform"][-2:]
-            for tmp_name, tmp_path in tmp_parquets.items():
-                upload_path = (
-                    f"goes-{satellite_number}/{os.path.splitext(nc_asset_path)[0]}_{tmp_name}"
-                )
-                parquet_storage.upload_file(tmp_path, upload_path)
-
-                key = f"geoparquet_{tmp_name[:-8]}"
-                item.assets[key].href = parquet_storage.get_url(upload_path)
-
-            item.assets["netcdf"].href = nc_storage.get_url(nc_asset_path)
+        # Update with remote URL
+        item.assets["netcdf"].href = nc_storage.get_url(nc_asset_path)
 
         return [item]
