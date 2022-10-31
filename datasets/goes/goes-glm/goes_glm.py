@@ -1,5 +1,3 @@
-import sys
-import time
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Union
@@ -19,12 +17,12 @@ GEOPARQUET_CONTAINER = "blob://goeseuwest/noaa-goes-geoparquet/"
 # an "insert" rather than "upsert" action so it fails if duplicate source
 # data assets exist.
 
+
 class GoesGlmCollection(Collection):
     @classmethod
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
-        t0 = time.time()
         nc_storage, nc_asset_path = storage_factory.get_storage_for_file(asset_uri)
 
         # download the netcdf
