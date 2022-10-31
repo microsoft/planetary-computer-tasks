@@ -105,7 +105,9 @@ def create_chunks_cmd(
     help=("Only process files that have been modified at or after this datetime."),
 )
 @click.option(
-    "--is-update-workflow", is_flag=True, help="",
+    "--is-update-workflow",
+    is_flag=True,
+    help="Make an 'update' workflow by adding 'since' to the runtime arguments.",
 )
 @opt_submit
 @opt_upsert
