@@ -5,6 +5,7 @@ from tempfile import TemporaryDirectory
 from typing import Set
 
 import orjson
+import pytest
 
 from pctasks.cli.cli import setup_logging
 from pctasks.core.storage import StorageFactory
@@ -84,8 +85,13 @@ def test_process_items() -> None:
             assert len(ids) == 4
 
 
-def test_process_items_is_update_workflow() -> None:
+@pytest.mark.parametrize("has_args", [True, False])
+def test_process_items_is_update_workflow(has_args) -> None:
     ds_config = template_dataset_file(DATASET_PATH)
+    if not has_args:
+        ds_config = ds_config.copy(update={"args": None})
+        assert ds_config.args is None
+
     collection_config = ds_config.collections[0]
 
     workflow = create_process_items_workflow(
