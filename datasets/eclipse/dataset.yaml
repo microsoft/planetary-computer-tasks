@@ -1,4 +1,4 @@
-id: goes_cmi
+id: eclipse
 image: ${{ args.registry }}/pctasks-task-base:latest
 
 args:
@@ -10,7 +10,7 @@ environment:
   AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
 
 collections:
-  - id: goes-cmi
+  - id: eclipse
     template: ${{ local.path(./collection) }}
     class: pctasks.dataset.collection:PremadeItemCollection
     asset_storage:

@@ -67,24 +67,29 @@
       "description": "Calibrated PM 2.5 in \u00b5g/m\u00b3"
     },
     {
-      "name": "Humidity",
+      "name": "CalibratedO3",
       "type": "double",
-      "description": "Relative humidity"
+      "description": "Calibrated Ozone in PPB"
     },
     {
-      "name": "O3",
+      "name": "CalibratedNO2",
       "type": "double",
-      "description": "Uncalibrated Ozone in ppb"
-    },
-    {
-      "name": "NO2",
-      "type": "double",
-      "description": "Uncalibrated Nitrogen Dioxide in ppb"
+      "description": "Calibrated Nitrogen Dioxide in PPB"
     },
     {
       "name": "CO",
       "type": "double",
       "description": "Uncalibrated Carbon monoxide (CO) in PPM"
+    },
+    {
+      "name": "Temperature",
+      "type": "double",
+      "description": "Degree Celsius"
+    },
+    {
+      "name": "Humidity",
+      "type": "double",
+      "description": "Relative humidity"
     },
     {
       "name": "BatteryLevel",
