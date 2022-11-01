@@ -104,6 +104,11 @@ def create_chunks_cmd(
     "--since",
     help=("Only process files that have been modified at or after this datetime."),
 )
+@click.option(
+    "--is-update-workflow",
+    is_flag=True,
+    help="Make an 'update' workflow by adding 'since' to the runtime arguments.",
+)
 @opt_submit
 @opt_upsert
 @opt_workflow_id
@@ -122,6 +127,7 @@ def process_items_cmd(
     submit: bool = False,
     upsert: bool = False,
     workflow_id: Optional[str] = None,
+    is_update_workflow: bool = False,
 ) -> None:
     """Generate the workflow to create and ingest items.
 
@@ -152,6 +158,7 @@ def process_items_cmd(
         submit=submit,
         upsert=upsert,
         workflow_id=workflow_id,
+        is_update_workflow=is_update_workflow,
     )
 
 

@@ -5,6 +5,7 @@ from tempfile import TemporaryDirectory
 from typing import Set
 
 import orjson
+import pytest
 
 from pctasks.cli.cli import setup_logging
 from pctasks.core.storage import StorageFactory
@@ -86,3 +87,29 @@ def test_process_items() -> None:
                         validate_stac(item)
                         ids.add(item["id"])
                 assert len(ids) == 4
+
+
+@pytest.mark.parametrize("has_args", [True, False])
+def test_process_items_is_update_workflow(has_args) -> None:
+    ds_config = template_dataset_file(DATASET_PATH)
+    if not has_args:
+        ds_config = ds_config.copy(update={"args": None})
+        assert ds_config.args is None
+
+    collection_config = ds_config.collections[0]
+
+    workflow = create_process_items_workflow(
+        ds_config,
+        collection_config,
+        chunkset_id="${{ args.since }}",
+        ingest=False,
+        target="test",
+        is_update_workflow=True,
+    )
+    assert "since" in workflow.args
+    assert (
+        workflow.jobs["create-splits"]
+        .tasks[0]
+        .args["inputs"][0]["chunk_options"]["since"]
+        == "${{ args.since }}"
+    )

@@ -282,3 +282,21 @@ Also note that, because our dataset has multiple collections, you need to pass i
 option is not required. The `--submit` option will submit the generated workflow to PCTasks;
 if not supplied, then the workflow will be printed to stdout, which can be submitted later through
 the `pctasks workflow submit` command.
+
+## Dynamic updates
+
+You generate a workflow from a `dataset.yaml` to use in dynamic updates with the
+`--is-update-workflow` flag to `pctasks dataset`. This will append a `--since` argument
+to the workflow's `args`.
+
+You can register the generated workflow with pctasks:
+
+```shell
+> pctasks workflow update ...
+```
+
+And then set up a cron job or some other system to call it, providing `--since` as an arguemnt
+
+```shell
+> pctasks workflow submit ... --arg since $(date -d '-1 day' '+%Y-%m-%dT%H:%M:%S')
+```

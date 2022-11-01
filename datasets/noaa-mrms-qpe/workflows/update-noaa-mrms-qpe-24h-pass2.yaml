@@ -1,0 +1,110 @@
+name: Process items for noaa-mrms-qpe-24h-pass2
+tokens:
+  mrms:
+    containers:
+      mrms:
+        token: ${{ pc.get_token(mrms, mrms) }}
+target_environment: green
+args:
+- registry
+- since
+jobs:
+  create-splits:
+    id: create-splits
+    tasks:
+    - id: create-splits
+      image: ${{ args.registry }}/pctasks-task-base:latest
+      code:
+        src: datasets/noaa-mrms-qpe/noaa_mrms_qpe.py
+        requirements: datasets/noaa-mrms-qpe/requirements.txt
+      task: noaa_mrms_qpe:NoaaMrmsQpeCollection.create_splits_task
+      args:
+        inputs:
+        - uri: blob://mrms/mrms
+          splits:
+          - depth: 1
+          sas_token: ${{ pc.get_token(mrms, mrms) }}
+          chunk_options:
+            chunk_length: 48
+            name_starts_with: MultiSensor_QPE_24H_Pass2_00.00
+            extensions:
+            - .gz
+            list_folders: false
+            chunk_file_name: uris-list
+            chunk_extension: .csv
+            since: ${{ args.since }}
+        options: {}
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+  create-chunks:
+    id: create-chunks
+    tasks:
+    - id: create-chunks
+      image: ${{ args.registry }}/pctasks-task-base:latest
+      code:
+        src: datasets/noaa-mrms-qpe/noaa_mrms_qpe.py
+        requirements: datasets/noaa-mrms-qpe/requirements.txt
+      task: pctasks.dataset.chunks.task:create_chunks_task
+      args:
+        src_uri: ${{ item.uri }}
+        dst_uri: blob://mrms/mrms-etl-data/qpe-24h-pass2/${{ args.since }}/assets
+        options: ${{ item.chunk_options }}
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+    foreach:
+      items: ${{ jobs.create-splits.tasks.create-splits.output.splits }}
+      flatten: true
+    needs: create-splits
+  process-chunk:
+    id: process-chunk
+    tasks:
+    - id: create-items
+      image: ${{ args.registry }}/pctasks-task-base:latest
+      code:
+        src: datasets/noaa-mrms-qpe/noaa_mrms_qpe.py
+        requirements: datasets/noaa-mrms-qpe/requirements.txt
+      task: noaa_mrms_qpe:NoaaMrmsQpeCollection.create_items_task
+      args:
+        asset_chunk_info:
+          uri: ${{ item.uri }}
+          chunk_id: ${{ item.chunk_id }}
+        item_chunkset_uri: blob://mrms/mrms-etl-data/qpe-24h-pass2/${{ args.since
+          }}/items
+        collection_id: noaa-mrms-qpe-24h-pass2
+        options:
+          skip_validation: false
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+    - id: ingest-items
+      image_key: ingest
+      task: pctasks.ingest_task.task:ingest_task
+      args:
+        content:
+          type: Ndjson
+          uris:
+          - ${{tasks.create-items.output.ndjson_uri}}
+        options:
+          insert_group_size: 5000
+          insert_only: false
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+    foreach:
+      items: ${{ jobs.create-chunks.tasks.create-chunks.output.chunks }}
+      flatten: true
+    needs: create-chunks
+schema_version: 1.0.0
+id: noaa_mrms_qpe-noaa-mrms-qpe-24h-pass2-process-items-update
+dataset: noaa_mrms_qpe
+
