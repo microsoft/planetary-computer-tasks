@@ -50,6 +50,7 @@ resource "azurerm_subnet" "k8snode_subnet" {
     "Microsoft.Storage",
     "Microsoft.KeyVault",
     "Microsoft.ContainerRegistry",
+    "Microsoft.AzureCosmosDB",
   ]
 }
 
