@@ -19,8 +19,8 @@ Therefore, the data files for the first snapshot are at
 The Parquet file schema is as described below. 
 
 ## Additional Documentation
-For details on Calibration of Pm2.5, O3 and NO2, please see
-[link to Calibration pdf]
+
+For details on Calibration of Pm2.5, O3 and NO2, please see [this PDF](https://ai4edatasetspublicassets.blob.core.windows.net/assets/aod_docs/Calibration_Doc_v1.1.pdf).
 
 ## License and attribution
 Please cite: Daepp, Cabral, Ranganathan et al. (2022) [Eclipse: An End-to-End Platform for Low-Cost, Hyperlocal Environmental Sensing in Cities. ACM/IEEE Information Processing in Sensor Networks. Milan, Italy.](https://www.microsoft.com/en-us/research/uploads/prod/2022/05/ACM_2022-IPSN_FINAL_Eclipse.pdf)
