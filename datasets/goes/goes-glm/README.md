@@ -16,6 +16,9 @@ $ pctasks dataset process-items '${{ args.since }}' \
     > datasets/goes/goes-glm/workflows/goes-glm-update.yaml
 ```
 
+As an optimization, I manually appended `2022` to the `prefix`. That will require updating in the new year. Longer-term pctasks should
+optionally do that dynamically from `since`.
+
 And registered with
 
 ```console
