@@ -73,10 +73,7 @@ def _prompt_for_settings(existing: Optional[ClientSettings] = None) -> ClientSet
     )
 
 
-@click.command(name="create")
-@click.argument("profile")
-@click.pass_context
-def create_profile_command(ctx: click.Context, profile: str) -> None:
+def create_profile(ctx: click.Context, profile: str) -> None:
     """Creates a new profile based on prompted input"""
     settings_config = SettingsConfig.get(profile=profile)
     settings_file = settings_config.get_settings_file()
@@ -103,10 +100,7 @@ def create_profile_command(ctx: click.Context, profile: str) -> None:
     rprint(f"\n[green]Profile [bold]{profile}[/bold] created![/green]")
 
 
-@click.command(name="edit")
-@click.argument("profile")
-@click.pass_context
-def edit_profile_command(ctx: click.Context, profile: str) -> None:
+def edit_profile(ctx: click.Context, profile: str) -> None:
     """Modifies an existing profile based on prompted input"""
     settings_config = SettingsConfig.get(profile=profile)
     settings_file = settings_config.get_settings_file()
@@ -136,10 +130,7 @@ def edit_profile_command(ctx: click.Context, profile: str) -> None:
     print()
 
 
-@click.command(name="set")
-@click.argument("profile")
-@click.pass_context
-def set_profile_command(ctx: click.Context, profile: str) -> None:
+def set_profile(ctx: click.Context, profile: str) -> None:
     """Sets the profile to be used by pctasks.
 
     The profile set by this command can still be overridden by the
@@ -162,10 +153,7 @@ def set_profile_command(ctx: click.Context, profile: str) -> None:
     print()
 
 
-@click.command(name="show")
-@click.argument("profile")
-@click.pass_context
-def show_profile_command(ctx: click.Context, profile: str) -> None:
+def show_profile(ctx: click.Context, profile: str) -> None:
     """Shows the values of the settings for PROFILE"""
     settings_config = SettingsConfig.get(profile=profile)
     if profile not in settings_config.get_profile_names():
@@ -179,8 +167,7 @@ def show_profile_command(ctx: click.Context, profile: str) -> None:
     print()
 
 
-@click.command(name="get")
-def get_profile_command() -> None:
+def get_profile() -> None:
     """Gets the profile that has been set to be used by pctasks."""
     settings_config = SettingsConfig.get()
     if settings_config.is_profile_from_environment:
@@ -204,8 +191,7 @@ def get_profile_command() -> None:
             print()
 
 
-@click.command(name="list")
-def list_profiles_command() -> None:
+def list_profiles() -> None:
     """Lists all available profiles."""
     settings_config = SettingsConfig.get()
     current_profile = settings_config.profile
@@ -231,16 +217,3 @@ def list_profiles_command() -> None:
         table.add_row(profile_out, endpoint)
     console = Console()
     console.print(table)
-
-
-@click.group(name="profile")
-def profile_cmd() -> None:
-    pass
-
-
-profile_cmd.add_command(create_profile_command)
-profile_cmd.add_command(edit_profile_command)
-profile_cmd.add_command(set_profile_command)
-profile_cmd.add_command(show_profile_command)
-profile_cmd.add_command(get_profile_command)
-profile_cmd.add_command(list_profiles_command)
