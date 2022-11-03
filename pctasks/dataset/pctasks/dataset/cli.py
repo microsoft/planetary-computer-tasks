@@ -162,6 +162,63 @@ def process_items_cmd(
     )
 
 
+@click.command("reprocess-chunkset", help="""\
+Generate a workflow for re-running a chunkset from a process-items task.
+
+``chunkset_id`` controls where the output items are written. Use the
+same chunkset ID as from `process-items` to write to the same location.
+
+``asset-uri`` should be the pctasks style URI to `uris-list.csv` file. For
+example::
+
+blob://<account>/<container>/pctasks/<prefix>/assets/all/<chunkset_id>/uris-list.csv.
+""")
+@click.argument("chunkset_id")
+@click.argument("asset-uri")
+@opt_ds_config
+@opt_collection
+@opt_args
+@click.option(
+    "-t",
+    "--target",
+    help="The target environment to process the items in.",
+)
+@click.option("--no-ingest", is_flag=True, help="Create ndjsons, but don't ingest.")
+@opt_submit
+@opt_upsert
+@opt_workflow_id
+@click.pass_context
+def reprocess_chunkset_cmd(
+    ctx: click.Context,
+    chunkset_id: str,
+    asset_uri: str,
+    dataset: Optional[str],
+    collection: Optional[str],
+    arg: List[Tuple[str, str]] = [],
+    target: Optional[str] = None,
+    no_ingest: bool = False,
+    submit: bool = False,
+    upsert: bool = False,
+    workflow_id: Optional[str] = None,
+) -> None:
+    """"""
+    from . import _cli
+
+    return _cli.reprocess_chunkset_cmd(
+        ctx,
+        chunkset_id,
+        asset_uri,
+        dataset,
+        collection,
+        arg=arg,
+        target=target,
+        no_ingest=no_ingest,
+        submit=submit,
+        upsert=upsert,
+        workflow_id=workflow_id,
+    )
+
+
 @click.command("ingest-collection")
 @opt_ds_config
 @opt_collection
@@ -227,7 +284,9 @@ def list_collections_cmd(
     return _cli.list_collections_cmd(ctx, dataset, arg=arg)
 
 
+
 dataset_cmd.add_command(create_chunks_cmd)
 dataset_cmd.add_command(process_items_cmd)
+dataset_cmd.add_command(reprocess_chunkset_cmd)
 dataset_cmd.add_command(ingest_collection_cmd)
 dataset_cmd.add_command(list_collections_cmd)

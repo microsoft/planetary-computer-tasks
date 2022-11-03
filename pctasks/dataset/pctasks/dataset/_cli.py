@@ -18,6 +18,7 @@ from pctasks.dataset.workflow import (
     create_chunks_workflow,
     create_ingest_collection_workflow,
     create_process_items_workflow,
+    create_reprocess_chunkset_workflow,
 )
 
 logger = logging.getLogger(__name__)
@@ -85,12 +86,70 @@ def create_chunks_cmd(
     )
 
 
+def _configs_from_cli(dataset: Optional[str], arg: List[Tuple[str, str]], collection: Optional[str]):
+    try:
+        ds_config = template_dataset_file(dataset, dict(arg))
+    except (MarkedYAMLError, YamlValidationError) as e:
+        raise click.ClickException(f"Invalid dataset config.\n{e}")
+    except FileNotFoundError:
+        raise click.ClickException(
+            "No dataset config found. Use --dataset to specify "
+            f"or name your config {DEFAULT_DATASET_YAML_PATH}."
+        )
+    if not ds_config:
+        raise click.ClickException("No dataset config found.")
+
+    try:
+        collection_config = ds_config.get_collection(collection)
+    except MultipleCollectionsError as e:
+        raise _handle_multiple_collections(e)
+    return ds_config, collection_config
+
+
+
+def reprocess_chunkset_cmd(
+    ctx: click.Context,
+    chunk_id: str,
+    asset_uri: str,
+    dataset: Optional[str],
+    collection: Optional[str],
+    arg: Optional[List[Tuple[str, str]]] = None,
+    target: Optional[str] = None,
+    no_ingest: bool = False,
+    submit: bool = False,
+    upsert: bool = False,
+    workflow_id: Optional[str] = None,
+):
+    arg = arg or []
+    ds_config, collection_config = _configs_from_cli(dataset, arg, collection)
+
+    workflow_def = create_reprocess_chunkset_workflow(
+        ds_config,
+        collection_config,
+        chunk_id,
+        asset_uri,
+        ingest=not no_ingest,
+        ingest_options=None,
+        target=target,
+        tags=None,
+    )
+
+    cli_handle_workflow(
+        ctx,
+        workflow_def,
+        workflow_id=workflow_id,
+        upsert=upsert,
+        upsert_and_submit=submit,
+        args={a[0]: a[1] for a in arg},
+    )
+
+
 def process_items_cmd(
     ctx: click.Context,
     chunkset_id: str,
     dataset: Optional[str],
     collection: Optional[str],
-    arg: List[Tuple[str, str]] = [],
+    arg: Optional[List[Tuple[str, str]]] = None,
     target: Optional[str] = None,
     no_ingest: bool = False,
     use_existing_chunks: bool = False,
@@ -110,22 +169,8 @@ def process_items_cmd(
     Output: If -s is present, will print the run ID to stdout. Otherwise,
     will print the workflow yaml.
     """
-    try:
-        ds_config = template_dataset_file(dataset, dict(arg))
-    except (MarkedYAMLError, YamlValidationError) as e:
-        raise click.ClickException(f"Invalid dataset config.\n{e}")
-    except FileNotFoundError:
-        raise click.ClickException(
-            "No dataset config found. Use --dataset to specify "
-            f"or name your config {DEFAULT_DATASET_YAML_PATH}."
-        )
-    if not ds_config:
-        raise click.ClickException("No dataset config found.")
-
-    try:
-        collection_config = ds_config.get_collection(collection)
-    except MultipleCollectionsError as e:
-        raise _handle_multiple_collections(e)
+    arg = arg or []
+    ds_config, collection_config = _configs_from_cli(dataset, arg, collection)
 
     workflow_def = create_process_items_workflow(
         dataset=ds_config,
@@ -230,3 +275,5 @@ def list_collections_cmd(
 
     for collection in ds_config.collections:
         cli_output(collection.id)
+
+

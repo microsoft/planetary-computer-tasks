@@ -80,6 +80,80 @@ def create_chunks_workflow(
     )
 
 
+def create_reprocess_chunkset_workflow(
+    dataset: DatasetDefinition,
+    collection: CollectionDefinition,
+    chunk_id: str,
+    asset_uri: str,
+    force: bool = False,
+    ingest: bool = True,
+    create_items_options: Optional[CreateItemsOptions] = None,
+    ingest_options: Optional[IngestOptions] = None,
+    target: Optional[str] = None,
+    tags: Optional[Dict[str, str]] = None,
+):
+    items_tasks: List[TaskDefinition] = []
+
+    asset_chunk_info=ChunkInfo(
+        uri=asset_uri, chunk_id=chunk_id,
+    )
+
+    create_items_task = CreateItemsTaskConfig.from_collection(
+        dataset,
+        collection,
+        chunkset_id=chunk_id,
+        asset_chunk_info=asset_chunk_info,
+        options=create_items_options,
+        environment=dataset.environment,
+        tags=tags,
+    )
+    items_tasks.append(create_items_task)
+    # TODO: deduplicate everything below this.
+
+    if ingest:
+        ingest_items_task = IngestTaskConfig.create(
+            "ingest-items",
+            content=IngestNdjsonInput(
+                uris=["${{" + f"tasks.{create_items_task.id}.output.ndjson_uri" + "}}"],
+            ),
+            target=target,
+            environment=dataset.environment,
+            tags=tags,
+            options=ingest_options,
+        )
+        items_tasks.append(ingest_items_task)
+
+    process_items_job = JobDefinition(
+        id="process-chunk",
+        # needs=chunks_job_id,
+        tasks=items_tasks,
+        # foreach=ForeachConfig(
+        #     items="${{ "
+        #     + (f"jobs.{chunks_job_id}." f"tasks.{chunks_job_id}.output.chunks")
+        #     + " }}"
+        # ),
+    )
+
+    id = f"{collection.id}-reprocess-items"
+    if collection.id != dataset.id:
+        id = f"{dataset.id}-{id}"
+    workflow_definition = WorkflowDefinition(
+        id=id,
+        name=f"Process items for {collection.id}",
+        dataset=dataset.id,
+        tokens=collection.get_tokens(),
+        args=dataset.args,
+        jobs={
+            process_items_job.get_id(): process_items_job,
+        },
+        target_environment=target,
+    )
+
+    return workflow_definition
+
+
+
+
 def create_process_items_workflow(
     dataset: DatasetDefinition,
     collection: CollectionDefinition,
