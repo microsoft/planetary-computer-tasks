@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Union
@@ -18,6 +19,13 @@ GEOPARQUET_CONTAINER = "blob://goeseuwest/noaa-goes-geoparquet/"
 # data assets exist.
 
 
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler()
+logger.setLevel(logging.INFO)
+handler.setLevel(logging.INFO)
+logger.addHandler(handler)
+
+
 class GoesGlmCollection(Collection):
     @classmethod
     def create_item(
@@ -32,7 +40,15 @@ class GoesGlmCollection(Collection):
             nc_storage.download_file(nc_asset_path, tmp_nc_asset_path)
 
             # create item and geoparquet files (saved to same directory as the nc file)
-            item = stac.create_item(tmp_nc_asset_path, nogeoparquet=True)
+            try:
+                item = stac.create_item(tmp_nc_asset_path, nogeoparquet=True)
+            except OSError:
+                # Some invalid NetCDF assets. For example
+                # https://goeseuwest.blob.core.windows.net/noaa-goes17/GLM-L2-LCFA/2021/088/21/OR_GLM-L2-LCFA_G17_s20210882130200_e20210882130404_c20210882130418.nc   # noqa: E501
+                # last modified at 2021-09-02T13:15:26.000Z
+                logger.exception("Possibly invalid NetCDF file at %s", asset_uri)
+                # TODO: need some mechanism for signaling ignore this.
+                raise
 
         # preference: slim down the source netcdf asset
         netcdf_asset_dict = item.assets["netcdf"].to_dict()

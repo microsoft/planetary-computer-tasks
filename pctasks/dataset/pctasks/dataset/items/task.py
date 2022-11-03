@@ -1,7 +1,9 @@
 import logging
 import os
+import textwrap
 import time
-from typing import Callable, List, Union
+import traceback
+from typing import Callable, List, Tuple, Union
 
 import orjson
 import pystac
@@ -19,6 +21,31 @@ logger = logging.getLogger(__name__)
 class CreateItemsError(Exception):
     pass
 
+
+class CreateItemsMultiError(Exception):
+    def __init__(self, asset_uris: List[str], rendered_tracebacks: List[str]):
+        self.asset_uris = asset_uris
+        self.rendered_tracebacks = rendered_tracebacks
+
+    def __repr__(self):
+        n = len(self.asset_uris)
+        if n:
+            sample_asset_uri = self.asset_uris[0]
+            sample_traceback = self.rendered_tracebacks[0]
+        else:
+            sample_asset_uri = sample_traceback = None
+
+        return textwrap.dedent("""\
+        {n} failures during item creation.
+        
+        Sample asset uri:
+
+            {sample_asset_uri}
+
+        Sample traceback:
+
+            {sample_traceback}
+        """).format(n=n, sample_asset_uri=sample_asset_uri, sample_traceback=sample_traceback)
 
 CreateItemFunc = Callable[
     [str, StorageFactory], Union[List[pystac.Item], WaitTaskResult]
@@ -50,6 +77,7 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
     ) -> Union[List[pystac.Item], WaitTaskResult]:
         storage_factory = context.storage_factory
         results: List[pystac.Item] = []
+        exceptions: List[Tuple[str, str]] = []
 
         def _validate(items: List[pystac.Item]) -> None:
             if not args.options.skip_validation:
@@ -91,6 +119,8 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                     f"{end_time - start_time:.2f}s"
                 )
             except Exception as e:
+                logger.exception("Failed to create item from %s", args.asset_uri)
+                exceptions.append()
                 raise CreateItemsError(
                     f"Failed to create item from {args.asset_uri}"
                 ) from e
@@ -122,10 +152,12 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                         f" - {asset_uri} "
                         f"({i+1} of {asset_count})"
                     )
-                except Exception as e:
-                    raise CreateItemsError(
-                        f"Failed to create item from {asset_uri}"
-                    ) from e
+                except Exception:
+                    logger.exception("Failed to create items from %s", asset_uri)
+                    exceptions.append((asset_uri, traceback.format_exc()))
+                    # We'll continue on processing items here. We'll re-raise the
+                    # failures at the end.
+                    continue
                 if isinstance(result, WaitTaskResult):
                     return result
                 else:
@@ -135,6 +167,9 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                         _validate(result)
                         _ensure_collection(result)
                         results.extend(result)
+            if exceptions:
+                asset_uris, rendered_tracebacks = zip(*exceptions)
+                raise CreateItemsMultiError(asset_uris, rendered_tracebacks)
 
         else:
             # Should be prevented by validator
