@@ -120,7 +120,7 @@ environment:
 
 The `environment` provides the ability to inject environment variables into each task that is issued for the dataset. In this case, we're injecting the Azure SDK credentials for tasks. These environment variables will be provided to each task, regardless
 of whether they will be utilized in any specific task. In this case, the variable values are using the `${{ secrets.* }}` template
-group to retrieve secret values. See [](../user_guide/secrets) for more details about secrets.
+group to retrieve secret values. See [](../user_guide/templating.md#secrets) for more details about secrets.
 
 ### collections
 
@@ -252,7 +252,6 @@ class ChesapeakeCollection(Collection):
 See the [chesapeake-lulc stactools package](https://github.com/stactools-packages/chesapeake-lulc) for an example
 of how to create a stactools package. It's recommended that any public dataset ingestion starts with a stactools package,
 which allows community involvement in the generation of STAC for public datasets.
-
 
 ## requirements.txt
 

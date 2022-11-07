@@ -24,17 +24,20 @@ OPTIONAL. The workflow ID. If not provided, you will need to provide the ID upon
 REQUIRED. The dataset_id for the dataset this workflow pertains to.
 
 Example:
+
 ```yaml
 dataset: goes-r
 ```
 
 (arguments)=
+
 ### args
 
 Arguments define the required values that should be supplied when a workflow is submitted. The arguments defined in the configuration
 is a list of variable names that can then be used in templates throughout the workflow configuration.
 
 Example:
+
 ```yaml
 args:
 - registry
@@ -43,14 +46,14 @@ args:
 
 For the above, whenever this workflow is submitted, the API caller will need to supply values for the `registry` and `platform` arguments.
 
-
 ### tokens
 
 The `tokens` section allows the workflow to define Azure Storage Shared Access Signature (SAS) tokens for storage accounts and containers.
 These tokens can be supplied directly (not recommended), through a template function like `pc.get_token(...)` (see [](pc_template_group) docs),
-or through a secret (see [](../user_guide/secrets)).
+or through a secret (see [](../user_guide/templating.md#secrets)).
 
 Example:
+
 ```yaml
 tokens:
   sentinel2l2a01:
@@ -72,6 +75,7 @@ The `foreach` configuration is the key to distributed processing of data using P
 A `foreach` section defines the `items` that will be used to generate "sub-jobs". The value or properties of each element of `items` can be accessed through the [](item_template_group) template group. Each of the sub-jobs will be executed in parallel, with each task contained in the sub-jobs executed sequentially.
 
 Example:
+
 ```yaml
 jobs:
   job1:
@@ -86,6 +90,7 @@ More useful then specifying a list of items, you can use the output of a previou
 distribute processing over the results.
 
 Example:
+
 ```yaml
 jobs:
   job1:
@@ -99,7 +104,6 @@ jobs:
 When viewing records of a run, you'll notice that the job names have an index. For instance, in the above
 example, there would be no `job2`, but instead a set of jobs named `job2[0]`, `job2[1]`, etc. Each of the
 sub-jobs execute as if they were a distinct PCTasks job after being templated with the `foreach`.
-
 
 ## Task definition
 
@@ -134,6 +138,7 @@ the task. It must at least have `pctasks` installed. And, if no `code` section i
 the module referenced in the `task` definition on the PYTHONPATH.
 
 Example:
+
 ```yaml
 image: pccomponents.azurecr.io/pctasks-task-base:latest
 ```
@@ -142,6 +147,7 @@ An `image_key` must be registered with the PCTask deployment by an admin - it is
 defined based on a single key.
 
 Example
+
 ```yaml
 image_key: ingest
 ```
@@ -160,7 +166,7 @@ against the input model at task runtime.
 ### environment
 
 You can define key/value pairs to load into the environment before running the task. This is useful for setting things like Azure SDK
-credentials using [](../user_guide/secrets), or anything else that is required to run the task.
+credentials using [](../user_guide/templating.md#secrets), or anything else that is required to run the task.
 
 ### tags
 
