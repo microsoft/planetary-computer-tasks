@@ -91,7 +91,7 @@ def create_reprocess_chunkset_workflow(
     ingest_options: Optional[IngestOptions] = None,
     target: Optional[str] = None,
     tags: Optional[Dict[str, str]] = None,
-):
+) -> WorkflowDefinition:
     items_tasks: List[TaskDefinition] = []
 
     asset_chunk_info=ChunkInfo(

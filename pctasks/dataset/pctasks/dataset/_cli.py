@@ -11,7 +11,11 @@ from pctasks.core.utils import map_opt
 from pctasks.core.yaml import YamlValidationError
 from pctasks.dataset.chunks.models import ChunkOptions
 from pctasks.dataset.constants import DEFAULT_DATASET_YAML_PATH
-from pctasks.dataset.models import MultipleCollectionsError
+from pctasks.dataset.models import (
+    MultipleCollectionsError,
+    DatasetDefinition,
+    CollectionDefinition,
+)
 from pctasks.dataset.splits.models import CreateSplitsOptions
 from pctasks.dataset.template import template_dataset_file
 from pctasks.dataset.workflow import (
@@ -86,7 +90,9 @@ def create_chunks_cmd(
     )
 
 
-def _configs_from_cli(dataset: Optional[str], arg: List[Tuple[str, str]], collection: Optional[str]):
+def _configs_from_cli(
+    dataset: Optional[str], arg: List[Tuple[str, str]], collection: Optional[str]
+) -> Tuple[DatasetDefinition, CollectionDefinition]:
     try:
         ds_config = template_dataset_file(dataset, dict(arg))
     except (MarkedYAMLError, YamlValidationError) as e:
@@ -106,7 +112,6 @@ def _configs_from_cli(dataset: Optional[str], arg: List[Tuple[str, str]], collec
     return ds_config, collection_config
 
 
-
 def reprocess_chunkset_cmd(
     ctx: click.Context,
     chunk_id: str,
@@ -119,7 +124,7 @@ def reprocess_chunkset_cmd(
     submit: bool = False,
     upsert: bool = False,
     workflow_id: Optional[str] = None,
-):
+) -> None:
     arg = arg or []
     ds_config, collection_config = _configs_from_cli(dataset, arg, collection)
 
@@ -275,5 +280,3 @@ def list_collections_cmd(
 
     for collection in ds_config.collections:
         cli_output(collection.id)
-
-

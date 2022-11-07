@@ -27,7 +27,7 @@ class CreateItemsMultiError(Exception):
         self.asset_uris = asset_uris
         self.rendered_tracebacks = rendered_tracebacks
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         n = len(self.asset_uris)
         if n:
             sample_asset_uri = self.asset_uris[0]
@@ -130,7 +130,6 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                 )
             except Exception as e:
                 logger.exception("Failed to create item from %s", args.asset_uri)
-                exceptions.append()
                 raise CreateItemsError(
                     f"Failed to create item from {args.asset_uri}"
                 ) from e
@@ -179,7 +178,7 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                         results.extend(result)
             if exceptions and raise_exceptions:
                 asset_uris, rendered_tracebacks = zip(*exceptions)
-                raise CreateItemsMultiError(asset_uris, rendered_tracebacks)
+                raise CreateItemsMultiError(list(asset_uris), list(rendered_tracebacks))
 
         else:
             # Should be prevented by validator
