@@ -52,7 +52,7 @@ class Collection(ABC):
 
     @classmethod
     def create_items_task(cls) -> Task:
-        return CreateItemsTask(cls.create_item)
+        return CreateItemsTask(cls.create_item, cls.deduplicate_items)
 
     @classmethod
     def create_splits_task(cls) -> Task:
@@ -61,6 +61,23 @@ class Collection(ABC):
     @classmethod
     def create_chunks_task(cls) -> Task:
         return CreateChunksTask()
+
+    @classmethod
+    def deduplicate_items(cls, items: List[pystac.Item]) -> List[pystac.Item]:
+        """
+        Deduplicate items in a chunkset.
+
+        This will be called by :meth:`CreateItemsTask.run` as part of processing a chunkset,
+        to ensure that chunksets provided to pgstac for ingest are valid (it requires no
+        duplicate item IDs in a chunkset).
+        
+        By default, a ``ValueError`` is raised if there are any duplicates in a chunkset.
+        Subclasses are free to override this method to use dataset-specific logic to
+        pick the "right" item.
+        """
+        if len(items) != len(set(x.id for x in items)):
+            raise ValueError("Duplicate IDs detected in chunkset")
+        return items
 
 
 class PremadeItemCollection(Collection):

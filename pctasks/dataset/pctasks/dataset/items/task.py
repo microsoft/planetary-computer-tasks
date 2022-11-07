@@ -55,6 +55,8 @@ class CreateItemsMultiError(Exception):
 CreateItemFunc = Callable[
     [str, StorageFactory], Union[List[pystac.Item], WaitTaskResult]
 ]
+DeduplicateItemsFunc = Callable[[List[pystac.Item]], list[pystac.Item]]
+
 
 
 class OutputNDJSONRequired(Exception):
@@ -73,9 +75,11 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
     def __init__(
         self,
         create_item: CreateItemFunc,
+        deduplicate_items: DeduplicateItemsFunc,
     ) -> None:
         super().__init__()
         self._create_item = create_item
+        self._deduplicate_items = deduplicate_items
 
     def create_items(
         self, args: CreateItemsInput, context: TaskContext
@@ -199,6 +203,9 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
             return results
         else:
             output: CreateItemsOutput
+            # potentially deduplicate
+            results = self._deduplicate_items(results)
+
             # Save ndjson
 
             if not input.item_chunkset_uri:

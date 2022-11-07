@@ -1,3 +1,4 @@
+import itertools
 import logging
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -65,3 +66,19 @@ class GoesGlmCollection(Collection):
         item.assets["netcdf"].href = nc_storage.get_url(nc_asset_path)
 
         return [item]
+
+    @classmethod
+    def deduplicate_items(cls, items: List[pystac.Item]) -> List[pystac.Item]:
+        logger.info("Deduplicating items")
+        items = sorted(items, key=lambda x: x.id)
+        items2 = []
+        for _, v in itertools.groupby(items, key=lambda x: x.id):
+            v2 = list(v)
+            # the NetCDF file includes the processing datetime.
+            # maximizing that will give the most recent item.
+            item = max(v2, key=lambda x: x.assets["netcdf"].href)
+            items2.append(item)
+
+        logger.info("Deduplicated items. %s -> %s", len(items), len(items2))
+        return items2
+
