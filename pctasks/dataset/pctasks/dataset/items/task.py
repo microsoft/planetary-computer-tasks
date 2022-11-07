@@ -35,9 +35,10 @@ class CreateItemsMultiError(Exception):
         else:
             sample_asset_uri = sample_traceback = None
 
-        return textwrap.dedent("""\
+        return textwrap.dedent(
+            """\
         {n} failures during item creation.
-        
+
         Sample asset uri:
 
             {sample_asset_uri}
@@ -45,7 +46,11 @@ class CreateItemsMultiError(Exception):
         Sample traceback:
 
             {sample_traceback}
-        """).format(n=n, sample_asset_uri=sample_asset_uri, sample_traceback=sample_traceback)
+        """
+        ).format(
+            n=n, sample_asset_uri=sample_asset_uri, sample_traceback=sample_traceback
+        )
+
 
 CreateItemFunc = Callable[
     [str, StorageFactory], Union[List[pystac.Item], WaitTaskResult]
