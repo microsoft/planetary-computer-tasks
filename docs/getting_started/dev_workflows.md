@@ -104,13 +104,14 @@ Once it completes, you should see something like:
 |  _/| (__   | |  / _` |(_-/| / /(_-/
 |_|   \___|  |_|  \__/_|/__/|_\_\/__/
 
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┓
-┃                                     ┃ status         ┃
-┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━┩
-│ Workflow: List log files in Azurite │ ✅ Completed   │
-│  - Job: list-logs-job               │  ✅ Completed  │
-│     - Task:list-logs-task           │   ✅ Completed │
-└─────────────────────────────────────┴────────────────┘
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓
+┃                            ┃ status       ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩
+│ Workflow: list-logs        │ ✅ Completed │
+│   Job: list-logs-job       │ ✅ Completed │
+│     Partition: 0           │ ✅ Completed │
+│       Task: list-logs-task │ ✅ Completed │
+└────────────────────────────┴──────────────┘
 ```
 
 ### Argo logs
