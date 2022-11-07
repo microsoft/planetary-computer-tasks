@@ -47,7 +47,7 @@ class GoesGlmCollection(Collection):
                 # https://goeseuwest.blob.core.windows.net/noaa-goes17/GLM-L2-LCFA/2021/088/21/OR_GLM-L2-LCFA_G17_s20210882130200_e20210882130404_c20210882130418.nc   # noqa: E501
                 # last modified at 2021-09-02T13:15:26.000Z
                 logger.exception("Possibly invalid NetCDF file at %s", asset_uri)
-                # TODO: need some mechanism for signaling ignore this.
+                # TODO: need some mechanism for signaling ignore this?
                 raise
 
         # preference: slim down the source netcdf asset

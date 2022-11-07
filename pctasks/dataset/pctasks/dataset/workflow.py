@@ -134,7 +134,7 @@ def create_reprocess_chunkset_workflow(
         # ),
     )
 
-    id = f"{collection.id}-reprocess-items"
+    id = f"{collection.id}-reprocess-chunkset"
     if collection.id != dataset.id:
         id = f"{dataset.id}-{id}"
     workflow_definition = WorkflowDefinition(

@@ -78,6 +78,7 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
         storage_factory = context.storage_factory
         results: List[pystac.Item] = []
         exceptions: List[Tuple[str, str]] = []
+        raise_exceptions = False
 
         def _validate(items: List[pystac.Item]) -> None:
             if not args.options.skip_validation:
@@ -167,7 +168,7 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                         _validate(result)
                         _ensure_collection(result)
                         results.extend(result)
-            if exceptions:
+            if exceptions and raise_exceptions:
                 asset_uris, rendered_tracebacks = zip(*exceptions)
                 raise CreateItemsMultiError(asset_uris, rendered_tracebacks)
 
