@@ -1,6 +1,6 @@
 # Frequently Asked Questions
 
-### When to use docker-compose vs cluster for workflows?
+## When to use docker-compose vs cluster for workflows?
 
 PCTasks has two mechanisms to submit workflows to the development environment: one that runs through the docker-compose services
 started via `scripts/server`, and another that runs inside the Kind cluster. The docker-compose setup executes workflows inside the server
