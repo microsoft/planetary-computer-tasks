@@ -1,0 +1,84 @@
+id: noaa-cdr
+image: ${{ args.registry }}/pctasks-task-base:latest
+args:
+  - registry
+code:
+  src: ${{ local.path(./noaa_cdr.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+collections:
+  - id: noaa-cdr-ocean-heat-content
+    template: ${{ local.path(./collections/ocean-heat-content) }}
+    class: noaa_cdr:OceanHeatContentCollection
+    asset_storage:
+      - uri: blob://noaacdr/ocean-heat-content
+        chunks:
+          options:
+            name_starts_with: data/derived
+            extensions: [.nc]
+            # The limit is 1 because we're just using this to get the directory
+            limit: 1
+    chunk_storage:
+      uri: blob://noaacdr/etl-data/ocean-heat-content
+  - id: noaa-cdr-ocean-heat-content-netcdf
+    template: ${{ local.path(./collections/ocean-heat-content-netcdf) }}
+    class: noaa_cdr:OceanHeatContentNetcdfCollection
+    asset_storage:
+      - uri: blob://noaacdr/ocean-heat-content
+        chunks:
+          options:
+            name_starts_with: data/derived
+            extensions: [.nc]
+    chunk_storage:
+      uri: blob://noaacdr/etl-data/ocean-heat-content-netcdf
+  # As of 2023-03-31, noaa-cdr-sea-ice-concentration does not work. The data in
+  # Azure blob storage is V2, but the data on the NOAA FTP site is V4, and the
+  # stactools package was developed against V4. We're retaining this section for
+  # the future when the Azure blob storage data is brought up-to-date.
+  - id: noaa-cdr-sea-ice-concentration
+    template: ${{ local.path(./collections/sea-ice-concentration) }}
+    class: noaa_cdr:SeaIceConcentrationCollection
+    asset_storage:
+      - uri: blob://noaacdr/sea-ice-concentration
+        chunks:
+          options:
+            name_starts_with: data
+            extensions: [.nc]
+    chunk_storage:
+      uri: blob://noaacdr/etl-data/sea-ice-concentration
+  - id: noaa-cdr-sea-surface-temperature-optimum-interpolation
+    template: ${{ local.path(./collections/sea-surface-temperature-optimum-interpolation) }}
+    class: noaa_cdr:SeaSurfaceTemperatureOptimumInterpolationCollection
+    asset_storage:
+      - uri: blob://noaacdr/sea-surface-temp-optimum-interpolation
+        chunks:
+          options:
+            name_starts_with: data/v2.1/avhrr
+            extensions: [.nc]
+    chunk_storage:
+      uri: blob://noaacdr/etl-data/sea-surface-temperature-optimum-interpolation
+  - id: noaa-cdr-sea-surface-temperature-whoi
+    template: ${{ local.path(./collections/sea-surface-temperature-whoi) }}
+    class: noaa_cdr:SeaSurfaceTemperatureWhoiCollection
+    asset_storage:
+      - uri: blob://noaacdr/sea-surface-temp-whoi
+        chunks:
+          options:
+            name_starts_with: data
+            extensions: [.nc]
+    chunk_storage:
+      uri: blob://noaacdr/etl-data/sea-surface-temperature-whoi
+  - id: noaa-cdr-sea-surface-temperature-whoi-netcdf
+    template: ${{ local.path(./collections/sea-surface-temperature-whoi-netcdf) }}
+    class: noaa_cdr:SeaSurfaceTemperatureWhoiNetcdfCollection
+    asset_storage:
+      - uri: blob://noaacdr/sea-surface-temp-whoi
+        chunks:
+          options:
+            name_starts_with: data
+            extensions: [.nc]
+    chunk_storage:
+      uri: blob://noaacdr/etl-data/sea-surface-temperature-whoi-netcdf
