@@ -59,7 +59,7 @@ class NoaaClimateNormalsTabular(Collection):
                 csv_hrefs=tmp_csv_paths,
                 frequency=frequency,
                 period=period,
-                geoparquet_dir=tmp_dir
+                geoparquet_dir=tmp_dir,
             )
 
             parquet_path = Path(tmp_dir, parquet_filename)
@@ -69,9 +69,7 @@ class NoaaClimateNormalsTabular(Collection):
                 )
             parquet_storage.upload_file(parquet_path, parquet_filename)
 
-            item.assets["geoparquet"].href = parquet_storage.get_url(
-                parquet_filename
-            )
+            item.assets["geoparquet"].href = parquet_storage.get_url(parquet_filename)
             item.assets["geoparquet"].extra_fields["table:storage_options"] = {
                 "account_name": "noaanormals"
             }
@@ -120,7 +118,7 @@ class NoaaClimateNormalsGridded(Collection):
                 data = {
                     "monthly": {
                         "frequency": GriddedFrequency.DAILY,
-                        "indices": range(1, 367)
+                        "indices": range(1, 367),
                     }
                 }
             elif frequency is GriddedFrequency.MLY:
@@ -132,12 +130,9 @@ class NoaaClimateNormalsGridded(Collection):
                     },
                     "seasonal": {
                         "frequency": GriddedFrequency.SEAS,
-                        "indices": range(1, 5)
+                        "indices": range(1, 5),
                     },
-                    "annual": {
-                        "frequency": GriddedFrequency.ANN,
-                        "indices": [1]
-                    }
+                    "annual": {"frequency": GriddedFrequency.ANN, "indices": [1]},
                 }
             else:
                 raise ValueError(f"Unexpected frequency: {frequency.name}")
@@ -153,7 +148,7 @@ class NoaaClimateNormalsGridded(Collection):
                             frequency=value["frequency"],
                             time_index=index,
                             cog_dir=tmp_cog_dir,
-                            api_url_netcdf=NETCDF_STAC_API_URL
+                            api_url_netcdf=NETCDF_STAC_API_URL,
                         )
                     )
 
