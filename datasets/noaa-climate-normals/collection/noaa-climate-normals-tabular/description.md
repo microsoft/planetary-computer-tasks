@@ -6,4 +6,4 @@ This Collection contains tabular weather variable data at weather station locati
 
 - Conventional 30-year normals (1991–2020)
 - Legacy 30-year normals (1981–2010)
-- Supplemental, recent 15-year normals (2006–2020)
+- Supplemental 15-year normals (2006–2020)
