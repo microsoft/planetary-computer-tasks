@@ -19,6 +19,7 @@ collections:
     class: noaa_climate_normals:NoaaClimateNormalsTabular
     asset_storage:
       - uri: blob://noaanormals/climate-normals
+        token: ${{ pc.get_token(noaanormals, climate-normals) }}
         chunks:
           options:
             name_starts_with: access

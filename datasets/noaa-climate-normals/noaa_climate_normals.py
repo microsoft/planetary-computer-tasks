@@ -1,6 +1,6 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Iterable, List, Union
+from typing import List, Union
 
 import pystac
 from stactools.noaa_climate_normals.gridded.constants import (
@@ -24,7 +24,7 @@ from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
 
-GEOPARQUET_CONTAINER = "blob://noaanormals/climate-normals-geoparquet"
+PARQUET_CONTAINER = "blob://noaanormals/climate-normals-geoparquet"
 COG_CONTAINER = "blob://noaanormals/gridded-normals-cogs"
 NETCDF_STAC_API_URL = "https://planetarycomputer.microsoft.com/api/stac/v1/collections/noaa-climate-normals-netcdf/items/"  # noqa
 
@@ -46,38 +46,32 @@ class NoaaClimateNormalsTabular(Collection):
         csv_storage = storage_factory.get_storage("/".join(uri_parts[:-1]))
         csv_paths = list(csv_storage.list_files(extensions=[".csv"]))
 
+        parquet_storage = storage_factory.get_storage(PARQUET_CONTAINER)
+        parquet_filename = f"{period.value.replace('-', '_')}-{frequency}.parquet"
+
         with TemporaryDirectory() as tmp_dir:
-            # download the csv files
             tmp_csv_paths = []
             for csv_path in csv_paths:
                 tmp_csv_paths.append(Path(tmp_dir, csv_path))
                 csv_storage.download_file(csv_path, tmp_csv_paths[-1])
 
-            # create item and geoparquet
             item = tabular_create_item(
                 csv_hrefs=tmp_csv_paths,
                 frequency=frequency,
                 period=period,
-                parquet_dir=tmp_dir,
+                geoparquet_dir=tmp_dir
             )
 
-            geoparquet_filename = (
-                f"{period.value.replace('-', '_')}-{frequency}.parquet"
-            )
-            geoparquet_path = Path(tmp_dir, geoparquet_filename)
-            if not geoparquet_path.exists():
+            parquet_path = Path(tmp_dir, parquet_filename)
+            if not parquet_path.exists():
                 raise MissingGeoParquet(
-                    f"Expected '{geoparquet_filename}' to be created, but not found."
+                    f"Expected '{parquet_filename}' to be created, but not found."
                 )
+            parquet_storage.upload_file(parquet_path, parquet_filename)
 
-            # upload geoparquet file to Azure container and update href
-            geoparquet_storage = storage_factory.get_storage(GEOPARQUET_CONTAINER)
-            geoparquet_storage.upload_file(geoparquet_path, geoparquet_filename)
-            item.assets["geoparquet"].href = geoparquet_storage.get_url(
-                geoparquet_filename
+            item.assets["geoparquet"].href = parquet_storage.get_url(
+                parquet_filename
             )
-
-            # add table:storage_options to asset
             item.assets["geoparquet"].extra_fields["table:storage_options"] = {
                 "account_name": "noaanormals"
             }
@@ -107,45 +101,6 @@ class NoaaClimateNormalsGridded(Collection):
         frequency = GriddedFrequency(path_parts[-3])
         period = GriddedPeriod(path_parts[-4].replace("_", "-"))
 
-        def process_items_cogs(
-            _nc_href: str,
-            _frequency: GriddedFrequency,
-            _cog_dir: str,
-            _time_indices: Iterable[int],
-            _storage_factory: StorageFactory,
-            _period: GriddedPeriod,
-            _path_fragment: str
-        ) -> List[pystac.Item]:
-            # create items and cogs
-            _items: List[pystac.Item] = []
-            for index in _time_indices:
-                _items.append(
-                    gridded_create_item(
-                        nc_href=_nc_href,
-                        frequency=_frequency,
-                        cog_dir=_cog_dir,
-                        api_url_netcdf=NETCDF_STAC_API_URL,
-                        time_index=index,
-                    )
-                )
-            # upload cogs to Azure, update cog asset hrefs
-            cog_storage = _storage_factory.get_storage(
-                f"{COG_CONTAINER}/normals-{_path_fragment}/{_period}/"
-            )
-            for _item in _items:
-                id_parts = _item.id.split("-")
-                index_for_name = id_parts[-1] if index is not None else None
-                base = "-".join(id_parts[:2])
-                for key, value in _item.assets.items():
-                    cog_filename = f"{base}-{key}.tif"
-                    if index_for_name:
-                        cog_filename = f"{cog_filename[:-4]}-{index_for_name}.tif"
-                    cog_storage.upload_file(
-                        Path(_cog_dir, cog_filename), cog_filename
-                    )
-                    value.href = cog_storage.get_url(cog_filename)
-            return _items
-
         with TemporaryDirectory() as tmp_dir:
             tmp_nc_dir = Path(tmp_dir, "nc")
             tmp_cog_dir = Path(tmp_dir, "cog")
@@ -159,27 +114,18 @@ class NoaaClimateNormalsGridded(Collection):
                 tmp_nc_path = Path(tmp_nc_dir, Path(nc_path).name)
                 nc_storage.download_file(nc_path, tmp_nc_path)
 
-            # create items and cogs
-            items: List[pystac.Item] = []
+            # prep for item and cog creation
             if frequency is GriddedFrequency.DAILY:
-                indices = range(1, 367)
                 num_cogs = 6 * 366
-                path_fragment = "daily"
-                items.extend(
-                    process_items_cogs(
-                        _nc_href=tmp_nc_path,
-                        _frequency=frequency,
-                        _cog_dir=tmp_cog_dir,
-                        _time_indices=indices,
-                        _storage_factory=storage_factory,
-                        _period=period,
-                        _path_fragment=path_fragment
-                    )
-                )
+                data = {
+                    "monthly": {
+                        "frequency": GriddedFrequency.DAILY,
+                        "indices": range(1, 367)
+                    }
+                }
             elif frequency is GriddedFrequency.MLY:
-                # monthly files contain monthly, seasonal, and annual data
                 num_cogs = 4 * 20 + 12 * 20 + 1 * 20
-                contained = {
+                data = {
                     "monthly": {
                         "frequency": GriddedFrequency.MLY,
                         "indices": range(1, 13),
@@ -190,23 +136,48 @@ class NoaaClimateNormalsGridded(Collection):
                     },
                     "annual": {
                         "frequency": GriddedFrequency.ANN,
-                        "indices": [None]
+                        "indices": [1]
                     }
                 }
-                for key, value in contained.items():
-                    items.extend(
-                        process_items_cogs(
-                            _nc_href=tmp_nc_path,
-                            _frequency=value["frequency"],
-                            _cog_dir=tmp_cog_dir,
-                            _time_indices=value["indices"],
-                            _storage_factory=storage_factory,
-                            _period=period,
-                            _path_fragment=key
-                        )
-                    )
             else:
                 raise ValueError(f"Unexpected frequency: {frequency.name}")
+
+            # create items and cogs
+            all_items: List[pystac.Item] = []
+            for key, value in data.items():
+                items = []
+                for index in value["indices"]:
+                    items.append(
+                        gridded_create_item(
+                            nc_href=tmp_nc_path,
+                            frequency=value["frequency"],
+                            time_index=index,
+                            cog_dir=tmp_cog_dir,
+                            api_url_netcdf=NETCDF_STAC_API_URL
+                        )
+                    )
+
+                cog_storage = storage_factory.get_storage(
+                    f"{COG_CONTAINER}/normals-{key}/{period}/"
+                )
+
+                for item in items:
+                    id_parts = item.id.split("-")
+                    if value["frequency"] is not GriddedFrequency.ANN:
+                        name_index = id_parts[-1]
+                    else:
+                        name_index = None
+                    base = "-".join(id_parts[:2])
+                    for asset_key, asset_value in item.assets.items():
+                        cog_filename = f"{base}-{asset_key}.tif"
+                        if name_index:
+                            cog_filename = f"{cog_filename[:-4]}-{name_index}.tif"
+                        cog_storage.upload_file(
+                            Path(tmp_cog_dir, cog_filename), cog_filename
+                        )
+                        asset_value.href = cog_storage.get_url(cog_filename)
+
+                all_items.extend(items)
 
             local_cogs = list(tmp_cog_dir.glob("*.tif"))
             if len(local_cogs) != num_cogs:
