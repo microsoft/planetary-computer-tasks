@@ -89,3 +89,7 @@ def test_wait_for_assets():
 
     task_result = run_test_task(args.dict(), TASK_PATH)
     assert isinstance(task_result, WaitTaskResult)
+
+
+def test_deduplicate_items():
+    ...
