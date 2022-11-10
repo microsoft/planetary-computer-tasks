@@ -234,6 +234,7 @@ def list_collections_cmd(
         cli_output(collection.id)
 
 
-def validate_collection_cmd(collection: click.File):
-    data = json.loads(collection.read())
+def validate_collection_cmd(collection: click.File) -> None:
+    # error: "File" has no attribute "read"
+    data = json.loads(collection.read())  # type: ignore
     validate_collection(data)

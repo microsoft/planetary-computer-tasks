@@ -229,7 +229,7 @@ def list_collections_cmd(
 
 @click.command("validate-collection")
 @click.argument("collection", type=click.File("rt"))
-def validate_collection(collection: click.File):
+def validate_collection(collection: click.File) -> None:
     """Validate a STAC collection."""
     from . import _cli
 
