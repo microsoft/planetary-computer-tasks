@@ -122,6 +122,19 @@ The `environment` provides the ability to inject environment variables into each
 of whether they will be utilized in any specific task. In this case, the variable values are using the `${{ secrets.* }}` template
 group to retrieve secret values. See [](../user_guide/secrets) for more details about secrets.
 
+### task_config
+
+Although not included in the example being reviewed here, custom task-level configurations can be defined in a `task_config` section. Currently, only the assignment of tags to tasks is supported. For example, to specify that the high memory Azure batch pool should be used for the `create-items` task, we can define an appropriate tag on the `create-items` task by adding the following section to the `dataset.yaml` file:
+
+```yaml
+task_config:
+  create-items:
+    tags:
+      batch_pool_id: high_memory_pool
+```
+
+Note that should a conflict occur between a tag generated in code and one defined in the `task_config` section of the `dataset.yaml` file, the `task_config` tag value will take precedence.
+
 ### collections
 
 The `collections` element is a list of collection configuration. If your dataset only has one collection,
