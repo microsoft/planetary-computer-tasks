@@ -42,8 +42,8 @@ def task_tags(
     Returns:
         Optional[Dict[str, str]]: A merged dictionary of tag key value pairs.
     """
-    task_config_ = {} if task_config is None else task_config
-    tags_ = {} if tags is None else tags
+    task_config_ = task_config or {}
+    tags_ = tags or {}
     merged_tags = {**tags_, **task_config_.get(task_name, {}).get("tags", {})}
     if merged_tags:
         return merged_tags
