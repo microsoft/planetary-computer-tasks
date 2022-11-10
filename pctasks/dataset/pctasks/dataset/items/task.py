@@ -3,7 +3,7 @@ import os
 import textwrap
 import time
 import traceback
-from typing import Callable, List, Tuple, Union
+from typing import Callable, List, Optional, Tuple, Union
 
 import orjson
 import pystac
@@ -29,6 +29,8 @@ class CreateItemsMultiError(Exception):
 
     def __repr__(self) -> str:
         n = len(self.asset_uris)
+        sample_asset_uri: Optional[str]
+        sample_traceback: Optional[str]
         if n:
             sample_asset_uri = self.asset_uris[0]
             sample_traceback = self.rendered_tracebacks[0]
