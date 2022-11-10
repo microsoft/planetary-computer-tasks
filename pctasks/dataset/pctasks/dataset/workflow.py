@@ -24,7 +24,24 @@ def task_tags(
     tags: Optional[Dict[str, str]],
     task_config: Optional[Dict[str, Any]],
 ) -> Optional[Dict[str, str]]:
+    """
+    Extracts task-specific tags from the task_config dictionary defined in a
+    dataset.yaml and merges them with any tags directly passed to a workflow
+    creation function. If there is a conflict between tags (same key), the
+    task_config tags (those defined in a dataset.yaml) will take precedence.
 
+    Args:
+        task_name (str): Workflow task id.
+        tags (Optional[Dict[str, str]]): A dictionary of tags that was passed
+            directly to one of the create workflow functions, e.g., via the
+            `tags` parameter in the `create_chunks_workflow` function.
+        task_config (Optional[Dict[str, Any]]): A dictionary of task
+            configuration objects, one of which may be a 'tags' object,
+            originally defined in a dataset.yaml file.
+
+    Returns:
+        Optional[Dict[str, str]]: A merged dictionary of tag key value pairs.
+    """
     task_config_ = {} if task_config is None else task_config
     tags_ = {} if tags is None else tags
     merged_tags = {**tags_, **task_config_.get(task_name, {}).get("tags", {})}
