@@ -45,6 +45,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
     # Run deployment script
     ${DOCKER_COMPOSE} run --rm \
-        deploy bin/publish_func \
+        deploy bin/publish_pkgs \
         -t "${PACKAGE_TAG}"
 fi

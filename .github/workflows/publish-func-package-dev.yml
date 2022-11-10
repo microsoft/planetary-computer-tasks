@@ -33,4 +33,4 @@ jobs:
       - name: "Publish package"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./scripts/cipublish-func -t "${{ steps.semvers.outputs.minor }}-dev"
+        run: ./scripts/cipublish-pkgs -t "${{ steps.semvers.outputs.minor }}-dev"
