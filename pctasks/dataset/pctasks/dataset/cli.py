@@ -227,7 +227,17 @@ def list_collections_cmd(
     return _cli.list_collections_cmd(ctx, dataset, arg=arg)
 
 
+@click.command("validate-collection")
+@click.argument("collection", type=click.File("rt"))
+def validate_collection(collection: click.File):
+    """Validate a STAC collection."""
+    from . import _cli
+
+    _cli.validate_collection_cmd(collection)
+
+
 dataset_cmd.add_command(create_chunks_cmd)
 dataset_cmd.add_command(process_items_cmd)
 dataset_cmd.add_command(ingest_collection_cmd)
 dataset_cmd.add_command(list_collections_cmd)
+dataset_cmd.add_command(validate_collection)
