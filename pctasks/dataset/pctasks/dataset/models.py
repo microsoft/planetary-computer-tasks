@@ -152,6 +152,7 @@ class DatasetDefinition(PCBaseModel):
     collections: List[CollectionDefinition]
     args: Optional[List[str]] = None
     environment: Optional[Dict[str, Any]] = None
+    task_config: Optional[Dict[str, Any]] = None
 
     def get_collection(
         self, collection_id: Optional[str] = None
