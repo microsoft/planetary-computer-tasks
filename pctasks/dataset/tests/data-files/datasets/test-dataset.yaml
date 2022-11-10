@@ -7,6 +7,14 @@ args:
   - test_prefix
   - sas_token
 
+task_config:
+  create-items:
+    tags:
+      batch_pool_id: high_memory_pool
+  ingest-collection:
+    tags:
+      batch_pool_id: ingest_pool
+
 collections:
   - id: test-dataset
     class: mycode:TestCollection

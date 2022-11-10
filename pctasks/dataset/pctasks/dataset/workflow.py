@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from pctasks.core.models.base import ForeachConfig
 from pctasks.core.models.task import TaskDefinition
@@ -19,6 +19,21 @@ from pctasks.ingest.settings import IngestOptions
 from pctasks.ingest.utils import generate_collection_json
 
 
+def task_tags(
+    task_name: str,
+    tags: Optional[Dict[str, str]],
+    task_config: Optional[Dict[str, Any]],
+) -> Optional[Dict[str, str]]:
+
+    task_config_ = {} if task_config is None else task_config
+    tags_ = {} if tags is None else tags
+    merged_tags = tags_ | task_config_.get(task_name, {}).get("tags", {})
+    if merged_tags:
+        return merged_tags
+    else:
+        return None
+
+
 def create_chunks_workflow(
     dataset: DatasetDefinition,
     collection: CollectionDefinition,
@@ -35,7 +50,7 @@ def create_chunks_workflow(
         options=create_splits_options or CreateSplitsOptions(),
         chunk_options=chunk_options,
         environment=dataset.environment,
-        tags=tags,
+        tags=task_tags("create-splits", tags, dataset.task_config),
     )
 
     create_splits_job = JobDefinition(id="create-splits", tasks=[create_splits_task])
@@ -46,7 +61,7 @@ def create_chunks_workflow(
         chunkset_id=chunkset_id,
         src_uri="${{ item.uri }}",
         environment=dataset.environment,
-        tags=tags,
+        tags=task_tags("create-chunks", tags, dataset.task_config),
         options="${{ item.chunk_options }}",
     )
 
@@ -105,7 +120,7 @@ def create_process_items_workflow(
             chunkset_id=chunkset_id,
             all=force,
             environment=dataset.environment,
-            tags=tags,
+            tags=task_tags("list-chunks", tags, dataset.task_config),
         )
         list_chunks_job = JobDefinition(id="list-chunks", tasks=[list_chunks_task])
         chunks_job_id = list_chunks_job.get_id()
@@ -117,7 +132,7 @@ def create_process_items_workflow(
             options=create_splits_options or CreateSplitsOptions(),
             chunk_options=chunk_options,
             environment=dataset.environment,
-            tags=tags,
+            tags=task_tags("create-splits", tags, dataset.task_config),
         )
 
         create_splits_job = JobDefinition(
@@ -130,7 +145,7 @@ def create_process_items_workflow(
             chunkset_id=chunkset_id,
             src_uri="${{ item.uri }}",
             environment=dataset.environment,
-            tags=tags,
+            tags=task_tags("create-chunks", tags, dataset.task_config),
             options="${{ item.chunk_options }}",
         )
 
@@ -165,7 +180,7 @@ def create_process_items_workflow(
         ),
         options=create_items_options,
         environment=dataset.environment,
-        tags=tags,
+        tags=task_tags("create-items", tags, dataset.task_config),
     )
     items_tasks.append(create_items_task)
 
@@ -177,7 +192,7 @@ def create_process_items_workflow(
             ),
             target=target,
             environment=dataset.environment,
-            tags=tags,
+            tags=task_tags("ingest-items", tags, dataset.task_config),
             options=ingest_options,
         )
         items_tasks.append(ingest_items_task)
@@ -250,7 +265,7 @@ def create_ingest_collection_workflow(
         collection=collection_body,
         target=target,
         environment=dataset.environment,
-        tags=tags,
+        tags=task_tags("ingest-collection", tags, dataset.task_config),
     )
 
     id = f"{collection.id}-ingest-collection"

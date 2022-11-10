@@ -113,3 +113,30 @@ def test_process_items_is_update_workflow(has_args) -> None:
         .args["inputs"][0]["chunk_options"]["since"]
         == "${{ args.since }}"
     )
+
+
+def test_task_config_tags() -> None:
+    ds_config = template_dataset_file(DATASET_PATH)
+    assert (
+        ds_config.task_config["create-items"]["tags"]["batch_pool_id"]
+        == "high_memory_pool"
+    )
+    assert (
+        ds_config.task_config["ingest-collection"]["tags"]["batch_pool_id"]
+        == "ingest_pool"
+    )
+
+    collection_config = ds_config.collections[0]
+
+    workflow = create_process_items_workflow(
+        ds_config,
+        collection_config,
+        chunkset_id="test",
+        tags={"tag": "value", "batch_pool_id": "overwritten"},
+    )
+
+    assert workflow.jobs["process-chunk"].tasks[0].tags["tag"] == "value"
+    assert (
+        workflow.jobs["process-chunk"].tasks[0].tags["batch_pool_id"]
+        == "high_memory_pool"
+    )
