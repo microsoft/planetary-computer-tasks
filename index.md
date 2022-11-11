@@ -19,7 +19,7 @@ $ helm repo update
 
 {% comment %}[0] and [1] below represent key and value{% endcomment %}
 {% for helm_chart in site.data.index.entries %}
-{% assign title = helm_chart[0] | capitalize %}
+{% assign title = helm_chart[0] %}
 {% assign all_charts = helm_chart[1] | sort: 'created' | reverse %}
 {% assign latest_chart = all_charts[0] %}
 
@@ -46,16 +46,22 @@ $ helm install --version {{ latest_chart.version }} myrelease {{ site.repo_name 
 
 {% endfor %}
 
-## Function packages
+## Script packages
 
-### {{ site.data.func-index.name }}
+{% for package_type in site.data.pkg-index.packages %}
+{% assign title = package_type[0] %}
+{% assign all_versions = package_type[1] | sort: 'created' | reverse %}
+{% assign latest_version = all_versions[0] %}
 
-{{ site.data.func-index.description }}
+### {{ title }}
 
-Last updated: {{ site.data.func-index.generated | date_to_long_string }}
+{{ latest_version.description }}
+
+Last updated: {{ latest_version.created | date_to_long_string }}
 
 | Package | Version | Date |
 |---------|---------|------|
-{% for package in site.data.func-index.packages | sort: 'created' | reverse -%}
+{% for package in all_versions | sort: 'created' | reverse -%}
 | [{{ package.name }}]({{ package.url }}) | {{ package.version }} | {{ package.created | date_to_long_string }} |
+{% endfor %}
 {% endfor %}
