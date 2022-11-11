@@ -1,7 +1,7 @@
-generated: '2022-11-10T15:06:41.720877+00:00'
+generated: '2022-11-11T11:21:35.699768+00:00'
 name: Planetary Computer Tasks Functions Package Index
 packages:
-- created: '2022-11-10T15:06:41.720877+00:00'
+- created: '2022-11-11T11:21:35.699768+00:00'
   name: planetary-computer-tasks-func-2022.3.0-dev
   url: https://microsoft.github.io/planetary-computer-tasks/func-packages/planetary-computer-tasks-func-2022.3.0-dev.zip
   version: 2022.3.0-dev
