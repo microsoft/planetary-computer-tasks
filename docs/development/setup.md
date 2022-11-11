@@ -36,9 +36,6 @@ You can run `scripts/update` to build the docker images and update dependencies
 at any time. Add the `--help` flag to see the available options targeting
 subsets of images.
 
-
-http://localhost:8500
-
 ## Bring up development servers
 
 To run the development servers:
@@ -162,6 +159,6 @@ The frontend is configured with default values to connect to and authenticate wi
 
 ## Argo UI
 
-Once the kind cluster is up, you can view the Argo UI by visiting http://localhost:8500/argo.
+Once the kind cluster is up, you can view the Argo UI by visiting <http://localhost:8500/argo>.
 You'll need to use your ARGO_TOKEN to log in, which you can
 find using `scripts/cluster argo-token`
