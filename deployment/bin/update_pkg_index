@@ -1,0 +1,58 @@
+#!/usr/bin/python3
+
+import argparse
+import yaml
+
+from datetime import datetime, timezone
+
+description = "Publish a new version of the Planetary Computer script packages."
+
+
+parser = argparse.ArgumentParser(description=description)
+parser.add_argument("pkg_type", help="The package type to publish")
+parser.add_argument("pkg_name", help="name of package being published")
+parser.add_argument("version", help="published version")
+
+BASE_URL = "https://microsoft.github.io/planetary-computer-tasks/script-packages"
+
+created = datetime.now(tz=timezone.utc).isoformat()
+
+
+def update_index(pkg_type: str, pkg_name: str, version: str):
+    entry = {
+        "name": pkg_name,
+        "created": created,
+        "version": version,
+        "url": f"{BASE_URL}/{pkg_name}.zip",
+    }
+
+    with open("pkg-index.yaml", "r") as f:
+        index = yaml.safe_load(f)
+
+    if "packages" not in index:
+        index["packages"] = {}
+
+    packages = index["packages"]
+
+    if pkg_type not in packages:
+        packages[pkg_type] = {}
+
+    package = packages[pkg_type]
+
+    # Recreate the list of package versions, but replace an existing entry of
+    # the current version if it exists
+    version_entries = [p for p in package if p["version"] != version]
+    version_entries.append(entry)
+    packages[pkg_type] = version_entries
+
+    # Update the index with this package list
+    index["packages"] = packages
+    index["generated"] = created
+
+    with open("pkg-index.yaml", "w") as f:
+        yaml.safe_dump(index, f, default_flow_style=False)
+
+
+if __name__ == "__main__":
+    args = parser.parse_args()
+    update_index(args.pkg_type, args.pkg_name, args.version)
