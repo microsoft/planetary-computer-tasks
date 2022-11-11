@@ -75,7 +75,7 @@ module "batch_pool_d3_v3_high_memory" {
   subnet_id = module.resources.batch_nodepool_subnet
 }
 
-module "batch_pool_d3_v3" {
+module "batch_pool_d3_v3_landsat" {
   source = "../batch_pool"
 
   name                = "landsat_pool"
