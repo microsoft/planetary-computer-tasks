@@ -122,7 +122,9 @@ def test_task_config_tags() -> None:
         == "high_memory_pool"
     )
     assert (
-        ds_config.task_config["test-dataset"]["ingest-collection"]["tags"]["batch_pool_id"]
+        ds_config.task_config["test-dataset"]["ingest-collection"]["tags"][
+            "batch_pool_id"
+        ]
         == "ingest_pool"
     )
 
