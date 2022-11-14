@@ -17,7 +17,7 @@ $ pctasks dataset process-items '${{ args.since }}' \
 ```
 
 As an optimization, I manually appended `2022` to the `prefix`. That will require updating in the new year. Longer-term pctasks should
-optionally do that dynamically from `since`.
+optionally do that dynamically from `since`. Likewise for `blue` with a `--workflow-id=goes-glm-update-blue`.
 
 And registered with
 
