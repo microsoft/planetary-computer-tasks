@@ -6,7 +6,7 @@ tokens:
         token: ${{ pc.get_token(goeseuwest, noaa-goes16) }}
       noaa-goes17:
         token: ${{ pc.get_token(goeseuwest, noaa-goes17) }}
-target_environment: green
+target_environment: blue
 args:
 - registry
 - since
@@ -114,6 +114,6 @@ jobs:
       flatten: true
     needs: create-chunks
 schema_version: 1.0.0
-id: goes-glm-update
+id: goes-glm-update-blue
 dataset: goes_glm
 
