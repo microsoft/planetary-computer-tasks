@@ -13,6 +13,11 @@ environment:
   AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
   AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
 
+task_config:
+  create-items:
+    tags:
+      batch_pool_id: high_memory_pool
+
 collections:
   - id: noaa-climate-normals-tabular
     template: ${{ local.path(./collection/noaa-climate-normals-tabular) }}

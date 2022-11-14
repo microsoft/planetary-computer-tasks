@@ -116,7 +116,7 @@ class NoaaClimateNormalsGridded(Collection):
             if frequency is GriddedFrequency.DAILY:
                 num_cogs = 6 * 366
                 data = {
-                    "monthly": {
+                    "daily": {
                         "frequency": GriddedFrequency.DAILY,
                         "indices": range(1, 367),
                     }
@@ -157,16 +157,8 @@ class NoaaClimateNormalsGridded(Collection):
                 )
 
                 for item in items:
-                    id_parts = item.id.split("-")
-                    if value["frequency"] is not GriddedFrequency.ANN:
-                        name_index = id_parts[-1]
-                    else:
-                        name_index = None
-                    base = "-".join(id_parts[:2])
                     for asset_key, asset_value in item.assets.items():
-                        cog_filename = f"{base}-{asset_key}.tif"
-                        if name_index:
-                            cog_filename = f"{cog_filename[:-4]}-{name_index}.tif"
+                        cog_filename = f"{item.id}-{asset_key}.tif"
                         cog_storage.upload_file(
                             Path(tmp_cog_dir, cog_filename), cog_filename
                         )
@@ -181,4 +173,4 @@ class NoaaClimateNormalsGridded(Collection):
                     f"{num_cogs} expected, but {len(local_cogs)} produced."
                 )
 
-        return items
+        return all_items
