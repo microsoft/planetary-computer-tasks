@@ -118,11 +118,13 @@ def test_process_items_is_update_workflow(has_args) -> None:
 def test_task_config_tags() -> None:
     ds_config = template_dataset_file(DATASET_PATH)
     assert (
-        ds_config.task_config["create-items"]["tags"]["batch_pool_id"]
+        ds_config.task_config["test-dataset"]["create-items"]["tags"]["batch_pool_id"]
         == "high_memory_pool"
     )
     assert (
-        ds_config.task_config["ingest-collection"]["tags"]["batch_pool_id"]
+        ds_config.task_config["test-dataset"]["ingest-collection"]["tags"][
+            "batch_pool_id"
+        ]
         == "ingest_pool"
     )
 
