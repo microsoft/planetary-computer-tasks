@@ -14,6 +14,10 @@ resource "azurerm_batch_account" "pctasks" {
   storage_account_id                  = azurerm_storage_account.pctasks-batch.id
   storage_account_authentication_mode = "StorageKeys"
 
+  identity {
+    type = "SystemAssigned"
+  }
+
   tags = {
     ManagedBy   = "AI4E"
     Environment = var.environment
