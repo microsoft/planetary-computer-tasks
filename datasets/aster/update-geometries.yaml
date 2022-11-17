@@ -19,10 +19,31 @@ jobs:
           AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
           AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
           AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
-  process-partition:
+  create-chunks:
     foreach:
       items: ${{ jobs.get-partitions.tasks.get-partitions.output.assets }}
     needs: get-partitions
+    tasks:
+      - id: create-chunks
+        image: ${{ args.registry }}/pctasks-task-base:latest
+        code:
+          src: ${{ local.path(./aster.py) }}
+          requirements: ${{ local.path(./requirements.txt) }}
+        task: aster:create_chunks_task
+        args:
+          asset: ${{ item }}
+          dst_uri: blob://ai4edataeuwest/pctasks-scratch-etl-data/aster/update-geometries/chunks
+          chunk_size: 10
+          limit: 20
+        environment:
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+  update-items:
+    foreach:
+      items: ${{ jobs.create-chunks.tasks.create-chunks.output.chunks }}
+      flatten: true
+    needs: create-chunks
     tasks:
       - id: update-items
         image: ${{ args.registry }}/pctasks-task-base:latest
@@ -31,17 +52,15 @@ jobs:
           requirements: ${{ local.path(./requirements.txt) }}
         task: aster:update_items_task
         args:
-          asset: ${{ item }}
+          partition_number: ${{ item.partition_number }}
+          chunk_uri: ${{ item.uri }}
+          chunk_id: ${{ item.id }}
           item_chunkset_uri: blob://ai4edataeuwest/pctasks-scratch-etl-data/aster/update-geometries/items
           simplify_tolerance: 0.001
-          max_workers: 8
-          limit: 80
         environment:
           AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
           AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
           AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
-        tags:
-          batch_pool_id: high_memory_pool
       - id: ingest-items
         image_key: ingest
         task: pctasks.ingest_task.task:ingest_task
