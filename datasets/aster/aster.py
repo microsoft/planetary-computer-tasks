@@ -1,6 +1,8 @@
+import concurrent.futures
 import itertools
 import logging
-from typing import Any, Dict, Iterator, List, Optional
+from concurrent.futures import ThreadPoolExecutor
+from typing import Any, Dict, List, Optional
 
 import geopandas
 import numpy
@@ -59,7 +61,8 @@ class UpdateItemsInput(PCBaseModel):
     asset: Dict[str, Any]
     item_chunkset_uri: str
     limit: Optional[int]
-    precision: float
+    simplify_tolerance: float
+    max_workers: int
 
 
 class UpdateItemsOutput(PCBaseModel):
@@ -87,18 +90,22 @@ class UpdateItemsTask(Task[UpdateItemsInput, UpdateItemsOutput]):
         item_collection = stac_geoparquet.stac_geoparquet.to_item_collection(dataframe)
         items = list()
         error_items = list()
-        for item in itertools.islice(item_collection, input.limit):
-            planetary_computer.sign(item)
-            try:
-                new_item = stactools.aster.utils.update_geometry(
-                    item,
-                    simplify_tolerance=input.precision,
-                )
-            except Exception as e:
-                logger.error(e)
-                error_items.append(fix_dict(item.to_dict()))
-            else:
-                items.append(fix_dict(new_item.to_dict()))
+        logger.info(f"{len(item_collection)} items, limit={input.limit}")
+        with ThreadPoolExecutor(max_workers=input.max_workers) as executor:
+            futures = {
+                executor.submit(sign_and_update, item, input.simplify_tolerance): item
+                for item in itertools.islice(item_collection, input.limit)
+            }
+            for future in concurrent.futures.as_completed(futures):
+                item = futures[future]
+                try:
+                    new_item = future.result()
+                except Exception as e:
+                    logger.error(e)
+                    error_items.append(fix_dict(item.to_dict()))
+                else:
+                    items.append(fix_dict(new_item.to_dict()))
+        logger.info(f"{len(items)} items updated, {len(error_items)} errors")
         storage, path = context.storage_factory.get_storage_for_file(
             input.item_chunkset_uri
             + "/"
@@ -120,6 +127,14 @@ class UpdateItemsTask(Task[UpdateItemsInput, UpdateItemsOutput]):
 
 
 update_items_task = UpdateItemsTask()
+
+
+def sign_and_update(item: Item, simplify_tolerance: float) -> Item:
+    planetary_computer.sign(item)
+    return stactools.aster.utils.update_geometry(
+        item,
+        simplify_tolerance=simplify_tolerance,
+    )
 
 
 def fix_assets(assets: Dict[str, Any]) -> Dict[str, Any]:
