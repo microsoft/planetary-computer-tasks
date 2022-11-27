@@ -20,11 +20,12 @@ task_config:
         batch_pool_id: high_memory_pool
 
 collections:
+  # Running all tabular datasets in one go not yet successful; use individual workflows instead
   - id: noaa-climate-normals-tabular
     template: ${{ local.path(./collection/noaa-climate-normals-tabular) }}
     class: noaa_climate_normals:NoaaClimateNormalsTabular
     asset_storage:
-      - uri: blob://noaanormals/climate-normals/normals-daily
+      - uri: blob://noaanormals/climate-normals/
         token: ${{ pc.get_token(noaanormals, climate-normals) }}
         chunks:
           options:
@@ -33,25 +34,9 @@ collections:
             chunk_length: 1
             limit: 1
           splits:
-            - depth: 1
+            - depth: 2
     chunk_storage:
       uri: blob://noaanormals/normals-etl-data/tabular/
-  # - id: noaa-climate-normals-tabular
-  #   template: ${{ local.path(./collection/noaa-climate-normals-tabular) }}
-  #   class: noaa_climate_normals:NoaaClimateNormalsTabular
-  #   asset_storage:
-  #     - uri: blob://noaanormals/climate-normals
-  #       token: ${{ pc.get_token(noaanormals, climate-normals) }}
-  #       chunks:
-  #         options:
-  #           name_starts_with: access
-  #           extensions: [.csv]
-  #           chunk_length: 1
-  #           limit: 1
-  #         splits:
-  #           - depth: 2
-  #   chunk_storage:
-  #     uri: blob://noaanormals/normals-etl-data/tabular/
 
   - id: noaa-climate-normals-netcdf
     template: ${{ local.path(./collection/noaa-climate-normals-netcdf) }}

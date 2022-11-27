@@ -111,8 +111,7 @@
     "item_assets": {
         "geoparquet": {
             "type": "application/x-parquet",
-            "title": "GeoParquet for all stations",
-            "table:primary_geometry": "geometry",
+            "title": "Dataset root",
             "table:storage_options": {
                 "account_name": "noaanormals"
             },

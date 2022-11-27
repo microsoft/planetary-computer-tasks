@@ -1,8 +1,10 @@
+import logging
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Union
 
 import pystac
+import requests
 from stactools.noaa_climate_normals.gridded.constants import (
     Frequency as GriddedFrequency,
 )
@@ -28,6 +30,13 @@ PARQUET_CONTAINER = "blob://noaanormals/climate-normals-geoparquet"
 COG_CONTAINER = "blob://noaanormals/gridded-normals-cogs"
 NETCDF_STAC_API_URL = "https://planetarycomputer.microsoft.com/api/stac/v1/collections/noaa-climate-normals-netcdf/items/"  # noqa
 
+handler = logging.StreamHandler()
+handler.setFormatter(logging.Formatter("[%(levelname)s]:%(asctime)s: %(message)s"))
+handler.setLevel(logging.INFO)
+logger = logging.getLogger(__name__)
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
+
 
 class MissingGeoParquet(Exception):
     pass
@@ -47,29 +56,69 @@ class NoaaClimateNormalsTabular(Collection):
         csv_paths = list(csv_storage.list_files(extensions=[".csv"]))
 
         parquet_storage = storage_factory.get_storage(PARQUET_CONTAINER)
-        parquet_filename = f"{period.value.replace('-', '_')}-{frequency}.parquet"
+        parquet_directory = f"{period.value.replace('-', '_')}-{frequency}.parquet"
+
+        logger.info(f"Processing Climate Normals for Period '{period}', Frequency '{frequency}'")
 
         with TemporaryDirectory() as tmp_dir:
             tmp_csv_paths = []
-            for csv_path in csv_paths:
-                tmp_csv_paths.append(Path(tmp_dir, csv_path))
-                csv_storage.download_file(csv_path, tmp_csv_paths[-1])
+            failures = True
+            retry_num = 0
+            while failures:
+                num_csvs = len(csv_paths)
+                failed_csv_paths = []
+                for i, csv_path in enumerate(csv_paths, 1):
+                    try:
+                        tmp_csv_path = Path(tmp_dir, csv_path)
+                        auth_url = csv_storage.get_authenticated_url(csv_path)
+                        response = requests.get(auth_url, timeout=10)
+                        with open(tmp_csv_path, "wb") as fstream:
+                            fstream.write(response.content)
+                        tmp_csv_paths.append(Path(tmp_dir, csv_path))
+                        logger.info(
+                            f"Downloaded CSV {i}/{num_csvs}: {Path(csv_path).name}"
+                        )
+                    except Exception:
+                        logger.error(
+                            f"Failed to download CSV {i}/{num_csvs}: {Path(csv_path).name}",
+                            exc_info=1,
+                        )
+                        failed_csv_paths.append(csv_path)
+                if failed_csv_paths:
+                    csv_paths = failed_csv_paths
+                    retry_num += 1
+                    if retry_num > 5:
+                        raise ValueError(f"Too many CSV download retries ({retry_num}).")
+                    logger.info(
+                        f"Failed to download {len(csv_paths)} CSVs. Retrying them."
+                    )
+                else:
+                    failures = False
 
+            logger.info("Creating Item and GeoParquet")
             item = tabular_create_item(
                 csv_hrefs=tmp_csv_paths,
                 frequency=frequency,
                 period=period,
                 geoparquet_dir=tmp_dir,
+                num_partitions=5
             )
 
-            parquet_path = Path(tmp_dir, parquet_filename)
+            logger.info("Uploading GeoParquet")
+            parquet_path = Path(tmp_dir, parquet_directory)
             if not parquet_path.exists():
                 raise MissingGeoParquet(
-                    f"Expected '{parquet_filename}' to be created, but not found."
+                    f"Expected '{parquet_directory}' to be created, but not found."
                 )
-            parquet_storage.upload_file(parquet_path, parquet_filename)
+            parquet_file_paths = parquet_path.glob("*.parquet")
+            for parquet_file_path in parquet_file_paths:
+                parquet_storage.upload_file(
+                    parquet_file_path, f"{parquet_directory}/{parquet_file_path.name}"
+                )
 
-            item.assets["geoparquet"].href = parquet_storage.get_url(parquet_filename)
+            item.assets["geoparquet"].href = parquet_storage.fsspec_path(
+                parquet_directory
+            )
             item.assets["geoparquet"].extra_fields["table:storage_options"] = {
                 "account_name": "noaanormals"
             }
