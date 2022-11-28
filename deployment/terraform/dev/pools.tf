@@ -100,14 +100,14 @@ module "batch_pool_d3_v3_landsat" {
   subnet_id = module.resources.batch_nodepool_subnet
 }
 
-module "batch_pool_d3_v3_s2" {
+module "batch_pool_s2" {
   source = "../batch_pool"
 
   name                = "s2_pool"
   resource_group_name = module.resources.resource_group
   account_name        = module.resources.batch_account_name
   display_name        = "s2_pool"
-  vm_size             = "STANDARD_D3_V2"
+  vm_size             = "STANDARD_D4_V4"
   max_tasks_per_node  = 4
 
   min_dedicated = 0
