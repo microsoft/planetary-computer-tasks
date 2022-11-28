@@ -114,7 +114,7 @@ module "batch_pool_d3_v3_s2" {
   max_dedicated = 0
 
   min_low_priority = var.min_low_priority
-  max_low_priority = 2
+  max_low_priority = 100
 
   max_increase_per_scale = 50
 
