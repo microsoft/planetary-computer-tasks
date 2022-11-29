@@ -55,4 +55,5 @@ Your code is importable with `import mypackage`, `from mypackage import module_a
 Behind the scenes, when you submit a workflow generated from this `dataset.yaml`
 the module is uploaded to Azure Blob Storage. Before executing your task, the
 worker downloads that module and places it in a location that's importable by
-the Python interpreter.
+the Python interpreter. The uploaded module / package is prioritized over any
+existing modules with the same import name.
