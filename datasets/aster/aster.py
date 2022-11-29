@@ -1,19 +1,21 @@
 import itertools
 import logging
-import time
 from typing import Any, Dict, List, Optional
 
 import geopandas
 import numpy
 import orjson
 import planetary_computer
+import rasterio
 import stac_geoparquet
 import stactools.aster
 import stactools.aster.utils
 from adlfs import AzureBlobFileSystem
-from geopandas import GeoDataFrame
 from pystac import Collection, Item
-from stactools.core.utils.raster_footprint import DEFAULT_PRECISION
+from pystac.extensions.eo import EOExtension
+from pystac.extensions.projection import ProjectionExtension
+from pystac.extensions.raster import RasterBand, RasterExtension
+from stactools.aster.constants import ASTER_SENSORS, NO_DATA
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.task.context import TaskContext
@@ -99,6 +101,8 @@ class CreateChunksTask(Task[CreateChunksInput, CreateChunksOutput]):
             if len(chunk) >= input.chunk_size:
                 chunks.append(chunk)
                 chunk = []
+        if chunk:
+            chunks.append(chunk)
         output = []
         for i, chunk in enumerate(chunks):
             uri = f"{input.dst_uri}/{asset['partition-number']}/{i}.ndjson"
@@ -173,10 +177,32 @@ def sign_and_update(item: Item, simplify_tolerance: float) -> Item:
     item.clear_links("parent")
     item.clear_links("collection")
     planetary_computer.sign(item)
-    return stactools.aster.utils.update_geometry(
+    # TODO do we need to unsign the asset hrefs?
+    item = stactools.aster.utils.update_geometry(
         item,
         simplify_tolerance=simplify_tolerance,
     )
+    for sensor in stactools.aster.constants.ASTER_SENSORS:
+        if sensor in item.assets:
+            asset = item.assets[sensor]
+            eo = EOExtension.ext(asset)
+            assert eo.bands
+            projection = ProjectionExtension.ext(asset)
+            assert projection.transform
+            bands = []
+            with rasterio.open(asset.href) as dataset:
+                for eo_band, dtype in zip(eo.bands, dataset.dtypes):
+                    spatial_resolution = round(projection.transform[0])
+                    band = RasterBand.create(
+                        nodata=NO_DATA,
+                        data_type=dtype,
+                        spatial_resolution=spatial_resolution,
+                    )
+                    band.properties["name"] = eo_band.name
+                    bands.append(band)
+                raster = RasterExtension.ext(asset)
+                raster.bands = bands
+    return item
 
 
 def fix_assets(assets: Dict[str, Any]) -> Dict[str, Any]:

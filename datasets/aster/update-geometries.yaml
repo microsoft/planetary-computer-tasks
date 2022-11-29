@@ -33,7 +33,8 @@ jobs:
         args:
           asset: ${{ item }}
           dst_uri: blob://ai4edataeuwest/pctasks-scratch-etl-data/aster/update-geometries/chunks
-          chunk_size: 10000
+          limit: 20
+          chunk_size: 10
         environment:
           AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
           AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
