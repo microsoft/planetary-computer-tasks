@@ -130,6 +130,6 @@ def ensure_code(
         is_package = zipfile.is_zipfile(output_path)
     if is_package:
         logger.debug("Adding %s to sys.path", output_path)
-        sys.path.append(str(output_path))
+        sys.path.insert(0, str(output_path))
 
     return pathlib.Path(output_path)

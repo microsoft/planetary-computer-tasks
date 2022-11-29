@@ -64,6 +64,7 @@ def _import_package(target_dir: Optional[str] = None):
         assert instance.a() == "a"
         assert instance.b() == "b"
         assert result.name == "example_module.zip"
+        assert Path(sys.path[0]).name == "example_module.zip"
 
 
 def test_import_package():
