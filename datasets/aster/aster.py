@@ -182,6 +182,7 @@ def sign_and_update(item: Item, simplify_tolerance: float) -> Item:
         item,
         simplify_tolerance=simplify_tolerance,
     )
+    RasterExtension.add_to(item)
     for sensor in stactools.aster.constants.ASTER_SENSORS:
         if sensor in item.assets:
             asset = item.assets[sensor]
