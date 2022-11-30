@@ -107,8 +107,8 @@ module "batch_pool_d3_v3_s2" {
   resource_group_name = module.resources.resource_group
   account_name        = module.resources.batch_account_name
   display_name        = "s2_pool"
-  vm_size             = "STANDARD_D4_V3"
-  max_tasks_per_node  = 4
+  vm_size             = "Standard_D8a_v4"
+  max_tasks_per_node  = 8
 
   min_dedicated = 0
   max_dedicated = 0
