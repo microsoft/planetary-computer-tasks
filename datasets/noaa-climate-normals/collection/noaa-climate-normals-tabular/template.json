@@ -143,54 +143,54 @@
             "citation": "Applequist, S., A. Arguez, I. Durre, M. Squires, R. Vose, and X. Yin, 2012: 1981-2010 U.S. Hourly Normals. Bulletin of the American Meteorological Society, 93, 1637-1640. DOI: 10.1175/BAMS-D-11-00173.1."
         }
     ],
-    "table:tables": {
-        "0": {
+    "table:tables": [
+        {
             "name": "1981_2010-hourly",
             "description": "Hourly Climate Normals for Period 1981-2010"
         },
-        "1": {
+        {
             "name": "1981_2010-daily",
             "description": "Daily Climate Normals for Period 1981-2010"
         },
-        "2": {
+        {
             "name": "1981_2010-monthly",
             "description": "Monthly Climate Normals for Period 1981-2010"
         },
-        "3": {
+        {
             "name": "1981_2010-annualseasonal",
             "description": "Annual/Seasonal Climate Normals for Period 1981-2010"
         },
-        "4": {
+        {
             "name": "1991_2020-hourly",
             "description": "Hourly Climate Normals for Period 1991-2020"
         },
-        "5": {
+        {
             "name": "1991_2020-daily",
             "description": "Daily Climate Normals for Period 1991-2020"
         },
-        "6": {
+        {
             "name": "1991_2020-monthly",
             "description": "Monthly Climate Normals for Period 1991-2020"
         },
-        "7": {
+        {
             "name": "1991_2020-annualseasonal",
             "description": "Annual/Seasonal Climate Normals for Period 1991-2020"
         },
-        "8": {
+        {
             "name": "2006_2020-hourly",
             "description": "Hourly Climate Normals for Period 2006-2020"
         },
-        "9": {
+        {
             "name": "2006_2020-daily",
             "description": "Daily Climate Normals for Period 2006-2020"
         },
-        "10": {
+        {
             "name": "2006_2020-monthly",
             "description": "Monthly Climate Normals for Period 2006-2020"
         },
-        "11": {
+        {
             "name": "2006_2020-annualseasonal",
             "description": "Annual/Seasonal Climate Normals for Period 2006-2020"
         }
-    }
+    ]
 }
