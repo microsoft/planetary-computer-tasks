@@ -58,7 +58,9 @@ class NoaaClimateNormalsTabular(Collection):
         parquet_storage = storage_factory.get_storage(PARQUET_CONTAINER)
         parquet_directory = f"{period.value.replace('-', '_')}-{frequency}.parquet"
 
-        logger.info(f"Processing Climate Normals for Period '{period}', Frequency '{frequency}'")
+        logger.info(
+            f"Processing Climate Normals for Period '{period}', Frequency '{frequency}'"
+        )
 
         with TemporaryDirectory() as tmp_dir:
             tmp_csv_paths = []
@@ -88,7 +90,9 @@ class NoaaClimateNormalsTabular(Collection):
                     csv_paths = failed_csv_paths
                     retry_num += 1
                     if retry_num > 5:
-                        raise ValueError(f"Too many CSV download retries ({retry_num}).")
+                        raise ValueError(
+                            f"Too many CSV download retries ({retry_num})."
+                        )
                     logger.info(
                         f"Failed to download {len(csv_paths)} CSVs. Retrying them."
                     )
@@ -101,7 +105,7 @@ class NoaaClimateNormalsTabular(Collection):
                 frequency=frequency,
                 period=period,
                 geoparquet_dir=tmp_dir,
-                num_partitions=5
+                num_partitions=5,
             )
 
             logger.info("Uploading GeoParquet")
