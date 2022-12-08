@@ -238,9 +238,10 @@ class CosmosDBContainer(BaseCosmosDBContainer[T], ABC):
 
         if stored_proc:
             partition_key = self.get_partition_key(model)
+            sp_name: str = stored_proc
             with_backoff(
                 lambda: self._container_client.scripts.execute_stored_procedure(
-                    stored_proc, partition_key=partition_key, parameters=[item]
+                    sp_name, partition_key=partition_key, parameters=[item]
                 ),
                 strategy=self.backoff_strategy,
             )
@@ -270,9 +271,10 @@ class CosmosDBContainer(BaseCosmosDBContainer[T], ABC):
                 with_backoff(lambda: self.put(model))
         else:
             for partition_key, item_group in self._group_for_bulk_put(models):
+                sp_name: str = stored_proc
                 with_backoff(
                     lambda: self._container_client.scripts.execute_stored_procedure(
-                        stored_proc,
+                        sp_name,
                         partition_key=partition_key,
                         params=[list(item_group)],
                     ),
@@ -406,11 +408,12 @@ class AsyncCosmosDBContainer(BaseCosmosDBContainer[T], ABC):
         stored_proc = self._get_put_stored_proc(model)
 
         if stored_proc:
+            sp_name: str = stored_proc
             partition_key = self.get_partition_key(model)
 
             async def _sp() -> Dict[str, Any]:
                 return await self._container_client.scripts.execute_stored_procedure(
-                    stored_proc, partition_key=partition_key, parameters=[item]
+                    sp_name, partition_key=partition_key, parameters=[item]
                 )
 
             await with_backoff_async(
@@ -448,13 +451,13 @@ class AsyncCosmosDBContainer(BaseCosmosDBContainer[T], ABC):
             for model in models:
                 await self.put(model)
         else:
-
+            sp_name: str = stored_proc
             for partition_key, item_group in self._group_for_bulk_put(models):
 
                 async def _sp() -> Dict[str, Any]:
                     return (
                         await self._container_client.scripts.execute_stored_procedure(
-                            stored_proc,
+                            sp_name,
                             partition_key=partition_key,
                             params=[list(item_group)],
                         )
