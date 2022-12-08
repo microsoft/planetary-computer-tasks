@@ -1,0 +1,23 @@
+id: fws-nwi
+image: ${{ args.registry }}/pctasks-fws-nwi:latest
+args:
+  - registry
+code:
+  src: ${{ local.path(./fws_nwi.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+collections:
+  - id: fws-nwi
+    template: ${{ local.path(./collection) }}
+    class: fws_nwi:FwsNwiCollection
+    asset_storage:
+      - uri: blob://ai4edataeuwest/pctasks-scratch/fws-nwi
+        chunks:
+          options:
+            extensions: [.zip]
+            chunk_length: 1
+    chunk_storage:
+      uri: blob://ai4edataeuwest/pctasks-scratch-etl-data/fws-nwi
