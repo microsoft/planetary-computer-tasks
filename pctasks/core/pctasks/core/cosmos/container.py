@@ -5,6 +5,7 @@ from itertools import groupby
 from typing import (
     Any,
     AsyncIterable,
+    AsyncIterator,
     Callable,
     Dict,
     Generic,
@@ -36,6 +37,7 @@ from pctasks.core.cosmos.settings import CosmosDBSettings
 from pctasks.core.models.run import Record
 from pctasks.core.models.utils import tzutc_now
 from pctasks.core.utils import grouped
+from pctasks.core.utils.backoff import BackoffStrategy, with_backoff, with_backoff_async
 
 T = TypeVar("T", bound=Record)
 
@@ -70,6 +72,7 @@ class BaseCosmosDBContainer(Generic[T], ABC):
             Dict[ContainerOperation, Dict[Type[BaseModel], str]]
         ] = None,
         triggers: Optional[Dict[ContainerOperation, Dict[TriggerType, str]]] = None,
+        with_backoff_waits: Optional[List[float]] = None,
     ) -> None:
         if not settings:
             if db:
@@ -87,6 +90,21 @@ class BaseCosmosDBContainer(Generic[T], ABC):
         self.name = name
         self.stored_procedures = stored_procedures
         self.triggers = triggers
+
+        self.backoff_strategy = BackoffStrategy(
+            waits=with_backoff_waits
+            or [
+                0.1,
+                0.2,
+                0.3,
+                0.4,
+                0.5,
+                1,
+                2,
+                5,
+                10,
+            ]
+        )
 
     @abstractmethod
     def get_partition_key(self, model: T) -> str:
@@ -220,8 +238,11 @@ class CosmosDBContainer(BaseCosmosDBContainer[T], ABC):
 
         if stored_proc:
             partition_key = self.get_partition_key(model)
-            self._container_client.scripts.execute_stored_procedure(
-                stored_proc, partition_key=partition_key, params=[item]
+            with_backoff(
+                lambda: self._container_client.scripts.execute_stored_procedure(
+                    stored_proc, partition_key=partition_key, parameters=[item]
+                ),
+                strategy=self.backoff_strategy,
             )
         else:
             # Otherwise upsert the item
@@ -246,18 +267,26 @@ class CosmosDBContainer(BaseCosmosDBContainer[T], ABC):
                 f"and model {type(models[0])}. Falling back to individual puts."
             )
             for model in models:
-                self.put(model)
+                with_backoff(lambda: self.put(model))
         else:
             for partition_key, item_group in self._group_for_bulk_put(models):
-                self._container_client.scripts.execute_stored_procedure(
-                    stored_proc,
-                    partition_key=partition_key,
-                    params=[list(item_group)],
+                with_backoff(
+                    lambda: self._container_client.scripts.execute_stored_procedure(
+                        stored_proc,
+                        partition_key=partition_key,
+                        params=[list(item_group)],
+                    ),
+                    strategy=self.backoff_strategy,
                 )
 
     def get(self, id: str, partition_key: str) -> Optional[T]:
         try:
-            item = self._container_client.read_item(id, partition_key=partition_key)
+            item = with_backoff(
+                lambda: self._container_client.read_item(
+                    id, partition_key=partition_key
+                ),
+                strategy=self.backoff_strategy,
+            )
         except CosmosResourceNotFoundError:
             return None
         if item.get("deleted"):
@@ -277,18 +306,28 @@ class CosmosDBContainer(BaseCosmosDBContainer[T], ABC):
 
         item_paged = cast(
             ItemPaged[Dict[str, Any]],
-            self._container_client.query_items(
-                query=query,
-                parameters=params,
-                partition_key=partition_key,
-                max_item_count=page_size,
+            with_backoff(
+                lambda: self._container_client.query_items(
+                    query=query,
+                    parameters=params,
+                    partition_key=partition_key,
+                    max_item_count=page_size,
+                ),
+                strategy=self.backoff_strategy,
             ),
         )
         paged_iterator = cast(
             PageIterator[Dict[str, Any]],
-            item_paged.by_page(continuation_token=continuation_token),
+            with_backoff(
+                lambda: item_paged.by_page(continuation_token=continuation_token)
+            ),
         )
-        for page in paged_iterator:
+        # Grab the iterator and loop with a while yielding results
+        while True:
+            page = with_backoff(
+                lambda: next(paged_iterator),
+                strategy=self.backoff_strategy,
+            )
             continuation_token = paged_iterator.continuation_token
             yield Page(
                 items=map(
@@ -368,19 +407,32 @@ class AsyncCosmosDBContainer(BaseCosmosDBContainer[T], ABC):
 
         if stored_proc:
             partition_key = self.get_partition_key(model)
-            await self._container_client.scripts.execute_stored_procedure(
-                stored_proc, partition_key=partition_key, params=[item]
+
+            async def _sp() -> Dict[str, Any]:
+                return await self._container_client.scripts.execute_stored_procedure(
+                    stored_proc, partition_key=partition_key, parameters=[item]
+                )
+
+            await with_backoff_async(
+                _sp,
+                strategy=self.backoff_strategy,
             )
         else:
             # Otherwise upsert the item
-            await self._container_client.upsert_item(
-                item,
-                pre_trigger_include=self.get_trigger(
-                    ContainerOperation.PUT, TriggerType.PRE
-                ),
-                post_trigger_include=self.get_trigger(
-                    ContainerOperation.PUT, TriggerType.POST
-                ),
+            async def _upsert() -> Dict[str, Any]:
+                return await self._container_client.upsert_item(
+                    item,
+                    pre_trigger_include=self.get_trigger(
+                        ContainerOperation.PUT, TriggerType.PRE
+                    ),
+                    post_trigger_include=self.get_trigger(
+                        ContainerOperation.PUT, TriggerType.POST
+                    ),
+                )
+
+            await with_backoff_async(
+                _upsert,
+                strategy=self.backoff_strategy,
             )
 
     async def bulk_put(self, models: Iterable[T]) -> None:
@@ -396,17 +448,34 @@ class AsyncCosmosDBContainer(BaseCosmosDBContainer[T], ABC):
             for model in models:
                 await self.put(model)
         else:
+
             for partition_key, item_group in self._group_for_bulk_put(models):
-                await self._container_client.scripts.execute_stored_procedure(
-                    stored_proc,
-                    partition_key=partition_key,
-                    params=[list(item_group)],
+
+                async def _sp() -> Dict[str, Any]:
+                    return (
+                        await self._container_client.scripts.execute_stored_procedure(
+                            stored_proc,
+                            partition_key=partition_key,
+                            params=[list(item_group)],
+                        )
+                    )
+
+                await with_backoff_async(
+                    _sp,
+                    strategy=self.backoff_strategy,
                 )
 
     async def get(self, id: str, partition_key: str) -> Optional[T]:
         try:
-            item = await self._container_client.read_item(
-                id, partition_key=partition_key
+
+            async def _read() -> Dict[str, Any]:
+                return await self._container_client.read_item(
+                    id, partition_key=partition_key
+                )
+
+            item = await with_backoff_async(
+                _read,
+                strategy=self.backoff_strategy,
             )
         except CosmosResourceNotFoundError:
             return None
@@ -438,7 +507,17 @@ class AsyncCosmosDBContainer(BaseCosmosDBContainer[T], ABC):
             AsyncPageIterator[Dict[str, Any]],
             item_paged.by_page(continuation_token=continuation_token),
         )
-        async for page in paged_iterator:
+
+        async def _next_page() -> Optional[AsyncIterator[Dict[str, Any]]]:
+            try:
+                return await paged_iterator.__anext__()
+            except StopAsyncIteration:
+                return None
+
+        while True:
+            page = await with_backoff_async(_next_page, strategy=self.backoff_strategy)
+            if not page:
+                break
             continuation_token = paged_iterator.continuation_token
             yield Page(
                 items=[
