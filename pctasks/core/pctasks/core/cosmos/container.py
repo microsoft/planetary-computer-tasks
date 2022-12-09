@@ -10,6 +10,7 @@ from typing import (
     Dict,
     Generic,
     Iterable,
+    Iterator,
     List,
     Optional,
     Tuple,
@@ -318,19 +319,36 @@ class CosmosDBContainer(BaseCosmosDBContainer[T], ABC):
                 strategy=self.backoff_strategy,
             ),
         )
+
+        # Loop over the pages while yielding results,
+        # applying a with_backoff to each page request.
+
         paged_iterator = cast(
             PageIterator[Dict[str, Any]],
             with_backoff(
                 lambda: item_paged.by_page(continuation_token=continuation_token)
             ),
         )
-        # Grab the iterator and loop with a while yielding results
+
+        def _next_page() -> Optional[Iterator[Dict[str, Any]]]:
+            try:
+                return next(paged_iterator)
+            except StopIteration:
+                return None
+
         while True:
             page = with_backoff(
-                lambda: next(paged_iterator),
+                _next_page,
                 strategy=self.backoff_strategy,
             )
+
+            if not page:
+                break
+
+            # Paged iterator mutates the continuation token property
+            # after each page fetch.
             continuation_token = paged_iterator.continuation_token
+
             yield Page(
                 items=map(
                     lambda item: self.model_from_item(self.model_type, item), page
@@ -506,6 +524,10 @@ class AsyncCosmosDBContainer(BaseCosmosDBContainer[T], ABC):
                 max_item_count=page_size,
             ),
         )
+
+        # Loop over the pages while yielding results,
+        # applying a with_backoff to each page request.
+
         paged_iterator = cast(
             AsyncPageIterator[Dict[str, Any]],
             item_paged.by_page(continuation_token=continuation_token),
@@ -521,7 +543,11 @@ class AsyncCosmosDBContainer(BaseCosmosDBContainer[T], ABC):
             page = await with_backoff_async(_next_page, strategy=self.backoff_strategy)
             if not page:
                 break
+
+            # Paged iterator mutates the continuation token property
+            # after each page fetch.
             continuation_token = paged_iterator.continuation_token
+
             yield Page(
                 items=[
                     self.model_from_item(self.model_type, item) async for item in page
