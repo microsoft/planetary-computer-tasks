@@ -64,42 +64,11 @@ class NoaaClimateNormalsTabular(Collection):
         )
 
         with TemporaryDirectory() as tmp_dir:
-            # download all CSVs, retrying on connection resets and hanging downloads
+            # download CSVs
             tmp_csv_paths = []
-            failures = True
-            retry_num = 0
-            while failures:
-                num_csvs = len(csv_paths)
-                failed_csv_paths = []
-                for i, csv_path in enumerate(csv_paths, 1):
-                    try:
-                        tmp_csv_path = Path(tmp_dir, csv_path)
-                        auth_url = csv_storage.get_authenticated_url(csv_path)
-                        response = requests.get(auth_url, timeout=10)
-                        with open(tmp_csv_path, "wb") as fstream:
-                            fstream.write(response.content)
-                        tmp_csv_paths.append(Path(tmp_dir, csv_path))
-                        logger.info(
-                            f"Downloaded CSV {i}/{num_csvs}: {Path(csv_path).name}"
-                        )
-                    except Exception:
-                        logger.error(
-                            f"Failed to download CSV {i}/{num_csvs}: {Path(csv_path).name}",
-                            exc_info=1,
-                        )
-                        failed_csv_paths.append(csv_path)
-                if failed_csv_paths:
-                    csv_paths = failed_csv_paths
-                    retry_num += 1
-                    if retry_num > 5:
-                        raise ValueError(
-                            f"Too many CSV download retries ({retry_num})."
-                        )
-                    logger.info(
-                        f"Failed to download {len(csv_paths)} CSVs. Retrying them."
-                    )
-                else:
-                    failures = False
+            for csv_path in csv_paths:
+                tmp_csv_paths.append(Path(tmp_dir, csv_path))
+                csv_storage.download_file(csv_path, tmp_csv_paths[-1], timeout_seconds=10)
 
             # create Item
             logger.info("Creating Item and GeoParquet")
