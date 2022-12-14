@@ -3,6 +3,7 @@ black==22.*
 mypy==0.982
 pytest==6.*
 isort==5.*
+pytest-asyncio==0.18.*
 
 planetary-computer
 pystac[validation]==1.*
