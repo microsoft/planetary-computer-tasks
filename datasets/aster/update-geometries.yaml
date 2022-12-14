@@ -7,7 +7,7 @@ jobs:
   get-partitions:
     tasks:
       - id: get-partitions
-        image: ${{ args.registry }}/pctasks-task-base:latest
+        image: ${{ args.registry }}/pctasks-aster:latest
         code:
           src: ${{ local.path(./aster.py) }}
           requirements: ${{ local.path(./requirements.txt) }}
@@ -25,7 +25,7 @@ jobs:
     needs: get-partitions
     tasks:
       - id: create-chunks
-        image: ${{ args.registry }}/pctasks-task-base:latest
+        image: ${{ args.registry }}/pctasks-aster:latest
         code:
           src: ${{ local.path(./aster.py) }}
           requirements: ${{ local.path(./requirements.txt) }}
@@ -44,7 +44,7 @@ jobs:
     needs: create-chunks
     tasks:
       - id: update-items
-        image: ${{ args.registry }}/pctasks-task-base:latest
+        image: ${{ args.registry }}/pctasks-aster:latest
         code:
           src: ${{ local.path(./aster.py) }}
           requirements: ${{ local.path(./requirements.txt) }}
