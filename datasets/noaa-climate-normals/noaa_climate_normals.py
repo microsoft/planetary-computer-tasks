@@ -26,6 +26,7 @@ from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
 from pctasks.core.storage.base import Storage
+from pctasks.core.utils.backoff import with_backoff
 
 PARQUET_CONTAINER = "blob://noaanormals/climate-normals-geoparquet"
 COG_CONTAINER = "blob://noaanormals/gridded-normals-cogs"
@@ -65,10 +66,24 @@ class NoaaClimateNormalsTabular(Collection):
 
         with TemporaryDirectory() as tmp_dir:
             # download CSVs
+            def downloader(url, path) -> None:
+                response = requests.get(url, timeout=15)
+                with open(path, "wb") as fstream:
+                    fstream.write(response.content)
+
+            def always_retry(e: Exception) -> bool:
+                return True
+
+            logger.info(f"Downloading CSVs for Period '{period}', Frequency '{frequency}'")
             tmp_csv_paths = []
-            for csv_path in csv_paths:
+            for i, csv_path in enumerate(csv_paths, 1):
                 tmp_csv_paths.append(Path(tmp_dir, csv_path))
-                csv_storage.download_file(csv_path, tmp_csv_paths[-1], timeout_seconds=10)
+                auth_url = csv_storage.get_authenticated_url(csv_path)
+                with_backoff(
+                    fn=lambda: downloader(auth_url, tmp_csv_paths[-1]),
+                    is_throttle=always_retry,
+                )
+                logger.debug(f"Downloaded {i}/{len(csv_paths)}: {csv_path}")
 
             # create Item
             logger.info("Creating Item and GeoParquet")
@@ -142,7 +157,7 @@ class NoaaClimateNormalsGridded(Collection):
             all_items = gridded_create_items(
                 nc_href=tmp_nc_path,
                 cog_dir=tmp_cog_dir,
-                api_url_netcdf=NETCDF_STAC_API_URL
+                api_url_netcdf=NETCDF_STAC_API_URL,
             )
 
             # upload created COGs to Azure and update Item asset hrefs
@@ -150,6 +165,7 @@ class NoaaClimateNormalsGridded(Collection):
                 return storage_factory.get_storage(
                     f"{COG_CONTAINER}/normals-{_frequency}/{period}/"
                 )
+
             cog_storage_dict = {}
             if frequency is GriddedFrequency.DAILY:
                 cog_storage_dict["daily"] = get_cog_storage("daily")
