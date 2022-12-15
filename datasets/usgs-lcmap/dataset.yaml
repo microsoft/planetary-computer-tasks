@@ -1,0 +1,44 @@
+id: usgs_lcmap
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./usgs_lcmap.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: usgs-lcmap-conus-v13
+    template: ${{ local.path(./collection/usgs-lcmap-conus-v13) }}
+    class: usgs_lcmap:USGSLCMAPCollection
+    asset_storage:
+      - uri: blob://landcoverdata/lcmap/
+        token: ${{ pc.get_token(landcoverdata, lcmap) }}
+        chunks:
+          options:
+            name_starts_with: CU/V13
+            extensions: [.tar]
+            chunk_length: 10  # testing only; set to 1000 for production
+            limit: 1  # testing only; remove limit for production
+    chunk_storage:
+      uri: blob://landcoverdata/lcmap-etl-data/lcmap-conus-v13/
+
+  - id: usgs-lcmap-hawaii-v10
+    template: ${{ local.path(./collection/usgs-lcmap-hawaii-v10) }}
+    class: usgs_lcmap:USGSLCMAPCollection
+    asset_storage:
+      - uri: blob://landcoverdata/lcmap/
+        token: ${{ pc.get_token(landcoverdata, lcmap) }}
+        chunks:
+            name_starts_with: HI/V10
+            extensions: [.tar]
+            chunk_length: 10  # testing only; set to 1000 for production
+            limit: 1  # testing only; remove limit for production
+    chunk_storage:
+      uri: blob://landcoverdata/lcmap-etl-data/lcmap-hawaii-v10/
