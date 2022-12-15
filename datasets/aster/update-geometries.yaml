@@ -33,6 +33,7 @@ jobs:
         args:
           asset: ${{ item }}
           dst_uri: blob://astersa/aster-etl-data/chunks/update-geometries
+          chunk_size: 5000
         environment:
           AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
           AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
@@ -53,7 +54,7 @@ jobs:
           partition_number: ${{ item.partition_number }}
           chunk_uri: ${{ item.uri }}
           chunk_id: ${{ item.id }}
-          item_chunkset_uri: blob://aster/aster-etl-data/items/update-geometries
+          item_chunkset_uri: blob://astersa/aster-etl-data/items/update-geometries
           simplify_tolerance: 0.001
         environment:
           AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
