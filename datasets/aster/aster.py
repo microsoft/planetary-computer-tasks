@@ -1,6 +1,6 @@
 import itertools
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import geopandas
 import numpy
@@ -15,9 +15,12 @@ from pystac import Collection, Item
 from pystac.extensions.eo import EOExtension
 from pystac.extensions.projection import ProjectionExtension
 from pystac.extensions.raster import RasterBand, RasterExtension
-from stactools.aster.constants import ASTER_SENSORS, NO_DATA
+from stactools.aster.constants import NO_DATA
 
 from pctasks.core.models.base import PCBaseModel
+from pctasks.core.models.task import WaitTaskResult
+from pctasks.core.storage import StorageFactory
+from pctasks.dataset.collection import Collection as PcTasksCollection
 from pctasks.task.context import TaskContext
 from pctasks.task.task import Task
 
@@ -230,3 +233,11 @@ def fix_dict(d: Dict[str, Any]) -> Dict[str, Any]:
 
 def fix_list(l: List[Any]) -> List[Any]:
     return [fix(value) for value in l]
+
+
+class AsterL1tCollection(PcTasksCollection):
+    @classmethod
+    def create_item(
+        cls, asset_uri: str, storage_factory: StorageFactory
+    ) -> Union[List[Item], WaitTaskResult]:
+        raise NotImplementedError
