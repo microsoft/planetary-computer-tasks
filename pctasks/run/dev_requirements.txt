@@ -1,0 +1,3 @@
+file:./pctasks/core#egg=pctasks.core
+file:./pctasks/task#egg=pctasks.task
+file:./pctasks/client#egg=pctasks.client

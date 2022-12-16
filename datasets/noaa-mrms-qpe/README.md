@@ -37,3 +37,11 @@ They can be registered with
 ```bash
 $ ls datasets/noaa-mrms-qpe/workflows/* | xargs -I {} pctasks workflow update {}
 ```
+
+## Image building
+
+```
+./scripts/generate-requirements datasets/noaa-mrms-qpe/requirements.txt
+docker build -t <registry>/pctasks-noaa-mrms-qpe:<tag> -f datasets/goes/goes-glm/Dockerfile .
+```
+

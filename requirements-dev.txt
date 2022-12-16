@@ -11,6 +11,9 @@ pystac[validation]==1.*
 azure-functions
 azure-functions-durable
 
+# for generating requirements files for Docker
+pip-tools
+
 # Mypy stubs
 
 types-cachetools

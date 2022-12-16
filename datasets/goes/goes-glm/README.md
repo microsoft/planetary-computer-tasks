@@ -23,4 +23,12 @@ And registered with
 
 ```console
 $ pctasks workflow create datasets/goes/goes-glm/workflows/goes-glm-update.yaml
+$ pctasks workflow create datasets/goes/goes-glm/workflows/goes-glm-update-blue.yaml
+```
+
+## Image building
+
+```
+./scripts/generate-requirements datasets/goes/goes-glm/requirements.txt
+docker build -t <registry>/pctasks-goes-glm:<tag> -f datasets/goes/goes-glm/Dockerfile .
 ```

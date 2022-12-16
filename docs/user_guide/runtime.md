@@ -3,7 +3,11 @@
 ## Specifying requirements
 
 In addition to the set of packages provided by the base docker image, you can specify a list of additional packages
-to install with a `requirements.txt` file. This can be done in a dataset configuration or in a task configuration.
+to install with a `requirements.txt` file.
+
+```{note} Installing extra dependencies at runtime should only be done when developing a workflow. See [](#building-images) for transitioning to a production-ready workflow.
+```
+This can be done in a dataset configuration or in a task configuration.
 
 ```yaml
 # file: naip/dataset.yaml
@@ -57,3 +61,31 @@ the module is uploaded to Azure Blob Storage. Before executing your task, the
 worker downloads that module and places it in a location that's importable by
 the Python interpreter. The uploaded module / package is prioritized over any
 existing modules with the same import name.
+
+## Building Images
+
+`pctasks` lets you specify a `requirements.txt` with additional dependencies to
+install at runtime. This is convenient for development, but installing
+additional dependencies isn't appropriate for production environments that need
+to run reliably at scale. For that, we'll build a container image from our
+requirements.
+
+First, use `./scripts/generate-requirements` to generate the `requirements.txt`
+file. Provide any additional requirements files you need to this script:
+
+```
+$ ./scripts/generate-requirements datasets/goes/goes-glm/requirements.txt
+```
+
+Next, build and upload the container image:
+
+```
+$ docker build -t pctasks-goes-glm:latest -f datasets/goes/goes-glm/Dockerfile .
+$ docker push ...
+```
+
+Alternatively, build the docker container in Azure:
+
+```
+$ az acr build -r "registry" -g "resource-group -t 'pctasks-<dataset>:<tag>' -f Dockerfile.task_base .
+```
