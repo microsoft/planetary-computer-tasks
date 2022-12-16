@@ -179,7 +179,7 @@ def sign_and_update(item: Item, simplify_tolerance: float) -> Item:
     item.clear_links("root")
     item.clear_links("parent")
     item.clear_links("collection")
-    planetary_computer.sign(item)
+    planetary_computer.sign_inplace(item)
     item = stactools.aster.utils.update_geometry(
         item,
         simplify_tolerance=simplify_tolerance,
