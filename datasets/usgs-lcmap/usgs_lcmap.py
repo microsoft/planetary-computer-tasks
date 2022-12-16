@@ -36,4 +36,4 @@ class USGSLCMAPCollection(Collection):
             item.assets["tar"].href = storage.get_url(tar_path)
             item.assets["tar_metadata"].href = storage.get_url(xml_path)
 
-        return item
+        return [item]
