@@ -58,7 +58,7 @@ class GetPartitionsTask(Task[GetPartitionsInput, GetPartitionsOutput]):
             partition_asset = asset.clone()
             partition_asset.href = f"abfs://{path}"
             asset_as_dict = partition_asset.to_dict()
-            asset_as_dict["partition-number"] = i
+            asset_as_dict["partition_number"] = i
             assets.append(asset_as_dict)
         return GetPartitionsOutput(assets=assets)
 
@@ -103,7 +103,7 @@ class CreateChunksTask(Task[CreateChunksInput, CreateChunksOutput]):
             chunks.append(chunk)
         output = []
         for i, chunk in enumerate(chunks):
-            uri = f"{input.dst_uri}/{asset['partition-number']}/{i}.ndjson"
+            uri = f"{input.dst_uri}/{asset['partition_number']}/{i}.ndjson"
             storage, path = context.storage_factory.get_storage_for_file(uri)
             storage.write_text(
                 path, "\n".join(orjson.dumps(item).decode("utf-8") for item in chunk)
@@ -112,7 +112,7 @@ class CreateChunksTask(Task[CreateChunksInput, CreateChunksOutput]):
                 Chunk(
                     uri=storage.get_uri(path),
                     id=str(i),
-                    partition_number=str(asset["partition-number"]),
+                    partition_number=str(asset["partition_number"]),
                 )
             )
         return CreateChunksOutput(chunks=output)
