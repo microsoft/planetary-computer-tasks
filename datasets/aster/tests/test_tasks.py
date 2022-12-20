@@ -3,12 +3,13 @@
 from pathlib import Path
 
 import aster
-import geopandas
 import orjson
 
 
 def test_update_geometries_from_dataframe() -> None:
     path = Path(__file__).parent / "data-files" / "aster-l1t-subset.parquet"
-    dataframe = geopandas.read_parquet(path)
-    item = next(aster.update_geometries_from_dataframe(dataframe))
-    _ = orjson.dumps(item).decode("utf-8")
+    item_collection = aster.read_item_collection(path)
+    item = aster.sign_and_update(item_collection.items[0], 0.001)
+    _ = orjson.dumps(aster.fix_dict(item.to_dict(include_self_link=False))).decode(
+        "utf-8"
+    )

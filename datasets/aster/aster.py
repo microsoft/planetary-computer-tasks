@@ -11,7 +11,7 @@ import stac_geoparquet
 import stactools.aster
 import stactools.aster.utils
 from adlfs import AzureBlobFileSystem
-from pystac import Collection, Item
+from pystac import Collection, Item, ItemCollection
 from pystac.extensions.eo import EOExtension
 from pystac.extensions.projection import ProjectionExtension
 from pystac.extensions.raster import RasterBand, RasterExtension
@@ -89,14 +89,9 @@ class CreateChunksTask(Task[CreateChunksInput, CreateChunksOutput]):
 
     def run(self, input: CreateChunksInput, context: TaskContext) -> CreateChunksOutput:
         asset = input.asset
-        dataframe = geopandas.read_parquet(
+        item_collection = read_item_collection(
             asset["href"], storage_options=asset["table:storage_options"]
         )
-        dataframe["assets"] = dataframe["assets"].apply(fix_assets)
-        dataframe["stac_extensions"] = [
-            extension.tolist() for extension in dataframe.stac_extensions
-        ]
-        item_collection = stac_geoparquet.stac_geoparquet.to_item_collection(dataframe)
         chunks = []
         chunk = []
         for item in itertools.islice(item_collection, input.limit):
@@ -191,7 +186,7 @@ def sign_and_update(item: Item, simplify_tolerance: float) -> Item:
             eo = EOExtension.ext(asset)
             assert eo.bands
             projection = ProjectionExtension.ext(asset)
-            assert projection.transform
+            assert projection.transform is not None
             bands = []
             with rasterio.open(asset.href) as dataset:
                 for eo_band, dtype in zip(eo.bands, dataset.dtypes):
@@ -241,3 +236,14 @@ class AsterL1tCollection(PcTasksCollection):
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[Item], WaitTaskResult]:
         raise NotImplementedError
+
+
+def read_item_collection(
+    href: str, storage_options: Optional[Any] = None
+) -> ItemCollection:
+    dataframe = geopandas.read_parquet(href, storage_options=storage_options)
+    dataframe["assets"] = dataframe["assets"].apply(fix_assets)
+    dataframe["stac_extensions"] = [
+        extension.tolist() for extension in dataframe.stac_extensions
+    ]
+    return stac_geoparquet.stac_geoparquet.to_item_collection(dataframe)
