@@ -1,1 +1,1 @@
-git+https://github.com/stactools-packages/fws-nwi@9ee49407fa268a712b142b78f0c5ad26debbbbc4
+git+https://github.com/stactools-packages/fws-nwi@5dcd3e833f9d27a905e8da989cbb82e163a0ae92
