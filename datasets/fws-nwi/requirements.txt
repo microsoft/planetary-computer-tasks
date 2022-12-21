@@ -1,1 +1,1 @@
-git+https://github.com/stactools-packages/fws-nwi@5dcd3e833f9d27a905e8da989cbb82e163a0ae92
+stactools-fws-nwi == 0.2.0
