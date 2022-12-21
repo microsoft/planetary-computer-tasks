@@ -9,7 +9,7 @@ import reportWebVitals from "./reportWebVitals";
 
 import "./index.css";
 import App from "./App";
-import { Home, WorkflowDetail, Workflows } from "pages";
+import { RegisteredWorkflowPage, WorkflowDetailPage, WorkflowRunsPage } from "pages";
 import { initializeIcons } from "@fluentui/react";
 import { SelectionProvider } from "state/SelectionProvider";
 
@@ -28,11 +28,11 @@ root.render(
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<App />}>
-                <Route index element={<Home />} />
-                <Route path="workflows" element={<Workflows />} />
+                <Route path="workflows" element={<RegisteredWorkflowPage />} />
+                <Route path="workflows/:workflowId" element={<WorkflowRunsPage />} />
                 <Route
-                  path="workflows/:workflowRunId"
-                  element={<WorkflowDetail />}
+                  path="workflows/:workflowId/:workflowRunId"
+                  element={<WorkflowDetailPage />}
                 />
               </Route>
             </Routes>

@@ -8,13 +8,14 @@ import {
 } from "@fluentui/react";
 import { formatRunTimes } from "helpers/time";
 import { gapRegular, treeIndent } from "styles/global";
-import { IndentLevel, JobRun, TaskRun } from "types";
+import { IndentLevel } from "types";
+import { JobRunRecord, TaskRunRecord } from "types/runs";
 import { RunTimeDuration } from "../RunTimes/RunDuration";
 import StatusIcon from "../StatusIcon";
 
 interface RunItemProps {
   title: string;
-  run: JobRun | TaskRun | undefined;
+  run: JobRunRecord | TaskRunRecord | undefined;
   selected?: boolean;
   indent: IndentLevel;
   onClick?: () => void;

@@ -6,7 +6,7 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import humanizeDuration from "humanize-duration";
 
-import { Run, RunTimesHumanized } from "types";
+import { RunRecord, RunTimesHumanized } from "types/runs";
 
 dayjs.extend(durationPlugin);
 dayjs.extend(relativeTimePlugin);
@@ -36,7 +36,7 @@ const shortHumanizer = humanizeDuration.humanizer({
   conjunction: "",
 });
 
-export const formatRunTimes = (run: Run): RunTimesHumanized => {
+export const formatRunTimes = (run: RunRecord): RunTimesHumanized => {
   const start = dayjs.utc(run.created);
   const end = dayjs.utc(run.updated);
 

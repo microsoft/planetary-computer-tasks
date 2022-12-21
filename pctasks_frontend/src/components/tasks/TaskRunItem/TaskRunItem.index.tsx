@@ -3,11 +3,12 @@ import { RunItem } from "components/common/RunItem/RunItem.index";
 import { equals } from "helpers/tasks";
 import { useSelection } from "state/SelectionProvider";
 import { borderTop } from "styles/global";
-import { IndentLevel, TaskApiDefinition, TaskRun } from "types";
+import { IndentLevel, TaskDefinition } from "types";
+import { TaskRunRecord } from "types/runs";
 
 interface TaskRunItemProps {
-  task: TaskApiDefinition;
-  taskRun: TaskRun | undefined;
+  task: TaskDefinition;
+  taskRun: TaskRunRecord | undefined;
   indent?: IndentLevel;
 }
 

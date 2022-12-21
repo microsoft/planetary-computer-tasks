@@ -7,11 +7,11 @@ import {
 } from "@fluentui/react";
 import { ArrowCircleDownSplit20Regular } from "@fluentui/react-icons";
 
-import { JobRun } from "types";
+import { JobRunRecord } from "types/runs";
 import { getSubJobStatusSummary } from "helpers/jobs";
 
 interface JobStatusFilterProps {
-  jobRuns: JobRun[];
+  jobRuns: JobRunRecord[];
   statusFilters: string[];
   onFilterChange: (filters: string[]) => void;
 }

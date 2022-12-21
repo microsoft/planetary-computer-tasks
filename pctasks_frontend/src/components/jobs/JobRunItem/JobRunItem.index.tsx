@@ -1,9 +1,11 @@
-import { IndentLevel, JobApiDefinition, JobRun } from "types";
+import { IndentLevel } from "types";
+import { JobRunRecord } from "types/runs";
+import { JobDefinition } from "types/jobs";
 import { RunItem } from "components/common/RunItem/RunItem.index";
 
 interface JobRunItemProps {
-  job: JobApiDefinition;
-  run: JobRun | undefined;
+  job: JobDefinition;
+  run: JobRunRecord | undefined;
   indent: IndentLevel;
   children?: React.ReactNode;
 }

@@ -2,13 +2,13 @@ import { FontWeights, getTheme, mergeStyleSets, Stack, Text } from "@fluentui/re
 import { Link } from "react-router-dom";
 import StatusIcon from "components/common/StatusIcon";
 import { RunTimeBlock } from "components/common/RunTimes/RunTimeBlock";
-import { WorkflowRun } from "types";
+import { WorkflowRunRecord } from "types/runs";
 import { gapRegular } from "styles/global";
 import { getShortId } from "helpers/workflows";
 import { WorkflowRunItemErrors } from "./WorkflowRunItemErrors";
 
 interface WorkflowRunItemProps {
-  run: WorkflowRun;
+  run: WorkflowRunRecord;
   selected?: boolean;
 }
 
@@ -20,7 +20,7 @@ export const WorkflowRunItem: React.FC<WorkflowRunItemProps> = ({
 
   const runName = (
     <Link className={styles.title} to={`${run.run_id}`}>
-      {run.dataset}
+      {run.dataset_id}
     </Link>
   );
   const runId = (

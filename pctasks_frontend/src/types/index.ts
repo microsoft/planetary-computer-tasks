@@ -1,4 +1,4 @@
-import { JobRunStatus, LinkRel, TaskRunStatus, WorkflowRunStatus } from "./enums";
+import { LinkRel } from "./enums";
 
 export type ResponseLink = {
   rel: LinkRel;
@@ -7,42 +7,15 @@ export type ResponseLink = {
   title?: string;
 };
 
-export type Run = {
-  run_id: string;
+export type PCTRecord = {
+  type: string;
+  schema_version: string;
   created: string;
   updated: string;
-  links: ResponseLink[] | null;
-  errors: string[] | null;
+  deleted: boolean;
 };
 
-export type WorkflowRun = Run & {
-  dataset: string;
-  status: WorkflowRunStatus;
-  workflow?: WorkflowConfig | null;
-  trigger_event?: CloudEvent | null;
-  args?: Record<string, any> | null;
-};
-
-export type JobRun = Run & {
-  job_id: string;
-  status: JobRunStatus;
-};
-
-export type JobApiDefinition = {
-  id: string;
-  tasks: [];
-  foreach: [];
-  notifications: ItemNotificationConfig[] | null;
-  needs: string | string[] | null;
-};
-
-export type TaskRun = Run & {
-  task_id: string;
-  job_id: string;
-  status: TaskRunStatus;
-};
-
-export type TaskApiDefinition = {
+export type TaskDefinition = {
   id: string;
   image: string | null;
   image_key: string | null;
@@ -51,11 +24,11 @@ export type TaskApiDefinition = {
   args: Record<string, any>;
   tags: Record<string, string> | null;
   environment: Record<string, string> | null;
-  schema_version: string;
 };
 
 export type ForeachConfig = {
   items: string | any[] | null;
+  flatten: boolean;
 };
 
 // TODO
@@ -64,30 +37,6 @@ export type CodeConfig = any;
 export type TriggerConfig = any;
 export type StorageAccountTokens = any;
 export type DatasetIdentifier = any;
-
-// export type JobConfig = {
-//   id: string;
-//   image: string | null;
-//   image_key: string | null;
-//   code: CodeConfig | null;
-//   task: string;
-//   args: Record<string, any>;
-//   tags: Record<string, string> | null;
-//   environment: Record<string, string> | null;
-//   schema_version: string;
-// };
-
-export type WorkflowConfig = {
-  name: string;
-  dataset: DatasetIdentifier | string;
-  group_id: string | null;
-  tokens: Record<string, StorageAccountTokens> | null;
-  target_environment: string | null;
-  args: string[] | null;
-  jobs: Record<string, JobApiDefinition>;
-  on: TriggerConfig | null;
-  schema_version: string;
-};
 
 export type CloudEvent = {
   spec_version: string;
@@ -98,13 +47,6 @@ export type CloudEvent = {
   time: string;
   data_content_type: string;
   data: Record<string, any>;
-};
-
-export type RunTimesHumanized = {
-  startFriendly: string;
-  startFormatted: string;
-  duration: number;
-  durationFriendly: string;
 };
 
 export type IndentLevel = number;

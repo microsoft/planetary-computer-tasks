@@ -2,10 +2,10 @@ import { mergeStyleSets, Spinner } from "@fluentui/react";
 import { useTaskRunLog } from "helpers/api";
 import React from "react";
 import { LazyLog } from "react-lazylog";
-import { TaskRun } from "types";
+import { TaskRunRecord } from "types/runs";
 
 interface TextOutputProps {
-  taskRun: TaskRun | undefined;
+  taskRun: TaskRunRecord | undefined;
 }
 
 export const TextOutput: React.FC<TextOutputProps> = ({ taskRun }) => {

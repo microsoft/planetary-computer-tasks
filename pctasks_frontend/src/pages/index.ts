@@ -1,7 +1,5 @@
-import { Workflows as WorkflowsPage } from "./Workflows/Workflows.index";
+import { WorkflowRuns as WorkflowRunsPage } from "./WorkflowRuns/WorkflowRuns.index";
 import { WorkflowDetail as WorkflowDetailPage } from "./WorkflowDetail/WorkflowDetail.index";
-import { Home as HomePage } from "./Home/Home.index";
+import { RegisteredWorkflows as RegisteredWorkflowPage } from "./RegisteredWorkflows/RegisteredWorkflows.index";
 
-export const Home = HomePage;
-export const Workflows = WorkflowsPage;
-export const WorkflowDetail = WorkflowDetailPage;
+export { WorkflowRunsPage, WorkflowDetailPage, RegisteredWorkflowPage };

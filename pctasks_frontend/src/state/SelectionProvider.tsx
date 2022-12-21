@@ -1,11 +1,11 @@
 import React, { createContext } from "react";
-import { JobRun, TaskRun } from "types";
+import { JobRunRecord, TaskRunRecord } from "types/runs";
 
 export interface SelectionProviderContext {
-  selectedJobRun: JobRun | undefined;
-  setSelectedJobRun: (jobRun: JobRun | undefined) => void;
-  selectedTaskRun: TaskRun | undefined;
-  setSelectedTaskRun: (taskRun: TaskRun | undefined) => void;
+  selectedJobRun: JobRunRecord | undefined;
+  setSelectedJobRun: (jobRun: JobRunRecord | undefined) => void;
+  selectedTaskRun: TaskRunRecord | undefined;
+  setSelectedTaskRun: (taskRun: TaskRunRecord | undefined) => void;
 }
 
 const initialState: SelectionProviderContext = {
@@ -22,9 +22,10 @@ interface Props {
 }
 
 export const SelectionProvider: React.FC<Props> = ({ children }) => {
-  const [selectedJobRun, setSelectedJobRun] = React.useState<JobRun | undefined>();
+  const [selectedJobRun, setSelectedJobRun] =
+    React.useState<JobRunRecord | undefined>();
   const [selectedTaskRun, setSelectedTaskRun] =
-    React.useState<TaskRun | undefined>();
+    React.useState<TaskRunRecord | undefined>();
 
   const context: SelectionProviderContext = {
     selectedJobRun,

@@ -2,7 +2,7 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { withRouter } from "storybook-addon-react-router-v6";
 
-import JobRunItem from "components/jobs/JobRunItem";
+import { JobRunItem } from "components/jobs";
 import { TestJobDefinitions, TestJobRuns } from "./data";
 import { isJobRun, isSubJobRun } from "helpers/jobs";
 

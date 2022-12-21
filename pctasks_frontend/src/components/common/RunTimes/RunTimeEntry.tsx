@@ -1,6 +1,6 @@
 import { Stack, Text } from "@fluentui/react";
 import { gapSmall } from "styles/global";
-import { RunTimesHumanized } from "types";
+import { RunTimesHumanized } from "types/runs";
 
 interface RunTimeEntryProps extends React.HTMLAttributes<HTMLElement> {
   icon?: React.ReactNode;

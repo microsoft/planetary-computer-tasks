@@ -1,8 +1,9 @@
 import { AxiosInstance } from "axios";
 import { useQuery, QueryFunctionContext } from "@tanstack/react-query";
 
-import { JobRun, TaskRun, WorkflowRun } from "types";
+import { JobRunRecord, TaskRunRecord, WorkflowRunRecord } from "types/runs";
 import { useAuthApiClient } from "components/auth/hooks/useApiClient";
+import { WorkflowRecord } from "types/workflows";
 
 // Create default query options including a client for authentication. Will
 // refresh tokens as needed. The authenticated client is accessible via the
@@ -24,14 +25,31 @@ const getClient = (context: QueryFunctionContext) =>
 
 // === API Hooks ===
 
-export const useWorkflowRuns = () => {
+export const useWorkflows = () => {
   const queryConfig = useQueryConfigDefaults([]);
-  return useQuery(["workflows"], getWorkflowRuns, queryConfig);
+  return useQuery(["workflows"], getRegisteredWorkflows, queryConfig);
+};
+
+export const useWorkflow = (workflowId: string | undefined) => {
+  const queryConfig = useQueryConfigDefaults([workflowId]);
+  return useQuery(["workflow", workflowId], getWorkflowRecord, queryConfig);
+};
+
+export const useWorkflowRuns = (
+  workflowId: string | undefined,
+  isSortDesc: boolean = true
+) => {
+  const queryConfig = useQueryConfigDefaults([workflowId]);
+  return useQuery(
+    ["workflowRuns", workflowId, isSortDesc],
+    getWorkflowRuns,
+    queryConfig
+  );
 };
 
 export const useWorkflowRun = (workflowRunId: string | undefined) => {
   const queryConfig = useQueryConfigDefaults([workflowRunId]);
-  return useQuery(["workflow", workflowRunId], getWorkflowRun, queryConfig);
+  return useQuery(["workflowRun", workflowRunId], getWorkflowRun, queryConfig);
 };
 
 export const useWorkflowJobRuns = (workflowRunId: string | undefined) => {
@@ -43,7 +61,7 @@ export const useWorkflowJobRuns = (workflowRunId: string | undefined) => {
 };
 
 export const useJobTaskRuns = (
-  jobRun: JobRun | undefined,
+  jobRun: JobRunRecord | undefined,
   enabled: boolean = true
 ) => {
   const queryConfig = useQueryConfigDefaults([jobRun, enabled]);
@@ -53,7 +71,7 @@ export const useJobTaskRuns = (
   });
 };
 
-export const useTaskRunLog = (taskRun: TaskRun | undefined) => {
+export const useTaskRunLog = (taskRun: TaskRunRecord | undefined) => {
   const queryConfig = useQueryConfigDefaults([taskRun?.task_id]);
   return useQuery(
     ["taskRunLog", taskRun?.run_id, taskRun?.job_id, taskRun?.task_id],
@@ -67,18 +85,43 @@ export const useTaskRunLog = (taskRun: TaskRun | undefined) => {
 
 // === API Requests ===
 
-const getWorkflowRuns = async (
+const getRegisteredWorkflows = async (
   queryContext: QueryFunctionContext<[string]>
-): Promise<WorkflowRun[]> => {
+): Promise<WorkflowRecord[]> => {
   const client = getClient(queryContext);
 
-  const response = await client.get(`/runs/`);
-  return response.data.runs;
+  const response = await client.get(`/workflows/`, {
+    params: { sortBy: "updated", order: "desc" },
+  });
+  return response.data.records;
+};
+
+const getWorkflowRecord = async (
+  queryContext: QueryFunctionContext<[string, string | undefined]>
+): Promise<WorkflowRecord> => {
+  const client = getClient(queryContext);
+  const [, workflowId] = queryContext.queryKey;
+
+  const response = await client.get(`/workflows/${workflowId}`);
+  return response.data.record;
+};
+
+const getWorkflowRuns = async (
+  queryContext: QueryFunctionContext<[string, string | undefined, boolean]>
+): Promise<WorkflowRunRecord[]> => {
+  const client = getClient(queryContext);
+  const [, workflowId, sortDesc] = queryContext.queryKey;
+
+  const sort = sortDesc ? "desc" : "asc";
+  const response = await client.get(`/workflows/${workflowId}/runs`, {
+    params: { sortBy: "created", order: sort },
+  });
+  return response.data.records;
 };
 
 const getWorkflowRun = async (
   queryContext: QueryFunctionContext<[string, string | undefined]>
-): Promise<WorkflowRun> => {
+): Promise<WorkflowRunRecord> => {
   const [, workflowRunId] = queryContext.queryKey;
   const client = getClient(queryContext);
 
@@ -88,7 +131,7 @@ const getWorkflowRun = async (
 
 const getWorkflowJobRuns = async (
   queryContext: QueryFunctionContext<[string, string | undefined]>
-): Promise<JobRun[]> => {
+): Promise<JobRunRecord[]> => {
   const [, workflowRunId] = queryContext.queryKey;
   const client = getClient(queryContext);
 
@@ -97,8 +140,8 @@ const getWorkflowJobRuns = async (
 };
 
 const getJobTaskRuns = async (
-  queryContext: QueryFunctionContext<[string, JobRun | undefined]>
-): Promise<TaskRun[]> => {
+  queryContext: QueryFunctionContext<[string, JobRunRecord | undefined]>
+): Promise<TaskRunRecord[]> => {
   const [, jobRun] = queryContext.queryKey;
   const client = getClient(queryContext);
 

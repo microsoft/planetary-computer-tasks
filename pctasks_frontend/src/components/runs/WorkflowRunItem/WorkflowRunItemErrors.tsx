@@ -1,9 +1,9 @@
 import { FontSizes, Link, mergeStyles, TooltipHost } from "@fluentui/react";
 import { useCallback } from "react";
-import { WorkflowRun } from "types";
+import { WorkflowRunRecord } from "types/runs";
 
 interface WorkflowRunItemErrorsProps {
-  run: WorkflowRun;
+  run: WorkflowRunRecord;
 }
 
 export const WorkflowRunItemErrors: React.FC<WorkflowRunItemErrorsProps> = ({

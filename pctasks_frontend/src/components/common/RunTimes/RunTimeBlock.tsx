@@ -1,12 +1,12 @@
 import { mergeStyles, Stack } from "@fluentui/react";
 import { formatRunTimes } from "helpers/time";
 import { gapSmall } from "styles/global";
-import { Run } from "types";
+import { RunRecord } from "types/runs";
 import { RunTimeDuration } from "./RunDuration";
 import { RunTimeStarted } from "./RunStarted";
 
 interface RunTimeBlockProps {
-  run: Run;
+  run: RunRecord;
 }
 
 export const RunTimeBlock: React.FC<RunTimeBlockProps> = ({ run }) => {

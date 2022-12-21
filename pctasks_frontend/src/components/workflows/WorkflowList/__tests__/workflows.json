@@ -1,0 +1,414 @@
+[
+  {
+    "type": "Workflow",
+    "schema_version": "1.0.0",
+    "created": "2022-12-20T22:31:54.725262+00:00",
+    "updated": "2022-12-20T22:51:39.206593+00:00",
+    "deleted": false,
+    "workflow_id": "landsat",
+    "workflow": {
+      "id": "landsat",
+      "definition": {
+        "id": "landsat",
+        "name": "Landsat",
+        "dataset": "microsoft/landsat",
+        "tokens": null,
+        "target_environment": null,
+        "args": ["start_datetime", "end_datetime"],
+        "jobs": {
+          "initialize": {
+            "id": "initialize",
+            "tasks": [
+              {
+                "id": "initialize",
+                "image": "pccomponentstest.azurecr.io/pconboarding-base:2022.11.29.0",
+                "image_key": null,
+                "code": {
+                  "src": "blob://pctasksteststaging/code/b4d14ca1c29dece658c02e84f0ca1890/pc_onboarding-0.1.0-py3-none-any.whl",
+                  "requirements": null,
+                  "pip_options": null
+                },
+                "task": "pc_onboarding.landsat:LandsatInitializeTask",
+                "args": {
+                  "start_datetime": "2022-12-20T11:31:53",
+                  "end_datetime": "2022-12-20T18:31:53",
+                  "landsat_username": "aiforearth",
+                  "table_endpoint": "https://pconboarding.table.core.windows.net",
+                  "table_name": "etl",
+                  "storage_account_url": "https://landsateuwest.blob.core.windows.net",
+                  "queue_account_url": "https://pconboarding.queue.core.windows.net",
+                  "queue_name": "landsat",
+                  "storage_container_name": "landsat-c2-test-tom"
+                },
+                "tags": null,
+                "environment": {
+                  "landsat_password": "${{ secrets.onboarding-landsat-password }}",
+                  "table_credential": "${{ secrets.onboarding-table-credential }}",
+                  "storage_credential": "${{ secrets.onboarding-landsat-storage-credential }}",
+                  "queue_credential": "${{ secrets.onboarding-landsat-queue-credential }}",
+                  "APPLICATIONINSIGHTS_CONNECTION_STRING": "${{ secrets.onboarding-APPLICATIONINSIGHTS-CONNECTION-STRING }}",
+                  "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+                  "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+                  "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+                },
+                "schema_version": "1.0.0"
+              }
+            ],
+            "foreach": null,
+            "notifications": null,
+            "needs": null
+          },
+          "copy": {
+            "id": "copy",
+            "tasks": [
+              {
+                "id": "copy",
+                "image": "pccomponentstest.azurecr.io/pconboarding-base:2022.11.29.0",
+                "image_key": null,
+                "code": {
+                  "src": "blob://pctasksteststaging/code/b4d14ca1c29dece658c02e84f0ca1890/pc_onboarding-0.1.0-py3-none-any.whl",
+                  "requirements": null,
+                  "pip_options": null
+                },
+                "task": "pc_onboarding.landsat:LandsatCopyItemsTask",
+                "args": {
+                  "start_datetime": "2022-12-20T11:31:53",
+                  "end_datetime": "2022-12-20T18:31:53",
+                  "landsat_username": "aiforearth",
+                  "table_endpoint": "https://pconboarding.table.core.windows.net",
+                  "table_name": "etl",
+                  "storage_account_url": "https://landsateuwest.blob.core.windows.net",
+                  "queue_account_url": "https://pconboarding.queue.core.windows.net",
+                  "queue_name": "landsat",
+                  "storage_container_name": "landsat-c2-test-tom"
+                },
+                "tags": {
+                  "batch_pool_id": "landsat_pool"
+                },
+                "environment": {
+                  "landsat_password": "${{ secrets.onboarding-landsat-password }}",
+                  "table_credential": "${{ secrets.onboarding-table-credential }}",
+                  "storage_credential": "${{ secrets.onboarding-landsat-storage-credential }}",
+                  "queue_credential": "${{ secrets.onboarding-landsat-queue-credential }}",
+                  "APPLICATIONINSIGHTS_CONNECTION_STRING": "${{ secrets.onboarding-APPLICATIONINSIGHTS-CONNECTION-STRING }}",
+                  "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+                  "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+                  "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+                },
+                "schema_version": "1.0.0"
+              }
+            ],
+            "foreach": {
+              "items": "${{ jobs.initialize.tasks.initialize.output.partitions }}",
+              "flatten": true
+            },
+            "notifications": null,
+            "needs": null
+          }
+        },
+        "on": null,
+        "schema_version": "1.0.0"
+      }
+    },
+    "log_uri": null,
+    "workflow_run_counts": {
+      "running": 8,
+      "completed": 1
+    }
+  },
+  {
+    "type": "Workflow",
+    "schema_version": "1.0.0",
+    "created": "2022-12-20T04:39:37.020373+00:00",
+    "updated": "2022-12-20T04:59:49.232807+00:00",
+    "deleted": false,
+    "workflow_id": "modis",
+    "workflow": {
+      "id": "modis",
+      "definition": {
+        "id": "modis",
+        "name": "Update a product",
+        "dataset": "microsoft/modis",
+        "tokens": null,
+        "target_environment": null,
+        "args": ["start_date", "end_date"],
+        "jobs": {
+          "initialize": {
+            "id": "initialize",
+            "tasks": [
+              {
+                "id": "initialize",
+                "image": "pccomponentstest.azurecr.io/pconboarding-base:2022.11.29.0",
+                "image_key": null,
+                "code": {
+                  "src": "blob://pctasksteststaging/code/1dbd94034793fa171e5bd2870984f6c8/pc_onboarding-0.1.0-py3-none-any.whl",
+                  "requirements": null,
+                  "pip_options": null
+                },
+                "task": "pc_onboarding.modis:NSIDCModisInitializeTask",
+                "args": {
+                  "start_date": "2022-12-12",
+                  "end_date": "2022-12-20",
+                  "table_endpoint": "https://pconboarding.table.core.windows.net",
+                  "table_name": "etl",
+                  "storage_account_url": "https://modiseuwest.blob.core.windows.net",
+                  "storage_container_name": "modis-061",
+                  "queue_account_url": "https://pconboarding.queue.core.windows.net",
+                  "queue_name": "modis-ice"
+                },
+                "tags": null,
+                "environment": {
+                  "earthdata_token": "${{ secrets.onboarding-modis-earthdata-token }}",
+                  "earthdata_password": "${{ secrets.onboarding-modis-earthdata-password }}",
+                  "table_credential": "${{ secrets.onboarding-modis-table-credential }}",
+                  "storage_credential": "${{ secrets.onboarding-modis-storage-credential }}",
+                  "queue_credential": "${{ secrets.onboarding-modis-ice-queue-credential }}",
+                  "APPLICATIONINSIGHTS_CONNECTION_STRING": "${{ secrets.onboarding-modis-APPLICATIONINSIGHTS-CONNECTION-STRING }}",
+                  "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+                  "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+                  "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+                },
+                "schema_version": "1.0.0"
+              }
+            ],
+            "foreach": null,
+            "notifications": null,
+            "needs": null
+          },
+          "copy": {
+            "id": "copy",
+            "tasks": [
+              {
+                "id": "copy",
+                "image": "pccomponentstest.azurecr.io/pconboarding-base:2022.11.29.0",
+                "image_key": null,
+                "code": {
+                  "src": "blob://pctasksteststaging/code/1dbd94034793fa171e5bd2870984f6c8/pc_onboarding-0.1.0-py3-none-any.whl",
+                  "requirements": null,
+                  "pip_options": null
+                },
+                "task": "pc_onboarding.modis:NSIDCModisCopyItemsTask",
+                "args": {
+                  "start_date": "2022-12-12",
+                  "end_date": "2022-12-20",
+                  "table_endpoint": "https://pconboarding.table.core.windows.net",
+                  "table_name": "etl",
+                  "storage_account_url": "https://modiseuwest.blob.core.windows.net",
+                  "storage_container_name": "modis-061",
+                  "queue_account_url": "https://pconboarding.queue.core.windows.net",
+                  "queue_name": "modis-ice"
+                },
+                "tags": null,
+                "environment": {
+                  "earthdata_token": "${{ secrets.onboarding-modis-earthdata-token }}",
+                  "earthdata_password": "${{ secrets.onboarding-modis-earthdata-password }}",
+                  "table_credential": "${{ secrets.onboarding-modis-table-credential }}",
+                  "storage_credential": "${{ secrets.onboarding-modis-storage-credential }}",
+                  "queue_credential": "${{ secrets.onboarding-modis-ice-queue-credential }}",
+                  "APPLICATIONINSIGHTS_CONNECTION_STRING": "${{ secrets.onboarding-modis-APPLICATIONINSIGHTS-CONNECTION-STRING }}",
+                  "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+                  "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+                  "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+                },
+                "schema_version": "1.0.0"
+              }
+            ],
+            "foreach": {
+              "items": "${{ jobs.initialize.tasks.initialize.output.partitions }}",
+              "flatten": true
+            },
+            "notifications": null,
+            "needs": null
+          }
+        },
+        "on": null,
+        "schema_version": "1.0.0"
+      }
+    },
+    "log_uri": null,
+    "workflow_run_counts": {
+      "submitted": -6,
+      "running": 6,
+      "completed": 1
+    }
+  },
+  {
+    "type": "Workflow",
+    "schema_version": "1.0.0",
+    "created": "2022-10-28T00:50:14.532364+00:00",
+    "updated": "2022-10-28T00:50:42.146148+00:00",
+    "deleted": false,
+    "workflow_id": "io_lulc-io-lulc-process-items",
+    "workflow": {
+      "id": "io_lulc-io-lulc-process-items",
+      "definition": {
+        "id": "io_lulc-io-lulc-process-items",
+        "name": "Process items for io-lulc",
+        "dataset": "io_lulc",
+        "tokens": {
+          "ai4edataeuwest": {
+            "token": null,
+            "containers": {
+              "io-lulc": {
+                "token": "${{ pc.get_token(ai4edataeuwest, io-lulc) }}",
+                "blobs": null
+              }
+            }
+          }
+        },
+        "target_environment": null,
+        "args": ["registry"],
+        "jobs": {
+          "create-splits": {
+            "id": "create-splits",
+            "tasks": [
+              {
+                "id": "create-splits",
+                "image": "${{ args.registry }}/pctasks-task-base:latest",
+                "image_key": null,
+                "code": {
+                  "src": "blob://pctasksteststaging/code/dfb838f9346d1e9074e282e4c8165ed1/io_lulc.py",
+                  "requirements": null,
+                  "pip_options": null
+                },
+                "task": "io_lulc:TenClassIOCollection.create_splits_task",
+                "args": {
+                  "inputs": [
+                    {
+                      "uri": "blob://ai4edataeuwest/io-lulc",
+                      "sas_token": "${{ pc.get_token(ai4edataeuwest, io-lulc) }}",
+                      "chunk_options": {
+                        "chunk_length": 100,
+                        "name_starts_with": "io-lulc-model-001-v01-composite-v03-supercell-v02-clip-v01/",
+                        "ends_with": ".tif",
+                        "list_folders": false,
+                        "chunk_file_name": "uris-list",
+                        "chunk_extension": ".csv"
+                      }
+                    }
+                  ],
+                  "options": {}
+                },
+                "tags": null,
+                "environment": {
+                  "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+                  "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+                  "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+                },
+                "schema_version": "1.0.0"
+              }
+            ],
+            "foreach": null,
+            "notifications": null,
+            "needs": null
+          },
+          "create-chunks": {
+            "id": "create-chunks",
+            "tasks": [
+              {
+                "id": "create-chunks",
+                "image": "${{ args.registry }}/pctasks-task-base:latest",
+                "image_key": null,
+                "code": {
+                  "src": "blob://pctasksteststaging/code/dfb838f9346d1e9074e282e4c8165ed1/io_lulc.py",
+                  "requirements": null,
+                  "pip_options": null
+                },
+                "task": "pctasks.dataset.chunks.task:create_chunks_task",
+                "args": {
+                  "src_uri": "${{ item.uri }}",
+                  "dst_uri": "blob://ai4edataeuwest/io-lulc-etl-data/pctasks-chunks/io-lulc/2022-10-27_test/assets",
+                  "options": "${{ item.chunk_options }}"
+                },
+                "tags": null,
+                "environment": {
+                  "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+                  "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+                  "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+                },
+                "schema_version": "1.0.0"
+              }
+            ],
+            "foreach": {
+              "items": "${{ jobs.create-splits.tasks.create-splits.output.splits }}",
+              "flatten": true
+            },
+            "notifications": null,
+            "needs": "create-splits"
+          },
+          "process-chunk": {
+            "id": "process-chunk",
+            "tasks": [
+              {
+                "id": "create-items",
+                "image": "${{ args.registry }}/pctasks-task-base:latest",
+                "image_key": null,
+                "code": {
+                  "src": "blob://pctasksteststaging/code/dfb838f9346d1e9074e282e4c8165ed1/io_lulc.py",
+                  "requirements": null,
+                  "pip_options": null
+                },
+                "task": "io_lulc:TenClassIOCollection.create_items_task",
+                "args": {
+                  "asset_chunk_info": {
+                    "uri": "${{ item.uri }}",
+                    "chunk_id": "${{ item.chunk_id }}"
+                  },
+                  "item_chunkset_uri": "blob://ai4edataeuwest/io-lulc-etl-data/pctasks-chunks/io-lulc/2022-10-27_test/items",
+                  "collection_id": "io-lulc",
+                  "options": {
+                    "skip_validation": false
+                  }
+                },
+                "tags": null,
+                "environment": {
+                  "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+                  "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+                  "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+                },
+                "schema_version": "1.0.0"
+              },
+              {
+                "id": "ingest-items",
+                "image": null,
+                "image_key": "ingest",
+                "code": null,
+                "task": "pctasks.ingest_task.task:ingest_task",
+                "args": {
+                  "content": {
+                    "type": "Ndjson",
+                    "uris": ["${{tasks.create-items.output.ndjson_uri}}"]
+                  },
+                  "options": {
+                    "insert_group_size": 5000,
+                    "insert_only": false
+                  }
+                },
+                "tags": null,
+                "environment": {
+                  "AZURE_TENANT_ID": "${{ secrets.task-tenant-id }}",
+                  "AZURE_CLIENT_ID": "${{ secrets.task-client-id }}",
+                  "AZURE_CLIENT_SECRET": "${{ secrets.task-client-secret }}"
+                },
+                "schema_version": "1.0.0"
+              }
+            ],
+            "foreach": {
+              "items": "${{ jobs.create-chunks.tasks.create-chunks.output.chunks }}",
+              "flatten": true
+            },
+            "notifications": null,
+            "needs": "create-chunks"
+          }
+        },
+        "on": null,
+        "schema_version": "1.0.0"
+      }
+    },
+    "log_uri": null,
+    "workflow_run_counts": {
+      "submitted": -1,
+      "running": 2
+    }
+  }
+]

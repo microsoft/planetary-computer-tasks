@@ -3,14 +3,16 @@ import { mergeStyles, mergeStyleSets, Stack } from "@fluentui/react";
 import { JobRunItem } from "components/jobs/JobRunItem/JobRunItem.index";
 import TaskRunList from "components/tasks/TaskRunList";
 import { gapRegular, borderTop, treeIndent } from "styles/global";
-import { IndentLevel, JobApiDefinition, JobRun, TaskRun } from "types";
+import { IndentLevel } from "types";
+import { JobRunRecord, TaskRunRecord } from "types/runs";
+import { JobDefinition } from "types/jobs";
 import { useExpandButton } from "components/common/hooks";
 import { useJobTaskRuns } from "helpers/api";
 
 interface JobRunWithTasksProps {
-  job: JobApiDefinition;
-  jobRun: JobRun | undefined;
-  initialTaskRuns: TaskRun[];
+  job: JobDefinition;
+  jobRun: JobRunRecord | undefined;
+  initialTaskRuns: TaskRunRecord[];
   expanded?: boolean;
   indent: IndentLevel;
 }

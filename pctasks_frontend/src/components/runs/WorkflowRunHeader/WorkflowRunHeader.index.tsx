@@ -1,10 +1,10 @@
 import { mergeStyles, mergeStyleSets, Stack, Text } from "@fluentui/react";
 import StatusIcon from "components/common/StatusIcon";
 import { borderRound, gapRegular } from "styles/global";
-import { WorkflowRun } from "types";
+import { WorkflowRunRecord } from "types/runs";
 
 interface WorkflowRunHeaderProps {
-  run: WorkflowRun | undefined;
+  run: WorkflowRunRecord | undefined;
 }
 
 export const WorkflowRunHeader: React.FC<WorkflowRunHeaderProps> = ({ run }) => {
@@ -13,11 +13,11 @@ export const WorkflowRunHeader: React.FC<WorkflowRunHeaderProps> = ({ run }) => 
       <h2 className={styles.heading}>
         <Stack horizontal tokens={gapRegular}>
           <StatusIcon status={run?.status} size="large" />
-          <span className={styles.title}>{run?.dataset}</span>
+          <span className={styles.title}>{run?.dataset_id}</span>
         </Stack>
       </h2>
       <Text className={styles.subtitle} variant="mediumPlus">
-        {run?.workflow?.name}
+        {run?.workflow_id}
       </Text>
     </Stack>
   );

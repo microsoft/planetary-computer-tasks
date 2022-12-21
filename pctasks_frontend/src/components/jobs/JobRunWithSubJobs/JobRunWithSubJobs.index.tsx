@@ -1,6 +1,7 @@
 import { List, mergeStyles, mergeStyleSets, Stack } from "@fluentui/react";
 
-import { JobApiDefinition, JobRun } from "types";
+import { JobRunRecord } from "types/runs";
+import { JobDefinition } from "types/jobs";
 import { borderTop, gapRegular } from "styles/global";
 import { JobRunWithTasks } from "../JobRunWithTasks/JobRunWithTasks.index";
 import { ParentJobRunItem } from "../ParentJobRunItem/ParentJobRunItem.index";
@@ -9,8 +10,8 @@ import { useSubJobFilter } from "../hooks/useSubJobFilter";
 import { hasSubJobs } from "helpers/jobs";
 
 interface JobRunWithSubJobsProps {
-  job: JobApiDefinition;
-  jobRuns: JobRun[];
+  job: JobDefinition;
+  jobRuns: JobRunRecord[];
   expanded?: boolean;
 }
 
@@ -27,7 +28,7 @@ export const JobRunWithSubJobs: React.FC<JobRunWithSubJobsProps> = ({
     throw new Error("JobRunWithSubJobs must be used with a job with sub jobs");
   }
 
-  const renderJob = (run: JobRun | undefined) => {
+  const renderJob = (run: JobRunRecord | undefined) => {
     if (!run) return;
 
     return (

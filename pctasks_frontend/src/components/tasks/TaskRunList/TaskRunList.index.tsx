@@ -1,10 +1,11 @@
 import { Stack } from "@fluentui/react";
-import { IndentLevel, TaskApiDefinition, TaskRun } from "types";
+import { IndentLevel, TaskDefinition } from "types";
+import { TaskRunRecord } from "types/runs";
 import TaskRunItem from "../TaskRunItem";
 
 interface TaskRunListProps {
-  tasks: TaskApiDefinition[];
-  taskRuns: TaskRun[];
+  tasks: TaskDefinition[];
+  taskRuns: TaskRunRecord[];
   indent: IndentLevel;
 }
 

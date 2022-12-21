@@ -1,7 +1,7 @@
 import { mergeStyleSets, Spinner, Stack, StackItem } from "@fluentui/react";
 import { useParams } from "react-router-dom";
 
-import { WorkflowRunHeader } from "components/workflows";
+import { WorkflowRunHeader } from "components/runs";
 import { JobRunList } from "components/jobs/JobRunList/JobRunList.index";
 import { useWorkflowJobRuns, useWorkflowRun } from "helpers/api";
 import { gapRegular, gapSmall } from "styles/global";
@@ -16,8 +16,10 @@ export const WorkflowDetail = () => {
   const { data: jobRuns } = useWorkflowJobRuns(workflowRunId);
   const { selectedTaskRun } = useSelection();
 
-  const pageTitle = `Workflow ${workflowRun?.dataset}: ${workflowRun?.run_id}`;
-  const jobs = Object.values(workflowRun?.workflow?.jobs || {});
+  const pageTitle = `Workflow ${workflowRun?.dataset_id}: ${workflowRun?.run_id}`;
+
+  // TODO: Get Job Def from workflow def embedded in the url path?
+  const jobs = undefined;
   const runList = (
     <Stack className={styles.container} horizontal tokens={gapRegular}>
       <JobRunList jobs={jobs} runs={jobRuns} />
@@ -33,7 +35,7 @@ export const WorkflowDetail = () => {
 
       <Stack className={styles.splitView} horizontal tokens={gapSmall}>
         <StackItem className={styles.panel} shrink={1} grow={1}>
-          {workflowRun?.workflow && runList}
+          {workflowRun?.workflow_id && runList}
         </StackItem>
         <TextOutput taskRun={selectedTaskRun} />
       </Stack>

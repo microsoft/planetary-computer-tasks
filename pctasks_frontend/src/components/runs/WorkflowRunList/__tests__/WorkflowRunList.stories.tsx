@@ -1,7 +1,7 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { withRouter } from "storybook-addon-react-router-v6";
 
-import WorkflowRunList from "components/workflows/WorkflowRunList";
+import { WorkflowRunList } from "components/runs";
 import { TestWorkflowRunListItems, TestWorkflowRunListItemsLong } from "./data";
 
 export default {

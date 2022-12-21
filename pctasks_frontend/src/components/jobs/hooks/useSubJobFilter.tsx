@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { JobRun } from "types";
+import { JobRunRecord } from "types/runs";
 import { JobRunStatus } from "types/enums";
 import { JobStatusFilter } from "../JobStatusFilter/JobStatusFilter.index";
 
-export const useSubJobFilter = (jobRuns: JobRun[]) => {
+export const useSubJobFilter = (jobRuns: JobRunRecord[]) => {
   const [filter, setFilter] = useState<string[]>(allStatuses);
 
   const filterPanel = (

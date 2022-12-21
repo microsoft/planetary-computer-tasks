@@ -1,6 +1,6 @@
 import { WorkflowRun } from "types";
 import longWorkflowRunsList from "./workflow-runs.json";
-import { TestWorkflowRunItems } from "components/workflows/WorkflowRunItem/__tests__/data";
+import { TestWorkflowRunItems } from "components/runs/WorkflowRunItem/__tests__/data";
 
 const { completed, failed, running, submitted } = TestWorkflowRunItems;
 export const TestWorkflowRunListItems: WorkflowRun[] = [

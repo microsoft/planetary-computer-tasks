@@ -6,29 +6,29 @@ import {
   Stack,
   Text,
 } from "@fluentui/react";
-import { WorkflowRunItem } from "components/workflows";
-import { borderRound } from "styles/global";
-import { WorkflowRun } from "types";
 
-interface WorkflowRunListProps {
-  runs: WorkflowRun[];
+import { borderRound } from "styles/global";
+import { WorkflowRecord } from "types/workflows";
+import { Workflow } from "../Workflow/Workflow.index";
+
+interface WorkflowListProps {
+  workflows: WorkflowRecord[];
 }
 
-export const WorkflowRunList: React.FC<WorkflowRunListProps> = ({ runs }) => {
-  const items = runs.map(run => (
-    <div className={styles.item} key={run.run_id}>
-      <WorkflowRunItem run={run} />
-    </div>
-  ));
+export const WorkflowList: React.FC<WorkflowListProps> = ({ workflows }) => {
   const header = (
     <div className={styles.header}>
-      <Text className={styles.title}>Workflow runs</Text>
+      <Text className={styles.title}>Registered Workflows </Text>
     </div>
   );
+  const workflowItems = workflows.map(workflow => (
+    <Workflow workflow={workflow} key={workflow.workflow_id} />
+  ));
+
   return (
     <Stack className={styles.list}>
       {header}
-      {items}
+      {workflowItems}
     </Stack>
   );
 };

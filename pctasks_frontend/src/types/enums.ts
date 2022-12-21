@@ -17,6 +17,14 @@ export enum TaskRunStatus {
   cancelled = "cancelled",
 }
 
+export enum JobPartitionRunStatus {
+  running = "running",
+  completed = "completed",
+  failed = "failed",
+  cancelled = "cancelled",
+  pending = "pending",
+}
+
 export enum JobRunStatus {
   pending = "pending",
   running = "running",
