@@ -18,30 +18,23 @@ collections:
     template: ${{ local.path(./collection/usgs-lcmap-conus-v13) }}
     class: usgs_lcmap:USGSLCMAPCollection
     asset_storage:
-      # - uri: blob://landcoverdata/lcmap/CU/V13/
-      #   token: ${{ pc.get_token(landcoverdata, lcmap) }}
-      - uri: blob://ai4edataeuwest/pctasks-scratch/lcmap/CU/V13/
+      - uri: blob://landcoverdata/lcmap/CU/V13/
         chunks:
           options:
             extensions: [.tar]
-            chunk_length: 2  # testing only; set to 1000 for production
-            limit: 2  # testing only; remove limit for production
+            chunk_length: 200  # testing only; set to 1000 for production
+            limit: 1000  # testing only; remove limit for production
     chunk_storage:
-      # uri: blob://landcoverdata/lcmap-etl-data/lcmap-conus-v13/
-      uri: blob://ai4edataeuwest/pctasks-scratch-etl-data/lcmap/lcmap-conus-v13/
+      uri: blob://landcoverdata/lcmap-etl-data/lcmap-conus-v13/
 
   - id: usgs-lcmap-hawaii-v10
     template: ${{ local.path(./collection/usgs-lcmap-hawaii-v10) }}
     class: usgs_lcmap:USGSLCMAPCollection
     asset_storage:
-      # - uri: blob://landcoverdata/lcmap/HI/V10/
-      #   token: ${{ pc.get_token(landcoverdata, lcmap) }}
-      - uri: blob://ai4edataeuwest/pctasks-scratch/lcmap/HI/V10/
+      - uri: blob://landcoverdata/lcmap/HI/V10/
         chunks:
           options:
             extensions: [.tar]
-            chunk_length: 2  # testing only; set to 1000 for production
-            limit: 2  # testing only; remove limit for production
+            chunk_length: 100  # testing only; set to 1000 for production
     chunk_storage:
-      # uri: blob://landcoverdata/lcmap-etl-data/lcmap-hawaii-v10/
-      uri: blob://ai4edataeuwest/pctasks-scratch-etl-data/lcmap/lcmap-hawaii-v10/
+      uri: blob://landcoverdata/lcmap-etl-data/lcmap-hawaii-v10/

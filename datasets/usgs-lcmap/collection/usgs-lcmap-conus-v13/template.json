@@ -173,475 +173,391 @@
                 {
                     "value": 0,
                     "name": "nodata",
-                    "description": "No data",
+                    "description": "No Data",
                     "color_hint": "000000"
                 },
                 {
                     "value": 1,
                     "name": "developed",
-                    "description": "Areas of intensive use with much of the land covered with structures (e.g., high-density residential, commercial, industrial, mining, or transportation), or less intensive uses where the land cover matrix includes vegetation, bare ground, and structures (e.g., low-density residential, recreational facilities, cemeteries, transportation/utility corridors, etc.), including any land functionality related to the developed or built-up activity.",
+                    "description": "Developed",
                     "color_hint": "ff3232"
                 },
                 {
                     "value": 2,
                     "name": "cropland",
-                    "description": "Land in either a vegetated or unvegetated state used in production of food, fiber, and fuels. This includes cultivated and uncultivated croplands, hay lands, orchards, vineyards, and confined livestock operations. Forest plantations are considered as forests or woodlands (Tree Cover class) regardless of the use of the wood products.",
+                    "description": "Cropland",
                     "color_hint": "be8c5a"
                 },
                 {
                     "value": 3,
                     "name": "grass_shrub",
-                    "description": "Land predominantly covered with shrubs and perennial or annual natural and domesticated grasses (e.g., pasture), forbs, or other forms of herbaceous vegetation. The grass and shrub cover must comprise at least 10% of the area and tree cover is less than 10% of the area.",
+                    "description": "Grass/Shrub",
                     "color_hint": "e6f0d2"
                 },
                 {
                     "value": 4,
                     "name": "tree_cover",
-                    "description": "Tree-covered land where the tree cover density is greater than 10%. Cleared or harvested trees (i.e., clearcuts) will be mapped according to current cover (e.g., Barren, Grass/Shrub).",
+                    "description": "Tree Cover",
                     "color_hint": "1c6330"
                 },
                 {
                     "value": 5,
                     "name": "water",
-                    "description": "Areas covered with water, such as streams, canals, lakes, reservoirs, bays, or oceans.",
+                    "description": "Water",
                     "color_hint": "0070ff"
                 },
                 {
                     "value": 6,
                     "name": "wetlands",
-                    "description": "Lands where water saturation is the determining factor in soil characteristics, vegetation types, and animal communities. Wetlands are composed of mosaics of water, bare soil, and herbaceous or wooded vegetated cover.",
+                    "description": "Wetlands",
                     "color_hint": "b3d9ff"
                 },
                 {
                     "value": 7,
                     "name": "ice_snow",
-                    "description": "Land where accumulated snow and ice does not completely melt during the summer period (i.e., perennial ice/snow).",
+                    "description": "Snow/Ice",
                     "color_hint": "ffffff"
                 },
                 {
                     "value": 8,
                     "name": "barren",
-                    "description": "Land comprised of natural occurrences of soils, sand, or rocks where less than 10% of the area is vegetated.",
+                    "description": "Barren",
                     "color_hint": "b3aea3"
                 },
                 {
                     "value": 12,
                     "name": "1_to_2",
-                    "description": "Land cover change from class 1 to class 2.",
+                    "description": "Cover change from Developed to Cropland",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 13,
                     "name": "1_to_3",
-                    "description": "Land cover change from class 1 to class 3.",
+                    "description": "Cover change from Developed to Grass/Shrub",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 14,
                     "name": "1_to_4",
-                    "description": "Land cover change from class 1 to class 4.",
+                    "description": "Cover change from Developed to Tree Cover",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 15,
                     "name": "1_to_5",
-                    "description": "Land cover change from class 1 to class 5.",
+                    "description": "Cover change from Developed to Water",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 16,
                     "name": "1_to_6",
-                    "description": "Land cover change from class 1 to class 6.",
+                    "description": "Cover change from Developed to Wetlands",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 17,
                     "name": "1_to_7",
-                    "description": "Land cover change from class 1 to class 7.",
+                    "description": "Cover change from Developed to Snow/Ice",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 18,
                     "name": "1_to_8",
-                    "description": "Land cover change from class 1 to class 8.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 19,
-                    "name": "1_to_9",
-                    "description": "Land cover change from class 1 to class 9.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 20,
-                    "name": "2_to_0",
-                    "description": "Land cover change from class 2 to class 0.",
+                    "description": "Cover change from Developed to Barren",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 21,
                     "name": "2_to_1",
-                    "description": "Land cover change from class 2 to class 1.",
+                    "description": "Cover change from Cropland to Developed",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 23,
                     "name": "2_to_3",
-                    "description": "Land cover change from class 2 to class 3.",
+                    "description": "Cover change from Cropland to Grass/Shrub",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 24,
                     "name": "2_to_4",
-                    "description": "Land cover change from class 2 to class 4.",
+                    "description": "Cover change from Cropland to Tree Cover",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 25,
                     "name": "2_to_5",
-                    "description": "Land cover change from class 2 to class 5.",
+                    "description": "Cover change from Cropland to Water",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 26,
                     "name": "2_to_6",
-                    "description": "Land cover change from class 2 to class 6.",
+                    "description": "Cover change from Cropland to Wetlands",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 27,
                     "name": "2_to_7",
-                    "description": "Land cover change from class 2 to class 7.",
+                    "description": "Cover change from Cropland to Snow/Ice",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 28,
                     "name": "2_to_8",
-                    "description": "Land cover change from class 2 to class 8.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 29,
-                    "name": "2_to_9",
-                    "description": "Land cover change from class 2 to class 9.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 30,
-                    "name": "3_to_0",
-                    "description": "Land cover change from class 3 to class 0.",
+                    "description": "Cover change from Cropland to Barren",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 31,
                     "name": "3_to_1",
-                    "description": "Land cover change from class 3 to class 1.",
+                    "description": "Cover change from Grass/Shrub to Developed",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 32,
                     "name": "3_to_2",
-                    "description": "Land cover change from class 3 to class 2.",
+                    "description": "Cover change from Grass/Shrub to Cropland",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 34,
                     "name": "3_to_4",
-                    "description": "Land cover change from class 3 to class 4.",
+                    "description": "Cover change from Grass/Shrub to Tree Cover",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 35,
                     "name": "3_to_5",
-                    "description": "Land cover change from class 3 to class 5.",
+                    "description": "Cover change from Grass/Shrub to Water",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 36,
                     "name": "3_to_6",
-                    "description": "Land cover change from class 3 to class 6.",
+                    "description": "Cover change from Grass/Shrub to Wetlands",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 37,
                     "name": "3_to_7",
-                    "description": "Land cover change from class 3 to class 7.",
+                    "description": "Cover change from Grass/Shrub to Snow/Ice",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 38,
                     "name": "3_to_8",
-                    "description": "Land cover change from class 3 to class 8.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 39,
-                    "name": "3_to_9",
-                    "description": "Land cover change from class 3 to class 9.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 40,
-                    "name": "4_to_0",
-                    "description": "Land cover change from class 4 to class 0.",
+                    "description": "Cover change from Grass/Shrub to Barren",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 41,
                     "name": "4_to_1",
-                    "description": "Land cover change from class 4 to class 1.",
+                    "description": "Cover change from Tree Cover to Developed",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 42,
                     "name": "4_to_2",
-                    "description": "Land cover change from class 4 to class 2.",
+                    "description": "Cover change from Tree Cover to Cropland",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 43,
                     "name": "4_to_3",
-                    "description": "Land cover change from class 4 to class 3.",
+                    "description": "Cover change from Tree Cover to Grass/Shrub",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 45,
                     "name": "4_to_5",
-                    "description": "Land cover change from class 4 to class 5.",
+                    "description": "Cover change from Tree Cover to Water",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 46,
                     "name": "4_to_6",
-                    "description": "Land cover change from class 4 to class 6.",
+                    "description": "Cover change from Tree Cover to Wetlands",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 47,
                     "name": "4_to_7",
-                    "description": "Land cover change from class 4 to class 7.",
+                    "description": "Cover change from Tree Cover to Snow/Ice",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 48,
                     "name": "4_to_8",
-                    "description": "Land cover change from class 4 to class 8.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 49,
-                    "name": "4_to_9",
-                    "description": "Land cover change from class 4 to class 9.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 50,
-                    "name": "5_to_0",
-                    "description": "Land cover change from class 5 to class 0.",
+                    "description": "Cover change from Tree Cover to Barren",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 51,
                     "name": "5_to_1",
-                    "description": "Land cover change from class 5 to class 1.",
+                    "description": "Cover change from Water to Developed",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 52,
                     "name": "5_to_2",
-                    "description": "Land cover change from class 5 to class 2.",
+                    "description": "Cover change from Water to Cropland",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 53,
                     "name": "5_to_3",
-                    "description": "Land cover change from class 5 to class 3.",
+                    "description": "Cover change from Water to Grass/Shrub",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 54,
                     "name": "5_to_4",
-                    "description": "Land cover change from class 5 to class 4.",
+                    "description": "Cover change from Water to Tree Cover",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 56,
                     "name": "5_to_6",
-                    "description": "Land cover change from class 5 to class 6.",
+                    "description": "Cover change from Water to Wetlands",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 57,
                     "name": "5_to_7",
-                    "description": "Land cover change from class 5 to class 7.",
+                    "description": "Cover change from Water to Snow/Ice",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 58,
                     "name": "5_to_8",
-                    "description": "Land cover change from class 5 to class 8.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 59,
-                    "name": "5_to_9",
-                    "description": "Land cover change from class 5 to class 9.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 60,
-                    "name": "6_to_0",
-                    "description": "Land cover change from class 6 to class 0.",
+                    "description": "Cover change from Water to Barren",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 61,
                     "name": "6_to_1",
-                    "description": "Land cover change from class 6 to class 1.",
+                    "description": "Cover change from Wetlands to Developed",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 62,
                     "name": "6_to_2",
-                    "description": "Land cover change from class 6 to class 2.",
+                    "description": "Cover change from Wetlands to Cropland",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 63,
                     "name": "6_to_3",
-                    "description": "Land cover change from class 6 to class 3.",
+                    "description": "Cover change from Wetlands to Grass/Shrub",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 64,
                     "name": "6_to_4",
-                    "description": "Land cover change from class 6 to class 4.",
+                    "description": "Cover change from Wetlands to Tree Cover",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 65,
                     "name": "6_to_5",
-                    "description": "Land cover change from class 6 to class 5.",
+                    "description": "Cover change from Wetlands to Water",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 67,
                     "name": "6_to_7",
-                    "description": "Land cover change from class 6 to class 7.",
+                    "description": "Cover change from Wetlands to Snow/Ice",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 68,
                     "name": "6_to_8",
-                    "description": "Land cover change from class 6 to class 8.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 69,
-                    "name": "6_to_9",
-                    "description": "Land cover change from class 6 to class 9.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 70,
-                    "name": "7_to_0",
-                    "description": "Land cover change from class 7 to class 0.",
+                    "description": "Cover change from Wetlands to Barren",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 71,
                     "name": "7_to_1",
-                    "description": "Land cover change from class 7 to class 1.",
+                    "description": "Cover change from Snow/Ice to Developed",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 72,
                     "name": "7_to_2",
-                    "description": "Land cover change from class 7 to class 2.",
+                    "description": "Cover change from Snow/Ice to Cropland",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 73,
                     "name": "7_to_3",
-                    "description": "Land cover change from class 7 to class 3.",
+                    "description": "Cover change from Snow/Ice to Grass/Shrub",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 74,
                     "name": "7_to_4",
-                    "description": "Land cover change from class 7 to class 4.",
+                    "description": "Cover change from Snow/Ice to Tree Cover",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 75,
                     "name": "7_to_5",
-                    "description": "Land cover change from class 7 to class 5.",
+                    "description": "Cover change from Snow/Ice to Water",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 76,
                     "name": "7_to_6",
-                    "description": "Land cover change from class 7 to class 6.",
+                    "description": "Cover change from Snow/Ice to Wetlands",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 78,
                     "name": "7_to_8",
-                    "description": "Land cover change from class 7 to class 8.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 79,
-                    "name": "7_to_9",
-                    "description": "Land cover change from class 7 to class 9.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 80,
-                    "name": "8_to_0",
-                    "description": "Land cover change from class 8 to class 0.",
+                    "description": "Cover change from Snow/Ice to Barren",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 81,
                     "name": "8_to_1",
-                    "description": "Land cover change from class 8 to class 1.",
+                    "description": "Cover change from Barren to Developed",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 82,
                     "name": "8_to_2",
-                    "description": "Land cover change from class 8 to class 2.",
+                    "description": "Cover change from Barren to Cropland",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 83,
                     "name": "8_to_3",
-                    "description": "Land cover change from class 8 to class 3.",
+                    "description": "Cover change from Barren to Grass/Shrub",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 84,
                     "name": "8_to_4",
-                    "description": "Land cover change from class 8 to class 4.",
+                    "description": "Cover change from Barren to Tree Cover",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 85,
                     "name": "8_to_5",
-                    "description": "Land cover change from class 8 to class 5.",
+                    "description": "Cover change from Barren to Water",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 86,
                     "name": "8_to_6",
-                    "description": "Land cover change from class 8 to class 6.",
+                    "description": "Cover change from Barren to Wetlands",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 87,
                     "name": "8_to_7",
-                    "description": "Land cover change from class 8 to class 7.",
+                    "description": "Cover change from Barren to Snow/Ice",
                     "color_hint": "ab00d6"
                 }
             ]
@@ -672,475 +588,391 @@
                 {
                     "value": 0,
                     "name": "nodata",
-                    "description": "No data",
+                    "description": "No Data",
                     "color_hint": "000000"
                 },
                 {
                     "value": 1,
                     "name": "developed",
-                    "description": "Areas of intensive use with much of the land covered with structures (e.g., high-density residential, commercial, industrial, mining, or transportation), or less intensive uses where the land cover matrix includes vegetation, bare ground, and structures (e.g., low-density residential, recreational facilities, cemeteries, transportation/utility corridors, etc.), including any land functionality related to the developed or built-up activity.",
+                    "description": "Developed",
                     "color_hint": "ff3232"
                 },
                 {
                     "value": 2,
                     "name": "cropland",
-                    "description": "Land in either a vegetated or unvegetated state used in production of food, fiber, and fuels. This includes cultivated and uncultivated croplands, hay lands, orchards, vineyards, and confined livestock operations. Forest plantations are considered as forests or woodlands (Tree Cover class) regardless of the use of the wood products.",
+                    "description": "Cropland",
                     "color_hint": "be8c5a"
                 },
                 {
                     "value": 3,
                     "name": "grass_shrub",
-                    "description": "Land predominantly covered with shrubs and perennial or annual natural and domesticated grasses (e.g., pasture), forbs, or other forms of herbaceous vegetation. The grass and shrub cover must comprise at least 10% of the area and tree cover is less than 10% of the area.",
+                    "description": "Grass/Shrub",
                     "color_hint": "e6f0d2"
                 },
                 {
                     "value": 4,
                     "name": "tree_cover",
-                    "description": "Tree-covered land where the tree cover density is greater than 10%. Cleared or harvested trees (i.e., clearcuts) will be mapped according to current cover (e.g., Barren, Grass/Shrub).",
+                    "description": "Tree Cover",
                     "color_hint": "1c6330"
                 },
                 {
                     "value": 5,
                     "name": "water",
-                    "description": "Areas covered with water, such as streams, canals, lakes, reservoirs, bays, or oceans.",
+                    "description": "Water",
                     "color_hint": "0070ff"
                 },
                 {
                     "value": 6,
                     "name": "wetlands",
-                    "description": "Lands where water saturation is the determining factor in soil characteristics, vegetation types, and animal communities. Wetlands are composed of mosaics of water, bare soil, and herbaceous or wooded vegetated cover.",
+                    "description": "Wetlands",
                     "color_hint": "b3d9ff"
                 },
                 {
                     "value": 7,
                     "name": "ice_snow",
-                    "description": "Land where accumulated snow and ice does not completely melt during the summer period (i.e., perennial ice/snow).",
+                    "description": "Snow/Ice",
                     "color_hint": "ffffff"
                 },
                 {
                     "value": 8,
                     "name": "barren",
-                    "description": "Land comprised of natural occurrences of soils, sand, or rocks where less than 10% of the area is vegetated.",
+                    "description": "Barren",
                     "color_hint": "b3aea3"
                 },
                 {
                     "value": 12,
                     "name": "1_to_2",
-                    "description": "Land cover change from class 1 to class 2.",
+                    "description": "Cover change from Developed to Cropland",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 13,
                     "name": "1_to_3",
-                    "description": "Land cover change from class 1 to class 3.",
+                    "description": "Cover change from Developed to Grass/Shrub",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 14,
                     "name": "1_to_4",
-                    "description": "Land cover change from class 1 to class 4.",
+                    "description": "Cover change from Developed to Tree Cover",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 15,
                     "name": "1_to_5",
-                    "description": "Land cover change from class 1 to class 5.",
+                    "description": "Cover change from Developed to Water",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 16,
                     "name": "1_to_6",
-                    "description": "Land cover change from class 1 to class 6.",
+                    "description": "Cover change from Developed to Wetlands",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 17,
                     "name": "1_to_7",
-                    "description": "Land cover change from class 1 to class 7.",
+                    "description": "Cover change from Developed to Snow/Ice",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 18,
                     "name": "1_to_8",
-                    "description": "Land cover change from class 1 to class 8.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 19,
-                    "name": "1_to_9",
-                    "description": "Land cover change from class 1 to class 9.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 20,
-                    "name": "2_to_0",
-                    "description": "Land cover change from class 2 to class 0.",
+                    "description": "Cover change from Developed to Barren",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 21,
                     "name": "2_to_1",
-                    "description": "Land cover change from class 2 to class 1.",
+                    "description": "Cover change from Cropland to Developed",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 23,
                     "name": "2_to_3",
-                    "description": "Land cover change from class 2 to class 3.",
+                    "description": "Cover change from Cropland to Grass/Shrub",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 24,
                     "name": "2_to_4",
-                    "description": "Land cover change from class 2 to class 4.",
+                    "description": "Cover change from Cropland to Tree Cover",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 25,
                     "name": "2_to_5",
-                    "description": "Land cover change from class 2 to class 5.",
+                    "description": "Cover change from Cropland to Water",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 26,
                     "name": "2_to_6",
-                    "description": "Land cover change from class 2 to class 6.",
+                    "description": "Cover change from Cropland to Wetlands",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 27,
                     "name": "2_to_7",
-                    "description": "Land cover change from class 2 to class 7.",
+                    "description": "Cover change from Cropland to Snow/Ice",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 28,
                     "name": "2_to_8",
-                    "description": "Land cover change from class 2 to class 8.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 29,
-                    "name": "2_to_9",
-                    "description": "Land cover change from class 2 to class 9.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 30,
-                    "name": "3_to_0",
-                    "description": "Land cover change from class 3 to class 0.",
+                    "description": "Cover change from Cropland to Barren",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 31,
                     "name": "3_to_1",
-                    "description": "Land cover change from class 3 to class 1.",
+                    "description": "Cover change from Grass/Shrub to Developed",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 32,
                     "name": "3_to_2",
-                    "description": "Land cover change from class 3 to class 2.",
+                    "description": "Cover change from Grass/Shrub to Cropland",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 34,
                     "name": "3_to_4",
-                    "description": "Land cover change from class 3 to class 4.",
+                    "description": "Cover change from Grass/Shrub to Tree Cover",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 35,
                     "name": "3_to_5",
-                    "description": "Land cover change from class 3 to class 5.",
+                    "description": "Cover change from Grass/Shrub to Water",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 36,
                     "name": "3_to_6",
-                    "description": "Land cover change from class 3 to class 6.",
+                    "description": "Cover change from Grass/Shrub to Wetlands",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 37,
                     "name": "3_to_7",
-                    "description": "Land cover change from class 3 to class 7.",
+                    "description": "Cover change from Grass/Shrub to Snow/Ice",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 38,
                     "name": "3_to_8",
-                    "description": "Land cover change from class 3 to class 8.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 39,
-                    "name": "3_to_9",
-                    "description": "Land cover change from class 3 to class 9.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 40,
-                    "name": "4_to_0",
-                    "description": "Land cover change from class 4 to class 0.",
+                    "description": "Cover change from Grass/Shrub to Barren",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 41,
                     "name": "4_to_1",
-                    "description": "Land cover change from class 4 to class 1.",
+                    "description": "Cover change from Tree Cover to Developed",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 42,
                     "name": "4_to_2",
-                    "description": "Land cover change from class 4 to class 2.",
+                    "description": "Cover change from Tree Cover to Cropland",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 43,
                     "name": "4_to_3",
-                    "description": "Land cover change from class 4 to class 3.",
+                    "description": "Cover change from Tree Cover to Grass/Shrub",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 45,
                     "name": "4_to_5",
-                    "description": "Land cover change from class 4 to class 5.",
+                    "description": "Cover change from Tree Cover to Water",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 46,
                     "name": "4_to_6",
-                    "description": "Land cover change from class 4 to class 6.",
+                    "description": "Cover change from Tree Cover to Wetlands",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 47,
                     "name": "4_to_7",
-                    "description": "Land cover change from class 4 to class 7.",
+                    "description": "Cover change from Tree Cover to Snow/Ice",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 48,
                     "name": "4_to_8",
-                    "description": "Land cover change from class 4 to class 8.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 49,
-                    "name": "4_to_9",
-                    "description": "Land cover change from class 4 to class 9.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 50,
-                    "name": "5_to_0",
-                    "description": "Land cover change from class 5 to class 0.",
+                    "description": "Cover change from Tree Cover to Barren",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 51,
                     "name": "5_to_1",
-                    "description": "Land cover change from class 5 to class 1.",
+                    "description": "Cover change from Water to Developed",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 52,
                     "name": "5_to_2",
-                    "description": "Land cover change from class 5 to class 2.",
+                    "description": "Cover change from Water to Cropland",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 53,
                     "name": "5_to_3",
-                    "description": "Land cover change from class 5 to class 3.",
+                    "description": "Cover change from Water to Grass/Shrub",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 54,
                     "name": "5_to_4",
-                    "description": "Land cover change from class 5 to class 4.",
+                    "description": "Cover change from Water to Tree Cover",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 56,
                     "name": "5_to_6",
-                    "description": "Land cover change from class 5 to class 6.",
+                    "description": "Cover change from Water to Wetlands",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 57,
                     "name": "5_to_7",
-                    "description": "Land cover change from class 5 to class 7.",
+                    "description": "Cover change from Water to Snow/Ice",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 58,
                     "name": "5_to_8",
-                    "description": "Land cover change from class 5 to class 8.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 59,
-                    "name": "5_to_9",
-                    "description": "Land cover change from class 5 to class 9.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 60,
-                    "name": "6_to_0",
-                    "description": "Land cover change from class 6 to class 0.",
+                    "description": "Cover change from Water to Barren",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 61,
                     "name": "6_to_1",
-                    "description": "Land cover change from class 6 to class 1.",
+                    "description": "Cover change from Wetlands to Developed",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 62,
                     "name": "6_to_2",
-                    "description": "Land cover change from class 6 to class 2.",
+                    "description": "Cover change from Wetlands to Cropland",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 63,
                     "name": "6_to_3",
-                    "description": "Land cover change from class 6 to class 3.",
+                    "description": "Cover change from Wetlands to Grass/Shrub",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 64,
                     "name": "6_to_4",
-                    "description": "Land cover change from class 6 to class 4.",
+                    "description": "Cover change from Wetlands to Tree Cover",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 65,
                     "name": "6_to_5",
-                    "description": "Land cover change from class 6 to class 5.",
+                    "description": "Cover change from Wetlands to Water",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 67,
                     "name": "6_to_7",
-                    "description": "Land cover change from class 6 to class 7.",
+                    "description": "Cover change from Wetlands to Snow/Ice",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 68,
                     "name": "6_to_8",
-                    "description": "Land cover change from class 6 to class 8.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 69,
-                    "name": "6_to_9",
-                    "description": "Land cover change from class 6 to class 9.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 70,
-                    "name": "7_to_0",
-                    "description": "Land cover change from class 7 to class 0.",
+                    "description": "Cover change from Wetlands to Barren",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 71,
                     "name": "7_to_1",
-                    "description": "Land cover change from class 7 to class 1.",
+                    "description": "Cover change from Snow/Ice to Developed",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 72,
                     "name": "7_to_2",
-                    "description": "Land cover change from class 7 to class 2.",
+                    "description": "Cover change from Snow/Ice to Cropland",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 73,
                     "name": "7_to_3",
-                    "description": "Land cover change from class 7 to class 3.",
+                    "description": "Cover change from Snow/Ice to Grass/Shrub",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 74,
                     "name": "7_to_4",
-                    "description": "Land cover change from class 7 to class 4.",
+                    "description": "Cover change from Snow/Ice to Tree Cover",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 75,
                     "name": "7_to_5",
-                    "description": "Land cover change from class 7 to class 5.",
+                    "description": "Cover change from Snow/Ice to Water",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 76,
                     "name": "7_to_6",
-                    "description": "Land cover change from class 7 to class 6.",
+                    "description": "Cover change from Snow/Ice to Wetlands",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 78,
                     "name": "7_to_8",
-                    "description": "Land cover change from class 7 to class 8.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 79,
-                    "name": "7_to_9",
-                    "description": "Land cover change from class 7 to class 9.",
-                    "color_hint": "ab00d6"
-                },
-                {
-                    "value": 80,
-                    "name": "8_to_0",
-                    "description": "Land cover change from class 8 to class 0.",
+                    "description": "Cover change from Snow/Ice to Barren",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 81,
                     "name": "8_to_1",
-                    "description": "Land cover change from class 8 to class 1.",
+                    "description": "Cover change from Barren to Developed",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 82,
                     "name": "8_to_2",
-                    "description": "Land cover change from class 8 to class 2.",
+                    "description": "Cover change from Barren to Cropland",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 83,
                     "name": "8_to_3",
-                    "description": "Land cover change from class 8 to class 3.",
+                    "description": "Cover change from Barren to Grass/Shrub",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 84,
                     "name": "8_to_4",
-                    "description": "Land cover change from class 8 to class 4.",
+                    "description": "Cover change from Barren to Tree Cover",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 85,
                     "name": "8_to_5",
-                    "description": "Land cover change from class 8 to class 5.",
+                    "description": "Cover change from Barren to Water",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 86,
                     "name": "8_to_6",
-                    "description": "Land cover change from class 8 to class 6.",
+                    "description": "Cover change from Barren to Wetlands",
                     "color_hint": "ab00d6"
                 },
                 {
                     "value": 87,
                     "name": "8_to_7",
-                    "description": "Land cover change from class 8 to class 7.",
+                    "description": "Cover change from Barren to Snow/Ice",
                     "color_hint": "ab00d6"
                 }
             ]
@@ -1330,7 +1162,7 @@
                     "values": [
                         212
                     ],
-                    "summary": "July 1st falls in a gap between two stable time series models of differing land cover class. If July 1st is before the \u201cbreak date\u201d of the earlier model, Primary Land Cover is assigned the primary land cover class of that earlier model. Otherwise, Primary Land Cover is assigned the primary land cover class of the subsequent, later model."
+                    "summary": "July 1st falls in a gap between two stable time series models of differing land cover class. If July 1st is before the 'break date' of the earlier model, Primary Land Cover is assigned the primary land cover class of that earlier model. Otherwise, Primary Land Cover is assigned the primary land cover class of the subsequent, later model."
                 },
                 {
                     "values": [
@@ -1508,7 +1340,7 @@
                     "values": [
                         212
                     ],
-                    "summary": "July 1st falls in a gap between two stable time series models of differing secondary land cover classes. If July 1st is before the \u201cbreak date\u201d of the earlier model, Secondary Land Cover is assigned the secondary land cover class of the earlier model. Otherwise, Secondary Land Cover is assigned the secondary land cover class of the subsequent model."
+                    "summary": "July 1st falls in a gap between two stable time series models of differing secondary land cover classes. If July 1st is before the 'break date' of the earlier model, Secondary Land Cover is assigned the secondary land cover class of the earlier model. Otherwise, Secondary Land Cover is assigned the secondary land cover class of the subsequent model."
                 },
                 {
                     "values": [
@@ -1667,12 +1499,12 @@
                 {
                     "value": 44,
                     "name": "insufficient_clear",
-                    "description": "A simple model for the entire time series in cases where fewer than 25% of input observations are labeled as \u201cClear\u201d or \u201cWater\u201d by the U.S. Landsat ARD per-pixel quality band (PIXELQA)."
+                    "description": "A simple model for the entire time series in cases where fewer than 25% of input observations are labeled as 'Clear' or 'Water' by the U.S. Landsat ARD per-pixel quality band (PIXELQA)."
                 },
                 {
                     "value": 54,
                     "name": "persistent_snow",
-                    "description": "A simple model for the entire time series in cases where 75% or more of input observations are labeled as \u201cSnow\u201d by the U.S. Landsat ARD per-pixel quality band (PIXELQA)."
+                    "description": "A simple model for the entire time series in cases where 75% or more of input observations are labeled as 'Snow' by the U.S. Landsat ARD per-pixel quality band (PIXELQA)."
                 }
             ]
         },
@@ -1685,11 +1517,11 @@
         }
     },
     "summaries": {
-        "usgs-lcmap:horizontal_tile": {
+        "usgs_lcmap:horizontal_tile": {
             "minimum": 1,
             "maximum": 32
         },
-        "usgs-lcmap:vertical_tile": {
+        "usgs_lcmap:vertical_tile": {
             "minimum": 0,
             "maximum": 20
         }
@@ -1697,7 +1529,7 @@
     "sci:publications": [
         {
             "doi": "10.1016/j.rse.2019.111356",
-            "citation": "Brown, J.F., Tollerud, H.J., Barber, C.P., Zhou, Q., Dwyer, J.L., Vogelmann, J.E., Loveland, T.R., Woodcock, C.E., Stehman, S.V., Zhu, Z., Pengra, B.W., Smith, K., Horton, J.A., Xian, G., Auch, R.F., Sohl, T.L., Sayler, K.L., Gallant, A.L., Zelenak, D., Reker, R.R., and Rover, J., 2020, Lessons learned implementing an operational continuous United States national land change monitoring capability\u2014The Land Change Monitoring, Assessment, and Projection (LCMAP) approach: Remote Sensing of Environment, v. 238, article 111356"
+            "citation": "Brown, J.F., Tollerud, H.J., Barber, C.P., Zhou, Q., Dwyer, J.L., Vogelmann, J.E., Loveland, T.R., Woodcock, C.E., Stehman, S.V., Zhu, Z., Pengra, B.W., Smith, K., Horton, J.A., Xian, G., Auch, R.F., Sohl, T.L., Sayler, K.L., Gallant, A.L., Zelenak, D., Reker, R.R., and Rover, J., 2020, Lessons learned implementing an operational continuous United States national land change monitoring capability-The Land Change Monitoring, Assessment, and Projection (LCMAP) approach: Remote Sensing of Environment, v. 238, article 111356"
         },
         {
             "doi": "10.1016/j.rse.2014.01.011",

@@ -30,7 +30,9 @@ class USGSLCMAPCollection(Collection):
             tmp_asset_paths = Path(tmp_tar_path).with_suffix("").glob("*.*")
             asset_keys_tmp_paths = get_variable_asset_info(tmp_asset_paths)
             for key, value in asset_keys_tmp_paths.items():
-                asset_path = str(Path(tar_path).with_suffix("") / Path(value["href"]).name)
+                asset_path = str(
+                    Path(tar_path).with_suffix("") / Path(value["href"]).name
+                )
                 storage.upload_file(value["href"], asset_path)
                 item.assets[key].href = storage.get_url(asset_path)
             item.assets["tar"].href = storage.get_url(tar_path)
