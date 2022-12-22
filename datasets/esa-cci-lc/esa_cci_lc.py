@@ -33,9 +33,7 @@ class EsaCciLcCog(Collection):
 
             for item in items:
                 id_parts = item.id.split("-")
-                tile = id_parts[-1]
-                version = id_parts[-2]
-                year = id_parts[-3]
+                *_, year, version, tile = id_parts
                 for asset in item.assets.values():
                     asset_path = str(
                         Path(nc_path).parent.parent
