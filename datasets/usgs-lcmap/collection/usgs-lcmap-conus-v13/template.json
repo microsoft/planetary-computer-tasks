@@ -2,7 +2,7 @@
     "stac_version": "1.0.0",
     "type": "Collection",
     "id": "usgs-lcmap-conus-v13",
-    "title": "USGS LCMAP CONUS 1.3",
+    "title": "USGS LCMAP CONUS Collection 1.3",
     "description": "{{ collection.description }}",
     "license": "proprietary",
     "links": [

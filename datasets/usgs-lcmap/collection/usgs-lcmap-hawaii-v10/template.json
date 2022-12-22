@@ -2,7 +2,7 @@
     "stac_version": "1.0.0",
     "type": "Collection",
     "id": "usgs-lcmap-hawaii-v10",
-    "title": "USGS LCMAP Hawaii 1.0",
+    "title": "USGS LCMAP Hawaii Collection 1.0",
     "description": "{{ collection.description }}",
     "license": "proprietary",
     "links": [

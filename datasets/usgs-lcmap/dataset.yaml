@@ -22,7 +22,7 @@ collections:
         chunks:
           options:
             extensions: [.tar]
-            chunk_length: 200  # testing only; set to 1000 for production
+            chunk_length: 200  # testing only; set to something large (1000?) for production
             limit: 1000  # testing only; remove limit for production
     chunk_storage:
       uri: blob://landcoverdata/lcmap-etl-data/lcmap-conus-v13/
@@ -35,6 +35,6 @@ collections:
         chunks:
           options:
             extensions: [.tar]
-            chunk_length: 100  # testing only; set to 1000 for production
+            chunk_length: 100
     chunk_storage:
       uri: blob://landcoverdata/lcmap-etl-data/lcmap-hawaii-v10/
