@@ -1,0 +1,77 @@
+name: Update ASTER geometries
+id: aster-update-geometries
+dataset: aster
+args:
+  - registry
+jobs:
+  get-partitions:
+    tasks:
+      - id: get-partitions
+        image: ${{ args.registry }}/pctasks-aster:latest
+        code:
+          src: ${{ local.path(./aster.py) }}
+          requirements: ${{ local.path(./requirements.txt) }}
+        task: aster:get_partitions_task
+        args:
+          url: https://planetarycomputer.microsoft.com/api/stac/v1/collections/aster-l1t
+          asset_key: geoparquet-items
+        environment:
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+  create-chunks:
+    foreach:
+      items: ${{ jobs.get-partitions.tasks.get-partitions.output.assets }}
+    needs: get-partitions
+    tasks:
+      - id: create-chunks
+        image: ${{ args.registry }}/pctasks-aster:latest
+        code:
+          src: ${{ local.path(./aster.py) }}
+          requirements: ${{ local.path(./requirements.txt) }}
+        task: aster:create_chunks_task
+        args:
+          asset: ${{ item }}
+          dst_uri: blob://astersa/aster-etl-data/chunks/update-geometries
+          chunk_size: 5000
+        environment:
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+  update-items:
+    foreach:
+      items: ${{ jobs.create-chunks.tasks.create-chunks.output.chunks }}
+      flatten: true
+    needs: create-chunks
+    tasks:
+      - id: update-items
+        image: ${{ args.registry }}/pctasks-aster:latest
+        code:
+          src: ${{ local.path(./aster.py) }}
+          requirements: ${{ local.path(./requirements.txt) }}
+        task: aster:update_items_task
+        args:
+          partition_number: ${{ item.partition_number }}
+          chunk_uri: ${{ item.uri }}
+          chunk_id: ${{ item.id }}
+          item_chunkset_uri: blob://astersa/aster-etl-data/items/update-geometries
+          simplify_tolerance: 0.001
+        environment:
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      - id: ingest-items
+        image_key: ingest
+        task: pctasks.ingest_task.task:ingest_task
+        args:
+          content:
+            type: Ndjson
+            uris:
+              - ${{ tasks.update-items.output.ndjson_uri }}
+          options:
+            insert_group_size: 5000
+            insert_only: false
+        environment:
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
