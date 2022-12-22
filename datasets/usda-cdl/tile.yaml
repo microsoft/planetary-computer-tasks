@@ -10,7 +10,7 @@ jobs:
         image: ${{ args.registry }}/pctasks-task-base:latest
         task: pctasks.task.common.list_files:task
         args:
-          src_uri: blob://landcoverdata/usda-cdl/zipfiles
+          src_uri: blob://landcoverdata/usda-cdl-onboarding
           extensions:
             - .zip
         environment:
