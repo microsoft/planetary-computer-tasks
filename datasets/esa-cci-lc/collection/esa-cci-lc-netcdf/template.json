@@ -1,0 +1,176 @@
+{
+    "stac_version": "1.0.0",
+    "type": "Collection",
+    "id": "esa-cci-lc-netcdf",
+    "title": "ESA Climate Change Initiative Land Cover Maps (NetCDF)",
+    "description": "{{ collection.description }}",
+    "license": "proprietary",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://cds.climate.copernicus.eu/api/v2/terms/static/satellite-land-cover.pdf",
+            "type": "text/html",
+            "title": "ESA CCI license"
+        },
+        {
+            "rel": "license",
+            "href": "https://cds.climate.copernicus.eu/api/v2/terms/static/licence-to-use-copernicus-products.pdf",
+            "type": "text/html",
+            "title": "COPERNICUS license"
+        },
+        {
+            "rel": "license",
+            "href": "https://cds.climate.copernicus.eu/api/v2/terms/static/vito-proba-v.pdf",
+            "type": "text/html",
+            "title": "VITO License"
+        },
+        {
+            "rel": "about",
+            "href": "https://cds.climate.copernicus.eu/cdsapp#!/dataset/satellite-land-cover",
+            "type": "text/html",
+            "title": "Product Landing Page"
+        },
+        {
+            "rel": "about",
+            "href": "https://datastore.copernicus-climate.eu/documents/satellite-land-cover/D5.3.1_PUGS_ICDR_LC_v2.1.x_PRODUCTS_v1.1.pdf",
+            "type": "application/pdf",
+            "title": "Product user guide for version 2.1"
+        },
+        {
+            "rel": "about",
+            "href": "https://datastore.copernicus-climate.eu/documents/satellite-land-cover/D3.3.11-v1.0_PUGS_CDR_LC-CCI_v2.0.7cds_Products_v1.0.1_APPROVED_Ver1.pdf",
+            "type": "application/pdf",
+            "title": "Product user guide for version 2.0"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.24381/cds.006f2c9a"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+    ],
+    "keywords": [
+        "Land Cover",
+        "ESA",
+        "CCI",
+        "Global"
+    ],
+    "msft:short_description": "ESA CCI global land cover maps in NetCDF format",
+    "msft:storage_account": "landcoverdata",
+    "msft:container": "esa-cci-lc",
+    "msft:group_id": "esa-cci-lc",
+    "providers": [
+        {
+            "name": "VITO",
+            "description": "Provides the PROBA-V source data (for v2.0).",
+            "roles": [
+                "licensor"
+            ],
+            "url": "https://vito.be"
+        },
+        {
+            "name": "UCLouvain",
+            "description": "UCLouvain produces the dataset (v2.1) for the ESA Climate Change Initiative.",
+            "roles": [
+                "producer"
+            ],
+            "url": "https://uclouvain.be"
+        },
+        {
+            "name": "Brockmann Consult",
+            "description": "Brockmann Consult is responsible for the required pre-processing and the distribution of the dataset (v2.1).",
+            "roles": [
+                "processor"
+            ],
+            "url": "https://brockmann-consult.de"
+        },
+        {
+            "name": "ESA Climate Change Initiative",
+            "description": "The ESA Climate Change Initiative (CCI) is leading the product creation.",
+            "roles": [
+                "licensor"
+            ],
+            "url": "http://esa-landcover-cci.org"
+        },
+        {
+            "name": "Copernicus",
+            "description": "Hosts the data on the Copernicus Climate Data Store (CDS).",
+            "roles": [
+                "licensor"
+            ],
+            "url": "https://copernicus.eu"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "processor",
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "title": "ESA CCI Land Cover NetCDF Thumbnail",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/esa-cci-lc-netcdf-thumb.png",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/esa-cci-lc-netcdf.parquet",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            }
+        } 
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180.0,
+                    -90.0,
+                    180.0,
+                    90.0
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "1992-01-01T00:00:00Z",
+                    "2020-12-31T23:59:59Z"
+                ]
+            ]
+        }
+    },
+    "item_assets": {
+        "netcdf": {
+            "title": "ESA CCI Land Cover NetCDF 4 File",
+            "type": "application/netcdf",
+            "roles": [
+                "data",
+                "quality"
+            ]
+        }
+    },
+    "sci:doi": "10.24381/cds.006f2c9a",
+    "summaries": {
+        "esa_cci_lc:version": [
+            "2.0.7cds",
+            "2.1.1"
+        ]
+    }
+}

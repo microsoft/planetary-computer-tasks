@@ -1,0 +1,43 @@
+id: esa_cci_lc
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./esa_cci_lc.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: esa-cci-lc-netcdf
+    template: ${{ local.path(./collection/esa-cci-lc-netcdf) }}
+    class: esa_cci_lc:EsaCciLcNetcdf
+    asset_storage:
+      - uri: blob://landcoverdata/esa-cci-lc/
+        chunks:
+          options:
+            name_starts_with: netcdf/
+            extension: [.nc]
+            chunk_length: 2  # for testing; set to 10 for production
+            limit: 2  # for testing; remove for production
+    chunk_storage:
+      uri: blob://landcoverdata/esa-cci-lc-etl-data/esa-cci-lc-netcdf/
+
+  - id: esa-cci-lc
+    template: ${{ local.path(./collection/esa-cci-lc) }}
+    class: esa_cci_lc:EsaCciLcCog
+    asset_storage:
+      - uri: blob://landcoverdata/esa-cci-lc/
+        chunks:
+          options:
+            name_starts_with: netcdf/
+            extension: [.nc]
+            chunk_length: 1  # for testing; set to 10 for production
+            limit: 2  # for testing; remove for production
+    chunk_storage:
+      uri: blob://landcoverdata/esa-cci-lc-etl-data/esa-cci-lc/

@@ -1,0 +1,1 @@
+git+https://github.com/stactools-packages/esa-cci-lc.git@de196366c565e4e2eff63b63be3a4cb609f54390
