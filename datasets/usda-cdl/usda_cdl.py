@@ -93,8 +93,8 @@ class UsdaCdlCollection(Collection):
                 link = Link(
                     rel="source",
                     target=(
-                        "https://www.nass.usda.gov"
-                        f"/Research_and_Science/Cropland/Release/datasets/{year}_30m_cdls.zip"
+                        "https://landcoverdata.blob.core.windows.net/usda-cdl-onboarding/"
+                        f"{year}_30m_cdls.zip"
                     ),
                     media_type="application/zip",
                     title=f"{year} National CDL",
@@ -104,8 +104,7 @@ class UsdaCdlCollection(Collection):
                 link = Link(
                     rel="source",
                     target=(
-                        "https://www.nass.usda.gov"
-                        "/Research_and_Science/Cropland/Release/datasets/"
+                        "https://landcoverdata.blob.core.windows.net/usda-cdl-onboarding/"
                         f"{year}_Cultivated_Layer.zip"
                     ),
                     media_type="application/zip",
@@ -117,8 +116,7 @@ class UsdaCdlCollection(Collection):
                 link = Link(
                     rel="source",
                     target=(
-                        "https://www.nass.usda.gov"
-                        "/Research_and_Science/Cropland/Release/datasets/"
+                        "https://landcoverdata.blob.core.windows.net/usda-cdl-onboarding/"
                         f"Crop_Frequency_{start_year}-{end_year}.zip"
                     ),
                     media_type="application/zip",
