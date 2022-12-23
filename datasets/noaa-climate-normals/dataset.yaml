@@ -32,10 +32,10 @@ collections:
           options:
             name_starts_with: access
             extensions: [.csv]
-            chunk_length: 1
-            limit: 1
+            chunk_length: 1 # this is correct for production; we only want one csv href
+            limit: 1 # this is correct for production; we only want one csv href
           splits:
-            - depth: 2
+            - depth: 2  # this drops us into each subdirectory of interest
     chunk_storage:
       uri: blob://noaanormals/normals-etl-data/tabular/
 
@@ -58,9 +58,9 @@ collections:
         chunks:
           options:
             extensions: [.nc]
-            chunk_length: 1
-            limit: 1
+            chunk_length: 1  # this is correct for production; we only want one nc href
+            limit: 1  # this is correct for production; we only want one nc href
           splits:
-            - depth: 2
+            - depth: 2  # this drops us into each subdirectory of interest
     chunk_storage:
       uri: blob://noaanormals/normals-etl-data/gridded/

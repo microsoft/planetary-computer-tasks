@@ -121,13 +121,13 @@
         }
     },
     "summaries": {
-        "frequency": [
+        "noaa_climate_normals:frequency": [
             "hourly",
             "daily",
             "monthly",
             "annualseasonal"
         ],
-        "period": [
+        "noaa_climate_normals:period": [
             "1981-2010",
             "1991-2020",
             "2006-2020"
