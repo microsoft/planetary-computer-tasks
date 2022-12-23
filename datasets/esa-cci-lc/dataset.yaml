@@ -38,6 +38,6 @@ collections:
             name_starts_with: netcdf/
             extension: [.nc]
             chunk_length: 1  # for testing; set to 10 for production
-            limit: 1  # for testing; remove for production
+            limit: 2  # for testing; remove for production
     chunk_storage:
       uri: blob://landcoverdata/esa-cci-lc-etl-data/esa-cci-lc/
