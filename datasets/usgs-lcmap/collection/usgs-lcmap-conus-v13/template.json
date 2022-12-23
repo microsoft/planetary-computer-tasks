@@ -19,6 +19,12 @@
             "title": "Proprietary, Unrestricted"
         },
         {
+            "rel": "source",
+            "href": "https://www.usgs.gov/special-topics/lcmap/lcmap-data-access",
+            "type": "text/html",
+            "title": "USGS Data Access Options"
+        },
+        {
             "rel": "cite-as",
             "href": "https://doi.org/10.1016/j.rse.2019.111356"
         },
