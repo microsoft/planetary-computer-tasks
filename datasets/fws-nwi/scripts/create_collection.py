@@ -15,7 +15,7 @@ collection.extra_fields[
     "msft:short_description"
 ] = "Vector dataset containing wetlands boundaries and identification across the United States."
 collection.extra_fields["msft:storage_account"] = "ai4edataeuwest"
-collection.extra_fields["msft:container"] = "pc-tasks-scratch"
+collection.extra_fields["msft:container"] = "fws-nwi"
 collection.providers.append(
     Provider(
         "Microsoft",

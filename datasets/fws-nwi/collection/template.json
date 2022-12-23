@@ -44,7 +44,7 @@
   },
   "msft:short_description": "Vector dataset containing wetlands boundaries and identification across the United States.",
   "msft:storage_account": "ai4edataeuwest",
-  "msft:container": "pc-tasks-scratch",
+  "msft:container": "fws-nwi",
   "title": "FWS National Wetlands Inventory",
   "extent": {
     "spatial": {

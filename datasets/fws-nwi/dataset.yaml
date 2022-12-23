@@ -14,10 +14,10 @@ collections:
     template: ${{ local.path(./collection) }}
     class: fws_nwi:FwsNwiCollection
     asset_storage:
-      - uri: blob://ai4edataeuwest/pctasks-scratch/fws-nwi
+      - uri: blob://ai4edataeuwest/fws-nwi/
         chunks:
           options:
             extensions: [.zip]
             chunk_length: 1
     chunk_storage:
-      uri: blob://ai4edataeuwest/pctasks-scratch-etl-data/fws-nwi
+      uri: blob://ai4edataeuwest/fws-nwi-etl-data/

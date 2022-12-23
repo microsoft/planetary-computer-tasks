@@ -9,7 +9,7 @@ from stactools.fws_nwi.constants import ZIPFILE_ASSET_KEY
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
 
-GEOPARQUET_CONTAINER = "blob://ai4edataeuwest/pctasks-scratch/fws-nwi/geoparquet"
+GEOPARQUET_CONTAINER = "blob://ai4edataeuwest/fws-nwi/geoparquet"
 
 
 class FwsNwiCollection(Collection):
