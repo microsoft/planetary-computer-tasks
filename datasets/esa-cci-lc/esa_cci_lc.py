@@ -22,18 +22,12 @@ class EsaCciLcCog(Collection):
             tmp_nc_path = str(Path(tmp_dir, Path(nc_path).name))
             storage.download_file(nc_path, tmp_nc_path)
 
-            items = cog_create_items(
-                nc_path=tmp_nc_path,
-                cog_dir=tmp_dir,
-                nc_api_url=(
-                    "https://planetarycomputer.microsoft.com/api/stac/v1/"
-                    "collections/esa-cci-lc-netcdf/items"
-                ),
-            )
+            items = cog_create_items(nc_path=tmp_nc_path, cog_dir=tmp_dir)
 
             for item in items:
                 id_parts = item.id.split("-")
                 *_, year, version, tile = id_parts
+                # update cog asset hrefs and upload to storage
                 for asset in item.assets.values():
                     asset_path = str(
                         Path(nc_path).parent.parent
@@ -45,6 +39,18 @@ class EsaCciLcCog(Collection):
                     )
                     storage.upload_file(asset.href, asset_path)
                     asset.href = storage.get_url(asset_path)
+                # add link to source netcdf stac item
+                item.links.append(
+                    pystac.Link(
+                        rel=pystac.RelType.DERIVED_FROM,
+                        title="Source NetCDF Item",
+                        media_type=pystac.MediaType.JSON,
+                        target=(
+                            f"collections/esa-cci-lc-netcdf/items/"
+                            f"{'-'.join(id_parts[:-1])}"
+                        ),
+                    )
+                )
 
         return items
 
