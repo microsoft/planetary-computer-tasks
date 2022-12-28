@@ -1,0 +1,62 @@
+[
+  {
+    "type": "JobRun",
+    "schema_version": "1.0.0",
+    "created": null,
+    "updated": null,
+    "deleted": false,
+    "status": "completed",
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2022-12-22T23:31:41.063536+00:00"
+      },
+      {
+        "status": "running",
+        "timestamp": "2022-12-22T23:31:48.911407+00:00"
+      },
+      {
+        "status": "completed",
+        "timestamp": "2022-12-22T23:40:33.719705+00:00"
+      }
+    ],
+    "run_id": "1d958a10-84d7-4d7f-ac45-b4974520c03f",
+    "job_id": "initialize",
+    "job_partition_counts": {
+      "pending": 0,
+      "running": 1,
+      "completed": 1,
+      "failed": 0,
+      "cancelled": 0
+    },
+    "errors": null
+  },
+  {
+    "type": "JobRun",
+    "schema_version": "1.0.0",
+    "created": null,
+    "updated": null,
+    "deleted": false,
+    "status": "running",
+    "status_history": [
+      {
+        "status": "pending",
+        "timestamp": "2022-12-22T23:31:41.063774+00:00"
+      },
+      {
+        "status": "running",
+        "timestamp": "2022-12-22T23:40:36.943063+00:00"
+      }
+    ],
+    "run_id": "1d958a10-84d7-4d7f-ac45-b4974520c03f",
+    "job_id": "copy",
+    "job_partition_counts": {
+      "pending": 0,
+      "running": 4,
+      "completed": 0,
+      "failed": 0,
+      "cancelled": 0
+    },
+    "errors": null
+  }
+]

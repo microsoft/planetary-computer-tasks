@@ -4,17 +4,17 @@ import { JobRunItem } from "../JobRunItem/JobRunItem.index";
 
 interface ParentJobRunItemProps {
   job: JobDefinition;
-  runs: JobRunRecord[];
+  run: JobRunRecord;
   children: React.ReactNode;
 }
 
 export const ParentJobRunItem: React.FC<ParentJobRunItemProps> = ({
   job,
-  runs,
+  run,
   children,
 }) => {
   return (
-    <JobRunItem job={job} run={undefined} indent={0}>
+    <JobRunItem job={job} run={run} indent={0}>
       {children}
     </JobRunItem>
   );

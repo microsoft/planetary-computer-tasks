@@ -1,7 +1,12 @@
 import { AxiosInstance } from "axios";
 import { useQuery, QueryFunctionContext } from "@tanstack/react-query";
 
-import { JobRunRecord, TaskRunRecord, WorkflowRunRecord } from "types/runs";
+import {
+  JobParitionRunRecord,
+  JobRunRecord,
+  TaskRunRecord,
+  WorkflowRunRecord,
+} from "types/runs";
 import { useAuthApiClient } from "components/auth/hooks/useApiClient";
 import { WorkflowRecord } from "types/workflows";
 
@@ -52,11 +57,18 @@ export const useWorkflowRun = (workflowRunId: string | undefined) => {
   return useQuery(["workflowRun", workflowRunId], getWorkflowRun, queryConfig);
 };
 
-export const useWorkflowJobRuns = (workflowRunId: string | undefined) => {
+export const useWorkflowJobLog = (workflowRunId: string | undefined) => {
   const queryConfig = useQueryConfigDefaults([workflowRunId]);
-  return useQuery(["workflowJobRuns", workflowRunId], getWorkflowJobRuns, {
+  return useQuery(["workflowJobRuns", workflowRunId], getWorkflowJobLog, {
     ...queryConfig,
     // refetchInterval: 5000,
+  });
+};
+
+export const useJobRunPartition = (jobRun: JobRunRecord | undefined) => {
+  const queryConfig = useQueryConfigDefaults([jobRun]);
+  return useQuery(["jobRunPartition", jobRun], getJobRunPartitions, {
+    ...queryConfig,
   });
 };
 
@@ -126,17 +138,29 @@ const getWorkflowRun = async (
   const client = getClient(queryContext);
 
   const response = await client.get(`/runs/${workflowRunId}`);
-  return response.data;
+  return response.data.record;
 };
 
-const getWorkflowJobRuns = async (
+const getWorkflowJobLog = async (
   queryContext: QueryFunctionContext<[string, string | undefined]>
 ): Promise<JobRunRecord[]> => {
   const [, workflowRunId] = queryContext.queryKey;
   const client = getClient(queryContext);
 
-  const response = await client.get(`/runs/${workflowRunId}/jobs`);
-  return response.data.jobs;
+  const response = await client.get(`/runs/${workflowRunId}/log`);
+  return response.data;
+};
+
+const getJobRunPartitions = async (
+  queryContext: QueryFunctionContext<[string, JobRunRecord | undefined]>
+): Promise<JobParitionRunRecord[]> => {
+  const [, jobRun] = queryContext.queryKey;
+  const client = getClient(queryContext);
+
+  const response = await client.get(
+    `/runs/${jobRun?.run_id}/jobs/${jobRun?.job_id}/partitions`
+  );
+  return response.data.records;
 };
 
 const getJobTaskRuns = async (

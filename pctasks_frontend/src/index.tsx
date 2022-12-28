@@ -31,7 +31,7 @@ root.render(
                 <Route path="workflows" element={<RegisteredWorkflowPage />} />
                 <Route path="workflows/:workflowId" element={<WorkflowRunsPage />} />
                 <Route
-                  path="workflows/:workflowId/:workflowRunId"
+                  path="workflows/:workflowId/run/:workflowRunId"
                   element={<WorkflowDetailPage />}
                 />
               </Route>

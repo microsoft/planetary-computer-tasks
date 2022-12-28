@@ -19,7 +19,7 @@ export const WorkflowRunItem: React.FC<WorkflowRunItemProps> = ({
   const styles = getStyles(selected);
 
   const runName = (
-    <Link className={styles.title} to={`${run.run_id}`}>
+    <Link className={styles.title} to={`run/${run.run_id}`}>
       {run.dataset_id}
     </Link>
   );

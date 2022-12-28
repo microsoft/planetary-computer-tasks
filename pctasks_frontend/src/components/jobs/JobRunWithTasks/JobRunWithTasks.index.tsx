@@ -4,28 +4,26 @@ import { JobRunItem } from "components/jobs/JobRunItem/JobRunItem.index";
 import TaskRunList from "components/tasks/TaskRunList";
 import { gapRegular, borderTop, treeIndent } from "styles/global";
 import { IndentLevel } from "types";
-import { JobRunRecord, TaskRunRecord } from "types/runs";
+import { JobParitionRunRecord, JobRunRecord } from "types/runs";
 import { JobDefinition } from "types/jobs";
 import { useExpandButton } from "components/common/hooks";
-import { useJobTaskRuns } from "helpers/api";
 
-interface JobRunWithTasksProps {
+interface JobRunPartitionWithTasksProps {
   job: JobDefinition;
   jobRun: JobRunRecord | undefined;
-  initialTaskRuns: TaskRunRecord[];
+  jobRunPartition: JobParitionRunRecord | undefined;
   expanded?: boolean;
   indent: IndentLevel;
 }
 
-export const JobRunWithTasks: React.FC<JobRunWithTasksProps> = ({
+export const JobRunPartitionWithTasks: React.FC<JobRunPartitionWithTasksProps> = ({
   job,
   jobRun,
-  initialTaskRuns,
+  jobRunPartition,
   expanded = false,
   indent,
 }) => {
   const { isExpanded, toggleButton } = useExpandButton(expanded);
-  const { data: taskRuns } = useJobTaskRuns(jobRun, isExpanded);
 
   const jobHeader = <JobRunItem job={job} run={jobRun} indent={0} />;
   const styles = getStyles(indent);
@@ -45,7 +43,7 @@ export const JobRunWithTasks: React.FC<JobRunWithTasksProps> = ({
         {isExpanded && (
           <TaskRunList
             tasks={job.tasks}
-            taskRuns={taskRuns || []}
+            taskRuns={jobRunPartition?.tasks || []}
             indent={indent + 2}
           />
         )}

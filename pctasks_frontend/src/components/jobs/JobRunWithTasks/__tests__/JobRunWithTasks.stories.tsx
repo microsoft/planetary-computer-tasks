@@ -1,6 +1,6 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 
-import { JobRunWithTasks } from "../JobRunWithTasks.index";
+import { JobRunPartitionWithTasks } from "../JobRunWithTasks.index";
 import {
   TestJobDefinitions,
   TestJobRuns,
@@ -10,11 +10,11 @@ import { TestTaskRuns as chunkTaskRuns } from "components/tasks/TaskRunList/__te
 
 export default {
   title: "PC Tasks/JobRunWithTasks",
-  component: JobRunWithTasks,
-} as ComponentMeta<typeof JobRunWithTasks>;
+  component: JobRunPartitionWithTasks,
+} as ComponentMeta<typeof JobRunPartitionWithTasks>;
 
-const Template: ComponentStory<typeof JobRunWithTasks> = args => (
-  <JobRunWithTasks {...args} />
+const Template: ComponentStory<typeof JobRunPartitionWithTasks> = args => (
+  <JobRunPartitionWithTasks {...args} />
 );
 
 const splitsJobRuns = TestJobRuns.find(job => job.job_id === "create-splits");

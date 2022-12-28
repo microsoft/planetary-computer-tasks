@@ -1,24 +1,26 @@
 import { useState } from "react";
-import { JobRunRecord } from "types/runs";
-import { JobRunStatus } from "types/enums";
-import { JobStatusFilter } from "../JobStatusFilter/JobStatusFilter.index";
+import { JobParitionRunRecord } from "types/runs";
+import { JobPartitionRunStatus } from "types/enums";
+import { JobPartitionFilter } from "../JobStatusFilter/JobStatusFilter.index";
 
-export const useSubJobFilter = (jobRuns: JobRunRecord[]) => {
+export const useSubJobFilter = (jobPartitionRuns: JobParitionRunRecord[]) => {
   const [filter, setFilter] = useState<string[]>(allStatuses);
 
   const filterPanel = (
-    <JobStatusFilter
-      jobRuns={jobRuns}
+    <JobPartitionFilter
+      jobPartitionRuns={jobPartitionRuns}
       onFilterChange={setFilter}
       statusFilters={filter}
     />
   );
 
-  const filteredJobRuns = jobRuns.filter(run => filter.includes(run.status));
+  const filteredJobPartitionRuns = jobPartitionRuns.filter(run =>
+    filter.includes(run.status)
+  );
 
-  return { filterPanel, filteredJobRuns };
+  return { filterPanel, filteredJobPartitionRuns };
 };
 
-const allStatuses = Object.values(JobRunStatus)
-  .map(key => JobRunStatus[key])
+const allStatuses = Object.values(JobPartitionRunStatus)
+  .map(key => JobPartitionRunStatus[key])
   .filter(value => typeof value === "string") as string[];

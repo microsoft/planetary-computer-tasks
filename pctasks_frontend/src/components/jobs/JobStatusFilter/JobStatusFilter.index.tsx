@@ -7,29 +7,34 @@ import {
 } from "@fluentui/react";
 import { ArrowCircleDownSplit20Regular } from "@fluentui/react-icons";
 
-import { JobRunRecord } from "types/runs";
-import { getSubJobStatusSummary } from "helpers/jobs";
+import { JobParitionRunRecord } from "types/runs";
 
-interface JobStatusFilterProps {
-  jobRuns: JobRunRecord[];
+interface JobPartitionStatusFilterProps {
+  jobPartitionRuns: JobParitionRunRecord[];
   statusFilters: string[];
   onFilterChange: (filters: string[]) => void;
 }
 
-export const JobStatusFilter: React.FC<JobStatusFilterProps> = ({
-  jobRuns,
+export const JobPartitionFilter: React.FC<JobPartitionStatusFilterProps> = ({
+  jobPartitionRuns,
   statusFilters,
   onFilterChange,
 }) => {
-  const jobSummary = getSubJobStatusSummary(jobRuns);
-  const options = Object.entries(jobSummary)
-    .filter(([, count]) => count > 0)
-    .map(([status, count]): IDropdownOption => {
+  const statusCounts = jobPartitionRuns.reduce((acc, run) => {
+    const status = run.status;
+    const count = acc.get(status) || 0;
+    acc.set(status, count + 1);
+    return acc;
+  }, new Map<string, number>());
+
+  const options = Object.entries(statusCounts).map(
+    ([status, count]): IDropdownOption => {
       return {
         key: status,
         text: `${status} (${count})`,
       };
-    });
+    }
+  );
 
   const handleChange = (
     _: React.FormEvent<HTMLDivElement>,
@@ -47,7 +52,7 @@ export const JobStatusFilter: React.FC<JobStatusFilterProps> = ({
   return (
     <Dropdown
       multiSelect
-      title="This job has multiple run iterators. Click to filter."
+      title="This job has multiple run partitions. Click to filter."
       selectedKeys={statusFilters}
       styles={dropdownStyles}
       onRenderPlaceholder={() => (

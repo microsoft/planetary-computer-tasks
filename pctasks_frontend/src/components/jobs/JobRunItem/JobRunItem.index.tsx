@@ -16,8 +16,6 @@ export const JobRunItem: React.FC<JobRunItemProps> = ({
   indent,
   children,
 }) => {
-  // Use the job id from the run (since it may be a sub job), but if there are no runs
-  // use the name from the workflow job definition.
   const title = run?.job_id || job.id;
 
   return (

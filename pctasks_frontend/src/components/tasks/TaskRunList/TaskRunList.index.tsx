@@ -15,8 +15,10 @@ export const TaskRunList: React.FC<TaskRunListProps> = ({
   indent,
 }) => {
   const items = tasks.map(task => {
-    const runs = taskRuns.find(run => run.task_id === task.id);
-    return <TaskRunItem key={task.id} task={task} taskRun={runs} indent={indent} />;
+    const taskRun = taskRuns.find(run => run.task_id === task.id);
+    return (
+      <TaskRunItem key={task.id} task={task} taskRun={taskRun} indent={indent} />
+    );
   });
 
   return <Stack>{items}</Stack>;
