@@ -23,7 +23,7 @@ jobs:
         inputs:
         - uri: blob://goeseuwest/noaa-goes16/
           splits:
-          - prefix: GLM-L2-LCFA/2022/
+          - prefix: GLM-L2-LCFA/2023/
             depth: 2
           sas_token: ${{ pc.get_token(goeseuwest, noaa-goes16) }}
           chunk_options:
@@ -35,7 +35,7 @@ jobs:
             since: ${{ args.since }}
         - uri: blob://goeseuwest/noaa-goes17/
           splits:
-          - prefix: GLM-L2-LCFA/2022/
+          - prefix: GLM-L2-LCFA/2023/
             depth: 2
           sas_token: ${{ pc.get_token(goeseuwest, noaa-goes17) }}
           chunk_options:
