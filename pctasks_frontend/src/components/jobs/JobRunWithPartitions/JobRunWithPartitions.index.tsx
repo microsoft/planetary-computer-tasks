@@ -27,7 +27,9 @@ export const JobRunWithPartitions: React.FC<JobRunWithSubJobsProps> = ({
     useSubJobFilter(jobRunPartitions);
 
   if (!hasMultiplePartitions(job)) {
-    throw new Error("JobRunWithSubJobs must be used with a job with sub jobs");
+    throw new Error(
+      "JobRunWithPartitions must be used with a job with multiple partitions (from a foreach)"
+    );
   }
 
   const renderJob = (partition: JobParitionRunRecord | undefined) => {

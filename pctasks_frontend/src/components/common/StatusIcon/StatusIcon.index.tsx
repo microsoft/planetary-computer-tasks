@@ -11,10 +11,20 @@ import {
   CircleFilled,
 } from "@fluentui/react-icons";
 import { mergeClassNames } from "helpers/utils";
-import { JobRunStatus, TaskRunStatus, WorkflowRunStatus } from "types/enums";
+import {
+  JobPartitionRunStatus,
+  JobRunStatus,
+  TaskRunStatus,
+  WorkflowRunStatus,
+} from "types/enums";
 
 interface StatusIconProps {
-  status: WorkflowRunStatus | JobRunStatus | TaskRunStatus | undefined;
+  status:
+    | WorkflowRunStatus
+    | JobRunStatus
+    | JobPartitionRunStatus
+    | TaskRunStatus
+    | undefined;
   size?: "small" | "medium" | "large";
 }
 
@@ -39,7 +49,7 @@ export const StatusIcon: React.FC<StatusIconProps> = ({
       <AddCircleFilled className={mergeClassNames(styles.submitted, sizeClass)} />
     ),
     cancelled: (
-      <DismissCircleFilled className={mergeClassNames(styles.failed, sizeClass)} />
+      <DismissCircleFilled className={mergeClassNames(styles.unknown, sizeClass)} />
     ),
     notasks: (
       <SubtractCircleFilled className={mergeClassNames(styles.failed, sizeClass)} />

@@ -15,7 +15,6 @@ export const JobRunContainer: React.FC<JobRunContainerProps> = ({
 }) => {
   const { data: jobRunPartitions } = useJobRunPartition(jobRun);
 
-  // Job run containers determine if the job has more than the 1 default partition.
   if (!jobRunPartitions) return null;
 
   if (jobRunPartitions.length > 1) {

@@ -1,11 +1,13 @@
 import { IndentLevel } from "types";
-import { JobRunRecord } from "types/runs";
+import { JobParitionRunRecord, JobRunRecord } from "types/runs";
 import { JobDefinition } from "types/jobs";
 import { RunItem } from "components/common/RunItem/RunItem.index";
+import { hasMultiplePartitions } from "helpers/jobs";
 
 interface JobRunItemProps {
   job: JobDefinition;
   run: JobRunRecord | undefined;
+  partitionRun?: JobParitionRunRecord;
   indent: IndentLevel;
   children?: React.ReactNode;
 }
@@ -13,13 +15,19 @@ interface JobRunItemProps {
 export const JobRunItem: React.FC<JobRunItemProps> = ({
   job,
   run,
+  partitionRun,
   indent,
   children,
 }) => {
-  const title = run?.job_id || job.id;
+  const titlePartitionId =
+    partitionRun && hasMultiplePartitions(job)
+      ? `[${partitionRun?.partition_id}]`
+      : "";
+  const title = `${job.id} ${titlePartitionId}`;
 
+  const runItem = partitionRun || run;
   return (
-    <RunItem title={title} run={run} indent={indent}>
+    <RunItem title={title} run={runItem} indent={indent}>
       {children}
     </RunItem>
   );

@@ -20,12 +20,14 @@ export const JobPartitionFilter: React.FC<JobPartitionStatusFilterProps> = ({
   statusFilters,
   onFilterChange,
 }) => {
-  const statusCounts = jobPartitionRuns.reduce((acc, run) => {
-    const status = run.status;
-    const count = acc.get(status) || 0;
-    acc.set(status, count + 1);
-    return acc;
-  }, new Map<string, number>());
+  const statusCounts = jobPartitionRuns.reduce<Record<string, number>>(
+    (acc, run) => {
+      const count = acc[run.status] || 0;
+      acc[run.status] = count + 1;
+      return acc;
+    },
+    {}
+  );
 
   const options = Object.entries(statusCounts).map(
     ([status, count]): IDropdownOption => {

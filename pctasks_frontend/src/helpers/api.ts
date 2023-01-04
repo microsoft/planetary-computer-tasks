@@ -72,27 +72,12 @@ export const useJobRunPartition = (jobRun: JobRunRecord | undefined) => {
   });
 };
 
-export const useJobTaskRuns = (
-  jobRun: JobRunRecord | undefined,
-  enabled: boolean = true
-) => {
-  const queryConfig = useQueryConfigDefaults([jobRun, enabled]);
-  return useQuery(["jobTaskRuns", jobRun], getJobTaskRuns, {
-    ...queryConfig,
-    refetchInterval: 5000,
-  });
-};
-
 export const useTaskRunLog = (taskRun: TaskRunRecord | undefined) => {
   const queryConfig = useQueryConfigDefaults([taskRun?.task_id]);
-  return useQuery(
-    ["taskRunLog", taskRun?.run_id, taskRun?.job_id, taskRun?.task_id],
-    getTaskRunLog,
-    {
-      ...queryConfig,
-      refetchInterval: 2000,
-    }
-  );
+  return useQuery(["taskRunLog", taskRun], getTaskRunLog, {
+    ...queryConfig,
+    refetchInterval: 2000,
+  });
 };
 
 // === API Requests ===
@@ -163,28 +148,20 @@ const getJobRunPartitions = async (
   return response.data.records;
 };
 
-const getJobTaskRuns = async (
-  queryContext: QueryFunctionContext<[string, JobRunRecord | undefined]>
-): Promise<TaskRunRecord[]> => {
-  const [, jobRun] = queryContext.queryKey;
-  const client = getClient(queryContext);
-
-  const response = await client.get(
-    `/runs/${jobRun?.run_id}/jobs/${jobRun?.job_id}/tasks`
-  );
-  return response.data.tasks;
-};
-
 const getTaskRunLog = async (
-  queryContext: QueryFunctionContext<
-    [string, string | undefined, string | undefined, string | undefined]
-  >
+  queryContext: QueryFunctionContext<[string, TaskRunRecord | undefined]>
 ): Promise<string> => {
-  const [, runId, jobId, taskId] = queryContext.queryKey;
+  const [, taskRun] = queryContext.queryKey;
   const client = getClient(queryContext);
 
-  const response = await client.get(
-    `/runs/${runId}/jobs/${jobId}/tasks/${taskId}/logs/run.txt`
-  );
+  const url = [
+    `/runs/${taskRun?.run_id}`,
+    `/jobs/${taskRun?.job_id}`,
+    `/partitions/${taskRun?.partition_id}`,
+    `/tasks/${taskRun?.task_id}`,
+    `/log`,
+  ].join("");
+
+  const response = await client.get(url);
   return response.data;
 };

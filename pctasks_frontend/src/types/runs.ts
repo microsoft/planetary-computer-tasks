@@ -39,8 +39,9 @@ export type JobParitionRunRecord = RunRecord & {
 };
 
 export type TaskRunRecord = RunRecord & {
-  task_id: string;
   job_id: string;
+  task_id: string;
+  partition_id: string;
   status: TaskRunStatus;
 };
 

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { WorkflowRunHeader } from "components/runs";
 import { JobRunList } from "components/jobs/JobRunList/JobRunList.index";
-import { useWorkflowJobLog, useWorkflow, useWorkflowRun } from "helpers/api";
+import { useWorkflow, useWorkflowRun } from "helpers/api";
 import { gapRegular, gapSmall } from "styles/global";
 import { TextOutput } from "components/common/TextOutput/TextOutput.index";
 import { useSelection } from "state/SelectionProvider";
@@ -32,7 +32,7 @@ export const WorkflowRunDetail = () => {
   usePageTitle(pageTitle);
   return (
     <AuthPage>
-      <WorkflowRunHeader run={workflowRun} />
+      <WorkflowRunHeader workflow={workflowRecord} run={workflowRun} />
       {isLoading && <Spinner />}
       {isError && <div>Error</div>}
 

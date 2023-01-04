@@ -9,13 +9,13 @@ import {
 import { formatRunTimes } from "helpers/time";
 import { gapRegular, treeIndent } from "styles/global";
 import { IndentLevel } from "types";
-import { JobRunRecord, TaskRunRecord } from "types/runs";
+import { JobParitionRunRecord, JobRunRecord, TaskRunRecord } from "types/runs";
 import { RunTimeDuration } from "../RunTimes/RunDuration";
 import StatusIcon from "../StatusIcon";
 
 interface RunItemProps {
   title: string;
-  run: JobRunRecord | TaskRunRecord | undefined;
+  run: JobRunRecord | JobParitionRunRecord | TaskRunRecord | undefined;
   selected?: boolean;
   indent: IndentLevel;
   onClick?: () => void;
