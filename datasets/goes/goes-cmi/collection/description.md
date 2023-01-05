@@ -1,10 +1,10 @@
 The GOES-R Advanced Baseline Imager (ABI) L2 Cloud and Moisture Imagery product provides 16 reflective and emissive bands at high temporal cadence over the Western Hemisphere.
 
-The GOES-R series is the latest in the Geostationary Operational Environmental Satellites (GOES) program, which has been operated in a collaborative effort by NOAA and NASA since 1975. The operational GOES-R Satellites, GOES-16 (or GOES East) and GOES-17 (or GOES West), capture 16-band imagery from geostationary orbits over the Western Hemisphere via the Advance Baseline Imager (ABI) radiometer. The ABI captures 2 visible, 4 near-infrared, and 10 infrared channels at resolutions between 0.5km and 2km.
+The GOES-R series is the latest in the Geostationary Operational Environmental Satellites (GOES) program, which has been operated in a collaborative effort by NOAA and NASA since 1975. The operational GOES-R Satellites, GOES-16, GOES-17, and GOES-18, capture 16-band imagery from geostationary orbits over the Western Hemisphere via the Advance Baseline Imager (ABI) radiometer. The ABI captures 2 visible, 4 near-infrared, and 10 infrared channels at resolutions between 0.5km and 2km.
 
 ### Geographic coverage
 
-The ABI captures three levels of coverage, each at a different temporal cadence depending on the modes described below. The goegraphic coverage for each image is described by the `goes:image-type` STAC Item property.
+The ABI captures three levels of coverage, each at a different temporal cadence depending on the modes described below. The geographic coverage for each image is described by the `goes:image-type` STAC Item property.
 
 - _FULL DISK_: a circular image depicting nearly full coverage of the Western Hemisphere.
 - _CONUS_: a 3,000 (lat) by 5,000 (lon) km rectangular image depicting the Continental U.S. (GOES-16) or the Pacific Ocean including Hawaii (GOES-17).
