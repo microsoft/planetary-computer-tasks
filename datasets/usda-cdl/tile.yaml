@@ -1,0 +1,36 @@
+name: Tile USDA CDL assets
+id: usda-cdl-tile
+dataset: usda-cdl
+args:
+  - registry
+jobs:
+  list-files:
+    tasks:
+      - id: list-files
+        image: ${{ args.registry }}/pctasks-task-base:latest
+        task: pctasks.task.common.list_files:task
+        args:
+          src_uri: blob://landcoverdata/usda-cdl-onboarding
+          extensions:
+            - .zip
+        environment:
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+  tile:
+    foreach:
+      items: ${{ jobs.list-files.tasks.list-files.output.uris }}
+    tasks:
+      - id: tile
+        image: ${{ args.registry }}/pctasks-task-base:latest
+        code:
+          src: ${{ local.path(./usda_cdl.py) }}
+          requirements: ${{ local.path(./requirements.txt) }}
+        task: usda_cdl:tile_task
+        args:
+          src_uri: ${{ item }}
+          dst_uri: blob://landcoverdata/usda-cdl/tiles
+        environment:
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}

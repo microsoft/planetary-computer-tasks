@@ -80,7 +80,8 @@
     "summaries": {
         "platform": [
             "GOES-16",
-            "GOES-17"
+            "GOES-17",
+            "GOES-18"
         ],
         "instruments": [
             "ABI"

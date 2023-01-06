@@ -1,0 +1,1 @@
+git+https://github.com/stactools-packages/noaa-climate-normals.git@2d574925ac928d4705f3f9e85f5fbb4794d0593f

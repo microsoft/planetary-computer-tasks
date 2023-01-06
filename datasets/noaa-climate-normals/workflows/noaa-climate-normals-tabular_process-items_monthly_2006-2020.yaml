@@ -1,46 +1,31 @@
-name: Process items for goes-glm
+name: Process items for noaa-climate-normals-tabular
 tokens:
-  goeseuwest:
+  noaanormals:
     containers:
-      noaa-goes16:
-        token: ${{ pc.get_token(goeseuwest, noaa-goes16) }}
-      noaa-goes17:
-        token: ${{ pc.get_token(goeseuwest, noaa-goes17) }}
-target_environment: green
+      climate-normals:
+        token: ${{ pc.get_token(noaanormals, climate-normals) }}
 args:
 - registry
-- since
 jobs:
   create-splits:
     id: create-splits
     tasks:
     - id: create-splits
-      image: ${{ args.registry }}/pctasks-goes-glm:2022.11.3.0
+      image: ${{ args.registry }}/pctasks-task-base:latest
       code:
-        src: datasets/goes/goes-glm/goes_glm.py
-      task: goes_glm:GoesGlmCollection.create_splits_task
+        src: datasets/noaa-climate-normals/noaa_climate_normals.py
+        requirements: datasets/noaa-climate-normals/requirements.txt
+      task: noaa_climate_normals:NoaaClimateNormalsTabular.create_splits_task
       args:
         inputs:
-        - uri: blob://goeseuwest/noaa-goes16/
-          splits:
-          - prefix: GLM-L2-LCFA/2023/
-            depth: 2
-          sas_token: ${{ pc.get_token(goeseuwest, noaa-goes16) }}
+        - uri: blob://noaanormals/climate-normals/normals-monthly/2006-2020/
+          sas_token: ${{ pc.get_token(noaanormals, climate-normals) }}
           chunk_options:
-            chunk_length: 10000
-            ends_with: .nc
-            list_folders: false
-            chunk_file_name: uris-list
-            chunk_extension: .csv
-            since: ${{ args.since }}
-        - uri: blob://goeseuwest/noaa-goes17/
-          splits:
-          - prefix: GLM-L2-LCFA/2023/
-            depth: 2
-          sas_token: ${{ pc.get_token(goeseuwest, noaa-goes17) }}
-          chunk_options:
-            chunk_length: 10000
-            ends_with: .nc
+            chunk_length: 1
+            name_starts_with: access
+            extensions:
+            - .csv
+            limit: 1
             list_folders: false
             chunk_file_name: uris-list
             chunk_extension: .csv
@@ -54,13 +39,14 @@ jobs:
     id: create-chunks
     tasks:
     - id: create-chunks
-      image: ${{ args.registry }}/pctasks-goes-glm:2022.11.3.0
+      image: ${{ args.registry }}/pctasks-task-base:latest
       code:
-        src: datasets/goes/goes-glm/goes_glm.py
+        src: datasets/noaa-climate-normals/noaa_climate_normals.py
+        requirements: datasets/noaa-climate-normals/requirements.txt
       task: pctasks.dataset.chunks.task:create_chunks_task
       args:
         src_uri: ${{ item.uri }}
-        dst_uri: blob://goeseuwest/noaa-goes-etl-data/pctasks/glm/${{ args.since }}/assets
+        dst_uri: blob://noaanormals/normals-etl-data/tabular/test-monthly-2006-2020/assets
         options: ${{ item.chunk_options }}
       environment:
         AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -75,19 +61,21 @@ jobs:
     id: process-chunk
     tasks:
     - id: create-items
-      image: ${{ args.registry }}/pctasks-goes-glm:2022.11.3.0
+      image: ${{ args.registry }}/pctasks-task-base:latest
       code:
-        src: datasets/goes/goes-glm/goes_glm.py
-      task: goes_glm:GoesGlmCollection.create_items_task
+        src: datasets/noaa-climate-normals/noaa_climate_normals.py
+        requirements: datasets/noaa-climate-normals/requirements.txt
+      task: noaa_climate_normals:NoaaClimateNormalsTabular.create_items_task
       args:
         asset_chunk_info:
           uri: ${{ item.uri }}
           chunk_id: ${{ item.chunk_id }}
-        item_chunkset_uri: blob://goeseuwest/noaa-goes-etl-data/pctasks/glm/${{ args.since
-          }}/items
-        collection_id: goes-glm
+        item_chunkset_uri: blob://noaanormals/normals-etl-data/tabular/test-monthly-2006-2020/items
+        collection_id: noaa-climate-normals-tabular
         options:
           skip_validation: false
+      tags:
+        batch_pool_id: high_memory_pool
       environment:
         AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
         AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
@@ -114,6 +102,6 @@ jobs:
       flatten: true
     needs: create-chunks
 schema_version: 1.0.0
-id: goes-glm-update
-dataset: goes_glm
+id: test_noaa-climate-normals-tabular_process-items_monthly_2006-2020
+dataset: noaa_climate_normals
 
