@@ -836,6 +836,13 @@
       "url": "https://planetarycomputer.microsoft.com"
     }
   ],
+  "summaries": {
+    "usda_cdl:type": [
+      "cropland",
+      "frequency",
+      "cultivated"
+    ]
+  },
   "assets": {
     "thumbnail": {
       "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/usda-cdl-thumb.png",
