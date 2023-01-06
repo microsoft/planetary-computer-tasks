@@ -87,7 +87,7 @@ class UsdaCdlCollection(Collection):
         )
         updated_items = list()
         for item in items:
-            item_type = item.extra_fields["usda_cdl:type"]
+            item_type = item.properties["usda_cdl:type"]
             if item_type == "cropland":
                 year = item.common_metadata.start_datetime.year
                 link = Link(
