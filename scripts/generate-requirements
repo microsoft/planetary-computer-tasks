@@ -1,0 +1,20 @@
+#!/bin/bash
+# Usage: ./scripts/generate-requirements [optional paths to additional requirements.txt]
+set -ex
+
+pip-compile -o requirements.txt \
+    pctasks/core/setup.py \
+    pctasks/cli/dev_requirements.txt \
+    pctasks/cli/setup.py \
+    pctasks/task/dev_requirements.txt \
+    pctasks/task/setup.py \
+    pctasks/client/dev_requirements.txt \
+    pctasks/client/setup.py \
+    pctasks/ingest/dev_requirements.txt \
+    pctasks/ingest/setup.py \
+    pctasks/dataset/dev_requirements.txt \
+    pctasks/dataset/setup.py \
+    "${@:1}"
+
+grep -v "^file:./" requirements.txt  > requirements.base.txt
+grep "^file:./" requirements.txt | sed 's/^/-e /' > requirements.pctasks.txt

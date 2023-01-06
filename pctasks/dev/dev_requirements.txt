@@ -1,0 +1,5 @@
+file:./pctasks/task#egg=pctasks.task
+file:./pctasks/client#egg=pctasks.client
+file:./pctasks/ingest#egg=pctasks.ingest
+file:./pctasks/run#egg=pctasks.run
+file:./pctasks/cli#egg=pctasks.cli

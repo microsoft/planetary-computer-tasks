@@ -1,0 +1,2 @@
+file:./pctasks/core#egg=pctasks.core
+file:./pctasks/run#egg=pctasks.run

@@ -1,0 +1,2 @@
+file:./pctasks/task#egg=pctasks.task
+file:./pctasks/ingest#egg=pctasks.ingest
