@@ -17,4 +17,4 @@ pip-compile -o requirements.txt \
     "${@:1}"
 
 grep -v "^file:./" requirements.txt  > requirements.base.txt
-grep "^file:./" requirements.txt > requirements.pctasks.txt
+grep "^file:./" requirements.txt | sed 's/^/-e /' > requirements.pctasks.txt

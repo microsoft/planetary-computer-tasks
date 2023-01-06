@@ -19,8 +19,8 @@ COPY pctasks/client /opt/src/pctasks/client
 COPY pctasks/ingest /opt/src/pctasks/ingest
 COPY pctasks/dataset /opt/src/pctasks/dataset
 
-COPY requirements.pctasks.txt /requirements.pctasks.txt
-RUN cd /opt/src && python -m pip install -r /requirements.pctasks.txt
+COPY requirements.pctasks.txt /opt/src/requirements.pctasks.txt
+RUN cd /opt/src && python -m pip install -r requirements.pctasks.txt
 
 # Setup Python Path to allow import of test modules
 ENV PYTHONPATH=/opt/src:$PYTHONPATH
