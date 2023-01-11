@@ -39,7 +39,7 @@ The STAC keys for most assets consist of two abbreviations. A "variable":
 | tmax         | Maximum temperature over the time period |
 | tmin         | Minimum temperature over the time period |
 
-And an "aggregation"
+And an "aggregation":
 
 | Abbreviation |                                  Description                                   |
 | ------------ | ------------------------------------------------------------------------------ |
