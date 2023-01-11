@@ -3,7 +3,7 @@ import { List, mergeStyles, mergeStyleSets, Stack } from "@fluentui/react";
 import { JobParitionRunRecord, JobRunRecord } from "types/runs";
 import { JobDefinition } from "types/jobs";
 import { borderTop, gapRegular } from "styles/global";
-import { JobRunPartitionWithTasks } from "../JobRunWithTasks/JobRunWithTasks.index";
+import { JobRunPartitionWithTasks } from "../JobRunPartitionWithTasks/JobRunWithTasks.index";
 import { ParentJobRunItem } from "../ParentJobRunItem/ParentJobRunItem.index";
 import { useExpandButton } from "components/common/hooks";
 import { useSubJobFilter } from "../hooks/useSubJobFilter";
@@ -16,12 +16,12 @@ interface JobRunWithSubJobsProps {
   expanded?: boolean;
 }
 
-export const JobRunWithPartitions: React.FC<JobRunWithSubJobsProps> = ({
+export const JobRunWithPartitions = ({
   job,
   jobRun,
   jobRunPartitions,
   expanded = false,
-}) => {
+}: JobRunWithSubJobsProps) => {
   const { isExpanded, toggleButton } = useExpandButton(expanded);
   const { filterPanel, filteredJobPartitionRuns } =
     useSubJobFilter(jobRunPartitions);
@@ -37,7 +37,7 @@ export const JobRunWithPartitions: React.FC<JobRunWithSubJobsProps> = ({
 
     return (
       <JobRunPartitionWithTasks
-        key={partition.job_id + partition.run_id}
+        key={`${partition.job_id}-${partition.partition_id}`}
         job={job}
         jobRun={jobRun}
         jobRunPartition={partition}

@@ -7,7 +7,6 @@ import { IndentLevel } from "types";
 import { JobParitionRunRecord, JobRunRecord } from "types/runs";
 import { JobDefinition } from "types/jobs";
 import { useExpandButton } from "components/common/hooks";
-import { hasMultiplePartitions } from "helpers/jobs";
 
 interface JobRunPartitionWithTasksProps {
   job: JobDefinition;
@@ -27,7 +26,13 @@ export const JobRunPartitionWithTasks: React.FC<JobRunPartitionWithTasksProps> =
   const { isExpanded, toggleButton } = useExpandButton(expanded);
 
   const jobHeader = (
-    <JobRunItem job={job} run={jobRun} indent={0} partitionRun={jobRunPartition} />
+    <JobRunItem
+      job={job}
+      run={jobRun}
+      indent={0}
+      partitionRun={jobRunPartition}
+      // href={`job/${job.id}`}
+    />
   );
   const styles = getStyles(indent);
 

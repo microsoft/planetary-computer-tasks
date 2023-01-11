@@ -1,14 +1,15 @@
-import { mergeStyleSets, Spinner } from "@fluentui/react";
-import { useTaskRunLog } from "helpers/api";
 import React from "react";
 import { LazyLog } from "react-lazylog";
+import { mergeStyleSets, Spinner } from "@fluentui/react";
+
+import { useTaskRunLog } from "helpers/api";
 import { TaskRunRecord } from "types/runs";
 
-interface TextOutputProps {
+interface LogOutputProps {
   taskRun: TaskRunRecord | undefined;
 }
 
-export const TextOutput: React.FC<TextOutputProps> = ({ taskRun }) => {
+export const LogOutput: React.FC<LogOutputProps> = ({ taskRun }) => {
   const { data: logText, isLoading } = useTaskRunLog(taskRun);
   const title = taskRun && `${taskRun.job_id} / ${taskRun.task_id}`;
 

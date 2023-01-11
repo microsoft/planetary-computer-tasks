@@ -41,9 +41,10 @@ export const formatRunTimes = (run: RunRecord): RunTimesHumanized => {
   const end = dayjs.utc(run.updated);
 
   const duration = start.diff(end);
+  const durationFriendly = isNaN(duration) ? "-" : shortHumanizer(duration);
   return {
     duration,
-    durationFriendly: shortHumanizer(duration),
+    durationFriendly,
     startFriendly: start.fromNow(),
     startFormatted: start.tz(dayjs.tz.guess()).format("llll"),
   };

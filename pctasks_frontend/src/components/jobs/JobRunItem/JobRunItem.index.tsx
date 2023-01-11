@@ -25,9 +25,11 @@ export const JobRunItem: React.FC<JobRunItemProps> = ({
       : "";
   const title = `${job.id} ${titlePartitionId}`;
 
+  const href = partitionRun ? undefined : `job/${job.id}`;
   const runItem = partitionRun || run;
+
   return (
-    <RunItem title={title} run={runItem} indent={indent}>
+    <RunItem title={title} run={runItem} indent={indent} href={href}>
       {children}
     </RunItem>
   );

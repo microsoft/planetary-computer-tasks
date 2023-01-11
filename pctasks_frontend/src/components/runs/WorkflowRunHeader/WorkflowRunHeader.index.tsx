@@ -1,5 +1,5 @@
-import { Icon, mergeStyles, mergeStyleSets, Stack, Text } from "@fluentui/react";
-import { IconLabel } from "components/common/IconLabel/IconLable.index";
+import { mergeStyles, mergeStyleSets, Stack } from "@fluentui/react";
+import { IconLabel } from "components/common/IconLabel/IconLabel.index";
 import { RunTimeBlock } from "components/common/RunTimes/RunTimeBlock";
 import StatusIcon from "components/common/StatusIcon";
 import { borderRound, gapRegular } from "styles/global";

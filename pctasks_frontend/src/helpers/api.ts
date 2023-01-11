@@ -65,9 +65,19 @@ export const useWorkflowJobLog = (workflowRunId: string | undefined) => {
   });
 };
 
-export const useJobRunPartition = (jobRun: JobRunRecord | undefined) => {
+export const useJobRunPartitions = (jobRun: JobRunRecord | undefined) => {
   const queryConfig = useQueryConfigDefaults([jobRun]);
   return useQuery(["jobRunPartition", jobRun], getJobRunPartitions, {
+    ...queryConfig,
+  });
+};
+
+export const useJobRunPartition = (
+  jobRun: JobRunRecord | undefined,
+  partitionId: string | undefined
+) => {
+  const queryConfig = useQueryConfigDefaults([jobRun]);
+  return useQuery(["jobRunPartition", jobRun, partitionId], getJobRunPartition, {
     ...queryConfig,
   });
 };
@@ -146,6 +156,20 @@ const getJobRunPartitions = async (
     `/runs/${jobRun?.run_id}/jobs/${jobRun?.job_id}/partitions`
   );
   return response.data.records;
+};
+
+const getJobRunPartition = async (
+  queryContext: QueryFunctionContext<
+    [string, JobRunRecord | undefined, string | undefined]
+  >
+): Promise<JobParitionRunRecord> => {
+  const [, jobRun, partitionId] = queryContext.queryKey;
+  const client = getClient(queryContext);
+
+  const response = await client.get(
+    `/runs/${jobRun?.run_id}/jobs/${jobRun?.job_id}/partitions/${partitionId}`
+  );
+  return response.data.record;
 };
 
 const getTaskRunLog = async (

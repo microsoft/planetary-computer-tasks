@@ -12,6 +12,8 @@ import App from "./App";
 import { RegisteredWorkflowPage, WorkflowDetailPage, WorkflowRunsPage } from "pages";
 import { initializeIcons } from "@fluentui/react";
 import { SelectionProvider } from "state/SelectionProvider";
+import { JobRunSelectionDetail } from "components/jobs";
+import { TaskRunSelectionDetail } from "components/tasks";
 
 initializeIcons();
 
@@ -33,7 +35,13 @@ root.render(
                 <Route
                   path="workflows/:workflowId/run/:workflowRunId"
                   element={<WorkflowDetailPage />}
-                />
+                >
+                  <Route path="job/:jobId" element={<JobRunSelectionDetail />} />
+                  <Route
+                    path="job/:jobId/:partitionId/tasks/:taskId"
+                    element={<TaskRunSelectionDetail />}
+                  />
+                </Route>
               </Route>
             </Routes>
           </BrowserRouter>

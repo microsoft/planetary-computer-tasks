@@ -1,12 +1,6 @@
-import {
-  getTheme,
-  Link,
-  mergeStyles,
-  mergeStyleSets,
-  Stack,
-  Text,
-} from "@fluentui/react";
+import { getTheme, mergeStyles, mergeStyleSets, Stack, Text } from "@fluentui/react";
 import { formatRunTimes } from "helpers/time";
+import { Link } from "react-router-dom";
 import { gapRegular, treeIndent } from "styles/global";
 import { IndentLevel } from "types";
 import { JobParitionRunRecord, JobRunRecord, TaskRunRecord } from "types/runs";
@@ -17,15 +11,15 @@ interface RunItemProps {
   title: string;
   run: JobRunRecord | JobParitionRunRecord | TaskRunRecord | undefined;
   selected?: boolean;
+  href?: string;
   indent: IndentLevel;
-  onClick?: () => void;
   children?: React.ReactNode;
 }
 export const RunItem: React.FC<RunItemProps> = ({
   title,
   run,
   selected = false,
-  onClick,
+  href,
   children,
   indent,
 }) => {
@@ -37,6 +31,14 @@ export const RunItem: React.FC<RunItemProps> = ({
     <Text className={styles.duration}>--</Text>
   );
 
+  const titleElement = href ? (
+    <Link to={href}>
+      <Text>{title}</Text>
+    </Link>
+  ) : (
+    <Text>{title}</Text>
+  );
+
   return (
     <Stack
       horizontal
@@ -46,9 +48,7 @@ export const RunItem: React.FC<RunItemProps> = ({
     >
       <Stack horizontal tokens={gapRegular} verticalAlign="start">
         <StatusIcon status={run?.status} />
-        <Link onClick={onClick}>
-          <Text>{title}</Text>
-        </Link>
+        {titleElement}
         {children}
       </Stack>
 
