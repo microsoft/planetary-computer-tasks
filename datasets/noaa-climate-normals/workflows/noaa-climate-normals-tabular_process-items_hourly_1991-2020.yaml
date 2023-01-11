@@ -14,7 +14,7 @@ jobs:
       image: ${{ args.registry }}/pctasks-noaa-climate-normals:latest
       code:
         src: datasets/noaa-climate-normals/noaa_climate_normals.py
-        requirements: datasets/noaa-climate-normals/requirements.txt
+
       task: noaa_climate_normals:NoaaClimateNormalsTabular.create_splits_task
       args:
         inputs:
@@ -42,7 +42,7 @@ jobs:
       image: ${{ args.registry }}/pctasks-noaa-climate-normals:latest
       code:
         src: datasets/noaa-climate-normals/noaa_climate_normals.py
-        requirements: datasets/noaa-climate-normals/requirements.txt
+
       task: pctasks.dataset.chunks.task:create_chunks_task
       args:
         src_uri: ${{ item.uri }}
@@ -64,7 +64,7 @@ jobs:
       image: ${{ args.registry }}/pctasks-noaa-climate-normals:latest
       code:
         src: datasets/noaa-climate-normals/noaa_climate_normals.py
-        requirements: datasets/noaa-climate-normals/requirements.txt
+
       task: noaa_climate_normals:NoaaClimateNormalsTabular.create_items_task
       args:
         asset_chunk_info:
