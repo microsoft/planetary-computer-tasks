@@ -1,5 +1,5 @@
 id: noaa_climate_normals
-image: ${{ args.registry }}/pctasks-task-base:latest
+image: ${{ args.registry }}/pctasks-noaa-climate-normals:latest
 
 args:
 - registry

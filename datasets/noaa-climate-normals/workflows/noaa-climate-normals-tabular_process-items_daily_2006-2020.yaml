@@ -11,7 +11,7 @@ jobs:
     id: create-splits
     tasks:
     - id: create-splits
-      image: ${{ args.registry }}/pctasks-task-base:latest
+      image: ${{ args.registry }}/pctasks-noaa-climate-normals:latest
       code:
         src: datasets/noaa-climate-normals/noaa_climate_normals.py
         requirements: datasets/noaa-climate-normals/requirements.txt
@@ -39,7 +39,7 @@ jobs:
     id: create-chunks
     tasks:
     - id: create-chunks
-      image: ${{ args.registry }}/pctasks-task-base:latest
+      image: ${{ args.registry }}/pctasks-noaa-climate-normals:latest
       code:
         src: datasets/noaa-climate-normals/noaa_climate_normals.py
         requirements: datasets/noaa-climate-normals/requirements.txt
@@ -61,7 +61,7 @@ jobs:
     id: process-chunk
     tasks:
     - id: create-items
-      image: ${{ args.registry }}/pctasks-task-base:latest
+      image: ${{ args.registry }}/pctasks-noaa-climate-normals:latest
       code:
         src: datasets/noaa-climate-normals/noaa_climate_normals.py
         requirements: datasets/noaa-climate-normals/requirements.txt
