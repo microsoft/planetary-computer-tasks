@@ -11,3 +11,42 @@ The data in this Collection have been converted from the original NetCDF format 
 - Daily normals
     - 30-year (1991–2020)
     - 15-year (2006–2020)
+
+## STAC Metadata
+
+The STAC items in this collection contain several custom fields that can be used to further filter the data.
+
+* `noaa_climate_normals:period`: Climate normal time period. This can be "1901-2000", "1991-2020", or "2006-2020".
+* `noaa_climate_normals:frequency`: Climate normal temporal interval (frequency). This can be "daily", "monthly", "seasonal" , or "annual"
+* `noaa-climate_normals:time_index`: Time step index, e.g., month of year (1-12).
+
+The `description` field of the assets varies by frequency. Using `prcp_norm` as an example, the descriptions are
+
+* annual: "Annual precipitation normals from monthly precipitation normal values"
+* seasonal: "Seasonal precipitation normals (WSSF) from monthly normals"
+* monthly: "Monthly precipitation normals from monthly precipitation values"
+* daily: "Precipitation normals from daily averages"
+
+Check the assets on individual items for the appropriate description.
+
+The STAC keys for most assets consist of two abbreviations. A "variable":
+
+
+| Abbreviation |               Description                |
+| ------------ | ---------------------------------------- |
+| prcp         | Precipitation over the time period       |
+| tavg         | Mean temperature over the time period    |
+| tmax         | Maximum temperature over the time period |
+| tmin         | Minimum temperature over the time period |
+
+And an "aggregation"
+
+| Abbreviation |                                  Description                                   |
+| ------------ | ------------------------------------------------------------------------------ |
+| max          | Maximum of the variable over the time period                                   |
+| min          | Minimum of the variable over the time period                                   |
+| std          | Standard deviation of the value over the time period                           |
+| flag         | An count of the number of inputs (months, years, etc.) to calculate the normal |
+| norm         | The normal for the variable over the time period                               |
+
+So, for example, `prcp_max` for monthly data is the "Maximum values of all input monthly precipitation normal values".
