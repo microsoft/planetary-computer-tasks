@@ -14,11 +14,9 @@ collections:
     template: ${{ local.path(./collection) }}
     class: usda_cdl:UsdaCdlCollection
     asset_storage:
-      - uri: blob://landcoverdata/usda-cdl/tiles
+      - uri: blob://landcoverdata/usda-cdl-onboarding/
         chunks:
           options:
-            list_folders: true
-            max_depth: 1
             chunk_length: 1
     chunk_storage:
       uri: blob://landcoverdata/usda-cdl-etl-data/chunks
