@@ -18,7 +18,7 @@ The STAC items in this collection contain several custom fields that can be used
 
 * `noaa_climate_normals:period`: Climate normal time period. This can be "1901-2000", "1991-2020", or "2006-2020".
 * `noaa_climate_normals:frequency`: Climate normal temporal interval (frequency). This can be "daily", "monthly", "seasonal" , or "annual"
-* `noaa-climate_normals:time_index`: Time step index, e.g., month of year (1-12).
+* `noaa_climate_normals:time_index`: Time step index, e.g., month of year (1-12).
 
 The `description` field of the assets varies by frequency. Using `prcp_norm` as an example, the descriptions are
 
