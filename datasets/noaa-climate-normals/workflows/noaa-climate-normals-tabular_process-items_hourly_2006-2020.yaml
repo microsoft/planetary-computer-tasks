@@ -46,7 +46,7 @@ jobs:
       task: pctasks.dataset.chunks.task:create_chunks_task
       args:
         src_uri: ${{ item.uri }}
-        dst_uri: blob://noaanormals/normals-etl-data/tabular/test-hourly-2006-2020/assets
+        dst_uri: blob://noaanormals/normals-etl-data/tabular/hourly-2023-01-11-2006-2020/assets
         options: ${{ item.chunk_options }}
       environment:
         AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -70,7 +70,7 @@ jobs:
         asset_chunk_info:
           uri: ${{ item.uri }}
           chunk_id: ${{ item.chunk_id }}
-        item_chunkset_uri: blob://noaanormals/normals-etl-data/tabular/test-hourly-2006-2020/items
+        item_chunkset_uri: blob://noaanormals/normals-etl-data/tabular/hourly-2023-01-11-2006-2020/items
         collection_id: noaa-climate-normals-tabular
         options:
           skip_validation: false
