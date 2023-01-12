@@ -1,12 +1,13 @@
 id: esa_cci_lc
-image: ${{ args.registry }}/pctasks-task-base:latest
+image: ${{ args.registry }}/pctasks-esa-cci-lc:latest
 
 args:
 - registry
 
 code:
   src: ${{ local.path(./esa_cci_lc.py) }}
-  requirements: ${{ local.path(./requirements.txt) }}
+  # included in the container image
+  # requirements: ${{ local.path(./requirements.txt) }}
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -23,8 +24,7 @@ collections:
           options:
             name_starts_with: netcdf/
             extension: [.nc]
-            chunk_length: 2  # for testing; set to 10 for production
-            limit: 2  # for testing; remove for production
+            chunk_length: 10
     chunk_storage:
       uri: blob://landcoverdata/esa-cci-lc-etl-data/esa-cci-lc-netcdf/
 
@@ -37,7 +37,6 @@ collections:
           options:
             name_starts_with: netcdf/
             extension: [.nc]
-            chunk_length: 1  # for testing; set to 10 for production
-            limit: 2  # for testing; remove for production
+            chunk_length: 10
     chunk_storage:
       uri: blob://landcoverdata/esa-cci-lc-etl-data/esa-cci-lc/

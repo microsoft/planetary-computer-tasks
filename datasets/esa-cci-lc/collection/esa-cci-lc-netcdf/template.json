@@ -105,7 +105,6 @@
         {
             "name": "Microsoft",
             "roles": [
-                "processor",
                 "host"
             ],
             "url": "https://planetarycomputer.microsoft.com"
