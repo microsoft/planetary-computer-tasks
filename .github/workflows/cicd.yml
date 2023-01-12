@@ -79,7 +79,7 @@ jobs:
         run: ./scripts/publish --acr pccomponentstest --tag ${{steps.get_image_tag.outputs.tag}} --no-login
 
       - name: Log into the ACR
-        run: az acr login -n pccomponentstest
+        run: az acr login -n pccomponents
 
       - name: Publish images
         run: ./scripts/publish --acr pccomponents --tag ${{steps.get_image_tag.outputs.tag}} --no-login
