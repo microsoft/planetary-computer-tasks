@@ -1,0 +1,233 @@
+{
+  "type": "Collection",
+  "id": "fws-nwi",
+  "stac_version": "1.0.0",
+  "description": "{{ collection.description }}",
+  "links": [
+    {
+      "rel": "describedby",
+      "href": "https://www.fws.gov/wetlands/Data/metadata/FWS_Wetlands.xml",
+      "type": "application/xml",
+      "title": "Wetlands metadata"
+    },
+    {
+      "rel": "about",
+      "href": "https://www.fws.gov/sites/default/files/documents/national-wetlands-inventory-fact-sheet.pdf",
+      "type": "application/pdf",
+      "title": "Project Fact Sheet"
+    },
+    {
+      "rel": "about",
+      "href": "https://www.fws.gov/program/national-wetlands-inventory",
+      "type": "text/html",
+      "title": "Project Landing Page"
+    },
+    {
+      "rel": "license",
+      "href": "http://www.usa.gov/publicdomain/label/1.0/",
+      "type": "text/html",
+      "title": "US Public Domain"
+    }
+  ],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+  ],
+  "item_assets": {
+    "zip": {
+      "type": "application/zip",
+      "roles": [
+        "data",
+        "archive",
+        "source"
+      ]
+    }
+  },
+  "msft:short_description": "Vector dataset containing wetlands boundaries and identification across the United States.",
+  "msft:storage_account": "ai4edataeuwest",
+  "msft:container": "fws-nwi",
+  "title": "FWS National Wetlands Inventory",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -64.54958,
+          13.16667,
+          144.6,
+          71.99633
+        ],
+        [
+          144.6,
+          13.16667,
+          180.0,
+          71.99633
+        ],
+        [
+          -180.0,
+          13.16667,
+          -64.54958,
+          71.99633
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2022-10-01T00:00:00Z",
+          "2022-10-01T00:00:00Z"
+        ]
+      ]
+    }
+  },
+  "license": "proprietary",
+  "keywords": [
+    "USFWS",
+    "Wetlands",
+    "United States"
+  ],
+  "providers": [
+    {
+      "name": "U.S. Fish and Wildlife Service",
+      "description": "The U.S. Fish and Wildlife Service is the principal federal agency tasked with providing information to the public on the extent and status of the nation's wetland and deepwater habitats, as well as changes to these habitats over time.",
+      "roles": [
+        "producer",
+        "licensor"
+      ],
+      "url": "https://www.fws.gov",
+      "email": "wetlands_team@fws.gov"
+    },
+    {
+      "name": "Microsoft",
+      "roles": [
+        "host"
+      ],
+      "url": "https://planetarycomputer.microsoft.com"
+    }
+  ],
+  "summaries": {
+    "fws_nwi:state": [
+      "Alabama",
+      "Alaska",
+      "Arizona",
+      "Arkansas",
+      "California",
+      "Colorado",
+      "Connecticut",
+      "Delaware",
+      "District of Columbia",
+      "Florida",
+      "Georgia",
+      "Hawaii",
+      "Idaho",
+      "Illinois",
+      "Indiana",
+      "Iowa",
+      "Kansas",
+      "Kentucky",
+      "Louisiana",
+      "Maine",
+      "Maryland",
+      "Massachusetts",
+      "Michigan",
+      "Minnesota",
+      "Mississippi",
+      "Missouri",
+      "Montana",
+      "Nebraska",
+      "Nevada",
+      "New Hampshire",
+      "New Jersey",
+      "New Mexico",
+      "New York",
+      "North Carolina",
+      "North Dakota",
+      "Ohio",
+      "Oklahoma",
+      "Oregon",
+      "Pacific Trust Islands",
+      "Pennsylvania",
+      "Puerto Rico and Virgin Islands",
+      "Rhode Island",
+      "South Carolina",
+      "South Dakota",
+      "Tennessee",
+      "Texas",
+      "Utah",
+      "Vermont",
+      "Virginia",
+      "Washington",
+      "West Virginia",
+      "Wisconsin",
+      "Wyoming"
+    ],
+    "fws_nwi:state_code": [
+      "AL",
+      "AK",
+      "AZ",
+      "AR",
+      "CA",
+      "CO",
+      "CT",
+      "DE",
+      "DC",
+      "FL",
+      "GA",
+      "HI",
+      "ID",
+      "IL",
+      "IN",
+      "IA",
+      "KS",
+      "KY",
+      "LA",
+      "ME",
+      "MD",
+      "MA",
+      "MI",
+      "MN",
+      "MS",
+      "MO",
+      "MT",
+      "NE",
+      "NV",
+      "NH",
+      "NJ",
+      "NM",
+      "NY",
+      "NC",
+      "ND",
+      "OH",
+      "OK",
+      "OR",
+      "PacTrust",
+      "PA",
+      "PRVI",
+      "RI",
+      "SC",
+      "SD",
+      "TN",
+      "TX",
+      "UT",
+      "VT",
+      "VA",
+      "WA",
+      "WV",
+      "WI",
+      "WY"
+    ],
+    "fws_nwi:content": [
+      "riparian",
+      "historic_wetlands",
+      "wetlands"
+    ]
+  },
+  "assets": {
+    "thumbnail": {
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/fws-nwi-thumb.png",
+      "type": "image/png",
+      "title": "FWS National Wetlands Inventory thumbnail",
+      "roles": [
+        "thumbnail"
+      ]
+    }
+  }
+}
