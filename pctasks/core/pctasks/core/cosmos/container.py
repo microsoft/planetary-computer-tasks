@@ -248,14 +248,16 @@ class CosmosDBContainer(BaseCosmosDBContainer[T], ABC):
             )
         else:
             # Otherwise upsert the item
-            self._container_client.upsert_item(
-                item,
-                pre_trigger_include=self.get_trigger(
-                    ContainerOperation.PUT, TriggerType.PRE
-                ),
-                post_trigger_include=self.get_trigger(
-                    ContainerOperation.PUT, TriggerType.POST
-                ),
+            with_backoff(
+                lambda: self._container_client.upsert_item(
+                    item,
+                    pre_trigger_include=self.get_trigger(
+                        ContainerOperation.PUT, TriggerType.PRE
+                    ),
+                    post_trigger_include=self.get_trigger(
+                        ContainerOperation.PUT, TriggerType.POST
+                    ),
+                )
             )
 
     def bulk_put(self, models: Iterable[T]) -> None:
