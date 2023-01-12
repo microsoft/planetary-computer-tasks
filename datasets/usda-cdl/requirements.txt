@@ -1,1 +1,1 @@
-stactools-usda-cdl == 0.1.1
+stactools-usda-cdl == 0.1.2
