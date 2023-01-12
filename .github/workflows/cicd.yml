@@ -10,6 +10,9 @@ env:
   PCTASKS_COSMOSDB__KEY: ${{ secrets.COSMOSDB_KEY }}
   PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX: ${{ github.run_id }}
 
+permissions:
+  id-token: write
+
 jobs:
   build_and_publish:
     runs-on: ubuntu-latest
