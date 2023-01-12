@@ -1,1 +1,1 @@
-git+https://github.com/stactools-packages/usgs-lcmap.git@9d0451b05ae34bead8855aa8ef85620c84dae298
+git+https://github.com/stactools-packages/usgs-lcmap.git@1f512e6a376265dc89e61d39c8829760853de53b
