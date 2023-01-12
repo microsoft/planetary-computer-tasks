@@ -171,14 +171,16 @@ update_items_task = UpdateItemsTask()
 
 
 def sign_and_update(item: Item, simplify_tolerance: float) -> Item:
+    updated_item = stactools.aster.utils.update_geometry(
+        planetary_computer.sign(item),
+        simplify_tolerance=simplify_tolerance,
+    )
+    item.geometry = updated_item.geometry
+    item.bbox = updated_item.bbox
     item.clear_links("root")
     item.clear_links("parent")
     item.clear_links("collection")
-    planetary_computer.sign_inplace(item)
-    item = stactools.aster.utils.update_geometry(
-        item,
-        simplify_tolerance=simplify_tolerance,
-    )
+    item.clear_links("preview")
     RasterExtension.add_to(item)
     for sensor in stactools.aster.constants.ASTER_SENSORS:
         if sensor in item.assets:
