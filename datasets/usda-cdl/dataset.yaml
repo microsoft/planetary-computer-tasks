@@ -1,10 +1,10 @@
 id: usda-cdl
-image: ${{ args.registry }}/pctasks-task-base:latest
+image: ${{ args.registry }}/pctasks-usda-cdl:latest
 args:
   - registry
 code:
   src: ${{ local.path(./usda_cdl.py) }}
-  requirements: ${{ local.path(./requirements.txt) }}
+  # requirements: ${{ local.path(./requirements.txt) }}
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
   AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
@@ -19,6 +19,6 @@ collections:
           options:
             list_folders: true
             max_depth: 1
-            chunk_length: 1
+            chunk_length: 2
     chunk_storage:
       uri: blob://landcoverdata/usda-cdl-etl-data/chunks

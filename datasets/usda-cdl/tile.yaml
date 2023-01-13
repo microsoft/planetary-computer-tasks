@@ -7,7 +7,7 @@ jobs:
   list-files:
     tasks:
       - id: list-files
-        image: ${{ args.registry }}/pctasks-task-base:latest
+        image: ${{ args.registry }}/pctasks-usda-cdl:latest
         task: pctasks.task.common.list_files:task
         args:
           src_uri: blob://landcoverdata/usda-cdl-onboarding
@@ -22,10 +22,10 @@ jobs:
       items: ${{ jobs.list-files.tasks.list-files.output.uris }}
     tasks:
       - id: tile
-        image: ${{ args.registry }}/pctasks-task-base:latest
+        image: ${{ args.registry }}/pctasks-usda-cdl:latest
         code:
           src: ${{ local.path(./usda_cdl.py) }}
-          requirements: ${{ local.path(./requirements.txt) }}
+          # requirements: ${{ local.path(./requirements.txt) }}
         task: usda_cdl:tile_task
         args:
           src_uri: ${{ item }}
