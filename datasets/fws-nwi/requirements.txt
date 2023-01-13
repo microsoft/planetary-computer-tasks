@@ -1,0 +1,1 @@
+stactools-fws-nwi == 0.2.0
