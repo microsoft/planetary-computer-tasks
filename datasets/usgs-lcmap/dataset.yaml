@@ -1,12 +1,12 @@
 id: usgs_lcmap
-image: ${{ args.registry }}/pctasks-task-base:latest
+image: ${{ args.registry }}/pctasks-usgs-lcmap:latest
 
 args:
 - registry
 
 code:
   src: ${{ local.path(./usgs_lcmap.py) }}
-  requirements: ${{ local.path(./requirements.txt) }}
+  # requirements: ${{ local.path(./requirements.txt) }}
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -22,8 +22,7 @@ collections:
         chunks:
           options:
             extensions: [.tar]
-            chunk_length: 200  # testing only; set to something large (1000?) for production
-            limit: 1000  # testing only; remove limit for production
+            chunk_length: 500
     chunk_storage:
       uri: blob://landcoverdata/lcmap-etl-data/lcmap-conus-v13/
 
