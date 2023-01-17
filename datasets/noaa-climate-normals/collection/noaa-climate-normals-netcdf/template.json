@@ -46,6 +46,7 @@
     "msft:storage_account": "noaanormals",
     "msft:container": "gridded-normals",
     "msft:group_id": "noaa-climate-normals",
+    "msft:region": "eastus",
     "providers": [
         {
             "name": "NOAA National Centers for Environmental Information",

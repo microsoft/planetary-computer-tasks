@@ -11,3 +11,5 @@ The data in this Collection are the original NetCDF files provided by NOAA's Nat
 - Daily normals
     - 30-year (1991–2020)
     - 15-year (2006–2020)
+
+For most use-cases, we recommend using the [`noaa-climate-normals-gridded`](https://planetarycomputer.microsoft.com/data/noaa-climate-normals-gridded) collection, which contains the same data in Cloud Optimized GeoTIFF format.
