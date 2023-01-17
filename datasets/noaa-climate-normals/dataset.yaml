@@ -1,12 +1,13 @@
 id: noaa_climate_normals
-image: ${{ args.registry }}/pctasks-task-base:latest
+image: ${{ args.registry }}/pctasks-noaa-climate-normals:latest
 
 args:
 - registry
 
 code:
   src: ${{ local.path(./noaa_climate_normals.py) }}
-  requirements: ${{ local.path(./requirements.txt) }}
+  # included in container image
+  # requirements: ${{ local.path(./requirements.txt) }}
 
 environment: 
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
