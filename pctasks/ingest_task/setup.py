@@ -15,8 +15,6 @@ install_requires = [
     "python-dateutil==2.8.2",
     "fire==0.4.0",
     "plpygis==0.2.0",
-    "pydantic==1.9.0",
-    "tenacity== 8.0.1",
 ]
 
 extra_reqs = {
