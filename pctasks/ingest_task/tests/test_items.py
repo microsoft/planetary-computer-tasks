@@ -5,8 +5,8 @@ from pctasks.core.models.task import FailedTaskResult
 from pctasks.dev.mocks import MockTaskContext
 from pctasks.ingest.models import (
     IngestNdjsonInput,
-    IngestTaskInput,
     IngestTaskConfig,
+    IngestTaskInput,
     NdjsonFolder,
 )
 from pctasks.ingest_task.task import ingest_task
