@@ -8,567 +8,13 @@
       "rel": "license",
       "href": "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
       "type": "text/html",
-      "title": "CC0 1.0"
+      "title": "CC0-1.0 License"
     }
   ],
   "stac_extensions": [
     "https://stac-extensions.github.io/xarray-assets/v1.0.0/schema.json",
     "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
   ],
-  "cube:dimensions": {
-    "time": {
-      "type": "temporal",
-      "description": "time",
-      "extent": [
-        "1958-01-01T00:00:00Z",
-        "2019-12-01T00:00:00Z"
-      ]
-    },
-    "lon": {
-      "type": "spatial",
-      "axis": "x",
-      "description": "longitude",
-      "extent": [
-        -179.97916666666666,
-        179.97916666666666
-      ],
-      "reference_system": 4326
-    },
-    "lat": {
-      "type": "spatial",
-      "axis": "y",
-      "description": "latitude",
-      "extent": [
-        -89.97916666666664,
-        89.97916666666667
-      ],
-      "reference_system": 4326
-    }
-  },
-  "cube:variables": {
-    "aet": {
-      "type": "data",
-      "description": "Actual Evapotranspiration",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "mm",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "Actual Evapotranspiration",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "water_evaporation_amount",
-        "standard_name": "water_evaporation_amount",
-        "units": "mm"
-      }
-    },
-    "def": {
-      "type": "data",
-      "description": "Climatic Water Deficit",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "mm",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "Climatic Water Deficit",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "water_potential_evaporation_amount_minus_water_evaporation_amount",
-        "standard_name": "water_potential_evaporation_amount_minus_water_evaporation_amount",
-        "units": "mm"
-      }
-    },
-    "pdsi": {
-      "type": "data",
-      "description": "Palmer Drought Severity Index",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "unitless",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "Palmer Drought Severity Index",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "palmer_drought_severity_index",
-        "standard_name": "palmer_drought_severity_index",
-        "units": "unitless"
-      }
-    },
-    "pet": {
-      "type": "data",
-      "description": "Reference Evapotranspiration",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "mm",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "Reference Evapotranspiration",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "water_potential_evaporation_amount",
-        "standard_name": "water_potential_evaporation_amount",
-        "units": "mm"
-      }
-    },
-    "ppt": {
-      "type": "data",
-      "description": "Accumulated Precipitation",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "mm",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "Accumulated Precipitation",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "precipitation_amount",
-        "standard_name": "precipitation_amount",
-        "units": "mm"
-      }
-    },
-    "ppt_station_influence": {
-      "type": "data",
-      "description": "A number between 0 and 8, indicating the number of stations contributing to each grid value directly from CRU and interpolated to the TerraClimate grid. When this value is greater than 1, CRU data is used for the anomalies in the method. When this value is 0, JRA-55/ERA-20C/ERA-INTERIM is used for anomalies in the method.",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "none",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "A number between 0 and 8, indicating the number of stations contributing to each grid value directly from CRU and interpolated to the TerraClimate grid. When this value is greater than 1, CRU data is used for the anomalies in the method. When this value is 0, JRA-55/ERA-20C/ERA-INTERIM is used for anomalies in the method.",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "station_influence",
-        "standard_name": "station_influence",
-        "units": "none"
-      }
-    },
-    "q": {
-      "type": "data",
-      "description": "Runoff",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "mm",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "Runoff",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "runoff_amount",
-        "standard_name": "runoff_amount",
-        "units": "mm"
-      }
-    },
-    "soil": {
-      "type": "data",
-      "description": "Soil Moisture at End of Month",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "mm",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "Soil Moisture at End of Month",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "soil_moisture_content",
-        "standard_name": "soil_moisture_content",
-        "units": "mm"
-      }
-    },
-    "srad": {
-      "type": "data",
-      "description": "Downward Shortwave Radiation Flux at the Surface",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "W/m2",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "Downward Shortwave Radiation Flux at the Surface",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "downwelling_shortwave_flux_in_air",
-        "standard_name": "downwelling_shortwave_flux_in_air",
-        "units": "W/m2"
-      }
-    },
-    "swe": {
-      "type": "data",
-      "description": "Snow Water Equivalent at End of Month",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "mm",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "Snow Water Equivalent at End of Month",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "liquid_water_content_of_surface_snow",
-        "standard_name": "liquid_water_content_of_surface_snow",
-        "units": "mm"
-      }
-    },
-    "tmax": {
-      "type": "data",
-      "description": "Maximum 2-m Temperature",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "deg C",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "Maximum 2-m Temperature",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "air_temperature",
-        "standard_name": "air_temperature",
-        "units": "deg C"
-      }
-    },
-    "tmax_station_influence": {
-      "type": "data",
-      "description": "A number between 0 and 8, indicating the number of stations contributing to each grid value directly from CRU and interpolated to the TerraClimate grid. When this value is greater than 1, CRU data is used for the anomalies in the method. When this value is 0, JRA-55/ERA-20C/ERA-INTERIM is used for anomalies in the method.",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "none",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "A number between 0 and 8, indicating the number of stations contributing to each grid value directly from CRU and interpolated to the TerraClimate grid. When this value is greater than 1, CRU data is used for the anomalies in the method. When this value is 0, JRA-55/ERA-20C/ERA-INTERIM is used for anomalies in the method.",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "station_influence",
-        "standard_name": "station_influence",
-        "units": "none"
-      }
-    },
-    "tmin": {
-      "type": "data",
-      "description": "Minimum 2-m Temperature",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "deg C",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "Minimum 2-m Temperature",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "air_temperature",
-        "standard_name": "air_temperature",
-        "units": "deg C"
-      }
-    },
-    "tmin_station_influence": {
-      "type": "data",
-      "description": "A number between 0 and 8, indicating the number of stations contributing to each grid value directly from CRU and interpolated to the TerraClimate grid. When this value is greater than 1, CRU data is used for the anomalies in the method. When this value is 0, JRA-55/ERA-20C/ERA-INTERIM is used for anomalies in the method.",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "none",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "A number between 0 and 8, indicating the number of stations contributing to each grid value directly from CRU and interpolated to the TerraClimate grid. When this value is greater than 1, CRU data is used for the anomalies in the method. When this value is 0, JRA-55/ERA-20C/ERA-INTERIM is used for anomalies in the method.",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "station_influence",
-        "standard_name": "station_influence",
-        "units": "none"
-      }
-    },
-    "vap": {
-      "type": "data",
-      "description": "2-m Vapor Pressure",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "kPa",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "2-m Vapor Pressure",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "water_vapor_partial_pressure_in_air",
-        "standard_name": "water_vapor_partial_pressure_in_air",
-        "units": "kPa"
-      }
-    },
-    "vap_station_influence": {
-      "type": "data",
-      "description": "A number between 0 and 8, indicating the number of stations contributing to each grid value directly from CRU and interpolated to the TerraClimate grid. When this value is greater than 1, CRU data is used for the anomalies in the method. When this value is 0, JRA-55/ERA-20C/ERA-INTERIM is used for anomalies in the method.",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "none",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "A number between 0 and 8, indicating the number of stations contributing to each grid value directly from CRU and interpolated to the TerraClimate grid. When this value is greater than 1, CRU data is used for the anomalies in the method. When this value is 0, JRA-55/ERA-20C/ERA-INTERIM is used for anomalies in the method.",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "station_influence",
-        "standard_name": "station_influence",
-        "units": "none"
-      }
-    },
-    "vpd": {
-      "type": "data",
-      "description": "Mean Vapor Pressure Deficit",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "kPa",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "Mean Vapor Pressure Deficit",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "vapor_pressure_deficit",
-        "standard_name": "vapor_pressure_deficit",
-        "units": "kPa"
-      }
-    },
-    "ws": {
-      "type": "data",
-      "description": "10-m Wind Speed",
-      "dimensions": [
-        "time",
-        "lat",
-        "lon"
-      ],
-      "unit": "m/s",
-      "shape": [
-        744,
-        4320,
-        8640
-      ],
-      "chunks": [
-        12,
-        1440,
-        1440
-      ],
-      "attrs": {
-        "coordinate_system": "WGS84,EPSG:4326",
-        "description": "10-m Wind Speed",
-        "dimensions": "lon lat time",
-        "grid_mapping": "crs",
-        "long_name": "wind_speed",
-        "standard_name": "wind_speed",
-        "units": "m/s"
-      }
-    }
-  },
   "title": "TerraClimate",
   "providers": [
     {
@@ -596,12 +42,14 @@
   ],
   "assets": {
     "zarr-https": {
-      "href": "https://cpdataeuwest.blob.core.windows.net/cpdata/raw/terraclimate/4000m/raster.zarr",
+      "href": "https://cpdataeuwest.blob.core.windows.net/cpdata/terraclimate.zarr",
       "type": "application/vnd+zarr",
       "title": "TerraClimate HTTPS Zarr root",
       "description": "HTTPS URI of the TerraClimate Zarr Group on Azure Blob Storage.",
       "xarray:open_kwargs": {
-        "consolidated": true
+        "consolidated": true,
+        "engine": "zarr",
+        "chunks": {}
       },
       "roles": [
         "data",
@@ -610,12 +58,17 @@
       ]
     },
     "zarr-abfs": {
-      "href": "az://cpdata/raw/terraclimate/4000m/raster.zarr",
+      "href": "az://cpdata/terraclimate.zarr",
       "type": "application/vnd+zarr",
       "title": "TerraClimate Azure Blob File System Zarr root",
       "description": "Azure Blob File System URI of the TerraClimate Zarr Group on Azure Blob Storage for use with adlfs.",
-      "xarray:storage_options": {
-        "account_name": "cpdataeuwest"
+      "xarray:open_kwargs": {
+        "consolidated": true,
+        "engine": "zarr",
+        "chunks": {},
+        "storage_options": {
+          "account_name": "cpdataeuwest"
+        }
       },
       "roles": [
         "data",
@@ -640,9 +93,447 @@
     "Vapor Pressure",
     "Climate"
   ],
-  "msft:short_description": "Monthly climate and climatic water balance for global terrestrial surfaces from 1958 to the present",
-  "msft:storage_account": "cpdataeuwest",
+  "msft:short_description": "High-resolution global dataset of monthly climate and climatic water balance",
+  "msfs:msft:storage_account": "cpdataeuwest",
   "msft:container": "cpdata",
+  "cube:dimensions": {
+    "time": {
+      "extent": [
+        "1958-01-01T00:00:00Z",
+        "2021-12-01T00:00:00Z"
+      ],
+      "description": "time",
+      "type": "temporal"
+    },
+    "lon": {
+      "axis": "x",
+      "extent": [
+        -179.97916666666666,
+        179.97916666666666
+      ],
+      "description": "longitude",
+      "reference_system": 4326,
+      "type": "spatial"
+    },
+    "lat": {
+      "axis": "y",
+      "extent": [
+        -89.97916666666664,
+        89.97916666666667
+      ],
+      "description": "latitude",
+      "reference_system": 4326,
+      "type": "spatial"
+    }
+  },
+  "cube:variables": {
+    "aet": {
+      "type": "data",
+      "description": "Actual Evapotranspiration",
+      "dimensions": [
+        "time",
+        "lat",
+        "lon"
+      ],
+      "unit": "mm",
+      "attrs": {
+        "coordinate_system": "WGS84,EPSG:4326",
+        "description": "Actual Evapotranspiration",
+        "dimensions": "lon lat time",
+        "grid_mapping": "crs",
+        "long_name": "water_evaporation_amount",
+        "standard_name": "water_evaporation_amount",
+        "units": "mm"
+      },
+      "shape": [
+        768,
+        4320,
+        8640
+      ],
+      "chunks": [
+        12,
+        1024,
+        1024
+      ]
+    },
+    "def": {
+      "type": "data",
+      "description": "Climatic Water Deficit",
+      "dimensions": [
+        "time",
+        "lat",
+        "lon"
+      ],
+      "unit": "mm",
+      "attrs": {
+        "coordinate_system": "WGS84,EPSG:4326",
+        "description": "Climatic Water Deficit",
+        "dimensions": "lon lat time",
+        "grid_mapping": "crs",
+        "long_name": "water_potential_evaporation_amount_minus_water_evaporation_amount",
+        "standard_name": "water_potential_evaporation_amount_minus_water_evaporation_amount",
+        "units": "mm"
+      },
+      "shape": [
+        768,
+        4320,
+        8640
+      ],
+      "chunks": [
+        12,
+        1024,
+        1024
+      ]
+    },
+    "pdsi": {
+      "type": "data",
+      "description": "Palmer Drought Severity Index",
+      "dimensions": [
+        "time",
+        "lat",
+        "lon"
+      ],
+      "unit": "unitless",
+      "attrs": {
+        "coordinate_system": "WGS84,EPSG:4326",
+        "description": "Palmer Drought Severity Index",
+        "dimensions": "lon lat time",
+        "grid_mapping": "crs",
+        "long_name": "palmer_drought_severity_index",
+        "standard_name": "palmer_drought_severity_index",
+        "units": "unitless"
+      },
+      "shape": [
+        768,
+        4320,
+        8640
+      ],
+      "chunks": [
+        12,
+        1024,
+        1024
+      ]
+    },
+    "pet": {
+      "type": "data",
+      "description": "Reference Evapotranspiration",
+      "dimensions": [
+        "time",
+        "lat",
+        "lon"
+      ],
+      "unit": "mm",
+      "attrs": {
+        "coordinate_system": "WGS84,EPSG:4326",
+        "description": "Reference Evapotranspiration",
+        "dimensions": "lon lat time",
+        "grid_mapping": "crs",
+        "long_name": "water_potential_evaporation_amount",
+        "standard_name": "water_potential_evaporation_amount",
+        "units": "mm"
+      },
+      "shape": [
+        768,
+        4320,
+        8640
+      ],
+      "chunks": [
+        12,
+        1024,
+        1024
+      ]
+    },
+    "ppt": {
+      "type": "data",
+      "description": "Accumulated Precipitation",
+      "dimensions": [
+        "time",
+        "lat",
+        "lon"
+      ],
+      "unit": "mm",
+      "attrs": {
+        "coordinate_system": "WGS84,EPSG:4326",
+        "description": "Accumulated Precipitation",
+        "dimensions": "lon lat time",
+        "grid_mapping": "crs",
+        "long_name": "precipitation_amount",
+        "standard_name": "precipitation_amount",
+        "units": "mm"
+      },
+      "shape": [
+        768,
+        4320,
+        8640
+      ],
+      "chunks": [
+        12,
+        1024,
+        1024
+      ]
+    },
+    "q": {
+      "type": "data",
+      "description": "Runoff",
+      "dimensions": [
+        "time",
+        "lat",
+        "lon"
+      ],
+      "unit": "mm",
+      "attrs": {
+        "coordinate_system": "WGS84,EPSG:4326",
+        "description": "Runoff",
+        "dimensions": "lon lat time",
+        "grid_mapping": "crs",
+        "long_name": "runoff_amount",
+        "standard_name": "runoff_amount",
+        "units": "mm"
+      },
+      "shape": [
+        768,
+        4320,
+        8640
+      ],
+      "chunks": [
+        12,
+        1024,
+        1024
+      ]
+    },
+    "soil": {
+      "type": "data",
+      "description": "Soil Moisture at End of Month",
+      "dimensions": [
+        "time",
+        "lat",
+        "lon"
+      ],
+      "unit": "mm",
+      "attrs": {
+        "coordinate_system": "WGS84,EPSG:4326",
+        "description": "Soil Moisture at End of Month",
+        "dimensions": "lon lat time",
+        "grid_mapping": "crs",
+        "long_name": "soil_moisture_content",
+        "standard_name": "soil_moisture_content",
+        "units": "mm"
+      },
+      "shape": [
+        768,
+        4320,
+        8640
+      ],
+      "chunks": [
+        12,
+        1024,
+        1024
+      ]
+    },
+    "srad": {
+      "type": "data",
+      "description": "Downward Shortwave Radiation Flux at the Surface",
+      "dimensions": [
+        "time",
+        "lat",
+        "lon"
+      ],
+      "unit": "W/m^2",
+      "attrs": {
+        "coordinate_system": "WGS84,EPSG:4326",
+        "description": "Downward Shortwave Radiation Flux at the Surface",
+        "dimensions": "lon lat time",
+        "grid_mapping": "crs",
+        "long_name": "downwelling_shortwave_flux_in_air",
+        "standard_name": "downwelling_shortwave_flux_in_air",
+        "units": "W/m^2"
+      },
+      "shape": [
+        768,
+        4320,
+        8640
+      ],
+      "chunks": [
+        12,
+        1024,
+        1024
+      ]
+    },
+    "swe": {
+      "type": "data",
+      "description": "Snow Water Equivalent at End of Month",
+      "dimensions": [
+        "time",
+        "lat",
+        "lon"
+      ],
+      "unit": "mm",
+      "attrs": {
+        "coordinate_system": "WGS84,EPSG:4326",
+        "description": "Snow Water Equivalent at End of Month",
+        "dimensions": "lon lat time",
+        "grid_mapping": "crs",
+        "long_name": "liquid_water_content_of_surface_snow",
+        "standard_name": "liquid_water_content_of_surface_snow",
+        "units": "mm"
+      },
+      "shape": [
+        768,
+        4320,
+        8640
+      ],
+      "chunks": [
+        12,
+        1024,
+        1024
+      ]
+    },
+    "tmax": {
+      "type": "data",
+      "description": "Maximum 2-m Temperature",
+      "dimensions": [
+        "time",
+        "lat",
+        "lon"
+      ],
+      "unit": "degC",
+      "attrs": {
+        "coordinate_system": "WGS84,EPSG:4326",
+        "description": "Maximum 2-m Temperature",
+        "dimensions": "lon lat time",
+        "grid_mapping": "crs",
+        "long_name": "air_temperature",
+        "standard_name": "air_temperature",
+        "units": "degC"
+      },
+      "shape": [
+        768,
+        4320,
+        8640
+      ],
+      "chunks": [
+        12,
+        1024,
+        1024
+      ]
+    },
+    "tmin": {
+      "type": "data",
+      "description": "Minimum 2-m Temperature",
+      "dimensions": [
+        "time",
+        "lat",
+        "lon"
+      ],
+      "unit": "degC",
+      "attrs": {
+        "coordinate_system": "WGS84,EPSG:4326",
+        "description": "Minimum 2-m Temperature",
+        "dimensions": "lon lat time",
+        "grid_mapping": "crs",
+        "long_name": "air_temperature",
+        "standard_name": "air_temperature",
+        "units": "degC"
+      },
+      "shape": [
+        768,
+        4320,
+        8640
+      ],
+      "chunks": [
+        12,
+        1024,
+        1024
+      ]
+    },
+    "vap": {
+      "type": "data",
+      "description": "2-m Vapor Pressure",
+      "dimensions": [
+        "time",
+        "lat",
+        "lon"
+      ],
+      "unit": "kPa",
+      "attrs": {
+        "coordinate_system": "WGS84,EPSG:4326",
+        "description": "2-m Vapor Pressure",
+        "dimensions": "lon lat time",
+        "grid_mapping": "crs",
+        "long_name": "water_vapor_partial_pressure_in_air",
+        "standard_name": "water_vapor_partial_pressure_in_air",
+        "units": "kPa"
+      },
+      "shape": [
+        768,
+        4320,
+        8640
+      ],
+      "chunks": [
+        12,
+        1024,
+        1024
+      ]
+    },
+    "vpd": {
+      "type": "data",
+      "description": "Vapor Pressure Deficit",
+      "dimensions": [
+        "time",
+        "lat",
+        "lon"
+      ],
+      "unit": "kPa",
+      "attrs": {
+        "coordinate_system": "WGS84,EPSG:4326",
+        "description": "Vapor Pressure Deficit",
+        "dimensions": "lon lat time",
+        "grid_mapping": "crs",
+        "long_name": "vapor_pressure_deficit",
+        "standard_name": "vapor_pressure_deficit",
+        "units": "kPa"
+      },
+      "shape": [
+        768,
+        4320,
+        8640
+      ],
+      "chunks": [
+        12,
+        1024,
+        1024
+      ]
+    },
+    "ws": {
+      "type": "data",
+      "description": "Wind Speed at 10-m",
+      "dimensions": [
+        "time",
+        "lat",
+        "lon"
+      ],
+      "unit": "m/s",
+      "attrs": {
+        "coordinate_system": "WGS84,EPSG:4326",
+        "description": "Wind Speed at 10-m",
+        "dimensions": "lon lat time",
+        "grid_mapping": "crs",
+        "long_name": "wind_speed",
+        "standard_name": "wind_speed",
+        "units": "m/s"
+      },
+      "shape": [
+        768,
+        4320,
+        8640
+      ],
+      "chunks": [
+        12,
+        1024,
+        1024
+      ]
+    }
+  },
   "extent": {
     "spatial": {
       "bbox": [
@@ -658,7 +549,7 @@
       "interval": [
         [
           "1958-01-01T00:00:00Z",
-          "2019-12-01T00:00:00Z"
+          "2021-12-01T00:00:00Z"
         ]
       ]
     }
