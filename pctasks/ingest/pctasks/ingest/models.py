@@ -99,7 +99,7 @@ class IngestTaskConfig(TaskDefinition):
         environment: Optional[Dict[str, str]] = None,
         options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
-        add_service_principal: bool = True,
+        add_service_principal: bool = False,
     ) -> TaskDefinition:
         data = IngestTaskInput(
             content=content,
@@ -146,7 +146,7 @@ class IngestTaskConfig(TaskDefinition):
         environment: Optional[Dict[str, str]] = None,
         options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
-        add_service_principal: bool = True,
+        add_service_principal: bool = False,
     ) -> TaskDefinition:
         if "collection" not in item:
             raise InvalidSTACException("Item is missing a collection.")
@@ -171,7 +171,7 @@ class IngestTaskConfig(TaskDefinition):
         environment: Optional[Dict[str, str]] = None,
         options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
-        add_service_principal: bool = True,
+        add_service_principal: bool = False,
     ) -> TaskDefinition:
         if "id" not in collection:
             raise InvalidSTACException("Collection is missing an id.")
@@ -196,7 +196,7 @@ class IngestTaskConfig(TaskDefinition):
         environment: Optional[Dict[str, str]] = None,
         options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
-        add_service_principal: bool = True,
+        add_service_principal: bool = False,
     ) -> TaskDefinition:
 
         return cls.create(
@@ -219,7 +219,7 @@ class IngestTaskConfig(TaskDefinition):
         environment: Optional[Dict[str, str]] = None,
         option: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
-        add_service_principal: bool = True,
+        add_service_principal: bool = False,
     ) -> TaskDefinition:
         return cls.create(
             task_id=NDJSON_TASK_ID,
