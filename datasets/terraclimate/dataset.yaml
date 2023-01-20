@@ -1,4 +1,4 @@
-id: eclipse
+id: terraclimate
 image: ${{ args.registry }}/pctasks-task-base:latest
 
 args:
