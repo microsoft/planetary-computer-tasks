@@ -70,7 +70,8 @@ def test_ndjson_ingest():
 
 def test_ingest_ndjson_add_service_principal():
     result = IngestTaskConfig.from_ndjson(
-        ndjson_data=IngestNdjsonInput(ndjson_folder=NdjsonFolder(uri="test/"))
+        ndjson_data=IngestNdjsonInput(ndjson_folder=NdjsonFolder(uri="test/")),
+        add_service_principal=True,
     )
 
     assert result.environment["AZURE_TENANT_ID"] == "${{ secrets.task-tenant-id }}"
@@ -82,6 +83,7 @@ def test_ingest_ndjson_add_service_principal():
     result = IngestTaskConfig.from_ndjson(
         ndjson_data=IngestNdjsonInput(ndjson_folder=NdjsonFolder(uri="test/")),
         environment={"AZURE_TENANT_ID": "test"},
+        add_service_principal=True,
     )
     assert result.environment["AZURE_TENANT_ID"] == "test"
     assert result.environment["AZURE_CLIENT_ID"] == "${{ secrets.task-client-id }}"
@@ -91,7 +93,6 @@ def test_ingest_ndjson_add_service_principal():
 
     result = IngestTaskConfig.from_ndjson(
         ndjson_data=IngestNdjsonInput(ndjson_folder=NdjsonFolder(uri="test/")),
-        add_service_principal=False,
     )
     assert "AZURE_TENANT_ID" not in result.environment
     assert "AZURE_TENANT_ID" not in result.environment
