@@ -30,6 +30,7 @@ def ingest_ndjson_cmd(
     submit: bool,
     limit: Optional[int],
     workflow_id: Optional[str] = None,
+    add_service_principal: bool = True,
 ) -> None:
     """Ingest Items from a folder of Ndjsons.
 
@@ -64,6 +65,7 @@ def ingest_ndjson_cmd(
         ),
         target=target,
         option=ingest_config,
+        add_service_principal=add_service_principal,
     )
 
     job = JobDefinition(tasks=[task])
