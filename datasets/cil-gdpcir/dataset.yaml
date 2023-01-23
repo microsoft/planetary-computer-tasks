@@ -1,12 +1,7 @@
-name: cil_gdpcir
+id: cil-gdpcir
 image: ${{ args.registry }}/pctasks-task-base:latest
-
 args:
-- registry
-
-code:
-  src: ${{ local.path(./cil_gdpcir.py) }}
-  # requirements: ${{ local.path(./requirements.txt) }}
+  - registry
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -52,4 +47,3 @@ collections:
             chunk_length: 1000
     chunk_storage:
       uri: blob://rhgeuwest/cil-gdpcir-etl-data/chunks/cc0
-
