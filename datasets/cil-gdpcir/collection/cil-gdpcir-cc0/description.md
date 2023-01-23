@@ -63,7 +63,8 @@ We then introduce a similar method tailored to increase spatial resolution while
 
 Together, these methods provide a robust means to handle both the central and tail behavior seen in climate model output, while aligning the full distribution to a state-of-the-art reanalysis dataset and providing the spatial granularity needed to study surface impacts.
 
-A publication providing additional detail is in process and will be linked here as soon as it is available.
+For further documentation, see [Global downscaled projections for climate impacts research (GDPCIR): preserving extremes for modeling future climate impacts](https://egusphere.copernicus.org/preprints/2023/egusphere-2022-1513/) (EGUsphere, 2022 [preprint]).
+
 
 ## Citing, licensing, and using data produced by this project
 
