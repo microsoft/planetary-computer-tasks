@@ -43,7 +43,7 @@ output "pctasks_server_replica_count" {
 ## Functions
 
 output "function_app_name" {
-  value = azurerm_function_app.pctasks.name
+  value = azurerm_linux_function_app.pctasks.name
 }
 
 ## Batch
@@ -113,7 +113,7 @@ output "sa_connection_string" {
 ## Keyvault
 
 output "keyvault_url" {
-  value = azurerm_key_vault.pctasks.vault_uri
+  value = data.azurerm_key_vault.pctasks.vault_uri
 }
 
 output "kv_sp_tenant_id" {
@@ -153,4 +153,18 @@ output "pctasks_server_sp_client_id" {
 output "pctasks_server_sp_client_secret" {
   value = var.pctasks_server_sp_client_secret
   sensitive = true
+}
+
+output "argo_wf_node_group_name" {
+  value = var.argo_wf_node_group_name
+}
+
+## CosmosDB
+
+output "cosmosdb_url" {
+  value = data.azurerm_cosmosdb_account.pctasks.endpoint
+}
+
+output "cosmosdb_key" {
+  value = data.azurerm_cosmosdb_account.pctasks.primary_key
 }

@@ -12,7 +12,6 @@ def test_walk():
     with temp_azurite_blob_storage(
         HERE / ".." / "data-files" / "simple-assets"
     ) as storage:
-
         result: Dict[str, Tuple[List[str], List[str]]] = {}
         for root, folders, files in storage.walk():
             result[root] = (folders, files)
@@ -79,3 +78,25 @@ def test_fsspec_components():
             storage.fsspec_path("foo/bar.csv")
             == f"abfs://{TEST_DATA_CONTAINER}/foo/bar.csv"
         )
+
+
+def test_blob_download_timeout():
+    TIMEOUT_SECONDS = 5
+    with temp_azurite_blob_storage(
+        HERE / ".." / "data-files" / "simple-assets"
+    ) as storage:
+        with storage._get_client() as client:
+            with client.container.get_blob_client(
+                storage._add_prefix("a/asset-a-1.json")
+            ) as blob:
+                storage_stream_downloader = blob.download_blob(timeout=TIMEOUT_SECONDS)
+                assert (
+                    storage_stream_downloader._request_options["timeout"]
+                    == TIMEOUT_SECONDS
+                )
+
+                storage_stream_downloader = blob.download_blob()
+                assert (
+                    storage_stream_downloader._request_options.pop("timeout", None)
+                    is None
+                )

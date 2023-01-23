@@ -1,7 +1,5 @@
 name: 'Ingest Collection: goes-cmi'
-dataset:
-  owner: microsoft
-  name: goes-cmi
+dataset: goes-cmi
 target_environment: staging
 jobs:
   ingest-collection:

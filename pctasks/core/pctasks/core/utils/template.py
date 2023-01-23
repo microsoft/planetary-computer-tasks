@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, TypeVar, Union, cast
 from uuid import uuid4
 
+from planetary_computer.sas import get_token
 from pydantic import BaseModel
 
 TEMPLATE_REGEX = r"\$\{\{\s*([^\"]*?)\s*\}\}"
@@ -41,6 +42,9 @@ def find_value(
 
     Handles lists that are represented as suffixes to paths, like
     "parent.child[0].url"
+
+    If part of the path is a list and no index is specified, returns
+    a list of values for each item in the list.
     """
 
     def _fetch(
@@ -174,7 +178,7 @@ def template_dict(
     d: Dict[str, Any],
     get_value: Callable[[List[str]], Optional[TemplateValue]],
 ) -> Dict[str, Any]:
-    """Replaces dictionary with all secrets replaced with their values.
+    """Replaces dictionary with all templates replaced with their values.
 
     get_value takes the list of strings that make up the template path
     and expects a string value. For example, ${{ output.file.path }}
@@ -283,5 +287,22 @@ class LocalTemplater(Templater):
             if path_match:
                 file_path = Path(path_match.group(1))
                 return str(self.base_dir / file_path)
+
+        return None
+
+
+class PCTemplater(Templater):
+    _GET_TOKEN_REGEX: str = r"get_token\(([^,]+),([^\)]+)\)"
+
+    def get_value(self, path: List[str]) -> Optional[TemplateValue]:
+        if path[0] != "pc":
+            return None
+        path = path[1:]
+
+        get_token_match = re.match(self._GET_TOKEN_REGEX, path[0])
+        if get_token_match:
+            storage_account = get_token_match.group(1).strip()
+            container = get_token_match.group(2).strip()
+            return get_token(storage_account, container).token
 
         return None

@@ -1,6 +1,14 @@
 environment: "staging"
 
 pctasks:
+  cosmosdb:
+    url: ""
+    key: ""
+    dev:
+      enabled: false
+      emulator_host: ""
+      test_container_suffix: ""
+
   server:
     host: "0.0.0.0"
     port: "80"
@@ -14,6 +22,7 @@ pctasks:
     dev:
       enabled: false
       api_key: ""
+      auth_token: ""
 
     image:
       # e.g. myacr.azurecr.io/my-repository
@@ -119,11 +128,6 @@ pctasks:
       account_key: ""
       connection_string: ""
       image_key_table_name: "imagekeys"
-      dataset_table_name: "datasets"
-      task_run_record_table_name: "taskrunrecords"
-      job_run_record_table_name: "jobrunrecords"
-      workflow_run_record_table_name: "workflowrunrecords"
-      workflow_run_group_record_table_name: "workflowrungrouprecords"
 
     blob:
       account_url: ""
@@ -144,6 +148,9 @@ pctasks:
       token: ""
       namespace: "argo"
       workflow_runner_image: ""
+      node_affinity:
+        enabled: false
+        node_group: ""
 
     keyvault:
       enabled: true

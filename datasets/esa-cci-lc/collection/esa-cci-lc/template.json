@@ -1,0 +1,539 @@
+{
+    "stac_version": "1.0.0",
+    "type": "Collection",
+    "id": "esa-cci-lc",
+    "title": "ESA Climate Change Initiative Land Cover Maps (Cloud Optimized GeoTIFF)",
+    "description": "{{ collection.description }}",
+    "license": "proprietary",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://cds.climate.copernicus.eu/api/v2/terms/static/satellite-land-cover.pdf",
+            "type": "text/html",
+            "title": "ESA CCI license"
+        },
+        {
+            "rel": "license",
+            "href": "https://cds.climate.copernicus.eu/api/v2/terms/static/licence-to-use-copernicus-products.pdf",
+            "type": "text/html",
+            "title": "COPERNICUS license"
+        },
+        {
+            "rel": "license",
+            "href": "https://cds.climate.copernicus.eu/api/v2/terms/static/vito-proba-v.pdf",
+            "type": "text/html",
+            "title": "VITO License"
+        },
+        {
+            "rel": "about",
+            "href": "https://cds.climate.copernicus.eu/cdsapp#!/dataset/satellite-land-cover",
+            "type": "text/html",
+            "title": "Product Landing Page"
+        },
+        {
+            "rel": "about",
+            "href": "https://datastore.copernicus-climate.eu/documents/satellite-land-cover/D5.3.1_PUGS_ICDR_LC_v2.1.x_PRODUCTS_v1.1.pdf",
+            "type": "application/pdf",
+            "title": "Product user guide for version 2.1"
+        },
+        {
+            "rel": "about",
+            "href": "https://datastore.copernicus-climate.eu/documents/satellite-land-cover/D3.3.11-v1.0_PUGS_CDR_LC-CCI_v2.0.7cds_Products_v1.0.1_APPROVED_Ver1.pdf",
+            "type": "application/pdf",
+            "title": "Product user guide for version 2.0"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.24381/cds.006f2c9a"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/classification/v1.1.0/schema.json",
+        "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.1.0/schema.json",
+        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+    ],
+    "keywords": [
+        "Land Cover",
+        "ESA",
+        "CCI",
+        "Global"
+    ],
+    "msft:short_description": "Tiled ESA CCI global land cover maps in COG format",
+    "msft:storage_account": "landcoverdata",
+    "msft:container": "esa-cci-lc",
+    "msft:group_id": "esa-cci-lc",
+    "providers": [
+        {
+            "name": "VITO",
+            "description": "Provides the PROBA-V source data (for v2.0).",
+            "roles": [
+                "licensor"
+            ],
+            "url": "https://vito.be"
+        },
+        {
+            "name": "UCLouvain",
+            "description": "UCLouvain produces the dataset (v2.1) for the ESA Climate Change Initiative.",
+            "roles": [
+                "producer"
+            ],
+            "url": "https://uclouvain.be"
+        },
+        {
+            "name": "Brockmann Consult",
+            "description": "Brockmann Consult is responsible for the required pre-processing and the distribution of the dataset (v2.1).",
+            "roles": [
+                "processor"
+            ],
+            "url": "https://brockmann-consult.de"
+        },
+        {
+            "name": "ESA Climate Change Initiative",
+            "description": "The ESA Climate Change Initiative (CCI) is leading the product creation.",
+            "roles": [
+                "licensor"
+            ],
+            "url": "http://esa-landcover-cci.org"
+        },
+        {
+            "name": "Copernicus",
+            "description": "Hosts the data on the Copernicus Climate Data Store (CDS).",
+            "roles": [
+                "licensor"
+            ],
+            "url": "https://copernicus.eu"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "processor",
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "title": "ESA CCI Land Cover COGs Thumbnail",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/esa-cci-lc-thumb.png",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/esa-cci-lc.parquet",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            }
+        } 
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180.0,
+                    -90.0,
+                    180.0,
+                    90.0
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "1992-01-01T00:00:00Z",
+                    "2020-12-31T23:59:59Z"
+                ]
+            ]
+        }
+    },
+    "item_assets": {
+        "change_count": {
+            "title": "Number of Class Changes",
+            "description": "Number of years where land cover class changes have occurred, since 1992. 0 for stable, greater than 0 for changes.",
+            "roles": [
+                "quality"
+            ],
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "raster:bands": [
+                {
+                    "spatial_resolution": 300,
+                    "sampling": "area",
+                    "data_type": "uint8"
+                }
+            ]
+        },
+        "current_pixel_state": {
+            "title": "Land Cover Pixel Type Mask",
+            "description": "Pixel identification from satellite surface reflectance observations, mainly distinguishing between land, water, and snow/ice.",
+            "roles": [
+                "quality"
+            ],
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "classification:classes": [
+                {
+                    "value": 1,
+                    "name": "land",
+                    "description": "Clear land"
+                },
+                {
+                    "value": 2,
+                    "name": "water",
+                    "description": "Clear water"
+                },
+                {
+                    "value": 3,
+                    "name": "snow",
+                    "description": "Clear snow / ice"
+                },
+                {
+                    "value": 4,
+                    "name": "cloud",
+                    "description": "Cloud"
+                },
+                {
+                    "value": 5,
+                    "name": "cloud_shadow",
+                    "description": "Cloud shadow"
+                },
+                {
+                    "value": 6,
+                    "name": "filled",
+                    "description": "Filled"
+                }
+            ],
+            "raster:bands": [
+                {
+                    "spatial_resolution": 300,
+                    "sampling": "area",
+                    "data_type": "uint8",
+                    "nodata": 255
+                }
+            ]
+        },
+        "lccs_class": {
+            "title": "Land Cover Class Defined in the Land Cover Classification System",
+            "description": "Land cover class per pixel, defined using the Land Cover Classification System developed by the United Nations Food and Agriculture Organization.",
+            "roles": [
+                "data"
+            ],
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "classification:classes": [
+                {
+                    "value": 0,
+                    "name": "no-data",
+                    "description": "No data",
+                    "color_hint": "000000",
+                    "no_data": true
+                },
+                {
+                    "value": 10,
+                    "name": "cropland-1",
+                    "description": "Cropland, rainfed",
+                    "color_hint": "FFFF64"
+                },
+                {
+                    "value": 11,
+                    "name": "cropland-1a",
+                    "description": "Cropland, rainfed, herbaceous cover",
+                    "color_hint": "FFFF64",
+                    "regional": true
+                },
+                {
+                    "value": 12,
+                    "name": "cropland-1b",
+                    "description": "Cropland, rainfed, tree, or shrub cover",
+                    "color_hint": "FFFF00",
+                    "regional": true
+                },
+                {
+                    "value": 20,
+                    "name": "cropland-2",
+                    "description": "Cropland, irrigated or post-flooding",
+                    "color_hint": "AAF0F0"
+                },
+                {
+                    "value": 30,
+                    "name": "cropland-3",
+                    "description": "Mosaic cropland (>50%) / natural vegetation (tree, shrub, herbaceous cover) (<50%)",
+                    "color_hint": "DCF064"
+                },
+                {
+                    "value": 40,
+                    "name": "natural-veg",
+                    "description": "Mosaic natural vegetation (tree, shrub, herbaceous cover) (>50%) / cropland (<50%)",
+                    "color_hint": "C8C864"
+                },
+                {
+                    "value": 50,
+                    "name": "tree-1",
+                    "description": "Tree cover, broadleaved, evergreen, closed to open (>15%)",
+                    "color_hint": "006400"
+                },
+                {
+                    "value": 60,
+                    "name": "tree-2",
+                    "description": "Tree cover, broadleaved, deciduous, closed to open (>15%)",
+                    "color_hint": "00A000"
+                },
+                {
+                    "value": 61,
+                    "name": "tree-2a",
+                    "description": "Tree cover, broadleaved, deciduous, closed (>40%)",
+                    "color_hint": "00A000",
+                    "regional": true
+                },
+                {
+                    "value": 62,
+                    "name": "tree-2b",
+                    "description": "Tree cover, broadleaved, deciduous, open (15-40%)",
+                    "color_hint": "AAC800",
+                    "regional": true
+                },
+                {
+                    "value": 70,
+                    "name": "tree-3",
+                    "description": "Tree cover, needleleaved, evergreen, closed to open (>15%)",
+                    "color_hint": "003C00"
+                },
+                {
+                    "value": 71,
+                    "name": "tree-3a",
+                    "description": "Tree cover, needleleaved, evergreen, closed (>40%)",
+                    "color_hint": "003C00",
+                    "regional": true
+                },
+                {
+                    "value": 72,
+                    "name": "tree-3b",
+                    "description": "Tree cover, needleleaved, evergreen, open (15-40%)",
+                    "color_hint": "005000",
+                    "regional": true
+                },
+                {
+                    "value": 80,
+                    "name": "tree-4",
+                    "description": "Tree cover, needleleaved, deciduous, closed to open (>15%)",
+                    "color_hint": "285000"
+                },
+                {
+                    "value": 81,
+                    "name": "tree-4a",
+                    "description": "Tree cover, needleleaved, deciduous, closed (>40%)",
+                    "color_hint": "285000",
+                    "regional": true
+                },
+                {
+                    "value": 82,
+                    "name": "tree-4b",
+                    "description": "Tree cover, needleleaved, deciduous, open (15-40%)",
+                    "color_hint": "286400",
+                    "regional": true
+                },
+                {
+                    "value": 90,
+                    "name": "tree-5",
+                    "description": "Tree cover, mixed leaf type (broadleaved and needleleaved)",
+                    "color_hint": "788200"
+                },
+                {
+                    "value": 100,
+                    "name": "tree-shrub",
+                    "description": "Mosaic tree and shrub (>50%) / herbaceous cover (<50%)",
+                    "color_hint": "8CA000"
+                },
+                {
+                    "value": 110,
+                    "name": "herbaceous",
+                    "description": "Mosaic herbaceous cover (>50%) / tree and shrub (<50%)",
+                    "color_hint": "BE9600"
+                },
+                {
+                    "value": 120,
+                    "name": "shrubland",
+                    "description": "Shrubland",
+                    "color_hint": "966400"
+                },
+                {
+                    "value": 121,
+                    "name": "shrubland-a",
+                    "description": "Evergreen shrubland",
+                    "color_hint": "966400",
+                    "regional": true
+                },
+                {
+                    "value": 122,
+                    "name": "shrubland-b",
+                    "description": "Deciduous shrubland",
+                    "color_hint": "966400",
+                    "regional": true
+                },
+                {
+                    "value": 130,
+                    "name": "grassland",
+                    "description": "Grassland",
+                    "color_hint": "FFB432"
+                },
+                {
+                    "value": 140,
+                    "name": "lichens-moses",
+                    "description": "Lichens and mosses",
+                    "color_hint": "FFDCD2"
+                },
+                {
+                    "value": 150,
+                    "name": "sparse-veg",
+                    "description": "Sparse vegetation (tree, shrub, herbaceous cover) (<15%)",
+                    "color_hint": "FFEBAF"
+                },
+                {
+                    "value": 151,
+                    "name": "sparse-veg-a",
+                    "description": "Sparse tree (<15%)",
+                    "color_hint": "FFC864",
+                    "regional": true
+                },
+                {
+                    "value": 152,
+                    "name": "sparse-veg-b",
+                    "description": "Sparse shrub (<15%)",
+                    "color_hint": "FFD278",
+                    "regional": true
+                },
+                {
+                    "value": 153,
+                    "name": "sparse-veg-c",
+                    "description": "Sparse herbaceous cover (<15%)",
+                    "color_hint": "FFEBAF",
+                    "regional": true
+                },
+                {
+                    "value": 160,
+                    "name": "flooded-tree-1",
+                    "description": "Tree cover, flooded, fresh or brackish water",
+                    "color_hint": "00785A"
+                },
+                {
+                    "value": 170,
+                    "name": "flooded-tree-2",
+                    "description": "Tree cover, flooded, saline water",
+                    "color_hint": "009678"
+                },
+                {
+                    "value": 180,
+                    "name": "flooded-shrub-herbaceous",
+                    "description": "Shrub or herbaceous cover, flooded, fresh/saline/brackish water",
+                    "color_hint": "00DC82"
+                },
+                {
+                    "value": 190,
+                    "name": "urban",
+                    "description": "Urban areas",
+                    "color_hint": "C31400"
+                },
+                {
+                    "value": 200,
+                    "name": "bare",
+                    "description": "Bare areas",
+                    "color_hint": "FFF5D7"
+                },
+                {
+                    "value": 201,
+                    "name": "bare-a",
+                    "description": "Consolidated bare areas",
+                    "color_hint": "DCDCDC",
+                    "regional": true
+                },
+                {
+                    "value": 202,
+                    "name": "bare-b",
+                    "description": "Unconsolidated bare areas",
+                    "color_hint": "FFF5D7",
+                    "regional": true
+                },
+                {
+                    "value": 210,
+                    "name": "water",
+                    "description": "Water bodies",
+                    "color_hint": "0046C8"
+                },
+                {
+                    "value": 220,
+                    "name": "snow-ice",
+                    "description": "Permanent snow and ice",
+                    "color_hint": "FFFFFF"
+                }
+            ],
+            "raster:bands": [
+                {
+                    "spatial_resolution": 300,
+                    "sampling": "area",
+                    "data_type": "uint8",
+                    "nodata": 0
+                }
+            ]
+        },
+        "observation_count": {
+            "title": "Number of Valid Observations",
+            "description": "Number of valid satellite observations that have contributed to each pixel's classification.",
+            "roles": [
+                "quality"
+            ],
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "raster:bands": [
+                {
+                    "spatial_resolution": 300,
+                    "sampling": "area",
+                    "data_type": "uint16"
+                }
+            ]
+        },
+        "processed_flag": {
+            "title": "Land Cover Map Processed Area Flag",
+            "description": "Flag to mark areas that could not be classified.",
+            "roles": [
+                "quality"
+            ],
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "classification:classes": [
+                {
+                    "value": 0,
+                    "name": "not_processed",
+                    "description": "Not processed"
+                },
+                {
+                    "value": 1,
+                    "name": "processed",
+                    "description": "Processed"
+                }
+            ],
+            "raster:bands": [
+                {
+                    "spatial_resolution": 300,
+                    "sampling": "area",
+                    "data_type": "uint8",
+                    "nodata": 255
+                }
+            ]
+        }
+    },
+    "sci:doi": "10.24381/cds.006f2c9a",
+    "summaries": {
+        "esa_cci_lc:version": [
+            "2.0.7cds",
+            "2.1.1"
+        ]
+    }
+}

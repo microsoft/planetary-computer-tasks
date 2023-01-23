@@ -1,10 +1,12 @@
 import json
 import logging
-from typing import Any, Dict, List, Union
+from collections import defaultdict
+from typing import Any, Dict, List, Optional, Union
 
 import requests
 
-from pctasks.core.models.record import TaskRunStatus
+from pctasks.core.models.run import TaskRunStatus
+from pctasks.core.models.task import TaskDefinition
 from pctasks.run.constants import MAX_MISSING_POLLS
 from pctasks.run.models import (
     FailedTaskSubmitResult,
@@ -27,13 +29,24 @@ class LocalTaskRunner(TaskRunner):
     def __init__(self, local_dev_endpoints_url: str):
         self.local_dev_endpoints_url = local_dev_endpoints_url
 
+    def prepare_task_info(
+        self,
+        dataset_id: str,
+        run_id: str,
+        job_id: str,
+        task_def: TaskDefinition,
+        image: str,
+        task_tags: Optional[Dict[str, str]],
+    ) -> Dict[str, Any]:
+        return {}
+
     def submit_tasks(
         self, prepared_tasks: List[PreparedTaskSubmitMessage]
     ) -> List[Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]]:
         results: List[Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]] = []
         for prepared_task in prepared_tasks:
             task_input_blob_config = prepared_task.task_input_blob_config
-            task_tags = prepared_task.task_tags
+            task_tags = prepared_task.task_data.tags
             args = [
                 "task",
                 "run",
@@ -83,3 +96,30 @@ class LocalTaskRunner(TaskRunner):
         except Exception as e:
             logger.exception(e)
             return TaskPollResult(task_status=TaskRunStatus.FAILED)
+
+    def get_failed_tasks(
+        self,
+        runner_ids: Dict[str, Dict[str, Dict[str, Any]]],
+    ) -> Dict[str, Dict[str, str]]:
+        # TODO: Optimize implementation
+        result: Dict[str, Dict[str, str]] = defaultdict(dict)
+
+        for partition_id in runner_ids:
+            for task_id, runner_id in runner_ids[partition_id].items():
+                poll_result = self.poll_task(runner_id, 0)
+                if poll_result.task_status == TaskRunStatus.FAILED:
+                    error = (
+                        poll_result.poll_errors[0]
+                        if poll_result.poll_errors
+                        else "Local task failed."
+                    )
+                    result[partition_id][task_id] = error
+
+        return result
+
+    def cancel_task(self, runner_id: Dict[str, Any]) -> None:
+        # No-op
+        pass
+
+    def cleanup(self, task_infos: List[Dict[str, Any]]) -> None:
+        pass

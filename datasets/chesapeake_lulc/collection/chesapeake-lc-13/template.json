@@ -65,7 +65,22 @@
             "roles": [
                 "thumbnail"
             ]
-        }
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/chesapeake-lc-13.parquet",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            }
+        } 
     },
     "extent": {
         "spatial": {

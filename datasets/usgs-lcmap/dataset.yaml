@@ -1,0 +1,39 @@
+id: usgs_lcmap
+image: ${{ args.registry }}/pctasks-usgs-lcmap:latest
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./usgs_lcmap.py) }}
+  # requirements: ${{ local.path(./requirements.txt) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: usgs-lcmap-conus-v13
+    template: ${{ local.path(./collection/usgs-lcmap-conus-v13) }}
+    class: usgs_lcmap:USGSLCMAPCollection
+    asset_storage:
+      - uri: blob://landcoverdata/lcmap/CU/V13/
+        chunks:
+          options:
+            extensions: [.tar]
+            chunk_length: 500
+    chunk_storage:
+      uri: blob://landcoverdata/lcmap-etl-data/lcmap-conus-v13/
+
+  - id: usgs-lcmap-hawaii-v10
+    template: ${{ local.path(./collection/usgs-lcmap-hawaii-v10) }}
+    class: usgs_lcmap:USGSLCMAPCollection
+    asset_storage:
+      - uri: blob://landcoverdata/lcmap/HI/V10/
+        chunks:
+          options:
+            extensions: [.tar]
+            chunk_length: 100
+    chunk_storage:
+      uri: blob://landcoverdata/lcmap-etl-data/lcmap-hawaii-v10/

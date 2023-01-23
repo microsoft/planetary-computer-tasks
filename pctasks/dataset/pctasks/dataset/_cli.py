@@ -5,14 +5,13 @@ import click
 from pystac.utils import str_to_datetime
 from strictyaml.exceptions import MarkedYAMLError
 
-from pctasks.cli.cli import cli_output
-from pctasks.client.settings import ClientSettings
-from pctasks.client.submit._cli import cli_submit_workflow
-from pctasks.core.context import PCTasksCommandContext
+from pctasks.cli.cli import cli_output, cli_print
+from pctasks.client.workflow.commands import cli_handle_workflow
 from pctasks.core.utils import map_opt
 from pctasks.core.yaml import YamlValidationError
 from pctasks.dataset.chunks.models import ChunkOptions
 from pctasks.dataset.constants import DEFAULT_DATASET_YAML_PATH
+from pctasks.dataset.models import MultipleCollectionsError
 from pctasks.dataset.splits.models import CreateSplitsOptions
 from pctasks.dataset.template import template_dataset_file
 from pctasks.dataset.workflow import (
@@ -24,6 +23,13 @@ from pctasks.dataset.workflow import (
 logger = logging.getLogger(__name__)
 
 
+def _handle_multiple_collections(e: MultipleCollectionsError) -> Exception:
+    cli_print("[bold yellow]Multiple Collections Found[/bold yellow]:")
+    for c in e.collection_ids:
+        cli_print(f" - {c}")
+    return click.UsageError("Please specify which collection using --collection")
+
+
 def create_chunks_cmd(
     ctx: click.Context,
     chunkset_id: str,
@@ -33,14 +39,15 @@ def create_chunks_cmd(
     since: Optional[str] = None,
     limit: Optional[int] = None,
     submit: bool = False,
+    upsert: bool = False,
     target: Optional[str] = None,
+    workflow_id: Optional[str] = None,
 ) -> None:
     """Creates workflow to generate asset chunks for bulk processing.
 
     Output: If -s is present, will print the run ID to stdout. Otherwise,
     will print the workflow yaml.
     """
-    context: PCTasksCommandContext = ctx.obj
     try:
         ds_config = template_dataset_file(dataset, dict(arg))
     except (MarkedYAMLError, YamlValidationError) as e:
@@ -54,9 +61,12 @@ def create_chunks_cmd(
     if not ds_config:
         raise click.ClickException("No dataset config found.")
 
-    collection_config = ds_config.get_collection(collection)
+    try:
+        collection_config = ds_config.get_collection(collection)
+    except MultipleCollectionsError as e:
+        raise _handle_multiple_collections(e)
 
-    workflow = create_chunks_workflow(
+    workflow_def = create_chunks_workflow(
         dataset=ds_config,
         collection=collection_config,
         chunkset_id=chunkset_id,
@@ -65,14 +75,14 @@ def create_chunks_cmd(
         target=target,
     )
 
-    if not submit:
-        cli_output(workflow.to_yaml())
-        ctx.exit(0)
-    else:
-        settings = ClientSettings.get(context.profile, context.settings_file)
-        ctx.exit(
-            cli_submit_workflow(workflow=workflow, args=dict(arg), settings=settings)
-        )
+    cli_handle_workflow(
+        ctx,
+        workflow_def,
+        workflow_id=workflow_id,
+        upsert=upsert,
+        upsert_and_submit=submit,
+        args={a[0]: a[1] for a in arg},
+    )
 
 
 def process_items_cmd(
@@ -87,6 +97,9 @@ def process_items_cmd(
     since: Optional[str] = None,
     limit: Optional[int] = None,
     submit: bool = False,
+    upsert: bool = False,
+    workflow_id: Optional[str] = None,
+    is_update_workflow: bool = False,
 ) -> None:
     """Generate the workflow to create and ingest items.
 
@@ -97,7 +110,6 @@ def process_items_cmd(
     Output: If -s is present, will print the run ID to stdout. Otherwise,
     will print the workflow yaml.
     """
-    context: PCTasksCommandContext = ctx.obj
     try:
         ds_config = template_dataset_file(dataset, dict(arg))
     except (MarkedYAMLError, YamlValidationError) as e:
@@ -110,9 +122,12 @@ def process_items_cmd(
     if not ds_config:
         raise click.ClickException("No dataset config found.")
 
-    collection_config = ds_config.get_collection(collection)
+    try:
+        collection_config = ds_config.get_collection(collection)
+    except MultipleCollectionsError as e:
+        raise _handle_multiple_collections(e)
 
-    workflow = create_process_items_workflow(
+    workflow_def = create_process_items_workflow(
         dataset=ds_config,
         collection=collection_config,
         chunkset_id=chunkset_id,
@@ -124,16 +139,17 @@ def process_items_cmd(
         ingest_options=None,
         target=target,
         tags=None,
+        is_update_workflow=is_update_workflow,
     )
 
-    if not submit:
-        cli_output(workflow.to_yaml())
-        ctx.exit(0)
-    else:
-        settings = ClientSettings.get(context.profile, context.settings_file)
-        ctx.exit(
-            cli_submit_workflow(workflow=workflow, args=dict(arg), settings=settings)
-        )
+    cli_handle_workflow(
+        ctx,
+        workflow_def,
+        workflow_id=workflow_id,
+        upsert=upsert,
+        upsert_and_submit=submit,
+        args={a[0]: a[1] for a in arg},
+    )
 
 
 def ingest_collection_cmd(
@@ -143,6 +159,8 @@ def ingest_collection_cmd(
     arg: List[Tuple[str, str]] = [],
     target: Optional[str] = None,
     submit: bool = False,
+    upsert: bool = False,
+    workflow_id: Optional[str] = None,
 ) -> None:
     """Generate the workflow to ingest a collection.
 
@@ -153,7 +171,6 @@ def ingest_collection_cmd(
     Output: If -s is present, will print the run ID to stdout. Otherwise,
     will print the workflow yaml.
     """
-    context: PCTasksCommandContext = ctx.obj
     try:
         ds_config = template_dataset_file(dataset, dict(arg))
     except (MarkedYAMLError, YamlValidationError) as e:
@@ -166,28 +183,31 @@ def ingest_collection_cmd(
     if not ds_config:
         raise click.ClickException("No dataset config found.")
 
-    collection_config = ds_config.get_collection(collection)
+    try:
+        collection_config = ds_config.get_collection(collection)
+    except MultipleCollectionsError as e:
+        raise _handle_multiple_collections(e)
 
     if not collection_config.template:
         raise click.ClickException(
             f"'template' not specified for collection {collection_config.id}"
         )
 
-    workflow = create_ingest_collection_workflow(
+    workflow_def = create_ingest_collection_workflow(
         dataset=ds_config,
         collection=collection_config,
         target=target,
         tags=None,
     )
 
-    if not submit:
-        cli_output(workflow.to_yaml())
-        ctx.exit(0)
-    else:
-        settings = ClientSettings.get(context.profile, context.settings_file)
-        ctx.exit(
-            cli_submit_workflow(workflow=workflow, args=dict(arg), settings=settings)
-        )
+    cli_handle_workflow(
+        ctx,
+        workflow_def,
+        workflow_id=workflow_id,
+        upsert=upsert,
+        upsert_and_submit=submit,
+        args={a[0]: a[1] for a in arg},
+    )
 
 
 def list_collections_cmd(

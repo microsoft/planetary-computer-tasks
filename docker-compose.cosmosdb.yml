@@ -1,0 +1,41 @@
+version: "2.1"
+services:
+  cosmosdb:
+    container_name: pctasks-cosmosdb
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+    environment:
+      - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
+      - AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE=172.16.238.246
+      # Controls the number of possible containers the emulator can hold
+      # This this number of containers is reached, the emulator will start
+      # throwing ServiceUnavailable exceptions.
+      # See https://learn.microsoft.com/en-us/azure/cosmos-db/emulator-command-line-parameters#set-partitioncount
+      - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=10
+    ports:
+        - '8081:8081'
+        - '8900:8900'
+        - '8901:8901'
+        - '8902:8902'
+        - '10250:10250'
+        - '10251:10251'
+        - '10252:10252'
+        - '10253:10253'
+        - '10254:10254'
+        - '10255:10255'
+        - '10256:10256'
+        - '10350:10350'
+    volumes:
+      - pctasks-cosmosdb-data:/tmp/cosmosdb
+    stop_grace_period: 1s  # Cosmos emulator isn't responsive to SIGTERM
+    networks:
+      default:
+        ipv4_address: 172.16.238.246
+
+networks:
+  default:
+    # Network created during scripts/setup
+    external:
+      name: pctasks-network
+
+volumes:
+  pctasks-cosmosdb-data: null

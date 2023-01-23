@@ -5,7 +5,7 @@ ENV CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
 ENV PATH=$PATH:/install/bin
 
-RUN pip install stac_fastapi.api==2.3.0 stac_fastapi.pgstac==2.3.0 uvicorn==0.17.6
+RUN pip install stac_fastapi.api==2.4.1 stac_fastapi.pgstac==2.4.1 uvicorn==0.17.6
 
 RUN mkdir -p /opt/src
 COPY dev/stacapi.py /opt/src/stacapi.py

@@ -10,13 +10,14 @@ from pctasks.core.utils import completely_flatten
 from pctasks.dev.blob import copy_dir_to_azurite, temp_azurite_blob_storage
 from pctasks.dev.db import temp_pgstac_db
 from pctasks.dev.test_utils import assert_workflow_is_successful, run_pctasks
+from tests.constants import DEFAULT_TIMEOUT
 
 HERE = Path(__file__).parent
 DATASETS = HERE
 TEST_DATA = HERE / ".." / "data-files"
 WORKFLOWS = HERE / ".." / "workflows"
 
-TIMEOUT_SECONDS = 180
+TIMEOUT_SECONDS = DEFAULT_TIMEOUT
 
 
 def test_dataset():
@@ -49,13 +50,14 @@ def test_dataset():
                     str(HERE / "dataset.yaml"),
                     "-c",
                     collection_id,
+                    "-u",
                     "-s",
                 ]
                 + list(completely_flatten([["-a", k, v] for k, v in args.items()])),
             )
 
             assert ingest_collection_result.exit_code == 0
-            ingest_collection_run_id = ingest_collection_result.output
+            ingest_collection_run_id = ingest_collection_result.output.strip()
             assert_workflow_is_successful(
                 ingest_collection_run_id, timeout_seconds=TIMEOUT_SECONDS
             )
@@ -84,7 +86,7 @@ def test_dataset():
             )
 
             assert process_items_result.exit_code == 0
-            process_items_run_id = process_items_result.output
+            process_items_run_id = process_items_result.output.strip()
             assert_workflow_is_successful(
                 process_items_run_id, timeout_seconds=TIMEOUT_SECONDS
             )

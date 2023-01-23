@@ -9,7 +9,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import PlainTextResponse
 
 from pctasks.server.logging import init_logging
-from pctasks.server.routes import code, runs, submit
+from pctasks.server.routes import code, runs, workflows
 
 # Initialize logging
 init_logging("tasks")
@@ -28,7 +28,7 @@ app = FastAPI(root_path=APP_ROOT_PATH, default_response_class=ORJSONResponse)
 app.add_middleware(
     CORSMiddleware,
     allow_origins="*",
-    allow_methods=["GET", "POST"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -63,9 +63,9 @@ async def ping() -> Dict[str, Any]:
 
 
 app.include_router(
-    submit.submit_router,
-    prefix="/submit",
-    tags=["Submit workflows"],
+    workflows.workflows_router,
+    prefix="/workflows",
+    tags=["Workflows"],
 )
 
 app.include_router(

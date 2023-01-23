@@ -7,6 +7,8 @@ resource "azurerm_batch_pool" "batch_pool" {
   vm_size             = var.vm_size
   max_tasks_per_node  = var.max_tasks_per_node
 
+  inter_node_communication = "Disabled"
+
   network_configuration {
     subnet_id = var.subnet_id
   }

@@ -1,29 +1,146 @@
 import logging
 import os
 from datetime import datetime, timedelta
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
-from azure.core.credentials import AzureNamedKeyCredential
-from azure.data.tables import TableSasPermissions, generate_table_sas
 from azure.storage.blob import BlobSasPermissions, generate_blob_sas
 
 from pctasks.core.constants import ENV_VAR_TASK_APPINSIGHTS_KEY
-from pctasks.core.models.config import BlobConfig, ImageConfig, TableSasConfig
-from pctasks.core.models.task import TaskRunConfig, TaskRunMessage
+from pctasks.core.models.config import BlobConfig
+from pctasks.core.models.task import TaskDefinition, TaskRunConfig, TaskRunMessage
 from pctasks.core.models.tokens import StorageAccountTokens
 from pctasks.core.storage.blob import BlobStorage, BlobUri
-from pctasks.run.models import PreparedTaskSubmitMessage, TaskSubmitMessage
+from pctasks.core.utils.backoff import with_backoff
+from pctasks.core.utils.template import PCTemplater
+from pctasks.run.errors import TaskPreparationError
+from pctasks.run.models import (
+    PreparedTaskData,
+    PreparedTaskSubmitMessage,
+    TaskSubmitMessage,
+)
 from pctasks.run.secrets.base import SecretsProvider
 from pctasks.run.secrets.keyvault import KeyvaultSecretsProvider
 from pctasks.run.secrets.local import LocalSecretsProvider
 from pctasks.run.settings import RunSettings
+from pctasks.run.task.base import TaskRunner
 from pctasks.run.utils import (
-    get_run_log_path,
     get_task_input_path,
+    get_task_log_path,
     get_task_output_path,
+    get_task_status_path,
 )
 
 logger = logging.getLogger(__name__)
+
+
+def prepare_task_data(
+    dataset_id: str,
+    run_id: str,
+    job_id: str,
+    task_def: TaskDefinition,
+    settings: RunSettings,
+    tokens: Optional[Dict[str, StorageAccountTokens]],
+    target_environment: Optional[str],
+    task_runner: TaskRunner,
+) -> PreparedTaskData:
+    environment = task_def.environment
+    task_tags = task_def.tags
+
+    # --Handle image key--
+
+    if not task_def.image:
+        image_key = task_def.image_key
+        if not image_key:
+            # Should have been handled by model validation
+            raise ValueError("Must specify either image_key or image.")
+
+        logger.info(f"No image specified, using image key '{image_key}'")
+
+        with settings.get_image_key_table() as image_key_table:
+            image_config = image_key_table.get_image(image_key, target_environment)
+
+        if image_config is None:
+            raise ValueError(
+                f"Image for image key '{image_key}' and target environment "
+                f"'{target_environment}' not found "
+                f"in table {settings.image_key_table_name}."
+            )
+
+        image = image_config.image
+
+        # Merge the environment variables from the image-key table into
+        # this environment. Explicit environment takes precedence.
+        if environment:
+            if image_config.environment:
+                logger.info(
+                    "Merging environment from image key table "
+                    "into submit msg environment."
+                )
+                environment = {
+                    **(image_config.get_environment() or {}),
+                    **environment,
+                }
+        else:
+            logger.info("Setting image key environment as task environment.")
+            environment = image_config.get_environment()
+
+        # Merge the tags from the image-key table into
+        # the message tags. Explicit tags takes precedence.
+        if task_tags:
+            if image_config.environment:
+                logger.info(
+                    "Merging tags from image key table " "into submit msg tags."
+                )
+                task_tags = {
+                    **(image_config.get_tags() or {}),
+                    **task_tags,
+                }
+        else:
+            logger.info("Setting image key tags as task tags.")
+            task_tags = image_config.get_tags()
+    else:
+        image = task_def.image
+
+    # --Handle secrets--
+
+    secrets_provider: SecretsProvider
+    if settings.local_secrets:
+        secrets_provider = LocalSecretsProvider(settings)
+    else:
+        secrets_provider = KeyvaultSecretsProvider.get_provider(settings)
+
+    with secrets_provider:
+        if environment:
+            environment = secrets_provider.substitute_secrets(environment)
+
+        if tokens:
+
+            def _transform_tokens(tokens: Dict[str, Any]) -> Dict[str, Any]:
+                tks = secrets_provider.substitute_secrets(tokens)
+                try:
+                    tks = with_backoff(lambda: PCTemplater().template_dict(tks))
+                except Exception as e:
+                    raise TaskPreparationError(
+                        f"Failed to fetch SAS tokens from the Planetary Computer: {e}"
+                    ) from e
+                return tks
+
+            tokens = {
+                account: StorageAccountTokens(**_transform_tokens(tokens=v.dict()))
+                for account, v in tokens.items()
+            }
+
+    runner_info = task_runner.prepare_task_info(
+        dataset_id, run_id, job_id, task_def, image, task_tags
+    )
+
+    return PreparedTaskData(
+        image=image,
+        environment=environment,
+        tags=task_tags,
+        tokens=tokens,
+        runner_info=runner_info,
+    )
 
 
 def write_task_run_msg(run_msg: TaskRunMessage, settings: RunSettings) -> BlobConfig:
@@ -34,6 +151,7 @@ def write_task_run_msg(run_msg: TaskRunMessage, settings: RunSettings) -> BlobCo
     """
     task_input_path = get_task_input_path(
         job_id=run_msg.config.job_id,
+        partition_id=run_msg.config.partition_id,
         task_id=run_msg.config.task_id,
         run_id=run_msg.config.run_id,
     )
@@ -74,6 +192,7 @@ def write_task_run_msg(run_msg: TaskRunMessage, settings: RunSettings) -> BlobCo
 def prepare_task(
     submit_msg: TaskSubmitMessage,
     run_id: str,
+    task_data: PreparedTaskData,
     settings: RunSettings,
 ) -> PreparedTaskSubmitMessage:
     """
@@ -85,117 +204,40 @@ def prepare_task(
     - configure task IO, logging, and records access
     - write task run message to task IO input file
     """
-    if not submit_msg.instance_id:
-        raise ValueError("submit_msg.instance_id is required")
-
-    target_environment = submit_msg.target_environment
+    # target_environment = submit_msg.target_environment
     job_id = submit_msg.job_id
-    task_config = submit_msg.config
-    task_id = task_config.id
+    partition_id = submit_msg.partition_id
+    task_def = submit_msg.definition
+    task_id = task_def.id
 
     event_logger_app_insights_key = os.environ.get(ENV_VAR_TASK_APPINSIGHTS_KEY)
 
-    environment = submit_msg.config.environment
-    task_tags = submit_msg.config.tags
-
-    # --Handle image key--
-
-    if not task_config.image:
-        image_key = task_config.image_key
-        if not image_key:
-            # Should have been handled by model validation
-            raise ValueError("Must specify either image_key or image.")
-
-        logger.info(f"No image specified, using image key '{image_key}'")
-
-        with settings.get_image_key_table() as image_key_table:
-            image_config = image_key_table.get_image(image_key, target_environment)
-
-        if image_config is None:
-            raise ValueError(
-                f"Image for image key '{image_key}' and target environment "
-                f"'{target_environment}' not found "
-                f"in table {settings.image_key_table_name}."
-            )
-
-        # Merge the environment variables from the image-key table into
-        # this environment. Explicit environment takes precedence.
-        if environment:
-            if image_config.environment:
-                logger.info(
-                    "Merging environment from image key table "
-                    "into submit msg environment."
-                )
-                environment = {
-                    **(image_config.get_environment() or {}),
-                    **environment,
-                }
-        else:
-            logger.info("Setting image key environment as task environment.")
-            environment = image_config.get_environment()
-
-        # Merge the tags from the image-key table into
-        # the message tags. Explicit tags takes precedence.
-        if task_tags:
-            if image_config.environment:
-                logger.info(
-                    "Merging tags from image key table " "into submit msg tags."
-                )
-                task_tags = {
-                    **(image_config.get_tags() or {}),
-                    **task_tags,
-                }
-        else:
-            logger.info("Setting image key tags as task tags.")
-            task_tags = image_config.get_tags()
-    else:
-        image_config = ImageConfig(image=task_config.image)
-
-    # --Handle secrets--
-
-    secrets_provider: SecretsProvider
-    if settings.local_secrets:
-        secrets_provider = LocalSecretsProvider(settings)
-    else:
-        secrets_provider = KeyvaultSecretsProvider.get_provider(settings)
-
-    with secrets_provider:
-        if environment:
-            environment = secrets_provider.substitute_secrets(environment)
-
-        tokens = submit_msg.tokens
-        if tokens:
-            tokens = {
-                account: StorageAccountTokens(
-                    **secrets_provider.substitute_secrets(v.dict())
-                )
-                for account, v in tokens.items()
-            }
-
     # --Handle configuration--
 
-    # Tables
+    # Handle status blob
 
-    tables_cred = AzureNamedKeyCredential(
-        name=settings.tables_account_name, key=settings.tables_account_key
+    task_status_path = get_task_status_path(job_id, partition_id, task_id, run_id)
+    task_status_uri = (
+        f"blob://{settings.blob_account_name}/"
+        f"{settings.task_io_blob_container}/{task_status_path}"
     )
-
-    task_runs_table_sas_token = generate_table_sas(
-        credential=tables_cred,
-        table_name=settings.task_run_record_table_name,
+    log_blob_sas_token = generate_blob_sas(
+        account_name=settings.blob_account_name,
+        account_key=settings.blob_account_key,
+        container_name=settings.task_io_blob_container,
+        blob_name=task_status_path,
         start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),
-        permission=TableSasPermissions(read=True, write=True, update=True),
+        permission=BlobSasPermissions(write=True),
     )
-
-    task_runs_table_config = TableSasConfig(
-        account_url=settings.tables_account_url,
-        table_name=settings.task_run_record_table_name,
-        sas_token=task_runs_table_sas_token,
+    status_blob_config = BlobConfig(
+        uri=task_status_uri,
+        sas_token=log_blob_sas_token,
+        account_url=settings.blob_account_url,
     )
 
     # Handle log blob
-    log_path = get_run_log_path(job_id, task_id, run_id)
+    log_path = get_task_log_path(job_id, partition_id, task_id, run_id)
     log_uri = (
         f"blob://{settings.blob_account_name}/{settings.log_blob_container}/{log_path}"
     )
@@ -214,7 +256,7 @@ def prepare_task(
 
     # Handle output blob
 
-    output_path = get_task_output_path(job_id, task_id, run_id)
+    output_path = get_task_output_path(job_id, partition_id, task_id, run_id)
     output_uri = (
         f"blob://{settings.blob_account_name}/"
         f"{settings.task_io_blob_container}/{output_path}"
@@ -239,7 +281,7 @@ def prepare_task(
     code_requirements_blob_config: Optional[BlobConfig] = None
     code_pip_options: Optional[List[str]] = None
 
-    code_config = task_config.code
+    code_config = task_def.code
     if code_config:
         code_uri = code_config.src
         code_path = code_config.get_src_path()
@@ -284,14 +326,15 @@ def prepare_task(
         code_pip_options = code_config.pip_options
 
     config = TaskRunConfig(
-        image=image_config.image,
-        run_id=submit_msg.run_id,
-        job_id=submit_msg.job_id,
-        task_id=submit_msg.config.id,
-        task=task_config.task,
-        environment=environment,
-        tokens=tokens,
-        task_runs_table_config=task_runs_table_config,
+        image=task_data.image,
+        run_id=run_id,
+        job_id=job_id,
+        partition_id=partition_id,
+        task_id=task_id,
+        task=task_def.task,
+        environment=task_data.environment,
+        tokens=task_data.tokens,
+        status_blob_config=status_blob_config,
         output_blob_config=output_blob_config,
         log_blob_config=log_blob_config,
         code_src_blob_config=code_src_blob_config,
@@ -300,7 +343,7 @@ def prepare_task(
         event_logger_app_insights_key=event_logger_app_insights_key,
     )
 
-    run_msg = TaskRunMessage(args=task_config.args, config=config)
+    run_msg = TaskRunMessage(args=task_def.args, config=config)
 
     task_input_blob_config = write_task_run_msg(run_msg, settings)
 
@@ -308,5 +351,5 @@ def prepare_task(
         task_submit_message=submit_msg,
         task_run_message=run_msg,
         task_input_blob_config=task_input_blob_config,
-        task_tags=task_tags,
+        task_data=task_data,
     )

@@ -1,0 +1,13 @@
+{
+  "arrowParens": "avoid",
+  "htmlWhitespaceSensitivity": "css",
+  "insertPragma": false,
+  "jsxSingleQuote": false,
+  "printWidth": 85,
+  "proseWrap": "always",
+  "requirePragma": false,
+  "semi": true,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "useTabs": false
+}

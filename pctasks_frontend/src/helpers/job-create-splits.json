@@ -1,0 +1,16 @@
+{
+  "links": [
+    {
+      "rel": "task",
+      "href": "https://pctaskstest-staging.azure-api.net/tasks/runs/b6320d38fcec41a0a959831efc54345f/jobs/create-splits/tasks/create-splits",
+      "type": "application/json",
+      "title": "Task: create-splits"
+    }
+  ],
+  "errors": null,
+  "created": "2022-08-01T16:09:56.958856",
+  "updated": "2022-07-28T22:53:26.860795",
+  "run_id": "b6320d38fcec41a0a959831efc54345f",
+  "job_id": "create-splits",
+  "status": "completed"
+}

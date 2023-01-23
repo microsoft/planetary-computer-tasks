@@ -4,11 +4,11 @@ from pydantic import validator
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.config import CodeConfig
-from pctasks.core.models.task import TaskConfig
+from pctasks.core.models.task import TaskDefinition
 from pctasks.dataset.chunks.constants import ITEM_CHUNKS_PREFIX
 from pctasks.dataset.chunks.models import ChunkInfo
 from pctasks.dataset.constants import CREATE_ITEMS_TASK_ID
-from pctasks.dataset.models import CollectionConfig, DatasetConfig
+from pctasks.dataset.models import CollectionDefinition, DatasetDefinition
 
 
 class CreateItemsOptions(PCBaseModel):
@@ -71,7 +71,7 @@ class CreateItemsOutput(PCBaseModel):
     """NDJSON of Items."""
 
 
-class CreateItemsTaskConfig(TaskConfig):
+class CreateItemsTaskConfig(TaskDefinition):
     @classmethod
     def create(
         cls,
@@ -95,8 +95,8 @@ class CreateItemsTaskConfig(TaskConfig):
     @classmethod
     def from_collection(
         cls,
-        ds: DatasetConfig,
-        collection: CollectionConfig,
+        ds: DatasetDefinition,
+        collection: CollectionDefinition,
         chunkset_id: str,
         asset_chunk_info: ChunkInfo,
         options: Optional[CreateItemsOptions] = None,

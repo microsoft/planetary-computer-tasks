@@ -20,6 +20,7 @@ from typing import (
 )
 from urllib.parse import urlparse
 
+import azure.core.exceptions
 from azure.identity import DefaultAzureCredential
 from azure.identity._credentials.client_secret import ClientSecretCredential
 from azure.storage.blob import (
@@ -53,6 +54,10 @@ _AZURITE_ACCOUNT_KEY = (
 
 
 class BlobStorageError(Exception):
+    pass
+
+
+class ResourceNoteFoundError(BlobStorageError):
     pass
 
 
@@ -324,7 +329,10 @@ class BlobStorage(Storage):
     def get_file_info(self, file_path: str) -> StorageFileInfo:
         with self._get_client() as client:
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
-                props = with_backoff(lambda: blob.get_blob_properties())
+                try:
+                    props = with_backoff(lambda: blob.get_blob_properties())
+                except azure.core.exceptions.ResourceNotFoundError:
+                    raise FileNotFoundError(f"File {file_path} not found in {self}")
                 return StorageFileInfo(size=cast(int, props.size))
 
     def file_exists(self, file_path: str) -> bool:
@@ -495,11 +503,20 @@ class BlobStorage(Storage):
         file_path: str,
         output_path: str,
         is_binary: bool = True,
+        timeout_seconds: Optional[int] = None,
     ) -> None:
         with self._get_client() as client:
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 with open(output_path, "wb" if is_binary else "w") as f:
-                    with_backoff(lambda: blob.download_blob().readinto(f))
+                    try:
+                        # timeout raises an azure.core.exceptions.HttpResponseError: ("Connection broken: ConnectionResetError(104, 'Connection reset by peer')"  # noqa
+                        with_backoff(
+                            lambda: blob.download_blob(
+                                timeout=timeout_seconds
+                            ).readinto(f)
+                        )
+                    except azure.core.exceptions.ResourceNotFoundError:
+                        raise FileNotFoundError(f"File {file_path} not found in {self}")
 
     def upload_bytes(
         self,
@@ -513,7 +530,7 @@ class BlobStorage(Storage):
             ) as blob:
 
                 def _upload() -> None:
-                    blob.upload_blob(data, overwrite=overwrite)
+                    blob.upload_blob(data, overwrite=overwrite)  # type: ignore
 
                 with_backoff(_upload)
 
@@ -548,6 +565,8 @@ class BlobStorage(Storage):
                         bytes,
                         blob_data.readall(),
                     )
+        except azure.core.exceptions.ResourceNotFoundError:
+            raise FileNotFoundError(f"File {file_path} not found in {self}")
         except Exception as e:
             raise BlobStorageError(
                 f"Could not read text from {self.get_uri(file_path)}"
@@ -557,7 +576,9 @@ class BlobStorage(Storage):
         full_path = self._add_prefix(file_path)
         with self._get_client() as client:
             with client.container.get_blob_client(full_path) as blob:
-                with_backoff(lambda: blob.upload_blob(data, overwrite=overwrite))
+                with_backoff(
+                    lambda: blob.upload_blob(data, overwrite=overwrite)  # type: ignore
+                )
 
     def delete_folder(self, folder_path: Optional[str] = None) -> None:
         for file_path in self.list_files(name_starts_with=folder_path):
@@ -566,7 +587,10 @@ class BlobStorage(Storage):
     def delete_file(self, file_path: str) -> None:
         with self._get_client() as client:
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
-                with_backoff(lambda: blob.delete_blob())
+                try:
+                    with_backoff(lambda: blob.delete_blob())
+                except azure.core.exceptions.ResourceNotFoundError:
+                    raise FileNotFoundError(f"File {file_path} not found in {self}")
 
     @classmethod
     def from_uri(

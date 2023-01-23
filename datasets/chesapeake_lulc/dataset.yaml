@@ -1,4 +1,4 @@
-name: chesapeake_lulc
+id: chesapeake_lulc
 image: ${{ args.registry }}/pctasks-task-base:latest
 
 args:

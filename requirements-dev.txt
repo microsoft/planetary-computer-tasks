@@ -1,8 +1,9 @@
 flake8==4.*
 black==22.*
-mypy==0.931
+mypy==0.982
 pytest==6.*
 isort==5.*
+pytest-asyncio==0.18.*
 
 planetary-computer
 pystac[validation]==1.*
@@ -25,3 +26,4 @@ myst-parser
 pydata-sphinx-theme
 sphinx
 sphinx-autobuild==2021.3.14
+sphinx_design==0.2.0

@@ -1,19 +1,20 @@
 import pytest
 from pydantic import ValidationError
 
-from pctasks.core.models.task import TaskConfig
+from pctasks.core.models.task import TaskDefinition
 from pctasks.core.models.workflow import (
-    JobConfig,
-    WorkflowConfig,
+    JobDefinition,
+    Workflow,
+    WorkflowDefinition,
     WorkflowSubmitMessage,
 )
 
 
 def test_sets_job_id():
-    workflow = WorkflowConfig.from_yaml(
+    workflow = WorkflowDefinition.from_yaml(
         """
         name: A workflow*  *with* *asterisks
-        dataset: microsoft/test-dataset
+        dataset: test-dataset
 
         jobs:
             test-job:
@@ -31,13 +32,13 @@ def test_sets_job_id():
 
 def test_disallows_invalid_job_ids():
     with pytest.raises(ValidationError):
-        WorkflowConfig(
+        WorkflowDefinition(
             name="Test Workflow!",
-            dataset="microsoft/test-dataset",
+            dataset_id="test-dataset",
             jobs={
-                "A job / task / thing": JobConfig(
+                "A job / task / thing": JobDefinition(
                     tasks=[
-                        TaskConfig(
+                        TaskDefinition(
                             id="submit_unit_test",
                             image="pctasks-ingest:latest",
                             task="tests.test_submit.MockTask",
@@ -52,7 +53,7 @@ def test_disallows_invalid_job_ids():
 def test_args():
     workflow = """
     name: Test workflow
-    dataset: microsoft/test-dataset
+    dataset: test-dataset
 
     args:
       - name
@@ -66,19 +67,22 @@ def test_args():
             args:
               hello: ${{ args.name }}
     """
-    workflow = WorkflowConfig.from_yaml(workflow)
-    submit_message = WorkflowSubmitMessage(workflow=workflow, args={"name": "world"})
+    workflow_def = WorkflowDefinition.from_yaml(workflow)
+    workflow = Workflow(id="test-workflow", definition=workflow_def)
+    submit_message = WorkflowSubmitMessage(
+        workflow=workflow, args={"name": "world"}, run_id="test-run"
+    )
     templated = submit_message.get_workflow_with_templated_args()
-    assert templated.jobs["test-job"].tasks[0].args["hello"] == "world"
+    assert templated.definition.jobs["test-job"].tasks[0].args["hello"] == "world"
 
 
 def test_unexpected_args():
     workflow = """
     name: Test workflow
-    dataset: microsoft/test-dataset
+    dataset: test-dataset
 
     args:
-      - name
+      - nombre
 
     jobs:
       test-job:
@@ -89,10 +93,13 @@ def test_unexpected_args():
             args:
               hello: ${{ args.name }}
     """
-    workflow = WorkflowConfig.from_yaml(workflow)
+    workflow_def = WorkflowDefinition.from_yaml(workflow)
+    workflow = Workflow(id="test-workflow", definition=workflow_def)
     try:
         _ = WorkflowSubmitMessage(
-            workflow=workflow, args={"nombre": "mundo", "name": "world"}
+            workflow=workflow,
+            args={"nombre": "mundo", "name": "world"},
+            run_id="test-run",
         )
     except ValidationError as e:
         assert "Unexpected args" in str(e)
@@ -102,10 +109,10 @@ def test_unexpected_args():
 def test_missing_and_unexpected_args():
     workflow = """
     name: Test workflow
-    dataset: microsoft/test-dataset
+    dataset: test-dataset
 
     args:
-      - name
+      - nombre
 
     jobs:
       test-job:
@@ -116,9 +123,12 @@ def test_missing_and_unexpected_args():
             args:
               hello: ${{ args.name }}
     """
-    workflow = WorkflowConfig.from_yaml(workflow)
+    workflow_def = WorkflowDefinition.from_yaml(workflow)
+    workflow = Workflow(id="test-workflow", definition=workflow_def)
     try:
-        _ = WorkflowSubmitMessage(workflow=workflow, args={"nombre": "mundo"})
+        _ = WorkflowSubmitMessage(
+            workflow=workflow, args={"name": "mundo"}, run_id="test-run"
+        )
     except ValidationError as e:
         assert "Unexpected args" in str(e)
         assert "Args expected" in str(e)
@@ -128,7 +138,7 @@ def test_missing_and_unexpected_args():
 def test_missing_args():
     workflow = """
     name: Test workflow
-    dataset: microsoft/test-dataset
+    dataset: test-dataset
 
     args:
       - name
@@ -142,9 +152,10 @@ def test_missing_args():
             args:
               hello: ${{ args.name }}
     """
-    workflow = WorkflowConfig.from_yaml(workflow)
+    workflow_def = WorkflowDefinition.from_yaml(workflow)
+    workflow = Workflow(id="test-workflow", definition=workflow_def)
     try:
-        _ = WorkflowSubmitMessage(workflow=workflow)
+        _ = WorkflowSubmitMessage(workflow=workflow, run_id="test-run")
     except ValidationError as e:
         assert "Args expected" in str(e)
         return
@@ -152,10 +163,10 @@ def test_missing_args():
 
 def test_job_ids_no_commas():
     with pytest.raises(ValidationError):
-        _ = WorkflowConfig.from_yaml(
+        _ = WorkflowDefinition.from_yaml(
             """
             name: A workflow*  *with* *asterisks
-            dataset: microsoft/test-dataset
+            dataset: test-dataset
 
             jobs:
                 test,job:
@@ -171,7 +182,7 @@ def test_job_ids_no_commas():
 
 def test_job_get_dependencies():
     assert (
-        WorkflowConfig.from_yaml(
+        WorkflowDefinition.from_yaml(
             """
             name: A workflow*  *with* *asterisks
             dataset: microsoft/test-dataset
@@ -193,7 +204,7 @@ def test_job_get_dependencies():
     )
 
     assert (
-        WorkflowConfig.from_yaml(
+        WorkflowDefinition.from_yaml(
             """
             name: A workflow*  *with* *asterisks
             dataset: microsoft/test-dataset

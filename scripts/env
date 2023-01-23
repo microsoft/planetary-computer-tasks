@@ -14,7 +14,6 @@ PACKAGE_DIRS=(
     "pctasks/run"
     "pctasks/notify"
     "pctasks/router"
-    "pctasks/operations"
     "pctasks/server"
     "pctasks/dev"
 )
@@ -36,6 +35,16 @@ function setup_docker_network() {
 
             docker network create \
                 --driver=bridge \
+                --subnet=172.16.238.0/24 \
                 pctasks-network
         fi
+}
+
+function require_env() {
+    v=$(eval echo \$${1})
+
+    if [[ -z ${v} ]]; then
+        echo "${1} must be set as environment variable" >&2
+        exit 1
+    fi
 }

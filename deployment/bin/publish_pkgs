@@ -1,0 +1,149 @@
+#!/bin/bash
+
+source bin/lib
+
+set -e
+
+if [[ "${CI}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+        "Usage: $(basename "$0") -t PACKAGE_TAG
+Publish Azure function and CosmosDB script packages to gh-pages.
+
+-t PACKAGE_TAG: The version tag used for the published packages. Required.
+"
+}
+
+while [[ "$#" -gt 0 ]]; do case $1 in
+    -t)
+        PACKAGE_TAG=${2}
+        shift
+        shift
+        ;;
+    --help)
+        usage
+        exit 0
+        shift
+        ;;
+    *)
+        usage "Unknown parameter passed: $1"
+        shift
+        shift
+        ;;
+    esac done
+
+if [[ -z ${PACKAGE_TAG} ]]; then
+    echo "Must pass in PACKAGE_TAG with -t"
+    exit
+fi
+
+require_env GITHUB_TOKEN
+require_env GITHUB_ACTOR
+
+echo "Building script packages with tag: ${PACKAGE_TAG}"
+
+configure() {
+    git config --global user.name "${GITHUB_ACTOR}"
+    git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+    if [[ -z ${GITHUB_REPOSITORY} ]]; then
+        GITHUB_REPOSITORY="microsoft/planetary-computer-tasks"
+    fi
+
+    OWNER=$(cut -d '/' -f 1 <<< "$GITHUB_REPOSITORY")
+    REPOSITORY=$(cut -d '/' -f 2 <<< "$GITHUB_REPOSITORY")
+
+    REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${OWNER}/${REPOSITORY}"
+    BRANCH=gh-pages
+
+    PKG_TMP_DIR=$(mktemp -d)
+
+    FUNC_PKG_TYPE="planetary-computer-tasks-func"
+    CDB_PKG_TYPE="planetary-computer-tasks-cdb"
+
+    FUNC_PKG_NAME="${FUNC_PKG_TYPE}-${PACKAGE_TAG}"
+    CDB_PKG_NAME="${CDB_PKG_TYPE}-${PACKAGE_TAG}"
+}
+
+package() {
+    package_func
+    package_cdb
+}
+
+package_func() {
+    echo "Packaging function app..."
+
+    prepare_funcs
+
+    pushd /opt/src/functions_deploy
+    func pack --output "${PKG_TMP_DIR}/${FUNC_PKG_NAME}"
+    popd
+}
+
+package_cdb() {
+    echo "Packaging CosmosDB scripts..."
+
+    pushd /opt/src/deployment/cosmosdb/scripts
+    zip -r "${PKG_TMP_DIR}/${CDB_PKG_NAME}.zip" .
+    popd
+}
+
+
+update() {
+    # Clone the repo and checkout the gh-pages branch. Update the package
+    # metadata index and the artifact to be included in the published Pages
+    # deployment.
+
+    TMP_REPO_DIR=$(mktemp -d)
+    PKG_TARGET_DIR="${TMP_REPO_DIR}/${REPOSITORY}/script-packages"
+    pushd "$TMP_REPO_DIR" >& /dev/null
+
+    git clone "${REPO_URL}"
+    cd "${REPOSITORY}"
+    git remote set-url origin "${REPO_URL}"
+    git checkout "${BRANCH}"
+
+    # Target directory for published func packages
+    mkdir -p "${PKG_TARGET_DIR}"
+
+    # Update the index file with the metadata for the new packages
+    if [[ -f "pkg-index.yaml" ]]; then
+        echo "Found metadata index, merging package version"
+
+        mv -f "${PKG_TMP_DIR}/${FUNC_PKG_NAME}.zip" "${PKG_TARGET_DIR}"
+        /opt/src/deployment/bin/update_pkg_index "${FUNC_PKG_TYPE}" "${FUNC_PKG_NAME}" "${PACKAGE_TAG}"
+
+        mv -f "${PKG_TMP_DIR}/${CDB_PKG_NAME}.zip" "${PKG_TARGET_DIR}"
+        /opt/src/deployment/bin/update_pkg_index "${CDB_PKG_TYPE}" "${CDB_PKG_NAME}" "${PACKAGE_TAG}"
+
+    else
+        echo "Could not find the script metadata index file"
+        exit 1
+    fi
+
+    upload
+
+    popd >& /dev/null
+    rm -rf "$TMP_REPO_DIR"
+}
+
+upload() {
+    git add pkg-index.yaml
+    git add "${PKG_TARGET_DIR}/${FUNC_PKG_NAME}.zip"
+    git add "${PKG_TARGET_DIR}/${CDB_PKG_NAME}.zip"
+    git status
+
+    git commit -m "Publish pctasks packages ${PACKAGE_TAG}"
+    git push origin ${BRANCH}
+
+    echo "Published pctasks packages ${PACKAGE_TAG} to ${BRANCH}"
+    ls -lh "${PKG_TARGET_DIR}"
+}
+
+# Package the scripts and upload to gh-pages
+configure
+package
+update

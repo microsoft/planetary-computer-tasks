@@ -1,0 +1,42 @@
+id: goes_glm
+image: ${{ args.registry }}/pctasks-goes-glm:2022.10.31.0
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./goes_glm.py) }}
+  # This requirements.txt is used in the Dockerfile.
+  # requirements: ${{ local.path(./requirements.txt) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: goes-glm
+    template: ${{ local.path(./collection) }}
+    class: goes_glm:GoesGlmCollection
+    asset_storage:
+      - uri: blob://goeseuwest/noaa-goes16/
+        token: ${{ pc.get_token(goeseuwest, noaa-goes16) }}
+        chunks:
+          options:
+            ends_with: .nc
+            chunk_length: 10000
+          splits:
+            - prefix: GLM-L2-LCFA/
+              depth: 2
+      - uri: blob://goeseuwest/noaa-goes17/
+        token: ${{ pc.get_token(goeseuwest, noaa-goes17) }}
+        chunks:
+          options:
+            ends_with: .nc
+            chunk_length: 10000
+          splits:
+            - prefix: GLM-L2-LCFA/
+              depth: 2
+
+    chunk_storage:
+      uri: blob://goeseuwest/noaa-goes-etl-data/pctasks/glm/

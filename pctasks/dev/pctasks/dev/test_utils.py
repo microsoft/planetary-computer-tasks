@@ -12,18 +12,13 @@ from pctasks.cli.cli import pctasks_cmd
 from pctasks.client.client import PCTasksClient
 from pctasks.client.errors import NotFoundError
 from pctasks.client.settings import ClientSettings
-from pctasks.client.submit.template import template_workflow_dict
-from pctasks.core.constants import (
-    DEFAULT_LOG_CONTAINER,
-    DEFAULT_TASK_IO_CONTAINER,
-    DEFAULT_TASK_RUN_RECORD_TABLE_NAME,
-)
-from pctasks.core.models.api import JobRunResponse, TaskRunResponse, WorkflowRunResponse
-from pctasks.core.models.base import RunRecordId
-from pctasks.core.models.record import (
+from pctasks.client.workflow.template import template_workflow_dict
+from pctasks.core.constants import DEFAULT_LOG_CONTAINER, DEFAULT_TASK_IO_CONTAINER
+from pctasks.core.models.run import (
+    JobPartitionRunRecord,
     JobRunStatus,
-    TaskRunRecord,
     TaskRunStatus,
+    WorkflowRunRecord,
     WorkflowRunStatus,
 )
 from pctasks.core.models.task import (
@@ -33,8 +28,12 @@ from pctasks.core.models.task import (
     WaitTaskResult,
 )
 from pctasks.core.models.tokens import StorageAccountTokens
-from pctasks.core.models.workflow import WorkflowConfig, WorkflowSubmitMessage
-from pctasks.dataset.models import ChunkOptions, StorageConfig
+from pctasks.core.models.workflow import (
+    Workflow,
+    WorkflowDefinition,
+    WorkflowSubmitRequest,
+)
+from pctasks.dataset.models import ChunkOptions, StorageDefinition
 from pctasks.dataset.splits.models import CreateSplitsOptions
 from pctasks.dataset.template import template_dataset_file
 from pctasks.dataset.workflow import (
@@ -42,7 +41,7 @@ from pctasks.dataset.workflow import (
     create_process_items_workflow,
 )
 from pctasks.dev.blob import temp_azurite_blob_storage
-from pctasks.dev.config import get_blob_config, get_table_config
+from pctasks.dev.config import get_blob_config
 from pctasks.dev.db import temp_pgstac_db
 from pctasks.ingest.constants import DB_CONNECTION_STRING_ENV_VAR
 from pctasks.task.run import run_task
@@ -71,74 +70,86 @@ def run_pctasks(
 
 
 @dataclass
-class TestJobRunRecords:
-    job_record: JobRunResponse
-    tasks: Dict[str, TaskRunResponse]
-
-
-@dataclass
 class TestWorkflowRunRecords:
-    workflow_record: WorkflowRunResponse
-    jobs: Dict[str, TestJobRunRecords]
+    workflow: Workflow
+    workflow_run: WorkflowRunRecord
+    job_partition_runs: Dict[str, List[JobPartitionRunRecord]]
     timeout: bool = False
 
     def print(self) -> None:
-        print(f"Workflow: {self.workflow_record.run_id}:")
+        print("________________________________________")
+        print(f"Workflow: {self.workflow_run.run_id}:")
         print("----------------------------------------")
-        print(self.workflow_record.to_yaml())
-        print("----------------------------------------")
-        for job in self.jobs.values():
-            print(f"Job: {job.job_record.job_id}:")
+        print(self.workflow_run.to_yaml())
+        print("++++++++++++++++++++++++++++++++++++++++")
+        for job in self.workflow_run.jobs:
+            print(f"Job: {job.job_id}:")
             print("----------------------------------------")
-            print(job.job_record.to_yaml())
-            for task in job.tasks.values():
-                print(f"Task: {task.task_id} ({task.job_id}):")
+            print(job.to_yaml())
+            print("++++++++++++++++++++++++++++++++++++++++")
+            job_parts = self.job_partition_runs.get(job.job_id, [])
+            if not job_parts:
+                print(f"No job partition runs for job {job.job_id}")
+            for job_part in job_parts:
+                print(f"Job Partition: {job_part.partition_id}:")
                 print("----------------------------------------")
-                print(task.to_yaml())
+                print(job_part.to_yaml())
+                print("++++++++++++++++++++++++++++++++++++++++")
+                for task in job_part.tasks:
+                    print(f"Task: {task.task_id} ({task.job_id}):")
+                    print("----------------------------------------")
+                    print(task.to_yaml())
+                    print("++++++++++++++++++++++++++++++++++++++++")
+        print("________________________________________")
 
 
 def wait_for_test_workflow_run(
     run_id: str, timeout_seconds: int = 10
 ) -> TestWorkflowRunRecords:
     print(f"Waiting for test workflow run {run_id} to complete...")
-    workflow: Optional[WorkflowRunResponse] = None
+    workflow_run: Optional[WorkflowRunRecord] = None
 
     client = PCTasksClient()
 
     tic = time.perf_counter()
     tok = time.perf_counter()
     while (
-        workflow is None
-        or workflow.status
+        workflow_run is None
+        or workflow_run.status
         not in [WorkflowRunStatus.COMPLETED, WorkflowRunStatus.FAILED]
     ) and tok - tic < timeout_seconds:
-        if not workflow:
+        if not workflow_run:
             print(f"waiting for workflow run record... ({tok - tic:.0f} s)".format(tok))
         else:
             print(
-                f"Waiting on workflow run with status {workflow.status}... "
+                f"Waiting on workflow run with status {workflow_run.status}... "
                 f"({tok - tic:.0f} s)".format(tok)
             )
         try:
-            workflow = client.get_workflow(run_id)
+            workflow_run = client.get_workflow_run(run_id)
         except NotFoundError:
             pass
 
-        time.sleep(1)
+        time.sleep(5)
         tok = time.perf_counter()
 
-    if workflow:
-        jobs = client.get_jobs_from_workflow(workflow)
+    if workflow_run:
+        workflow_record = client.get_workflow(workflow_run.workflow_id)
+        if not workflow_record:
+            raise Exception(f"Workflow {workflow_run.workflow_id} not found")
+        job_runs = workflow_run.jobs
 
-        job_records: Dict[str, TestJobRunRecords] = {}
-        for job in jobs:
-            tasks = client.get_tasks_from_job(job)
-            job_records[job.job_id] = TestJobRunRecords(
-                job, {t.task_id: t for t in tasks}
+        job_part_runs: Dict[str, List[JobPartitionRunRecord]] = {}
+        for job_run in job_runs:
+            job_part_runs[job_run.job_id] = list(
+                client.list_job_partition_runs(run_id, job_run.job_id)
             )
 
         return TestWorkflowRunRecords(
-            workflow, job_records, timeout=tok - tic >= timeout_seconds
+            workflow=workflow_record.workflow,
+            workflow_run=workflow_run,
+            job_partition_runs=job_part_runs,
+            timeout=tok - tic >= timeout_seconds,
         )
     else:
         raise Exception(f"Timeout while waiting for workflow {run_id}")
@@ -147,46 +158,56 @@ def wait_for_test_workflow_run(
 def _check_workflow(
     run_id: str, timeout_seconds: int = 10
 ) -> Tuple[bool, TestWorkflowRunRecords]:
-    workflow_run_records = wait_for_test_workflow_run(run_id, timeout_seconds)
-    failed = workflow_run_records.workflow_record.status != WorkflowRunStatus.COMPLETED
+    workflow_record = wait_for_test_workflow_run(run_id, timeout_seconds)
+    failed = workflow_record.workflow_run.status != WorkflowRunStatus.COMPLETED
     if failed:
         print(
             f"Workflow run {run_id} failed. "
-            f"Status: {workflow_run_records.workflow_record.status}"
+            f"Status: {workflow_record.workflow_run.status}"
         )
-        if workflow_run_records.timeout:
+        if workflow_record.timeout:
             print(f"TIMEOUT while waiting for workflow {run_id}")
-        if workflow_run_records.workflow_record.workflow:
-            print("Workflow:")
-            print(workflow_run_records.workflow_record.workflow.to_yaml())
-        for error in workflow_run_records.workflow_record.errors or []:
-            print(f" - {error}")
-    for job_id, job_records in workflow_run_records.jobs.items():
-        job_failed = job_records.job_record.status != JobRunStatus.COMPLETED
+        print("Workflow:")
+        print(workflow_record.workflow.to_yaml())
+    for job_run in workflow_record.workflow_run.jobs:
+        job_failed = job_run.status != JobRunStatus.COMPLETED
         if job_failed:
-            print(f"Job {job_id} failed. Status: {job_records.job_record.status}")
-            for error in job_records.job_record.errors or []:
+            print(f"Job {job_run.job_id} failed. Status: {job_run.status}")
+            for error in job_run.errors or []:
                 print(f" -- {error}")
         failed |= job_failed
-        for task_id, task in job_records.tasks.items():
-            task_failed = task.status != TaskRunStatus.COMPLETED
-            if task_failed:
-                print(f"Task {task_id} failed")
-                for error in task.errors or []:
-                    print(f" --- {error}")
-            failed |= task_failed
-            if task_failed:
-                client = PCTasksClient()
-                try:
-                    logs = client.get_task_logs_from_task(task)
-                    for log_name, log in logs.items():
-                        print(f"\t\t-- log: {log_name} --")
-                        print(log)
-                        print(f"\t\t-- End log {log_name} --")
-                except NotFoundError:
-                    print(f"No run log found for task {task_id}")
+        job_partitions = workflow_record.job_partition_runs.get(job_run.job_id)
+        if not job_partitions:
+            print(f"No job partitions for job {job_run.job_id}")
+        else:
+            for job_part_run in job_partitions:
+                for task_run in job_part_run.tasks:
+                    task_failed = task_run.status != TaskRunStatus.COMPLETED
+                    if task_failed:
+                        print(
+                            f"Task {task_run.task_id} failed in job "
+                            f"{job_run.job_id}:{job_part_run.partition_id}."
+                        )
+                        for error in task_run.errors or []:
+                            print(f" --- {error}")
+                    failed |= task_failed
+                    if task_failed:
+                        client = PCTasksClient()
 
-    return (failed, workflow_run_records)
+                        log = client.get_task_log(
+                            run_id=run_id,
+                            job_id=job_run.job_id,
+                            partition_id=task_run.partition_id,
+                            task_id=task_run.task_id,
+                        )
+                        if log:
+                            print("\t\t---------- TASK LOG ----------")
+                            print(log)
+                            print(f"\t\t-- End log  for task {task_run.task_id} --")
+                        else:
+                            print(f"No run log found for task {task_run.task_id}")
+
+    return (failed, workflow_record)
 
 
 def assert_workflow_is_successful(
@@ -206,23 +227,31 @@ def assert_workflow_fails(
 
 
 def run_workflow(
-    workflow: Union[str, WorkflowConfig],
+    workflow_def: Union[str, WorkflowDefinition],
     args: Optional[Dict[str, Any]] = None,
     base_path: Union[str, Path] = Path.cwd(),
 ) -> str:
-    """Runs a workflow from either a YAML string or WorkflowConfig object.
+    """Runs a workflow from either a YAML string or WorkflowDefinition object.
     Uses the default submit settings.
     Returns the run_id
     """
-    workflow = (
-        WorkflowConfig.from_yaml(workflow) if isinstance(workflow, str) else workflow
+    workflow_def = (
+        WorkflowDefinition.from_yaml(workflow_def)
+        if isinstance(workflow_def, str)
+        else workflow_def
     )
-    templated_workflow = template_workflow_dict(workflow.dict(), base_path=base_path)
+    workflow_def = template_workflow_dict(workflow_def.dict(), base_path=base_path)
+    if args:
+        workflow_def = workflow_def.template_args(args)
+
     submit_settings = ClientSettings.get()
-    submit_message = PCTasksClient(submit_settings).submit_workflow(
-        WorkflowSubmitMessage(workflow=templated_workflow, args=args)
+    submit_settings.confirmation_required = False
+
+    submit_response = PCTasksClient(submit_settings).upsert_and_submit_workflow(
+        workflow_definition=workflow_def, request=WorkflowSubmitRequest(args=args)
     )
-    return submit_message.run_id
+
+    return submit_response.run_id
 
 
 def run_workflow_from_file(
@@ -245,62 +274,39 @@ def run_test_task(
     task: str,
     tokens: Optional[Dict[str, StorageAccountTokens]] = None,
 ) -> Union[CompletedTaskResult, WaitTaskResult]:
-    from pctasks.dev.tables import get_task_run_record_table
 
     job_id = "unit-test-job"
     task_id = "task-unit-test"
     run_id = "test_task_func"
 
-    run_record_id = RunRecordId(
-        job_id=job_id,
-        task_id=task_id,
-        run_id=run_id,
+    log_path = f"{job_id}/{task_id}/{run_id}.log"
+    status_update_path = f"{job_id}/{task_id}/{run_id}/status.txt"
+    output_path = f"{job_id}/{task_id}/{run_id}-output.json"
+
+    msg = TaskRunMessage(
+        args=args,
+        config=TaskRunConfig(
+            run_id=run_id,
+            job_id=job_id,
+            partition_id="0",
+            task_id=task_id,
+            image="TESTIMAGE:latest",
+            tokens=tokens,
+            task=task,
+            status_blob_config=get_blob_config(
+                DEFAULT_TASK_IO_CONTAINER, status_update_path
+            ),
+            log_blob_config=get_blob_config(DEFAULT_LOG_CONTAINER, log_path),
+            output_blob_config=get_blob_config(DEFAULT_TASK_IO_CONTAINER, output_path),
+        ),
     )
 
-    with get_task_run_record_table() as task_run_table:
-        task_run_table.upsert_record(
-            TaskRunRecord(
-                run_id=run_record_id.run_id,
-                job_id=job_id,
-                task_id=task_id,
-                status=TaskRunStatus.SUBMITTED,
-            )
-        )
-
-        log_path = f"{job_id}/{task_id}/{run_id}.log"
-        output_path = f"{job_id}/{task_id}/{run_id}-output.json"
-
-        msg = TaskRunMessage(
-            args=args,
-            config=TaskRunConfig(
-                run_id=run_id,
-                job_id=job_id,
-                task_id=task_id,
-                image="TESTIMAGE:latest",
-                tokens=tokens,
-                task=task,
-                task_runs_table_config=get_table_config(
-                    DEFAULT_TASK_RUN_RECORD_TABLE_NAME
-                ),
-                log_blob_config=get_blob_config(DEFAULT_LOG_CONTAINER, log_path),
-                output_blob_config=get_blob_config(
-                    DEFAULT_TASK_IO_CONTAINER, output_path
-                ),
-            ),
-        )
-
-        result = run_task(msg)
-        if isinstance(result, CompletedTaskResult):
-            record = task_run_table.get_record(
-                run_record_id=run_record_id,
-            )
-            assert record
-            assert record.status == TaskRunStatus.COMPLETED
-
-            return result
-        else:
-            assert isinstance(result, WaitTaskResult)
-            return result
+    result = run_task(msg)
+    if isinstance(result, CompletedTaskResult):
+        return result
+    else:
+        assert isinstance(result, WaitTaskResult)
+        return result
 
 
 def run_process_items_workflow(
@@ -328,7 +334,7 @@ def run_process_items_workflow(
             dataset.environment[DB_CONNECTION_STRING_ENV_VAR] = conn_str_info.remote
 
             for collection_config in dataset.collections:
-                collection_config.chunk_storage = StorageConfig(
+                collection_config.chunk_storage = StorageDefinition(
                     uri=chunks_storage.get_uri()
                 )
 
@@ -336,18 +342,16 @@ def run_process_items_workflow(
             collection_id = collection_config.id
 
             # Ingest collection
-
+            _ingest_submit_result = PCTasksClient().upsert_and_submit_workflow(
+                workflow_definition=create_ingest_collection_workflow(
+                    dataset, collection_config
+                ),
+                request=WorkflowSubmitRequest(
+                    args=args,
+                ),
+            )
             assert_workflow_is_successful(
-                PCTasksClient()
-                .submit_workflow(
-                    WorkflowSubmitMessage(
-                        workflow=create_ingest_collection_workflow(
-                            dataset, collection_config
-                        ),
-                        args=args,
-                    )
-                )
-                .run_id,
+                _ingest_submit_result.run_id,
                 timeout_seconds=timeout_seconds,
             )
 
@@ -359,24 +363,18 @@ def run_process_items_workflow(
                 assert res == collection_id
 
             # Process items
-
+            _items_submit_result = PCTasksClient().upsert_and_submit_workflow(
+                workflow_definition=create_process_items_workflow(
+                    dataset,
+                    collection_config,
+                    "test-chunkset-id",
+                    create_splits_options=CreateSplitsOptions(limit=splits_limit),
+                    chunk_options=ChunkOptions(limit=chunks_limit),
+                ),
+                request=WorkflowSubmitRequest(args=args),
+            )
             assert_workflow_is_successful(
-                PCTasksClient()
-                .submit_workflow(
-                    WorkflowSubmitMessage(
-                        workflow=create_process_items_workflow(
-                            dataset,
-                            collection_config,
-                            "test-chunkset-id",
-                            create_splits_options=CreateSplitsOptions(
-                                limit=splits_limit
-                            ),
-                            chunk_options=ChunkOptions(limit=chunks_limit),
-                        ),
-                        args=args,
-                    )
-                )
-                .run_id,
+                _items_submit_result.run_id,
                 timeout_seconds=timeout_seconds,
             )
 

@@ -3,13 +3,17 @@ services:
     container_name: pctasks-dev
     image: pctasks-dev
     build:
-        context: .
-        dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: Dockerfile.dev
     volumes:
       - .:/opt/src
     environment:
       - PCTASKS_CLIENT__ENDPOINT=http://nginx/tasks
       - PCTASKS_CLIENT__API_KEY=hunter2
+      - PCTASKS_CLIENT__CONFIRMATION_REQUIRED=False
+
+      # Server API access key
+      - PCTASKS_SERVER__ACCESS_KEY=access-key-test
 
       # Dev executor settings
       - PCTASKS_RUN__TASK_RUNNER_TYPE=local
@@ -22,10 +26,14 @@ services:
       - AZURITE_PORT=10000
       - AZURITE_STORAGE_ACCOUNT=devstoreaccount1
 
+      # Cosmos DB settings
+      - COSMOSDB_EMULATOR_HOST=cosmosdb
+      - PCTASKS_COSMOSDB__URL=${PCTASKS_COSMOSDB__URL:-https://cosmosdb:8081/}
+      - PCTASKS_COSMOSDB__KEY=${PCTASKS_COSMOSDB__KEY:-C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==}
+      - PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX
+
       # Local secrets provider secrets
       - SECRETS_DB_CONNECTION_STRING=postgresql://username:password@database:5432/postgis
-
-      - PCTASKS_SERVER__RECORD_TABLES__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://azurite:10002/devstoreaccount1;
 
       # Run settings #######################################################
 
@@ -34,6 +42,7 @@ services:
       ### Queues
       - PCTASKS_RUN__NOTIFICATION_QUEUE__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
       - PCTASKS_RUN__INBOX_QUEUE__CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;
+
       ### Tables
       - PCTASKS_RUN__TABLES_ACCOUNT_URL=http://azurite:10002/devstoreaccount1
       - PCTASKS_RUN__TABLES_ACCOUNT_NAME=devstoreaccount1
@@ -66,27 +75,18 @@ services:
       - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_NAME=devstoreaccount1
       - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
 
-      # Operations settings #######################################################
-
-      ## Azure Storage
-
-      ### Tables
-
-      - PCTASKS_OPS__TABLES_ACCOUNT_URL=http://azurite:10002/devstoreaccount1
-      - PCTASKS_OPS__TABLES_ACCOUNT_NAME=devstoreaccount1
-      - PCTASKS_OPS__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
-
   integration-tests:
     container_name: pctasks-integration-tests
     image: pctasks-dev
     build:
-        context: .
-        dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: Dockerfile.dev
     volumes:
       - .:/opt/src
     environment:
       - PCTASKS_CLIENT__ENDPOINT=http://host.docker.internal:8500/tasks
       - PCTASKS_CLIENT__API_KEY=kind-api-key
+      - PCTASKS_CLIENT__CONFIRMATION_REQUIRED=False
 
       # Dev storage settings
       - AZURITE_HOST=azurite
@@ -102,4 +102,3 @@ services:
 networks:
   default:
     name: pctasks-network
-

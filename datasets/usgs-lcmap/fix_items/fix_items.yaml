@@ -1,0 +1,21 @@
+name: Fix USGS LCMAP Item classes
+id: usgs-lcmap-fix-items
+dataset: usgs-lcmap
+args:
+  - registry
+jobs:
+  fix-items:
+    id: fix-items
+    tasks:
+      - id: fix-items
+        image: ${{ args.registry }}/pctasks-task-base:latest
+        code:
+          src: ${{ local.path(./fix_items.py) }}
+        task: fix_items:fix_items_task
+        args:
+          incorrect_chunkset_uri: blob://landcoverdata/lcmap-etl-data/lcmap-conus-v13/2023-01-12-full-2/items
+          corrected_chunkset_uri: blob://landcoverdata/lcmap-etl-data/lcmap-conus-v13/2023-01-12-full-2/fixed-items
+        environment:
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}

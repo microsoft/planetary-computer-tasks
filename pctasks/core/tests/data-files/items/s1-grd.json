@@ -1,0 +1,480 @@
+{
+    "id": "S1A_EW_GRDM_1SSH_20220505T235314_20220505T235417_043082_05250D",
+    "bbox": [
+        -70.2574733,
+        -62.8037152,
+        -60.3805765,
+        -57.8212329
+    ],
+    "type": "Feature",
+    "links": [
+        {
+            "rel": "collection",
+            "type": "application/json",
+            "href": "https://pct-apis-staging.westeurope.cloudapp.azure.com/stac/collections/sentinel-1-grd"
+        },
+        {
+            "rel": "parent",
+            "type": "application/json",
+            "href": "https://pct-apis-staging.westeurope.cloudapp.azure.com/stac/collections/sentinel-1-grd"
+        },
+        {
+            "rel": "root",
+            "type": "application/json",
+            "href": "https://pct-apis-staging.westeurope.cloudapp.azure.com/stac/"
+        },
+        {
+            "rel": "self",
+            "type": "application/geo+json",
+            "href": "https://pct-apis-staging.westeurope.cloudapp.azure.com/stac/collections/sentinel-1-grd/items/S1A_EW_GRDM_1SSH_20220505T235314_20220505T235417_043082_05250D"
+        },
+        {
+            "rel": "license",
+            "href": "https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice"
+        }
+    ],
+    "assets": {
+        "hh": {
+            "href": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2022/5/5/EW/SH/S1A_EW_GRDM_1SSH_20220505T235314_20220505T235417_043082_05250D_9362/measurement/ew-hh.tiff",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "HH",
+            "eo:bands": [
+                {
+                    "name": "HH",
+                    "description": "HH band: horizontal transmit and horizontal receive"
+                }
+            ],
+            "description": "Actual SAR data that have been processed into an image"
+        },
+        "thumbnail": {
+            "href": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2022/5/5/EW/SH/S1A_EW_GRDM_1SSH_20220505T235314_20220505T235417_043082_05250D_9362/preview/quick-look.png",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "Preview Image",
+            "description": "An averaged, decimated preview image in PNG format. Single polarisation products are represented with a grey scale image. Dual polarisation products are represented by a single composite colour image in RGB with the red channel (R) representing the  co-polarisation VV or HH), the green channel (G) represents the cross-polarisation (VH or HV) and the blue channel (B) represents the ratio of the cross an co-polarisations."
+        },
+        "safe-manifest": {
+            "href": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2022/5/5/EW/SH/S1A_EW_GRDM_1SSH_20220505T235314_20220505T235417_043082_05250D_9362/manifest.safe",
+            "type": "application/xml",
+            "roles": [
+                "metadata"
+            ],
+            "title": "Manifest File",
+            "description": "General product metadata in XML format. Contains a high-level textual description of the product and references to all of product's components, the product metadata, including the product identification and the resource references, and references to the physical location of each component file contained in the product."
+        },
+        "schema-noise-hh": {
+            "href": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2022/5/5/EW/SH/S1A_EW_GRDM_1SSH_20220505T235314_20220505T235417_043082_05250D_9362/annotation/calibration/noise-ew-hh.xml",
+            "type": "application/xml",
+            "roles": [
+                "metadata"
+            ],
+            "title": "Noise Schema",
+            "description": "Estimated thermal noise look-up tables"
+        },
+        "schema-product-hh": {
+            "href": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2022/5/5/EW/SH/S1A_EW_GRDM_1SSH_20220505T235314_20220505T235417_043082_05250D_9362/annotation/rfi/rfi-ew-hh.xml",
+            "type": "application/xml",
+            "roles": [
+                "metadata"
+            ],
+            "title": "Product Schema",
+            "description": "Describes the main characteristics corresponding to the band: state of the platform during acquisition, image properties, Doppler information, geographic location, etc."
+        },
+        "schema-calibration-hh": {
+            "href": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2022/5/5/EW/SH/S1A_EW_GRDM_1SSH_20220505T235314_20220505T235417_043082_05250D_9362/annotation/calibration/calibration-ew-hh.xml",
+            "type": "application/xml",
+            "roles": [
+                "metadata"
+            ],
+            "title": "Calibration Schema",
+            "description": "Calibration metadata including calibration information and the beta nought, sigma nought, gamma and digital number look-up tables that can be used for absolute product calibration."
+        }
+    },
+    "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+            [
+                [
+                    [
+                        -67.3458027,
+                        -62.8037152
+                    ],
+                    [
+                        -67.0376092,
+                        -62.7413793
+                    ],
+                    [
+                        -66.6611436,
+                        -62.6638236
+                    ],
+                    [
+                        -66.2866536,
+                        -62.5852634
+                    ],
+                    [
+                        -65.9141471,
+                        -62.5057072
+                    ],
+                    [
+                        -65.5436314,
+                        -62.4251638
+                    ],
+                    [
+                        -65.1751132,
+                        -62.3436417
+                    ],
+                    [
+                        -64.8085985,
+                        -62.2611494
+                    ],
+                    [
+                        -64.4440926,
+                        -62.1776957
+                    ],
+                    [
+                        -64.0816005,
+                        -62.0932891
+                    ],
+                    [
+                        -63.7211262,
+                        -62.0079383
+                    ],
+                    [
+                        -63.3626734,
+                        -61.9216517
+                    ],
+                    [
+                        -63.0062451,
+                        -61.8344381
+                    ],
+                    [
+                        -62.6518438,
+                        -61.746306
+                    ],
+                    [
+                        -62.2994714,
+                        -61.657264
+                    ],
+                    [
+                        -61.9491291,
+                        -61.5673206
+                    ],
+                    [
+                        -61.600818,
+                        -61.4764842
+                    ],
+                    [
+                        -61.2545381,
+                        -61.3847635
+                    ],
+                    [
+                        -60.9102894,
+                        -61.2921669
+                    ],
+                    [
+                        -60.5680712,
+                        -61.1987028
+                    ],
+                    [
+                        -60.3805765,
+                        -61.1467196
+                    ],
+                    [
+                        -60.5665964,
+                        -60.9862168
+                    ],
+                    [
+                        -60.7511214,
+                        -60.8251413
+                    ],
+                    [
+                        -60.9338116,
+                        -60.6638145
+                    ],
+                    [
+                        -61.1146945,
+                        -60.5022404
+                    ],
+                    [
+                        -61.293797,
+                        -60.3404229
+                    ],
+                    [
+                        -61.4711457,
+                        -60.1783659
+                    ],
+                    [
+                        -61.6467665,
+                        -60.0160732
+                    ],
+                    [
+                        -61.8206849,
+                        -59.8535485
+                    ],
+                    [
+                        -61.9929262,
+                        -59.6907955
+                    ],
+                    [
+                        -62.163515,
+                        -59.5278177
+                    ],
+                    [
+                        -62.3324756,
+                        -59.3646187
+                    ],
+                    [
+                        -62.4998318,
+                        -59.2012018
+                    ],
+                    [
+                        -62.6656071,
+                        -59.0375704
+                    ],
+                    [
+                        -62.8298245,
+                        -58.8737278
+                    ],
+                    [
+                        -62.9925065,
+                        -58.7096773
+                    ],
+                    [
+                        -63.1536755,
+                        -58.545422
+                    ],
+                    [
+                        -63.3133533,
+                        -58.380965
+                    ],
+                    [
+                        -63.4715613,
+                        -58.2163093
+                    ],
+                    [
+                        -63.6283207,
+                        -58.051458
+                    ],
+                    [
+                        -63.7836522,
+                        -57.8864139
+                    ],
+                    [
+                        -63.8443718,
+                        -57.8212329
+                    ],
+                    [
+                        -64.0190093,
+                        -57.868584
+                    ],
+                    [
+                        -64.3373768,
+                        -57.9537082
+                    ],
+                    [
+                        -64.6572477,
+                        -58.038032
+                    ],
+                    [
+                        -64.9786197,
+                        -58.121549
+                    ],
+                    [
+                        -65.30149,
+                        -58.2042529
+                    ],
+                    [
+                        -65.6258557,
+                        -58.2861372
+                    ],
+                    [
+                        -65.9517135,
+                        -58.3671955
+                    ],
+                    [
+                        -66.2790596,
+                        -58.4474216
+                    ],
+                    [
+                        -66.6078901,
+                        -58.526809
+                    ],
+                    [
+                        -66.9382005,
+                        -58.6053514
+                    ],
+                    [
+                        -67.2699861,
+                        -58.6830424
+                    ],
+                    [
+                        -67.6032417,
+                        -58.7598755
+                    ],
+                    [
+                        -67.9379619,
+                        -58.8358446
+                    ],
+                    [
+                        -68.2741407,
+                        -58.9109431
+                    ],
+                    [
+                        -68.611772,
+                        -58.9851649
+                    ],
+                    [
+                        -68.9508489,
+                        -59.0585035
+                    ],
+                    [
+                        -69.2913646,
+                        -59.1309528
+                    ],
+                    [
+                        -69.6333115,
+                        -59.2025063
+                    ],
+                    [
+                        -69.9766819,
+                        -59.2731579
+                    ],
+                    [
+                        -70.2574733,
+                        -59.3299565
+                    ],
+                    [
+                        -70.0767623,
+                        -59.5692874
+                    ],
+                    [
+                        -69.9455791,
+                        -59.7407598
+                    ],
+                    [
+                        -69.8131293,
+                        -59.9121088
+                    ],
+                    [
+                        -69.6793919,
+                        -60.0833324
+                    ],
+                    [
+                        -69.5443456,
+                        -60.2544286
+                    ],
+                    [
+                        -69.4079683,
+                        -60.4253953
+                    ],
+                    [
+                        -69.2702377,
+                        -60.5962304
+                    ],
+                    [
+                        -69.1311309,
+                        -60.7669317
+                    ],
+                    [
+                        -68.9906246,
+                        -60.937497
+                    ],
+                    [
+                        -68.8486951,
+                        -61.107924
+                    ],
+                    [
+                        -68.7053179,
+                        -61.2782104
+                    ],
+                    [
+                        -68.5604681,
+                        -61.4483538
+                    ],
+                    [
+                        -68.4141205,
+                        -61.6183517
+                    ],
+                    [
+                        -68.2662489,
+                        -61.7882017
+                    ],
+                    [
+                        -68.116827,
+                        -61.9579013
+                    ],
+                    [
+                        -67.9658275,
+                        -62.1274478
+                    ],
+                    [
+                        -67.8132229,
+                        -62.2968385
+                    ],
+                    [
+                        -67.6589848,
+                        -62.4660707
+                    ],
+                    [
+                        -67.5030843,
+                        -62.6351416
+                    ],
+                    [
+                        -67.3458027,
+                        -62.8037152
+                    ]
+                ]
+            ]
+        ]
+    },
+    "collection": "sentinel-1-grd",
+    "properties": {
+        "datetime": "2022-05-05T23:53:45.981844Z",
+        "platform": "SENTINEL-1A",
+        "s1:shape": [
+            10557,
+            10764
+        ],
+        "end_datetime": "2022-05-05 23:54:17.839375+00:00",
+        "constellation": "Sentinel-1",
+        "s1:resolution": "medium",
+        "s1:datatake_id": "337165",
+        "start_datetime": "2022-05-05 23:53:14.124313+00:00",
+        "s1:orbit_source": "RESORB",
+        "s1:slice_number": "3",
+        "s1:total_slices": "3",
+        "sar:looks_range": 6,
+        "sat:orbit_state": "ascending",
+        "sar:product_type": "GRD",
+        "sar:looks_azimuth": 2,
+        "sar:polarizations": [
+            "HH"
+        ],
+        "sar:frequency_band": "C",
+        "sat:absolute_orbit": 43082,
+        "sat:relative_orbit": 135,
+        "s1:processing_level": "1",
+        "sar:instrument_mode": "EW",
+        "sar:center_frequency": 5.405,
+        "sar:resolution_range": 93,
+        "s1:product_timeliness": "Fast-24h",
+        "sar:resolution_azimuth": 87,
+        "sar:pixel_spacing_range": 40,
+        "sar:observation_direction": "right",
+        "sar:pixel_spacing_azimuth": 40,
+        "sar:looks_equivalent_number": 10.7,
+        "s1:instrument_configuration_ID": "7",
+        "sat:platform_international_designator": "2014-016A"
+    },
+    "stac_version": "1.0.0",
+    "stac_extensions": [
+        "https://stac-extensions.github.io/sar/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/sat/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/eo/v1.0.0/schema.json"
+    ]
+}

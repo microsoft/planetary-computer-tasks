@@ -3,8 +3,10 @@ from urllib.parse import urlparse
 
 from pydantic import validator
 
-from pctasks.core.models.workflow import WorkflowSubmitMessage
+from pctasks.core.models.workflow import WorkflowDefinition
 from pctasks.core.settings import PCTasksSettings
+
+DEFAULT_PAGE_SIZE = 100
 
 
 class ClientSettings(PCTasksSettings):
@@ -16,6 +18,7 @@ class ClientSettings(PCTasksSettings):
     api_key: str
     confirmation_required: bool = True
     default_args: Optional[Dict[str, str]] = None
+    default_page_size: int = DEFAULT_PAGE_SIZE
 
     @validator("endpoint")
     def _validate_endpoint(cls, v: str) -> str:
@@ -27,15 +30,18 @@ class ClientSettings(PCTasksSettings):
             raise ValueError(f"{v} is not a valid URL")
         return v
 
-    def add_default_arguments(self, submit_message: WorkflowSubmitMessage) -> None:
-        """Modifies the submit message to include default arguments."""
+    def add_default_args(
+        self, workflow_definition: WorkflowDefinition, args: Optional[Dict[str, str]]
+    ) -> Optional[Dict[str, str]]:
+        """Returns a new dictionary with the default args merged in.
+        If args is None and there are no default args, returns None.
+        """
+        result = args.copy() if args else None
         if self.default_args:
             for arg_name, arg_value in self.default_args.items():
-                if (
-                    submit_message.workflow.args
-                    and arg_name in submit_message.workflow.args
-                ):
-                    if not submit_message.args:
-                        submit_message.args = {}
-                    if arg_name not in submit_message.args:
-                        submit_message.args[arg_name] = arg_value
+                if workflow_definition.args and arg_name in workflow_definition.args:
+                    if not result:
+                        result = {}
+                    if arg_name not in result:
+                        result[arg_name] = arg_value
+        return result

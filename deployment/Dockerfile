@@ -32,10 +32,8 @@ RUN mv terraform /usr/local/bin
 
 # Install kubectl
 
-RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-RUN echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
-RUN apt-get update
-RUN apt-get install -y kubectl
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
+ && install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
 # Install Helm
 
@@ -44,6 +42,11 @@ RUN echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/
 RUN apt-get update
 RUN apt-get install helm
 
+# Install kubelogin
+
+RUN curl -sL https://github.com/Azure/kubelogin/releases/download/v0.0.18/kubelogin-linux-amd64.zip --output kubelogin.zip \
+    && unzip -j kubelogin.zip bin/linux_amd64/kubelogin -d /usr/local/bin/ \
+    && rm -rf kubelogin.zip
 
 # Install azure client
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash

@@ -2,13 +2,14 @@ from typing import Dict, List, Optional, Union
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.config import CodeConfig
-from pctasks.core.models.task import TaskConfig
+from pctasks.core.models.task import TaskDefinition
 from pctasks.dataset.chunks.constants import (
     ASSET_CHUNKS_PREFIX,
     CREATE_CHUNKS_TASK_PATH,
+    LIST_CHUNKS_TASK_PATH,
 )
 from pctasks.dataset.constants import CREATE_CHUNKS_TASK_ID, LIST_CHUNKS_TASK_ID
-from pctasks.dataset.models import ChunkOptions, CollectionConfig, DatasetConfig
+from pctasks.dataset.models import ChunkOptions, CollectionDefinition, DatasetDefinition
 
 
 class CreateChunksInput(PCBaseModel):
@@ -41,7 +42,7 @@ class ChunksOutput(PCBaseModel):
     """List of chunks. Each chunk contain a lists of asset URIs."""
 
 
-class CreateChunksTaskConfig(TaskConfig):
+class CreateChunksTaskConfig(TaskDefinition):
     @classmethod
     def create(
         cls,
@@ -64,8 +65,8 @@ class CreateChunksTaskConfig(TaskConfig):
     @classmethod
     def from_collection(
         cls,
-        ds: DatasetConfig,
-        collection: CollectionConfig,
+        ds: DatasetDefinition,
+        collection: CollectionDefinition,
         chunkset_id: str,
         src_uri: str,
         options: Optional[Union[str, ChunkOptions]] = None,
@@ -90,19 +91,21 @@ class CreateChunksTaskConfig(TaskConfig):
         )
 
 
-class ListChunksTaskConfig(TaskConfig):
+class ListChunksTaskConfig(TaskDefinition):
     @classmethod
     def create(
         cls,
         image: str,
         args: ListChunksInput,
-        task: str = CREATE_CHUNKS_TASK_PATH,
+        task: str = LIST_CHUNKS_TASK_PATH,
+        code: Optional[CodeConfig] = None,
         environment: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> "ListChunksTaskConfig":
         return ListChunksTaskConfig(
             id=LIST_CHUNKS_TASK_ID,
             image=image,
+            code=code,
             args=args.dict(),
             task=task,
             environment=environment,
@@ -112,8 +115,8 @@ class ListChunksTaskConfig(TaskConfig):
     @classmethod
     def from_collection(
         cls,
-        ds: DatasetConfig,
-        collection: CollectionConfig,
+        ds: DatasetDefinition,
+        collection: CollectionDefinition,
         chunkset_id: str,
         all: bool = False,
         environment: Optional[Dict[str, str]] = None,
@@ -126,8 +129,9 @@ class ListChunksTaskConfig(TaskConfig):
 
         return cls.create(
             image=ds.image,
+            code=ds.code,
             args=ListChunksInput(chunkset_uri=chunkset_uri, all=all),
-            task=f"{collection.collection_class}.create_chunks_task",
+            task=LIST_CHUNKS_TASK_PATH,
             environment=environment,
             tags=tags,
         )

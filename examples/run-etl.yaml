@@ -1,3 +1,4 @@
+id: etl-test-workflow
 name: ETL Test Workflow
 dataset: microsoft/test-collection
 target_environment: staging

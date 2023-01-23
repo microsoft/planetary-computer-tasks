@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime, timedelta
-from typing import Any, Callable, Iterable, List, Optional, Tuple, cast
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, cast
 
 import azure.batch.batch_auth as batchauth
 import azure.batch.models as batchmodels
@@ -13,9 +13,9 @@ from azure.batch.custom.custom_errors import CreateTasksErrorException
 from dateutil.tz import tzutc
 from requests import Response
 
-from pctasks.core.models.record import TaskRunStatus
+from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.utils import map_opt
-from pctasks.core.utils.backoff import with_backoff
+from pctasks.core.utils.backoff import is_common_throttle_exception, with_backoff
 from pctasks.run.batch.model import BatchJobInfo
 from pctasks.run.batch.task import BatchTask
 from pctasks.run.batch.utils import make_unique_job_id
@@ -45,6 +45,16 @@ class BatchClient:
 
     _dry_run: bool = False
 
+    def _with_backoff(self, func: Callable[[], Any]) -> Any:
+        def _is_throttle(e: Exception) -> bool:
+            if isinstance(e, batchmodels.BatchErrorException):
+                error: Any = e.error  # Avoid type hinting error
+                if error.code == "OperationTimedOut":
+                    return True
+            return is_common_throttle_exception(e)
+
+        return with_backoff(func, is_throttle=_is_throttle)
+
     @classmethod
     def set_dry_run(cls, v: bool) -> None:
         """If set to True, don't submit anything - log information
@@ -56,6 +66,7 @@ class BatchClient:
 
     def __init__(self, settings: BatchSettings):
         self.settings = settings
+        self._client: Optional[BatchServiceClient] = None
 
         self.credentials = batchauth.SharedKeyCredentials(
             self.settings.get_batch_name(), self.settings.key
@@ -68,6 +79,14 @@ class BatchClient:
     def __exit__(self, *args: Any) -> None:
         if self._client is not None:
             self._client.close()
+            self._client = None
+
+    def _ensure_client(self) -> BatchServiceClient:
+        if not self._client:
+            raise BatchClientError(
+                "BatchClient not initialized. Use as a context manager."
+            )
+        return self._client
 
     def find_active_job(self, prefix: str) -> Optional[str]:
         """Find a running job with the given prefix in the ID
@@ -75,8 +94,9 @@ class BatchClient:
         Returns the ID if found, or None if no running job is found.
         If multiple are found, returns the latest job.
         """
+        client = self._ensure_client()
         jobs: List[batchmodels.CloudJob] = list(
-            self._client.job.list(
+            client.job.list(
                 job_list_options=batchmodels.JobListOptions(filter="state eq 'active'")
             )
         )
@@ -103,13 +123,48 @@ class BatchClient:
 
         return map_opt(_mo, result)
 
+    def get_job(self, job_id: str) -> Optional[batchmodels.CloudJob]:
+        client = self._ensure_client()
+        try:
+            return cast(
+                batchmodels.CloudJob,
+                self._with_backoff(lambda: client.job.get(job_id=job_id)),
+            )
+        except batchmodels.BatchErrorException as e:
+            error: Any = e.error  # Avoid type hinting error
+            if error.code == "JobNotFound":
+                return None
+            else:
+                raise BatchClientError(error.message.value) from e
+
+    def list_jobs(self, job_id_prefix: str) -> List[batchmodels.CloudJob]:
+        client = self._ensure_client()
+        try:
+            return cast(
+                List[batchmodels.CloudJob],
+                self._with_backoff(
+                    lambda: list(
+                        client.job.list(
+                            job_list_options=batchmodels.JobListOptions(
+                                filter=f"startswith(id, '{job_id_prefix}')"
+                            )
+                        )
+                    )
+                ),
+            )
+        except batchmodels.BatchErrorException as e:
+            error: Any = e.error  # Avoid type hinting error
+            raise BatchClientError(error.message.value) from e
+
     def add_job(
         self,
         job_id: str,
         pool_id: Optional[str] = None,
         make_unique: bool = False,
         max_retry_count: int = 0,
+        terminate_on_tasks_complete: bool = True,
     ) -> str:
+        client = self._ensure_client()
 
         pool_id = pool_id or self.settings.default_pool_id
 
@@ -121,22 +176,27 @@ class BatchClient:
 
         pool_info = batchmodels.PoolInformation(pool_id=pool_id)
 
+        on_all_tasks_complete = batchmodels.OnAllTasksComplete.terminate_job
+        if not terminate_on_tasks_complete:
+            on_all_tasks_complete = batchmodels.OnAllTasksComplete.no_action
+
         job_param = batchmodels.JobAddParameter(
             id=job_id,
             pool_info=pool_info,
-            on_all_tasks_complete=batchmodels.OnAllTasksComplete.terminate_job,
+            on_all_tasks_complete=on_all_tasks_complete,
             constraints=batchmodels.JobConstraints(
                 max_task_retry_count=max_retry_count
             ),
         )
         logger.info(f"(BATCH CLIENT) Adding BatchJob {job_id}")
-        with_backoff(lambda: self._client.job.add(job_param))
+        self._with_backoff(lambda: client.job.add(job_param))
         return job_id
 
     def add_task(self, job_id: str, task: BatchTask) -> None:
+        client = self._ensure_client()
         task_params = task.to_params()
         logger.info(f"Adding BatchTask {task.task_id}")
-        with_backoff(lambda: self._client.task.add(job_id=job_id, task=task_params))
+        self._with_backoff(lambda: client.task.add(job_id=job_id, task=task_params))
 
     def add_collection(
         self, job_id: str, tasks: Iterable[BatchTask]
@@ -146,13 +206,17 @@ class BatchClient:
         Returns an optional list of errors corresponding to each task.
         If no error occurred for a task, the list entry will be None.
         """
+        client = self._ensure_client()
         params = [task.to_params() for task in tasks]
         try:
-            result: batchmodels.TaskAddCollectionResult = with_backoff(
-                lambda: self._client.task.add_collection(
-                    job_id=job_id,
-                    value=params,
-                    threads=self.settings.submit_threads,
+            result: batchmodels.TaskAddCollectionResult = self._with_backoff(
+                lambda: cast(
+                    batchmodels.TaskAddCollectionResult,
+                    client.task.add_collection(
+                        job_id=job_id,
+                        value=params,
+                        threads=self.settings.submit_threads,
+                    ),
                 )
             )
             task_results: List[batchmodels.TaskAddResult] = result.value  # type: ignore
@@ -177,10 +241,11 @@ class BatchClient:
         return [r.error for r in task_results]
 
     def get_job_info(self, job_id: str) -> BatchJobInfo:
-        cloud_job = with_backoff(
-            lambda: cast(batchmodels.CloudJob, self._client.job.get(job_id=job_id))
+        client = self._ensure_client()
+        cloud_job = self._with_backoff(
+            lambda: cast(batchmodels.CloudJob, client.job.get(job_id=job_id))
         )
-        tasks: List[batchmodels.CloudTask] = list(self._client.task.list(job_id))
+        tasks: List[batchmodels.CloudTask] = list(client.task.list(job_id))
         return BatchJobInfo.from_batch(cloud_job=cloud_job, tasks=tasks)
 
     def resubmit_failed_tasks(
@@ -189,8 +254,9 @@ class BatchClient:
         retry_job_id: Optional[str] = None,
         max_retry_count: int = 2,
     ) -> None:
+        client = self._ensure_client()
 
-        tasks = list(self._client.task.list(job_id))
+        tasks = list(client.task.list(job_id))
         failed_tasks = [
             cast(batchmodels.CloudTask, task)
             for task in tasks
@@ -200,7 +266,7 @@ class BatchClient:
 
         # If this job is complete, create a new one.
         # If not, just reactivate
-        job = cast(batchmodels.CloudJob, self._client.job.get(job_id=job_id))
+        job = cast(batchmodels.CloudJob, client.job.get(job_id=job_id))
 
         if job.state == batchmodels.JobState.completed:
             logger.info("Job already completed. Creating retry job...")
@@ -217,7 +283,7 @@ class BatchClient:
 
             logger.info(f"  -- Created job {retry_job_id}")
 
-            self._client.task.add_collection(
+            client.task.add_collection(
                 job_id=updated_job_id,
                 value=task_adds,
                 threads=self.settings.submit_threads,
@@ -228,11 +294,12 @@ class BatchClient:
         else:
             logger.info("Reactivating tasks...")
             for task in failed_tasks:
-                self._client.task.reactivate(job_id=job_id, task_id=task.id)
+                client.task.reactivate(job_id=job_id, task_id=task.id)
 
     def restart_hanging_tasks(self, job_id: str, max_runtime: timedelta) -> None:
+        client = self._ensure_client()
 
-        tasks = list(self._client.task.list(job_id))
+        tasks = list(client.task.list(job_id))
         print(len(tasks))
         running_tasks = [
             cast(batchmodels.CloudTask, task)
@@ -260,9 +327,9 @@ class BatchClient:
 
             for task in hanging_tasks:
                 print(f" - Terminating {task.id}")
-                self._client.task.terminate(job_id=job_id, task_id=task.id)
+                client.task.terminate(job_id=job_id, task_id=task.id)
                 print(f" -- Reactivating {task.id}")
-                self._client.task.reactivate(job_id=job_id, task_id=task.id)
+                client.task.reactivate(job_id=job_id, task_id=task.id)
 
     def restart_silent_tasks(
         self,
@@ -270,8 +337,9 @@ class BatchClient:
         max_since_log_output: timedelta,
         task_filter: Optional[Callable[[batchmodels.CloudTask], bool]] = None,
     ) -> None:
+        client = self._ensure_client()
 
-        tasks = list(self._client.task.list(job_id))
+        tasks = list(client.task.list(job_id))
         running_tasks = [
             cast(batchmodels.CloudTask, task)
             for task in tasks
@@ -287,7 +355,7 @@ class BatchClient:
         for task in running_tasks:
             r: Optional[Response] = None
             try:
-                raw_resp = self._client.file.get_properties_from_task(
+                raw_resp = client.file.get_properties_from_task(
                     job_id=job_id, task_id=task.id, file_path="stdout.txt", raw=True
                 )
                 assert raw_resp
@@ -346,9 +414,9 @@ class BatchClient:
 
             for task in hanging_tasks:
                 print(f" - Terminating {task.id}")
-                self._client.task.terminate(job_id=job_id, task_id=task.id)
+                client.task.terminate(job_id=job_id, task_id=task.id)
                 print(f" -- Reactivating {task.id}")
-                self._client.task.reactivate(job_id=job_id, task_id=task.id)
+                client.task.reactivate(job_id=job_id, task_id=task.id)
 
     def get_task_status(
         self, job_id: str, task_id: str
@@ -358,18 +426,14 @@ class BatchClient:
         If the task isn't found, returns None.
         If the is errored, will try to return the error message in
         the second tuple element.
-        If the job is completed but the task is still running, will
-        consider the task failed.
         Otherwise, returns the status as the first tuple element.
         """
+        client = self._ensure_client()
+
         try:
-            job = cast(
-                batchmodels.CloudJob,
-                with_backoff(lambda: self._client.job.get(job_id=job_id)),
-            )
             task = cast(
                 batchmodels.CloudTask,
-                self._client.task.get(job_id=job_id, task_id=task_id),
+                client.task.get(job_id=job_id, task_id=task_id),
             )
         except batchmodels.BatchErrorException as e:
             error: Any = e.error  # Avoid type hinting error
@@ -380,10 +444,8 @@ class BatchClient:
             else:
                 raise BatchClientError(error.message.value)
 
-        logger.debug(f"BATCH JOB STATUS: {job.state}")
         logger.debug(f"BATCH TASK STATUS: {task.state}")
 
-        job_state = cast(batchmodels.JobState, job.state)
         task_state = cast(batchmodels.TaskState, task.state)
         execution_info = cast(batchmodels.TaskExecutionInformation, task.execution_info)
         if task_state == batchmodels.TaskState.completed:
@@ -396,8 +458,6 @@ class BatchClient:
                 )
             else:
                 return (TaskRunStatus.COMPLETED, None)
-        if job_state == batchmodels.JobState.completed:
-            return (TaskRunStatus.FAILED, "Job completed before task completed")
         if task_state == batchmodels.TaskState.active:
             return (TaskRunStatus.PENDING, None)
         if task_state == batchmodels.TaskState.preparing:
@@ -410,11 +470,36 @@ class BatchClient:
         else:
             return (TaskRunStatus.SUBMITTED, None)
 
+    def get_failed_tasks(self, job_id: str) -> Dict[str, str]:
+        client = self._ensure_client()
+        completed_tasks = client.task.list(
+            job_id,
+            task_list_options=batchmodels.TaskListOptions(
+                filter="state eq 'completed'"
+            ),
+        )
+        result: Dict[str, str] = {}
+        for task in completed_tasks:
+            t = cast(batchmodels.CloudTask, task)
+            execution_info = cast(
+                batchmodels.TaskExecutionInformation,
+                t.execution_info,
+            )
+            if execution_info.result == batchmodels.TaskExecutionResult.failure:
+                if execution_info.failure_info and execution_info.failure_info.message:
+                    result[t.id] = execution_info.failure_info.message
+                else:
+                    result[t.id] = "Azure Batch task failed without error message"
+
+        return result
+
     def get_pool(self, pool_id: str) -> Optional[batchmodels.PoolInformation]:
+        client = self._ensure_client()
+
         try:
             return cast(
                 batchmodels.PoolInformation,
-                with_backoff(lambda: self._client.pool.get(pool_id)),
+                self._with_backoff(lambda: client.pool.get(pool_id)),
             )
         except batchmodels.BatchErrorException as e:
             error: Any = e.error  # Avoid type hinting error
@@ -422,3 +507,28 @@ class BatchClient:
                 return None
             else:
                 raise BatchClientError(error.message.value)
+
+    def terminate_job(self, job_id: str) -> None:
+        client = self._ensure_client()
+
+        def _terminate() -> None:
+            try:
+                client.job.terminate(job_id=job_id)
+            except batchmodels.BatchErrorException as e:
+                error: Any = e.error  # Avoid type hinting error
+                if error.code == "JobNotFound":
+                    logger.warning(f"Job {job_id} not found - skipping termination")
+                    return
+                if error.code == "JobTerminating":
+                    return
+                if error.code == "JobCompleted":
+                    return
+
+        self._with_backoff(_terminate)
+
+    def terminate_task(self, job_id: str, task_id: str) -> None:
+        client = self._ensure_client()
+
+        self._with_backoff(
+            lambda: client.task.terminate(job_id=job_id, task_id=task_id)
+        )

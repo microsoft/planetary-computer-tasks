@@ -15,8 +15,12 @@ function usage() {
     echo -n \
         "Usage: $(basename "$0") (SERVICE|--deploy)
 Runs a console. SERVICE is the name of the service
-container in the docker-compose.yml file. If --deploy is
-specified, the deployment image is run.
+container in the docker-compose.yml file.
+
+If --deploy is specified, the deployment image is run.
+Use:
+> scripts/console integration-tests
+for a console to run integration tests.
 "
 }
 

@@ -31,6 +31,7 @@ extensions = [
     "myst_parser",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
+    "sphinx_design",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -41,16 +42,17 @@ templates_path = ["_templates"]
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
+# -- Options for MyST -------------------------------------------------
+myst_enable_extensions = ["colon_fence"]
+myst_heading_anchors = 3
+
 
 # -- Options for HTML output -------------------------------------------------
 html_theme = "pydata_sphinx_theme"
 html_static_path = ["_static"]
-html_theme_options = {
-    "logo": {
-        "text": "Planetary Computer Tasks"
-    }
-}
+html_theme_options = {"logo": {"text": "Planetary Computer Tasks"}}
 
 # -- Options for autodoc -------------------------------------------------
 
 autosummary_generate = True
+autodoc_typehints = "both"

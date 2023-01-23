@@ -116,7 +116,7 @@ class LocalStorage(Storage):
             if min_depth and depth < min_depth:
                 continue
             if max_depth and depth > max_depth:
-                break
+                continue
             if file_limit and file_count + len(files) > file_limit:
                 files = files[: file_limit - file_count]
                 limit_break = True
@@ -195,6 +195,8 @@ class LocalStorage(Storage):
         return open(os.path.join(self.base_dir, file_path), mode=mode)
 
     def read_bytes(self, file_path: str) -> bytes:
+        if not self.file_exists(file_path):
+            raise FileNotFoundError(f"File {file_path} does not exist.")
         with open(os.path.join(self.base_dir, file_path), "rb") as f:
             return f.read()
 

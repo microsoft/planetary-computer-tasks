@@ -2,7 +2,7 @@ from pathlib import Path
 
 import yaml
 
-from pctasks.client.submit.template import LocalTemplater
+from pctasks.client.workflow.template import LocalTemplater
 from pctasks.ingest.models import IngestCollectionsInput
 
 HERE = Path(__file__).parent

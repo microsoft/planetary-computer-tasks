@@ -4,7 +4,7 @@ from pydantic import Field, validator
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.event import STACCollectionEventType, STACItemEventType
-from pctasks.core.models.task import TaskConfig
+from pctasks.core.models.task import TaskDefinition
 from pctasks.ingest.constants import (
     COLLECTION_TASK_ID,
     COLLECTIONS_MESSAGE_TYPE,
@@ -87,7 +87,7 @@ class IngestTaskOutput(PCBaseModel):
         return v
 
 
-class IngestTaskConfig(TaskConfig):
+class IngestTaskConfig(TaskDefinition):
     @classmethod
     def create(
         cls,
@@ -99,7 +99,8 @@ class IngestTaskConfig(TaskConfig):
         environment: Optional[Dict[str, str]] = None,
         options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
-    ) -> TaskConfig:
+        add_service_principal: bool = False,
+    ) -> TaskDefinition:
         data = IngestTaskInput(
             content=content,
             options=options or IngestOptions(),
@@ -118,7 +119,15 @@ class IngestTaskConfig(TaskConfig):
                 f"environment[{DB_CONNECTION_STRING_ENV_VAR}]"
             )
 
-        return TaskConfig(
+        environment = environment or {}
+        if add_service_principal:
+            environment.setdefault("AZURE_TENANT_ID", "${{ secrets.task-tenant-id }}")
+            environment.setdefault("AZURE_CLIENT_ID", "${{ secrets.task-client-id }}")
+            environment.setdefault(
+                "AZURE_CLIENT_SECRET", "${{ secrets.task-client-secret }}"
+            )
+
+        return TaskDefinition(
             id=task_id,
             image=None,
             image_key=image_key,
@@ -137,7 +146,8 @@ class IngestTaskConfig(TaskConfig):
         environment: Optional[Dict[str, str]] = None,
         options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
-    ) -> TaskConfig:
+        add_service_principal: bool = False,
+    ) -> TaskDefinition:
         if "collection" not in item:
             raise InvalidSTACException("Item is missing a collection.")
 
@@ -149,6 +159,7 @@ class IngestTaskConfig(TaskConfig):
             environment=environment,
             options=options,
             ingest_settings=ingest_settings,
+            add_service_principal=add_service_principal,
         )
 
     @classmethod
@@ -160,7 +171,8 @@ class IngestTaskConfig(TaskConfig):
         environment: Optional[Dict[str, str]] = None,
         options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
-    ) -> TaskConfig:
+        add_service_principal: bool = False,
+    ) -> TaskDefinition:
         if "id" not in collection:
             raise InvalidSTACException("Collection is missing an id.")
 
@@ -172,6 +184,7 @@ class IngestTaskConfig(TaskConfig):
             environment=environment,
             options=options,
             ingest_settings=ingest_settings,
+            add_service_principal=add_service_principal,
         )
 
     @classmethod
@@ -183,7 +196,8 @@ class IngestTaskConfig(TaskConfig):
         environment: Optional[Dict[str, str]] = None,
         options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
-    ) -> TaskConfig:
+        add_service_principal: bool = False,
+    ) -> TaskDefinition:
 
         return cls.create(
             task_id=COLLECTION_TASK_ID,
@@ -193,6 +207,7 @@ class IngestTaskConfig(TaskConfig):
             environment=environment,
             options=options,
             ingest_settings=ingest_settings,
+            add_service_principal=add_service_principal,
         )
 
     @classmethod
@@ -204,7 +219,8 @@ class IngestTaskConfig(TaskConfig):
         environment: Optional[Dict[str, str]] = None,
         option: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
-    ) -> TaskConfig:
+        add_service_principal: bool = False,
+    ) -> TaskDefinition:
         return cls.create(
             task_id=NDJSON_TASK_ID,
             content=ndjson_data,
@@ -213,4 +229,5 @@ class IngestTaskConfig(TaskConfig):
             environment=environment,
             options=option,
             ingest_settings=ingest_settings,
+            add_service_principal=add_service_principal,
         )

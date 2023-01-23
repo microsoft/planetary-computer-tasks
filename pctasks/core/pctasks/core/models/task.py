@@ -10,15 +10,15 @@ from pctasks.core.constants import (
     TASK_RUN_CONFIG_SCHEMA_VERSION,
     TASK_RUN_SIGNAL_SCHEMA_VERSION,
 )
-from pctasks.core.models.base import PCBaseModel, RunRecordId
-from pctasks.core.models.config import BlobConfig, CodeConfig, TableSasConfig
+from pctasks.core.models.base import PCBaseModel
+from pctasks.core.models.config import BlobConfig, CodeConfig
 from pctasks.core.models.event import NotificationMessage
 from pctasks.core.models.tokens import StorageAccountTokens
 from pctasks.core.tables.base import InvalidTableKeyError, validate_table_key
 from pctasks.core.utils import StrEnum
 
 
-class TaskConfig(PCBaseModel):
+class TaskDefinition(PCBaseModel):
     id: str
     image: Optional[str] = None
     image_key: Optional[str] = None
@@ -56,6 +56,7 @@ class TaskRunConfig(PCBaseModel):
     image: str
     run_id: str
     job_id: str
+    partition_id: str
     task_id: str
     task: str
     code_src_blob_config: Optional[BlobConfig] = None
@@ -63,19 +64,14 @@ class TaskRunConfig(PCBaseModel):
     code_pip_options: Optional[List[str]] = None
     environment: Optional[Dict[str, str]] = None
     tokens: Optional[Dict[str, StorageAccountTokens]] = None
-    # TODO: Update task status through signals
-    task_runs_table_config: TableSasConfig
+    status_blob_config: BlobConfig
     output_blob_config: BlobConfig
     log_blob_config: BlobConfig
     event_logger_app_insights_key: Optional[str] = None
     schema_version: str = Field(default=TASK_RUN_CONFIG_SCHEMA_VERSION, const=True)
 
-    def get_run_record_id(self) -> RunRecordId:
-        return RunRecordId(
-            run_id=self.run_id,
-            job_id=self.job_id,
-            task_id=self.task_id,
-        )
+    def get_run_record_id(self) -> str:
+        return f"{self.run_id}/{self.job_id}/{self.partition_id}/{self.task_id}"
 
 
 class TaskRunMessage(PCBaseModel):
@@ -83,9 +79,7 @@ class TaskRunMessage(PCBaseModel):
     config: TaskRunConfig
 
     def encoded(self) -> str:
-        return b64encode(
-            self.json(exclude_unset=True, exclude_none=True).encode("utf-8")
-        ).decode("utf-8")
+        return b64encode(self.json(exclude_none=True).encode("utf-8")).decode("utf-8")
 
     @classmethod
     def decode(cls, msg_text: str) -> "TaskRunMessage":

@@ -20,6 +20,7 @@ IMAGE_TAG - The tag to use for all images.
 
 options:
   --no-login     Don't attempt log into the ACR using the azure cli.
+  --only IMAGE   Only publish the specified image.
 "
 }
 
@@ -38,6 +39,11 @@ while [[ "$#" -gt 0 ]]; do case $1 in
         ;;
     --no-login)
         NO_LOGIN="1"
+        shift
+        ;;
+    --only)
+        ONLY_IMAGE=$2
+        shift
         shift
         ;;
     --help)
@@ -69,10 +75,14 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
             az acr login -n ${ACR_NAME}
         fi
 
-        publish pctasks-ingest
-        publish pctasks-server
-        publish pctasks-run
-        publish pctasks-task-base
+        if [ "${ONLY_IMAGE}" ]; then
+            publish ${ONLY_IMAGE}
+        else
+            publish pctasks-ingest
+            publish pctasks-server
+            publish pctasks-run
+            publish pctasks-task-base
+        fi
 
     fi
 

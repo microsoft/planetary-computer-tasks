@@ -20,7 +20,7 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 from yaml import Loader
 
 from pctasks.cli.cli import pctasks_cmd
-from pctasks.core.models.record import TaskRunStatus
+from pctasks.core.models.run import TaskRunStatus
 from pctasks.run.models import TaskPollResult
 
 app = FastAPI()

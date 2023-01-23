@@ -3,11 +3,12 @@ from pathlib import Path
 
 from pctasks.dev.db import temp_pgstac_db
 from pctasks.dev.test_utils import assert_workflow_is_successful, run_workflow_from_file
+from tests.constants import DEFAULT_TIMEOUT
 
 HERE = Path(__file__).parent
 WORKFLOWS = HERE / ".." / "workflows"
 
-TIMEOUT_SECONDS = 60
+TIMEOUT_SECONDS = DEFAULT_TIMEOUT
 
 
 def test_ingest_collection():

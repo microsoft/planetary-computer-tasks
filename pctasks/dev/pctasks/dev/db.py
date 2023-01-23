@@ -2,7 +2,7 @@ import logging
 import os
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Generator, Optional
+from typing import Iterator, Optional
 
 import psycopg
 from psycopg.conninfo import make_conninfo
@@ -35,7 +35,7 @@ class ConnStrInfo:
 @contextmanager
 def temp_pgstac_db(
     conn_str: Optional[str] = None,
-) -> Generator[ConnStrInfo, None, None]:
+) -> Iterator[ConnStrInfo]:
     """Creates a temporary PgSTAC database based on an existing connection string.
 
     If the connection string is not provided it will be
@@ -71,9 +71,9 @@ def temp_pgstac_db(
         new_remote_conn_info = make_conninfo(remote_conn_str, dbname=TEST_DB_NAME)
     else:
         new_remote_conn_info = new_conn_info
-
-    yield ConnStrInfo(local=new_conn_info, remote=new_remote_conn_info)
-
-    print("Dropping DB...")
-    with psycopg.connect(conn_str, autocommit=True) as conn:
-        conn.execute(f"DROP DATABASE {TEST_DB_NAME} WITH (FORCE);")
+    try:
+        yield ConnStrInfo(local=new_conn_info, remote=new_remote_conn_info)
+    finally:
+        print("Dropping DB...")
+        with psycopg.connect(conn_str, autocommit=True) as conn:
+            conn.execute(f"DROP DATABASE {TEST_DB_NAME} WITH (FORCE);")

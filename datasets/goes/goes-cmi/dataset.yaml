@@ -1,0 +1,32 @@
+id: goes_cmi
+image: ${{ args.registry }}/pctasks-goes-glm:latest
+
+args:
+- registry
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: goes-cmi
+    template: ${{ local.path(./collection) }}
+    class: dummy:Dummy
+    asset_storage:
+      - uri: blob://goeseuwest/noaa-goes16/
+        token: ${{ pc.get_token(goeseuwest, noaa-goes16) }}
+        chunks:
+          options:
+            name_starts_with: ABI-L2-MCMIPC/2020/001/
+            ends_with: .nc
+            chunk_length: 2
+      - uri: blob://goeseuwest/noaa-goes17/
+        token: ${{ pc.get_token(goeseuwest, noaa-goes17) }}
+        chunks:
+          options:
+            name_starts_with: ABI-L2-MCMIPC/2020/001/
+            ends_with: .nc
+            chunk_length: 2
+    chunk_storage:
+      uri: blob://goeseuwest/noaa-goes-etl-data/pctasks/cmi/

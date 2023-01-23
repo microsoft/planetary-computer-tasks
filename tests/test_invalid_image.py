@@ -4,8 +4,9 @@ import textwrap
 from pctasks.cli.cli import setup_logging
 from pctasks.dev.test_utils import assert_workflow_fails, run_workflow
 from pctasks.run.argo.client import ERR_IMAGE_PULL, IMAGE_PULL_BACKOFF
+from tests.constants import DEFAULT_TIMEOUT
 
-TIMEOUT_SECONDS = 60
+TIMEOUT_SECONDS = DEFAULT_TIMEOUT
 
 
 def test_invalid_image():
@@ -13,7 +14,7 @@ def test_invalid_image():
     run_id = run_workflow(
         textwrap.dedent(
             """\
-
+        id: test-invalid-image
         name: Test invalid image
         dataset: microsoft/test-invalid-image
         target_environment: staging
@@ -33,7 +34,7 @@ def test_invalid_image():
     records = assert_workflow_fails(run_id, timeout_seconds=TIMEOUT_SECONDS)
     records.print()
     errors = " ".join(
-        records.jobs["invalid-image-job"].tasks["invalid-image-task"].errors or []
+        records.job_partition_runs["invalid-image-job"][0].tasks[0].errors or []
     )
     assert IMAGE_PULL_BACKOFF in errors or ERR_IMAGE_PULL in errors
 

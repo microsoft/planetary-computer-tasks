@@ -1,5 +1,15 @@
 #!/bin/bash
 
+function require_env() {
+    v=$(eval echo \$${1})
+
+    if [[ -z ${v} ]]; then
+        echo "${1} must be set as environment variable" >&2
+        echo "Check deployment/docker-compose.yml for host environment requirements" >&2
+        exit 1
+    fi
+}
+
 function setup_env() {
 
     # Directory for rendered values and templates
@@ -59,7 +69,20 @@ function cluster_login() {
     az aks get-credentials \
         --resource-group ${RESOURCE_GROUP} \
         --name ${CLUSTER_NAME} \
-        --subscription ${ARM_SUBSCRIPTION_ID}
+        --subscription ${ARM_SUBSCRIPTION_ID} \
+         --overwrite-existing \
+        --file=kubeconfig
+
+    # kubelogin mutates every entry in the kubeconfig
+    # https://github.com/Azure/kubelogin/issues/87.
+    # So we export to a kubeconfig file
+    echo "Converting kubeconfig..."
+    kubelogin convert-kubeconfig \
+        --login spn \
+        --client-id ${ARM_CLIENT_ID} \
+        --client-secret ${ARM_CLIENT_SECRET} \
+        --kubeconfig=kubeconfig
+    export KUBECONFIG=kubeconfig
 }
 
 function setup_helm() {
@@ -99,4 +122,17 @@ function set_tf_vars() {
     else
         echo "File ${TV_VARS_FILE} not found."
     fi
+}
+
+
+function prepare_funcs() {
+    rm -rf /opt/src/functions_deploy
+    cp -r /opt/src/pctasks_funcs /opt/src/functions_deploy
+
+    pushd /opt/src/functions_deploy || exit
+    # Create symlink to enable function app building of pctasks
+    ln -s /opt/src/pctasks /opt/src/functions_deploy/pctasks_linked
+    cp requirements-deploy.txt requirements.txt
+
+    popd || exit
 }

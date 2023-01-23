@@ -1,91 +1,34 @@
-import argparse
 import logging
 import sys
-from functools import lru_cache
-from typing import Any, Dict, List, Optional, Union
 
-from pctasks.dev.setup_azurite import setup_azurite
+import click
+
+from pctasks.cli.cli import setup_logging
+from pctasks.dev.azurite import azurite_cmd
+from pctasks.dev.cosmosdb import cosmosdb_cmd
 from pctasks.task.version import __version__
 
 logger = logging.getLogger(__name__)
 
 
-@lru_cache(maxsize=1)
-def _setup_logging(level: Union[str, int], log_libraries: bool = False) -> None:
-    _logger = logging.root if log_libraries else logging.getLogger("pctasks")
+@click.group(name="pctasks-dev")
+@click.version_option(__version__)
+@click.option("-v", "--verbose", help=("Use verbose mode"), is_flag=True)
+@click.option("-q", "--quiet", help=("Use quiet mode (no output)"), is_flag=True)
+@click.option("--log-libs", is_flag=True, help="Output logs from other libraries")
+def cli(verbose: bool, quiet: bool, log_libs: bool) -> None:
+    """ "Planetary Computer Tasks - Dev tools"""
+    logging_level = logging.INFO
+    if verbose:
+        logging_level = logging.DEBUG
+    if quiet:
+        logging_level = logging.ERROR
 
-    _logger.setLevel(level)
-
-    if log_libraries:
-        formatter = logging.Formatter("[%(levelname)s]:%(name)s: %(message)s")
-    else:
-        formatter = logging.Formatter("[%(levelname)s]:%(asctime)s: %(message)s")
-
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setLevel(level)
-    ch.setFormatter(formatter)
-    _logger.addHandler(ch)
-
-
-def setup_azurite_cmd(args: Dict[str, Any]) -> int:
-    setup_azurite()
-    return 0
+    setup_logging(logging_level)
 
 
-def parse_args(args: List[str]) -> Optional[Dict[str, Any]]:
-    desc = "Planetary Computer Tasks - Dev tools"
-    dhf = argparse.ArgumentDefaultsHelpFormatter
-    parser0 = argparse.ArgumentParser(description=desc)
-    parser0.add_argument(
-        "--version",
-        help="Print version and exit",
-        action="version",
-        version=__version__,
-    )
-
-    parent = argparse.ArgumentParser(add_help=False)
-    parent.add_argument(
-        "--logging", default="INFO", help="DEBUG, INFO, WARN, ERROR, CRITICAL"
-    )
-    parent.add_argument(
-        "--log-libs", action="store_true", help="Output logs from other libraries"
-    )
-
-    subparsers = parser0.add_subparsers(dest="command")
-
-    # setup-azurite command
-    _ = subparsers.add_parser(
-        "setup-azurite",
-        help="Sets up Azurite for development.",
-        parents=[parent],
-        formatter_class=dhf,
-    )
-
-    parsed_args = {
-        k: v for k, v in vars(parser0.parse_args(args)).items() if v is not None
-    }
-
-    if "command" not in parsed_args:
-        parser0.print_usage()
-        return None
-
-    return parsed_args
-
-
-def cli(args: Optional[List[str]] = None) -> Optional[int]:
-    parsed_args = parse_args(args or sys.argv[1:])
-
-    if not parsed_args:
-        return None
-
-    loglevel = parsed_args.pop("logging")
-    _setup_logging(loglevel, parsed_args.pop("log_libs", False))
-
-    cmd = parsed_args.pop("command")
-
-    if cmd == "setup-azurite":
-        return setup_azurite_cmd(parsed_args)
-    return None
+cli.add_command(azurite_cmd)
+cli.add_command(cosmosdb_cmd)
 
 
 if __name__ == "__main__":

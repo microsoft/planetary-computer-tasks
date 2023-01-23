@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 from typing import Callable, List, Union
 
 import orjson
@@ -82,7 +83,13 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
 
         if args.asset_uri:
             try:
+                start_time = time.monotonic()
                 result = self._create_item(args.asset_uri, storage_factory)
+                end_time = time.monotonic()
+                logger.info(
+                    f"Created items from {args.asset_uri} in "
+                    f"{end_time - start_time:.2f}s"
+                )
             except Exception as e:
                 raise CreateItemsError(
                     f"Failed to create item from {args.asset_uri}"
@@ -101,11 +108,20 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                 args.asset_chunk_info.uri
             )
             chunk_lines = chunk_storage.read_text(chunk_path).splitlines()
+            asset_count = len(chunk_lines)
             if args.options.limit:
                 chunk_lines = chunk_lines[: args.options.limit]
-            for asset_uri in chunk_lines:
+            for i, asset_uri in enumerate(chunk_lines):
                 try:
+                    start_time = time.monotonic()
                     result = self._create_item(asset_uri, storage_factory)
+                    end_time = time.monotonic()
+                    logger.info(
+                        f"({((i+1)/asset_count)*100:06.2f}%) "
+                        f"[{end_time - start_time:.2f}s] "
+                        f" - {asset_uri} "
+                        f"({i+1} of {asset_count})"
+                    )
                 except Exception as e:
                     raise CreateItemsError(
                         f"Failed to create item from {asset_uri}"
@@ -133,6 +149,7 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
     def run(
         self, input: CreateItemsInput, context: TaskContext
     ) -> Union[CreateItemsOutput, WaitTaskResult, FailedTaskResult]:
+        logger.info("Creating items...")
         results = self.create_items(input, context)
 
         if isinstance(results, WaitTaskResult):

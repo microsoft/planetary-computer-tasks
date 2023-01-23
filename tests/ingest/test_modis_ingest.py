@@ -11,13 +11,14 @@ from pctasks.dev.test_utils import (
     run_workflow,
     run_workflow_from_file,
 )
+from tests.constants import DEFAULT_TIMEOUT
 
 HERE = Path(__file__).parent
 COLLECTION_PATH = HERE / ".." / "data-files/modis/collection.json"
 NDJSON_PATH = HERE / ".." / "data-files/modis/items.ndjson"
 WORKFLOWS = HERE / ".." / "workflows"
 
-TIMEOUT_SECONDS = 60
+TIMEOUT_SECONDS = DEFAULT_TIMEOUT
 
 
 def test_modis_ingest() -> None:
@@ -39,6 +40,7 @@ def test_modis_ingest() -> None:
 
             items_workflow = textwrap.dedent(
                 """\
+                id: test-modis-ingest-items
                 name: Ingest Items Test Workflow
                 dataset: microsoft/modis-test
 

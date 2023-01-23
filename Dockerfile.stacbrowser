@@ -9,7 +9,7 @@ WORKDIR /opt/src/stac-browser
 RUN git checkout v3.0.0-beta.1
 RUN npm install
 RUN npm install http-server -g
-RUN npm run build -- --catalogUrl="http://localhost:8510/stac/" --pathPrefix="/browser/"
+RUN npm run build -- --catalogUrl="http://localhost:8513/"
 WORKDIR /opt/src/stac-browser/dist
 
 CMD ["http-server", "-p", "8080", "."]

@@ -1,6 +1,10 @@
 environment: "test"
 
 pctasks:
+  cosmosdb:
+    url: "{{ tf.cosmosdb_url }}"
+    key: "{{ tf.cosmosdb_key }}"
+
   server:
     host: "0.0.0.0"
     port: "80"
@@ -29,6 +33,8 @@ pctasks:
       replicaCount: 1
       podAnnotations:
         "deployed": "{{ env.DATE }}"
+      nodeSelector:
+        "node_group": "default"
 
   run:
     task_runner_type: "batch"
@@ -56,6 +62,9 @@ pctasks:
       namespace: pc
       host: "http://argo-workflows-server.pc.svc.cluster.local:2746"
       workflow_runner_image: "{{ tf.component_acr_name }}.azurecr.io/pctasks-run:{{ tf.pctasks_run_image_tag }}"
+      node_affinity:
+        enabled: true
+        node_group: "{{ tf.argo_wf_node_group_name }}"
       # argo token set during helm install
 
     batch:

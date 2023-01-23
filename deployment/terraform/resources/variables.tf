@@ -82,6 +82,14 @@ variable "stac_db_connection_string" {
   type = string
 }
 
+variable "cosmosdb_account_name" {
+  type = string
+}
+
+variable "cosmosdb_resource_group" {
+  type = string
+}
+
 ## Keyvault
 
 variable "task_sp_tenant_id" {
@@ -108,6 +116,14 @@ variable "kv_sp_client_secret" {
   type    = string
 }
 
+variable "pctasks_task_kv" {
+  type = string
+}
+
+variable "pctasks_task_kv_resource_group_name" {
+  type = string
+}
+
 variable "deploy_secrets_kv_name" {
   type    = string
 }
@@ -117,6 +133,10 @@ variable deploy_secrets_kv_rg {
 }
 
 variable access_key_secret_name {
+  type    = string
+}
+
+variable backend_api_app_id_secret_name {
   type    = string
 }
 
@@ -136,6 +156,11 @@ variable "pctasks_server_sp_client_secret" {
 
 variable "pctasks_server_sp_object_id" {
   type    = string
+}
+
+variable "argo_wf_node_group_name"{
+  type = string
+  default ="argo-workflows"
 }
 
 # ---------------

@@ -1,0 +1,13 @@
+id: list-logs
+name: List log files in Azurite
+dataset: microsoft/test
+
+jobs:
+  list-logs-job:
+    name: List logs job
+    tasks:
+      - id: list-logs-task
+        image: localhost:5001/pctasks-task-base:latest
+        task: pctasks.task.common.list_files:ListFilesTask
+        args:
+          src_uri: blob://devstoreaccount1/tasklogs/

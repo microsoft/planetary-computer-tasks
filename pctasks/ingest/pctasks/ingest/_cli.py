@@ -4,12 +4,10 @@ from typing import List, Optional
 
 import click
 
-from pctasks.cli.cli import cli_output
-from pctasks.client.settings import ClientSettings
-from pctasks.client.submit._cli import cli_submit_workflow
+from pctasks.client.workflow.commands import cli_handle_workflow
 from pctasks.core.constants import DEFAULT_TARGET_ENVIRONMENT
 from pctasks.core.context import PCTasksCommandContext
-from pctasks.core.models.workflow import JobConfig, WorkflowConfig
+from pctasks.core.models.workflow import JobDefinition, WorkflowDefinition
 from pctasks.ingest.models import IngestNdjsonInput, IngestTaskConfig, NdjsonFolder
 from pctasks.ingest.settings import IngestOptions, IngestSettings
 from pctasks.ingest.utils import generate_collection_json
@@ -31,6 +29,8 @@ def ingest_ndjson_cmd(
     owner: str,
     submit: bool,
     limit: Optional[int],
+    workflow_id: Optional[str] = None,
+    add_service_principal: bool = True,
 ) -> None:
     """Ingest Items from a folder of Ndjsons.
 
@@ -65,11 +65,12 @@ def ingest_ndjson_cmd(
         ),
         target=target,
         option=ingest_config,
+        add_service_principal=add_service_principal,
     )
 
-    job = JobConfig(tasks=[task])
+    job = JobDefinition(tasks=[task])
 
-    workflow = WorkflowConfig(
+    workflow = WorkflowDefinition(
         name=f"Ingest NDJsons from {ndjson_folder_uri}",
         dataset=f"{owner}/{collection_id}",
         collection_id=collection_id,
@@ -80,11 +81,7 @@ def ingest_ndjson_cmd(
         },
     )
 
-    if not submit:
-        cli_output(workflow.to_yaml())
-    else:
-        settings = ClientSettings.get(context.profile, context.settings_file)
-        cli_submit_workflow(workflow=workflow, args=None, settings=settings)
+    cli_handle_workflow(ctx, workflow_def=workflow, args=None, workflow_id=workflow_id)
 
 
 def ingest_collection_cmd(
@@ -99,8 +96,6 @@ def ingest_collection_cmd(
     If PATH is a directory, will read collection template information
     from the directory. Otherwise PATH must bea complete STAC Collection JSON.
     """
-    context: PCTasksCommandContext = ctx.obj
-
     collection_path = Path(path)
 
     target = target or DEFAULT_TARGET_ENVIRONMENT
@@ -117,18 +112,13 @@ def ingest_collection_cmd(
 
     task = IngestTaskConfig.from_collection(collection=collection, target=target)
 
-    workflow = WorkflowConfig(
+    workflow = WorkflowDefinition(
         name=f"Ingest Collection: {collection_id}",
         dataset=f"{owner}/{collection_id}",
         target_environment=target,
         jobs={
-            "ingest-collection": JobConfig(tasks=[task]),
+            "ingest-collection": JobDefinition(tasks=[task]),
         },
     )
 
-    if not submit:
-        cli_output(workflow.to_yaml())
-        ctx.exit(0)
-    else:
-        settings = ClientSettings.get(context.profile, context.settings_file)
-        ctx.exit(cli_submit_workflow(workflow=workflow, args=None, settings=settings))
+    cli_handle_workflow(ctx, workflow_def=workflow, args=None)

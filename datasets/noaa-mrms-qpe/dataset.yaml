@@ -1,0 +1,63 @@
+id: noaa_mrms_qpe
+image: ${{ args.registry }}/pctasks-noaa-mrms-qpe:latest
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./noaa_mrms_qpe.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+
+environment: 
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: noaa-mrms-qpe-1h-pass1
+    template: ${{ local.path(./collection/noaa-mrms-qpe-1h-pass1) }}
+    class: noaa_mrms_qpe:NoaaMrmsQpeCollection
+    asset_storage:
+      - uri: blob://mrms/mrms
+        token: ${{ pc.get_token(mrms, mrms) }}
+        chunks:
+          options:
+            name_starts_with: MultiSensor_QPE_01H_Pass1_00.00
+            extensions: [.gz]
+            chunk_length: 48
+          splits:
+            - depth: 1
+    chunk_storage:
+      uri: blob://mrms/mrms-etl-data/qpe-1h-pass1/
+
+  - id: noaa-mrms-qpe-1h-pass2
+    template: ${{ local.path(./collection/noaa-mrms-qpe-1h-pass2) }}
+    class: noaa_mrms_qpe:NoaaMrmsQpeCollection
+    asset_storage:
+      - uri: blob://mrms/mrms
+        token: ${{ pc.get_token(mrms, mrms) }}
+        chunks:
+          options:
+            name_starts_with: MultiSensor_QPE_01H_Pass2_00.00
+            extensions: [.gz]
+            chunk_length: 48
+          splits:
+            - depth: 1
+    chunk_storage:
+      uri: blob://mrms/mrms-etl-data/qpe-1h-pass2/
+
+  - id: noaa-mrms-qpe-24h-pass2
+    template: ${{ local.path(./collection/noaa-mrms-qpe-24h-pass2) }}
+    class: noaa_mrms_qpe:NoaaMrmsQpeCollection
+    asset_storage:
+      - uri: blob://mrms/mrms
+        token: ${{ pc.get_token(mrms, mrms) }}
+        chunks:
+          options:
+            name_starts_with: MultiSensor_QPE_24H_Pass2_00.00
+            extensions: [.gz]
+            chunk_length: 48
+          splits:
+            - depth: 1
+    chunk_storage:
+      uri: blob://mrms/mrms-etl-data/qpe-24h-pass2/

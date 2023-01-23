@@ -3,14 +3,16 @@ import math
 import random
 import time
 from concurrent import futures
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
-from pctasks.core.logging import RunLogger
+from pctasks.core.cosmos.container import CosmosDBContainer
+from pctasks.core.cosmos.containers.workflow_runs import WorkflowRunsContainer
+from pctasks.core.logging import StorageLogger
 from pctasks.core.models.event import NotificationSubmitMessage
-from pctasks.core.models.record import (
-    JobRunRecord,
+from pctasks.core.models.run import (
+    JobPartitionRunRecord,
+    JobPartitionRunStatus,
     JobRunStatus,
-    TaskRunRecord,
     TaskRunStatus,
     WorkflowRunRecord,
     WorkflowRunStatus,
@@ -21,26 +23,27 @@ from pctasks.core.queues import QueueService
 from pctasks.core.utils import grouped, map_opt
 from pctasks.run.constants import TASKS_TEMPLATE_PATH
 from pctasks.run.dag import sort_jobs
+from pctasks.run.errors import WorkflowRunRecordError
 from pctasks.run.models import (
     FailedTaskSubmitResult,
-    JobRunRecordUpdate,
-    JobSubmitMessage,
+    JobPartition,
+    JobPartitionSubmitMessage,
+    PreparedTaskData,
     PreparedTaskSubmitMessage,
     SuccessfulTaskSubmitResult,
-    TaskRunRecordUpdate,
-    WorkflowRunRecordUpdate,
 )
-from pctasks.run.records import RecordUpdater
-from pctasks.run.settings import RunSettings
+from pctasks.run.settings import WorkflowExecutorConfig
 from pctasks.run.task import get_task_runner
+from pctasks.run.task.prepare import prepare_task_data
 from pctasks.run.template import (
     template_foreach,
     template_job_with_item,
     template_notification,
 )
+from pctasks.run.utils import get_workflow_log_path
 from pctasks.run.workflow.executor.models import (
-    JobState,
-    JobStateStatus,
+    JobPartitionState,
+    JobPartitionStateStatus,
     TaskState,
     TaskStateStatus,
 )
@@ -56,83 +59,175 @@ class WorkflowFailedError(Exception):
     pass
 
 
+def update_workflow_run_status(
+    container: CosmosDBContainer[WorkflowRunRecord],
+    workflow_run: WorkflowRunRecord,
+    status: WorkflowRunStatus,
+    log_uri: Optional[str] = None,
+) -> None:
+    record = container.get(workflow_run.run_id, partition_key=workflow_run.run_id)
+    if not record:
+        raise WorkflowRunRecordError(
+            f"Workflow run record not found: {workflow_run.run_id}"
+        )
+
+    update = False
+    if record.status != status:
+        record.set_status(status)
+        update = True
+    if log_uri:
+        record.log_uri = log_uri
+        update = True
+
+    if update:
+        container.put(record)
+
+
+def update_job_run_status(
+    container: CosmosDBContainer[WorkflowRunRecord],
+    workflow_run: WorkflowRunRecord,
+    job_id: str,
+    status: JobRunStatus,
+    errors: Optional[List[str]] = None,
+) -> None:
+    record = container.get(workflow_run.run_id, partition_key=workflow_run.run_id)
+    if not record:
+        raise WorkflowRunRecordError(
+            f"Workflow run record not found: {workflow_run.run_id}"
+        )
+    job_run = record.get_job_run(job_id)
+    if not job_run:
+        raise WorkflowRunRecordError(
+            f"Job run not found: {workflow_run.run_id} {job_id}"
+        )
+    if job_run.status != status:
+        job_run.set_status(status)
+        if errors:
+            job_run.add_errors(errors)
+
+        if status == JobRunStatus.FAILED:
+            # If this is marking the job as failed,
+            # mark all pending jobs as cancelled.
+            for job in record.jobs:
+                if job.status == JobRunStatus.PENDING:
+                    job.set_status(JobRunStatus.CANCELLED)
+
+            # Also mark the workflow as failed.
+            record.set_status(WorkflowRunStatus.FAILED)
+
+        container.put(record)
+
+
+def update_job_partition_run_status(
+    container: CosmosDBContainer[JobPartitionRunRecord],
+    run_id: str,
+    job_partition_run_id: str,
+    status: JobPartitionRunStatus,
+) -> None:
+    record = container.get(job_partition_run_id, partition_key=run_id)
+    if not record:
+        raise WorkflowRunRecordError(
+            f"Job Partition run record not found: {job_partition_run_id}"
+        )
+    if record.status != status:
+        record.set_status(status)
+        container.put(record)
+
+
+def update_task_run_status(
+    container: CosmosDBContainer[JobPartitionRunRecord],
+    run_id: str,
+    job_partition_run_id: str,
+    task_id: str,
+    status: TaskRunStatus,
+    errors: Optional[List[str]] = None,
+    log_uri: Optional[str] = None,
+) -> None:
+    record = container.get(job_partition_run_id, partition_key=run_id)
+    if not record:
+        raise WorkflowRunRecordError(
+            f"Job Partition run record not found: {job_partition_run_id}"
+        )
+
+    task_run = record.get_task(task_id)
+    if not task_run:
+        raise WorkflowRunRecordError(
+            f"Task run not found: {job_partition_run_id} {task_id}"
+        )
+    if task_run.status != status:
+        task_run.set_status(status)
+        if errors:
+            task_run.add_errors(errors)
+        if log_uri:
+            task_run.log_uri = log_uri
+
+        if status in [TaskRunStatus.FAILED, TaskRunStatus.CANCELLED]:
+            # If this is marking the task as failed or cancelled,
+            # mark all pending tasks as cancelled.
+            for task in record.tasks:
+                if task.status == TaskRunStatus.PENDING:
+                    task.set_status(TaskRunStatus.CANCELLED)
+
+            # Also mark the job partition as failed.
+            record.set_status(JobPartitionRunStatus.FAILED)
+
+        container.put(record)
+
+
 class RemoteWorkflowExecutor:
     """Executes a workflow through submitting tasks remotely via a task runner."""
 
-    def __init__(self, settings: Optional[RunSettings] = None) -> None:
-        self.settings = settings or RunSettings.get()
-        self.executor = get_task_runner(self.settings)
-        self.record_updater = RecordUpdater(self.settings)
+    def __init__(self, settings: Optional[WorkflowExecutorConfig] = None) -> None:
+        self.config = settings or WorkflowExecutorConfig.get()
+        self.task_runner = get_task_runner(self.config.run_settings)
 
-    def create_job_state(self, job_submit_message: JobSubmitMessage) -> JobState:
-        """Create a job state from a job submit message."""
-        job_state = JobState.create(job_submit_message, self.settings)
-        self.record_updater.upsert_record(
-            record=JobRunRecord(
-                run_id=job_state.job_submit_message.run_id,
-                job_id=job_state.job_id,
-                status=JobRunStatus.RUNNING,
+    def create_job_partition_states(
+        self, submit_msgs: Iterable[JobPartitionSubmitMessage]
+    ) -> List[JobPartitionState]:
+        records: List[JobPartitionRunRecord] = []
+        states: List[JobPartitionState] = []
+        for submit_msg in submit_msgs:
+            job_partition_run = JobPartitionRunRecord.from_definition(
+                submit_msg.job_partition.partition_id,
+                submit_msg.job_partition.definition,
+                submit_msg.run_id,
+                status=JobPartitionRunStatus.RUNNING,
             )
-        )
+            job_partition_state = JobPartitionState.create(
+                submit_msg,
+                job_part_run_record_id=job_partition_run.get_id(),
+                settings=self.config.run_settings,
+            )
+            if job_partition_state.current_task:
+                task_state = job_partition_state.current_task
+                task_run = job_partition_run.get_task(task_state.task_id)
+                if not task_run:
+                    job_partition_run.status = JobPartitionRunStatus.FAILED
+                    raise WorkflowRunRecordError(
+                        f"Task {task_state.task_id} not found in "
+                        f"job partition {job_partition_run.get_id()}"
+                    )
+                task_run.status = TaskRunStatus.SUBMITTING
+            else:
+                job_partition_run.set_status(JobPartitionRunStatus.FAILED)
+                job_partition_state.status = JobPartitionStateStatus.NOTASKS
 
-        if job_state.current_task:
-            task_state = job_state.current_task
-            self.record_updater.upsert_record(
-                record=TaskRunRecord(
-                    run_id=task_state.prepared_task.task_submit_message.run_id,
-                    job_id=task_state.prepared_task.task_submit_message.job_id,
-                    task_id=task_state.task_id,
-                    status=TaskRunStatus.SUBMITTING,
-                )
-            )
-        else:
-            self.record_updater.upsert_record(
-                record=JobRunRecord(
-                    run_id=job_state.job_submit_message.run_id,
-                    job_id=job_state.job_id,
-                    status=JobRunStatus.FAILED,
-                    errors=["Job contains no tasks"],
-                )
-            )
-            raise Exception(f"Invalid job {job_state.job_id}: Job contains no tasks")
+            records.append(job_partition_run)
+            states.append(job_partition_state)
 
-        return job_state
+        # Bulk insert job partition run records
+        with WorkflowRunsContainer(
+            JobPartitionRunRecord, db=self.config.get_cosmosdb()
+        ) as container:
+            container.bulk_put(records)
 
-    def update_submitted_task_state(
-        self,
-        task_state: TaskState,
-        submit_result: Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult],
-    ) -> None:
-        task_state.set_submitted(submit_result)
-
-        if isinstance(submit_result, FailedTaskSubmitResult):
-            self.record_updater.update_record(
-                TaskRunRecordUpdate(
-                    run_id=task_state.prepared_task.task_submit_message.run_id,
-                    job_id=task_state.prepared_task.task_submit_message.job_id,
-                    task_id=task_state.task_id,
-                    status=TaskRunStatus.FAILED,
-                    errors=[
-                        "Failed to submit task.",
-                    ]
-                    + submit_result.errors,
-                )
-            )
-        else:
-            self.record_updater.update_record(
-                TaskRunRecordUpdate(
-                    run_id=task_state.prepared_task.task_submit_message.run_id,
-                    job_id=task_state.prepared_task.task_submit_message.job_id,
-                    task_id=task_state.task_id,
-                    status=TaskRunStatus.SUBMITTING,
-                )
-            )
+        return states
 
     def send_notification(
         self, notification_submit_message: NotificationSubmitMessage
     ) -> None:
         """Send a notification to the notification queue."""
-        queue_settings = self.settings.notification_queue
+        queue_settings = self.config.run_settings.notification_queue
         with QueueService.from_connection_string(
             connection_string=queue_settings.connection_string,
             queue_name=queue_settings.queue_name,
@@ -140,23 +235,13 @@ class RemoteWorkflowExecutor:
             msg_id = queue.send_message(notification_submit_message.dict())
             logger.info(f"  - Notification sent, queue id {msg_id}")
 
-    def succeed_job(self, job_state: JobState) -> None:
-        job_state.status = JobStateStatus.SUCCEEDED
+    def handle_job_part_notifications(self, job_state: JobPartitionState) -> None:
+        # TODO: Handle job notifications
 
-        self.record_updater.update_record(
-            JobRunRecordUpdate(
-                status=JobRunStatus.COMPLETED,
-                run_id=job_state.job_submit_message.run_id,
-                job_id=job_state.job_id,
-            )
-        )
-
-        # Handle job notifications
-
-        job_submit_msg = job_state.job_submit_message
-        job_config = job_submit_msg.job
-        if job_config.notifications:
-            for notification in job_config.notifications:
+        job_submit_msg = job_state.job_part_submit_msg
+        job_config = job_submit_msg.job_partition
+        if job_config.definition.notifications:
+            for notification in job_config.definition.notifications:
                 templated_notification = template_notification(
                     notification=notification,
                     task_outputs=job_state.task_outputs,
@@ -165,261 +250,360 @@ class RemoteWorkflowExecutor:
                 notification_submit_msg = NotificationSubmitMessage(
                     notification=notification_message,
                     target_environment=job_submit_msg.target_environment,
-                    processing_id=job_state.job_submit_message.get_run_record_id(),
+                    processing_id=job_state.job_part_submit_msg.get_run_record_id(),
                 )
 
                 self.send_notification(notification_submit_msg)
 
-    def complete_jobs(
-        self, run_id: str, group_id: str, job_states: List[JobState]
+    def cancel_tasks(self, job_part_state: JobPartitionState) -> None:
+        # Called when a job partition is cancelled, prior to submitting tasks.
+        task_state = job_part_state.current_task
+        if task_state:
+            task_state.change_status(TaskStateStatus.CANCELLED)
+            container = WorkflowRunsContainer(
+                JobPartitionRunRecord, db=self.config.get_cosmosdb()
+            )
+            job_part_run = container.get(
+                job_part_state.job_part_run_record_id,
+                partition_key=job_part_state.run_id,
+            )
+            if job_part_run:
+                for task in job_part_run.tasks:
+                    if task.status in [TaskRunStatus.PENDING, TaskRunStatus.SUBMITTING]:
+                        task.set_status(TaskRunStatus.CANCELLED)
+                container.put(job_part_run)
+
+    def update_submit_result(
+        self,
+        task_state: TaskState,
+        submit_result: Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult],
+        container: CosmosDBContainer[JobPartitionRunRecord],
+        run_id: str,
+        job_partition_run_id: str,
+    ) -> TaskRunStatus:
+        """Updates a task state and task run status based on the submit result.
+
+        Returns the resulting task run status.
+        """
+        task_state.set_submitted(submit_result)
+
+        if isinstance(submit_result, FailedTaskSubmitResult):
+            update_task_run_status(
+                container,
+                run_id=run_id,
+                job_partition_run_id=job_partition_run_id,
+                task_id=task_state.task_id,
+                status=TaskRunStatus.FAILED,
+                errors=["Task failed to submit."] + submit_result.errors,
+            )
+            return TaskRunStatus.FAILED
+        else:
+            update_task_run_status(
+                container,
+                run_id=run_id,
+                job_partition_run_id=job_partition_run_id,
+                task_id=task_state.task_id,
+                status=TaskRunStatus.SUBMITTED,
+            )
+            return TaskRunStatus.SUBMITTED
+
+    def complete_job_partitions(
+        self,
+        run_id: str,
+        job_id: str,
+        group_id: str,
+        job_part_states: List[JobPartitionState],
     ) -> List[Dict[str, Any]]:
-        """Complete jobs and return the results.
+        """Complete job partitions and return the results.
 
         This is a blocking loop that is meant to be called on it's own thread.
         """
-        task_io_storage = self.settings.get_task_io_storage()
-        task_log_storage = self.settings.get_log_storage()
+        task_io_storage = self.config.run_settings.get_task_io_storage()
+        task_log_storage = self.config.run_settings.get_log_storage()
 
         completed_job_count = 0
         failed_job_count = 0
-        total_job_count = len(job_states)
+        total_job_count = len(job_part_states)
         _jobs_left = lambda: total_job_count - completed_job_count - failed_job_count
         _report_status = lambda: logger.info(
-            f"{group_id} status: "
+            f"{job_id} {group_id} status: "
             f"{completed_job_count} completed, "
             f"{failed_job_count} failed, "
             f"{_jobs_left()} remaining"
         )
 
-        while _jobs_left():
-            # print(f"{group_id} remaining: {_jobs_left()}")
-            statuses: List[str] = []
-            for job_state in job_states:
-                if job_state.status == JobStateStatus.NEW:
-                    job_state.status = JobStateStatus.RUNNING
-                    self.record_updater.upsert_record(
-                        record=JobRunRecord(
-                            status=JobRunStatus.RUNNING,
-                            run_id=run_id,
-                            job_id=job_state.job_id,
-                        )
-                    )
+        _last_runner_poll_time: float = time.monotonic()
+        runner_failed_tasks: Dict[str, Dict[str, str]] = {}
 
-                if job_state.current_task:
-                    task_state = job_state.current_task
-
-                    #
-                    # Update task state
-                    #
-
-                    # Update task state if waiting and
-                    # wait time expired, sets status to NEW
-                    task_state.update_if_waiting()
-
-                    if task_state.should_check_output(
-                        self.settings.check_output_seconds
-                    ):
-                        task_state.process_output_if_available(
-                            task_io_storage, self.settings
-                        )
-
-                    # If not completed through output, poll
-                    # the executor in case of other failure.
-                    if task_state.should_poll(self.settings.task_poll_seconds):
-                        logger.debug(
-                            f" ~ Polling {job_state.job_id}:{task_state.task_id}"
-                        )
-                        task_state.poll(self.executor, task_io_storage, self.settings)
-
-                    #
-                    # Act on task state
-                    #
-
-                    if task_state.status == TaskStateStatus.NEW:
-
-                        # New task, submit it
-
-                        self.record_updater.upsert_record(
-                            record=TaskRunRecord(
-                                run_id=task_state.run_id,
-                                job_id=task_state.job_id,
-                                task_id=task_state.task_id,
-                                status=TaskRunStatus.SUBMITTING,
-                            )
-                        )
-                        job_state.current_task.submit(self.executor)
-                        submit_result = job_state.current_task.submit_result
-                        if not submit_result:
-                            raise Exception(
-                                f"Unexpected submit result: {submit_result}"
-                            )
-
-                        self.update_submitted_task_state(task_state, submit_result)
-
-                    elif task_state.status == TaskStateStatus.SUBMITTED:
-
-                        # Job is still running...
-                        pass
-
-                    elif task_state.status == TaskStateStatus.WAITING:
-
-                        # If we just moved the job state to waiting,
-                        # update the record.
-
-                        if not task_state.status_updated:
-                            self.record_updater.update_record(
-                                TaskRunRecordUpdate(
-                                    status=TaskRunStatus.WAITING,
-                                    run_id=run_id,
-                                    job_id=job_state.job_id,
-                                    task_id=task_state.task_id,
-                                )
-                            )
-                            task_state.status_updated = True
-
-                    elif task_state.status == TaskStateStatus.FAILED:
-
-                        logger.warning(
-                            f"Task failed: {job_state.job_id} - {task_state.task_id}"
-                        )
-                        errors: Optional[List[str]] = None
-                        task_result = task_state.task_result
-                        if isinstance(task_result, FailedTaskResult):
-                            errors = task_result.errors
-
-                        for error in errors or []:
-                            logger.warning(f"  - {error}")
-
-                        failed_job_count += 1
-
-                        job_state.status = JobStateStatus.FAILED
-                        job_state.current_task = None
-
-                        # Mark this task as failed
-
-                        self.record_updater.update_record(
-                            TaskRunRecordUpdate(
-                                status=TaskRunStatus.FAILED,
-                                run_id=run_id,
-                                job_id=job_state.job_id,
-                                task_id=task_state.task_id,
-                                log_uris=map_opt(
-                                    lambda uri: [uri],
-                                    task_state.get_log_uri(task_log_storage),
-                                ),
-                                errors=errors,
-                            )
-                        )
-
-                        # Mark any other tasks in the job as cancelled
-                        for task_config in job_state.task_queue:
-                            self.record_updater.upsert_record(
-                                record=TaskRunRecord(
-                                    status=TaskRunStatus.CANCELLED,
-                                    run_id=run_id,
-                                    job_id=job_state.job_id,
-                                    task_id=task_config.id,
-                                )
-                            )
-
-                        job_state.status = JobStateStatus.FAILED
-
-                        self.record_updater.update_record(
-                            JobRunRecordUpdate(
-                                status=JobRunStatus.FAILED,
-                                run_id=run_id,
-                                job_id=job_state.job_id,
-                                errors=[f"Task {task_state.task_id} failed"],
-                            )
-                        )
-
-                        logger.warning(f"Job failed: {job_state.job_id}")
-
-                        _report_status()
-
-                    elif task_state.status == TaskStateStatus.COMPLETED:
-
-                        logger.info(
-                            f"Task completed: {job_state.job_id} - {task_state.task_id}"
-                        )
-                        assert isinstance(task_state.task_result, CompletedTaskResult)
-                        job_state.task_outputs[task_state.task_id] = {
-                            "output": task_state.task_result.output
+        with WorkflowRunsContainer(
+            JobPartitionRunRecord, db=self.config.get_cosmosdb()
+        ) as container:
+            while _jobs_left() > 0:
+                # Check the task runner for any failed tasks.
+                if (
+                    time.monotonic() - _last_runner_poll_time
+                    > self.config.run_settings.task_poll_seconds
+                ):
+                    logger.info("Polling task runner for failed tasks...")
+                    current_tasks = {
+                        jps.partition_id: {
+                            jps.current_task.task_id: jps.current_task.task_runner_id
                         }
+                        for jps in job_part_states
+                        if jps.current_task and jps.current_task.task_runner_id
+                    }
 
-                        self.record_updater.update_record(
-                            TaskRunRecordUpdate(
-                                status=TaskRunStatus.COMPLETED,
-                                run_id=run_id,
-                                job_id=job_state.job_id,
-                                task_id=task_state.task_id,
-                                log_uris=map_opt(
-                                    lambda uri: [uri],
-                                    task_state.get_log_uri(task_log_storage),
-                                ),
-                            )
-                        )
-
-                        try:
-                            job_state.prepare_next_task(self.settings)
-                        except Exception as e:
-                            job_state.status = JobStateStatus.FAILED
-                            failed_job_count += 1
-                            self.record_updater.update_record(
-                                JobRunRecordUpdate(
-                                    status=JobRunStatus.FAILED,
-                                    run_id=run_id,
-                                    job_id=job_state.job_id,
-                                    errors=[
-                                        (
-                                            f"Job {job_state.job_id} "
-                                            "failed while preparing task"
-                                        ),
-                                        str(e),
-                                    ],
-                                )
-                            )
-
-                        # Handle job completion
-                        if (
-                            job_state.current_task is None
-                            and job_state.status != JobStateStatus.FAILED
-                        ):
-                            try:
-                                self.succeed_job(job_state)
-                                completed_job_count += 1
-                                logger.info(f"Job completed: {job_state.job_id}")
-                            except Exception as e:
-                                job_state.status = JobStateStatus.FAILED
-                                failed_job_count += 1
-                                self.record_updater.update_record(
-                                    JobRunRecordUpdate(
-                                        status=JobRunStatus.FAILED,
-                                        run_id=run_id,
-                                        job_id=job_state.job_id,
-                                        errors=[
-                                            (
-                                                f"Job {job_state.job_id} "
-                                                "failed while completing"
-                                            ),
-                                            str(e),
-                                        ],
-                                    )
-                                )
-
-                        _report_status()
-
-                    statuses.append(
-                        f"{job_state.job_id}:{task_state.task_id}:{task_state.status}"
+                    runner_failed_tasks = self.task_runner.get_failed_tasks(
+                        current_tasks
                     )
+                    _last_runner_poll_time = time.monotonic()
+                    total_failed = [len(ts) for ts in runner_failed_tasks.values()]
+                    if total_failed:
+                        logger.info(f"  - {sum(total_failed)} failed tasks found.")
+                    else:
+                        logger.info("  - No failed tasks found.")
 
-            # for status in statuses:
-            #     print(f"- {status}")
-            time.sleep(0.25 + ((random.randint(0, 10) / 100) - 0.05))
+                for job_part_state in job_part_states:
+                    part_id = job_part_state.job_part_submit_msg.partition_id
 
-        logger.info(f"Task group {group_id} completed!")
+                    # For each job partition in this group, process
+                    # the status of the current task.
 
-        return [job_state.task_outputs for job_state in job_states]
+                    try:
+                        if job_part_state.current_task:
+
+                            task_state = job_part_state.current_task
+                            part_run_record_id = job_part_state.job_part_run_record_id
+
+                            #
+                            # Update task state
+                            #
+
+                            # Update task state if waiting and
+                            # wait time expired, sets status to NEW
+                            task_state.update_if_waiting()
+
+                            if task_state.should_check_output(
+                                self.config.run_settings.check_output_seconds
+                            ):
+                                task_state.process_output_if_available(
+                                    task_io_storage, self.config.run_settings
+                                )
+
+                            # If not completed through output,
+                            # check the status blob
+                            if task_state.should_check_status_blob(
+                                self.config.run_settings.check_status_blob_seconds
+                            ):
+                                task_state.process_status_blob_if_available(
+                                    task_io_storage
+                                )
+
+                            if part_id in runner_failed_tasks:
+                                if task_state.task_id in runner_failed_tasks[part_id]:
+                                    error_msg = runner_failed_tasks[part_id][
+                                        task_state.task_id
+                                    ]
+                                    task_state.set_failed([error_msg])
+
+                            #
+                            # Act on task state
+                            #
+
+                            if task_state.status == TaskStateStatus.NEW:
+
+                                # New task, submit it
+
+                                update_task_run_status(
+                                    container,
+                                    run_id=run_id,
+                                    job_partition_run_id=part_run_record_id,
+                                    task_id=task_state.task_id,
+                                    status=TaskRunStatus.SUBMITTING,
+                                )
+
+                                job_part_state.current_task.submit(self.task_runner)
+                                submit_result = (
+                                    job_part_state.current_task.submit_result
+                                )
+                                if not submit_result:
+                                    raise Exception(
+                                        f"Unexpected submit result: {submit_result}"
+                                    )
+
+                                self.update_submit_result(
+                                    task_state,
+                                    submit_result,
+                                    container,
+                                    run_id=run_id,
+                                    job_partition_run_id=part_run_record_id,
+                                )
+
+                            elif task_state.status == TaskStateStatus.SUBMITTED:
+
+                                # Job is running...
+                                pass
+
+                            elif task_state.status == TaskStateStatus.RUNNING:
+
+                                # Job is still running...
+                                if not task_state.status_updated:
+                                    update_task_run_status(
+                                        container,
+                                        run_id=run_id,
+                                        job_partition_run_id=part_run_record_id,
+                                        task_id=task_state.task_id,
+                                        status=TaskRunStatus.RUNNING,
+                                    )
+                                    task_state.status_updated = True
+
+                            elif task_state.status == TaskStateStatus.WAITING:
+
+                                # If we just moved the job state to waiting,
+                                # update the record.
+
+                                if not task_state.status_updated:
+                                    update_task_run_status(
+                                        container,
+                                        run_id=run_id,
+                                        job_partition_run_id=part_run_record_id,
+                                        task_id=task_state.task_id,
+                                        status=TaskRunStatus.WAITING,
+                                    )
+                                    task_state.status_updated = True
+
+                            elif task_state.status == TaskStateStatus.FAILED:
+
+                                logger.warning(
+                                    f"Task failed: {job_part_state.job_id} "
+                                    f"- {task_state.task_id}"
+                                )
+                                errors: Optional[List[str]] = None
+                                task_result = task_state.task_result
+                                if isinstance(task_result, FailedTaskResult):
+                                    errors = task_result.errors
+
+                                for error in errors or []:
+                                    logger.warning(f"  - {error}")
+
+                                failed_job_count += 1
+
+                                job_part_state.status = JobPartitionStateStatus.FAILED
+                                job_part_state.current_task = None
+
+                                # Mark this task as failed (will also fail job part)
+
+                                update_task_run_status(
+                                    container,
+                                    run_id=run_id,
+                                    job_partition_run_id=part_run_record_id,
+                                    task_id=task_state.task_id,
+                                    status=TaskRunStatus.FAILED,
+                                    errors=errors,
+                                    log_uri=task_state.get_log_uri(task_log_storage),
+                                )
+
+                                logger.warning(
+                                    "Job partition failed: "
+                                    f"{job_part_state.job_id}:{part_id}"
+                                )
+
+                                _report_status()
+
+                            elif task_state.status == TaskStateStatus.COMPLETED:
+
+                                logger.info(
+                                    f"Task completed: {job_part_state.job_id}:{part_id}"
+                                    f":{task_state.task_id}"
+                                )
+                                if not isinstance(
+                                    task_state.task_result, CompletedTaskResult
+                                ):
+                                    task_state.set_failed(
+                                        [
+                                            "Unexpected task result: "
+                                            f"{task_state.task_result} "
+                                            f"of type {type(task_state.task_result)}"
+                                        ]
+                                    )
+                                    continue
+
+                                job_part_state.task_outputs[task_state.task_id] = {
+                                    "output": task_state.task_result.output
+                                }
+
+                                update_task_run_status(
+                                    container,
+                                    run_id=run_id,
+                                    job_partition_run_id=part_run_record_id,
+                                    task_id=task_state.task_id,
+                                    status=TaskRunStatus.COMPLETED,
+                                    log_uri=task_state.get_log_uri(task_log_storage),
+                                )
+
+                                try:
+                                    job_part_state.prepare_next_task(
+                                        self.config.run_settings
+                                    )
+                                except Exception as e:
+                                    logger.exception(e)
+                                    job_part_state.status = (
+                                        JobPartitionStateStatus.FAILED
+                                    )
+                                    failed_job_count += 1
+                                    update_job_partition_run_status(
+                                        container,
+                                        run_id=run_id,
+                                        job_partition_run_id=part_run_record_id,
+                                        status=JobPartitionRunStatus.FAILED,
+                                    )
+
+                                # Handle job completion
+                                if (
+                                    job_part_state.current_task is None
+                                    and job_part_state.status
+                                    != JobPartitionStateStatus.FAILED
+                                ):
+                                    try:
+                                        job_part_state.status = (
+                                            JobPartitionStateStatus.SUCCEEDED
+                                        )
+                                        update_job_partition_run_status(
+                                            container,
+                                            run_id=run_id,
+                                            job_partition_run_id=part_run_record_id,
+                                            status=JobPartitionRunStatus.COMPLETED,
+                                        )
+                                        self.handle_job_part_notifications(
+                                            job_part_state
+                                        )
+                                    except Exception:
+                                        job_part_state.status = (
+                                            JobPartitionStateStatus.FAILED
+                                        )
+                                        failed_job_count += 1
+                                        update_job_partition_run_status(
+                                            container,
+                                            run_id=run_id,
+                                            job_partition_run_id=part_run_record_id,
+                                            status=JobPartitionRunStatus.FAILED,
+                                        )
+                                    completed_job_count += 1
+                                    logger.info(
+                                        f"Job partition completed: {job_id}:{part_id}"
+                                    )
+
+                                _report_status()
+
+                    except Exception as e:
+                        logger.exception(e)
+                        raise
+
+                time.sleep(0.25 + ((random.randint(0, 10) / 100) - 0.05))
+
+            logger.info(f"Partition group {group_id} completed!")
+
+            return [job_state.task_outputs for job_state in job_part_states]
 
     def execute_workflow(
         self,
@@ -427,242 +611,503 @@ class RemoteWorkflowExecutor:
     ) -> Dict[str, Any]:
 
         workflow = submit_message.get_workflow_with_templated_args()
-        run_record_id = submit_message.get_run_record_id()
-        run_logger = RunLogger(run_record_id, logger_id="RUNNER")
         trigger_event = map_opt(lambda e: e.dict(), submit_message.trigger_event)
         run_id = submit_message.run_id
+        dataset_id = submit_message.workflow.definition.dataset_id
+        target_env = workflow.definition.target_environment
 
+        run_settings = self.config.run_settings
         pool = futures.ThreadPoolExecutor(
-            max_workers=self.settings.remote_runner_threads
+            max_workers=run_settings.remote_runner_threads
         )
 
-        logger.info("***********************************")
-        logger.info(f"Workflow: {submit_message.workflow.name}")
-        logger.info(f"Run Id: {run_id}")
-        logger.info("***********************************")
-
-        self.record_updater.upsert_record(
-            record=WorkflowRunRecord(
-                dataset=submit_message.workflow.get_dataset_id(),
-                run_id=submit_message.run_id,
-                workflow=submit_message.workflow,
-                trigger_event=submit_message.trigger_event,
-                args=submit_message.args,
-                status=WorkflowRunStatus.RUNNING,
-            ),
+        log_path = get_workflow_log_path(run_id)
+        log_uri = (
+            f"blob://{run_settings.blob_account_name}/"
+            f"{run_settings.log_blob_container}/{log_path}"
         )
+        log_storage = run_settings.get_log_storage()
 
-        workflow_errors: List[str] = []
-        job_outputs: Dict[str, Union[Dict[str, Any], List[Dict[str, Any]]]] = {}
+        with StorageLogger.from_uri(log_uri, log_storage=log_storage):
 
-        workflow_jobs = list(workflow.jobs.values())
-        sorted_jobs = sort_jobs(workflow_jobs)
-        logger.info(f"Running jobs: {[j.id for j in sorted_jobs]}")
-        for base_job in sorted_jobs:
-            if workflow_errors:
-                break
+            logger.info("***********************************")
+            logger.info(f"Workflow: {submit_message.workflow.id}")
+            logger.info(f"Run Id: {run_id}")
+            logger.info("***********************************")
 
-            msg = f"Running job: {base_job.id}"
-            logger.info(msg)
-            run_logger.info(msg)
+            logger.info(f"Logging to: {log_uri}")
 
-            try:
-                if base_job.foreach:
-                    items = template_foreach(
-                        base_job.foreach,
-                        job_outputs=job_outputs,
-                        trigger_event=None,
+            with WorkflowRunsContainer(
+                WorkflowRunRecord, db=self.config.get_cosmosdb()
+            ) as container:
+                workflow_run = container.get(run_id, partition_key=run_id)
+
+                if not workflow_run:
+                    raise WorkflowRunRecordError(
+                        f"Record for workflow run {run_id} not found."
                     )
-                    jobs = [
-                        template_job_with_item(base_job, item, i)
-                        for i, item in enumerate(items)
-                    ]
-                    msg = f" - Running {len(jobs)} subjobs"
-                    logger.info(msg)
-                    run_logger.info(msg)
-                else:
-                    jobs = [base_job]
-            except Exception as e:
-                logger.exception(e)
-                workflow_errors.extend(
-                    [f"Job {base_job.id} failed during templating.:", str(e)]
+
+                update_workflow_run_status(
+                    container, workflow_run, WorkflowRunStatus.RUNNING, log_uri=log_uri
                 )
-                break
 
-            total_job_count = len(jobs)
+                job_outputs: Dict[str, Union[Dict[str, Any], List[Dict[str, Any]]]] = {}
+                workflow_failed = False
+                try:
 
-            job_submit_messages = [
-                JobSubmitMessage(
-                    job=prepared_job,
-                    dataset=workflow.get_dataset_id(),
-                    run_id=submit_message.run_id,
-                    job_id=prepared_job.get_id(),
-                    tokens=workflow.tokens,
-                    target_environment=workflow.target_environment,
-                    job_outputs=job_outputs,
-                    trigger_event=trigger_event,
-                )
-                for prepared_job in jobs
-            ]
+                    workflow_jobs = list(workflow.definition.jobs.values())
+                    sorted_jobs = sort_jobs(workflow_jobs)
+                    logger.info(f"Running jobs: {[j.id for j in sorted_jobs]}")
+                    for job_def in sorted_jobs:
 
-            # Create job states, prepare first tasks.
-            logger.info(" - Preparing jobs...")
-            try:
-                job_states = list(
-                    pool.map(
-                        self.create_job_state,
-                        job_submit_messages,
-                    )
-                )
-            except Exception as e:
-                logger.exception(e)
-                workflow_errors.extend(
-                    [f"Job {base_job.id} failed during job preparation.", str(e)]
-                )
-                break
+                        # For each job, create the job partitions
+                        # through the task pool, submit all initial
+                        # tasks, and then wait for all tasks to complete
 
-            initial_tasks: List[PreparedTaskSubmitMessage] = []
-            for job_state in job_states:
-                if not job_state.current_task:
-                    raise RemoteWorkflowRunnerError(
-                        f"Job {job_state.job_submit_message.job.id} has no tasks."
-                    )
-                initial_tasks.append(job_state.current_task.prepared_task)
+                        job_id = job_def.get_id()
+                        job_run = workflow_run.get_job_run(job_id)
 
-            # First tasks in a job are submitted in bulk to minimize
-            # the number of concurrent API calls.
-            logger.info(" - Submitting initial tasks...")
-            submit_results = self.executor.submit_tasks(initial_tasks)
-
-            logger.info(" -  Initial tasks submitted.")
-            submit_failed = False
-            for job_state, submit_result in zip(job_states, submit_results):
-                assert job_state.current_task
-                self.update_submitted_task_state(job_state.current_task, submit_result)
-                if isinstance(submit_result, FailedTaskSubmitResult):
-                    logger.error(f"Failed to submit task: {submit_result.errors}")
-                    submit_failed = True
-
-            if submit_failed:
-                error_msg = f"Failed to submit tasks for job {base_job.id}"
-                self.record_updater.update_record(
-                    update=WorkflowRunRecordUpdate(
-                        status=WorkflowRunStatus.FAILED,
-                        dataset=submit_message.workflow.get_dataset_id(),
-                        run_id=submit_message.run_id,
-                        errors=[error_msg],
-                    )
-                )
-                raise RemoteWorkflowRunnerError(error_msg)
-
-            # Split the jobs into groups based on number of threads
-            grouped_jobs = [
-                (list(g), group_num)
-                for group_num, g in enumerate(
-                    grouped(
-                        job_states,
-                        int(
-                            math.ceil(
-                                len(job_states) / self.settings.remote_runner_threads
+                        if not job_run:
+                            raise WorkflowRunRecordError(
+                                f"Job run {job_def.get_id()} not found."
                             )
-                        ),
-                    )
-                )
-            ]
 
-            # Wait for the first task of the job to complete, and then complete
-            # all remaining tasks
+                        if workflow_failed:
+                            update_job_run_status(
+                                container,
+                                workflow_run,
+                                job_def.get_id(),
+                                JobRunStatus.CANCELLED,
+                            )
+                            # Skip processing the job
+                            continue
 
-            logger.info("Waiting for tasks to complete...")
-
-            job_futures = {
-                pool.submit(
-                    self.complete_jobs,
-                    run_id,
-                    f"job-group-{group_num}",
-                    job_state_group,
-                ): job_state_group
-                for job_state_group, group_num in grouped_jobs
-            }
-
-            job_results: List[Dict[str, Any]] = []
-
-            job_done_count = 0
-            failed_jobs: Set[str] = set()
-            for job_future in futures.as_completed(job_futures.keys()):
-                job_states = job_futures[job_future]
-
-                future_error = job_future.exception()
-                if future_error:
-                    self.record_updater.update_record(
-                        update=WorkflowRunRecordUpdate(
-                            status=WorkflowRunStatus.FAILED,
-                            dataset=submit_message.workflow.get_dataset_id(),
-                            run_id=submit_message.run_id,
-                            errors=[
-                                "Unexpected error in workflow runner",
-                                str(future_error),
-                            ],
+                        logger.info(f"Running job: {job_def.id}")
+                        update_job_run_status(
+                            container,
+                            workflow_run,
+                            job_def.get_id(),
+                            JobRunStatus.RUNNING,
                         )
-                    )
-                    raise future_error
 
-                if job_future.cancelled():
-                    self.record_updater.update_record(
-                        update=WorkflowRunRecordUpdate(
-                            status=WorkflowRunStatus.FAILED,
-                            dataset=submit_message.workflow.get_dataset_id(),
-                            run_id=submit_message.run_id,
-                            errors=[str("Job threads were cancelled.")],
+                        job_partitions: List[JobPartition]
+
+                        # Prepare task data
+                        logger.info(f"Preparing task data for job: {job_id}")
+                        task_data: List[PreparedTaskData] = []
+                        try:
+                            for task in job_def.tasks:
+                                task_data.append(
+                                    prepare_task_data(
+                                        dataset_id,
+                                        run_id,
+                                        job_id,
+                                        task,
+                                        settings=run_settings,
+                                        tokens=workflow.definition.tokens,
+                                        target_environment=target_env,
+                                        task_runner=self.task_runner,
+                                    )
+                                )
+                        except Exception as e:
+                            logger.error(f"Failed to prepare task data: {e}")
+                            logger.exception(e)
+                            logger.info(
+                                f"...cleaning up based on task data for job: {job_id}"
+                            )
+                            self.task_runner.cleanup([d.runner_info for d in task_data])
+                            job_run.add_errors(
+                                [
+                                    f"Job {job_def.id} failed during task data prep:",
+                                    str(e),
+                                ]
+                            )
+                            update_job_run_status(
+                                container,
+                                workflow_run,
+                                job_def.get_id(),
+                                JobRunStatus.FAILED,
+                            )
+                            workflow_failed = True
+                            continue
+
+                        try:
+                            if job_def.foreach:
+                                items = template_foreach(
+                                    job_def.foreach,
+                                    job_outputs=job_outputs,
+                                    trigger_event=None,
+                                )
+                                job_partitions = [
+                                    JobPartition(
+                                        definition=template_job_with_item(
+                                            job_def, item
+                                        ),
+                                        partition_id=str(i),
+                                        task_data=task_data,
+                                    )
+                                    for i, item in enumerate(items)
+                                ]
+                                msg = f" - Running {len(job_partitions)} job partitions"
+                                logger.info(msg)
+                            else:
+                                job_partitions = [
+                                    JobPartition(
+                                        definition=job_def,
+                                        partition_id="0",
+                                        task_data=task_data,
+                                    )
+                                ]
+                        except Exception as e:
+                            logger.error(f"Failed to template job partitions: {e}")
+                            logger.exception(e)
+                            logger.info(
+                                f"...cleaning up based on task data for job: {job_id}"
+                            )
+                            self.task_runner.cleanup([d.runner_info for d in task_data])
+                            job_run.add_errors(
+                                [f"Job {job_def.id} failed during templating.:", str(e)]
+                            )
+                            update_job_run_status(
+                                container,
+                                workflow_run,
+                                job_def.get_id(),
+                                JobRunStatus.FAILED,
+                            )
+                            workflow_failed = True
+                            continue
+
+                        total_job_part_count = len(job_partitions)
+
+                        if total_job_part_count <= 0:
+                            job_outputs[job_id] = []
+                            logger.warning(f"No tasks, skipping job {job_id}")
+                            logger.info(
+                                f"...cleaning up based on task data for job: {job_id}"
+                            )
+                            self.task_runner.cleanup([d.runner_info for d in task_data])
+                            update_job_run_status(
+                                container,
+                                workflow_run,
+                                job_def.get_id(),
+                                JobRunStatus.SKIPPED,
+                                errors=[f"Job {job_def.id} has no partitions to run."],
+                            )
+                            continue
+
+                        # ## CREATE JOB PARTITIONS
+
+                        job_part_submit_msgs = [
+                            JobPartitionSubmitMessage(
+                                job_partition=prepared_job,
+                                dataset_id=workflow.dataset_id,
+                                run_id=submit_message.run_id,
+                                job_id=prepared_job.definition.get_id(),
+                                partition_id=prepared_job.partition_id,
+                                tokens=workflow.definition.tokens,
+                                target_environment=target_env,
+                                job_outputs=job_outputs,
+                                trigger_event=trigger_event,
+                            )
+                            for prepared_job in job_partitions
+                        ]
+
+                        # Create job states, prepare first tasks.
+                        logger.info(" - Preparing jobs...")
+
+                        try:
+                            job_part_states = self.create_job_partition_states(
+                                job_part_submit_msgs
+                            )
+                        except Exception as e:
+                            logger.error(f"Failed to prepare job partitions: {e}")
+                            logger.exception(e)
+                            logger.info(
+                                f"...cleaning up based on task data for job: {job_id}"
+                            )
+                            self.task_runner.cleanup([d.runner_info for d in task_data])
+                            logger.exception(e)
+                            update_job_run_status(
+                                container,
+                                workflow_run,
+                                job_def.get_id(),
+                                JobRunStatus.FAILED,
+                                errors=[
+                                    f"Job {job_def.id} failed during job preparation.",
+                                    str(e),
+                                ],
+                            )
+                            workflow_failed = True
+                            continue
+
+                        if any(
+                            [
+                                jps.status == JobPartitionStateStatus.NOTASKS
+                                for jps in job_part_states
+                            ]
+                        ):
+                            # Mark all submitting task as cancelled.
+                            try:
+                                list(
+                                    pool.map(
+                                        self.cancel_tasks,
+                                        job_part_states,
+                                    )
+                                )
+                            except Exception as e:
+                                logger.exception(e)
+
+                            logger.warning(f" - Job {job_id} has no tasks to run.")
+                            logger.info(
+                                f"...cleaning up based on task data for job: {job_id}"
+                            )
+                            self.task_runner.cleanup([d.runner_info for d in task_data])
+
+                            # Fail job, update all task records to cancelled or failed.
+                            update_job_run_status(
+                                container,
+                                workflow_run,
+                                job_def.get_id(),
+                                JobRunStatus.FAILED,
+                            )
+                            workflow_failed = True
+                            continue
+
+                        # ## SUBMIT INITIAL TASKS
+
+                        initial_tasks: List[PreparedTaskSubmitMessage] = []
+                        for job_part_state in job_part_states:
+                            # Case with no tasks has already been handled.
+                            assert job_part_state.current_task
+                            initial_tasks.append(
+                                job_part_state.current_task.prepared_task
+                            )
+
+                        # First tasks in a job are submitted in bulk to minimize
+                        # the number of concurrent API calls.
+                        logger.info(" - Submitting initial tasks...")
+                        try:
+                            submit_results: List[
+                                Union[
+                                    SuccessfulTaskSubmitResult, FailedTaskSubmitResult
+                                ]
+                            ] = self.task_runner.submit_tasks(initial_tasks)
+                        except Exception as e:
+                            submit_results = [
+                                FailedTaskSubmitResult(errors=[str(e)])
+                                for _ in initial_tasks
+                            ]
+
+                        logger.info(" -  Initial tasks submitted, checking status...")
+
+                        try:
+
+                            def _update_submit_results(
+                                tup: Tuple[
+                                    JobPartitionState,
+                                    Union[
+                                        SuccessfulTaskSubmitResult,
+                                        FailedTaskSubmitResult,
+                                    ],
+                                ]
+                            ) -> TaskRunStatus:
+                                jps, submit_result = tup
+                                assert jps.current_task
+                                with WorkflowRunsContainer(
+                                    JobPartitionRunRecord, db=self.config.get_cosmosdb()
+                                ) as container:
+                                    return self.update_submit_result(
+                                        jps.current_task,
+                                        submit_result,
+                                        container=container,
+                                        run_id=jps.run_id,
+                                        job_partition_run_id=jps.job_part_run_record_id,
+                                    )
+
+                            any_submitted = False
+                            all_submitted = True
+                            for submitted in pool.map(
+                                _update_submit_results,
+                                zip(job_part_states, submit_results),
+                            ):
+                                _this_task_submitted = (
+                                    submitted == TaskRunStatus.SUBMITTED
+                                )
+                                any_submitted = any_submitted or _this_task_submitted
+                                all_submitted = all_submitted and _this_task_submitted
+
+                            if all_submitted:
+                                logger.info(
+                                    " -  All initial tasks submitted successfully."
+                                )
+                            elif any_submitted:
+                                logger.info(
+                                    " -  Some (not all) initial tasks "
+                                    "submitted successfully."
+                                )
+
+                        except Exception as e:
+                            logger.error(f"Failed to update task status: {e}")
+                            logger.exception(e)
+                            logger.info(
+                                f"...cleaning up based on task data for job: {job_id}"
+                            )
+                            self.task_runner.cleanup([d.runner_info for d in task_data])
+                            update_job_run_status(
+                                container,
+                                workflow_run,
+                                job_def.get_id(),
+                                JobRunStatus.FAILED,
+                            )
+                            workflow_failed = True
+                            continue
+
+                        if not any_submitted:
+                            logger.error(" -  All initial tasks failed to submit.")
+                            logger.info(
+                                f"...cleaning up based on task data for job: {job_id}"
+                            )
+                            self.task_runner.cleanup([d.runner_info for d in task_data])
+                            update_job_run_status(
+                                container,
+                                workflow_run,
+                                job_def.get_id(),
+                                JobRunStatus.FAILED,
+                                errors=[
+                                    f"Failed to submit tasks for job {job_def.get_id()}"
+                                ],
+                            )
+                            workflow_failed = True
+                            continue
+
+                        # ## MONITOR GROUPED JOB PARTITIONS
+
+                        # Split the job partitions into groups
+                        # based on number of threads
+                        grouped_job_partition_states = [
+                            (list(g), group_num)
+                            for group_num, g in enumerate(
+                                grouped(
+                                    job_part_states,
+                                    int(
+                                        math.ceil(
+                                            len(job_part_states)
+                                            / run_settings.remote_runner_threads
+                                        )
+                                    ),
+                                )
+                            )
+                        ]
+
+                        # Wait for the first task of the job partition to complete,
+                        # and then complete all remaining tasks
+
+                        logger.info("Waiting for tasks to complete...")
+
+                        job_part_futures = {
+                            pool.submit(
+                                self.complete_job_partitions,
+                                run_id,
+                                job_id,
+                                f"job-part-group-{group_num}",
+                                job_state_group,
+                            ): job_state_group
+                            for (
+                                job_state_group,
+                                group_num,
+                            ) in grouped_job_partition_states
+                        }
+
+                        job_results: List[Dict[str, Any]] = []
+
+                        job_done_count = 0
+                        failed_job_part_errors: List[str] = []
+                        job_failed = False
+                        for job_future in futures.as_completed(job_part_futures.keys()):
+                            job_part_states = job_part_futures[job_future]
+
+                            if job_future.cancelled():
+                                job_failed = True
+                                failed_job_part_errors.append(
+                                    "Job partitions failed due to thread cancellation."
+                                )
+
+                            future_error = job_future.exception()
+                            if future_error:
+                                job_failed = True
+                                failed_job_part_errors.append(
+                                    str(
+                                        "Job partitions thread failed "
+                                        f"with {future_error}"
+                                    )
+                                )
+
+                            job_done_count += len(job_part_states)
+                            for job_part_state in job_part_states:
+                                if (
+                                    job_part_state.status
+                                    == JobPartitionStateStatus.FAILED
+                                ):
+                                    job_failed = True
+                                else:
+                                    job_results.append(job_part_state.task_outputs)
+
+                            logger.info(
+                                f"Job {job_id} partition progress: "
+                                f"({job_done_count}/{total_job_part_count})"
+                            )
+
+                        # ## PROCESS JOB PARTITION RESULTS
+
+                        if job_failed:
+                            update_job_run_status(
+                                container,
+                                workflow_run,
+                                job_def.get_id(),
+                                JobRunStatus.FAILED,
+                                errors=failed_job_part_errors,
+                            )
+                            workflow_failed = True
+                        else:
+                            if len(job_results) == 1:
+                                job_outputs[job_id] = {
+                                    TASKS_TEMPLATE_PATH: job_results[0]
+                                }
+                            else:
+                                job_output_entry: List[Dict[str, Any]] = []
+                                for job_result in job_results:
+                                    job_output_entry.append(
+                                        {TASKS_TEMPLATE_PATH: job_result}
+                                    )
+                                job_outputs[job_id] = job_output_entry
+
+                            update_job_run_status(
+                                container,
+                                workflow_run,
+                                job_def.get_id(),
+                                JobRunStatus.COMPLETED,
+                            )
+
+                        logger.info(
+                            f"...cleaning up based on task data for job: {job_id}"
                         )
-                    )
-                    raise Exception("Jobs were cancelled.")
+                        self.task_runner.cleanup([d.runner_info for d in task_data])
 
-                job_done_count += len(job_states)
-                for job_state in job_states:
-                    if job_state.status == JobStateStatus.FAILED:
-                        failed_jobs.add(job_state.job_id)
+                    if workflow_failed:
+                        logger.error("Workflow failed!")
+                        update_workflow_run_status(
+                            container, workflow_run, WorkflowRunStatus.FAILED
+                        )
+                        raise WorkflowFailedError(f"Workflow '{workflow.id}' failed.")
                     else:
-                        job_results.append(job_state.task_outputs)
+                        logger.info("Workflow completed!")
+                        update_workflow_run_status(
+                            container, workflow_run, WorkflowRunStatus.COMPLETED
+                        )
+                except Exception as e:
+                    logger.exception(e)
+                    update_workflow_run_status(
+                        container, workflow_run, WorkflowRunStatus.FAILED
+                    )
 
-                logger.info(f"Jobs progress: ({job_done_count}/{total_job_count})")
-
-            if failed_jobs:
-                workflow_errors.extend(
-                    [f"Job failed: {job_id}" for job_id in failed_jobs]
-                )
-            else:
-                if len(job_results) == 1:
-                    job_outputs[base_job.get_id()] = {
-                        TASKS_TEMPLATE_PATH: job_results[0]
-                    }
-                else:
-                    job_output_entry: List[Dict[str, Any]] = []
-                    for job_result in job_results:
-                        job_output_entry.append({TASKS_TEMPLATE_PATH: job_result})
-                    job_outputs[base_job.get_id()] = job_output_entry
-
-        if workflow_errors:
-            logger.error("Workflow failed!")
-            for error in workflow_errors:
-                logger.error(f" - {error}")
-            self.record_updater.update_record(
-                WorkflowRunRecordUpdate(
-                    dataset=workflow.get_dataset_id(),
-                    run_id=run_id,
-                    status=WorkflowRunStatus.FAILED,
-                    errors=workflow_errors,
-                )
-            )
-            raise WorkflowFailedError(f"Workflow '{workflow.name}' failed.")
-        else:
-            logger.info("Workflow completed!")
-            self.record_updater.update_record(
-                WorkflowRunRecordUpdate(
-                    dataset=workflow.get_dataset_id(),
-                    run_id=run_id,
-                    status=WorkflowRunStatus.COMPLETED,
-                )
-            )
-
-        return job_outputs
+                return job_outputs

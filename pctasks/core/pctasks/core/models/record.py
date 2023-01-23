@@ -1,159 +1,34 @@
+from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Dict, List, Optional
-
-from pydantic import Field, validator
+from typing import Any, Dict, Optional
 
 from pctasks.core.constants import RECORD_SCHEMA_VERSION
 from pctasks.core.models.base import PCBaseModel
-from pctasks.core.models.dataset import DatasetIdentifier
-from pctasks.core.models.event import CloudEvent
-from pctasks.core.models.workflow import WorkflowConfig, WorkflowRunStatus
-from pctasks.core.tables.base import InvalidTableKeyError, validate_table_key
-from pctasks.core.utils import StrEnum
-from pctasks.core.version import __version__
+
+TYPE_FIELD_NAME = "type"
 
 
-class RecordType(StrEnum):
-    WORKFLOW_GROUP = "WorkflowGroup"
-    WORKFLOW = "Workflow"
-    JOB = "Job"
-    TASK = "Task"
-
-
-class TaskRunStatus(StrEnum):
-
-    RECEIVED = "received"
-    """Task run was received by the executor (e.g. Azure Batch)."""
-
-    PENDING = "pending"
-    """Task run is being processed before submission."""
-
-    SUBMITTING = "submitting"
-    """Task run is in the process of being submitted."""
-
-    SUBMITTED = "submitted"
-    """Task run was submitted to the executor (e.g. Azure Batch)."""
-
-    STARTING = "starting"
-    """Task run is starting."""
-
-    RUNNING = "running"
-    """Task run is currently running."""
-
-    WAITING = "waiting"
-    """Task is waiting for conditions to be met."""
-
-    COMPLETED = "completed"
-    """Task run is completed successfully."""
-
-    FAILED = "failed"
-    """Task run completed with failure."""
-
-    CANCELLED = "cancelled"
-    """Task run was cancelled."""
-
-
-class JobRunStatus(StrEnum):
-
-    RUNNING = "running"
-    COMPLETED = "completed"
-    FAILED = "failed"
-    CANCELLED = "cancelled"
-    PENDING = "pending"
-    NOTASKS = "notasks"
-
-
-class WorkflowRunGroupStatus(StrEnum):
-
-    RUNNING = "running"
-    COMPLETED = "completed"
-    FAILED = "failed"
-
-
-class RunRecord(PCBaseModel):
+class Record(PCBaseModel, ABC):
     type: str
-    created: datetime = Field(default_factory=datetime.utcnow)
-    updated: datetime = Field(default_factory=datetime.utcnow)
-
-    errors: Optional[List[str]] = None
-
-    status: str
-
     schema_version: str = RECORD_SCHEMA_VERSION
 
-    def set_update_time(self) -> None:
-        self.updated = datetime.utcnow()
+    created: Optional[datetime] = None
+    updated: Optional[datetime] = None
 
+    deleted: bool = False
+    """Whether this record is deleted or not.
 
-class TaskRunRecord(RunRecord):
-    type: str = Field(default=RecordType.TASK, const=True)
+    This is a soft delete that appears in the cosmosdb change feed.
+    """
 
-    run_id: str
-    job_id: str
-    task_id: str
+    @abstractmethod
+    def get_id(self) -> str:
+        ...
 
-    status: TaskRunStatus
-    """Status of the task run."""
+    @staticmethod
+    def migrate(item: Dict[str, Any]) -> Dict[str, Any]:
+        """Migrate a record to the latest schema version.
 
-    log_uris: Optional[List[str]] = None
-    """URIs to log files for this run."""
-
-    version: str = __version__
-
-    def update_status(self, status: TaskRunStatus) -> None:
-        self.status = status
-        self.set_update_time()
-
-
-class JobRunRecord(RunRecord):
-    type: str = Field(default=RecordType.JOB, const=True)
-
-    run_id: str
-    job_id: str
-
-    status: JobRunStatus
-
-    @validator("job_id")
-    def validate_job_id(cls, v: Optional[str]) -> Optional[str]:
-        if v:
-            try:
-                validate_table_key(v)
-            except InvalidTableKeyError as e:
-                raise ValueError(f"Invalid job id '{v}': {e.INFO_MESSAGE}")
-        return v
-
-
-class WorkflowRunRecord(RunRecord):
-    type: str = Field(default=RecordType.WORKFLOW, const=True)
-
-    dataset: DatasetIdentifier
-    run_id: str
-
-    status: WorkflowRunStatus
-
-    workflow: WorkflowConfig
-    trigger_event: Optional[CloudEvent] = None
-    args: Optional[Dict[str, Any]] = None
-
-    created: datetime = Field(default_factory=datetime.utcnow)
-    updated: datetime = Field(default_factory=datetime.utcnow)
-
-
-class WorkflowRunGroupRecord(RunRecord):
-    # Record for "workflow groups"
-    # These are not currently used and the concept may be dropped.
-    type: str = Field(default=RecordType.WORKFLOW_GROUP, const=True)
-
-    dataset: DatasetIdentifier
-    group_id: str
-
-    status: WorkflowRunGroupStatus
-
-    @validator("group_id")
-    def validate_group_id(cls, v: Optional[str]) -> Optional[str]:
-        if v:
-            try:
-                validate_table_key(v)
-            except InvalidTableKeyError as e:
-                raise ValueError(f"Invalid group id '{v}': {e.INFO_MESSAGE}")
-        return v
+        Records should override this method to migrate to the latest schema version.
+        """
+        return item
