@@ -12,4 +12,4 @@ The data in this Collection are the original NetCDF files provided by NOAA's Nat
     - 30-year (1991–2020)
     - 15-year (2006–2020)
 
-For most use-cases, we recommend using the [`noaa-climate-normals-gridded`](https://planetarycomputer.microsoft.com/data/noaa-climate-normals-gridded) collection, which contains the same data in Cloud Optimized GeoTIFF format.
+For most use-cases, we recommend using the [`noaa-climate-normals-gridded`](https://planetarycomputer.microsoft.com/dataset/noaa-climate-normals-gridded) collection, which contains the same data in Cloud Optimized GeoTIFF format. The NetCDF files are delivered to Azure as part of the [NOAA Open Data Dissemination (NODD) Program](https://www.noaa.gov/information-technology/open-data-dissemination).
