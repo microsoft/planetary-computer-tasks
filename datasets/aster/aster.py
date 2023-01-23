@@ -92,18 +92,10 @@ class CreateChunksTask(Task[CreateChunksInput, CreateChunksOutput]):
         item_collection = read_item_collection(
             asset["href"], storage_options=asset["table:storage_options"]
         )
-        chunks = []
-        chunk = []
-        for item in itertools.islice(item_collection, input.limit):
-            chunk.append(fix_dict(item.to_dict(include_self_link=False)))
-            if len(chunk) >= input.chunk_size:
-                chunks.append(chunk)
-                chunk = []
-        if chunk:
-            chunks.append(chunk)
         output = []
-        for i, chunk in enumerate(chunks):
-            uri = f"{input.dst_uri}/{asset['partition_number']}/{i}.ndjson"
+
+        def write_chunk(chunk: List[Item], chunk_number: int) -> None:
+            uri = f"{input.dst_uri}/{asset['partition_number']}/{chunk_number}.ndjson"
             storage, path = context.storage_factory.get_storage_for_file(uri)
             storage.write_text(
                 path, "\n".join(orjson.dumps(item).decode("utf-8") for item in chunk)
@@ -111,10 +103,23 @@ class CreateChunksTask(Task[CreateChunksInput, CreateChunksOutput]):
             output.append(
                 Chunk(
                     uri=storage.get_uri(path),
-                    id=str(i),
+                    id=str(chunk_number),
                     partition_number=str(asset["partition_number"]),
                 )
             )
+            return chunk_number + 1
+
+        chunk = []
+        chunk_number = 0
+        for item in itertools.islice(item_collection, input.limit):
+            chunk.append(
+                fix_dict(item.to_dict(include_self_link=False, transform_hrefs=False))
+            )
+            if len(chunk) >= input.chunk_size:
+                chunk_number = write_chunk(chunk, chunk_number)
+                chunk = []
+        if chunk:
+            write_chunk(chunk, chunk_number)
         return CreateChunksOutput(chunks=output)
 
 
@@ -147,9 +152,17 @@ class UpdateItemsTask(Task[UpdateItemsInput, UpdateItemsOutput]):
                 new_item = sign_and_update(item, input.simplify_tolerance)
             except Exception as e:
                 logger.error(e)
-                error_items.append(fix_dict(item.to_dict(include_self_link=False)))
+                error_items.append(
+                    fix_dict(
+                        item.to_dict(include_self_link=False, transform_hrefs=False)
+                    )
+                )
             else:
-                items.append(fix_dict(new_item.to_dict(include_self_link=False)))
+                items.append(
+                    fix_dict(
+                        new_item.to_dict(include_self_link=False, transform_hrefs=False)
+                    )
+                )
         logger.info(f"{len(items)} items updated, {len(error_items)} errors")
         storage, path = context.storage_factory.get_storage_for_file(
             f"{input.item_chunkset_uri}/{input.partition_number}/{input.chunk_id}.ndjson"

@@ -38,6 +38,8 @@ jobs:
           AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
           AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
           AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+        tags:
+          batch_pool_id: high_memory_pool
   update-items:
     foreach:
       items: ${{ jobs.create-chunks.tasks.create-chunks.output.chunks }}
