@@ -29,6 +29,9 @@ jobs:
       - name: Test
         run: ./scripts/test
 
+      - name: Validate collections
+        run: ./scripts/validate-collections
+
       # Integration Tests
 
       - name: Install Kind

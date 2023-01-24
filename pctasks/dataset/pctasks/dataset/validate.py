@@ -3,6 +3,7 @@ Additional checks on dataset collections.
 """
 import argparse
 import json
+import pystac
 import sys
 from datetime import datetime
 from typing import Dict, List, Optional
@@ -35,6 +36,10 @@ def validate_collection(collection: Dict) -> None:
     """
     Planetary Computer specific validation for STAC collections.
     """
+    pystac_collection = pystac.Collection.from_dict(collection)
+    # why is this sometimes None and sometimes valid?
+    pystac_collection.remove_links(rel=pystac.RelType.ROOT)
+    pystac_collection.validate()
     required_keys = [
         "msft:short_description",
         "msft:storage_account",
