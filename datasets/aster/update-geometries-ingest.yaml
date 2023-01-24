@@ -1,0 +1,28 @@
+name: Ingest NDJsons from blob://astersa/aster-etl-data/items/update-geometries
+jobs:
+  ingest-items:
+    id: ingest-items
+    tasks:
+    - id: ingest-ndjson
+      image_key: ingest
+      task: pctasks.ingest_task.task:ingest_task
+      args:
+        content:
+          type: Ndjson
+          ndjson_folder:
+            uri: blob://astersa/aster-etl-data/items/update-geometries
+            extensions:
+            - .ndjson
+            matches: \d+.ndjson
+        options:
+          insert_group_size: 5000
+          insert_only: false
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+schema_version: 1.0.0
+id: aster-update-geometries-ingest
+dataset: microsoft/aster-l1t
+

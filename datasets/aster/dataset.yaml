@@ -1,6 +1,6 @@
 # TODO actually implement this -- this is currently a placeholder just to upload the collection
 id: aster
-image: ${{ args.registry }}/pctasks-task-base:latest
+image: ${{ args.registry }}/pctasks-aster:latest
 
 args:
   - registry
