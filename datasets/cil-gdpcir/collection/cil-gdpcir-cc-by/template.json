@@ -30,7 +30,7 @@
   "msft:container": "cil-gdpcir",
   "msft:short_description": "Climate Impact Lab Global Downscaled Projections for Climate Impacts Research (CC-BY-4.0)",
   "msft:group_id": "cil-gdpcir",
-  "sci:doi": "10.5281/zenodo.6403793",
+  "sci:doi": "10.5194/egusphere-2022-1513",
   "cube:dimensions": {
     "time": {
       "extent": [

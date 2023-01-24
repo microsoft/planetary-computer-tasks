@@ -71,7 +71,11 @@ Projects making use of the data produced as part of the Climate Impact Lab Globa
 
 ### CIL GDPCIR
 
-Users are requested to cite this project in derived works. A paper is in the works, but we do not yet have a citation or DOI - please check back for details. The code repository may be cited using the following:
+Users are requested to cite this project in derived works. Our method documentation paper may be cited using the following:
+
+> Gergel, D. R., Malevich, S. B., McCusker, K. E., Tenezakis, E., Delgado, M. T., Fish, M. A., and Kopp, R. E.: Global downscaled projections for climate impacts research (GDPCIR): preserving extremes for modeling future climate impacts, EGUsphere [preprint], https://doi.org/10.5194/egusphere-2022-1513, 2023. 
+
+A paper is in the works, but we do not yet have a citation or DOI - please check back for details. The code repository may be cited using the following:
 
 > Diana Gergel, Kelly McCusker, Brewster Malevich, Emile Tenezakis, Meredith Fish, Michael Delgado (2022). ClimateImpactLab/downscaleCMIP6: (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.6403794
 
