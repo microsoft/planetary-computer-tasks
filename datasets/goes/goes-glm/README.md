@@ -24,3 +24,5 @@ And registered with
 ```console
 $ pctasks workflow create datasets/goes/goes-glm/workflows/goes-glm-update.yaml
 ```
+
+Likewise for staging.
