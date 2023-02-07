@@ -12,7 +12,8 @@ install_requires = [
     "azure-batch==11.*",
     "azure-keyvault-secrets==4.*",
     "argo-workflows==6.3.*",
-    "networkx==2.*"
+    "networkx==2.*",
+    "kubernetes",
 ]
 
 extra_reqs = {

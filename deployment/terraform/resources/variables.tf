@@ -34,6 +34,16 @@ variable "pctasks_server_replica_count" {
   default = 1
 }
 
+variable "aks_task_group_label" {
+  type = string
+  default = "tasks"
+}
+
+variable "aks_task_pool_max_count" {
+  type = number
+  default = 100
+}
+
 ## Batch
 
 variable "batch_default_pool_id" {

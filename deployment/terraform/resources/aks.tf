@@ -5,8 +5,6 @@ resource "azurerm_kubernetes_cluster" "pctasks" {
   dns_prefix          = "${local.prefix}-cluster"
   kubernetes_version  = var.k8s_version
 
-
-
   default_node_pool {
     name                 = "agentpool"
     vm_size              = "Standard_DS2_v2"
@@ -58,9 +56,90 @@ resource "azurerm_kubernetes_cluster_node_pool" "argowf" {
   }
 }
 
+# Node pool for running tasks
+resource "azurerm_kubernetes_cluster_node_pool" "tasks" {
+  name                  = "tasks"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.pctasks.id
+  vm_size               = "Standard_D16d_v4"
+  enable_auto_scaling = true
+  min_count = 0
+  max_count = var.aks_task_pool_max_count
+
+  node_labels = {
+    # this should match the value in pctasks
+    node_group = "pc-lowlatency"
+  }
+
+   lifecycle {
+    ignore_changes = [
+      # Ignore changes that are auto-populated by AKS
+      vnet_subnet_id,
+      node_taints,
+      zones,
+      node_count,
+    ]
+  }
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "AI4E"
+  }
+}
+
+
 # add the role to the identity the kubernetes cluster was assigned
 resource "azurerm_role_assignment" "network" {
   scope                = azurerm_resource_group.pctasks.id
   role_definition_name = "Network Contributor"
   principal_id         = azurerm_kubernetes_cluster.pctasks.identity[0].principal_id
+}
+
+
+# # TODO: staging / prod Cosmos DB deployment
+# # hacky hacky hacky
+data "azurerm_storage_account" "streaming" {
+  name                = "pclowlatency"
+  resource_group_name = "low-latency-rg-test-tom"
+  provider = azurerm.pc
+}
+
+# TODO: Figure out who owns the Cosmos DB deployment.
+# It'll probably be manaul
+# TODO: staging / prod Cosmos DB deployment
+# data "azurerm_cosmosdb_account" "streaming" {
+#   name = "pclowlatencytesttom"
+#   resource_group_name = "low-latency-rg-test-tom"
+#   provider = azurerm.pc
+# }
+
+resource "kubernetes_namespace" "tasks" {
+  metadata {
+    name = "tasks"
+  }
+}
+
+resource "kubernetes_secret" "queue_account_key" {
+  metadata {
+    # Note: this must match the name inn keda-trigger-authentication.yaml
+    name = "secrets-storage-queue-account-key"
+    namespace = "tasks"
+  }
+
+  data = {
+    AccountKey = data.azurerm_storage_account.streaming.primary_access_key
+  }
+
+}
+
+resource "kubernetes_secret" "queue_connection_string" {
+  metadata {
+    # Note: this must match the name inn keda-trigger-authentication.yaml
+    name = "secrets-storage-queue-connection-string"
+    namespace = "tasks"
+  }
+
+  data = {
+    ConnectionString = data.azurerm_storage_account.streaming.primary_connection_string
+  }
+
 }

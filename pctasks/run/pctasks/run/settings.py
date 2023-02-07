@@ -169,7 +169,7 @@ class RunSettings(PCTasksSettings):
                 )
             if values.get("workflow_runner_image") is None:
                 raise ValueError(
-                    "Must specify argo_workflow_runner_image "
+                    "Must specify workflow_runner_image "
                     "for argo workflow runner type."
                 )
         return v

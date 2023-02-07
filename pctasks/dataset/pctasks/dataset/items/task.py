@@ -50,6 +50,7 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
     ) -> Union[List[pystac.Item], WaitTaskResult]:
         storage_factory = context.storage_factory
         results: List[pystac.Item] = []
+        # TODO: do this for streaming, deduplicate
 
         def _validate(items: List[pystac.Item]) -> None:
             if not args.options.skip_validation:

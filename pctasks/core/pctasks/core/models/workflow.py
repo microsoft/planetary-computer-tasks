@@ -83,6 +83,14 @@ class JobDefinition(PCBaseModel):
 
 
 class WorkflowDefinition(PCBaseModel):
+    """
+
+    is_streaming: bool, default False
+        Indicates whether this workflow is a batch (the default) or streaming
+        workflow. Streaming workflows have special requirements, and behave a
+        bit differently on the backend.
+    """
+
     workflow_id: Optional[str] = Field(default=None, alias="id")
     name: str
     dataset_id: str = Field(alias="dataset")
@@ -91,6 +99,7 @@ class WorkflowDefinition(PCBaseModel):
     args: Optional[List[str]] = None
     jobs: Dict[str, JobDefinition]
     on: Optional[TriggerDefinition] = None
+    is_streaming: bool = False
 
     schema_version: str = Field(default=WORKFLOW_SCHEMA_VERSION, const=True)
 

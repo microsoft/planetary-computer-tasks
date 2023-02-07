@@ -37,9 +37,16 @@ class TableAccountKeyConfig(PCBaseModel):
 
 
 class BlobConfig(PCBaseModel):
+    """
+    sas_token : str, optional
+        A SAS token to authenticate for the blob. This might be scoped to that
+        particular blob. If not provided, this will fall back to
+        using DefaultAzureCredential in blob operations.
+    """
+
     account_url: Optional[str]
     uri: str
-    sas_token: str
+    sas_token: Optional[str] = None
 
     def get_storage(self) -> BlobStorage:
         return BlobStorage.from_uri(
