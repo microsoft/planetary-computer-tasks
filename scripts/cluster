@@ -108,7 +108,25 @@ EOF
         --wait \
         --timeout 2m0s
 
+    # Don't worry about errors like
+    # E0303 15:59:48.181644   27243 memcache.go:255] couldn't get resource list for external.metrics.k8s.io/v1beta1: Got empty response for: external.metrics.k8s.io/v1beta1
+    # https://github.com/kubernetes-sigs/custom-metrics-apiserver/issues/146
+
+    echo "===== KEDA ======="
+    helm repo add kedacore https://kedacore.github.io/charts
+
+    helm upgrade --install keda kedacore/keda \
+        -n keda \
+        --create-namespace \
+        --wait \
+        --timeout 2m0s
+    kubectl apply -f deployment/helm/argo-workflow-keda-rbac.yaml
+    kubectl -n argo apply -f deployment/helm/keda-trigger-authentication.yaml
+    kubectl -n argo create secret generic queue-connection-string-auth \
+        --from-literal=ConnectionString='AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;'
+
 }
+
 
 function update_registry() {
     echo "Adding pctasks-server to local registry..."
@@ -188,6 +206,17 @@ function update_cluster() {
             --set pctasks.run.blob.account_key=${PCTASKS_RUN__BLOB_ACCOUNT_KEY}"
     fi
 
+    # Streaming settings. These are unused in the integration testing, which uses azurite,
+    # but must be set.
+    STREAMING_TASKIO_VARS=""
+    # if [ "${PCTASKS_RUN__BLOB_ACCOUNT_NAME}" ]; then
+    if [ true ]; then
+        STREAMING_TASKIO_VARS="--set pctasks.run.streaming_taskio_sp_tenant_id=test \
+            --set pctasks.run.streaming_taskio_sp_client_id=test \
+            --set pctasks.run.streaming_taskio_sp_client_secret=test \
+            --set pctasks.run.streaming_task_namespace=argo"
+    fi
+
     # Set pctasks.deploy.podAnnotations.updated to force a new deployment
     helm upgrade --install \
         pctasks-server \
@@ -196,7 +225,7 @@ function update_cluster() {
         -f cluster/dev-values.yaml \
         --create-namespace \
         --set pctasks.server.deploy.podAnnotations.updated="$(date)" \
-        --set pctasks.run.argo.token="${ARGO_TOKEN}" ${COSMOSDB_VARS} ${BATCH_VARS} ${KV_VARS} ${BLOB_VARS}
+        --set pctasks.run.argo.token="${ARGO_TOKEN}" ${COSMOSDB_VARS} ${BATCH_VARS} ${KV_VARS} ${BLOB_VARS} ${STREAMING_TASKIO_VARS}
 
     echo "Installing ingress-nginx..."
     # TODO: Move to helm chart

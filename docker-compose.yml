@@ -79,6 +79,12 @@ services:
       - PCTASKS_RUN__LOCAL_SECRETS=${PCTASKS_RUN__LOCAL_SECRETS:-true}
       - PCTASKS_RUN__WORKFLOW_RUNNER_TYPE=local
 
+      # streaming stuff
+      # These are unused in the local dev environment, which uses azurite.
+      - PCTASKS_RUN__STREAMING_TASKIO_SP_TENANT_ID=""
+      - PCTASKS_RUN__STREAMING_TASKIO_SP_CLIENT_ID=""
+      - PCTASKS_RUN__STREAMING_TASKIO_SP_CLIENT_SECRET=""
+
       ## Azure Batch
 
       - PCTASKS_RUN__BATCH_URL
@@ -195,7 +201,10 @@ services:
       - PCTASKS_COSMOSDB__KEY=${PCTASKS_COSMOSDB__KEY:-C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==}
       # Set trigger app setting separately to avoid issues with __ in env var names
       - FUNC_COSMOSDB_CONN_STR=AccountEndpoint=${PCTASKS_COSMOSDB__URL:-https://172.16.238.246:8081/};AccountKey=${PCTASKS_COSMOSDB__KEY:-C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==};
-
+      - FUNC_STORAGE_ACCOUNT_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
+      - FUNC_STORAGE_QUEUE_ACCOUNT_URL=http://azurite:10001/devstoreaccount1
+      - FUNC_STORAGE_ACCOUNT_NAME=devstoreaccount1
+      - FUNC_STORAGE_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
       - COSMOSDB_EMULATOR_HOST=172.16.238.246
 
 networks:

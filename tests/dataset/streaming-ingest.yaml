@@ -1,0 +1,37 @@
+name: "Streaming ingest items example"
+args:
+- db_connection_string
+- queue_url
+- account_name
+- account_key
+jobs:
+  ingest-items:
+    id: ingest-items
+    tasks:
+    - id: ingest-items
+      image: localhost:5001/pctasks-ingest:latest
+      task: pctasks.ingest_task.streaming:StreamingIngestItemsTask
+      args:
+        streaming_options:
+          queue_url: ${{ args.queue_url }}
+          queue_credential:
+            account_name: ${{ args.account_name }}
+            account_key: ${{ args.account_key }}
+          visibility_timeout: 30
+          min_replica_count: 0
+          max_replica_count: 1
+          polling_interval: 30
+          trigger_queue_length: 100
+        collection_id: "test-collection-streaming"
+        extra_env:
+          AZURITE_HOST: "azurite"
+          AZURITE_PORT: 10000
+          AZURITE_STORAGE_ACCOUNT: "devstoreaccount1"
+          DB_CONNECTION_STRING: ${{ args.db_connection_string }}
+      env:
+        DB_CONNECTION_STRING: ${{ args.db_connection_string }}
+      schema_version: 1.0.0
+is_streaming: True
+schema_version: 1.0.0
+id: test-streaming-ingest-items
+dataset: all

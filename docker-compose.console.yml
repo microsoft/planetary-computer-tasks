@@ -21,6 +21,12 @@ services:
       - PCTASKS_RUN__LOCAL_SECRETS=true
       - PCTASKS_RUN__WORKFLOW_RUNNER_TYPE=local
 
+      # Streaming settings
+      # These are unused in the local dev environment, which uses azurite.
+      - PCTASKS_RUN__STREAMING_TASKIO_SP_TENANT_ID=""
+      - PCTASKS_RUN__STREAMING_TASKIO_SP_CLIENT_ID=""
+      - PCTASKS_RUN__STREAMING_TASKIO_SP_CLIENT_SECRET=""
+
       # Dev storage settings
       - AZURITE_HOST=azurite
       - AZURITE_PORT=10000

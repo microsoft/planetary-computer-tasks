@@ -1,0 +1,14 @@
+# A Kubernetes Secret for authentication with the storage queues.
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  # This must match authenticationRef.name in ArgoClient._build_streaming_scaler
+  # Must be in the same namespace as the Deployment.
+  name: queue-connection-string-auth
+spec:
+  secretTargetRef:
+  - parameter: connection
+    # This Kubernetes Secret is created with terraform
+    # The name must match the value in terraform/resources/aks.tf
+    name: secrets-storage-queue-connection-string
+    key: ConnectionString

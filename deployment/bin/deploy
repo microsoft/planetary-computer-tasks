@@ -241,6 +241,19 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         --wait \
         --timeout 2m0s
 
+    echo "=================="
+    echo "===== KEDA ======="
+    echo "=================="
+
+    helm upgrade --install keda kedacore/keda \
+        -n keda \
+        --create-namespace \
+        --wait \
+        --timeout 2m0s
+
+    echo "Creating KEDA trigger auth"
+    kubectl apply -f helm/keda-trigger-authentication.yaml
+
     echo "===================="
     echo "== PCTasksIngress =="
     echo "===================="

@@ -114,6 +114,7 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
     ) -> Union[List[pystac.Item], WaitTaskResult]:
         storage_factory = context.storage_factory
         results: List[pystac.Item] = []
+        # TODO: do this for streaming, deduplicate
 
         if args.asset_uri:
             try:

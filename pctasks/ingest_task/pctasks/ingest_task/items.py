@@ -41,10 +41,6 @@ def ingest_item_paths(
     upsert: bool = True,
 ) -> None:
     logger.info("=== Ingesting into the database...")
-    # if upsert:
-    #     mode = loadopt("upsert")
-    # else:
-    #     mode = loadopt("insert")
 
     if upsert:
         mode = Methods.upsert

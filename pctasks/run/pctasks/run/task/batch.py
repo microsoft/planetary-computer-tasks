@@ -161,6 +161,10 @@ class BatchTaskRunner(TaskRunner):
 
             pool_id = get_pool_id(task_tags, self.settings.batch_settings)
 
+            # streaming jobs can use ServicePrincipals to load inputs.
+            # Batch tasks use SAS tokens.
+            assert task_input_blob_config.sas_token is not None
+
             command = [
                 "pctasks",
                 "task",

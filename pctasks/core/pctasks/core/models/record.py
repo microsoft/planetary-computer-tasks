@@ -12,6 +12,8 @@ class Record(PCBaseModel, ABC):
     type: str
     schema_version: str = RECORD_SCHEMA_VERSION
 
+    # These fields are updated by the comsodb
+    # BaseCosmosDBContainer logic during puts.
     created: Optional[datetime] = None
     updated: Optional[datetime] = None
 
