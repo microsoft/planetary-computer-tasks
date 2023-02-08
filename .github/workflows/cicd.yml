@@ -104,7 +104,3 @@ jobs:
         env:
           IMAGE_TAG: ${{needs.build_and_publish.outputs.image_tag}}
           ENVIRONMENT: staging
-          AZURE_SUBSCRIPTION_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}
-          AZURE_TENANT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}
-          AZURE_CLIENT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
-          AZURE_CLIENT_SECRET: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
