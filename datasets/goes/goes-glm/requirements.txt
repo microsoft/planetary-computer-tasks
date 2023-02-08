@@ -1,1 +1,1 @@
-stactools-goes-glm==0.2.1
+stactools-goes-glm==0.2.3
