@@ -11,13 +11,12 @@ $ pctasks dataset process-items '${{ args.since }}' \
     -d datasets/goes/goes-glm/dataset.yaml \
     -c goes-glm \
     --workflow-id=goes-glm-update \
-    --target=green \
     --is-update-workflow \
     > datasets/goes/goes-glm/workflows/goes-glm-update.yaml
 ```
 
-As an optimization, I manually appended `2022` to the `prefix`. That will require updating in the new year. Longer-term pctasks should
-optionally do that dynamically from `since`. Likewise for `blue` with a `--workflow-id=goes-glm-update-blue`.
+As an optimization, I manually appended `2023` to the `prefix`. That will require updating in the new year. Longer-term pctasks should
+optionally do that dynamically from `since`.
 
 And registered with
 
