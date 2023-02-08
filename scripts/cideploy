@@ -58,6 +58,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
         # Run deployment script
         ${DOCKER_COMPOSE} run --rm \
+            -v "$HOME/.azure":/root/.azure \
             deploy bin/deploy \
             -t "${TERRAFORM_DIR}"
     )
