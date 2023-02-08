@@ -40,4 +40,8 @@ setup(
     install_requires=install_requires,
     extras_require=extra_reqs,
     entry_points={"console_scripts": ["pctasks-dev=pctasks.dev.cli:cli"]},
+    use_scm_version={
+        "root": "../..",
+    },
+    setup_requires=["setuptools_scm"],
 )

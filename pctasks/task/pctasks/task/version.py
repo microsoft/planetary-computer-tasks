@@ -1,1 +1,7 @@
-__version__ = "0.1.0"
+from importlib.metadata import PackageNotFoundError, version
+
+try:
+    __version__ = version("pctasks-cli")
+except PackageNotFoundError:
+    # package is not installed
+    pass

@@ -53,4 +53,8 @@ setup(
     install_requires=install_requires,
     tests_require=extra_reqs["dev"],
     extras_require=extra_reqs,
+    use_scm_version={
+        "root": "../..",
+    },
+    setup_requires=["setuptools_scm"],
 )
