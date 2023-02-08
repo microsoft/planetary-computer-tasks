@@ -10,12 +10,12 @@ install_requires = [
     "azure-storage-blob==12.9",  # Issues with 12.11 generating sas from account keys
     # https://github.com/microsoft/planetary-computer-tasks/issues/136
     "azure-storage-queue>=12.0.0",
-    "azure-data-tables==12.*",
+    "azure-data-tables>=12.0.0",
     "azure-cosmos==4.3.*",
     "pydantic>=1.9,<2.0.0",
     "orjson==3.*",
     "strictyaml>=1.6",
-    "stac-validator>=3.1.*",
+    "stac-validator>=3.1.0",
     "opencensus-ext-azure==1.1.0",
     "opencensus-ext-logging==0.1.1",
     "pyyaml>=5.3",
