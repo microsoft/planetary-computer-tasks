@@ -11,7 +11,6 @@ $ pctasks dataset process-items '${{ args.since }}' \
     -d datasets/goes/goes-glm/dataset.yaml \
     -c goes-glm \
     --workflow-id=goes-glm-update \
-    --target=green \
     --is-update-workflow \
     > datasets/goes/goes-glm/workflows/goes-glm-update.yaml
 ```

@@ -6,7 +6,6 @@ tokens:
         token: ${{ pc.get_token(goeseuwest, noaa-goes16) }}
       noaa-goes17:
         token: ${{ pc.get_token(goeseuwest, noaa-goes17) }}
-target_environment: green
 args:
 - registry
 - since
