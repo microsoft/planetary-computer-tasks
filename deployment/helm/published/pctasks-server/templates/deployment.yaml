@@ -150,6 +150,8 @@ spec:
               value: "{{ .Values.pctasks.run.tables.account_name }}"
             - name: PCTASKS_RUN__TABLES_ACCOUNT_KEY
               value: "{{ .Values.pctasks.run.tables.account_key }}"
+            - name: PCTASKS_RUN__IMAGE_KEY_TABLE_NAME
+              value: "{{ .Values.pctasks.run.tables.image_key_table_name }}"
 
             ### Blobs
             - name: PCTASKS_RUN__BLOB_ACCOUNT_URL
