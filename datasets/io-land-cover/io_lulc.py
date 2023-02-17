@@ -18,6 +18,21 @@ from pctasks.dataset.collection import Collection
 IO_LULC = "io-lulc"
 IO_LULC_9_CLASS = "io-lulc-9-class"
 
+IO_LULC_10_CLASS_ITEMS = (
+    "blob://ai4edataeuwest/io-lulc/io-lulc-model-001-"
+    "v01-composite-v03-supercell-v02-clip-v01.geojson"
+)
+
+IO_LULC_9_CLASS_2017_2021_ITEMS = (
+    "blob://ai4edataeuwest/io-lulc/io-lulc-model-001-"
+    "v02-composite-v01-supercell-v02-clip-v01.geojson"
+)
+
+IO_LULC_9_CLASS_2022_ITEMS = (
+    "blob://ai4edataeuwest/io-lulc/io-lulc-model-001-"
+    "v02-composite-v01-supercell-v02-clip-v01_2022_addition.geojson"
+)
+
 IO_FEATURE_COLLECTION_PATHS: Dict[str, List[str]] = {
     IO_LULC: [
         (
@@ -30,15 +45,21 @@ IO_FEATURE_COLLECTION_PATHS: Dict[str, List[str]] = {
             "blob://ai4edataeuwest/io-lulc/io-lulc-model-001-"
             "v02-composite-v01-supercell-v02-clip-v01.geojson"
         ),
+        (
+            "blob://ai4edataeuwest/io-lulc/io-lulc-model-001-"
+            "v02-composite-v01-supercell-v02-clip-v01_2022_addition.geojson"
+        ),
     ],
 }
 
 ASSET_KEY = "data"
 
-NINE_CLASS_VSIAZ_PREFIX = (
+NINE_CLASS_2017_2021_VSIAZ_PREFIX = (
     "/vsiaz/io-lulc/io-lulc-model-001/v02/supercells/"
     "io-lulc-model-001-v02-composite-v01-supercell-v02-clip-v01"
 )
+
+NINE_CLASS_2022_VSIAZ_PREFIX = "/vsiaz/io-msft-lulc"
 
 
 class IOItems:
@@ -53,22 +74,46 @@ class IOItems:
                 orjson.loads(storage.read_bytes(path))
             )
 
-        item_collections = [
-            _read_item_collection(uri)
-            for uri in IO_FEATURE_COLLECTION_PATHS[collection]
-        ]
         result = {}
-        for item_collection in item_collections:
+
+        if collection == IO_LULC:
+            item_collection = _read_item_collection(IO_LULC_10_CLASS_ITEMS)
             for item in item_collection.items:
                 asset = item.assets["supercell"]
-                if NINE_CLASS_VSIAZ_PREFIX in asset.href:
-                    # 2017-2021 9-class
-                    path = asset.href.replace(NINE_CLASS_VSIAZ_PREFIX, "nine-class")
-                else:
-                    # 2020 10-class
-                    path = "/".join(asset.href.split("/")[-2:])
+
+                # 2020 10-class
+                path = "/".join(asset.href.split("/")[-2:])
 
                 result[path] = item
+        elif collection == IO_LULC_9_CLASS:
+            # 2017-2021
+            item_collection_2017_2021 = _read_item_collection(
+                IO_LULC_9_CLASS_2017_2021_ITEMS
+            )
+            for item in item_collection_2017_2021.items:
+                asset = item.assets["supercell"]
+
+                path = asset.href.replace(
+                    NINE_CLASS_2017_2021_VSIAZ_PREFIX, "nine-class"
+                )
+
+                result[path] = item
+
+            # 2022
+            item_collection_2022 = _read_item_collection(IO_LULC_9_CLASS_2022_ITEMS)
+            for item in item_collection_2022.items:
+                asset = item.assets["supercell"]
+
+                path = asset.href.replace(
+                    NINE_CLASS_2022_VSIAZ_PREFIX, "nine-class"
+                )
+
+                # Only take 2022 items
+                if path.endswith("20230101.tif"):
+                    result[path] = item
+        else:
+            raise ValueError(f"Unknown collection: {collection}")
+
         return result
 
 
