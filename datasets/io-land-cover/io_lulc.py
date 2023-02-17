@@ -33,25 +33,6 @@ IO_LULC_9_CLASS_2022_ITEMS = (
     "v02-composite-v01-supercell-v02-clip-v01_2022_addition.geojson"
 )
 
-IO_FEATURE_COLLECTION_PATHS: Dict[str, List[str]] = {
-    IO_LULC: [
-        (
-            "blob://ai4edataeuwest/io-lulc/io-lulc-model-001-"
-            "v01-composite-v03-supercell-v02-clip-v01.geojson"
-        ),
-    ],
-    IO_LULC_9_CLASS: [
-        (
-            "blob://ai4edataeuwest/io-lulc/io-lulc-model-001-"
-            "v02-composite-v01-supercell-v02-clip-v01.geojson"
-        ),
-        (
-            "blob://ai4edataeuwest/io-lulc/io-lulc-model-001-"
-            "v02-composite-v01-supercell-v02-clip-v01_2022_addition.geojson"
-        ),
-    ],
-}
-
 ASSET_KEY = "data"
 
 NINE_CLASS_2017_2021_VSIAZ_PREFIX = (
