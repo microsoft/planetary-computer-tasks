@@ -221,8 +221,9 @@ class BatchTaskRunner(TaskRunner):
                 for batch_task_id, error_message in batch_client.get_failed_tasks(
                     job_id
                 ).items():
-                    partition_id, task_id = indexed_task_ids[batch_task_id]
-                    result[partition_id][task_id] = error_message
+                    if batch_task_id in indexed_task_ids:
+                        partition_id, task_id = indexed_task_ids[batch_task_id]
+                        result[partition_id][task_id] = error_message
 
         return result
 
