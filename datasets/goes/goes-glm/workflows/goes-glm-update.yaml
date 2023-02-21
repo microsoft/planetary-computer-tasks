@@ -28,7 +28,7 @@ jobs:
             depth: 2
           sas_token: ${{ pc.get_token(goeseuwest, noaa-goes16) }}
           chunk_options:
-            chunk_length: 10000
+            chunk_length: 50000
             ends_with: .nc
             list_folders: false
             chunk_file_name: uris-list
@@ -36,11 +36,11 @@ jobs:
             since: ${{ args.since }}
         - uri: blob://goeseuwest/noaa-goes17/
           splits:
-          - p1refix: GLM-L2-LCFA/2023/
+          - prefix: GLM-L2-LCFA/2023/
             depth: 2
           sas_token: ${{ pc.get_token(goeseuwest, noaa-goes17) }}
           chunk_options:
-            chunk_length: 10000
+            chunk_length: 50000
             ends_with: .nc
             list_folders: false
             chunk_file_name: uris-list
@@ -51,7 +51,7 @@ jobs:
             depth: 2
           sas_token: ${{ pc.get_token(goeseuwest, noaa-goes18) }}
           chunk_options:
-            chunk_length: 10000
+            chunk_length: 50000
             ends_with: .nc
             list_folders: false
             chunk_file_name: uris-list
