@@ -312,7 +312,7 @@ class RemoteWorkflowExecutor:
         job_id: str,
         group_id: str,
         job_part_states: List[JobPartitionState],
-        container: WorkflowRunsContainer[JobPartitionRunRecord],
+        container: CosmosDBContainer[JobPartitionRunRecord],
     ) -> List[Dict[str, Any]]:
         """Complete job partitions and return the results.
 
@@ -627,18 +627,13 @@ class RemoteWorkflowExecutor:
             logger.info(f"Logging to: {log_uri}")
 
             logger.info("Creating CosmosDB connections...")
+
             # Create containers
-            wf_run_container = WorkflowRunsContainer(
+            with WorkflowRunsContainer(
                 WorkflowRunRecord, db=self.config.get_cosmosdb()
-            )
-
-            jp_container = WorkflowRunsContainer(
+            ) as wf_run_container, WorkflowRunsContainer(
                 JobPartitionRunRecord, db=self.config.get_cosmosdb()
-            )
-
-            try:
-                wf_run_container.__enter__()
-                jp_container.__enter__()
+            ) as jp_container:
 
                 workflow_run = wf_run_container.get(run_id, partition_key=run_id)
 
@@ -913,9 +908,7 @@ class RemoteWorkflowExecutor:
                                         FailedTaskSubmitResult,
                                     ],
                                 ],
-                                _jp_container: WorkflowRunsContainer[
-                                    JobPartitionRunRecord
-                                ],
+                                _jp_container: CosmosDBContainer[JobPartitionRunRecord],
                             ) -> TaskRunStatus:
                                 jps, submit_result = tup
                                 assert jps.current_task
@@ -1120,6 +1113,3 @@ class RemoteWorkflowExecutor:
                     )
 
                 return job_outputs
-            finally:
-                jp_container.__exit__()
-                wf_run_container.__exit__()
