@@ -338,38 +338,38 @@ class RemoteWorkflowExecutor:
         with WorkflowRunsContainer(
             JobPartitionRunRecord, db=self.config.get_cosmosdb()
         ) as container:
-            while _jobs_left() > 0:
-                # Check the task runner for any failed tasks.
-                if (
-                    time.monotonic() - _last_runner_poll_time
-                    > self.config.run_settings.task_poll_seconds
-                ):
-                    logger.info("Polling task runner for failed tasks...")
-                    current_tasks = {
-                        jps.partition_id: {
-                            jps.current_task.task_id: jps.current_task.task_runner_id
+            try:
+                while _jobs_left() > 0:
+                    # Check the task runner for any failed tasks.
+                    if (
+                        time.monotonic() - _last_runner_poll_time
+                        > self.config.run_settings.task_poll_seconds
+                    ):
+                        logger.info("Polling task runner for failed tasks...")
+                        current_tasks = {
+                            jps.partition_id: {
+                                jps.current_task.task_id: jps.current_task.task_runner_id  # noqa: E501
+                            }
+                            for jps in job_part_states
+                            if jps.current_task and jps.current_task.task_runner_id
                         }
-                        for jps in job_part_states
-                        if jps.current_task and jps.current_task.task_runner_id
-                    }
 
-                    runner_failed_tasks = self.task_runner.get_failed_tasks(
-                        current_tasks
-                    )
-                    _last_runner_poll_time = time.monotonic()
-                    total_failed = [len(ts) for ts in runner_failed_tasks.values()]
-                    if total_failed:
-                        logger.info(f"  - {sum(total_failed)} failed tasks found.")
-                    else:
-                        logger.info("  - No failed tasks found.")
+                        runner_failed_tasks = self.task_runner.get_failed_tasks(
+                            current_tasks
+                        )
+                        _last_runner_poll_time = time.monotonic()
+                        total_failed = [len(ts) for ts in runner_failed_tasks.values()]
+                        if total_failed:
+                            logger.info(f"  - {sum(total_failed)} failed tasks found.")
+                        else:
+                            logger.info("  - No failed tasks found.")
 
-                for job_part_state in job_part_states:
-                    part_id = job_part_state.job_part_submit_msg.partition_id
+                    for job_part_state in job_part_states:
+                        part_id = job_part_state.job_part_submit_msg.partition_id
 
-                    # For each job partition in this group, process
-                    # the status of the current task.
+                        # For each job partition in this group, process
+                        # the status of the current task.
 
-                    try:
                         if job_part_state.current_task:
 
                             task_state = job_part_state.current_task
@@ -595,13 +595,13 @@ class RemoteWorkflowExecutor:
 
                                 _report_status()
 
-                    except Exception as e:
-                        logger.exception(e)
-                        raise
+                    time.sleep(0.25 + ((random.randint(0, 10) / 100) - 0.05))
 
-                time.sleep(0.25 + ((random.randint(0, 10) / 100) - 0.05))
+                logger.info(f"Partition group {group_id} completed!")
 
-            logger.info(f"Partition group {group_id} completed!")
+            except Exception as e:
+                logger.exception(e)
+                raise
 
             return [job_state.task_outputs for job_state in job_part_states]
 
@@ -1049,6 +1049,10 @@ class RemoteWorkflowExecutor:
                                     == JobPartitionStateStatus.FAILED
                                 ):
                                     job_failed = True
+                                    logger.warning(
+                                        f"JOB PART FAILED: {job_id} "
+                                        f"{job_part_state.partition_id}"
+                                    )
                                 else:
                                     job_results.append(job_part_state.task_outputs)
 
