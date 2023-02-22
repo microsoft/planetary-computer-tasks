@@ -349,7 +349,7 @@ class RemoteWorkflowExecutor:
                     time.monotonic() - _last_runner_poll_time
                     > self.config.run_settings.task_poll_seconds
                 ):
-                    logger.info("Polling task runner for failed tasks...")
+
                     current_tasks = {
                         jps.partition_id: {
                             jps.current_task.task_id: jps.current_task.task_runner_id  # noqa: E501
@@ -362,11 +362,6 @@ class RemoteWorkflowExecutor:
                         current_tasks
                     )
                     _last_runner_poll_time = time.monotonic()
-                    total_failed = [len(ts) for ts in runner_failed_tasks.values()]
-                    if total_failed:
-                        logger.info(f"  - {sum(total_failed)} failed tasks found.")
-                    else:
-                        logger.info("  - No failed tasks found.")
 
                 for job_part_state in job_part_states:
                     part_id = job_part_state.job_part_submit_msg.partition_id

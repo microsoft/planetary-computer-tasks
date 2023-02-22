@@ -3,7 +3,9 @@ from collections import defaultdict
 from dataclasses import dataclass
 from itertools import groupby
 from threading import Lock
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Set, Union
+
+import cachetools
 
 from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.models.task import TaskDefinition
@@ -19,7 +21,7 @@ from pctasks.run.models import (
     SuccessfulTaskSubmitResult,
     TaskPollResult,
 )
-from pctasks.run.settings import BatchSettings
+from pctasks.run.settings import BatchSettings, RunSettings
 from pctasks.run.task.base import TaskRunner
 
 logger = logging.getLogger(__name__)
@@ -34,6 +36,7 @@ class BatchTaskRunnerError(Exception):
 
 
 job_locks: Dict[str, Lock] = defaultdict(Lock)
+failed_task_lock = Lock()
 
 
 def get_pool_id(tags: Optional[Dict[str, str]], batch_settings: BatchSettings) -> str:
@@ -70,6 +73,10 @@ class BatchTaskRunner(TaskRunner):
     def __init__(self, settings: RunSettings):
         super().__init__(settings)
         self._batch_client: Optional[BatchClient] = None
+        self.response_cache = cachetools.TTLCache(
+            maxsize=100, ttl=self.settings.batch_cache_seconds
+        )
+
     def __enter__(self) -> "BatchTaskRunner":
         logger.info("Initializing Batch client...")
         self._batch_client = BatchClient(self.settings.batch_settings)
@@ -116,108 +123,105 @@ class BatchTaskRunner(TaskRunner):
     def submit_tasks(
         self, prepared_tasks: List[PreparedTaskSubmitMessage]
     ) -> List[Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]]:
+        batch_client = self._get_batch_client()
 
         batch_submits: Dict[BatchJobInfo, List[BatchTaskInfo]] = defaultdict(list)
 
-        with BatchClient(self.settings.batch_settings) as batch_client:
+        # Transform the tasks into BatchTasks,
+        # grouped by the Azure Batch Job they
+        # will be submitted to
 
-            # Transform the tasks into BatchTasks,
-            # grouped by the Azure Batch Job they
-            # will be submitted to
+        for i, prepared_task in enumerate(prepared_tasks):
+            submit_msg = prepared_task.task_submit_message
+            # run_id = submit_msg.run_id
+            # job_id = submit_msg.job_id
+            part_id = submit_msg.partition_id
+            task_id = submit_msg.definition.id
+            run_msg = prepared_task.task_run_message
+            task_input_blob_config = prepared_task.task_input_blob_config
+            task_tags = prepared_task.task_data.tags
 
-            for i, prepared_task in enumerate(prepared_tasks):
-                submit_msg = prepared_task.task_submit_message
-                # run_id = submit_msg.run_id
-                # job_id = submit_msg.job_id
-                part_id = submit_msg.partition_id
-                task_id = submit_msg.definition.id
-                run_msg = prepared_task.task_run_message
-                task_input_blob_config = prepared_task.task_input_blob_config
-                task_tags = prepared_task.task_data.tags
+            task_id_for_batch = create_batch_task_id(part_id, task_id)
 
-                task_id_for_batch = create_batch_task_id(part_id, task_id)
+            pool_id = get_pool_id(task_tags, self.settings.batch_settings)
 
-                pool_id = get_pool_id(task_tags, self.settings.batch_settings)
+            command = [
+                "pctasks",
+                "task",
+                "run",
+                task_input_blob_config.uri,
+                "--sas-token",
+                task_input_blob_config.sas_token,
+            ]
 
-                command = [
-                    "pctasks",
-                    "task",
-                    "run",
-                    task_input_blob_config.uri,
-                    "--sas-token",
-                    task_input_blob_config.sas_token,
-                ]
+            if task_input_blob_config.account_url:
+                command.extend(["--account-url", task_input_blob_config.account_url])
 
-                if task_input_blob_config.account_url:
-                    command.extend(
-                        ["--account-url", task_input_blob_config.account_url]
+            batch_job_id = prepared_task.task_data.runner_info[JOB_ID_KEY]
+
+            batch_task_id = make_valid_batch_id(task_id_for_batch)
+
+            batch_task = BatchTask(
+                task_id=batch_task_id,
+                command=command,
+                image=run_msg.config.image,
+                # Set code directory to working directory,
+                # as Azure Batch doesn't allow containers to
+                # modify system or user directories.
+                environ={"PCTASKS_TASK__CODE_DIR": "./_code"},
+            )
+
+            batch_submits[BatchJobInfo(batch_job_id, pool_id)].append(
+                BatchTaskInfo(batch_task, i)
+            )
+
+        # Create any jobs necessary and submit the tasks
+
+        submit_results: Dict[
+            int, Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]
+        ] = {}
+
+        for batch_job_info, batch_task_infos in batch_submits.items():
+            batch_job_id = batch_job_info.job_prefix
+            pool_id = batch_job_info.pool_id
+
+            try:
+                # Lock to decrease pressure on Azure Batch API
+                with job_locks[batch_job_id]:
+
+                    # Submit the tasks
+                    task_errors = batch_client.add_collection(
+                        batch_job_id,
+                        [i.task for i in batch_task_infos],
                     )
 
-                batch_job_id = prepared_task.task_data.runner_info[JOB_ID_KEY]
+                    # Process the results from Azure Batch
+                    for i, task_error in enumerate(task_errors):
+                        batch_task_info = batch_task_infos[i]
+                        task_id = batch_task_info.task.task_id
+                        if task_error:
+                            err: Any = task_error.message
+                            error_msg = err.value
+                            submit_results[
+                                batch_task_info.index
+                            ] = FailedTaskSubmitResult(errors=[error_msg])
+                        else:
+                            submit_results[
+                                batch_task_info.index
+                            ] = SuccessfulTaskSubmitResult(
+                                task_runner_id=BatchTaskId(
+                                    batch_job_id=batch_job_id,
+                                    batch_task_id=task_id,
+                                ).dict(),
+                            )
 
-                batch_task_id = make_valid_batch_id(task_id_for_batch)
+            except Exception as e:
+                logger.exception(e)
 
-                batch_task = BatchTask(
-                    task_id=batch_task_id,
-                    command=command,
-                    image=run_msg.config.image,
-                    # Set code directory to working directory,
-                    # as Azure Batch doesn't allow containers to
-                    # modify system or user directories.
-                    environ={"PCTASKS_TASK__CODE_DIR": "./_code"},
-                )
-
-                batch_submits[BatchJobInfo(batch_job_id, pool_id)].append(
-                    BatchTaskInfo(batch_task, i)
-                )
-
-            # Create any jobs necessary and submit the tasks
-
-            submit_results: Dict[
-                int, Union[SuccessfulTaskSubmitResult, FailedTaskSubmitResult]
-            ] = {}
-
-            for batch_job_info, batch_task_infos in batch_submits.items():
-                batch_job_id = batch_job_info.job_prefix
-                pool_id = batch_job_info.pool_id
-
-                try:
-                    # Lock to decrease pressure on Azure Batch API
-                    with job_locks[batch_job_id]:
-
-                        # Submit the tasks
-                        task_errors = batch_client.add_collection(
-                            batch_job_id,
-                            [i.task for i in batch_task_infos],
-                        )
-
-                        # Process the results from Azure Batch
-                        for i, task_error in enumerate(task_errors):
-                            batch_task_info = batch_task_infos[i]
-                            task_id = batch_task_info.task.task_id
-                            if task_error:
-                                err: Any = task_error.message
-                                error_msg = err.value
-                                submit_results[
-                                    batch_task_info.index
-                                ] = FailedTaskSubmitResult(errors=[error_msg])
-                            else:
-                                submit_results[
-                                    batch_task_info.index
-                                ] = SuccessfulTaskSubmitResult(
-                                    task_runner_id=BatchTaskId(
-                                        batch_job_id=batch_job_id,
-                                        batch_task_id=task_id,
-                                    ).dict(),
-                                )
-
-                except Exception as e:
-                    logger.exception(e)
-
-                    for batch_task_info in batch_task_infos:
-                        submit_results[batch_task_info.index] = FailedTaskSubmitResult(
-                            errors=[str(e)]
-                        )
+                for batch_task_info in batch_task_infos:
+                    submit_results[batch_task_info.index] = FailedTaskSubmitResult(
+                        errors=[str(e)]
+                    )
 
         return [submit_results[i] for i in sorted(submit_results)]
 
@@ -226,6 +230,7 @@ class BatchTaskRunner(TaskRunner):
         runner_ids: Dict[str, Dict[str, Dict[str, Any]]],
     ) -> Dict[str, Dict[str, str]]:
         result: Dict[str, Dict[str, str]] = defaultdict(dict)
+
         for job_id, task_ids in groupby(
             [
                 (BatchTaskId.parse_obj(batch_id), (partition_id, task_id))
@@ -234,19 +239,47 @@ class BatchTaskRunner(TaskRunner):
             ],
             lambda x: x[0].batch_job_id,
         ):
-            indexed_task_ids: Dict[str, Tuple[str, str]] = {
+            indexed_task_ids = {
                 batch_id.batch_task_id: (partition_id, task_id)
                 for batch_id, (partition_id, task_id) in task_ids
             }
-            with BatchClient(self.settings.batch_settings) as batch_client:
-                for batch_task_id, error_message in batch_client.get_failed_tasks(
-                    job_id
-                ).items():
-                    if batch_task_id in indexed_task_ids:
-                        partition_id, task_id = indexed_task_ids[batch_task_id]
-                        result[partition_id][task_id] = error_message
+
+            for batch_task_id, error_message in self._get_failed_tasks(job_id).items():
+                if batch_task_id in indexed_task_ids:
+                    partition_id, task_id = indexed_task_ids[batch_task_id]
+                    result[partition_id][task_id] = error_message
 
         return result
+
+    def _get_failed_tasks(self, job_id: str) -> Dict[str, str]:
+        # Check for cached task statuses
+        with failed_task_lock:
+            cache_key = f"failed_tasks:{job_id}"
+            if cache_key in self.response_cache:
+                return self.response_cache[cache_key]
+            else:
+                batch_client = self._get_batch_client()
+
+                logger.info(
+                    "(BATCH) Polling task runner for "
+                    f"failed tasks in job {job_id}..."
+                )
+                try:
+                    failed_tasks = batch_client.get_failed_tasks(job_id)
+                except Exception:
+                    logger.exception("(BATCH) Error getting failed tasks.")
+                    # Don't let a Batch API error fail the job;
+                    # consider it as "no reported failures"
+                    failed_tasks = {}
+
+                total_failed = [len(ts) for ts in failed_tasks.values()]
+                if total_failed:
+                    logger.info(f"(BATCH)  - {sum(total_failed)} failed tasks found.")
+                else:
+                    logger.info("(BATCH)  - No failed tasks found.")
+
+                self.response_cache[cache_key] = failed_tasks
+                return failed_tasks
 
     def poll_task(
         self,
