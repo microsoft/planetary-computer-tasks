@@ -38,27 +38,27 @@ def run_workflow(
         run_settings = run_settings.copy(deep=True)
         run_settings.task_poll_seconds = 5
         cosmosdb_settings = CosmosDBSettings.get()
-        runner = RemoteWorkflowExecutor(
+
+        with RemoteWorkflowExecutor(
             WorkflowExecutorConfig(
                 run_settings=run_settings, cosmosdb_settings=cosmosdb_settings
             )
-        )
+        ) as runner:
+            with ignore_ssl_warnings():
+                # Make sure the workflow exists in the database
+                with WorkflowsContainer(WorkflowRecord) as workflow_container:
+                    workflow_container.put(
+                        WorkflowRecord(workflow=workflow, workflow_id=workflow.id)
+                    )
 
-        with ignore_ssl_warnings():
-            # Make sure the workflow exists in the database
-            with WorkflowsContainer(WorkflowRecord) as workflow_container:
-                workflow_container.put(
-                    WorkflowRecord(workflow=workflow, workflow_id=workflow.id)
-                )
+                # Mimic the server and write the workflow run record
+                # before executing workflow
+                with WorkflowRunsContainer(WorkflowRunRecord) as workflow_run_container:
+                    workflow_run_container.put(
+                        WorkflowRunRecord.from_submit_message(submit_message)
+                    )
 
-            # Mimic the server and write the workflow run record
-            # before executing workflow
-            with WorkflowRunsContainer(WorkflowRunRecord) as workflow_run_container:
-                workflow_run_container.put(
-                    WorkflowRunRecord.from_submit_message(submit_message)
-                )
-
-            result = runner.execute_workflow(submit_message)
+                result = runner.execute_workflow(submit_message)
 
     except WorkflowFailedError:
         workflow_failed = True

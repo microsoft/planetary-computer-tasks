@@ -181,6 +181,13 @@ class RemoteWorkflowExecutor:
         self.config = settings or WorkflowExecutorConfig.get()
         self.task_runner = get_task_runner(self.config.run_settings)
 
+    def __enter__(self) -> "RemoteWorkflowExecutor":
+        self.task_runner.__enter__()
+        return self
+
+    def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None:
+        self.task_runner.__exit__(exc_type, exc_value, traceback)
+
     def create_job_partition_states(
         self,
         submit_msgs: Iterable[JobPartitionSubmitMessage],

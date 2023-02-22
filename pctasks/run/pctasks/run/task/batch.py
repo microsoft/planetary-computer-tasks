@@ -67,6 +67,25 @@ class BatchTaskInfo:
 
 
 class BatchTaskRunner(TaskRunner):
+    def __init__(self, settings: RunSettings):
+        super().__init__(settings)
+        self._batch_client: Optional[BatchClient] = None
+    def __enter__(self) -> "BatchTaskRunner":
+        logger.info("Initializing Batch client...")
+        self._batch_client = BatchClient(self.settings.batch_settings)
+        self._batch_client.__enter__()
+        return self
+
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        if self._batch_client:
+            self._batch_client.__exit__(exc_type, exc_val, exc_tb)
+            self._batch_client = None
+
+    def _get_batch_client(self) -> BatchClient:
+        if not self._batch_client:
+            raise BatchTaskRunnerError("Batch client not initialized.")
+        return self._batch_client
+
     def prepare_task_info(
         self,
         dataset_id: str,
@@ -76,20 +95,22 @@ class BatchTaskRunner(TaskRunner):
         image: str,
         task_tags: Optional[Dict[str, str]],
     ) -> Dict[str, Any]:
+        batch_client = self._get_batch_client()
+
         pool_id = get_pool_id(task_tags, self.settings.batch_settings)
         batch_job_id = make_batch_job_id(dataset_id, job_id, run_id, pool_id)
-        with BatchClient(self.settings.batch_settings) as batch_client:
-            existing_job = batch_client.get_job(batch_job_id)
-            if not existing_job:
-                if not batch_client.get_pool(pool_id):
-                    raise BatchTaskRunnerError(f"Batch pool {pool_id} not found.")
 
-                batch_job_id = batch_client.add_job(
-                    job_id=batch_job_id,
-                    pool_id=pool_id,
-                    make_unique=False,
-                    terminate_on_tasks_complete=False,
-                )
+        existing_job = batch_client.get_job(batch_job_id)
+        if not existing_job:
+            if not batch_client.get_pool(pool_id):
+                raise BatchTaskRunnerError(f"Batch pool {pool_id} not found.")
+
+            batch_job_id = batch_client.add_job(
+                job_id=batch_job_id,
+                pool_id=pool_id,
+                make_unique=False,
+                terminate_on_tasks_complete=False,
+            )
         return {JOB_ID_KEY: batch_job_id}
 
     def submit_tasks(
@@ -232,41 +253,46 @@ class BatchTaskRunner(TaskRunner):
         runner_id: Dict[str, Any],
         previous_poll_count: int,
     ) -> TaskPollResult:
-        task_id = BatchTaskId.parse_obj(runner_id)
-        with BatchClient(self.settings.batch_settings) as batch_client:
-            task_status_result = batch_client.get_task_status(
-                job_id=task_id.batch_job_id, task_id=task_id.batch_task_id
-            )
+        batch_client = self._get_batch_client()
 
-            if task_status_result is None:
-                if previous_poll_count < MAX_MISSING_POLLS:
-                    return TaskPollResult(task_status=TaskRunStatus.PENDING)
-                else:
-                    return TaskPollResult(
-                        task_status=TaskRunStatus.FAILED,
-                        poll_errors=[
-                            f"Batch task not found after {previous_poll_count} polls."
-                        ],
-                    )
+        task_id = BatchTaskId.parse_obj(runner_id)
+
+        task_status_result = batch_client.get_task_status(
+            job_id=task_id.batch_job_id, task_id=task_id.batch_task_id
+        )
+
+        if task_status_result is None:
+            if previous_poll_count < MAX_MISSING_POLLS:
+                return TaskPollResult(task_status=TaskRunStatus.PENDING)
             else:
-                task_status, error_message = task_status_result
                 return TaskPollResult(
-                    task_status=task_status,
-                    poll_errors=map_opt(lambda e: [e], error_message),
+                    task_status=TaskRunStatus.FAILED,
+                    poll_errors=[
+                        f"Batch task not found after {previous_poll_count} polls."
+                    ],
                 )
+        else:
+            task_status, error_message = task_status_result
+            return TaskPollResult(
+                task_status=task_status,
+                poll_errors=map_opt(lambda e: [e], error_message),
+            )
 
     def cancel_task(self, runner_id: Dict[str, Any]) -> None:
+        batch_client = self._get_batch_client()
+
         task_id = BatchTaskId.parse_obj(runner_id)
-        with BatchClient(self.settings.batch_settings) as batch_client:
-            batch_client.terminate_task(
-                job_id=task_id.batch_job_id, task_id=task_id.batch_task_id
-            )
+
+        batch_client.terminate_task(
+            job_id=task_id.batch_job_id, task_id=task_id.batch_task_id
+        )
 
     def cleanup(self, task_infos: List[Dict[str, Any]]) -> None:
-        job_ids = set()
+        batch_client = self._get_batch_client()
+
+        job_ids: Set[str] = set()
         for info in task_infos:
             job_ids.add(info[JOB_ID_KEY])
         if job_ids:
-            with BatchClient(self.settings.batch_settings) as batch_client:
-                for job_id in job_ids:
-                    batch_client.terminate_job(job_id=job_id)
+            for job_id in job_ids:
+                batch_client.terminate_job(job_id=job_id)
