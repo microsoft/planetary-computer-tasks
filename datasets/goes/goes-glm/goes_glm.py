@@ -6,6 +6,7 @@ import pystac
 from stactools.goes_glm import stac
 from stactools.goes_glm.constants import DATACUBE_EXTENSION
 
+import pctasks.core.storage.blob
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
@@ -25,11 +26,16 @@ class GoesGlmCollection(Collection):
     ) -> Union[List[pystac.Item], WaitTaskResult]:
         nc_storage, nc_asset_path = storage_factory.get_storage_for_file(asset_uri)
 
+        if isinstance(nc_storage, pctasks.core.storage.blob.BlobStorage):
+            download_file_kwargs = {"timeout_seconds": 60}
+        else:
+            download_file_kwargs = {}
+
         # download the netcdf
         with TemporaryDirectory() as tmp:
             tmp_dir = Path(tmp)
             tmp_nc_asset_path = Path(tmp_dir, Path(nc_asset_path).name)
-            nc_storage.download_file(nc_asset_path, tmp_nc_asset_path)
+            nc_storage.download_file(nc_asset_path, tmp_nc_asset_path, **download_file_kwargs)
 
             # create item and geoparquet files (saved to same directory as the nc file)
             item = stac.create_item(tmp_nc_asset_path, nogeoparquet=True)
