@@ -3,15 +3,16 @@ from collections import defaultdict
 from dataclasses import dataclass
 from itertools import groupby
 from threading import Lock
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import cachetools
+import azure.batch.models as batchmodels
 
 from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.models.task import TaskDefinition
 from pctasks.core.utils import map_opt
 from pctasks.run.batch.client import BatchClient
-from pctasks.run.batch.model import BatchTaskId
+from pctasks.run.batch.model import BatchJobState, BatchTaskId
 from pctasks.run.batch.task import BatchTask
 from pctasks.run.batch.utils import make_valid_batch_id
 from pctasks.run.constants import MAX_MISSING_POLLS
@@ -244,14 +245,27 @@ class BatchTaskRunner(TaskRunner):
                 for batch_id, (partition_id, task_id) in task_ids
             }
 
-            for batch_task_id, error_message in self._get_failed_tasks(job_id).items():
-                if batch_task_id in indexed_task_ids:
-                    partition_id, task_id = indexed_task_ids[batch_task_id]
-                    result[partition_id][task_id] = error_message
+            failed_tasks, job_failed = self._get_failed_tasks(job_id)
+            if job_failed:
+                for batch_task_id, (partition_id, task_id) in indexed_task_ids.items():
+                    if batch_task_id in failed_tasks:
+                        result[partition_id][task_id] = failed_tasks[batch_task_id]
+                    else:
+                        result[partition_id][task_id] = "Job failed"
+            else:
+                for batch_task_id, error_message in failed_tasks.items():
+                    if batch_task_id in indexed_task_ids:
+                        partition_id, task_id = indexed_task_ids[batch_task_id]
+                        result[partition_id][task_id] = error_message
 
         return result
 
-    def _get_failed_tasks(self, job_id: str) -> Dict[str, str]:
+    def _get_failed_tasks(self, job_id: str) -> Tuple[Dict[str, str], bool]:
+        """Checks for failed tasks in a Job.
+
+        Returns a dictionary of task IDs to error messages for specific task failures.
+        Returns True in the second value if the job failed.
+        """
         # Check for cached task statuses
         with failed_task_lock:
             cache_key = f"failed_tasks:{job_id}"
@@ -259,6 +273,20 @@ class BatchTaskRunner(TaskRunner):
                 return self.response_cache[cache_key]
             else:
                 batch_client = self._get_batch_client()
+
+                job_failed = False
+
+                try:
+                    job_info = batch_client.get_job_info(job_id)
+                    job_failed = job_info.state == BatchJobState.FAILED
+                except batchmodels.BatchErrorException as e:
+                    error: Any = e.error  # Avoid type hinting error
+                    if error.code == "JobNotFound":
+                        job_failed = True
+                    else:
+                        logger.exception(
+                            f"(BATCH) Error getting job info for {job_id}."
+                        )
 
                 logger.info(
                     "(BATCH) Polling task runner for "
@@ -272,14 +300,15 @@ class BatchTaskRunner(TaskRunner):
                     # consider it as "no reported failures"
                     failed_tasks = {}
 
-                total_failed = [len(ts) for ts in failed_tasks.values()]
+                total_failed = [len(failed_tasks)]
                 if total_failed:
                     logger.info(f"(BATCH)  - {sum(total_failed)} failed tasks found.")
                 else:
                     logger.info("(BATCH)  - No failed tasks found.")
 
-                self.response_cache[cache_key] = failed_tasks
-                return failed_tasks
+                result = (failed_tasks, job_failed)
+                self.response_cache[cache_key] = result
+                return result
 
     def poll_task(
         self,
