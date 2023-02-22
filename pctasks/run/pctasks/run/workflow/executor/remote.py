@@ -980,122 +980,125 @@ class RemoteWorkflowExecutor:
                             continue
 
                         # ## MONITOR GROUPED JOB PARTITIONS
-
-                        # Split the job partitions into groups
-                        # based on number of threads
-                        grouped_job_partition_states = [
-                            (list(g), group_num)
-                            for group_num, g in enumerate(
-                                grouped(
-                                    job_part_states,
-                                    int(
-                                        math.ceil(
-                                            len(job_part_states)
-                                            / run_settings.remote_runner_threads
-                                        )
-                                    ),
-                                )
-                            )
-                        ]
-
-                        # Wait for the first task of the job partition to complete,
-                        # and then complete all remaining tasks
-
-                        logger.info("Waiting for tasks to complete...")
-
-                        job_part_futures = {
-                            pool.submit(
-                                self.complete_job_partitions,
-                                run_id,
-                                job_id,
-                                f"job-part-group-{group_num}",
-                                job_state_group,
-                                jp_container,
-                            ): job_state_group
-                            for (
-                                job_state_group,
-                                group_num,
-                            ) in grouped_job_partition_states
-                        }
-
-                        job_results: List[Dict[str, Any]] = []
-
-                        job_done_count = 0
-                        failed_job_part_errors: List[str] = []
-                        job_failed = False
-                        for job_future in futures.as_completed(job_part_futures.keys()):
-                            job_part_states = job_part_futures[job_future]
-
-                            if job_future.cancelled():
-                                job_failed = True
-                                failed_job_part_errors.append(
-                                    "Job partitions failed due to thread cancellation."
-                                )
-
-                            future_error = job_future.exception()
-                            if future_error:
-                                job_failed = True
-                                failed_job_part_errors.append(
-                                    str(
-                                        "Job partitions thread failed "
-                                        f"with {future_error}"
+                        try:
+                            # Split the job partitions into groups
+                            # based on number of threads
+                            grouped_job_partition_states = [
+                                (list(g), group_num)
+                                for group_num, g in enumerate(
+                                    grouped(
+                                        job_part_states,
+                                        int(
+                                            math.ceil(
+                                                len(job_part_states)
+                                                / run_settings.remote_runner_threads
+                                            )
+                                        ),
                                     )
                                 )
+                            ]
 
-                            job_done_count += len(job_part_states)
-                            for job_part_state in job_part_states:
-                                if (
-                                    job_part_state.status
-                                    == JobPartitionStateStatus.FAILED
-                                ):
+                            # Wait for the first task of the job partition to complete,
+                            # and then complete all remaining tasks
+
+                            logger.info("Waiting for tasks to complete...")
+
+                            job_part_futures = {
+                                pool.submit(
+                                    self.complete_job_partitions,
+                                    run_id,
+                                    job_id,
+                                    f"job-part-group-{group_num}",
+                                    job_state_group,
+                                    jp_container,
+                                ): job_state_group
+                                for (
+                                    job_state_group,
+                                    group_num,
+                                ) in grouped_job_partition_states
+                            }
+
+                            job_results: List[Dict[str, Any]] = []
+
+                            job_done_count = 0
+                            failed_job_part_errors: List[str] = []
+                            job_failed = False
+                            for job_future in futures.as_completed(
+                                job_part_futures.keys()
+                            ):
+                                job_part_states = job_part_futures[job_future]
+
+                                if job_future.cancelled():
                                     job_failed = True
-                                    logger.warning(
-                                        f"JOB PART FAILED: {job_id} "
-                                        f"{job_part_state.partition_id}"
+                                    failed_job_part_errors.append(
+                                        "Job partitions failed "
+                                        "due to thread cancellation."
                                     )
-                                else:
-                                    job_results.append(job_part_state.task_outputs)
 
-                            logger.info(
-                                f"Job {job_id} partition progress: "
-                                f"({job_done_count}/{total_job_part_count})"
-                            )
+                                future_error = job_future.exception()
+                                if future_error:
+                                    job_failed = True
+                                    failed_job_part_errors.append(
+                                        str(
+                                            "Job partitions thread failed "
+                                            f"with {future_error}"
+                                        )
+                                    )
 
-                        # ## PROCESS JOB PARTITION RESULTS
+                                job_done_count += len(job_part_states)
+                                for job_part_state in job_part_states:
+                                    if (
+                                        job_part_state.status
+                                        == JobPartitionStateStatus.FAILED
+                                    ):
+                                        job_failed = True
+                                        logger.warning(
+                                            f"JOB PART FAILED: {job_id} "
+                                            f"{job_part_state.partition_id}"
+                                        )
+                                    else:
+                                        job_results.append(job_part_state.task_outputs)
 
-                        if job_failed:
-                            update_job_run_status(
-                                wf_run_container,
-                                workflow_run,
-                                job_def.get_id(),
-                                JobRunStatus.FAILED,
-                                errors=failed_job_part_errors,
-                            )
-                            workflow_failed = True
-                        else:
-                            if len(job_results) == 1:
-                                job_outputs[job_id] = {
-                                    TASKS_TEMPLATE_PATH: job_results[0]
-                                }
+                                logger.info(
+                                    f"Job {job_id} partition progress: "
+                                    f"({job_done_count}/{total_job_part_count})"
+                                )
+
+                            # ## PROCESS JOB PARTITION RESULTS
+
+                            if job_failed:
+                                update_job_run_status(
+                                    wf_run_container,
+                                    workflow_run,
+                                    job_def.get_id(),
+                                    JobRunStatus.FAILED,
+                                    errors=failed_job_part_errors,
+                                )
+                                workflow_failed = True
                             else:
-                                job_output_entry: List[Dict[str, Any]] = []
-                                for job_result in job_results:
-                                    job_output_entry.append(
-                                        {TASKS_TEMPLATE_PATH: job_result}
-                                    )
-                                job_outputs[job_id] = job_output_entry
+                                if len(job_results) == 1:
+                                    job_outputs[job_id] = {
+                                        TASKS_TEMPLATE_PATH: job_results[0]
+                                    }
+                                else:
+                                    job_output_entry: List[Dict[str, Any]] = []
+                                    for job_result in job_results:
+                                        job_output_entry.append(
+                                            {TASKS_TEMPLATE_PATH: job_result}
+                                        )
+                                    job_outputs[job_id] = job_output_entry
 
-                            update_job_run_status(
-                                wf_run_container,
-                                workflow_run,
-                                job_def.get_id(),
-                                JobRunStatus.COMPLETED,
+                                update_job_run_status(
+                                    wf_run_container,
+                                    workflow_run,
+                                    job_def.get_id(),
+                                    JobRunStatus.COMPLETED,
+                                )
+                        finally:
+                            logger.info(
+                                f"...cleaning up based on task data for job: {job_id}"
                             )
-
-                        logger.info(
-                            f"...cleaning up based on task data for job: {job_id}"
-                        )
-                        self.task_runner.cleanup([d.runner_info for d in task_data])
+                            self.task_runner.cleanup([d.runner_info for d in task_data])
 
                     if workflow_failed:
                         logger.error("Workflow failed!")
