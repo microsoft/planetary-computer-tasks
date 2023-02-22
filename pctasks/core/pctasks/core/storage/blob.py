@@ -565,8 +565,8 @@ class BlobStorage(Storage):
                         bytes,
                         blob_data.readall(),
                     )
-        except azure.core.exceptions.ResourceNotFoundError:
-            raise FileNotFoundError(f"File {file_path} not found in {self}")
+        except azure.core.exceptions.ResourceNotFoundError as e:
+            raise FileNotFoundError(f"File {file_path} not found in {self}") from e
         except Exception as e:
             raise BlobStorageError(
                 f"Could not read text from {self.get_uri(file_path)}"

@@ -89,7 +89,7 @@ def workflow_status_cmd(
     if not watch:
         console.print(table)
     else:
-        with Live(table, refresh_per_second=poll_rate) as live:
+        with Live(table, refresh_per_second=float(1 / poll_rate)) as live:
             while not is_complete:
                 table, is_complete = get_table()
                 live.update(table)
