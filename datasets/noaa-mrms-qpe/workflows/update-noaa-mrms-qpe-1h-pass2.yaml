@@ -4,7 +4,6 @@ tokens:
     containers:
       mrms:
         token: ${{ pc.get_token(mrms, mrms) }}
-target_environment: green
 args:
 - registry
 - since
