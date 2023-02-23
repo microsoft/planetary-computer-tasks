@@ -300,7 +300,7 @@ class BatchClient:
         client = self._ensure_client()
 
         tasks = list(client.task.list(job_id))
-        print(len(tasks))
+
         running_tasks = [
             cast(batchmodels.CloudTask, task)
             for task in tasks
