@@ -29,7 +29,7 @@ def setup_azurite() -> None:
 
     print("~ Setting up queues...")
 
-    queue_client = QueueServiceClient.from_connection_string(
+    queue_client: QueueServiceClient = QueueServiceClient.from_connection_string(
         get_azurite_connection_string()
     )
     existing_queues = [q.name for q in queue_client.list_queues()]
