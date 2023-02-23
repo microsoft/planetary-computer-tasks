@@ -76,7 +76,8 @@ class QueueService:
             )
             return (
                 service_client,
-                service_client.get_queue_client(
+                # https://github.com/Azure/azure-sdk-for-python/issues/28960
+                service_client.get_queue_client(  # type: ignore
                     queue=_queue,
                     message_encode_policy=BinaryBase64EncodePolicy(),
                     message_decode_policy=BinaryBase64DecodePolicy(),
