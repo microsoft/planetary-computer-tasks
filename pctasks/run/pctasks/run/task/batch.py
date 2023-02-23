@@ -5,8 +5,8 @@ from itertools import groupby
 from threading import Lock
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
-import cachetools
 import azure.batch.models as batchmodels
+import cachetools
 
 from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.models.task import TaskDefinition
@@ -74,7 +74,7 @@ class BatchTaskRunner(TaskRunner):
     def __init__(self, settings: RunSettings):
         super().__init__(settings)
         self._batch_client: Optional[BatchClient] = None
-        self.response_cache = cachetools.TTLCache(
+        self.response_cache: cachetools.Cache = cachetools.TTLCache(
             maxsize=100, ttl=self.settings.batch_cache_seconds
         )
 
