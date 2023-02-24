@@ -71,8 +71,8 @@ class QueueService:
         def _get_clients(
             _conn_str: str = connection_string, _queue: str = queue_name
         ) -> Tuple[Optional[QueueServiceClient], QueueClient]:
-            service_client = QueueServiceClient.from_connection_string(
-                conn_str=_conn_str
+            service_client: QueueServiceClient = (
+                QueueServiceClient.from_connection_string(conn_str=_conn_str)
             )
             return (
                 service_client,

@@ -9,7 +9,7 @@ install_requires = [
     "azure-identity==1.*",
     "azure-storage-blob==12.9",  # Issues with 12.11 generating sas from account keys
     # https://github.com/microsoft/planetary-computer-tasks/issues/136
-    "azure-storage-queue>=12.0.0",
+    "azure-storage-queue>=12.6.0",
     "azure-data-tables==12.*",
     "azure-cosmos==4.3.*",
     "pydantic>=1.9,<2.0.0",
@@ -20,7 +20,7 @@ install_requires = [
     "opencensus-ext-logging==0.1.1",
     "pyyaml>=5.3",
     "aiohttp==3.8.*",
-    "planetary-computer>=0.4.0"
+    "planetary-computer>=0.4.0",
 ]
 
 extra_reqs = {

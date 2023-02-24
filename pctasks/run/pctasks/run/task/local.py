@@ -26,8 +26,14 @@ class LocalTaskRunner(TaskRunner):
     See the local-dev-endpoints service in the development environment.
     """
 
-    def __init__(self, local_dev_endpoints_url: str):
+    def __init__(self, local_dev_endpoints_url: str) -> None:
         self.local_dev_endpoints_url = local_dev_endpoints_url
+
+    def __enter__(self) -> "LocalTaskRunner":
+        return self
+
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        pass
 
     def prepare_task_info(
         self,

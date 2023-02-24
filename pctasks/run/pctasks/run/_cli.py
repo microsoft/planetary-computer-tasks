@@ -80,15 +80,14 @@ def remote_cmd(
             workflow_args[split_args[0]] = split_args[1]
         submit_message.args = {**(submit_message.args or {}), **workflow_args}
 
-    runner = RemoteWorkflowExecutor(executor_config)
-
     if new_id:
         submit_message.run_id = uuid4().hex
 
-    if executor_config.cosmosdb_settings.is_cosmosdb_emulator():
-        # Prevent workflow run logs from being overrun by
-        # SSL warnings if using the Cosmos DB emulator
-        with ignore_ssl_warnings():
+    with RemoteWorkflowExecutor(executor_config) as runner:
+        if executor_config.cosmosdb_settings.is_cosmosdb_emulator():
+            # Prevent workflow run logs from being overrun by
+            # SSL warnings if using the Cosmos DB emulator
+            with ignore_ssl_warnings():
+                runner.execute_workflow(submit_message)
+        else:
             runner.execute_workflow(submit_message)
-    else:
-        runner.execute_workflow(submit_message)
