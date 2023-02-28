@@ -1,38 +1,15 @@
 """
 Additional checks on dataset collections.
 """
-import argparse
-import json
-import pystac
-import sys
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
+
+import pystac
 
 DATETIME_RFC339 = "%Y-%m-%dT%H:%M:%SZ"
 
 
-def parse_args(args: Optional[List[str]] = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser("check-collection")
-    parser.add_argument(
-        "collection", nargs="?", type=argparse.FileType("r"), default=sys.stdin
-    )
-    return parser.parse_args(args)
-
-
-def main(args: Optional[List[str]] = None) -> int:
-    args2 = parse_args(args)
-    data = json.loads(args2.collection.read())
-
-    try:
-        validate_collection(data)
-        code = 0
-    except Exception as e:
-        print(e, file=sys.stderr)
-        code = 1
-    return code
-
-
-def validate_collection(collection: Dict) -> None:
+def validate_collection(collection: Dict) -> Tuple[str, List[str]]:
     """
     Planetary Computer specific validation for STAC collections.
     """
@@ -118,10 +95,8 @@ def validate_collection(collection: Dict) -> None:
     if not has_license_link:
         errors.append("must have license link")
 
-    if errors:
-        msg = "\n\n".join(errors)
-        raise ValueError(msg)
+    return cid, errors
 
-
-if __name__ == "__main__":
-    sys.exit(main())
+    # if errors:
+    #     msg = f"Errors in collection {cid} at {path}\n\n".join(errors)
+    #     raise ValueError(msg)

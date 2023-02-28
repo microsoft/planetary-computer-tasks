@@ -237,4 +237,10 @@ def list_collections_cmd(
 def validate_collection_cmd(collection: click.File) -> None:
     # error: "File" has no attribute "read"
     data = json.loads(collection.read())  # type: ignore
-    validate_collection(data)
+    cid, errors = validate_collection(data)
+
+    if errors:
+        click.echo(f"Errors in collection {cid} at {collection.name}")
+        for error in errors:
+            click.secho(f"  {error}", fg="red")
+        raise click.ClickException(f"Invalid collection: {cid}")
