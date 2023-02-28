@@ -8,15 +8,13 @@ with open("README.md") as f:
 install_requires = [
     "pctasks.task>=0.1.0",
     "pctasks.ingest>=0.1.0",
-    "pypgstac[psycopg]==0.6.9",
+    "pypgstac[psycopg]==0.6.13",
     "pystac==1.*",
     "smart-open==4.2.0",
     "orjson>=3.5.2",
     "python-dateutil==2.8.2",
     "fire==0.4.0",
     "plpygis==0.2.0",
-    "pydantic==1.9.0",
-    "tenacity== 8.0.1",
 ]
 
 extra_reqs = {

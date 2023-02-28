@@ -170,10 +170,10 @@
     },
     "summaries": {
         "noaa_mrms_qpe:pass": [
-            1
+            2
         ],
         "noaa_mrms_qpe:period": [
-            1
+            24
         ],
         "noaa_mrms_qpe:region": [
             "CONUS",

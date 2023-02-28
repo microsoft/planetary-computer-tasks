@@ -3,7 +3,12 @@ import pathlib
 
 from pctasks.core.models.task import FailedTaskResult
 from pctasks.dev.mocks import MockTaskContext
-from pctasks.ingest.models import IngestNdjsonInput, IngestTaskInput
+from pctasks.ingest.models import (
+    IngestNdjsonInput,
+    IngestTaskConfig,
+    IngestTaskInput,
+    NdjsonFolder,
+)
 from pctasks.ingest_task.task import ingest_task
 from tests.conftest import ingest_test_environment
 
@@ -61,3 +66,34 @@ def test_ndjson_ingest():
         result = ingest_task.run(input=message_data, context=task_context)
 
         assert not isinstance(result, FailedTaskResult)
+
+
+def test_ingest_ndjson_add_service_principal():
+    result = IngestTaskConfig.from_ndjson(
+        ndjson_data=IngestNdjsonInput(ndjson_folder=NdjsonFolder(uri="test/")),
+        add_service_principal=True,
+    )
+
+    assert result.environment["AZURE_TENANT_ID"] == "${{ secrets.task-tenant-id }}"
+    assert result.environment["AZURE_CLIENT_ID"] == "${{ secrets.task-client-id }}"
+    assert (
+        result.environment["AZURE_CLIENT_SECRET"] == "${{ secrets.task-client-secret }}"
+    )
+
+    result = IngestTaskConfig.from_ndjson(
+        ndjson_data=IngestNdjsonInput(ndjson_folder=NdjsonFolder(uri="test/")),
+        environment={"AZURE_TENANT_ID": "test"},
+        add_service_principal=True,
+    )
+    assert result.environment["AZURE_TENANT_ID"] == "test"
+    assert result.environment["AZURE_CLIENT_ID"] == "${{ secrets.task-client-id }}"
+    assert (
+        result.environment["AZURE_CLIENT_SECRET"] == "${{ secrets.task-client-secret }}"
+    )
+
+    result = IngestTaskConfig.from_ndjson(
+        ndjson_data=IngestNdjsonInput(ndjson_folder=NdjsonFolder(uri="test/")),
+    )
+    assert "AZURE_TENANT_ID" not in result.environment
+    assert "AZURE_TENANT_ID" not in result.environment
+    assert "AZURE_TENANT_ID" not in result.environment

@@ -20,35 +20,40 @@ from pctasks.ingest.utils import generate_collection_json
 
 
 def task_tags(
+    collection_id: str,
     task_name: str,
-    tags: Optional[Dict[str, str]],
-    task_config: Optional[Dict[str, Any]],
+    tags: Optional[Dict[str, str]] = None,
+    task_config: Optional[Dict[str, Any]] = None,
 ) -> Optional[Dict[str, str]]:
     """
-    Extracts task-specific tags from the task_config dictionary defined in a
-    dataset.yaml and merges them with any tags directly passed to a workflow
-    creation function. If there is a conflict between tags (same key), the
-    task_config tags (those defined in a dataset.yaml) will take precedence.
+    Extracts tags that are defined under a specific collection and task from
+    the task_config dictionary defined in a dataset.yaml. The extracted tags are
+    merged with any tags directly passed to a workflow creation function. If
+    there is a conflict between tags (same key), the task_config tags (those
+    defined in a dataset.yaml) will take precedence.
 
     Args:
-        task_name (str): Workflow task id.
+        collection_id (str): ID of collection from which to parse task tags.
+        task_name (str): ID of task from which to parse tags.
         tags (Optional[Dict[str, str]]): A dictionary of tags that was passed
             directly to one of the create workflow functions, e.g., via the
             `tags` parameter in the `create_chunks_workflow` function.
-        task_config (Optional[Dict[str, Any]]): A dictionary of task
-            configuration objects, one of which may be a 'tags' object,
-            originally defined in a dataset.yaml file.
+        task_config (Optional[Dict[str, Any]]): A nested dictionary of task
+            configuration objects, keyed by collection, task, and configuration.
+            The dictionary is parsed for the `tags` configuration object, which
+            is a dictionary of tag key-value pairs. The source of the
+            `task_config` object is a dataset.yaml file.
 
     Returns:
-        Optional[Dict[str, str]]: A merged dictionary of tag key value pairs.
+        Optional[Dict[str, str]]: A merged dictionary of tag key-value pairs.
     """
     task_config_ = task_config or {}
     tags_ = tags or {}
-    merged_tags = {**tags_, **task_config_.get(task_name, {}).get("tags", {})}
-    if merged_tags:
-        return merged_tags
-    else:
-        return None
+    merged_tags = {
+        **tags_,
+        **task_config_.get(collection_id, {}).get(task_name, {}).get("tags", {}),
+    }
+    return merged_tags or None
 
 
 def create_chunks_workflow(
@@ -67,7 +72,7 @@ def create_chunks_workflow(
         options=create_splits_options or CreateSplitsOptions(),
         chunk_options=chunk_options,
         environment=dataset.environment,
-        tags=task_tags("create-splits", tags, dataset.task_config),
+        tags=task_tags(collection.id, "create-splits", tags, dataset.task_config),
     )
 
     create_splits_job = JobDefinition(id="create-splits", tasks=[create_splits_task])
@@ -78,7 +83,7 @@ def create_chunks_workflow(
         chunkset_id=chunkset_id,
         src_uri="${{ item.uri }}",
         environment=dataset.environment,
-        tags=task_tags("create-chunks", tags, dataset.task_config),
+        tags=task_tags(collection.id, "create-chunks", tags, dataset.task_config),
         options="${{ item.chunk_options }}",
     )
 
@@ -137,7 +142,7 @@ def create_process_items_workflow(
             chunkset_id=chunkset_id,
             all=force,
             environment=dataset.environment,
-            tags=task_tags("list-chunks", tags, dataset.task_config),
+            tags=task_tags(collection.id, "list-chunks", tags, dataset.task_config),
         )
         list_chunks_job = JobDefinition(id="list-chunks", tasks=[list_chunks_task])
         chunks_job_id = list_chunks_job.get_id()
@@ -149,7 +154,7 @@ def create_process_items_workflow(
             options=create_splits_options or CreateSplitsOptions(),
             chunk_options=chunk_options,
             environment=dataset.environment,
-            tags=task_tags("create-splits", tags, dataset.task_config),
+            tags=task_tags(collection.id, "create-splits", tags, dataset.task_config),
         )
 
         create_splits_job = JobDefinition(
@@ -162,7 +167,7 @@ def create_process_items_workflow(
             chunkset_id=chunkset_id,
             src_uri="${{ item.uri }}",
             environment=dataset.environment,
-            tags=task_tags("create-chunks", tags, dataset.task_config),
+            tags=task_tags(collection.id, "create-chunks", tags, dataset.task_config),
             options="${{ item.chunk_options }}",
         )
 
@@ -197,7 +202,7 @@ def create_process_items_workflow(
         ),
         options=create_items_options,
         environment=dataset.environment,
-        tags=task_tags("create-items", tags, dataset.task_config),
+        tags=task_tags(collection.id, "create-items", tags, dataset.task_config),
     )
     items_tasks.append(create_items_task)
 
@@ -209,7 +214,7 @@ def create_process_items_workflow(
             ),
             target=target,
             environment=dataset.environment,
-            tags=task_tags("ingest-items", tags, dataset.task_config),
+            tags=task_tags(collection.id, "ingest-items", tags, dataset.task_config),
             options=ingest_options,
         )
         items_tasks.append(ingest_items_task)
@@ -282,7 +287,7 @@ def create_ingest_collection_workflow(
         collection=collection_body,
         target=target,
         environment=dataset.environment,
-        tags=task_tags("ingest-collection", tags, dataset.task_config),
+        tags=task_tags(collection.id, "ingest-collection", tags, dataset.task_config),
     )
 
     id = f"{collection.id}-ingest-collection"

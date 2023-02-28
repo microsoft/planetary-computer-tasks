@@ -120,17 +120,18 @@ environment:
 
 The `environment` provides the ability to inject environment variables into each task that is issued for the dataset. In this case, we're injecting the Azure SDK credentials for tasks. These environment variables will be provided to each task, regardless
 of whether they will be utilized in any specific task. In this case, the variable values are using the `${{ secrets.* }}` template
-group to retrieve secret values. See [](../user_guide/secrets) for more details about secrets.
+group to retrieve secret values. See [](../user_guide/templating.md#secrets) for more details about secrets.
 
 ### task_config
 
-Although not included in the example being reviewed here, custom task-level configurations can be defined in a `task_config` section. Currently, only the assignment of tags to tasks is supported. For example, to specify that the high memory Azure batch pool should be used for the `create-items` task, we can define an appropriate tag on the `create-items` task by adding the following section to the `dataset.yaml` file:
+Although not included in the example being reviewed here, custom task-level configurations specific to one of the collections defined in the `dataset.yaml` file can be defined in a `task_config` section. Currently, only the assignment of tags to tasks is supported. For example, to specify that the high memory Azure batch pool should be used for the `create-items` task for the `chesapeake-lc-13` collection, we can define an appropriate tag on the `create-items` task for that collection by adding the following section to the `dataset.yaml` file:
 
 ```yaml
 task_config:
-  create-items:
-    tags:
-      batch_pool_id: high_memory_pool
+  chesapeake-lc-13:
+    create-items:
+      tags:
+        batch_pool_id: high_memory_pool
 ```
 
 Note that should a conflict occur between a tag generated in code and one defined in the `task_config` section of the `dataset.yaml` file, the `task_config` tag value will take precedence.
@@ -265,7 +266,6 @@ class ChesapeakeCollection(Collection):
 See the [chesapeake-lulc stactools package](https://github.com/stactools-packages/chesapeake-lulc) for an example
 of how to create a stactools package. It's recommended that any public dataset ingestion starts with a stactools package,
 which allows community involvement in the generation of STAC for public datasets.
-
 
 ## requirements.txt
 

@@ -43,6 +43,7 @@ while the job is being executed, so as long as the output of the referenced job 
 be templated in. If there is an issue with templating this group, the workflow will fail with a templating error before the job starts executing, but after previous jobs have executed.
 
 Example:
+
 ```yaml
 jobs:
   job1:
@@ -59,6 +60,7 @@ jobs:
 Note that you can reference into objects or lists from the output, which is the object representation of the output model for a task (type 'U' of `Task[T, U]`, which is a pydantic model).
 
 Example:
+
 ```yaml
 jobs:
   job1:
@@ -77,6 +79,7 @@ jobs:
 Similar to the `jobs` group, the `tasks` group can be used to get the output of tasks that have run previously in the same job.
 
 Example:
+
 ```yaml
 jobs:
   job1:
@@ -89,9 +92,10 @@ jobs:
 ```
 
 (item_template_group)=
+
 ### item
 
-The `item` template group is used when a job defines a [](foreach) configuration. You can reference into the item if item is an object value,
+The `item` template group is used when a job defines a [](./workflows.md#using-foreach-in-jobs) configuration. You can reference into the item if item is an object value,
 index into item if it is a list.
 
 ### local
@@ -105,6 +109,7 @@ was not constructed from a file.
 The `local.file` function will read in the contents of a local JSON file and template in the contents as an object.
 
 Example:
+
 ```yaml
 task:
   - id: ingest-collection
@@ -118,6 +123,7 @@ Template in the absolute path of a file. Useful to ensure file paths are read th
 PCTasks client.
 
 Example:
+
 ```yaml
 code:
   src: ${{ local.path(./chesapeake_lulc.py) }}
@@ -136,6 +142,7 @@ The `get_token` function allows you to call the Planetary Computer [Data Auth AP
 generate a SAS token. It takes two arguments - the first being the storage account, the second being the container.
 
 Example:
+
 ```yaml
 tokens:
   sentinel2l2a01:

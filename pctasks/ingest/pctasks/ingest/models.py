@@ -99,6 +99,7 @@ class IngestTaskConfig(TaskDefinition):
         environment: Optional[Dict[str, str]] = None,
         options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
+        add_service_principal: bool = False,
     ) -> TaskDefinition:
         data = IngestTaskInput(
             content=content,
@@ -116,6 +117,14 @@ class IngestTaskConfig(TaskDefinition):
             raise ValueError(
                 "Must supply image_key or "
                 f"environment[{DB_CONNECTION_STRING_ENV_VAR}]"
+            )
+
+        environment = environment or {}
+        if add_service_principal:
+            environment.setdefault("AZURE_TENANT_ID", "${{ secrets.task-tenant-id }}")
+            environment.setdefault("AZURE_CLIENT_ID", "${{ secrets.task-client-id }}")
+            environment.setdefault(
+                "AZURE_CLIENT_SECRET", "${{ secrets.task-client-secret }}"
             )
 
         return TaskDefinition(
@@ -137,6 +146,7 @@ class IngestTaskConfig(TaskDefinition):
         environment: Optional[Dict[str, str]] = None,
         options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
+        add_service_principal: bool = False,
     ) -> TaskDefinition:
         if "collection" not in item:
             raise InvalidSTACException("Item is missing a collection.")
@@ -149,6 +159,7 @@ class IngestTaskConfig(TaskDefinition):
             environment=environment,
             options=options,
             ingest_settings=ingest_settings,
+            add_service_principal=add_service_principal,
         )
 
     @classmethod
@@ -160,6 +171,7 @@ class IngestTaskConfig(TaskDefinition):
         environment: Optional[Dict[str, str]] = None,
         options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
+        add_service_principal: bool = False,
     ) -> TaskDefinition:
         if "id" not in collection:
             raise InvalidSTACException("Collection is missing an id.")
@@ -172,6 +184,7 @@ class IngestTaskConfig(TaskDefinition):
             environment=environment,
             options=options,
             ingest_settings=ingest_settings,
+            add_service_principal=add_service_principal,
         )
 
     @classmethod
@@ -183,6 +196,7 @@ class IngestTaskConfig(TaskDefinition):
         environment: Optional[Dict[str, str]] = None,
         options: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
+        add_service_principal: bool = False,
     ) -> TaskDefinition:
 
         return cls.create(
@@ -193,6 +207,7 @@ class IngestTaskConfig(TaskDefinition):
             environment=environment,
             options=options,
             ingest_settings=ingest_settings,
+            add_service_principal=add_service_principal,
         )
 
     @classmethod
@@ -204,6 +219,7 @@ class IngestTaskConfig(TaskDefinition):
         environment: Optional[Dict[str, str]] = None,
         option: Optional[IngestOptions] = None,
         ingest_settings: Optional[IngestSettings] = None,
+        add_service_principal: bool = False,
     ) -> TaskDefinition:
         return cls.create(
             task_id=NDJSON_TASK_ID,
@@ -213,4 +229,5 @@ class IngestTaskConfig(TaskDefinition):
             environment=environment,
             options=option,
             ingest_settings=ingest_settings,
+            add_service_principal=add_service_principal,
         )

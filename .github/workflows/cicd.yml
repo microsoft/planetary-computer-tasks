@@ -10,6 +10,9 @@ env:
   PCTASKS_COSMOSDB__KEY: ${{ secrets.COSMOSDB_KEY }}
   PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX: ${{ github.run_id }}
 
+permissions:
+  id-token: write
+
 jobs:
   build_and_publish:
     runs-on: ubuntu-latest
@@ -20,6 +23,13 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: "3.8"
+
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+            client-id: ${{ secrets.AZURE_CLIENT_ID }}
+            tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+            subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Install local dependencies
         run: ./scripts/install
@@ -63,19 +73,13 @@ jobs:
           esac
 
       - name: Log into the ACR (test)
-        env:
-          CLIENT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
-          CLIENT_SECRET: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
-        run: docker login pccomponentstest.azurecr.io --username ${CLIENT_ID} --password ${CLIENT_SECRET}
+        run: az acr login -n pccomponentstest
 
       - name: Publish images (test)
         run: ./scripts/publish --acr pccomponentstest --tag ${{steps.get_image_tag.outputs.tag}} --no-login
 
       - name: Log into the ACR
-        env:
-          CLIENT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
-          CLIENT_SECRET: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
-        run: docker login pccomponents.azurecr.io --username ${CLIENT_ID} --password ${CLIENT_SECRET}
+        run: az acr login -n pccomponents
 
       - name: Publish images
         run: ./scripts/publish --acr pccomponents --tag ${{steps.get_image_tag.outputs.tag}} --no-login
@@ -100,7 +104,3 @@ jobs:
         env:
           IMAGE_TAG: ${{needs.build_and_publish.outputs.image_tag}}
           ENVIRONMENT: staging
-          AZURE_SUBSCRIPTION_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}
-          AZURE_TENANT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}
-          AZURE_CLIENT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
-          AZURE_CLIENT_SECRET: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}

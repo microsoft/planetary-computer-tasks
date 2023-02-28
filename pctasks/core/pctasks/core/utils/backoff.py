@@ -1,8 +1,9 @@
+import asyncio
 import logging
 import random
 import time
 from dataclasses import dataclass, field
-from typing import Callable, List, Optional, TypeVar
+from typing import Any, Callable, Coroutine, List, Optional, TypeVar
 
 T = TypeVar("T")
 
@@ -12,6 +13,15 @@ logger = logging.getLogger(__name__)
 
 class BackoffError(Exception):
     pass
+
+    @classmethod
+    def after(cls, strategy: "BackoffStrategy") -> "BackoffError":
+        # Try as we might, sometimes we fail
+        return cls(
+            "Potential throttling issue - see inner exception. "
+            f"Tried backoff {len(strategy.waits)} times "
+            f"up to {strategy.waits[-1]} seconds"
+        )
 
 
 def get_exception_status_code(e: Exception) -> Optional[int]:
@@ -46,11 +56,11 @@ def get_exception_status_code(e: Exception) -> Optional[int]:
                 pass
             except ValueError:
                 pass
-    elif isinstance(e, FileNotFoundError):
-        # fsspec will raise a FileNotFoundError
-        # if a request is throttled; check inner exception.
-        if e.__cause__ and isinstance(e.__cause__, Exception):
-            status_code = get_exception_status_code(e.__cause__)
+
+    # If no status code was found in the current exception, check the
+    # inner exceptions
+    if status_code is None and e.__cause__ and isinstance(e.__cause__, Exception):
+        status_code = get_exception_status_code(e.__cause__)
 
     return status_code
 
@@ -60,9 +70,10 @@ def is_common_throttle_exception(e: Exception) -> bool:
     if status_code is not None and status_code in (502, 503, 429):
         return True
 
-    if "connection reset by peer" in str(e).lower():
+    if "connection reset by peer" in str(e).lower() or status_code == 104:
         # If the connection was reset by peer, this could be throttling or
         # an intermittent issue.
+        # urllib3.exceptions.ProtocolError uses 104 for connection reset by peer
         return True
 
     return False
@@ -90,6 +101,17 @@ class BackoffStrategy:
         sp = self.spread_precentage
         return seconds * random.uniform(1 - sp, 1 + sp)
 
+    def get_waits(self) -> List[float]:
+        """Returns a copy of the waits list"""
+        return [self.spread(w) for w in self.waits]
+
+
+def _warn_throttle(wait_time: float, throttle_exception: Exception) -> None:
+    logger.warning(
+        f"Service responded with {throttle_exception} - "
+        f"trying again in {wait_time:.1f} seeconds..."
+    )
+
 
 def with_backoff(
     fn: Callable[[], T],
@@ -108,7 +130,7 @@ def with_backoff(
 
     throttle_exception: Optional[Exception] = None
 
-    for backoff_wait_seconds in strategy.waits:
+    for next_wait in strategy.get_waits():
         try:
 
             # Try to do the thing and return
@@ -117,19 +139,45 @@ def with_backoff(
         except Exception as e:
             if is_throttle(e):
                 # Handle throttling by backing off a random bit
-                actual_wait = backoff_wait_seconds * random.uniform(0.8, 1.2)
-                logger.warning(
-                    f"Service responded with throttling message - "
-                    f"trying again in {actual_wait:.1f} seconds..."
-                )
-                time.sleep(actual_wait)
+                _warn_throttle(next_wait, e)
+                time.sleep(next_wait)
                 throttle_exception = e
             else:
                 raise
 
-    # Try as we might, sometimes we fail
-    raise BackoffError(
-        "Potential throttling issue - see inner exception. "
-        f"Tried backoff {len(strategy.waits)} times "
-        f"up to {strategy.waits[-1]} seconds"
-    ) from throttle_exception
+    raise BackoffError.after(strategy) from throttle_exception
+
+
+async def with_backoff_async(
+    fn: Callable[[], Coroutine[Any, Any, T]],
+    strategy: Optional[BackoffStrategy] = None,
+    is_throttle: Optional[Callable[[Exception], bool]] = None,
+) -> T:
+    """Executes the given function fn. If an exception is raised
+    that returns True from is_throttle, wait for a bit and try again,
+    or fail after so many retries.
+    """
+    if strategy is None:
+        strategy = BackoffStrategy()
+
+    if is_throttle is None:
+        is_throttle = is_common_throttle_exception
+
+    throttle_exception: Optional[Exception] = None
+
+    for next_wait in strategy.get_waits():
+        try:
+
+            # Try to do the thing and return
+            return await fn()
+
+        except Exception as e:
+            if is_throttle(e):
+                # Backoff for the wait time
+                _warn_throttle(next_wait, e)
+                await asyncio.sleep(next_wait)
+                throttle_exception = e
+            else:
+                raise
+
+    raise BackoffError.after(strategy) from throttle_exception

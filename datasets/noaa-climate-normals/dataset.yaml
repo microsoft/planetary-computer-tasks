@@ -1,0 +1,67 @@
+id: noaa_climate_normals
+image: ${{ args.registry }}/pctasks-noaa-climate-normals:latest
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./noaa_climate_normals.py) }}
+  # included in container image
+  # requirements: ${{ local.path(./requirements.txt) }}
+
+environment: 
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+task_config:
+  noaa-climate-normals-tabular:
+    create-items:
+      tags:
+        batch_pool_id: high_memory_pool
+
+collections:
+  # Running all tabular datasets at once takes too long --> authentication timeout
+  # Use the individual workflows in the './workflows' directory instead
+  - id: noaa-climate-normals-tabular
+    template: ${{ local.path(./collection/noaa-climate-normals-tabular) }}
+    class: noaa_climate_normals:NoaaClimateNormalsTabular
+    asset_storage:
+      - uri: blob://noaanormals/climate-normals/
+        token: ${{ pc.get_token(noaanormals, climate-normals) }}
+        chunks:
+          options:
+            name_starts_with: access
+            extensions: [.csv]
+            chunk_length: 1 # this is correct for production; we only want one csv href
+            limit: 1 # this is correct for production; we only want one csv href
+          splits:
+            - depth: 2  # this drops us into each subdirectory of interest
+    chunk_storage:
+      uri: blob://noaanormals/normals-etl-data/tabular/
+
+  - id: noaa-climate-normals-netcdf
+    template: ${{ local.path(./collection/noaa-climate-normals-netcdf) }}
+    class: noaa_climate_normals:NoaaClimateNormalsNetcdf
+    asset_storage:
+      - uri: blob://noaanormals/gridded-normals
+        chunks:
+          options:
+            extensions: [.nc]
+    chunk_storage:
+      uri: blob://noaanormals/normals-etl-data/netcdf/
+
+  - id: noaa-climate-normals-gridded
+    template: ${{ local.path(./collection/noaa-climate-normals-gridded) }}
+    class: noaa_climate_normals:NoaaClimateNormalsGridded
+    asset_storage:
+      - uri: blob://noaanormals/gridded-normals
+        chunks:
+          options:
+            extensions: [.nc]
+            chunk_length: 1  # this is correct for production; we only want one nc href
+            limit: 1  # this is correct for production; we only want one nc href
+          splits:
+            - depth: 2  # this drops us into each subdirectory of interest
+    chunk_storage:
+      uri: blob://noaanormals/normals-etl-data/gridded/

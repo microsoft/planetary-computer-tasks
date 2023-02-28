@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/python3
 """
 Sets up the Cosmos DB emulator.
 """

@@ -29,10 +29,11 @@ def setup_azurite() -> None:
 
     print("~ Setting up queues...")
 
-    queue_client = QueueServiceClient.from_connection_string(
+    queue_client: QueueServiceClient = QueueServiceClient.from_connection_string(
         get_azurite_connection_string()
     )
-    existing_queues = [q.name for q in queue_client.list_queues()]
+    # https://github.com/Azure/azure-sdk-for-python/issues/28960
+    existing_queues = [q.name for q in queue_client.list_queues()]  # type: ignore
     for queue_name in [
         DEFAULT_WORKFLOW_QUEUE_NAME,
         DEFAULT_INBOX_QUEUE_NAME,
@@ -41,7 +42,8 @@ def setup_azurite() -> None:
     ]:
         if queue_name not in existing_queues:
             print(f"~ ~ Creating {queue_name} queue...")
-            queue_client.create_queue(queue_name)
+            # https://github.com/Azure/azure-sdk-for-python/issues/28960
+            queue_client.create_queue(queue_name)  # type: ignore
 
     # Tables
 
