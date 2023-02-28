@@ -103,23 +103,38 @@ class BatchTaskRunner(TaskRunner):
         image: str,
         task_tags: Optional[Dict[str, str]],
     ) -> Dict[str, Any]:
-        batch_client = self._get_batch_client()
 
         pool_id = get_pool_id(task_tags, self.settings.batch_settings)
         batch_job_id = make_batch_job_id(dataset_id, job_id, run_id, pool_id)
 
-        existing_job = batch_client.get_job(batch_job_id)
-        if not existing_job:
-            if not batch_client.get_pool(pool_id):
-                raise BatchTaskRunnerError(f"Batch pool {pool_id} not found.")
+        self._create_job_if_needed(batch_job_id, pool_id)
 
-            batch_job_id = batch_client.add_job(
-                job_id=batch_job_id,
-                pool_id=pool_id,
-                make_unique=False,
-                terminate_on_tasks_complete=False,
-            )
         return {JOB_ID_KEY: batch_job_id}
+
+    def _create_job_if_needed(self, batch_job_id: str, pool_id: str) -> None:
+        batch_client = self._get_batch_client()
+
+        # Lock the job creation so that we don't try to create the same job
+        # in parallel. Cache the result so that we don't hit the Batch API
+        # across multiple threads unnecessarily.
+
+        with job_locks[batch_job_id]:
+            cache_key = f"create_batch_job:{batch_job_id}"
+            if cache_key in self.response_cache:
+                return
+            else:
+                existing_job = batch_client.get_job(batch_job_id)
+                if not existing_job:
+                    if not batch_client.get_pool(pool_id):
+                        raise BatchTaskRunnerError(f"Batch pool {pool_id} not found.")
+
+                    batch_job_id = batch_client.add_job(
+                        job_id=batch_job_id,
+                        pool_id=pool_id,
+                        make_unique=False,
+                        terminate_on_tasks_complete=False,
+                    )
+                self.response_cache[cache_key] = True
 
     def submit_tasks(
         self, prepared_tasks: List[PreparedTaskSubmitMessage]
