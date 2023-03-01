@@ -10,11 +10,9 @@ from pctasks.core.models.workflow import WorkflowDefinition, WorkflowSubmitMessa
 from pctasks.core.storage import StorageFactory, get_storage_for_file
 from pctasks.core.utils import ignore_ssl_warnings
 from pctasks.run.settings import RunSettings, WorkflowExecutorConfig
-from pctasks.run.workflow.executor.remote import (
-    RemoteWorkflowExecutor,
-    StreamingWorkflowExecutor,
-)
+from pctasks.run.workflow.executor.remote import RemoteWorkflowExecutor
 from pctasks.run.workflow.executor.simple import SimpleWorkflowExecutor
+from pctasks.run.workflow.executor.streaming import StreamingWorkflowExecutor
 from pctasks.task.context import TaskContext
 
 
@@ -76,29 +74,27 @@ def remote_cmd(
 
     is_streaming = submit_message.workflow.definition.is_streaming
 
-    if is_streaming:
-        runner = StreamingWorkflowExecutor()
-        runner.execute_workflow(submit_message)
+    if executor_config_encoded:
+        executor_config = WorkflowExecutorConfig.from_yaml(
+            b64decode(executor_config_encoded.encode("utf-8")).decode("utf-8")
+        )
     else:
-        if executor_config_encoded:
-            executor_config = WorkflowExecutorConfig.from_yaml(
-                b64decode(executor_config_encoded.encode("utf-8")).decode("utf-8")
-            )
-        else:
-            context: PCTasksCommandContext = ctx.obj
-            run_settings = RunSettings.get(context.profile, context.settings_file)
-            cosmosdb_settings = CosmosDBSettings.get(
-                context.profile, context.settings_file
-            )
-            executor_config = WorkflowExecutorConfig(
-                run_settings=run_settings, cosmosdb_settings=cosmosdb_settings
-            )
+        context: PCTasksCommandContext = ctx.obj
+        run_settings = RunSettings.get(context.profile, context.settings_file)
+        cosmosdb_settings = CosmosDBSettings.get(context.profile, context.settings_file)
+        executor_config = WorkflowExecutorConfig(
+            run_settings=run_settings, cosmosdb_settings=cosmosdb_settings
+        )
+
+    if is_streaming:
+        runner = StreamingWorkflowExecutor(executor_config)
+    else:
         runner = RemoteWorkflowExecutor(executor_config)
 
-        if executor_config.cosmosdb_settings.is_cosmosdb_emulator():
-            # Prevent workflow run logs from being overrun by
-            # SSL warnings if using the Cosmos DB emulator
-            with ignore_ssl_warnings():
-                runner.execute_workflow(submit_message)
-        else:
+    if executor_config.cosmosdb_settings.is_cosmosdb_emulator():
+        # Prevent workflow run logs from being overrun by
+        # SSL warnings if using the Cosmos DB emulator
+        with ignore_ssl_warnings():
             runner.execute_workflow(submit_message)
+    else:
+        runner.execute_workflow(submit_message)

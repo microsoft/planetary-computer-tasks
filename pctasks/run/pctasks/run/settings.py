@@ -99,6 +99,16 @@ class RunSettings(PCTasksSettings):
     keyvault_sp_client_id: Optional[str] = None
     keyvault_sp_client_secret: Optional[str] = None
 
+    # Streaming task IO service principal
+    # If set, will be used by the task
+    # to read and write to the task IO and log container
+    # instead of using SAS Tokens.
+    streaming_taskio_sp_tenant_id: Optional[str] = None
+    streaming_taskio_sp_client_id: Optional[str] = None
+    streaming_taskio_sp_client_secret: Optional[str] = None
+
+    streaming_task_namespace: str = "tasks"
+
     # Type of task runner to use.
     task_runner_type: TaskRunnerType = TaskRunnerType.BATCH
 

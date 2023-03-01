@@ -38,7 +38,7 @@ class TriggerDefinition(PCBaseModel):
 
 class JobDefinition(PCBaseModel):
     id: Optional[str] = None
-    tasks: List[TaskDefinition]
+    tasks: List[TaskDefinition]  # TODO: Could this handle a streaming task definition?
 
     foreach: Optional[ForeachConfig] = None
 
@@ -116,6 +116,32 @@ class WorkflowDefinition(PCBaseModel):
             # Otherwise job validator will catch the error
             if not v[job_id].id:
                 JobDefinition.validate_job_id(job_id)
+        return v
+
+    @validator("is_streaming")
+    def _validate_is_streaming(cls, v: bool) -> bool:
+        # TODO: Validate that this is a valid streaming workflow.
+        """
+        A streaming workflow is similar to other pctasks workflows, but requires a few
+        additional properties on the streaming tasks within the workflow:
+
+        1. The task must define the streaming-related properties using `args`:
+
+        - `queue_url`
+        - `visibility_timeout`
+        - `min_replica_count`
+        - `max_replica_count`
+        - `polling_interval`
+        - `trigger_queue_length`
+
+        2. The workflow should set the top-level `is_streaming` property to `true`.
+
+        In addition to these schema-level requirements, there are some expectations in
+        how the workflow behaves at runtime. In general, streaming tasks should expect
+        to run indefinitely. They should continuously process messages from a queue,
+        and leave starting, stopping, and scaling to the pctasks framework.
+        """
+
         return v
 
     def template_args(self, args: Optional[Dict[str, Any]]) -> "WorkflowDefinition":

@@ -6,6 +6,12 @@ from pctasks.core.models.base import PCBaseModel
 from pctasks.core.storage.blob import BlobStorage, BlobUri
 
 
+class ClientSecretCredentials(PCBaseModel):
+    tenant_id: str
+    client_id: str
+    client_secret: str
+
+
 class QueueSasConfig(PCBaseModel):
     account_url: str
     queue_name: str

@@ -5,6 +5,10 @@
 #   - Create the Kubernetes Deployment
 
 name: "Streaming workflow example"
+
+env:
+  AZURE_CLIENT_ID: ${ secrets.task_sp_whatever_id }
+
 jobs:
   create-items:
     id: create-items

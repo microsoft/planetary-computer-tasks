@@ -41,7 +41,6 @@ from pctasks.run.template import (
     template_notification,
 )
 from pctasks.run.utils import get_workflow_log_path
-from pctasks.run.workflow import kubernetes
 from pctasks.run.workflow.executor.models import (
     JobPartitionState,
     JobPartitionStateStatus,
@@ -1119,16 +1118,3 @@ class RemoteWorkflowExecutor:
                     )
 
                 return job_outputs
-
-
-class StreamingWorkflowExecutor:
-    """
-    Registers a streaming workflow.
-    """
-
-    def execute_workflow(
-        self,
-        submit_message: WorkflowSubmitMessage,
-    ) -> None:
-        """'Execute' a workflow by submitting the Kube"""
-        kubernetes.submit_workflow(submit_message)

@@ -41,7 +41,7 @@ def prepare_task_data(
     settings: RunSettings,
     tokens: Optional[Dict[str, StorageAccountTokens]],
     target_environment: Optional[str],
-    task_runner: TaskRunner,
+    task_runner: Optional[TaskRunner] = None,
 ) -> PreparedTaskData:
     environment = task_def.environment
     task_tags = task_def.tags
@@ -130,16 +130,18 @@ def prepare_task_data(
                 for account, v in tokens.items()
             }
 
-    runner_info = task_runner.prepare_task_info(
-        dataset_id, run_id, job_id, task_def, image, task_tags
-    )
+    runner_info: Optional[Dict[str, Any]] = None
+    if task_runner:
+        runner_info = task_runner.prepare_task_info(
+            dataset_id, run_id, job_id, task_def, image, task_tags
+        )
 
     return PreparedTaskData(
         image=image,
         environment=environment,
         tags=task_tags,
         tokens=tokens,
-        runner_info=runner_info,
+        runner_info=runner_info or {},
     )
 
 
@@ -214,7 +216,6 @@ def prepare_task(
         the necessary blob storage resources (e.g. a managed identity or
         environment credentials).
     """
-    # target_environment = submit_msg.target_environment
     job_id = submit_msg.job_id
     partition_id = submit_msg.partition_id
     task_def = submit_msg.definition

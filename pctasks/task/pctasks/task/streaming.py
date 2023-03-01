@@ -185,6 +185,10 @@ class NoOutput(PCBaseModel):
     pass
 
 
+# TODO: Create a base streaming task
+# - Inherited Ingest streaming task, in pctasks.ingest_task
+# - Inherited CreateItems streaming task, in pctasks.dataset
+
 # Is this a task or a definition?
 class StreamingCreateItemsTask(Task[StreamingCreateItemsInput, NoOutput]):
     _input_model = StreamingCreateItemsInput
@@ -365,7 +369,6 @@ class StreamingIngestItemsTask(Task[StreamingIngestItemsInput, NoOutput]):
             n = 5
             logger.info("Sleeping for %s seconds", n)
             time.sleep(n)
-
 
 
 def create_item_from_item_uri(

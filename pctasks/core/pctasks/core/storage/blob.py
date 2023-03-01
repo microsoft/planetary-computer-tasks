@@ -21,8 +21,10 @@ from typing import (
 from urllib.parse import urlparse
 
 import azure.core.exceptions
-from azure.identity import DefaultAzureCredential
-from azure.identity._credentials.client_secret import ClientSecretCredential
+from azure.identity import (
+    ClientSecretCredential as AzureClientSecretCredential,
+    DefaultAzureCredential,
+)
 from azure.storage.blob import (
     BlobPrefix,
     BlobProperties,
@@ -37,6 +39,7 @@ from pctasks.core.constants import (
     AZURITE_PORT_ENV_VAR,
     AZURITE_STORAGE_ACCOUNT_ENV_VAR,
 )
+from pctasks.core.models.config import ClientSecretCredentials
 from pctasks.core.storage.base import Storage, StorageFileInfo
 from pctasks.core.storage.path_filter import PathFilter
 from pctasks.core.utils import map_opt
@@ -179,7 +182,7 @@ class BlobStorage(Storage):
     """
 
     _blob_creds: Union[
-        ClientSecretCredential, DefaultAzureCredential, Dict[str, str], str
+        AzureClientSecretCredential, DefaultAzureCredential, Dict[str, str], str
     ]
 
     def __init__(
@@ -188,6 +191,7 @@ class BlobStorage(Storage):
         container_name: str,
         prefix: Optional[str] = None,
         sas_token: Optional[str] = None,
+        client_secret_credentials: Optional[ClientSecretCredentials] = None,
         account_url: Optional[str] = None,
     ) -> None:
         self.sas_token = sas_token
@@ -220,6 +224,12 @@ class BlobStorage(Storage):
             # If so, use that. Otherwise check for a SAS token.
             if sas_token is not None:
                 self._blob_creds = sas_token
+            elif client_secret_credentials is not None:
+                self._blob_creds = AzureClientSecretCredential(
+                    client_id=client_secret_credentials.client_id,
+                    client_secret=client_secret_credentials.client_secret,
+                    tenant_id=client_secret_credentials.tenant_id,
+                )
             elif os.environ.get("AZURE_CLIENT_ID"):
                 self._blob_creds = DefaultAzureCredential()
             elif os.environ.get("AZURE_STORAGE_SAS_TOKEN"):
@@ -597,6 +607,7 @@ class BlobStorage(Storage):
         cls: Type[T],
         blob_uri: Union[BlobUri, str],
         sas_token: Optional[str] = None,
+        client_secret_credentials: Optional[ClientSecretCredentials] = None,
         account_url: Optional[str] = None,
     ) -> T:
         if isinstance(blob_uri, str):
@@ -607,6 +618,7 @@ class BlobStorage(Storage):
             container_name=blob_uri.container_name,
             prefix=blob_uri.blob_name,
             sas_token=sas_token,
+            client_secret_credentials=client_secret_credentials,
             account_url=account_url,
         )
 
