@@ -40,6 +40,9 @@ jobs:
       - name: Test
         run: ./scripts/test
 
+      - name: Validate collections
+        run: ./scripts/validate-collections
+
       # Integration Tests
 
       - name: Install Kind
@@ -58,6 +61,7 @@ jobs:
 
       - name: Run integration tests
         run: ./scripts/citest-integration
+
 
       # Publish images
 

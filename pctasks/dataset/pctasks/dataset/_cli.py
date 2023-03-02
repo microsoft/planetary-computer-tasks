@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import List, Optional, Tuple
 
@@ -14,6 +15,7 @@ from pctasks.dataset.constants import DEFAULT_DATASET_YAML_PATH
 from pctasks.dataset.models import MultipleCollectionsError
 from pctasks.dataset.splits.models import CreateSplitsOptions
 from pctasks.dataset.template import template_dataset_file
+from pctasks.dataset.validate import validate_collection
 from pctasks.dataset.workflow import (
     create_chunks_workflow,
     create_ingest_collection_workflow,
@@ -230,3 +232,15 @@ def list_collections_cmd(
 
     for collection in ds_config.collections:
         cli_output(collection.id)
+
+
+def validate_collection_cmd(collection: click.File) -> None:
+    # error: "File" has no attribute "read"
+    data = json.loads(collection.read())  # type: ignore
+    cid, errors = validate_collection(data)
+
+    if errors:
+        click.echo(f"Errors in collection {cid} at {collection.name}")
+        for error in errors:
+            click.secho(f"  {error}", fg="red")
+        raise click.ClickException(f"Invalid collection: {cid}")

@@ -36,6 +36,12 @@ class ArgoTaskRunner(TaskRunner):
             host=argo_host, token=argo_token, namespace=settings.argo_namespace
         )
 
+    def __enter__(self) -> "ArgoTaskRunner":
+        return self
+
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        pass
+
     def prepare_task_info(
         self,
         dataset_id: str,

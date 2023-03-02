@@ -71,12 +71,13 @@ class QueueService:
         def _get_clients(
             _conn_str: str = connection_string, _queue: str = queue_name
         ) -> Tuple[Optional[QueueServiceClient], QueueClient]:
-            service_client = QueueServiceClient.from_connection_string(
-                conn_str=_conn_str
+            service_client: QueueServiceClient = (
+                QueueServiceClient.from_connection_string(conn_str=_conn_str)
             )
             return (
                 service_client,
-                service_client.get_queue_client(
+                # https://github.com/Azure/azure-sdk-for-python/issues/28960
+                service_client.get_queue_client(  # type: ignore
                     queue=_queue,
                     message_encode_policy=BinaryBase64EncodePolicy(),
                     message_decode_policy=BinaryBase64DecodePolicy(),

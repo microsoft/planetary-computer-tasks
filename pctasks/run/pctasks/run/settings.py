@@ -37,6 +37,7 @@ class BatchSettings(PCBaseModel):
     key: str
     default_pool_id: str
     submit_threads: int
+    cache_seconds: int = 5  # How long to cache batch API responses
 
     def get_batch_name(self) -> str:
         return urlparse(self.url).netloc.split(".")[0]
@@ -83,6 +84,7 @@ class RunSettings(PCTasksSettings):
     batch_key: Optional[str] = None
     batch_default_pool_id: Optional[str] = None
     batch_submit_threads: int = 0
+    batch_cache_seconds: int = 5  # How long to cache batch API responses
 
     # Argo
     argo_host: Optional[str] = None

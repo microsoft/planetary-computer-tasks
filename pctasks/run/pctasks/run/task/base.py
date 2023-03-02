@@ -16,6 +16,14 @@ class TaskRunner(ABC):
         self.settings = settings
 
     @abstractmethod
+    def __enter__(self) -> "TaskRunner":
+        pass
+
+    @abstractmethod
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        pass
+
+    @abstractmethod
     def prepare_task_info(
         self,
         dataset_id: str,

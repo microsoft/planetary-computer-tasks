@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -e
+
+ls -1N datasets/**/*/template.json | xargs -I {} pctasks dataset validate-collection "{}" 2>&1
