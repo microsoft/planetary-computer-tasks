@@ -2,13 +2,16 @@ import pytest
 
 from pctasks.core.models.config import BlobConfig
 from pctasks.core.models.task import TaskRunConfig, TaskRunMessage
+from pctasks.dataset.streaming import (
+    StreamingCreateItemsConfig,
+    StreamingCreateItemsInput,
+)
 from pctasks.run.argo.client import ArgoClient
 from pctasks.run.models import (
     PreparedTaskData,
     PreparedTaskSubmitMessage,
     TaskSubmitMessage,
 )
-from pctasks.dataset.streaming import StreamingCreateItemsConfig, StreamingCreateItemsInput
 
 
 @pytest.fixture

@@ -11,11 +11,10 @@ import urllib.parse
 import uuid
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Union
 
-import azure.cosmos
 import azure.core.credentials
+import azure.cosmos
 import azure.identity
 import azure.storage.queue
-import pydantic
 import pystac
 
 from pctasks.core.models.base import PCBaseModel
@@ -105,17 +104,25 @@ class NoOutput(PCBaseModel):
 class StreamingTaskMixin:
     event: threading.Event
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.event = threading.Event()
 
-    def process_message(self, message: azure.storage.queue.QueueMessage, input: StreamingTaskInput, context: TaskContext, **extra_options) -> None:
+    def process_message(
+        self,
+        message: azure.storage.queue.QueueMessage,
+        input: StreamingTaskInput,
+        context: TaskContext,
+        **extra_options: Dict[str, Any],
+    ) -> None:
         raise NotImplementedError
 
-    def get_extra_options(self, input, context) -> Dict[str, Any]:
+    def get_extra_options(
+        self, input: StreamingTaskInput, context: TaskContext
+    ) -> Dict[str, Any]:
         return {}
 
-    def run(self, input:  StreamingTaskInput, context: TaskContext) -> NoOutput:
+    def run(self, input: StreamingTaskInput, context: TaskContext) -> NoOutput:
         credential = input.queue_credential or azure.identity.DefaultAzureCredential()
         qc = azure.storage.queue.QueueClient.from_queue_url(
             input.queue_url, credential=credential
@@ -123,7 +130,8 @@ class StreamingTaskMixin:
         extra_options = self.get_extra_options(input, context)
 
         while not self.event.is_set():
-            for message in qc.receive_messages(
+            # mypy upgrade
+            for message in qc.receive_messages(  # type: ignore
                 visibility_timeout=input.visibility_timeout
             ):
                 try:
@@ -138,13 +146,16 @@ class StreamingTaskMixin:
                 else:
                     # TODO: warning if we've passed the visibility timeout
                     logger.info("Processed message id=%s", message.id)
-                    qc.delete_message(message)
+                    # mypy upgrade
+                    qc.delete_message(message)  # type: ignore
             # We've drained the queue. Now we'll pause slightly before checking again.
             # TODO: some kind of exponential backoff here. From 0 - 5-10 seconds.
             n = 5
             logger.info("Sleeping for %s seconds", n)
             time.sleep(n)
 
+        logger.info("Finishing run")
+        return NoOutput()
 
 
 class StreamingCreateItemsInput(StreamingTaskInput):
@@ -182,6 +193,7 @@ class StreamingCreateItemsInput(StreamingTaskInput):
     collection_id: str
         The STAC collection ID for items in this queue.
     """
+
     collection_id: str
     options: StreamingCreateItemsOptions = StreamingCreateItemsOptions()
     cosmos_endpoint: str = (
@@ -189,7 +201,9 @@ class StreamingCreateItemsInput(StreamingTaskInput):
     )
     db_name: str = "lowlatencydb"  # TODO: config?
     container_name: str = "items"  # TODO: config?
-    create_items_function: Union[str, Callable]  # can't use callable & entrypoint string
+    create_items_function: Union[
+        str, Callable[[str, StorageFactory], List[pystac.Item]]
+    ]  # can't use callable & entrypoint string
 
 
 class StreamingCreateItemsConfig(TaskDefinition):
@@ -199,7 +213,7 @@ class StreamingCreateItemsConfig(TaskDefinition):
         task_id: str,
         visibility_timeout: int,
         queue_url: str,
-        create_items_function: Callable[[str], List[pystac.Item]],
+        create_items_function: Callable[[str, StorageFactory], List[pystac.Item]],
         collection_id: str,
         options: StreamingCreateItemsOptions = StreamingCreateItemsOptions(),
         cosmos_endpoint: str = "https://pclowlatencytesttom.documents.azure.com:443/",
@@ -239,17 +253,22 @@ class StreamingCreateItemsConfig(TaskDefinition):
         )
 
 
-
-
 # TODO: Create a base streaming task
 # - Inherited Ingest streaming task, in pctasks.ingest_task
 # - Inherited CreateItems streaming task, in pctasks.dataset
 
-class StreamingCreateItemsTask(StreamingTaskMixin, Task[StreamingCreateItemsInput, NoOutput]):
+
+class StreamingCreateItemsTask(
+    StreamingTaskMixin, Task[StreamingCreateItemsInput, NoOutput]
+):
     _input_model = StreamingCreateItemsInput
     _output_model = NoOutput
 
-    def get_extra_options(self, input, context) -> Dict[str, Any]:
+    # mypy doesn't like that `input` is a subclass of the type required
+    # by the parent.
+    def get_extra_options(  # type: ignore
+        self, input: StreamingCreateItemsInput, context: TaskContext
+    ) -> Dict[str, Any]:
         credential = azure.identity.DefaultAzureCredential()
         container_proxy = (
             azure.cosmos.CosmosClient(input.cosmos_endpoint, credential)
@@ -263,7 +282,10 @@ class StreamingCreateItemsTask(StreamingTaskMixin, Task[StreamingCreateItemsInpu
             create_items_function = entrypoint.load()
         assert callable(create_items_function)
 
-        return {"container_proxy": container_proxy, "create_items_function": create_items_function}
+        return {
+            "container_proxy": container_proxy,
+            "create_items_function": create_items_function,
+        }
 
     def create_items(
         self,
@@ -286,7 +308,10 @@ class StreamingCreateItemsTask(StreamingTaskMixin, Task[StreamingCreateItemsInpu
         #         validate_item(item)
         return items
 
-    def process_message(
+    # mypy doesn't like the child bringing in extra arguments, which is fair.
+    # We can't get these off `input` though, unless it were
+    # to cache the stuff.
+    def process_message(  # type: ignore
         self,
         message: azure.storage.queue.QueueMessage,
         input: StreamingCreateItemsInput,
@@ -296,6 +321,9 @@ class StreamingCreateItemsTask(StreamingTaskMixin, Task[StreamingCreateItemsInpu
     ) -> None:
         logger.info("Processing message id=%s", message.id)
         parsed_message = json.loads(message.content)
+        assert callable(
+            input.create_items_function
+        )  # convince mypy that this is the function.
         create_items_function = input.create_items_function
         try:
             items = self.create_items(
@@ -378,20 +406,26 @@ class StreamingIngestItemsInput(StreamingTaskInput):
     collection_id: str
 
 
-class StreamingIngestItemsTask(StreamingTaskMixin, Task[StreamingIngestItemsInput, NoOutput]):
+class StreamingIngestItemsTask(
+    StreamingTaskMixin, Task[StreamingIngestItemsInput, NoOutput]
+):
     _input_model = StreamingIngestItemsInput
     _output_model = NoOutput
 
-    def get_extra_options(self, input, context):
+    def get_extra_options(
+        self, input: StreamingTaskInput, context: TaskContext
+    ) -> Dict[str, Any]:
         from pctasks.ingest_task.task import PgSTAC
+
         return {"pgstac": PgSTAC.from_env()}
 
-    def process_message(
+    # TODO: figure out a safe way to get these extra arguments in here.
+    def process_message(  # type: ignore
         self,
         message: azure.storage.queue.QueueMessage,
         input: StreamingCreateItemsInput,
         context: TaskContext,
-        pgstac: PgSTAC
+        pgstac: PgSTAC,
     ) -> None:
         from pctasks.ingest_task.task import ingest_item
 

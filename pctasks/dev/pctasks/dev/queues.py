@@ -10,7 +10,7 @@ from azure.storage.queue import (
 
 from pctasks.core.models.config import QueueConnStrConfig
 from pctasks.core.queues import QueueService
-from pctasks.dev.constants import get_azurite_connection_string, AZURITE_ACCOUNT_KEY
+from pctasks.dev.constants import AZURITE_ACCOUNT_KEY, get_azurite_connection_string
 
 
 class TempQueue:
@@ -39,7 +39,7 @@ class TempQueue:
         self,
     ) -> QueueClient:
         self._service_client = QueueServiceClient.from_connection_string(
-            self.queue_config.connection_string, 
+            self.queue_config.connection_string,
         )
 
         self._service_client.create_queue(self.queue_config.queue_name)

@@ -6,7 +6,6 @@ from pctasks.core.models.base import PCBaseModel
 from pctasks.core.storage.blob import BlobStorage, BlobUri
 
 
-
 class QueueSasConfig(PCBaseModel):
     account_url: str
     queue_name: str

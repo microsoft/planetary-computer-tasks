@@ -1,14 +1,13 @@
 import logging
+import os
 import sys
 from typing import Optional
 
-import os
-
 import click
 
-from pctasks.core.models.config import ClientSecretCredentials
 from pctasks.core.models.task import TaskRunMessage
 from pctasks.core.storage import get_storage_for_file
+from pctasks.core.storage.blob import ClientSecretCredentials
 from pctasks.task.constants import (
     TASKIO_CLIENT_ID_ENV_VAR,
     TASKIO_CLIENT_SECRET_ENV_VAR,

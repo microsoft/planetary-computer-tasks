@@ -45,8 +45,8 @@ class QueueService:
         account_url: str,
         sas_token: str,
         queue_name: str,
-        message_encode_policy=BinaryBase64EncodePolicy(),
-        message_decode_policy=BinaryBase64DecodePolicy(),
+        message_encode_policy: BinaryBase64EncodePolicy = BinaryBase64EncodePolicy(),
+        message_decode_policy: BinaryBase64DecodePolicy = BinaryBase64DecodePolicy(),
     ) -> "QueueService":
         def _get_clients(
             _url: str = account_url, _token: str = sas_token, _queue: str = queue_name
@@ -68,7 +68,11 @@ class QueueService:
 
     @classmethod
     def from_connection_string(
-        cls, connection_string: str, queue_name: str, message_encode_policy=BinaryBase64DecodePolicy(), message_decode_policy=BinaryBase64DecodePolicy(),
+        cls,
+        connection_string: str,
+        queue_name: str,
+        message_encode_policy: BinaryBase64EncodePolicy = BinaryBase64EncodePolicy(),
+        message_decode_policy: BinaryBase64DecodePolicy = BinaryBase64DecodePolicy(),
     ) -> "QueueService":
         def _get_clients(
             _conn_str: str = connection_string, _queue: str = queue_name
@@ -94,8 +98,8 @@ class QueueService:
         account_url: str,
         account_key: str,
         queue_name: str,
-        message_encode_policy=BinaryBase64EncodePolicy(),
-        message_decode_policy=BinaryBase64DecodePolicy(),
+        message_encode_policy: BinaryBase64EncodePolicy = BinaryBase64EncodePolicy(),
+        message_decode_policy: BinaryBase64DecodePolicy = BinaryBase64DecodePolicy(),
     ) -> "QueueService":
         def _get_clients(
             _key: str = account_key,

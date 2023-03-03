@@ -47,7 +47,6 @@ def test_build_streaming_deployment(task_definition):
     )
     labels = {"node_group": "pc-lowlatency"}
     assert result.metadata.name == "pclowlatency-goes-glm-deployment"
-    name = "pclowlatency-goes-glm"
     assert result.metadata.labels == labels
     assert result.spec.selector["matchLabels"] == labels
     assert result.spec.template.metadata.labels == labels

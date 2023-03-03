@@ -21,10 +21,8 @@ from typing import (
 from urllib.parse import urlparse
 
 import azure.core.exceptions
-from azure.identity import (
-    ClientSecretCredential as AzureClientSecretCredential,
-    DefaultAzureCredential,
-)
+from azure.identity import ClientSecretCredential as AzureClientSecretCredential
+from azure.identity import DefaultAzureCredential
 from azure.storage.blob import (
     BlobPrefix,
     BlobProperties,
@@ -55,11 +53,11 @@ _AZURITE_ACCOUNT_KEY = (
     "FsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
 )
 
+
 class ClientSecretCredentials(PCBaseModel):
     tenant_id: str
     client_id: str
     client_secret: str
-
 
 
 class BlobStorageError(Exception):

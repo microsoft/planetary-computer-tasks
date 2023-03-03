@@ -5,10 +5,9 @@ from typing import Optional
 
 from pctasks.core.importer import ensure_code, ensure_requirements
 from pctasks.core.logging import StorageLogger
-from pctasks.core.models.config import ClientSecretCredentials
 from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.models.task import TaskResult, TaskRunMessage
-from pctasks.core.storage.blob import BlobStorage, BlobUri
+from pctasks.core.storage.blob import BlobStorage, BlobUri, ClientSecretCredentials
 from pctasks.core.utils import environment
 from pctasks.task.context import TaskContext
 from pctasks.task.settings import TaskSettings

@@ -24,9 +24,9 @@ from pctasks.core.models.task import TaskDefinition
 from pctasks.run.models import PreparedTaskSubmitMessage
 from pctasks.run.settings import RunSettings
 from pctasks.task.constants import (
-    TASKIO_TENANT_ID_ENV_VAR,
     TASKIO_CLIENT_ID_ENV_VAR,
     TASKIO_CLIENT_SECRET_ENV_VAR,
+    TASKIO_TENANT_ID_ENV_VAR,
 )
 
 logger = logging.getLogger(__name__)

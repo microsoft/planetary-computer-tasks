@@ -288,7 +288,8 @@ class StreamingCreateItemsTask(Task[StreamingCreateItemsInput, NoOutput]):
 
         while True:
             # Run forever, letting KEDA scale us down if necessary
-            for message in qc.receive_messages(
+            # need to update mypy
+            for message in qc.receive_messages(  # type: ignore
                 visibility_timeout=input.visibility_timeout
             ):
                 self.process_message(
@@ -354,7 +355,8 @@ class StreamingIngestItemsTask(Task[StreamingIngestItemsInput, NoOutput]):
         while True:
             # Run forever, letting KEDA scale us down if necessary
             # TODO: We should batch these with messages_per_page
-            for message in qc.receive_messages(
+            # need to update mypy
+            for message in qc.receive_messages(  # type: ignore
                 visibility_timeout=input.visibility_timeout
             ):
                 self.process_message(
