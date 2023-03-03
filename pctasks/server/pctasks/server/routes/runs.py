@@ -21,6 +21,7 @@ from pctasks.core.models.run import (
 )
 from pctasks.run.settings import RunSettings
 from pctasks.server.dependencies import PageParams, SortParams
+from pctasks.server.logging import log_request
 from pctasks.server.request import ParsedRequest
 
 logger = logging.getLogger(__name__)
@@ -43,6 +44,7 @@ async def fetch_workflow_run(
     run_id: str,
 ) -> RecordResponse[WorkflowRunRecord]:
     parsed_request = ParsedRequest(request)
+    log_request(parsed_request, f"Fetch workflow run: {run_id}", run_id=run_id)
 
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
@@ -66,6 +68,7 @@ async def fetch_workflow_run_log(
     run_id: str,
 ) -> PlainTextResponse:
     parsed_request = ParsedRequest(request)
+    log_request(parsed_request, f"Fetch workflow run log: {run_id}", run_id=run_id)
 
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
@@ -105,6 +108,12 @@ async def list_job_partition_runs(
     sort_params: SortParams = Depends(SortParams.dependency),
 ) -> RecordListResponse[JobPartitionRunRecord]:
     parsed_request = ParsedRequest(request)
+    log_request(
+        parsed_request,
+        f"List job partitions: {run_id}/{job_id}",
+        run_id=run_id,
+        job_id=job_id,
+    )
 
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
@@ -132,7 +141,7 @@ async def list_job_partition_runs(
 
 @runs_router.get(
     "/{run_id}/jobs/{job_id}/partitions/{partition_id}",
-    summary="Fetch job of a workflow run.",
+    summary="Fetch job partition of a workflow run.",
     response_class=ORJSONResponse,
     response_model=JobPartitionRunRecordResponse,
 )
@@ -140,6 +149,13 @@ async def fetch_job_partition_run(
     request: Request, run_id: str, job_id: str, partition_id: str
 ) -> RecordResponse[JobPartitionRunRecord]:
     parsed_request = ParsedRequest(request)
+    log_request(
+        parsed_request,
+        f"Fetch job partition: {run_id}/{job_id}/{partition_id}",
+        run_id=run_id,
+        job_id=job_id,
+        partition_id=partition_id,
+    )
 
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
@@ -165,6 +181,14 @@ async def fetch_task_log(
     request: Request, run_id: str, job_id: str, partition_id: str, task_id: str
 ) -> PlainTextResponse:
     parsed_request = ParsedRequest(request)
+    log_request(
+        parsed_request,
+        f"Fetch task log: {run_id}/{job_id}/{partition_id}/{task_id}",
+        run_id=run_id,
+        job_id=job_id,
+        partition_id=partition_id,
+        task_id=task_id,
+    )
 
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")

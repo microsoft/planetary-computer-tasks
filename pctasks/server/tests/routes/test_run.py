@@ -35,3 +35,14 @@ run_id: test-workflow-noauth
             "/workflows/test-workflow-noauth/submit", json=workflow.dict()
         )
         assert response.status_code == 401
+
+
+def test_run_workflow_invalid_workflow(client: TestClient) -> None:
+
+    with ignore_ssl_warnings():
+        response = client.post("/workflows/test-workflow", {"invalid": "workflow"})
+
+        assert response.content.decode("utf-8").startswith(
+            "1 validation error for Request"
+        )
+        assert response.status_code == 400

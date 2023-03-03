@@ -1,18 +1,22 @@
 import logging
 import os
-from typing import Any, Dict
+from typing import Any, Awaitable, Callable, Dict
 
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.exceptions import RequestValidationError, StarletteHTTPException
+from fastapi import FastAPI, Request, Response
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import ORJSONResponse
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import PlainTextResponse
 
 from pctasks.server.logging import init_logging
+from pctasks.server.middleware import handle_exceptions, timeout_middleware
 from pctasks.server.routes import code, runs, workflows
+from pctasks.server.settings import ServerSettings
 
 # Initialize logging
 init_logging("tasks")
+
+settings = ServerSettings.get()
 
 DEBUG: bool = os.getenv("DEBUG") == "TRUE" or False
 
@@ -33,20 +37,21 @@ app.add_middleware(
 )
 
 
-@app.exception_handler(HTTPException)
-async def http_exception_handler(
-    request: Request, exc: HTTPException
-) -> PlainTextResponse:
-    return PlainTextResponse(
-        str(exc.detail), status_code=exc.status_code, headers=exc.headers
+@app.middleware("http")
+async def _handle_exceptions(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+) -> Response:
+    return await handle_exceptions(request, call_next)
+
+
+@app.middleware("http")
+async def _timeout_middleware(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+) -> Response:
+    """Add a timeout to all requests."""
+    return await timeout_middleware(
+        request, call_next, timeout=settings.request_timeout
     )
-
-
-@app.exception_handler(StarletteHTTPException)
-async def base_http_exception_handler(
-    request: Request, exc: StarletteHTTPException
-) -> PlainTextResponse:
-    return PlainTextResponse(str(exc.detail), status_code=exc.status_code)
 
 
 @app.exception_handler(RequestValidationError)
