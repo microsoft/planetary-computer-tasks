@@ -12,7 +12,7 @@ def task_definition():
             "id": "create-items",
             "image": "pccomponentstest.azurecr.io/pctasks-goes-glm-streaming:2023.2.16.7",
             "code": {"src": "blob://pctasksteststaging/code/test-tom/goes_glm.py"},
-            "task": "pctasks.task.streaming:StreamingCreateItemsTask",
+            "task": "pctasks.dataset.streaming:StreamingCreateItemsTask",
             "args": {
                 "queue_url": "https://pclowlatency.queue.core.windows.net/goes-glm",
                 "visibility_timeout": 30,
@@ -41,7 +41,9 @@ def test_build_streaming_deployment(task_definition):
     result = pctasks.run.workflow.kubernetes.build_streaming_deployment(
         task_definition,
         input_uri="blob://pctasksteststaging/input",
-        azure_credentials={"AZURE_CLIENT_ID": "test-id"},
+        taskio_tenant_id="test-tenant-id",
+        taskio_client_id="test-client-id",
+        taskio_client_secret="test-client-secret",
     )
     labels = {"node_group": "pc-lowlatency"}
     assert result.metadata.name == "pclowlatency-goes-glm-deployment"

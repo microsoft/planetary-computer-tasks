@@ -45,6 +45,8 @@ class QueueService:
         account_url: str,
         sas_token: str,
         queue_name: str,
+        message_encode_policy=BinaryBase64EncodePolicy(),
+        message_decode_policy=BinaryBase64DecodePolicy(),
     ) -> "QueueService":
         def _get_clients(
             _url: str = account_url, _token: str = sas_token, _queue: str = queue_name
@@ -57,8 +59,8 @@ class QueueService:
                 service_client,
                 service_client.get_queue_client(
                     queue=_queue,
-                    message_encode_policy=BinaryBase64EncodePolicy(),
-                    message_decode_policy=BinaryBase64DecodePolicy(),
+                    message_encode_policy=message_encode_policy,
+                    message_decode_policy=message_decode_policy,
                 ),
             )
 
@@ -66,7 +68,7 @@ class QueueService:
 
     @classmethod
     def from_connection_string(
-        cls, connection_string: str, queue_name: str
+        cls, connection_string: str, queue_name: str, message_encode_policy=BinaryBase64DecodePolicy(), message_decode_policy=BinaryBase64DecodePolicy(),
     ) -> "QueueService":
         def _get_clients(
             _conn_str: str = connection_string, _queue: str = queue_name
@@ -79,8 +81,8 @@ class QueueService:
                 # https://github.com/Azure/azure-sdk-for-python/issues/28960
                 service_client.get_queue_client(  # type: ignore
                     queue=_queue,
-                    message_encode_policy=BinaryBase64EncodePolicy(),
-                    message_decode_policy=BinaryBase64DecodePolicy(),
+                    message_encode_policy=message_encode_policy,
+                    message_decode_policy=message_decode_policy,
                 ),
             )
 
@@ -92,6 +94,8 @@ class QueueService:
         account_url: str,
         account_key: str,
         queue_name: str,
+        message_encode_policy=BinaryBase64EncodePolicy(),
+        message_decode_policy=BinaryBase64DecodePolicy(),
     ) -> "QueueService":
         def _get_clients(
             _key: str = account_key,
@@ -103,8 +107,8 @@ class QueueService:
                 service_client,
                 service_client.get_queue_client(
                     queue=_queue,
-                    message_encode_policy=BinaryBase64EncodePolicy(),
-                    message_decode_policy=BinaryBase64DecodePolicy(),
+                    message_encode_policy=message_encode_policy,
+                    message_decode_policy=message_decode_policy,
                 ),
             )
 

@@ -8,7 +8,7 @@ from pctasks.run.models import (
     PreparedTaskSubmitMessage,
     TaskSubmitMessage,
 )
-from pctasks.task.streaming import StreamingCreateItemsConfig, StreamingCreateItemsInput
+from pctasks.dataset.streaming import StreamingCreateItemsConfig, StreamingCreateItemsInput
 
 
 @pytest.fixture

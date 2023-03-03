@@ -12,6 +12,7 @@ import uuid
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Union
 
 import azure.cosmos
+import azure.core.credentials
 import azure.identity
 import azure.storage.queue
 import pydantic
@@ -85,6 +86,7 @@ class StreamingCreateItemsOptions(PCBaseModel):
 
 class StreamingTaskInput(PCBaseModel):
     queue_url: str
+    queue_credential: Optional[str] = None
     visibility_timeout: int
     min_replica_count: int = 0
     max_replica_count: int = 100
@@ -110,15 +112,15 @@ class StreamingTaskMixin:
     def process_message(self, message: azure.storage.queue.QueueMessage, input: StreamingTaskInput, context: TaskContext, **extra_options) -> None:
         raise NotImplementedError
 
-    def get_extra_options(self) -> Dict[str, Any]:
+    def get_extra_options(self, input, context) -> Dict[str, Any]:
         return {}
 
     def run(self, input:  StreamingTaskInput, context: TaskContext) -> NoOutput:
-        credential = azure.identity.DefaultAzureCredential()
+        credential = input.queue_credential or azure.identity.DefaultAzureCredential()
         qc = azure.storage.queue.QueueClient.from_queue_url(
             input.queue_url, credential=credential
         )
-        extra_options = self.get_extra_options()
+        extra_options = self.get_extra_options(input, context)
 
         while not self.event.is_set():
             for message in qc.receive_messages(
@@ -168,7 +170,7 @@ class StreamingCreateItemsInput(StreamingTaskInput):
         The Cosmos DB database name the STAC items are written to.
     container_name: str
         The Cosmos DB container name the STAC items are written to.
-    create_items_function: str
+    create_items_function: str or callable.
         The entrypoints-style path to a callable that creates the STAC item.
     min_replica_count, max_replica_count: int
         The minimum and maximum number of concurrent workers that should process
@@ -187,7 +189,7 @@ class StreamingCreateItemsInput(StreamingTaskInput):
     )
     db_name: str = "lowlatencydb"  # TODO: config?
     container_name: str = "items"  # TODO: config?
-    create_items_function: str  # can't use callable & entrypoint string
+    create_items_function: Union[str, Callable]  # can't use callable & entrypoint string
 
 
 class StreamingCreateItemsConfig(TaskDefinition):
@@ -247,7 +249,7 @@ class StreamingCreateItemsTask(StreamingTaskMixin, Task[StreamingCreateItemsInpu
     _input_model = StreamingCreateItemsInput
     _output_model = NoOutput
 
-    def get_extra_options(self) -> Dict[str, Any]:
+    def get_extra_options(self, input, context) -> Dict[str, Any]:
         credential = azure.identity.DefaultAzureCredential()
         container_proxy = (
             azure.cosmos.CosmosClient(input.cosmos_endpoint, credential)
@@ -380,7 +382,7 @@ class StreamingIngestItemsTask(StreamingTaskMixin, Task[StreamingIngestItemsInpu
     _input_model = StreamingIngestItemsInput
     _output_model = NoOutput
 
-    def get_extra_options():
+    def get_extra_options(self, input, context):
         from pctasks.ingest_task.task import PgSTAC
         return {"pgstac": PgSTAC.from_env()}
 
