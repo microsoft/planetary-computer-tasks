@@ -95,23 +95,6 @@ resource "azurerm_role_assignment" "network" {
 }
 
 
-# # TODO: staging / prod Cosmos DB deployment
-# # hacky hacky hacky
-data "azurerm_storage_account" "streaming" {
-  name                = "pclowlatency"
-  resource_group_name = "low-latency-rg-test-tom"
-  provider = azurerm.pc
-}
-
-# TODO: Figure out who owns the Cosmos DB deployment.
-# It'll probably be manaul
-# TODO: staging / prod Cosmos DB deployment
-# data "azurerm_cosmosdb_account" "streaming" {
-#   name = "pclowlatencytesttom"
-#   resource_group_name = "low-latency-rg-test-tom"
-#   provider = azurerm.pc
-# }
-
 resource "kubernetes_namespace" "tasks" {
   metadata {
     name = "tasks"
@@ -126,7 +109,7 @@ resource "kubernetes_secret" "queue_account_key" {
   }
 
   data = {
-    AccountKey = data.azurerm_storage_account.streaming.primary_access_key
+    AccountKey = azurerm_storage_account.pctasks.primary_access_key
   }
 
 }
@@ -139,7 +122,7 @@ resource "kubernetes_secret" "queue_connection_string" {
   }
 
   data = {
-    ConnectionString = data.azurerm_storage_account.streaming.primary_connection_string
+    ConnectionString = azurerm_storage_account.pctasks.primary_connection_string
   }
 
 }
