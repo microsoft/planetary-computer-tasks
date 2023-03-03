@@ -39,7 +39,7 @@ from pctasks.core.constants import (
     AZURITE_PORT_ENV_VAR,
     AZURITE_STORAGE_ACCOUNT_ENV_VAR,
 )
-from pctasks.core.models.config import ClientSecretCredentials
+from pctasks.core.models.base import PCBaseModel
 from pctasks.core.storage.base import Storage, StorageFileInfo
 from pctasks.core.storage.path_filter import PathFilter
 from pctasks.core.utils import map_opt
@@ -54,6 +54,12 @@ _AZURITE_ACCOUNT_KEY = (
     "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6I"
     "FsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
 )
+
+class ClientSecretCredentials(PCBaseModel):
+    tenant_id: str
+    client_id: str
+    client_secret: str
+
 
 
 class BlobStorageError(Exception):

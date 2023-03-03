@@ -1,13 +1,16 @@
 import os
-from typing import Optional, Tuple
+from typing import Optional, Tuple, TYPE_CHECKING
 
 from cachetools import Cache, LRUCache, cachedmethod
-from pctasks.core.models.config import ClientSecretCredentials
 
 from pctasks.core.storage import blob, local
 from pctasks.core.storage.base import Storage
 from pctasks.core.tokens import Tokens
 
+
+if TYPE_CHECKING:
+    # avoid circular import
+    from pctasks.core.models.config import ClientSecretCredentials
 
 def get_storage(
     uri: str,
@@ -15,7 +18,7 @@ def get_storage(
     account_key: Optional[str] = None,
     tokens: Optional[Tokens] = None,
     account_url: Optional[str] = None,
-    client_secret_credentials: Optional[ClientSecretCredentials] = None
+    client_secret_credentials: Optional["ClientSecretCredentials"] = None
 ) -> Storage:
     """Gets storage that represents the folder at the uri."""
     if blob.BlobUri.matches(uri):
@@ -51,7 +54,7 @@ def get_storage_for_file(
     account_key: Optional[str] = None,
     tokens: Optional[Tokens] = None,
     account_url: Optional[str] = None,
-    client_secret_credentials: Optional[ClientSecretCredentials] = None
+    client_secret_credentials: Optional["ClientSecretCredentials"] = None
 ) -> Tuple[Storage, str]:
     """Returns storage and the path to the file based on that storage."""
     if blob.BlobUri.matches(file_uri):
