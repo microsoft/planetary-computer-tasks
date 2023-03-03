@@ -117,8 +117,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     # Deploy Terraform  #
     #####################
 
-    bin/azlogin
-
     source ${TERRAFORM_DIR}/env.sh
 
     require_env "DEPLOY_SECRETS_KV"
