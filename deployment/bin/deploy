@@ -113,11 +113,17 @@ setup_env
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
+    bin/azlogin
+
+    #########################
+    # Add IP to KV firewall #
+    #########################
+
+    bin/kv_add_ip
+
     #####################
     # Deploy Terraform  #
     #####################
-
-    bin/azlogin
 
     source ${TERRAFORM_DIR}/env.sh
 
@@ -177,6 +183,12 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     gather_tf_output
 
     popd
+
+    ##############################
+    # Remove IP from KV firewall #
+    ##############################
+
+    bin/kv_rmv_ip
 
     ############################
     # Render Helm chart values #
