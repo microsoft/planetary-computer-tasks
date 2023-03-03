@@ -15,7 +15,7 @@ jobs:
     tasks:
     - id: create-items
       image: "pccomponentstest.azurecr.io/pctasks-goes-glm:2023.2.27.0"
-      task: pctasks.task.streaming:StreamingCreateItemsTask
+      task: pctasks.dataset.streaming:StreamingCreateItemsTask
       code:
         src: datasets/goes/goes-glm/goes_glm.py
       args:
