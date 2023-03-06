@@ -101,6 +101,7 @@ resource "kubernetes_namespace" "tasks" {
   }
 }
 
+# TODO: verify if this is used, or only the connection string
 resource "kubernetes_secret" "queue_account_key" {
   metadata {
     # Note: this must match the name inn keda-trigger-authentication.yaml

@@ -108,7 +108,12 @@ EOF
         --wait \
         --timeout 2m0s
 
+    # Note: we don't install KEDA on the development cluster.
+    # Kind doesn't include metrics (by default at least), and KEDA requires that.
+    # https://github.com/kubernetes-sigs/kind/issues/398
+    # E0303 15:59:48.181644   27243 memcache.go:255] couldn't get resource list for external.metrics.k8s.io/v1beta1: Got empty response for: external.metrics.k8s.io/v1beta1
 }
+
 
 function update_registry() {
     echo "Adding pctasks-server to local registry..."

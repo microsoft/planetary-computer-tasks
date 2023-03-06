@@ -48,5 +48,3 @@ def test_streaming_create_items_task():
 
         task.run(task_input, context)
     assert count == 5
-
-    ...
