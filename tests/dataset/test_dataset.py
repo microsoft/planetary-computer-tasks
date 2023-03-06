@@ -117,7 +117,7 @@ def test_streaming():
         collection_id = "test-collection-streaming"
 
         # put some messages on the queue
-        for i in range(10):
+        for i in range(20):
             queue_client.send_message(json.dumps({"data": {"url": f"test-{i}.tif"}}))
 
         args = {
@@ -175,8 +175,6 @@ def test_streaming():
 
         assert process_items_result.exit_code == 0
         process_items_run_id = process_items_result.output.strip()
-        # I have no idea how to ensure that this completes.
-        # I suppose we add a max items.
         assert_workflow_is_successful(
             process_items_run_id, timeout_seconds=TIMEOUT_SECONDS
         )
@@ -192,6 +190,8 @@ def test_streaming():
             )
             assert isinstance(res, str)
             assert json.loads(res)["features"]
+
+    # TODO: cleanup the Kubernetes stuff
 
 
 if __name__ == "__main__":

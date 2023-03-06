@@ -7,7 +7,7 @@ jobs:
   create-items:
     id: ingest-items
     tasks:
-    - id: ingest-items
+    - id: create-items
       image: localhost:5001/pctasks-task-streaming-base:latest
       task: pctasks.task.streaming:StreamingIngestItemsTask
       args:
@@ -23,8 +23,7 @@ jobs:
         polling_interval: 30
         trigger_queue_length: 100
         collection_id: "test-collection-streaming"
-        options:
-          limit: 10
+        message_limit: 10
       env:
         DB_CONNECTION_STRING: ${{ args.db_connection_string }}
       schema_version: 1.0.0
