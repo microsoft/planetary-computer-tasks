@@ -80,3 +80,22 @@ resource "azurerm_cosmosdb_sql_container" "leases" {
   partition_key_path    = "/id"
   partition_key_version = 1
 }
+
+# Cosmos DB Container for storage events.
+# Each event follows the CloudEvent schema.
+resource "azurerm_cosmosdb_sql_container" "storage_events" {
+  name                = "storage-events"
+  resource_group_name   = data.azurerm_cosmosdb_account.pctasks.resource_group_name
+  account_name          = data.azurerm_cosmosdb_account.pctasks.name
+  database_name         = azurerm_cosmosdb_sql_database.pctasks.name
+  partition_key_path  = "/id"
+}
+
+# Cosmos DB Container for completed STAC items.
+resource "azurerm_cosmosdb_sql_container" "items" {
+  name                = "items"
+  resource_group_name   = data.azurerm_cosmosdb_account.pctasks.resource_group_name
+  account_name          = data.azurerm_cosmosdb_account.pctasks.name
+  database_name         = azurerm_cosmosdb_sql_database.pctasks.name
+  partition_key_path  = "/data/item/id"
+}
