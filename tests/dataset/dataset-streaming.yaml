@@ -1,0 +1,32 @@
+name: "Streaming ingest example"
+args:
+- db_connection_string
+- cosmos_endpoint
+- cosmos_credential
+jobs:
+  create-items:
+    id: ingest-items
+    tasks:
+    - id: ingest-items
+      image: localhost:5001/pctasks-task-streaming-base:latest
+      task: pctasks.task.streaming:StreamingIngestItemsTask
+      args:
+        queue_url: "http://azurite:10001/test-queue-stream"
+        visibility_timeout: 30
+        cosmos_endpoint: ${{ args.cosmos_endpoint }}
+        cosmos_credential: ${{ args.cosmos_credential }}
+        db_name: lowlatencydb
+        container_name: items
+        create_items_function: pctasks.dataset.streaming:create_item_from_item_uri
+        min_replica_count: 0
+        max_replica_count: 10
+        polling_interval: 30
+        trigger_queue_length: 100
+        collection_id: "test-collection"
+      env:
+        DB_CONNECTION_STRING: ${{ args.db_connection_string }}
+      schema_version: 1.0.0
+is_streaming: True
+schema_version: 1.0.0
+id: ingest-items-test
+dataset: all

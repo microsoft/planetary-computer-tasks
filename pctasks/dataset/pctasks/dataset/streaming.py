@@ -77,8 +77,6 @@ class StreamingCreateItemsOptions(PCBaseModel):
     Create items from a stream of messages.
     """
 
-    # TODO: limit?
-
     skip_validation: bool = False
     """Skip validation through PySTAC of the STAC Items."""
 
@@ -91,6 +89,8 @@ class StreamingTaskInput(PCBaseModel):
     max_replica_count: int = 100
     polling_interval: int = 30
     trigger_queue_length: int = 100
+
+    message_limit: Optional[int] = None
 
     class Config:
         extra = "forbid"
@@ -128,6 +128,7 @@ class StreamingTaskMixin:
             input.queue_url, credential=credential
         )
         extra_options = self.get_extra_options(input, context)
+        message_count = 0
 
         while not self.event.is_set():
             # mypy upgrade
@@ -150,6 +151,11 @@ class StreamingTaskMixin:
                     qc.delete_message(message)  # type: ignore
             # We've drained the queue. Now we'll pause slightly before checking again.
             # TODO: some kind of exponential backoff here. From 0 - 5-10 seconds.
+                message_count += 1
+                if input.options.message_limit and message_count >= input.options.message_limit:
+                    logger.info("Hit limit=%d", message_count)
+                    self.event.set()
+                    continue
             n = 5
             logger.info("Sleeping for %s seconds", n)
             time.sleep(n)
@@ -199,6 +205,7 @@ class StreamingCreateItemsInput(StreamingTaskInput):
     cosmos_endpoint: str = (
         "https://pclowlatencytesttom.documents.azure.com:443/"  # TODO: config?
     )
+    cosmos_credential: Optional[str] = None
     db_name: str = "lowlatencydb"  # TODO: config?
     container_name: str = "items"  # TODO: config?
     create_items_function: Union[
@@ -269,7 +276,12 @@ class StreamingCreateItemsTask(
     def get_extra_options(  # type: ignore
         self, input: StreamingCreateItemsInput, context: TaskContext
     ) -> Dict[str, Any]:
-        credential = azure.identity.DefaultAzureCredential()
+        # TODO: Used DefaultAzureCredential in dev / test too.
+        credential: Union[str, azure.core.credentials.TokenCredential]
+        if input.cosmos_credential:
+            credential = input.cosmos_credential
+        else:
+            credential = azure.identity.DefaultAzureCredential()
         container_proxy = (
             azure.cosmos.CosmosClient(input.cosmos_endpoint, credential)
             .get_database_client(input.db_name)

@@ -18,8 +18,9 @@ class TempQueue:
         self,
         message_encode_policy=BinaryBase64EncodePolicy(),
         message_decode_policy=BinaryBase64DecodePolicy(),
+        suffix: Optional[str] = None,
     ) -> None:
-        suffix = uuid1().hex[:5]
+        suffix = suffix or uuid1().hex[:5]
         self.message_encode_policy = message_encode_policy
         self.message_decode_policy = message_decode_policy
         self.queue_config = QueueConnStrConfig(
