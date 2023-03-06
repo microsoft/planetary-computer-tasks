@@ -112,7 +112,7 @@ def test_streaming():
         TempQueue(
             message_decode_policy=None, message_encode_policy=None, suffix="stream"
         ) as queue_client,
-        temp_azurite_blob_storage() as root_storage,
+        temp_azurite_blob_storage(),
     ):
         collection_id = "test-collection-streaming"
 
