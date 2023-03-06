@@ -5,7 +5,7 @@ import datetime
 import importlib.metadata
 import json
 import logging
-import threading
+import math
 import time
 import urllib.parse
 import uuid
@@ -82,6 +82,32 @@ class StreamingCreateItemsOptions(PCBaseModel):
 
 
 class StreamingTaskInput(PCBaseModel):
+    """
+    Inputs to all streaming tasks.
+
+    Parameters
+    ----------
+    queue_url: str
+        The full URL to the queue this task is processing. This will typically
+        be like ``https://<account-name>.queue.core.windows.net/<queue-name>``
+    visibility_timeout: int
+        The number of seconds to before the queue service assumes processing
+        fails and makes the message visible again. This should be some multiple
+        of the typical processing time.
+    min_replica_count, max_replica_count: int
+        The minimum and maximum number of concurrent workers that should process
+        items from this queue.
+    polling_interval: int, default 30
+        How often KEDA should poll the queue to check for new messages and rescale.
+    trigger_queue_length: int, default 100
+        Controls the scaling factor.
+    message_limit: Optional[int]
+        The maximum number of messages from the queue to process. Once reached,
+        the processing function will exit. If not set, the function will run
+        forever, relying on some external system (like KEDA) to stop processing.
+
+        This is primarily useful for testing.
+    """
     queue_url: str
     queue_credential: Optional[str] = None
     visibility_timeout: int
@@ -89,7 +115,6 @@ class StreamingTaskInput(PCBaseModel):
     max_replica_count: int = 100
     polling_interval: int = 30
     trigger_queue_length: int = 100
-
     message_limit: Optional[int] = None
 
     class Config:
@@ -102,12 +127,6 @@ class NoOutput(PCBaseModel):
 
 
 class StreamingTaskMixin:
-    event: threading.Event
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.event = threading.Event()
-
     def process_message(
         self,
         message: azure.storage.queue.QueueMessage,
@@ -129,8 +148,9 @@ class StreamingTaskMixin:
         )
         extra_options = self.get_extra_options(input, context)
         message_count = 0
+        max_messages = input.message_limit or math.inf
 
-        while not self.event.is_set():
+        while message_count < max_messages:
             # mypy upgrade
             for message in qc.receive_messages(  # type: ignore
                 visibility_timeout=input.visibility_timeout
@@ -149,15 +169,15 @@ class StreamingTaskMixin:
                     logger.info("Processed message id=%s", message.id)
                     # mypy upgrade
                     qc.delete_message(message)  # type: ignore
+
+                message_count += 1
+                if input.message_limit and message_count >= input.message_limit:
+                    logger.info("Hit limit=%d", message_count)
+                    continue
             # We've drained the queue. Now we'll pause slightly before checking again.
             # TODO: some kind of exponential backoff here. From 0 - 5-10 seconds.
-                message_count += 1
-                if input.options.message_limit and message_count >= input.options.message_limit:
-                    logger.info("Hit limit=%d", message_count)
-                    self.event.set()
-                    continue
             n = 5
-            logger.info("Sleeping for %s seconds", n)
+            logger.debug("Sleeping for %s seconds", n)
             time.sleep(n)
 
         logger.info("Finishing run")
@@ -166,7 +186,7 @@ class StreamingTaskMixin:
 
 class StreamingCreateItemsInput(StreamingTaskInput):
     """
-    Create items from a stream of messages.
+    Input for a streaming create items task.
 
     Parameters
     ----------
@@ -177,27 +197,39 @@ class StreamingCreateItemsInput(StreamingTaskInput):
         The number of seconds to before the queue service assumes processing
         fails and makes the message visible again. This should be some multiple
         of the typical processing time.
+    min_replica_count, max_replica_count: int
+        The minimum and maximum number of concurrent workers that should process
+        items from this queue.
+    polling_interval: int, default 30
+        How often KEDA should poll the queue to check for new messages and
+        rescale.
+    trigger_queue_length: int, default 100
+        Controls the scaling factor.
+    message_limit: Optional[int]
+        The maximum number of messages from the queue to process. Once reached,
+        the processing function will exit. If not set, the function will run
+        forever, relying on some external system (like KEDA) to stop processing.
+
+        This is primarily useful for testing.
+
+    collection_id: str
+        The STAC collection ID for items in this queue.
     options: StreamingCreateItemsOptions
         Additional options...
     cosmos_endpoint: str
         The full endpoint to the Cosmos DB account where STAC items will be
         written to. This will be like
         ``https://<account-name>.documents.azure.com:443/``.
+    cosmos_credential: str, optional
+        An account key for Cosmos DB. By default, ``DefaultAzureCredential`` is
+        used.
     db_name: str
         The Cosmos DB database name the STAC items are written to.
     container_name: str
         The Cosmos DB container name the STAC items are written to.
     create_items_function: str or callable.
-        The entrypoints-style path to a callable that creates the STAC item.
-    min_replica_count, max_replica_count: int
-        The minimum and maximum number of concurrent workers that should process
-        items from this queue.
-    polling_interval: int, default 30
-        How often KEDA should poll the queue to check for new messages and rescale.
-    trigger_queue_length: int, default 100
-        Controls the scaling factor.
-    collection_id: str
-        The STAC collection ID for items in this queue.
+        A callable or entrypoints-style path to a callable that creates the STAC
+        item.
     """
 
     collection_id: str
