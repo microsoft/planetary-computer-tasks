@@ -114,7 +114,7 @@ def test_streaming():
         ) as queue_client,
         temp_azurite_blob_storage() as root_storage,
     ):
-        collection_id = "test-collection"
+        collection_id = "test-collection-streaming"
 
         # put some messages on the queue
         for i in range(10):
@@ -157,7 +157,6 @@ def test_streaming():
             assert res == collection_id
 
         # Process items
-
         process_items_result = run_pctasks(
             [
                 "workflow",
@@ -176,6 +175,8 @@ def test_streaming():
 
         assert process_items_result.exit_code == 0
         process_items_run_id = process_items_result.output.strip()
+        # I have no idea how to ensure that this completes.
+        # I suppose we add a max items.
         assert_workflow_is_successful(
             process_items_run_id, timeout_seconds=TIMEOUT_SECONDS
         )
