@@ -10,13 +10,6 @@ services:
       - TF_VAR_username=${USER}
       - ARM_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}
       - ARM_TENANT_ID=${AZURE_TENANT_ID}
-      - ARM_CLIENT_ID=${AZURE_CLIENT_ID}
-      - ARM_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
-
-      # For Azure CLI
-      - AZURE_TENANT_ID=${AZURE_TENANT_ID}
-      - AZURE_CLIENT_ID=${AZURE_CLIENT_ID}
-      - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
 
       # Used in function deployment injected by GH Actions
       - GITHUB_TOKEN

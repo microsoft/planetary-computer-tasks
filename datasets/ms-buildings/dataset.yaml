@@ -1,0 +1,25 @@
+id: ms-buildings
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+- registry
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: ms-buildings
+    template: ${{ local.path(./collection) }}
+    class: pctasks.dataset.collection:PremadeItemCollection
+    asset_storage:
+      # the STAC items
+      - uri: blob://bingmlbuildings/msbuildings-stac
+        chunks:
+          options:
+            chunk_length: 3000
+            extensions:
+              - ".json"
+    chunk_storage:
+      uri: blob://bingmlbuildings/msbuildings-etl-data/chunks
