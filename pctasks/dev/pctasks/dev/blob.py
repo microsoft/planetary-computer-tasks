@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import Generator, Optional, Union, cast
 from uuid import uuid1
 
-import azure.storage.queue
 from azure.storage.blob import ContainerSasPermissions, generate_container_sas
 
 from pctasks.core.constants import DEFAULT_CODE_CONTAINER

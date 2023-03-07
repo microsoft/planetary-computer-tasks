@@ -16,8 +16,8 @@ from pctasks.dev.constants import get_azurite_connection_string
 class TempQueue:
     def __init__(
         self,
-        message_encode_policy: BinaryBase64EncodePolicy=BinaryBase64EncodePolicy(),
-        message_decode_policy: BinaryBase64DecodePolicy=BinaryBase64DecodePolicy(),
+        message_encode_policy: BinaryBase64EncodePolicy = BinaryBase64EncodePolicy(),
+        message_decode_policy: BinaryBase64DecodePolicy = BinaryBase64DecodePolicy(),
         suffix: Optional[str] = None,
     ) -> None:
         suffix = suffix or uuid1().hex[:5]
