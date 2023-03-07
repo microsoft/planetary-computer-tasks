@@ -5,6 +5,8 @@ resource "azurerm_kubernetes_cluster" "pctasks" {
   dns_prefix          = "${local.prefix}-cluster"
   kubernetes_version  = var.k8s_version
 
+
+
   default_node_pool {
     name                 = "agentpool"
     vm_size              = "Standard_DS2_v2"
@@ -95,26 +97,17 @@ resource "azurerm_role_assignment" "network" {
 }
 
 
+# Kubernetes namespace for running low-latency tasks.
+# All the secrets and trigger authentications needed by KEDA must be set in this namespace.
 resource "kubernetes_namespace" "tasks" {
   metadata {
     name = "tasks"
   }
 }
 
-# TODO: verify if this is used, or only the connection string
-resource "kubernetes_secret" "queue_account_key" {
-  metadata {
-    # Note: this must match the name inn keda-trigger-authentication.yaml
-    name = "secrets-storage-queue-account-key"
-    namespace = "tasks"
-  }
 
-  data = {
-    AccountKey = azurerm_storage_account.pctasks.primary_access_key
-  }
-
-}
-
+# Kubernetes secret for KEDA to monitor storage queues.
+# This is used in the KEDA TriggerAuthentication created during deployment.
 resource "kubernetes_secret" "queue_connection_string" {
   metadata {
     # Note: this must match the name inn keda-trigger-authentication.yaml

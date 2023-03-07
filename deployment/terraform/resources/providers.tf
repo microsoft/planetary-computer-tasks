@@ -31,11 +31,3 @@ provider "kubernetes" {
     command = "kubelogin"
   }
 }
-
-# TODO: remove this hack to get prod resources in staging
-provider "azurerm" {
-  alias = "pc"
-  subscription_id = "9da7523a-cb61-4c3e-b1d4-afa5fc6d2da9"
-  skip_provider_registration = true
-  features {}
-}
