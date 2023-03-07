@@ -59,34 +59,34 @@ resource "azurerm_kubernetes_cluster_node_pool" "argowf" {
 }
 
 # Node pool for running tasks
-resource "azurerm_kubernetes_cluster_node_pool" "tasks" {
-  name                  = "tasks"
-  kubernetes_cluster_id = azurerm_kubernetes_cluster.pctasks.id
-  vm_size               = "Standard_D16d_v4"
-  enable_auto_scaling = true
-  min_count = 0
-  max_count = var.aks_task_pool_max_count
+# resource "azurerm_kubernetes_cluster_node_pool" "tasks" {
+#   name                  = "tasks"
+#   kubernetes_cluster_id = azurerm_kubernetes_cluster.pctasks.id
+#   vm_size               = "Standard_D16d_v4"
+#   enable_auto_scaling = true
+#   min_count = 0
+#   max_count = var.aks_task_pool_max_count
 
-  node_labels = {
-    # this should match the value in pctasks
-    node_group = "pc-lowlatency"
-  }
+#   node_labels = {
+#     # this should match the value in pctasks
+#     node_group = "pc-lowlatency"
+#   }
 
-   lifecycle {
-    ignore_changes = [
-      # Ignore changes that are auto-populated by AKS
-      vnet_subnet_id,
-      node_taints,
-      zones,
-      node_count,
-    ]
-  }
+#    lifecycle {
+#     ignore_changes = [
+#       # Ignore changes that are auto-populated by AKS
+#       vnet_subnet_id,
+#       node_taints,
+#       zones,
+#       node_count,
+#     ]
+#   }
 
-  tags = {
-    Environment = var.environment
-    ManagedBy   = "AI4E"
-  }
-}
+#   tags = {
+#     Environment = var.environment
+#     ManagedBy   = "AI4E"
+#   }
+# }
 
 
 # add the role to the identity the kubernetes cluster was assigned
@@ -97,26 +97,26 @@ resource "azurerm_role_assignment" "network" {
 }
 
 
-# Kubernetes namespace for running low-latency tasks.
-# All the secrets and trigger authentications needed by KEDA must be set in this namespace.
-resource "kubernetes_namespace" "tasks" {
-  metadata {
-    name = "tasks"
-  }
-}
+# # Kubernetes namespace for running low-latency tasks.
+# # All the secrets and trigger authentications needed by KEDA must be set in this namespace.
+# resource "kubernetes_namespace" "tasks" {
+#   metadata {
+#     name = "tasks"
+#   }
+# }
 
 
-# Kubernetes secret for KEDA to monitor storage queues.
-# This is used in the KEDA TriggerAuthentication created during deployment.
-resource "kubernetes_secret" "queue_connection_string" {
-  metadata {
-    # Note: this must match the name inn keda-trigger-authentication.yaml
-    name = "secrets-storage-queue-connection-string"
-    namespace = "tasks"
-  }
+# # Kubernetes secret for KEDA to monitor storage queues.
+# # This is used in the KEDA TriggerAuthentication created during deployment.
+# resource "kubernetes_secret" "queue_connection_string" {
+#   metadata {
+#     # Note: this must match the name inn keda-trigger-authentication.yaml
+#     name = "secrets-storage-queue-connection-string"
+#     namespace = "tasks"
+#   }
 
-  data = {
-    ConnectionString = azurerm_storage_account.pctasks.primary_connection_string
-  }
+#   data = {
+#     ConnectionString = azurerm_storage_account.pctasks.primary_connection_string
+#   }
 
-}
+# }
