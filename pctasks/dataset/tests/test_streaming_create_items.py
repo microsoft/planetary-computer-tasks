@@ -27,6 +27,8 @@ class CreateItems:
 
 
 def test_streaming_create_items_task():
+    # This implicitly uses
+    # - azurite for queues, ...
     task = streaming.StreamingCreateItemsTask()
     create_items = CreateItems()
 
