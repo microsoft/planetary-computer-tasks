@@ -1,7 +1,17 @@
+import base64
+from pctasks.core.models.config import BlobConfig
+from pctasks.run.models import (
+    PreparedTaskData,
+    PreparedTaskSubmitMessage,
+    TaskSubmitMessage,
+)
+from pctasks.run.settings import RunSettings
 import pytest
 
 import pctasks.core.models.task
 import pctasks.run.workflow.kubernetes
+
+import kubernetes
 
 
 @pytest.fixture
@@ -14,18 +24,18 @@ def task_definition():
             "code": {"src": "blob://pctasksteststaging/code/test-tom/goes_glm.py"},
             "task": "pctasks.dataset.streaming:StreamingCreateItemsTask",
             "args": {
-                "queue_url": "https://pclowlatency.queue.core.windows.net/goes-glm",
+                "queue_url": "http://127.0.0.1:10001/devstoreaccount1/test",
                 "visibility_timeout": 30,
                 "options": {"skip_validation": False},
                 "cosmos_endpoint": "https://pclowlatencytesttom.documents.azure.com:443/",
                 "db_name": "lowlatencydb",
                 "container_name": "items",
-                "create_items_function": "goes_glm:GoesGlmCollection.create_item",
+                "create_items_function": "pctasks.dataset.streaming.create_item_from_item_uri",
                 "min_replica_count": 0,
                 "max_replica_count": 10,
                 "polling_interval": 30,
                 "trigger_queue_length": 100,
-                "collection_id": "goes-glm",
+                "collection_id": "test",
             },
             "schema_version": "1.0.0",
         }
@@ -34,7 +44,7 @@ def task_definition():
 
 def test_get_deployment_name(task_definition):
     result = pctasks.run.workflow.kubernetes.get_deployment_name(task_definition)
-    assert result == "pclowlatency-goes-glm-deployment"
+    assert result == "devstoreaccount1-test-deployment"
 
 
 def test_build_streaming_deployment(task_definition):
@@ -46,7 +56,7 @@ def test_build_streaming_deployment(task_definition):
         taskio_client_secret="test-client-secret",
     )
     labels = {"node_group": "pc-lowlatency"}
-    assert result.metadata.name == "pclowlatency-goes-glm-deployment"
+    assert result.metadata.name == "devstoreaccount1-test-deployment"
     assert result.metadata.labels == labels
     assert result.spec.selector["matchLabels"] == labels
     assert result.spec.template.metadata.labels == labels
@@ -61,13 +71,135 @@ def test_build_streaming_deployment(task_definition):
 
 def test_build_streaming_scaler(task_definition):
     result = pctasks.run.workflow.kubernetes.build_streaming_scaler(task_definition)
-    assert result["metadata"]["name"] == "pclowlatency-goes-glm-scaler"
-    assert (
-        result["spec"]["scaleTargetRef"]["name"] == "pclowlatency-goes-glm-deployment"
-    )
+    assert result["metadata"]["name"] == "devstoreaccount1-test-scaler"
+    assert result["spec"]["scaleTargetRef"]["name"] == "devstoreaccount1-test-deployment"
     assert result["spec"]["minReplicaCount"] == 0
     assert result["spec"]["maxReplicaCount"] == 10
     assert result["spec"]["pollingInterval"] == 30
-    assert result["spec"]["triggers"][0]["metadata"]["queueName"] == "goes-glm"
+    assert result["spec"]["triggers"][0]["metadata"]["queueName"] == "test"
     assert result["spec"]["triggers"][0]["metadata"]["queueLength"] == "100"
-    assert result["spec"]["triggers"][0]["metadata"]["accountName"] == "pclowlatency"
+    assert result["spec"]["triggers"][0]["metadata"]["accountName"] == "devstoreaccount1"
+
+
+@pytest.fixture
+def namespace():
+    from kubernetes import client, config
+
+    config.load_config()
+
+    v1 = client.CoreV1Api()
+    objects = client.CustomObjectsApi()
+    ns = client.V1Namespace(metadata=client.V1ObjectMeta(name="pctasks-test"))
+    try:
+        v1.create_namespace(ns)
+    except kubernetes.client.rest.ApiException as e:
+        if e.status != 409:
+            raise RuntimeError(
+                "Namespace pctasks-test already exists. Manually delete the namespace to run this test."
+            ) from e
+
+    connstr = base64.b64encode(
+        (
+            "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;"
+            "AccountKey="
+            "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq"
+            "/K1SZFPTOtr/KBHBeksoGMGw==;"
+            "BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;"
+            "QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;"
+            "TableEndpoint=http://127.0.0.1.10002/devstoreaccount1;"
+        ).encode()
+    ).decode()
+
+    v1.create_namespaced_secret(
+        namespace=ns.metadata.name, body=client.V1Secret(data={"ConnectionString": connstr}, metadata=client.V1ObjectMeta(name="secrets-storage-queue-connection-string"))
+    )
+    body = {
+        "apiVersion": "keda.sh/v1alpha1",
+        "kind": "TriggerAuthentication",
+        "metadata": {"name": "queue-connection-string-auth"},
+        "spec": {
+            "secretTargetRef": [
+                {
+                    "parameter": "connection",
+                    "name": "secrets-storage-queue-connection-string",
+                    "key": "ConnectionString",
+                }
+            ]
+        },
+    }
+    objects.create_namespaced_custom_object(
+        body=body, namespace=ns.metadata.name, group="keda.sh", version="v1alpha1", plural="triggerauthentications"
+    )
+
+    yield ns
+
+    v1.delete_namespace(name=ns.metadata.name)
+
+
+def test_submit_task(namespace, task_definition):
+    prepared_task = PreparedTaskSubmitMessage(
+        task_submit_message=TaskSubmitMessage(
+            dataset_id="test-dataset-id",
+            run_id="test-run",
+            job_id="job-id",
+            partition_id="0",
+            definition=task_definition,
+        ),
+        task_run_message=pctasks.core.models.task.TaskRunMessage(
+            args={},
+            config=pctasks.core.models.task.TaskRunConfig(
+                image="image",
+                run_id="test-run",
+                job_id="job-id",
+                partition_id="0",
+                task_id="task-id",
+                task=task_definition.task,
+                status_blob_config=BlobConfig(
+                    uri="blob://devstoreaccount1/taskio/status"
+                ),
+                output_blob_config=BlobConfig(
+                    uri="blob://devstoreaccount1/taskio/output"
+                ),
+                log_blob_config=BlobConfig(uri="blob://devstoreaccount1/taskio/log"),
+            ),
+        ),
+        task_input_blob_config=BlobConfig(uri="blob://devstoreaccount1/taskio/input"),
+        task_data=PreparedTaskData(
+            image="image",
+            runner_info={},
+        ),
+    )
+    run_settings = RunSettings(
+        notification_queue={
+            "account_url": "queue://devstoreaccount1/notifications",
+            "connection_string": "connstr",
+            "queue_name": "notifications",
+            "sas_token": "sas",
+        },
+        tables_account_url="table://devstoreaccount1/tables",
+        tables_account_name="devstoreaccount1",
+        tables_account_key="devstoreaccount1",
+        blob_account_url="blob://devstoreaccount1",
+        blob_account_name="devstoreaccount1",
+        blob_account_key="devstoreaccount1",
+        keyvault_url="https://devstoreaccount1.vault.azure.net/",
+        task_runner_type="local",
+        workflow_runner_type="local",
+        local_dev_endpoints_url="http://localhost:7071",
+        streaming_taskio_sp_client_id="test-client-id",
+        streaming_taskio_sp_client_secret="test-client-secret",
+        streaming_taskio_sp_tenant_id="test-tenant-id",
+        streaming_task_namespace=namespace.metadata.name,
+    )
+    # What do we want to assert here? What do we want to actually test?
+    # We're only testing submit here. We don't care whether the task actually runs.
+    pctasks.run.workflow.kubernetes.submit_task(prepared_task, run_settings)
+
+
+@pytest.mark.parametrize(["queue_url", "expected"], [
+    ("http://127.0.0.1:10001/devstoreaccount1/test-queue", "devstoreaccount1-test-queue"),
+    ("https://goeseuwest.blob.core.windows.net/goes-glm", "goeseuwest-goes-glm"),
+])
+def test_get_name_prefix(queue_url, expected):
+    result = pctasks.run.workflow.kubernetes.get_name_prefix(queue_url)
+    assert result == expected

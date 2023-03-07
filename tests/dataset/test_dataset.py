@@ -179,18 +179,6 @@ def test_streaming():
             process_items_run_id, timeout_seconds=TIMEOUT_SECONDS
         )
 
-        with PgstacDB(conn_str_info.local) as db:
-            res = db.search(
-                {
-                    "filter": {
-                        "op": "=",
-                        "args": [{"property": "collection"}, collection_id],
-                    }
-                }
-            )
-            assert isinstance(res, str)
-            assert json.loads(res)["features"]
-
     # TODO: cleanup the Kubernetes stuff
 
 

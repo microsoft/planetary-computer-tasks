@@ -90,7 +90,18 @@ def submit_task(
     )
 
 
-def get_name_prefix(task_definition: TaskDefinition) -> str:
+def get_queue_parts(queue_url) -> Tuple[str, str]:
+    pr = urllib.parse.urlparse(queue_url)
+    if pr.netloc == "127.0.0.1:10001":
+        # azurite
+        account_name, queue_name = pr.path.lstrip("/").split("/")
+    else:
+        account_name = pr.netloc.split(".")[0]
+        queue_name = pr.path.lstrip("/")
+    return account_name, queue_name
+
+
+def get_name_prefix(queue_url) -> str:
     """
     Get the prefix for a task. Used for Kubernetes resources.
 
@@ -102,11 +113,7 @@ def get_name_prefix(task_definition: TaskDefinition) -> str:
         The pctasks TaskDefintion. This *must* follow the streaming
         setup, so it should have a `queue_url` argument.
     """
-    args = task_definition.args
-    # XXX: We should be able to statically verify queue_url is a property
-    pr = urllib.parse.urlparse(args["queue_url"])
-    account_name = pr.netloc.split(".")[0]
-    queue_name = pr.path.lstrip("/")
+    account_name, queue_name = get_queue_parts(queue_url)
     return f"{account_name}-{queue_name}"
 
 
@@ -115,8 +122,7 @@ def get_deployment_name(task_definition: TaskDefinition) -> str:
     Get the Kubernetes Deployment name for a Task Definition.
     """
     # TODO: validate this gracefully
-    # assert isinstance(definition, StreamingCreateItemsConfig)
-    prefix = get_name_prefix(task_definition)
+    prefix = get_name_prefix(task_definition.args["queue_url"])
     return f"{prefix}-deployment"
 
 
@@ -124,15 +130,14 @@ def build_streaming_scaler(task_definition: TaskDefinition):
     """
     Build, but don't submit, the data for a KEDA ScaledObject.
     """
+    account_name, queue_name = get_queue_parts(task_definition.args["queue_url"])
+    prefix = get_name_prefix(task_definition.args["queue_url"])
     args = task_definition.args
-    pr = urllib.parse.urlparse(args["queue_url"])
-    account_name = pr.netloc.split(".")[0]
-    queue_name = pr.path.lstrip("/")
 
     scaler_data = {
         "apiVersion": "keda.sh/v1alpha1",
         "kind": "ScaledObject",
-        "metadata": {"name": f"{account_name}-{queue_name}-scaler"},
+        "metadata": {"name": f"{prefix}-scaler"},
         "spec": {
             "scaleTargetRef": {"name": get_deployment_name(task_definition)},
             "minReplicaCount": args["min_replica_count"],
