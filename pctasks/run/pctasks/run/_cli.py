@@ -72,8 +72,6 @@ def remote_cmd(
             workflow_args[split_args[0]] = split_args[1]
         submit_message.args = {**(submit_message.args or {}), **workflow_args}
 
-    is_streaming = submit_message.workflow.definition.is_streaming
-
     if executor_config_encoded:
         executor_config = WorkflowExecutorConfig.from_yaml(
             b64decode(executor_config_encoded.encode("utf-8")).decode("utf-8")
@@ -86,7 +84,7 @@ def remote_cmd(
             run_settings=run_settings, cosmosdb_settings=cosmosdb_settings
         )
 
-    if is_streaming:
+    if submit_message.workflow.definition.is_streaming:
         runner = StreamingWorkflowExecutor(executor_config)
     else:
         runner = RemoteWorkflowExecutor(executor_config)

@@ -80,6 +80,9 @@ def submit_task(
     logger.info("Ensuring deployment %s", deployment.metadata.name)
     create_or_update(deployment, apps_api, namespace=namespace)
     logger.info("Ensuring KEDA scaler %s", scaler["metadata"]["name"])
+    # XXX: We should verify that there's only one scaledobject per queue.
+    # We don't want to accidentally have two things processing the same queue.
+    # This should really be done at workflow submission time.
     create_or_update(
         scaler,
         objs_api,
