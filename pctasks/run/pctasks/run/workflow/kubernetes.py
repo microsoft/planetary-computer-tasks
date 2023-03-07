@@ -32,7 +32,6 @@ from pctasks.task.constants import (
 logger = logging.getLogger(__name__)
 
 
-# def submit_workflow(workflow_submit_message: WorkflowSubmitMessage, namespace="tasks"):
 def submit_task(
     prepared_task: PreparedTaskSubmitMessage,
     run_settings: RunSettings,

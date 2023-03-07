@@ -22,7 +22,6 @@ from pctasks.run.models import (
 from pctasks.run.settings import RunSettings, WorkflowExecutorConfig
 from pctasks.run.workflow.executor.streaming import StreamingWorkflowExecutor
 
-
 TEST_NAMESPACE = "pctasks-test"
 
 
@@ -95,7 +94,6 @@ def test_build_streaming_scaler(task_definition):
     assert (
         result["spec"]["triggers"][0]["metadata"]["accountName"] == "devstoreaccount1"
     )
-
 
 
 @pytest.fixture
@@ -279,6 +277,6 @@ def test_execute_workflow(namespace, task_definition, run_settings, monkeypatch)
     message = WorkflowSubmitMessage(
         run_id="test", workflow=Workflow(id="test", definition=definition)
     )
-    
+
     # Here's the test.
     executor.execute_workflow(message)
