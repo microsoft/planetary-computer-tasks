@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Optional
 
 from pctasks.core.models.workflow import WorkflowSubmitMessage
 from pctasks.run.models import TaskSubmitMessage
@@ -15,15 +15,23 @@ class StreamingWorkflowExecutor:
     def __init__(self, settings: Optional[WorkflowExecutorConfig] = None) -> None:
         self.config = settings or WorkflowExecutorConfig.get()
 
+    def __enter__(self) -> "StreamingWorkflowExecutor":
+        return self
+
+    def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None:
+        pass
+
     def execute_workflow(
         self,
         submit_message: WorkflowSubmitMessage,
     ) -> None:
-        """'Execute' a workflow by submitting the Kube"""
+        """
+        'Execute' a workflow by submitting a deployment and scaler to Kubernetes.
+        """
 
         workflow_def = submit_message.workflow.definition
 
-        # Get the single task definition. TODO
+        # Get the single task definition.
         job_def = list(workflow_def.jobs.values())[0]
         task_def = job_def.tasks[0]
 

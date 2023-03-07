@@ -171,8 +171,7 @@ async def submit_workflow(
         trigger_event=submit_request.trigger_event,
     )
 
-    # get_streaming_workflow_runner()
-    workflow_runner = get_workflow_runner()  # is it streaming or not.
+    workflow_runner = get_workflow_runner()
 
     async with AsyncWorkflowRunsContainer(WorkflowRunRecord) as workflow_runs:
         await workflow_runs.put(WorkflowRunRecord.from_submit_message(submit_msg))

@@ -10,14 +10,14 @@ from azure.storage.queue import (
 
 from pctasks.core.models.config import QueueConnStrConfig
 from pctasks.core.queues import QueueService
-from pctasks.dev.constants import AZURITE_ACCOUNT_KEY, get_azurite_connection_string
+from pctasks.dev.constants import get_azurite_connection_string
 
 
 class TempQueue:
     def __init__(
         self,
-        message_encode_policy=BinaryBase64EncodePolicy(),
-        message_decode_policy=BinaryBase64DecodePolicy(),
+        message_encode_policy: BinaryBase64EncodePolicy=BinaryBase64EncodePolicy(),
+        message_decode_policy: BinaryBase64DecodePolicy=BinaryBase64DecodePolicy(),
         suffix: Optional[str] = None,
     ) -> None:
         suffix = suffix or uuid1().hex[:5]

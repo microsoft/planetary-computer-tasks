@@ -1,5 +1,5 @@
 from base64 import b64decode
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 from uuid import uuid4
 
 import click
@@ -58,20 +58,6 @@ def remote_cmd(
     workflow_yaml = storage.read_text(path)
     submit_message = WorkflowSubmitMessage.from_yaml(workflow_yaml)
 
-    if new_id:
-        submit_message.run_id = uuid4().hex
-
-    # TODO: Do we need to pass in args at run time vs workflow submit msg?
-    workflow_args: Optional[Dict[str, Any]] = None
-    if args:
-        workflow_args = {}
-        for a in args:
-            split_args = a.split("=")
-            if not len(split_args) == 2:
-                raise click.UsageError(f"Invalid argument: {a}")
-            workflow_args[split_args[0]] = split_args[1]
-        submit_message.args = {**(submit_message.args or {}), **workflow_args}
-
     if executor_config_encoded:
         executor_config = WorkflowExecutorConfig.from_yaml(
             b64decode(executor_config_encoded.encode("utf-8")).decode("utf-8")
@@ -84,15 +70,31 @@ def remote_cmd(
             run_settings=run_settings, cosmosdb_settings=cosmosdb_settings
         )
 
-    if submit_message.workflow.definition.is_streaming:
-        runner = StreamingWorkflowExecutor(executor_config)
-    else:
-        runner = RemoteWorkflowExecutor(executor_config)
+    # TODO: Do we need to pass in args at run time vs workflow submit msg?
+    workflow_args: Optional[Dict[str, Any]] = None
+    if args:
+        workflow_args = {}
+        for a in args:
+            split_args = a.split("=")
+            if not len(split_args) == 2:
+                raise click.UsageError(f"Invalid argument: {a}")
+            workflow_args[split_args[0]] = split_args[1]
+        submit_message.args = {**(submit_message.args or {}), **workflow_args}
 
-    if executor_config.cosmosdb_settings.is_cosmosdb_emulator():
-        # Prevent workflow run logs from being overrun by
-        # SSL warnings if using the Cosmos DB emulator
-        with ignore_ssl_warnings():
-            runner.execute_workflow(submit_message)
+    if new_id:
+        submit_message.run_id = uuid4().hex
+
+    executor: Union[StreamingWorkflowExecutor, RemoteWorkflowExecutor]
+    if submit_message.workflow.definition.is_streaming:
+        executor = StreamingWorkflowExecutor(executor_config)
     else:
-        runner.execute_workflow(submit_message)
+        executor = RemoteWorkflowExecutor(executor_config)
+
+    with executor as runner:
+        if executor_config.cosmosdb_settings.is_cosmosdb_emulator():
+            # Prevent workflow run logs from being overrun by
+            # SSL warnings if using the Cosmos DB emulator
+            with ignore_ssl_warnings():
+                runner.execute_workflow(submit_message)
+        else:
+            runner.execute_workflow(submit_message)

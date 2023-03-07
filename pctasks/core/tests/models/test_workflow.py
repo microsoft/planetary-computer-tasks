@@ -253,6 +253,7 @@ def test_validate_streaming_workflow():
         )
 
     job.tasks.pop()
+    # Note: this test is sensitive to the order we validate these properties.
     args = [
         ("queue_url", "https://test.queue.core.windows.net/test"),
         ("visibility_timeout", 100),

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import urllib.parse
-from typing import Any, Dict, Union
+from typing import Any, Dict, Tuple, Union
 
 import kubernetes.client
 import kubernetes.config
@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 def submit_task(
     prepared_task: PreparedTaskSubmitMessage,
     run_settings: RunSettings,
-):
+) -> None:
     """
     Submit a streaming workflow for execution with Kubernetes.
 
@@ -92,7 +92,7 @@ def submit_task(
     )
 
 
-def get_queue_parts(queue_url) -> Tuple[str, str]:
+def get_queue_parts(queue_url: str) -> Tuple[str, str]:
     pr = urllib.parse.urlparse(queue_url)
     if pr.netloc == "127.0.0.1:10001":
         # azurite
@@ -103,7 +103,7 @@ def get_queue_parts(queue_url) -> Tuple[str, str]:
     return account_name, queue_name
 
 
-def get_name_prefix(queue_url) -> str:
+def get_name_prefix(queue_url: str) -> str:
     """
     Get the prefix for a task. Used for Kubernetes resources.
 
@@ -128,7 +128,7 @@ def get_deployment_name(task_definition: TaskDefinition) -> str:
     return f"{prefix}-deployment"
 
 
-def build_streaming_scaler(task_definition: TaskDefinition):
+def build_streaming_scaler(task_definition: TaskDefinition) -> dict[str, Any]:
     """
     Build, but don't submit, the data for a KEDA ScaledObject.
     """
@@ -268,81 +268,3 @@ def create_or_update(
                 raise
     else:
         raise TypeError(f"Unsupported type: {type(object)}")
-
-
-# def prepare_task(
-#     task: TaskDefinition,
-#     run_id: str,
-#     job_id: str,
-#     account_name: str = "pctasksteststaging",  # TODO: run settings
-# ) -> str:
-#     """
-#     Prepare a task for remote execution.
-
-#     Parameters
-#     ----------
-#     task : TaskDefinition
-#         A Task Definition. Note that
-
-#         - The `code` attribute should have a `src` that's in `blob://` format.
-#     run_id, job_id : str
-#         The IDs for the run and job that this task is part of.
-
-#     Returns
-#     -------
-#     input_uri : str
-#         The URI of the task's input data. For blob storage, this will be
-#         like `blob://{account_name}/taskio/{run_id}/0/{task_id}/input`.
-#         The contents at that blob will be base64-encoded JSON.
-#     """
-#     task_id = task.id
-
-#     status_uri = f"blob://{account_name}/taskio/status/{run_id}/0/{task_id}/status"
-#     output_uri = f"blob://{account_name}/taskio/run/{run_id}/0/{task_id}/output"
-#     log_uri = f"blob://{account_name}/taskio/status/{run_id}/0/{task_id}/task-log.txt"
-#     input_uri = f"blob://{account_name}/taskio/run/{run_id}/{job_id}/0/{task_id}/input"
-
-#     taskio = {
-#         "args": task.args,
-#         "config": {
-#             "image": task.image,
-#             "run_id": run_id,
-#             "job_id": job_id,
-#             "partition_id": "0",
-#             "task_id": task.id,
-#             "task": task.task,
-#             "status_blob_config": {
-#                 "account_url": f"https://{account_name}.blob.core.windows.net/",
-#                 "uri": status_uri,
-#             },
-#             "output_blob_config": {
-#                 "account_url": f"https://{account_name}.blob.core.windows.net/",
-#                 "uri": output_uri,
-#             },
-#             "log_blob_config": {
-#                 "account_url": f"https://{account_name}.blob.core.windows.net/",
-#                 "uri": log_uri,
-#             },
-#         },
-#     }
-
-#     if task.code:
-#         # XXX: the account_name stuff here isn't right. Already in the src maybe.
-#         taskio["config"]["code_src_blob_config"] = {
-#             "account_url": f"https://{account_name}.blob.core.windows.net/",
-#             "uri": task.code.src,
-#         }
-
-#     credential = azure.identity.DefaultAzureCredential()
-#     cc = azure.storage.blob.ContainerClient(
-#         f"https://{account_name}.blob.core.windows.net", "taskio", credential=credential
-#     )
-
-#     _, path = input_uri.split("/taskio/", 1)
-
-#     logger.info("Uploading task input to %s", input_uri)
-#     with cc.get_blob_client(path) as bc:
-#         data = base64.b64encode(json.dumps(taskio).encode())
-#         bc.upload_blob(data, overwrite=True)
-
-#     return input_uri

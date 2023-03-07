@@ -119,8 +119,9 @@ class WorkflowDefinition(PCBaseModel):
         return v
 
     @validator("is_streaming")
-    def _validate_is_streaming(cls, v: bool, values, **kwargs) -> bool:
-        # TODO: Validate that this is a valid streaming workflow.
+    def _validate_is_streaming(
+        cls, v: bool, values: Dict[str, Any], **kwargs: Dict[str, Any]
+    ) -> bool:
         """
         A streaming workflow is similar to other pctasks workflows, but requires a few
         additional properties on the streaming tasks within the workflow:
@@ -146,14 +147,16 @@ class WorkflowDefinition(PCBaseModel):
             n_jobs = len(jobs)
             if n_jobs != 1:
                 raise ValueError(
-                    f"Streaming workflows must have exactly one job. Got {n_jobs} instead."
+                    f"Streaming workflows must have exactly one job. Got "
+                    f"{n_jobs} instead."
                 )
             job = list(jobs.values())[0]
 
             n_tasks = len(job.tasks)
             if n_tasks != 1:
                 raise ValueError(
-                    f"Streaming workflows must have exactly one task. Got {n_tasks} instead."
+                    f"Streaming workflows must have exactly one task. Got "
+                    f"{n_tasks} instead."
                 )
 
             task = job.tasks[0]
@@ -167,7 +170,8 @@ class WorkflowDefinition(PCBaseModel):
             ]:
                 if key not in task.args:
                     raise ValueError(
-                        f"Streaming workflows must define the '{key}' property on the task."
+                        f"Streaming workflows must define the '{key}' property "
+                        f"on the task."
                     )
 
         return v

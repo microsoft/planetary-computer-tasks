@@ -28,20 +28,23 @@ TEST_NAMESPACE = "pctasks-test"
 @pytest.fixture
 def task_definition():
     """A task definition for a streaming workflow."""
+    image = "pccomponentstest.azurecr.io/pctasks-goes-glm-streaming:2023.2.16.7"
+    cosmos = "https://pclowlatencytesttom.documents.azure.com:443/"
+    function = "pctasks.dataset.streaming.create_item_from_item_uri"
     return pctasks.core.models.task.TaskDefinition(
         **{
             "id": "create-items",
-            "image": "pccomponentstest.azurecr.io/pctasks-goes-glm-streaming:2023.2.16.7",
+            "image": image,
             "code": {"src": "blob://pctasksteststaging/code/test-tom/goes_glm.py"},
             "task": "pctasks.dataset.streaming:StreamingCreateItemsTask",
             "args": {
                 "queue_url": "http://127.0.0.1:10001/devstoreaccount1/test",
                 "visibility_timeout": 30,
                 "options": {"skip_validation": False},
-                "cosmos_endpoint": "https://pclowlatencytesttom.documents.azure.com:443/",
+                "cosmos_endpoint": cosmos,
                 "db_name": "lowlatencydb",
                 "container_name": "items",
-                "create_items_function": "pctasks.dataset.streaming.create_item_from_item_uri",
+                "create_items_function": function,
                 "min_replica_count": 0,
                 "max_replica_count": 10,
                 "polling_interval": 30,
@@ -56,6 +59,10 @@ def task_definition():
 @pytest.fixture
 def run_settings():
     """Run settings, using azurite for storage."""
+    key = (
+        "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq"
+        "/K1SZFPTOtr/KBHBeksoGMGw=="
+    )
     return RunSettings(
         notification_queue={
             "account_url": "queue://devstoreaccount1/notifications",
@@ -68,7 +75,7 @@ def run_settings():
         tables_account_key="devstoreaccount1",
         blob_account_url="http://127.0.0.1:10000",
         blob_account_name="devstoreaccount1",
-        blob_account_key="Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==",
+        blob_account_key=key,
         keyvault_url="https://devstoreaccount1.vault.azure.net/",
         task_runner_type="local",
         workflow_runner_type="local",
@@ -106,7 +113,8 @@ def namespace():
     except kubernetes.client.rest.ApiException as e:
         if e.status != 409:
             raise RuntimeError(
-                "Namespace pctasks-test already exists. Manually delete the namespace to run this test."
+                "Namespace pctasks-test already exists. Manually delete the "
+                "namespace to run this test."
             ) from e
 
     connstr = base64.b64encode(
