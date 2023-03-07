@@ -22,7 +22,6 @@ from pctasks.run.models import (
 from pctasks.run.settings import RunSettings, WorkflowExecutorConfig
 from pctasks.run.workflow.executor.streaming import StreamingWorkflowExecutor
 
-
 TEST_NAMESPACE = "pctasks-test"
 
 

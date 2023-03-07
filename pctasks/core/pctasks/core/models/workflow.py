@@ -38,7 +38,7 @@ class TriggerDefinition(PCBaseModel):
 
 class JobDefinition(PCBaseModel):
     id: Optional[str] = None
-    tasks: List[TaskDefinition]  # TODO: Could this handle a streaming task definition?
+    tasks: List[TaskDefinition]
 
     foreach: Optional[ForeachConfig] = None
 
@@ -119,7 +119,7 @@ class WorkflowDefinition(PCBaseModel):
         return v
 
     @validator("is_streaming")
-    def _validate_is_streaming(cls, v: bool) -> bool:
+    def _validate_is_streaming(cls, v: bool, values, **kwargs) -> bool:
         # TODO: Validate that this is a valid streaming workflow.
         """
         A streaming workflow is similar to other pctasks workflows, but requires a few
@@ -141,6 +141,34 @@ class WorkflowDefinition(PCBaseModel):
         to run indefinitely. They should continuously process messages from a queue,
         and leave starting, stopping, and scaling to the pctasks framework.
         """
+        if v:
+            jobs = values["jobs"]
+            n_jobs = len(jobs)
+            if n_jobs != 1:
+                raise ValueError(
+                    f"Streaming workflows must have exactly one job. Got {n_jobs} instead."
+                )
+            job = list(jobs.values())[0]
+
+            n_tasks = len(job.tasks)
+            if n_tasks != 1:
+                raise ValueError(
+                    f"Streaming workflows must have exactly one task. Got {n_tasks} instead."
+                )
+
+            task = job.tasks[0]
+            for key in [
+                "queue_url",
+                "visibility_timeout",
+                "min_replica_count",
+                "max_replica_count",
+                "polling_interval",
+                "trigger_queue_length",
+            ]:
+                if key not in task.args:
+                    raise ValueError(
+                        f"Streaming workflows must define the '{key}' property on the task."
+                    )
 
         return v
 

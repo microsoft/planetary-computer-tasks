@@ -68,7 +68,6 @@ class TaskRunConfig(PCBaseModel):
     output_blob_config: BlobConfig
     log_blob_config: BlobConfig
     event_logger_app_insights_key: Optional[str] = None
-
     schema_version: str = Field(default=TASK_RUN_CONFIG_SCHEMA_VERSION, const=True)
 
     def get_run_record_id(self) -> str:

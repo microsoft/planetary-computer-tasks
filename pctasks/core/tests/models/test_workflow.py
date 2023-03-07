@@ -226,3 +226,56 @@ def test_job_get_dependencies():
         .get_dependencies()
         == ["job1", "job2"]
     )
+
+
+def test_validate_streaming_workflow():
+    job = JobDefinition(
+        tasks=[
+            TaskDefinition(id="task-0", task="task", image="na"),
+            TaskDefinition(id="task-1", task="task", image="na"),
+        ]
+    )
+
+    with pytest.raises(ValueError, match="exactly one job."):
+        WorkflowDefinition(
+            name="name",
+            jobs={"a": job, "b": job},
+            dataset="test",
+            is_streaming=True,
+        )
+
+    with pytest.raises(ValueError, match="exactly one task."):
+        WorkflowDefinition(
+            name="name",
+            jobs={"a": job},
+            dataset="test",
+            is_streaming=True,
+        )
+
+    job.tasks.pop()
+    args = [
+        ("queue_url", "https://test.queue.core.windows.net/test"),
+        ("visibility_timeout", 100),
+        ("min_replica_count", 0),
+        ("max_replica_count", 10),
+        ("polling_interval", 30),
+        ("trigger_queue_length", 100),
+    ]
+
+    for k, v in args:
+        with pytest.raises(ValueError, match=k):
+            WorkflowDefinition(
+                name="name",
+                jobs={"a": job},
+                dataset="test",
+                is_streaming=True,
+            )
+        job.tasks[0].args[k] = v
+
+    # and now we have a valid one
+    WorkflowDefinition(
+        name="name",
+        jobs={"a": job},
+        dataset="test",
+        is_streaming=True,
+    )

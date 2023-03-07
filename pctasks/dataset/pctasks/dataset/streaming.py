@@ -401,51 +401,6 @@ class StreamingCreateItemsTask(
                     container_proxy.upsert_item(event)
                     logger.info("Persisted event id=%s", event["id"])
 
-    # def run(self, input: StreamingCreateItemsInput, context: TaskContext) -> NoOutput:
-    #     create_items_function = input.create_items_function
-    #     if isinstance(create_items_function, str):
-    #         logger.info("Loading create_items_function")
-    #         entrypoint = importlib.metadata.EntryPoint("", create_items_function, "")
-    #         create_items_function = entrypoint.load()
-    #     assert callable(create_items_function)
-
-    #     logger.info("Starting task %s", type(self).__name__)
-
-    #     logger.info("Getting azure credential")
-    #     credential = azure.identity.DefaultAzureCredential()
-    #     logger.info("Got azure credential")
-
-    #     qc = azure.storage.queue.QueueClient.from_queue_url(
-    #         input.queue_url, credential=credential
-    #     )
-    #     logger.info("Getting cosmos container client")
-    #     db = (
-    #         azure.cosmos.CosmosClient(input.cosmos_endpoint, credential)
-    #         .get_database_client(input.db_name)
-    #         .get_container_client(input.container_name)
-    #     )
-    #     logger.info("Got cosmos container client")
-
-    #     while True:
-    #         # Run forever, letting KEDA scale us down if necessary
-    #         for message in qc.receive_messages(
-    #             visibility_timeout=input.visibility_timeout
-    #         ):
-    #             self.process_message(
-    #                 message=message,
-    #                 container_proxy=db,
-    #                 queue_client=qc,
-    #                 create_items_function=create_items_function,
-    #                 storage_factory=context.storage_factory,
-    #                 collection_id=input.collection_id,
-    #             )
-    #         # We've drained the queue. Now we'll pause slightly before checking again.
-    #         # TODO: some kind of exponential backoff here. From 0 - 5-10 seconds.
-    #         # I think after ~30 seconds of sleeping KEDA will stop this task.
-    #         n = 5
-    #         logger.info("Sleeping for %s seconds", n)
-    #         time.sleep(n)
-
 
 class StreamingIngestItemsInput(StreamingTaskInput):
     collection_id: str
