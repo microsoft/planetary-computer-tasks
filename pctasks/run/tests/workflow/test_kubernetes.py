@@ -1,4 +1,10 @@
 import base64
+
+import kubernetes
+import pytest
+
+import pctasks.core.models.task
+import pctasks.run.workflow.kubernetes
 from pctasks.core.models.config import BlobConfig
 from pctasks.run.models import (
     PreparedTaskData,
@@ -6,12 +12,6 @@ from pctasks.run.models import (
     TaskSubmitMessage,
 )
 from pctasks.run.settings import RunSettings
-import pytest
-
-import pctasks.core.models.task
-import pctasks.run.workflow.kubernetes
-
-import kubernetes
 
 
 @pytest.fixture
@@ -72,13 +72,17 @@ def test_build_streaming_deployment(task_definition):
 def test_build_streaming_scaler(task_definition):
     result = pctasks.run.workflow.kubernetes.build_streaming_scaler(task_definition)
     assert result["metadata"]["name"] == "devstoreaccount1-test-scaler"
-    assert result["spec"]["scaleTargetRef"]["name"] == "devstoreaccount1-test-deployment"
+    assert (
+        result["spec"]["scaleTargetRef"]["name"] == "devstoreaccount1-test-deployment"
+    )
     assert result["spec"]["minReplicaCount"] == 0
     assert result["spec"]["maxReplicaCount"] == 10
     assert result["spec"]["pollingInterval"] == 30
     assert result["spec"]["triggers"][0]["metadata"]["queueName"] == "test"
     assert result["spec"]["triggers"][0]["metadata"]["queueLength"] == "100"
-    assert result["spec"]["triggers"][0]["metadata"]["accountName"] == "devstoreaccount1"
+    assert (
+        result["spec"]["triggers"][0]["metadata"]["accountName"] == "devstoreaccount1"
+    )
 
 
 @pytest.fixture
@@ -111,7 +115,13 @@ def namespace():
     ).decode()
 
     v1.create_namespaced_secret(
-        namespace=ns.metadata.name, body=client.V1Secret(data={"ConnectionString": connstr}, metadata=client.V1ObjectMeta(name="secrets-storage-queue-connection-string"))
+        namespace=ns.metadata.name,
+        body=client.V1Secret(
+            data={"ConnectionString": connstr},
+            metadata=client.V1ObjectMeta(
+                name="secrets-storage-queue-connection-string"
+            ),
+        ),
     )
     body = {
         "apiVersion": "keda.sh/v1alpha1",
@@ -128,7 +138,11 @@ def namespace():
         },
     }
     objects.create_namespaced_custom_object(
-        body=body, namespace=ns.metadata.name, group="keda.sh", version="v1alpha1", plural="triggerauthentications"
+        body=body,
+        namespace=ns.metadata.name,
+        group="keda.sh",
+        version="v1alpha1",
+        plural="triggerauthentications",
     )
 
     yield ns
@@ -169,6 +183,7 @@ def test_submit_task(namespace, task_definition):
             runner_info={},
         ),
     )
+    # All of these RunSettings are nonsense. We aren't using them for this test.
     run_settings = RunSettings(
         notification_queue={
             "account_url": "queue://devstoreaccount1/notifications",
@@ -196,10 +211,16 @@ def test_submit_task(namespace, task_definition):
     pctasks.run.workflow.kubernetes.submit_task(prepared_task, run_settings)
 
 
-@pytest.mark.parametrize(["queue_url", "expected"], [
-    ("http://127.0.0.1:10001/devstoreaccount1/test-queue", "devstoreaccount1-test-queue"),
-    ("https://goeseuwest.blob.core.windows.net/goes-glm", "goeseuwest-goes-glm"),
-])
+@pytest.mark.parametrize(
+    ["queue_url", "expected"],
+    [
+        (
+            "http://127.0.0.1:10001/devstoreaccount1/test-queue",
+            "devstoreaccount1-test-queue",
+        ),
+        ("https://goeseuwest.blob.core.windows.net/goes-glm", "goeseuwest-goes-glm"),
+    ],
+)
 def test_get_name_prefix(queue_url, expected):
     result = pctasks.run.workflow.kubernetes.get_name_prefix(queue_url)
     assert result == expected

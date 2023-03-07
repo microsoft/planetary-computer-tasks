@@ -25,7 +25,8 @@ class CreateItems:
             properties={},
         )
         return [result]
- 
+
+
 def test_streaming_create_items_task():
     task = streaming.StreamingCreateItemsTask()
     create_items = CreateItems()

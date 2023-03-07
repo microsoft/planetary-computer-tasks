@@ -108,6 +108,7 @@ class StreamingTaskInput(PCBaseModel):
 
         This is primarily useful for testing.
     """
+
     queue_url: str
     queue_credential: Optional[str] = None
     visibility_timeout: int
