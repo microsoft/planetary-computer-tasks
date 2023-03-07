@@ -207,6 +207,7 @@ class BlobStorage(Storage):
         # at localhost or 127.0.0.1 (e.g. in a Docker container).
         is_azurite = False
         azurite_sa = os.getenv(AZURITE_STORAGE_ACCOUNT_ENV_VAR)
+
         if azurite_sa and azurite_sa == storage_account_name:
             host = os.getenv(AZURITE_HOST_ENV_VAR)
             port = os.getenv(AZURITE_PORT_ENV_VAR)

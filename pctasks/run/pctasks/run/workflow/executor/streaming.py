@@ -13,8 +13,7 @@ class StreamingWorkflowExecutor:
     """
 
     def __init__(self, settings: Optional[WorkflowExecutorConfig] = None) -> None:
-        settings = settings or WorkflowExecutorConfig.get()
-        self.config = settings
+        self.config = settings or WorkflowExecutorConfig.get()
 
     def execute_workflow(
         self,
@@ -59,6 +58,7 @@ class StreamingWorkflowExecutor:
             run_id,
             task_data=task_data,
             settings=self.config.run_settings,
+            generate_sas_tokens=False,
         )
 
         kubernetes.submit_task(prepared_task, self.config.run_settings)
