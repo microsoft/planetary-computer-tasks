@@ -141,7 +141,7 @@ output "api_management_name" {
 # Application Insights
 
 output "instrumentation_key" {
-  value = azurerm_application_insights.pctasks_application_insights.instrumentation_key
+  value = azurerm_application_insights.pctasks.instrumentation_key
 }
 
 ## PCTasks Server
