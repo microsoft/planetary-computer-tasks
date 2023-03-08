@@ -34,8 +34,6 @@ python:
     - method: pip
       path: "pctasks/router"
     - method: pip
-      path: "pctasks/operations"
-    - method: pip
       path: "pctasks/server"
     - method: pip
       path: "pctasks/dev"
