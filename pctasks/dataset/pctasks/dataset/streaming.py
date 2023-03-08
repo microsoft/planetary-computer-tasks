@@ -15,6 +15,7 @@ import azure.core.credentials
 import azure.cosmos
 import azure.identity
 import azure.storage.queue
+import pydantic
 import pystac
 
 from pctasks.core.models.base import PCBaseModel
@@ -44,9 +45,14 @@ def time_factory() -> str:
 
 
 def transform_url(event_url: str) -> str:
-    parsed = urllib.parse.urlparse(event_url)
-    account_name = parsed.netloc.split(".")[0]
-    return f"blob://{account_name}{parsed.path}"
+    # Why is this needed?
+    # To transform from EventGrid / Blob style HTTP urls to
+    # pctask's blob:// style urls.
+    if event_url.startswith("http"):
+        parsed = urllib.parse.urlparse(event_url)
+        account_name = parsed.netloc.split(".")[0]
+        return f"blob://{account_name}{parsed.path}"
+    return event_url
 
 
 @dataclasses.dataclass
@@ -90,6 +96,11 @@ class StreamingTaskInput(PCBaseModel):
     queue_url: str
         The full URL to the queue this task is processing. This will typically
         be like ``https://<account-name>.queue.core.windows.net/<queue-name>``
+    queue_credential: string or dictionary, optional.
+        This can be used to authentication with the storage queue. By default,
+        you should rely on managed identities and DefaultAzureCredential.
+        For testing with azurite, you can provide a dictionary with
+        ``account_name`` and ``account_key``.
     visibility_timeout: int
         The number of seconds to before the queue service assumes processing
         fails and makes the message visible again. This should be some multiple
@@ -107,16 +118,21 @@ class StreamingTaskInput(PCBaseModel):
         forever, relying on some external system (like KEDA) to stop processing.
 
         This is primarily useful for testing.
+
+    extra_env: dict, optional
+        Additional environment variables to set on the pod. This is primarily
+        useful for testing, setting the ``AZURITE_HOST`` for example.
     """
 
     queue_url: str
-    queue_credential: Optional[str] = None
+    queue_credential: Optional[Union[str, Dict[str, str]]] = None
     visibility_timeout: int
     min_replica_count: int = 0
     max_replica_count: int = 100
     polling_interval: int = 30
     trigger_queue_length: int = 100
     message_limit: Optional[int] = None
+    extra_env: Dict[str, str] = pydantic.Field(default_factory=dict)
 
     class Config:
         extra = "forbid"
@@ -143,6 +159,8 @@ class StreamingTaskMixin:
         return {}
 
     def run(self, input: StreamingTaskInput, context: TaskContext) -> NoOutput:
+        # queue_credential should only be used for testing with azurite.
+        # Otherwise, use managed identities.
         credential = input.queue_credential or azure.identity.DefaultAzureCredential()
         qc = azure.storage.queue.QueueClient.from_queue_url(
             input.queue_url, credential=credential
@@ -150,6 +168,8 @@ class StreamingTaskMixin:
         extra_options = self.get_extra_options(input, context)
         message_count = 0
         max_messages = input.message_limit or math.inf
+
+        logger.info("Processing messages from queue=%s", input.queue_url)
 
         while message_count < max_messages:
             # mypy upgrade
@@ -178,7 +198,7 @@ class StreamingTaskMixin:
             # We've drained the queue. Now we'll pause slightly before checking again.
             # TODO: some kind of exponential backoff here. From 0 - 5-10 seconds.
             n = 5
-            logger.debug("Sleeping for %s seconds", n)
+            logger.info("Sleeping for %s seconds", n)
             time.sleep(n)
 
         logger.info("Finishing run")
@@ -340,7 +360,8 @@ class StreamingCreateItemsTask(
         collection_id: str,
         skip_validation: bool = False,
     ) -> Union[List[pystac.Item], WaitTaskResult]:
-        url = transform_url(message_data["url"])
+        # url = transform_url(message_data["url"])
+        url = message_data["url"]
         items = create_items_function(url, storage_factory)
 
         if collection_id:
@@ -366,10 +387,18 @@ class StreamingCreateItemsTask(
     ) -> None:
         logger.info("Processing message id=%s", message.id)
         parsed_message = json.loads(message.content)
+        if not callable(input.create_items_function):
+            # Why isn't this already done?
+            logger.info("Loading create_items_functio")
+            entrypoint = importlib.metadata.EntryPoint(
+                "", input.create_items_function, ""
+            )
+            input.create_items_function = entrypoint.load()
         assert callable(
             input.create_items_function
         )  # convince mypy that this is the function.
         create_items_function = input.create_items_function
+
         try:
             items = self.create_items(
                 parsed_message["data"],
@@ -419,7 +448,7 @@ class StreamingIngestItemsTask(
 
         return {"pgstac": PgSTAC.from_env()}
 
-    # TODO: figure out a safe way to get these extra arguments in here.
+    # TODO: figure out a typesafe way to get these extra arguments in here.
     def process_message(  # type: ignore
         self,
         message: azure.storage.queue.QueueMessage,
@@ -464,3 +493,9 @@ def create_item_from_item_uri(
     item = pystac.Item.from_dict(data)
 
     return [item]
+
+
+def create_item_from_message(asset_uri, storage_factory):
+    # Just shoving the STAC item in the "url" field of the message.
+    # data = json.loads(asset_uri)
+    return [pystac.Item.from_dict(asset_uri)]

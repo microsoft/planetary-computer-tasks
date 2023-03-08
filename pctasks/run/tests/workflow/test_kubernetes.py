@@ -171,6 +171,14 @@ def test_get_deployment_name(task_definition):
     assert result == "devstoreaccount1-test-deployment"
 
 
+def test_get_deployment_name_azurite(task_definition):
+    task_definition.args[
+        "queue_url"
+    ] = "http://localhost:10001/devstoreaccount1/test-queue-stream"
+    result = pctasks.run.workflow.kubernetes.get_deployment_name(task_definition)
+    assert result == "localhost.10001-devstoreaccount1.test-queue-stream-deployment"
+
+
 def test_build_streaming_deployment(task_definition):
     result = pctasks.run.workflow.kubernetes.build_streaming_deployment(
         task_definition,
@@ -252,6 +260,10 @@ def test_submit_task(namespace, task_definition, run_settings):
     [
         (
             "http://127.0.0.1:10001/devstoreaccount1/test-queue",
+            "devstoreaccount1-test-queue",
+        ),
+        (
+            "http://azurite:10001/devstoreaccount1/test-queue",
             "devstoreaccount1-test-queue",
         ),
         ("https://goeseuwest.blob.core.windows.net/goes-glm", "goeseuwest-goes-glm"),

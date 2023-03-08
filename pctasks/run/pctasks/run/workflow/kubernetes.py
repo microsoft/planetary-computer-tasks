@@ -94,7 +94,7 @@ def submit_task(
 
 def get_queue_parts(queue_url: str) -> Tuple[str, str]:
     pr = urllib.parse.urlparse(queue_url)
-    if pr.netloc == "127.0.0.1:10001":
+    if pr.netloc in ("127.0.0.1:10001", "azurite:10001"):
         # azurite
         account_name, queue_name = pr.path.lstrip("/").split("/")
     else:
@@ -116,6 +116,9 @@ def get_name_prefix(queue_url: str) -> str:
         setup, so it should have a `queue_url` argument.
     """
     account_name, queue_name = get_queue_parts(queue_url)
+    # mostly for azurite
+    account_name = account_name.replace(":", ".").replace("/", ".")
+    queue_name = queue_name.replace(":", ".").replace("/", ".")
     return f"{account_name}-{queue_name}"
 
 
@@ -194,20 +197,24 @@ def build_streaming_deployment(
         }.items()
     ]
 
+    for k, v in task_definition.args.get("extra_env", {}).items():
+        env.append(V1EnvVar(name=k, value=str(v)))
+
     container = V1Container(
         name="run-workflow",
         image=task_definition.image,
-        image_pull_policy="IfNotPresent",
+        image_pull_policy="Always",
         command=["pctasks"],
         args=["task", "run", input_uri],
         env=env,
     )
     common_labels = {"node_group": "pc-lowlatency"}
 
+    # TODO: enable node_selector. Disabled for testing in kind.
     pod_spec = V1PodSpec(
         service_account_name="default",
         containers=[container],
-        node_selector=common_labels,
+        # node_selector=common_labels,
     )
     pod_template_spec = V1PodTemplateSpec(
         metadata=V1ObjectMeta(
