@@ -12,16 +12,17 @@ jobs:
       image: localhost:5001/pctasks-task-streaming-base:latest
       task: pctasks.task.streaming:StreamingIngestItemsTask
       args:
-        queue_url: ${{ args.queue_url }}
-        queue_credential:
-          account_name: ${{ args.account_name }}
-          account_key: ${{ args.account_key }}
-        visibility_timeout: 30
-        min_replica_count: 0
-        max_replica_count: 1
-        polling_interval: 30
-        trigger_queue_length: 100
-        message_limit: 1
+        streaming_options:
+          queue_url: ${{ args.queue_url }}
+          queue_credential:
+            account_name: ${{ args.account_name }}
+            account_key: ${{ args.account_key }}
+          visibility_timeout: 30
+          min_replica_count: 0
+          max_replica_count: 1
+          polling_interval: 30
+          trigger_queue_length: 100
+          message_limit: 1
         collection_id: "test-collection-streaming"
         extra_env:
           AZURITE_HOST: "azurite"

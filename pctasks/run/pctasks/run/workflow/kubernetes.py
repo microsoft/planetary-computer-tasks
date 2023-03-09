@@ -118,9 +118,7 @@ def get_name_prefix(queue_url: str) -> str:
 
     Parameters
     ----------
-    task_definition: TaskDefintion
-        The pctasks TaskDefintion. This *must* follow the streaming
-        setup, so it should have a `queue_url` argument.
+    queue_url : str
     """
     account_name, queue_name = get_queue_parts(queue_url)
     # mostly for azurite
@@ -134,7 +132,7 @@ def get_deployment_name(task_definition: TaskDefinition) -> str:
     Get the Kubernetes Deployment name for a Task Definition.
     """
     # TODO: validate this gracefully
-    prefix = get_name_prefix(task_definition.args["queue_url"])
+    prefix = get_name_prefix(task_definition.args["streaming_options"]["queue_url"])
     return f"{prefix}-deployment"
 
 
@@ -142,8 +140,8 @@ def build_streaming_scaler(task_definition: TaskDefinition) -> dict[str, Any]:
     """
     Build, but don't submit, the data for a KEDA ScaledObject.
     """
-    account_name, queue_name = get_queue_parts(task_definition.args["queue_url"])
-    prefix = get_name_prefix(task_definition.args["queue_url"])
+    account_name, queue_name = get_queue_parts(task_definition.args["streaming_options"]["queue_url"])
+    prefix = get_name_prefix(task_definition.args["streaming_options"]["queue_url"])
     args = task_definition.args
 
     scaler_data = {
@@ -152,16 +150,16 @@ def build_streaming_scaler(task_definition: TaskDefinition) -> dict[str, Any]:
         "metadata": {"name": f"{prefix}-scaler"},
         "spec": {
             "scaleTargetRef": {"name": get_deployment_name(task_definition)},
-            "minReplicaCount": args["min_replica_count"],
-            "maxReplicaCount": args["max_replica_count"],
-            "pollingInterval": args["polling_interval"],
+            "minReplicaCount": args["streaming_options"]["min_replica_count"],
+            "maxReplicaCount": args["streaming_options"]["max_replica_count"],
+            "pollingInterval": args["streaming_options"]["polling_interval"],
             "triggers": [
                 {
                     "type": "azure-queue",
                     "authenticationRef": {"name": "queue-connection-string-auth"},
                     "metadata": {
                         "queueName": queue_name,
-                        "queueLength": str(args["trigger_queue_length"]),
+                        "queueLength": str(args["streaming_options"]["trigger_queue_length"]),
                         "accountName": account_name,
                     },
                 }

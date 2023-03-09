@@ -262,6 +262,7 @@ def test_validate_streaming_workflow():
         ("polling_interval", 30),
         ("trigger_queue_length", 100),
     ]
+    job.tasks[0].args["streaming_options"] = {}
 
     for k, v in args:
         with pytest.raises(ValueError, match=k):
@@ -271,7 +272,7 @@ def test_validate_streaming_workflow():
                 dataset="test",
                 is_streaming=True,
             )
-        job.tasks[0].args[k] = v
+        job.tasks[0].args["streaming_options"][k] = v
 
     # and now we have a valid one
     WorkflowDefinition(

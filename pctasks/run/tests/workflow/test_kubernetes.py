@@ -38,17 +38,19 @@ def task_definition():
             "code": {"src": "blob://pctasksteststaging/code/test-tom/goes_glm.py"},
             "task": "pctasks.dataset.streaming:StreamingCreateItemsTask",
             "args": {
-                "queue_url": "http://127.0.0.1:10001/devstoreaccount1/test",
-                "visibility_timeout": 30,
+                "streaming_options": {
+                    "queue_url": "http://127.0.0.1:10001/devstoreaccount1/test",
+                    "visibility_timeout": 30,
+                    "min_replica_count": 0,
+                    "max_replica_count": 10,
+                    "polling_interval": 30,
+                    "trigger_queue_length": 100,
+                },
+                "container_name": "items",
                 "options": {"skip_validation": False},
                 "cosmos_endpoint": cosmos,
                 "db_name": "lowlatencydb",
-                "container_name": "items",
                 "create_items_function": function,
-                "min_replica_count": 0,
-                "max_replica_count": 10,
-                "polling_interval": 30,
-                "trigger_queue_length": 100,
                 "collection_id": "test",
             },
             "schema_version": "1.0.0",
@@ -172,7 +174,7 @@ def test_get_deployment_name(task_definition):
 
 
 def test_get_deployment_name_azurite(task_definition):
-    task_definition.args[
+    task_definition.args['streaming_options'][
         "queue_url"
     ] = "http://localhost:10001/devstoreaccount1/test-queue-stream"
     result = pctasks.run.workflow.kubernetes.get_deployment_name(task_definition)

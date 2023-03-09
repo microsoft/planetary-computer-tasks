@@ -160,6 +160,12 @@ class WorkflowDefinition(PCBaseModel):
                 )
 
             task = job.tasks[0]
+
+            try:
+                streaming_options = task.args["streaming_options"]
+            except KeyError as e:
+                raise ValueError("Streaming workflow must define 'streaming_options'") from e
+
             for key in [
                 "queue_url",
                 "visibility_timeout",
@@ -168,7 +174,7 @@ class WorkflowDefinition(PCBaseModel):
                 "polling_interval",
                 "trigger_queue_length",
             ]:
-                if key not in task.args:
+                if key not in streaming_options:
                     raise ValueError(
                         f"Streaming workflows must define the '{key}' property "
                         f"on the task."

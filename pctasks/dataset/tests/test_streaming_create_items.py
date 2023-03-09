@@ -8,6 +8,7 @@ from pctasks.dataset import streaming
 from pctasks.dev.constants import AZURITE_ACCOUNT_KEY
 from pctasks.dev.queues import TempQueue
 from pctasks.task.context import TaskContext
+from pctasks.task.streaming import StreamingTaskOptions
 
 
 class CreateItems:
@@ -41,10 +42,12 @@ def test_streaming_create_items_task():
         task_input = streaming.StreamingCreateItemsInput(
             collection_id="test",
             create_items_function=create_items,
-            queue_url=queue_client.url,
-            queue_credential=AZURITE_ACCOUNT_KEY,
-            visibility_timeout=10,
-            message_limit=5,
+            streaming_options=StreamingTaskOptions(
+                queue_url=queue_client.url,
+                queue_credential=AZURITE_ACCOUNT_KEY,
+                visibility_timeout=10,
+                message_limit=5,
+            )
         )
         context = TaskContext(run_id="test", storage_factory=StorageFactory())
 
@@ -84,10 +87,12 @@ def test_streaming_create_items_from_message():
         task_input = streaming.StreamingCreateItemsInput(
             collection_id="test",
             create_items_function=create_items,
-            queue_url=queue_client.url,
-            queue_credential=AZURITE_ACCOUNT_KEY,
-            visibility_timeout=10,
-            message_limit=5,
+            streaming_options=StreamingTaskOptions(
+                queue_url=queue_client.url,
+                queue_credential=AZURITE_ACCOUNT_KEY,
+                visibility_timeout=10,
+                message_limit=5,
+            )
         )
         context = TaskContext(run_id="test", storage_factory=StorageFactory())
 

@@ -1,7 +1,7 @@
 import logging
 import math
 import time
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Union, Protocol
 
 import azure.storage.queue
 import pydantic
@@ -15,7 +15,13 @@ from pctasks.task.task import Task
 logger = logging.getLogger(__name__)
 
 
-class StreamingTaskInput(PCBaseModel):
+
+class StreamingTaskInput(Protocol):
+    streaming_options: "StreamingTaskOptions"
+    
+
+
+class StreamingTaskOptions(PCBaseModel):
     """
     Base class for all streaming task inputs.
 
@@ -90,20 +96,20 @@ class StreamingTaskMixin:
     def run(self, input: StreamingTaskInput, context: TaskContext) -> NoOutput:
         # queue_credential should only be used for testing with azurite.
         # Otherwise, use managed identities.
-        credential = input.queue_credential or azure.identity.DefaultAzureCredential()
+        credential = input.streaming_options.queue_credential or azure.identity.DefaultAzureCredential()
         qc = azure.storage.queue.QueueClient.from_queue_url(
-            input.queue_url, credential=credential
+            input.streaming_options.queue_url, credential=credential
         )
         extra_options = self.get_extra_options(input, context)
         message_count = 0
-        max_messages = input.message_limit or math.inf
+        max_messages = input.streaming_options.message_limit or math.inf
 
-        logger.info("Processing messages from queue=%s", input.queue_url)
+        logger.info("Processing messages from queue=%s", input.streaming_options.queue_url)
 
         while message_count < max_messages:
             # mypy upgrade
             for message in qc.receive_messages(  # type: ignore
-                visibility_timeout=input.visibility_timeout
+                visibility_timeout=input.streaming_options.visibility_timeout
             ):
                 try:
                     self.process_message(
@@ -121,7 +127,7 @@ class StreamingTaskMixin:
                     qc.delete_message(message)  # type: ignore
 
                 message_count += 1
-                if input.message_limit and message_count >= input.message_limit:
+                if input.streaming_options.message_limit and message_count >= input.streaming_options.message_limit:
                     logger.info("Hit limit=%d", message_count)
                     continue
             # We've drained the queue. Now we'll pause slightly before checking again.

@@ -24,7 +24,7 @@ from pctasks.core.storage import StorageFactory
 #     validate_item,
 # )
 from pctasks.task.context import TaskContext
-from pctasks.task.streaming import NoOutput, StreamingTaskInput, StreamingTaskMixin
+from pctasks.task.streaming import NoOutput, StreamingTaskOptions, StreamingTaskMixin
 from pctasks.task.task import Task
 
 logger = logging.getLogger("pctasks.dataset.streaming")
@@ -77,12 +77,11 @@ class StreamingCreateItemsOptions(PCBaseModel):
     """
     Create items from a stream of messages.
     """
-
     skip_validation: bool = False
     """Skip validation through PySTAC of the STAC Items."""
 
 
-class StreamingCreateItemsInput(StreamingTaskInput):
+class StreamingCreateItemsInput(PCBaseModel):
     """
     Input for a streaming create items task.
 
@@ -129,7 +128,7 @@ class StreamingCreateItemsInput(StreamingTaskInput):
         A callable or entrypoints-style path to a callable that creates the STAC
         item.
     """
-
+    streaming_options: StreamingTaskOptions
     collection_id: str
     options: StreamingCreateItemsOptions = StreamingCreateItemsOptions()
     cosmos_endpoint: str = (
@@ -142,53 +141,8 @@ class StreamingCreateItemsInput(StreamingTaskInput):
         str, Callable[[str, StorageFactory], List[pystac.Item]]
     ]  # can't use callable & entrypoint string
 
-
-class StreamingCreateItemsConfig(TaskDefinition):
-    @classmethod
-    def create(
-        cls,
-        task_id: str,
-        visibility_timeout: int,
-        queue_url: str,
-        create_items_function: Callable[[str, StorageFactory], List[pystac.Item]],
-        collection_id: str,
-        options: StreamingCreateItemsOptions = StreamingCreateItemsOptions(),
-        cosmos_endpoint: str = "https://pclowlatencytesttom.documents.azure.com:443/",
-        db_name: str = "lowlatencydb",
-        container_name: str = "items",
-        min_replica_count: int = 0,
-        max_replica_count: int = 100,
-        polling_interval: int = 30,
-        trigger_queue_length: int = 100,
-        image: Optional[str] = None,
-        image_key: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        environment: Optional[Dict[str, str]] = None,
-    ) -> TaskDefinition:
-        data = StreamingCreateItemsInput(
-            queue_url=queue_url,
-            visibility_timeout=visibility_timeout,
-            collection_id=collection_id,
-            options=options,
-            cosmos_endpoint=cosmos_endpoint,
-            db_name=db_name,
-            container_name=container_name,
-            create_items_function=create_items_function,
-            min_replica_count=min_replica_count,
-            max_replica_count=max_replica_count,
-            polling_interval=polling_interval,
-            trigger_queue_length=trigger_queue_length,
-        ).dict()
-        return TaskDefinition(
-            id=task_id,
-            image=image,
-            image_key=image_key,
-            task="pctasks.dataset.streaming:StreamingCreateItemsTask",
-            tags=tags,
-            environment=environment,
-            args=data,
-        )
-
+    class Config:
+        extra = "forbid"
 
 # TODO: Create a base streaming task
 # - Inherited Ingest streaming task, in pctasks.ingest_task

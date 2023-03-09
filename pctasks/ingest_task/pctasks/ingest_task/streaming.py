@@ -6,12 +6,13 @@ import azure.storage.queue
 
 from pctasks.ingest_task.pgstac import PgSTAC
 from pctasks.task.context import Task, TaskContext
-from pctasks.task.streaming import NoOutput, StreamingTaskInput, StreamingTaskMixin
+from pctasks.task.streaming import NoOutput, StreamingTaskOptions, StreamingTaskMixin
 
 logger = logging.getLogger(__name__)
 
 
 class StreamingIngestItemsInput(StreamingTaskInput):
+    streaming_options: StreamingTaskOptions
     collection_id: str
 
 
@@ -22,7 +23,7 @@ class StreamingIngestItemsTask(
     _output_model = NoOutput
 
     def get_extra_options(
-        self, input: StreamingTaskInput, context: TaskContext
+        self, input: StreamingIngestItemsInput, context: TaskContext
     ) -> Dict[str, Any]:
         from pctasks.ingest_task.task import PgSTAC
 

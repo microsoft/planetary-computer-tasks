@@ -14,22 +14,23 @@ jobs:
       image: localhost:5001/pctasks-task-base:latest
       task: pctasks.dataset.streaming:StreamingCreateItemsTask
       args:
-        queue_url: ${{ args.queue_url }}
-        queue_credential:
-          account_name: ${{ args.account_name }}
-          account_key: ${{ args.account_key }}
-        visibility_timeout: 30
+        streaming_options:
+          queue_url: ${{ args.queue_url }}
+          queue_credential:
+            account_name: ${{ args.account_name }}
+            account_key: ${{ args.account_key }}
+          visibility_timeout: 30
+          min_replica_count: 0
+          max_replica_count: 10
+          polling_interval: 30
+          trigger_queue_length: 100
+          message_limit: 1
         cosmos_endpoint: ${{ args.cosmos_endpoint }}
         cosmos_credential: ${{ args.cosmos_credential }}
         db_name: pctasks
         container_name: items
         create_items_function: pctasks.dataset.streaming:create_item_from_message
-        min_replica_count: 0
-        max_replica_count: 10
-        polling_interval: 30
-        trigger_queue_length: 100
         collection_id: "test-collection-streaming"
-        message_limit: 1
         extra_env:
           AZURITE_HOST: "azurite"
           AZURITE_PORT: 10000
