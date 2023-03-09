@@ -13,10 +13,10 @@ import azure.identity
 # TODO: figure out when the message body is base64 encoded.
 
 COSMOS_ENDPOINT = os.environ.get(
-    "PCTASKS_COSMOS_ENDPOINT" "https://pclowlatencytesttom.documents.azure.com:443/"
+    "PCTASKS_COSMOS_ENDPOINT", "https://pclowlatencytesttom.documents.azure.com:443/"
 )
-DB_NAME = os.environ.get("PCTASKS_COSMOS_DATABASE_NAME" "lowlatencydb")
-CONTAINER_NAME = os.environ.get("PCTASKS_COSMOS_CONTAINER_NAME" "storage-events")
+DB_NAME = os.environ.get("PCTASKS_COSMOS_DATABASE_NAME", "lowlatencydb")
+CONTAINER_NAME = os.environ.get("PCTASKS_COSMOS_CONTAINER_NAME", "storage-events")
 
 
 def main(msg: func.QueueMessage) -> None:
@@ -38,7 +38,3 @@ def main(msg: func.QueueMessage) -> None:
         .upsert_item(event)
     )
     logging.info("Processed message_id=%s event_id=%s", msg.id, event["id"])
-
-
-if __name__ == "__main__":
-    main()
