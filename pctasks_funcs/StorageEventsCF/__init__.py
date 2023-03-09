@@ -19,7 +19,7 @@ DB_NAME = os.environ.get("PCTASKS_COSMOS_DATABASE_NAME" "lowlatencydb")
 CONTAINER_NAME = os.environ.get("PCTASKS_COSMOS_CONTAINER_NAME" "storage-events")
 
 
-def main(msg: func.QueueMessage):
+def main(msg: func.QueueMessage) -> None:
     credential = azure.identity.DefaultAzureCredential()
     client = azure.cosmos.CosmosClient(COSMOS_ENDPOINT, credential)
     logging.info.info("Processing message id=%s", msg.id)

@@ -8,7 +8,7 @@ import azure.identity
 import azure.storage.queue
 
 
-def main(documents: func.DocumentList) -> str:
+def main(documents: func.DocumentList) -> None:
     credential = azure.identity.DefaultAzureCredential()
     qc = azure.storage.queue.QueueClient(
         "https://pclowlatency.queue.core.windows.net/",
