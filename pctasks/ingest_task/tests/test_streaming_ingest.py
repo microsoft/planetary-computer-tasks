@@ -78,7 +78,7 @@ def test_streaming_create_items_task(conn_str_info, s1_grd_collection, document)
             )
 
             # ingest items
-            r = task = streaming.StreamingIngestItemsTask()
+            task = streaming.StreamingIngestItemsTask()
             task.run(task_input, context)
 
             results = list(

@@ -25,6 +25,7 @@ from pctasks.task.context import TaskContext
 from pctasks.task.streaming import (
     ItemCreatedData,
     ItemCreatedEvent,
+    ItemCreatedMetrics,
     NoOutput,
     StreamingTaskMixin,
     StreamingTaskOptions,
@@ -123,7 +124,10 @@ class StreamingCreateItemsTask(
     _input_model = StreamingCreateItemsInput
     _output_model = NoOutput
 
-    def get_extra_options(
+    # Mypy doesn't like us using a more specific type for the input here.
+    # I'm not sure what the solution is. You should only call this
+    # method with the task type.
+    def get_extra_options(  # type: ignore[override]
         self, input: StreamingCreateItemsInput, context: TaskContext
     ) -> Dict[str, Any]:
         # TODO: Used DefaultAzureCredential in dev / test too.
@@ -149,7 +153,7 @@ class StreamingCreateItemsTask(
             "create_items_function": create_items_function,
         }
 
-    def create_items(
+    def create_items(  # type ignore[override]
         self,
         message_data: dict[str, Any],
         create_items_function: Callable[[str, StorageFactory], List[pystac.Item]],
@@ -258,7 +262,9 @@ def create_item_from_item_uri(
     return [item]
 
 
-def create_item_from_message(asset_uri, storage_factory):
+def create_item_from_message(
+    asset_uri: Dict[str, Any], storage_factory: StorageFactory
+) -> Union[List[pystac.Item], WaitTaskResult]:
     # Just shoving the STAC item in the "url" field of the message.
     # data = json.loads(asset_uri)
     return [pystac.Item.from_dict(asset_uri)]

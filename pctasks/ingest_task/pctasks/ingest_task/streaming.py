@@ -23,14 +23,17 @@ class StreamingIngestItemsTask(
     _input_model = StreamingIngestItemsInput
     _output_model = NoOutput
 
-    def get_extra_options(
+    # Mypy doesn't like us using a more specific type for the input here.
+    # I'm not sure what the solution is. You should only call this
+    # method with the task type.
+    def get_extra_options(  # type: ignore[override]
         self, input: StreamingIngestItemsInput, context: TaskContext
     ) -> Dict[str, Any]:
         from pctasks.ingest_task.task import PgSTAC
 
         return {"pgstac": PgSTAC.from_env()}
 
-    def process_message(
+    def process_message(  # type: ignore[override]
         self,
         message: azure.storage.queue.QueueMessage,
         input: StreamingIngestItemsInput,

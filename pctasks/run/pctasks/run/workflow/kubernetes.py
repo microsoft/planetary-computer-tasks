@@ -62,6 +62,11 @@ def submit_task(
     ):
         raise ValueError("Streaming jobs require TaskIO service principal to be set")
 
+    # The previous check isn't sufficient for mypy to know these are set
+    assert run_settings.streaming_taskio_sp_tenant_id is not None
+    assert run_settings.streaming_taskio_sp_client_id is not None
+    assert run_settings.streaming_taskio_sp_client_secret is not None
+
     # Load config stuff
     kubernetes.config.load_config()
     apps_api = AppsV1Api()
