@@ -122,17 +122,20 @@ def log_request(
     task_id: Optional[str] = None,
 ) -> None:
     """Log the given request with the given status code."""
-    dimensions = get_custom_dimensions(parsed_request)
+    route_dimensions: Dict[str, Any] = {}
 
     if workflow_id:
-        dimensions[DIMENSION_KEYS.WORKFLOW_ID] = workflow_id
+        route_dimensions[DIMENSION_KEYS.WORKFLOW_ID] = workflow_id
     if run_id:
-        dimensions[DIMENSION_KEYS.RUN_ID] = run_id
+        route_dimensions[DIMENSION_KEYS.RUN_ID] = run_id
     if job_id:
-        dimensions[DIMENSION_KEYS.JOB_ID] = job_id
+        route_dimensions[DIMENSION_KEYS.JOB_ID] = job_id
     if partition_id:
-        dimensions[DIMENSION_KEYS.PARTITION_ID] = partition_id
+        route_dimensions[DIMENSION_KEYS.PARTITION_ID] = partition_id
     if task_id:
-        dimensions[DIMENSION_KEYS.TASK_ID] = task_id
+        route_dimensions[DIMENSION_KEYS.TASK_ID] = task_id
 
-    logger.info(msg, extra={"custom_dimensions": dimensions})
+    logger.info(
+        msg,
+        extra=get_custom_dimensions(parsed_request, route_dimensions),
+    )
