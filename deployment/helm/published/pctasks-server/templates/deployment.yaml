@@ -62,7 +62,7 @@ spec:
               value: "{{ .Values.pctasks.server.access_key.value }}"
             {{- end }}
 
-            - name: APP_INSIGHTS_INSTRUMENTATION_KEY
+            - name: PCTASKS_SERVER__APP_INSIGHTS_INSTRUMENTATION_KEY
               value: "{{ .Values.pctasks.server.instrumentationKey }}"
 
             ## Azure service principal

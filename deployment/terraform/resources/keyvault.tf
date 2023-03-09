@@ -1,11 +1,6 @@
 data "azurerm_key_vault" "pctasks" {
   name                = var.pctasks_task_kv
   resource_group_name = var.pctasks_task_kv_resource_group_name
-  network_acls {
-    default_action             = "Deny"
-    bypass                     = "AzureServices"
-    virtual_network_subnet_ids = [azurerm_subnet.k8snode_subnet.id]
-  }
 }
 
 resource "azurerm_key_vault_access_policy" "function_app" {
