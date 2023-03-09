@@ -19,6 +19,8 @@ pctasks:
       enabled: false
       value: ""
 
+    instrumentationKey: ""
+
     dev:
       enabled: false
       api_key: ""

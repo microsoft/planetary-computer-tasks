@@ -12,6 +12,8 @@ class ServerSettings(PCTasksSettings):
     def section_name(cls) -> str:
         return "server"
 
+    request_timeout: int = 30
+
     dev: bool = False
     dev_api_key: Optional[str] = None
     dev_auth_token: Optional[str] = None

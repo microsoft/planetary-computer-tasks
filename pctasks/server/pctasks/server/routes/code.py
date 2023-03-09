@@ -6,6 +6,7 @@ from fastapi.responses import ORJSONResponse
 
 from pctasks.core.models.response import UploadCodeResult
 from pctasks.run.settings import RunSettings
+from pctasks.server.logging import log_request
 from pctasks.server.request import ParsedRequest
 
 logger = logging.getLogger(__name__)
@@ -21,9 +22,9 @@ code_router = APIRouter()
     response_model=UploadCodeResult,
 )
 async def upload_code(request: Request, file: UploadFile) -> UploadCodeResult:
-    logger.info(f"Upload code: {file.filename}")
     logger.info(f"{request.headers}")
     parsed_request = ParsedRequest(request)
+    log_request(parsed_request, f"Upload code: {file.filename}")
 
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
