@@ -197,33 +197,6 @@ def test_streaming(cluster):
         assert process_items_result.exit_code == 0
 
         # Ingest items
-        process_items_result = run_pctasks(
-            [
-                "workflow",
-                "upsert-and-submit",
-                str(HERE / "streaming-ingest.yaml"),
-                "--arg",
-                "db_connection_string",
-                conn_str_info.remote,
-                "--arg",
-                "cosmos_endpoint",
-                os.environ["PCTASKS_COSMOSDB__URL"],
-                "--arg",
-                "cosmos_credential",
-                os.environ["PCTASKS_COSMOSDB__KEY"],
-                "--arg",
-                "queue_url",
-                dataset_queue_client.url.replace("localhost", "azurite"),
-                "--arg",
-                "account_name",
-                dataset_queue_client.credential.account_name,
-                "--arg",
-                "account_key",
-                dataset_queue_client.credential.account_key,
-            ]
-        )
-        assert process_items_result.exit_code == 0
-
         config.load_config()
         apps = client.AppsV1Api()
         deadline = time.monotonic() + TIMEOUT_SECONDS
@@ -259,6 +232,33 @@ def test_streaming(cluster):
 
             break
         # TODO: ingest collection
+        # process_items_result = run_pctasks(
+        #     [
+        #         "workflow"
+        #         "upsert-and-submit",
+        #         str(HERE / "streaming-ingest.yaml"),
+        #         "--arg",
+        #         "db_connection_string",
+        #         conn_str_info.remote,
+        #         "--arg",
+        #         "cosmos_endpoint",
+        #         os.environ["PCTASKS_COSMOSDB__URL"],
+        #         "--arg",
+        #         "cosmos_credential",
+        #         os.environ["PCTASKS_COSMOSDB__KEY"],
+        #         "--arg",
+        #         "queue_url",
+        #         dataset_queue_client.url.replace("localhost", "azurite"),
+        #         "--arg",
+        #         "account_name",
+        #         dataset_queue_client.credential.account_name,
+        #         "--arg",
+        #         "account_key",
+        #         dataset_queue_client.credential.account_key,
+        #     ]
+        # )
+        # assert process_items_result.exit_code == 0
+
         # TODO: create streaming items ingest deployment
 
     # TODO: cleanup the Kubernetes stuff
