@@ -1,14 +1,14 @@
 # this can be run with python -m pytest
 # to ensure that the file is on sys.path
-import pytest
-import pathlib
 import json
+import pathlib
+
 import azure.functions as func
-
 import PublishItemsCF
-
+import pytest
 
 HERE = pathlib.Path(__file__).parent
+
 
 @pytest.fixture
 def document() -> func.Document:

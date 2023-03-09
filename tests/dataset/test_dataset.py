@@ -224,7 +224,6 @@ def test_streaming(cluster):
         )
         assert process_items_result.exit_code == 0
 
-
         config.load_config()
         apps = client.AppsV1Api()
         deadline = time.monotonic() + TIMEOUT_SECONDS

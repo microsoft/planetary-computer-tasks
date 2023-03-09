@@ -1,13 +1,12 @@
 # import base64
 # import binascii
-import os
 import json
 import logging
+import os
 
-import azure.functions as func
 import azure.cosmos
+import azure.functions as func
 import azure.identity
-
 
 # TODO: setup config, remove fallbacks
 # TODO: key credential for azurite

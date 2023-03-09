@@ -75,9 +75,9 @@ def submit_task(
     deployment = build_streaming_deployment(
         task,
         input_uri,
-        run_settings.taskio_tenant_id,
-        run_settings.taskio_client_id,
-        run_settings.taskio_client_secret,
+        run_settings.streaming_taskio_sp_tenant_id,
+        run_settings.streaming_taskio_sp_client_id,
+        run_settings.streaming_taskio_sp_client_secret,
     )
     scaler = build_streaming_scaler(task)
 
