@@ -2,9 +2,9 @@ import dataclasses
 import datetime
 import logging
 import math
+import time
 import urllib.parse
 import uuid
-import time
 from typing import Any, Dict, Optional, Protocol, Union
 
 import azure.storage.queue
@@ -170,7 +170,7 @@ class ItemCreatedMetrics:
 
 @dataclasses.dataclass
 class ItemCreatedData:
-    item: dict[str, Any]
+    item: Dict[str, Any]
     metrics: ItemCreatedMetrics
 
 

@@ -23,12 +23,11 @@ from pctasks.core.storage import StorageFactory
 # )
 from pctasks.task.context import TaskContext
 from pctasks.task.streaming import (
+    ItemCreatedData,
+    ItemCreatedEvent,
     NoOutput,
     StreamingTaskMixin,
     StreamingTaskOptions,
-    ItemCreatedData,
-    ItemCreatedData,
-    ItemCreatedEvent,
 )
 from pctasks.task.task import Task
 

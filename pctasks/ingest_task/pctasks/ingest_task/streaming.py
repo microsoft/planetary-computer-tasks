@@ -7,7 +7,6 @@ import azure.storage.queue
 from pctasks.core.models.base import PCBaseModel
 from pctasks.ingest_task.pgstac import PgSTAC
 from pctasks.task.context import TaskContext
-from pctasks.task.task import Task
 from pctasks.task.streaming import NoOutput, StreamingTaskMixin, StreamingTaskOptions
 from pctasks.task.task import Task
 
