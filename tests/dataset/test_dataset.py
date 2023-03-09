@@ -28,7 +28,6 @@ TIMEOUT_SECONDS = DEFAULT_TIMEOUT
 
 
 def test_dataset():
-    return
     with temp_pgstac_db() as conn_str_info:
         test_tag = uuid1().hex[:5]
         collection_id = "test-collection"
