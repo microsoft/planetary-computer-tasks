@@ -118,7 +118,6 @@ class StreamingTaskInput(PCBaseModel):
         forever, relying on some external system (like KEDA) to stop processing.
 
         This is primarily useful for testing.
-
     extra_env: dict, optional
         Additional environment variables to set on the pod. This is primarily
         useful for testing, setting the ``AZURITE_HOST`` for example.

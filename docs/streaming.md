@@ -131,3 +131,17 @@ az cosmosdb sql role assignment create \
     --role-definition-id "00000000-0000-0000-0000-000000000002" \
     --principal-id "$OBJECT_ID"
 ```
+
+## Implementation notes
+
+There are a few steps between task submission and the task actually running.
+This section documents those. It's mostly useful for developers of `pctasks`,
+rather than end users.
+
+1. The client submits the workflow to be run. `pctasks workflow submit` or some
+   other command that includes a `-s`.
+2. The `pctasks-server` receives the request and creates an Argo Workflow.
+3. The Argo Workflow makes a `Deployment` and a `ScaledObject` and completes
+   successfully.
+4. The `Deployment` begins processing messages from the queue specified in the
+   workflow.

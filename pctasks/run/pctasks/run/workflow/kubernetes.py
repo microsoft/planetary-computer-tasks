@@ -39,6 +39,9 @@ def submit_task(
     """
     Submit a streaming workflow for execution with Kubernetes.
 
+    This will typically run in an Argo Workflow-managed pod, which
+    has been configured with all of the relevant run settings.
+
     Parameters
     ----------
     workflow_submit_message : WorkflowSubmitMessage
@@ -49,15 +52,15 @@ def submit_task(
     """
 
     # Streaming jobs require TaskIO service principal to be set
-    if (
-        not run_settings.streaming_taskio_sp_tenant_id
-        or not run_settings.streaming_taskio_sp_client_id
-        or not run_settings.streaming_taskio_sp_client_secret
+    if all(
+        x is None
+        for x in [
+            run_settings.streaming_taskio_sp_tenant_id,
+            run_settings.streaming_taskio_sp_client_id,
+            run_settings.streaming_taskio_sp_client_secret,
+        ]
     ):
         raise ValueError("Streaming jobs require TaskIO service principal to be set")
-    taskio_tenant_id = run_settings.streaming_taskio_sp_tenant_id
-    taskio_client_id = run_settings.streaming_taskio_sp_client_id
-    taskio_client_secret = run_settings.streaming_taskio_sp_client_secret
 
     # Load config stuff
     kubernetes.config.load_config()
@@ -70,7 +73,11 @@ def submit_task(
     input_uri = prepared_task.task_input_blob_config.uri
     task = prepared_task.task_submit_message.definition
     deployment = build_streaming_deployment(
-        task, input_uri, taskio_tenant_id, taskio_client_id, taskio_client_secret
+        task,
+        input_uri,
+        run_settings.taskio_tenant_id,
+        run_settings.taskio_client_id,
+        run_settings.taskio_client_secret,
     )
     scaler = build_streaming_scaler(task)
 

@@ -206,7 +206,8 @@ function update_cluster() {
             --set pctasks.run.blob.account_key=${PCTASKS_RUN__BLOB_ACCOUNT_KEY}"
     fi
 
-    # TODO: figure this out.
+    # Streaming settings. These are unused in the integration testing, which uses azurite,
+    # but must be set.
     STREAMING_TASKIO_VARS=""
     # if [ "${PCTASKS_RUN__BLOB_ACCOUNT_NAME}" ]; then
     if [ true ]; then
