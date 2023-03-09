@@ -1,10 +1,8 @@
 from typing import Any, Dict, Optional
 
-from pydantic import Field, validator
+from pydantic import validator
 
 from pctasks.core.settings import PCTasksSettings
-
-APP_INSIGHTS_INSTRUMENTATION_KEY_ENV_VAR = "APP_INSIGHTS_INSTRUMENTATION_KEY"
 
 
 class ServerSettings(PCTasksSettings):
@@ -20,10 +18,7 @@ class ServerSettings(PCTasksSettings):
 
     access_key: Optional[str] = None
 
-    app_insights_instrumentation_key: Optional[str] = Field(
-        default=None,
-        env=APP_INSIGHTS_INSTRUMENTATION_KEY_ENV_VAR,
-    )
+    app_insights_instrumentation_key: Optional[str] = None
 
     @validator("dev_api_key", always=True)
     def _dev_api_key_validator(
