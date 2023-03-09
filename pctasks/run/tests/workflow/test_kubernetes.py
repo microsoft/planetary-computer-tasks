@@ -174,7 +174,7 @@ def test_get_deployment_name(task_definition):
 
 
 def test_get_deployment_name_azurite(task_definition):
-    task_definition.args['streaming_options'][
+    task_definition.args["streaming_options"][
         "queue_url"
     ] = "http://localhost:10001/devstoreaccount1/test-queue-stream"
     result = pctasks.run.workflow.kubernetes.get_deployment_name(task_definition)

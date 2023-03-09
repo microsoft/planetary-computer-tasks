@@ -164,7 +164,9 @@ class WorkflowDefinition(PCBaseModel):
             try:
                 streaming_options = task.args["streaming_options"]
             except KeyError as e:
-                raise ValueError("Streaming workflow must define 'streaming_options'") from e
+                raise ValueError(
+                    "Streaming workflow must define 'streaming_options'"
+                ) from e
 
             for key in [
                 "queue_url",

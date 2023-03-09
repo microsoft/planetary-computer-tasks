@@ -140,7 +140,9 @@ def build_streaming_scaler(task_definition: TaskDefinition) -> dict[str, Any]:
     """
     Build, but don't submit, the data for a KEDA ScaledObject.
     """
-    account_name, queue_name = get_queue_parts(task_definition.args["streaming_options"]["queue_url"])
+    account_name, queue_name = get_queue_parts(
+        task_definition.args["streaming_options"]["queue_url"]
+    )
     prefix = get_name_prefix(task_definition.args["streaming_options"]["queue_url"])
     args = task_definition.args
 
@@ -159,7 +161,9 @@ def build_streaming_scaler(task_definition: TaskDefinition) -> dict[str, Any]:
                     "authenticationRef": {"name": "queue-connection-string-auth"},
                     "metadata": {
                         "queueName": queue_name,
-                        "queueLength": str(args["streaming_options"]["trigger_queue_length"]),
+                        "queueLength": str(
+                            args["streaming_options"]["trigger_queue_length"]
+                        ),
                         "accountName": account_name,
                     },
                 }

@@ -47,7 +47,7 @@ def test_streaming_create_items_task():
                 queue_credential=AZURITE_ACCOUNT_KEY,
                 visibility_timeout=10,
                 message_limit=5,
-            )
+            ),
         )
         context = TaskContext(run_id="test", storage_factory=StorageFactory())
 
@@ -92,7 +92,7 @@ def test_streaming_create_items_from_message():
                 queue_credential=AZURITE_ACCOUNT_KEY,
                 visibility_timeout=10,
                 message_limit=5,
-            )
+            ),
         )
         context = TaskContext(run_id="test", storage_factory=StorageFactory())
 

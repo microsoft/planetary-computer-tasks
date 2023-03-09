@@ -24,7 +24,7 @@ from pctasks.core.storage import StorageFactory
 #     validate_item,
 # )
 from pctasks.task.context import TaskContext
-from pctasks.task.streaming import NoOutput, StreamingTaskOptions, StreamingTaskMixin
+from pctasks.task.streaming import NoOutput, StreamingTaskMixin, StreamingTaskOptions
 from pctasks.task.task import Task
 
 logger = logging.getLogger("pctasks.dataset.streaming")
@@ -77,6 +77,7 @@ class StreamingCreateItemsOptions(PCBaseModel):
     """
     Create items from a stream of messages.
     """
+
     skip_validation: bool = False
     """Skip validation through PySTAC of the STAC Items."""
 
@@ -128,6 +129,7 @@ class StreamingCreateItemsInput(PCBaseModel):
         A callable or entrypoints-style path to a callable that creates the STAC
         item.
     """
+
     streaming_options: StreamingTaskOptions
     collection_id: str
     options: StreamingCreateItemsOptions = StreamingCreateItemsOptions()
@@ -144,6 +146,7 @@ class StreamingCreateItemsInput(PCBaseModel):
     class Config:
         extra = "forbid"
 
+
 # TODO: Create a base streaming task
 # - Inherited Ingest streaming task, in pctasks.ingest_task
 # - Inherited CreateItems streaming task, in pctasks.dataset
@@ -155,9 +158,7 @@ class StreamingCreateItemsTask(
     _input_model = StreamingCreateItemsInput
     _output_model = NoOutput
 
-    # mypy doesn't like that `input` is a subclass of the type required
-    # by the parent.
-    def get_extra_options(  # type: ignore
+    def get_extra_options(
         self, input: StreamingCreateItemsInput, context: TaskContext
     ) -> Dict[str, Any]:
         # TODO: Used DefaultAzureCredential in dev / test too.

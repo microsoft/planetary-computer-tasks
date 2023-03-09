@@ -4,14 +4,16 @@ from typing import Any, Dict
 
 import azure.storage.queue
 
+from pctasks.core.models.base import PCBaseModel
 from pctasks.ingest_task.pgstac import PgSTAC
+from pctasks.task.task import Task
 from pctasks.task.context import Task, TaskContext
-from pctasks.task.streaming import NoOutput, StreamingTaskOptions, StreamingTaskMixin
+from pctasks.task.streaming import NoOutput, StreamingTaskMixin, StreamingTaskOptions
 
 logger = logging.getLogger(__name__)
 
 
-class StreamingIngestItemsInput(StreamingTaskInput):
+class StreamingIngestItemsInput(PCBaseModel):
     streaming_options: StreamingTaskOptions
     collection_id: str
 
