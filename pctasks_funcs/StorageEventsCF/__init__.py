@@ -22,7 +22,7 @@ CONTAINER_NAME = os.environ.get("PCTASKS_COSMOS_CONTAINER_NAME", "storage-events
 def main(msg: func.QueueMessage) -> None:
     credential = azure.identity.DefaultAzureCredential()
     client = azure.cosmos.CosmosClient(COSMOS_ENDPOINT, credential)
-    logging.info.info("Processing message id=%s", msg.id)
+    logging.info("Processing message id=%s", msg.id)
 
     body = msg.get_body()
 
