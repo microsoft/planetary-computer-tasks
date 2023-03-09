@@ -22,7 +22,6 @@ services:
       - POSTGRES_DB=postgis
       - PGUSER=username
       - PGPASSWORD=password
-      - PGHOST=localhost
       - PGDATABASE=postgis
     ports:
       - "5499:5432"
