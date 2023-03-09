@@ -1,22 +1,20 @@
 from __future__ import annotations
 
 import dataclasses
-import datetime
 import importlib.metadata
 import json
 import logging
-import urllib.parse
-import uuid
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import azure.core.credentials
 import azure.cosmos
 import azure.identity
 import azure.storage.queue
+import pydantic
 import pystac
 
 from pctasks.core.models.base import PCBaseModel
-from pctasks.core.models.task import TaskDefinition, WaitTaskResult
+from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 
 # # TODO: check import / dependency order
@@ -24,53 +22,17 @@ from pctasks.core.storage import StorageFactory
 #     validate_item,
 # )
 from pctasks.task.context import TaskContext
-from pctasks.task.streaming import NoOutput, StreamingTaskMixin, StreamingTaskOptions
+from pctasks.task.streaming import (
+    NoOutput,
+    StreamingTaskMixin,
+    StreamingTaskOptions,
+    ItemCreatedData,
+    ItemCreatedData,
+    ItemCreatedEvent,
+)
 from pctasks.task.task import Task
 
 logger = logging.getLogger("pctasks.dataset.streaming")
-
-
-def event_id_factory() -> str:
-    return str(uuid.uuid4())
-
-
-def time_factory() -> str:
-    # TODO: can this be a datetime in python?
-    return datetime.datetime.utcnow().isoformat() + "Z"
-
-
-def transform_url(event_url: str) -> str:
-    # Why is this needed?
-    # To transform from EventGrid / Blob style HTTP urls to
-    # pctask's blob:// style urls.
-    if event_url.startswith("http"):
-        parsed = urllib.parse.urlparse(event_url)
-        account_name = parsed.netloc.split(".")[0]
-        return f"blob://{account_name}{parsed.path}"
-    return event_url
-
-
-@dataclasses.dataclass
-class ItemCreatedMetrics:
-    storage_event_time: str
-    message_inserted_time: str
-
-
-@dataclasses.dataclass
-class ItemCreatedData:
-    item: dict[str, Any]
-    metrics: ItemCreatedMetrics
-
-
-@dataclasses.dataclass
-class ItemCreatedEvent:
-    data: ItemCreatedData
-    specversion: str = "1.0"
-    type: str = "com.microsoft.planetarycomputer/item-created"
-    source: str = "pctasks"
-    id: str = dataclasses.field(default_factory=event_id_factory)
-    time: str = dataclasses.field(default_factory=time_factory)
-    datacontenttype: str = "application/json"
 
 
 class StreamingCreateItemsOptions(PCBaseModel):
@@ -128,6 +90,9 @@ class StreamingCreateItemsInput(PCBaseModel):
     create_items_function: str or callable.
         A callable or entrypoints-style path to a callable that creates the STAC
         item.
+    extra_env: dict, optional
+        Additional environment variables to set on the pod. This is primarily
+        useful for testing, setting the ``AZURITE_HOST`` for example.
     """
 
     streaming_options: StreamingTaskOptions
@@ -142,6 +107,7 @@ class StreamingCreateItemsInput(PCBaseModel):
     create_items_function: Union[
         str, Callable[[str, StorageFactory], List[pystac.Item]]
     ]  # can't use callable & entrypoint string
+    extra_env: Dict[str, str] = pydantic.Field(default_factory=dict)
 
     class Config:
         extra = "forbid"

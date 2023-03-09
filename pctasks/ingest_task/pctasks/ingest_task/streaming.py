@@ -6,16 +6,16 @@ import azure.storage.queue
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.ingest_task.pgstac import PgSTAC
+from pctasks.task.context import TaskContext
 from pctasks.task.task import Task
-from pctasks.task.context import Task, TaskContext
 from pctasks.task.streaming import NoOutput, StreamingTaskMixin, StreamingTaskOptions
+from pctasks.task.task import Task
 
 logger = logging.getLogger(__name__)
 
 
 class StreamingIngestItemsInput(PCBaseModel):
     streaming_options: StreamingTaskOptions
-    collection_id: str
 
 
 class StreamingIngestItemsTask(
@@ -31,8 +31,7 @@ class StreamingIngestItemsTask(
 
         return {"pgstac": PgSTAC.from_env()}
 
-    # TODO: figure out a typesafe way to get these extra arguments in here.
-    def process_message(  # type: ignore
+    def process_message(
         self,
         message: azure.storage.queue.QueueMessage,
         input: StreamingIngestItemsInput,
@@ -41,8 +40,12 @@ class StreamingIngestItemsTask(
     ) -> None:
         from pctasks.ingest_task.task import ingest_item
 
-        item = json.loads(message.content)
-        logger.info("Loading item")
-        if input.collection_id:
-            item["collection"] = input.collection_id
-        ingest_item(pgstac, item)
+        message = json.loads(message.content)
+        item = message["data"]["item"]
+
+        logger.info("Loading item collection=%s id=%s", item["collection"], item["id"])
+        # note: we rely on the collection ID being set, since
+        # we're potentially ingesting multiple items.
+        # if input.collection_id:
+        #     item["collection"] = input.collection_id
+        ingest_item(pgstac, item)  # this hangs, at least on bad data.

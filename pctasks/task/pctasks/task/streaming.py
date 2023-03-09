@@ -1,10 +1,13 @@
+import dataclasses
+import datetime
 import logging
 import math
+import urllib.parse
+import uuid
 import time
 from typing import Any, Dict, Optional, Protocol, Union
 
 import azure.storage.queue
-import pydantic
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.task.context import TaskContext
@@ -49,9 +52,6 @@ class StreamingTaskOptions(PCBaseModel):
         forever, relying on some external system (like KEDA) to stop processing.
 
         This is primarily useful for testing.
-    extra_env: dict, optional
-        Additional environment variables to set on the pod. This is primarily
-        useful for testing, setting the ``AZURITE_HOST`` for example.
     """
 
     queue_url: str
@@ -62,7 +62,6 @@ class StreamingTaskOptions(PCBaseModel):
     polling_interval: int = 30
     trigger_queue_length: int = 100
     message_limit: Optional[int] = None
-    extra_env: Dict[str, str] = pydantic.Field(default_factory=dict)
 
     class Config:
         extra = "forbid"
@@ -141,3 +140,46 @@ class StreamingTaskMixin:
 
         logger.info("Finishing run")
         return NoOutput()
+
+
+def event_id_factory() -> str:
+    return str(uuid.uuid4())
+
+
+def time_factory() -> str:
+    # TODO: can this be a datetime in python?
+    return datetime.datetime.utcnow().isoformat() + "Z"
+
+
+def transform_url(event_url: str) -> str:
+    # Why is this needed?
+    # To transform from EventGrid / Blob style HTTP urls to
+    # pctask's blob:// style urls.
+    if event_url.startswith("http"):
+        parsed = urllib.parse.urlparse(event_url)
+        account_name = parsed.netloc.split(".")[0]
+        return f"blob://{account_name}{parsed.path}"
+    return event_url
+
+
+@dataclasses.dataclass
+class ItemCreatedMetrics:
+    storage_event_time: str
+    message_inserted_time: str
+
+
+@dataclasses.dataclass
+class ItemCreatedData:
+    item: dict[str, Any]
+    metrics: ItemCreatedMetrics
+
+
+@dataclasses.dataclass
+class ItemCreatedEvent:
+    data: ItemCreatedData
+    specversion: str = "1.0"
+    type: str = "com.microsoft.planetarycomputer/item-created"
+    source: str = "pctasks"
+    id: str = dataclasses.field(default_factory=event_id_factory)
+    time: str = dataclasses.field(default_factory=time_factory)
+    datacontenttype: str = "application/json"
