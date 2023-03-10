@@ -61,7 +61,19 @@ function render_values() {
 function cluster_login() {
     echo "Logging into the cluster..."
 
-    # assume you've already logged in with the azure-cli
+    if [ -z "${RESOURCE_GROUP}" ]; then
+        RESOURCE_GROUP=$1
+    fi
+
+    if [ -z "${CLUSTER_NAME}" ]; then
+        CLUSTER_NAME=$2
+    fi
+
+    az login --service-principal \
+        --username ${ARM_CLIENT_ID} \
+        --password ${ARM_CLIENT_SECRET} \
+        --tenant ${ARM_TENANT_ID}
+
     az aks get-credentials \
         --resource-group ${RESOURCE_GROUP} \
         --name ${CLUSTER_NAME} \
@@ -74,7 +86,9 @@ function cluster_login() {
     # So we export to a kubeconfig file
     echo "Converting kubeconfig..."
     kubelogin convert-kubeconfig \
-        --login azurecli \
+        --login spn \
+        --client-id ${ARM_CLIENT_ID} \
+        --client-secret ${ARM_CLIENT_SECRET} \
         --kubeconfig=kubeconfig
     export KUBECONFIG=kubeconfig
 }
