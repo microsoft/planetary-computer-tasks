@@ -115,6 +115,12 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
     bin/azlogin
 
+    require_env "DEPLOY_SECRETS_KV"
+    require_env "DEPLOY_SECRETS_KV_SECRET"
+    require_env "DEPLOY_SECRETS_KV_RG_NAME"
+    require_env "PCTASKS_TASK_KV"
+    require_env "PCTASKS_TASK_KV_RESOURCE_GROUP_NAME"
+    
     #########################
     # Add IP to KV firewall #
     #########################
@@ -127,8 +133,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
     source ${TERRAFORM_DIR}/env.sh
 
-    require_env "DEPLOY_SECRETS_KV"
-    require_env "DEPLOY_SECRETS_KV_SECRET"
 
     if [ -z "${SKIP_FETCH_TF_VARS}${SKIP_TF}${DEV_DEPLOY}" ]; then
 
