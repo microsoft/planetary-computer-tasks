@@ -29,7 +29,7 @@ jobs:
           python-version: "3.8.15"
 
       - name: Upgrade setuptools
-        run: pip install --upgrade setuptools
+        run: pip install --upgrade setuptools==59.6.0
 
       - name: Install local dependencies
         run: ./scripts/install

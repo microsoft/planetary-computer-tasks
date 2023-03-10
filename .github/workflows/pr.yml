@@ -10,8 +10,7 @@ env:
 
 jobs:
   pr-build-and-test:
-
-    runs-on: 	ubuntu-22.04
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v3
@@ -21,7 +20,7 @@ jobs:
           python-version: "3.8.15"
 
       - name: Upgrade setuptools
-        run: pip install --upgrade setuptools
+        run: pip install --upgrade setuptools==59.6.0
 
       - name: Install local dependencies
         run: ./scripts/install
