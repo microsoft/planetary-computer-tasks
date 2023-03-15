@@ -113,6 +113,9 @@ setup_env
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
+    # Gather environment variables from the terraform directory
+    source "${TERRAFORM_DIR}"/env.sh
+
     bin/azlogin
 
     require_env "DEPLOY_SECRETS_KV"
@@ -120,7 +123,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     require_env "DEPLOY_SECRETS_KV_RG_NAME"
     require_env "PCTASKS_TASK_KV"
     require_env "PCTASKS_TASK_KV_RESOURCE_GROUP_NAME"
-    
+
     #########################
     # Add IP to KV firewall #
     #########################
