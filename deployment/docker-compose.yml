@@ -22,7 +22,6 @@ services:
       - GITHUB_TOKEN
       - GITHUB_REPOSITORY
       - GITHUB_ACTOR
-
     working_dir: /opt/src/deployment
     volumes:
       - ../deployment:/opt/src/deployment
