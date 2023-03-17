@@ -1,0 +1,30 @@
+id: io_bii
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+  - registry
+
+code:
+  src: ${{ local.path(./io_bii.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: io-bii
+    template: ${{ local.path(./collection) }}
+    class: io_bii:IOBiodiversityIntactnessIndex
+    asset_storage:
+      - uri: blob://pcdata01euw/impact
+        token: ${{ pc.get_token(pcdata01euw, impact) }}
+        chunks:
+          options:
+            ends_with: ".tif"
+            chunk_length: 500 # NOTE: there are approximately 15,000 blobs
+            limit: 2000
+
+    chunk_storage:
+      uri: blob://pcdata01euw/impact-etl-data/pctasks-chunks/
