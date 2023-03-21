@@ -17,10 +17,36 @@ The building extraction is done in two stages:
 
 ![Polygonization](https://github.com/microsoft/GlobalMLBuildingFootprints/raw/main/images/polygonization.jpg)
 
-## STAC metadata
-
-This STAC collection has one STAC item per region. The `msbuildings:region` property can be used to filter items to a specific region.
-
 ## Data assets
 
-The building footprints are provided as a set of [geoparquet](https://github.com/opengeospatial/geoparquet) datasets. The data are partitioned at multiple levels. There is one [Parquet dataset](https://arrow.apache.org/docs/python/parquet.html#partitioned-datasets-multiple-files) per region. Regions are partitioned into many parquet files so that each file fits comfortably in memory.
+The building footprints are provided as a set of [geoparquet](https://github.com/opengeospatial/geoparquet) datasets in [Delta][delta] table format.
+The data are partitioned by
+
+1. Region
+2. quadkey at [Bing Map Tiles][tiles] level 9
+
+Each `(Region, quadkey)` pair will have one or more geoparquet files, depending on the density of the of the buildings in that area.
+
+Note that older items in this dataset are *not* spatially partitioned. We recommend using data with a processing date
+of 2023-04-25 or newer. This processing date is part of the URL for each parquet file and is captured in the STAC metadata
+for each item (see below).
+
+## Delta Format
+
+The collection-level asset under the `delta` key gives you the fsspec-style URL
+to the Delta table. This can be used to efficiently query for matching partitions
+by `Region` and `quadkey`. See the notebook for an example using Python.
+
+## STAC metadata
+
+This STAC collection has one STAC item per region. The `msbuildings:region`
+property can be used to filter items to a specific region, and the `msbuildings:quadkey`
+property can be used to filter items to a specific quadkey (though you can also search
+by the `geometry`).
+
+Note that older STAC items are not spatially partitioned. We recommend filtering on
+items with an `msbuildings:processing-date` of `2023-04-25` or newer. See the collection
+summary for `msbuildings:processing-date` for a list of valid values.
+
+[delta]: https://delta.io/
+[tiles]: https://learn.microsoft.com/en-us/bingmaps/articles/bing-maps-tile-system

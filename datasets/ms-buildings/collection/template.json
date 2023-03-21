@@ -66,8 +66,14 @@
     "Buildings",
     "geoparquet",
     "Microsoft",
-    "Footprint"
+    "Footprint",
+    "Delta"
   ],
+  "summaries": {
+    "msbuildings:processing-date": [
+      "2023-04-25"
+    ]
+  },
   "providers": [
     {
       "name": "Microsoft",
@@ -84,6 +90,14 @@
       "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/msbuildings-thumbnail.png",
       "type": "image/png",
       "title": "Thumbnail"
+    },
+    "delta": {
+      "href": "az://footprints/delta/2023-04-25/ml-buildings.parquet/",
+      "title": "Delta table",
+      "description": "Delta table with latest buildings footprints partitioned by Region and quadkey.",
+      "table:storage_options": {
+        "account_name": "bingmlbuildings"
+      }
     }
   }
 }
