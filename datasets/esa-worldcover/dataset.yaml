@@ -1,0 +1,30 @@
+id: esa-worldcover
+# image: ${{ args.registry }}/pctasks-esa-worldcover:latest
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+  - registry
+
+code:
+  src: ${{ local.path(./esa_worldcover.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: esa-worldcover
+    template: ${{ local.path(./collection) }}
+    class: esa_worldcover:ESAWorldCoverCollection
+    asset_storage:
+      - uri: blob://ai4edataeuwest/esa-worldcover/
+        chunks:
+          options:
+            extensions: [.tif]
+            name_starts_with: v200/2021/map
+            chunk_length: 5
+            limit: 5
+    chunk_storage:
+      uri: blob://ai4edataeuwest/esa-worldcover-etl-data/pctasks/

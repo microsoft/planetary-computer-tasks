@@ -1,0 +1,1 @@
+git+https://github.com/stactools-packages/esa-worldcover.git@8b8f8a0d26366f47d8443867c4a8134d6bc21a4a
