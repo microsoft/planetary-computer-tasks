@@ -1,2 +1,2 @@
-pypgstac==0.6.9
+pypgstac==0.7.2
 Jinja2==3.1.2
