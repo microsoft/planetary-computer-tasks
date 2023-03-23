@@ -1,24 +1,16 @@
 id: esa-worldcover
 image: ${{ args.registry }}/pctasks-esa-worldcover:latest
-# image: ${{ args.registry }}/pctasks-task-base:latest
 
 args:
   - registry
 
 code:
   src: ${{ local.path(./esa_worldcover.py) }}
-#   requirements: ${{ local.path(./requirements.txt) }}
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
   AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
   AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
-
-# task_config:
-#   esa-worldcover:
-#     create-items:
-#       tags:
-#         batch_pool_id: high_memory_pool
 
 collections:
   - id: esa-worldcover
