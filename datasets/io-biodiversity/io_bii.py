@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Union
 import pystac
 import rasterio
 from pystac.utils import datetime_to_str, str_to_datetime
+from shapely.geometry import shape
 from stactools.core.utils.raster_footprint import RasterFootprint
 
 from pctasks.core.models.task import WaitTaskResult
@@ -31,7 +32,7 @@ def get_ndjson(storage_factory: StorageFactory) -> Dict[str, Dict[str, Any]]:
     return {item["id"]: item for item in item_dicts}
 
 
-class IOBiodiversityIntactnessIndex(Collection):
+class IOBiodiversityIntactness(Collection):
     @classmethod
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
@@ -58,6 +59,7 @@ class IOBiodiversityIntactnessIndex(Collection):
         item_dict = io_item_dicts[id]
 
         item_dict["geometry"] = geometry
+        item_dict["bbox"] = list(shape(geometry).bounds)
 
         asset_dict = item_dict["assets"].pop("asset")
         asset_dict["title"] = "Biodiversity Intactness Index"

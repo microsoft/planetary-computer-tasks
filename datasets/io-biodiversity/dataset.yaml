@@ -16,7 +16,7 @@ environment:
 collections:
   - id: io-bii
     template: ${{ local.path(./collection) }}
-    class: io_bii:IOBiodiversityIntactnessIndex
+    class: io_bii:IOBiodiversityIntactness
     asset_storage:
       - uri: blob://pcdata01euw/impact
         token: ${{ pc.get_token(pcdata01euw, impact) }}

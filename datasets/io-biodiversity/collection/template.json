@@ -1,35 +1,37 @@
 {
     "stac_version": "1.0.0",
     "type": "Collection",
-    "id": "io-bii",
-    "title": "Impact Observatory Biodiversity Intactness Index",
+    "id": "io-biodiversity",
+    "title": "Biodiversity Intactness",
     "description": "{{ collection.description }}",
-    "license": "proprietary",
+    "license": "CC BY 4.0",
     "links": [
         {
-            "rel": "cite-as",
-            "href": "https://doi.org/10.1126/science.aaf2201"
+            "rel": "license",
+            "href": "https://creativecommons.org/licenses/by/4.0/",
+            "type": "text/html",
+            "title": "CC BY 4.0"
+        },
+        {
+            "rel": "about",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pdfs/io-biodiversity/Biodiversity_Intactness_whitepaper.pdf",
+            "type": "application/pdf",
+            "title": "Technical White Paper"
         }
     ],
     "stac_extensions": [
         "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/raster/v1.0.0/schema.json"
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
     ],
     "keywords": [
         "Global",
         "Biodiversity"
     ],
-    "msft:short_description": "Global biodiversity intactness index at 100m resolution",
+    "msft:short_description": "Global biodiversity intactness index at 100m resolution for years 2017-2020",
     "msft:storage_account": "pcdata01euw",
     "msft:container": "impact",
     "providers": [
-        {
-            "name": "Esri",
-            "roles": [
-                "licensor"
-            ],
-            "url": "https://www.esri.com/"
-        },
         {
             "name": "Impact Observatory",
             "roles": [
@@ -38,6 +40,13 @@
                 "licensor"
             ],
             "url": "https://www.impactobservatory.com/"
+        },
+        {
+            "name": "Vizzuality",
+            "roles": [
+                "processor"
+            ],
+            "url": "https://www.vizzuality.com/"
         },
         {
             "name": "Microsoft",
@@ -49,12 +58,12 @@
     ],
     "assets": {
         "thumbnail": {
-            "title": "Impact Observatory Biodiversity Intactness Index",
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/io-bii.png",
+            "title": "Biodiversity Intactness Index",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/io-biodiversity-thumb.png",
             "media_type": "image/png"
         },
         "geoparquet-items": {
-            "href": "abfs://items/io-bii.parquet",
+            "href": "abfs://items/io-biodiversity.parquet",
             "title": "GeoParquet STAC items",
             "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
             "type": "application/x-parquet",
