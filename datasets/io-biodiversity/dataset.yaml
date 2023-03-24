@@ -17,13 +17,12 @@ collections:
     template: ${{ local.path(./collection) }}
     class: io_biodiversity:IOBiodiversityIntactness
     asset_storage:
-      - uri: blob://pcdata01euw/impact
+      - uri: blob://pcdata01euw/impact/bii-v1
         token: ${{ pc.get_token(pcdata01euw, impact) }}
         chunks:
           options:
             ends_with: ".tif"
-            chunk_length: 500 # NOTE: there are approximately 15,000 blobs
-            limit: 5000
+            chunk_length: 500 # 1224 blobs per year; 4 years of data
 
     chunk_storage:
       uri: blob://pcdata01euw/impact-etl-data/pctasks/

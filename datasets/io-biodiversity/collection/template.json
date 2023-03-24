@@ -28,7 +28,7 @@
         "Global",
         "Biodiversity"
     ],
-    "msft:short_description": "Global biodiversity intactness index at 100m resolution for years 2017-2020",
+    "msft:short_description": "Global terrestrial biodiversity intactness at 100m resolution for years 2017-2020",
     "msft:storage_account": "pcdata01euw",
     "msft:container": "impact",
     "providers": [
@@ -58,7 +58,7 @@
     ],
     "assets": {
         "thumbnail": {
-            "title": "Biodiversity Intactness Index",
+            "title": "Biodiversity Intactness",
             "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/io-biodiversity-thumb.png",
             "media_type": "image/png"
         },
@@ -85,8 +85,8 @@
     },
     "item_assets": {
         "data": {
-            "title": "Biodiversity Intactness Index",
-            "description": "Modelled average abundance of originally-present species, expressed as a percentage, relative to their abundance in an intact ecosystem.",
+            "title": "Biodiversity Intactness",
+            "description": "Terrestrial biodiversity intactness at 100m resolution",
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "raster:bands": [
                 {
@@ -119,11 +119,5 @@
                 ]
             ]
         }
-    },
-    "sci:publications": [
-        {
-            "doi": "10.1126/science.aaf2201",
-            "citation": "Newbold, Tim, Lawrence N. Hudson, Andrew P. Arnell, Sara Contu, Adriana De Palma, Simon Ferrier, Samantha L. L. Hill, et al. 2016. “Has Land Use Pushed Terrestrial Biodiversity beyond the Planetary Boundary? A Global Assessment.” Science 353 (6296): 288-291."
-        }
-    ]
+    }
 }

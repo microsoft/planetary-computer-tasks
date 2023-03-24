@@ -54,7 +54,6 @@ class IOBiodiversityIntactness(Collection):
             return []
 
         id = Path(asset_path).stem
-        logger.info(f"geometry for {id}:\n{geometry}")
         io_item_dicts = get_ndjson(storage_factory)
         item_dict = io_item_dicts[id]
 
@@ -62,11 +61,10 @@ class IOBiodiversityIntactness(Collection):
         item_dict["bbox"] = list(shape(geometry).bounds)
 
         asset_dict = item_dict["assets"].pop("asset")
-        asset_dict["title"] = "Biodiversity Intactness Index"
-        asset_dict["description"] = (
-            "Modelled average abundance of originally-present species, expressed "
-            "as a percentage, relative to their abundance in an intact ecosystem."
-        )
+        asset_dict["title"] = "Biodiversity Intactness"
+        asset_dict[
+            "description"
+        ] = "Terrestrial biodiversity intactness at 100m resolution"
         asset_dict["href"] = asset_storage.get_url(asset_path)
         asset_dict["type"] = pystac.MediaType.COG
         asset_dict["roles"] = ["data"]
