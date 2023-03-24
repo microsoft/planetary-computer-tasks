@@ -1,12 +1,11 @@
 id: io_biodiversity
-image: ${{ args.registry }}/pctasks-task-base:latest
+image: ${{ args.registry }}/pctasks-io-biodiversity:latest
 
 args:
   - registry
 
 code:
   src: ${{ local.path(./io_biodiversity.py) }}
-  requirements: ${{ local.path(./requirements.txt) }}
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -23,8 +22,8 @@ collections:
         chunks:
           options:
             ends_with: ".tif"
-            chunk_length: 100 # NOTE: there are approximately 15,000 blobs
-            limit: 100
+            chunk_length: 500 # NOTE: there are approximately 15,000 blobs
+            limit: 5000
 
     chunk_storage:
       uri: blob://pcdata01euw/impact-etl-data/pctasks/
