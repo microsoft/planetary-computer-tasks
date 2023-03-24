@@ -4,7 +4,7 @@
     "id": "io-biodiversity",
     "title": "Biodiversity Intactness",
     "description": "{{ collection.description }}",
-    "license": "CC BY 4.0",
+    "license": "CC-BY-4.0",
     "links": [
         {
             "rel": "license",
