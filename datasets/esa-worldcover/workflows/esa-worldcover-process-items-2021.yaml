@@ -1,0 +1,97 @@
+name: Process items for esa-worldcover
+tokens: {}
+args:
+- registry
+jobs:
+  create-splits:
+    id: create-splits
+    tasks:
+    - id: create-splits
+      image: ${{ args.registry }}/pctasks-esa-worldcover:latest
+      code:
+        src: datasets/esa-worldcover/esa_worldcover.py
+      task: esa_worldcover:ESAWorldCoverCollection.create_splits_task
+      args:
+        inputs:
+        - uri: blob://ai4edataeuwest/esa-worldcover/
+          chunk_options:
+            chunk_length: 200
+            name_starts_with: v200/2021/map
+            extensions:
+            - .tif
+            limit: 3000
+            list_folders: false
+            chunk_file_name: uris-list
+            chunk_extension: .csv
+        options: {}
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+  create-chunks:
+    id: create-chunks
+    tasks:
+    - id: create-chunks
+      image: ${{ args.registry }}/pctasks-esa-worldcover:latest
+      code:
+        src: datasets/esa-worldcover/esa_worldcover.py
+      task: pctasks.dataset.chunks.task:create_chunks_task
+      args:
+        src_uri: ${{ item.uri }}
+        dst_uri: blob://ai4edataeuwest/esa-worldcover-etl-data/pctasks/2021-all/assets
+        options: ${{ item.chunk_options }}
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+    foreach:
+      items: ${{ jobs.create-splits.tasks.create-splits.output.splits }}
+      flatten: true
+    needs: create-splits
+  process-chunk:
+    id: process-chunk
+    tasks:
+    - id: create-items
+      image: ${{ args.registry }}/pctasks-esa-worldcover:latest
+      code:
+        src: datasets/esa-worldcover/esa_worldcover.py
+      task: esa_worldcover:ESAWorldCoverCollection.create_items_task
+      args:
+        asset_chunk_info:
+          uri: ${{ item.uri }}
+          chunk_id: ${{ item.chunk_id }}
+        item_chunkset_uri: blob://ai4edataeuwest/esa-worldcover-etl-data/pctasks/2021-all/items
+        collection_id: esa-worldcover
+        options:
+          skip_validation: false
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+    - id: ingest-items
+      image_key: ingest
+      task: pctasks.ingest_task.task:ingest_task
+      args:
+        content:
+          type: Ndjson
+          uris:
+          - ${{tasks.create-items.output.ndjson_uri}}
+        options:
+          insert_group_size: 5000
+          insert_only: false
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+    foreach:
+      items: ${{ jobs.create-chunks.tasks.create-chunks.output.chunks }}
+      flatten: true
+    needs: create-chunks
+schema_version: 1.0.0
+id: esa-worldcover-process-items
+dataset: esa-worldcover
+
