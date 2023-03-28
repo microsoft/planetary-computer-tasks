@@ -3,6 +3,7 @@ from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List, Union
+import copy
 
 import pystac
 import rasterio
@@ -55,7 +56,7 @@ class IOBiodiversityIntactness(Collection):
 
         id = Path(asset_path).stem
         io_item_dicts = get_ndjson(storage_factory)
-        item_dict = io_item_dicts[id]
+        item_dict = copy.deepcopy(io_item_dicts[id])
 
         item_dict["geometry"] = geometry
         item_dict["bbox"] = list(shape(geometry).bounds)
