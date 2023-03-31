@@ -1,12 +1,30 @@
-id: sentinel-1-grd
+id: sentinel_5p
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+  - registry
+
+code:
+  src: ${{ local.path(./sentinel_5p.py) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
 collections:
-  id: sentinel-1-grd
-  containers:
-    assets: sentinel1euwest/s1-grd
-    stac: sentinel1euwest/s1-grd-stac
-    etl-data: sentinel1euwest/s1-grd-etl-info
-triggers:
-  storage:
-    account: sentinel1euwest
-    container: s1-grd-stac
-    filter: "*.json"
+  - id: sentinel-5p-l2-netcdf
+    template: ${{ local.path(./collection) }}
+    class: sentinel_5p:Sentinel5pNetCDFCollection
+    asset_storage:
+      - uri: blob://sentinel5euwest/sentinel-5p-stac/TROPOMI/
+        token: ${{ pc.get_token(sentinel5euwest, sentinel-5p-stac) }}
+        chunks:
+          options:
+            name_starts_with: L2__AER_AI/
+            extensions: [.json]
+            chunk_length: 100
+            limit: 200
+
+    chunk_storage:
+      uri: blob://sentinel5euwest/sentinel-5p-etl-data/pctasks-chunks/

@@ -2,7 +2,7 @@ id: io_lulc
 image: ${{ args.registry }}/pctasks-task-base:latest
 
 args:
-- registry
+  - registry
 
 code:
   src: ${{ local.path(./io_lulc.py) }}
