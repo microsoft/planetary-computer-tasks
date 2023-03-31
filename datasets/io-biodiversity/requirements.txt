@@ -1,1 +1,1 @@
-stactools==0.4.5
+git+https://github.com/stac-utils/stactools.git@c2bdf32331a9782373d7152472093cd4bc4298a9
