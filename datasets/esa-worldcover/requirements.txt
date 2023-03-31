@@ -1,1 +1,1 @@
-stactools-esa-worldcover == 0.2.0
+git+https://github.com/stactools-packages/esa-worldcover.git@164fcfea77954c87eb73d465d8da4bee00e1840c
