@@ -191,6 +191,9 @@ class StreamingCreateItemsTask(
         items_record_container, items_update_container = items_containers
 
         logger.info("Processing message id=%s", message.id)
+        # TODO: think about parsing this into a structured object.
+        # Right now we use "data" and "time" from cloud event
+        # Just be careful about performance.
         parsed_message = json.loads(message.content)  # type: ignore
         if not callable(input.create_items_function):
             # Why isn't this already done?

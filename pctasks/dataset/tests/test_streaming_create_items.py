@@ -1,6 +1,7 @@
 import datetime
 import json
 
+import azure.storage.queue
 import pystac
 
 from pctasks.core.storage import StorageFactory
@@ -25,6 +26,40 @@ class CreateItems:
             properties={},
         )
         return [result]
+
+
+def test_process_message():
+    task = streaming.StreamingCreateItemsTask()
+    create_items = CreateItems()
+    message = azure.storage.queue.QueueMessage(
+        content=json.dumps(
+            {
+                "data": {"url": "test.tif"},
+                "time": "2023-03-27T21:12:27.7409548Z",
+            }
+        )
+    )
+    context = TaskContext(run_id="test", storage_factory=StorageFactory())
+    task_input = streaming.StreamingCreateItemsInput(
+        collection_id="test",
+        create_items_function=create_items,
+        streaming_options=StreamingTaskOptions(
+            # process_message doesn't actually touch the queue
+            queue_url="http://example.com",
+            queue_credential=AZURITE_ACCOUNT_KEY,
+            visibility_timeout=10,
+            message_limit=5,
+        ),
+    )
+    items_containers = task.get_extra_options(task_input, context)["items_containers"]
+
+    task.process_message(
+        message,
+        task_input,
+        context,
+        items_containers,
+        create_items_function=create_items,
+    )
 
 
 def test_streaming_create_items_task():
@@ -59,9 +94,10 @@ def test_streaming_create_items_task():
         context = TaskContext(run_id="test", storage_factory=StorageFactory())
 
         task.run(task_input, context)
-    # I'm confused why this isn't 5. It seems like we're fetching a batch of
-    # messages from the queue at once.
-    assert create_items.count == 10
+        assert create_items.count == 10
+        # Hmm is this zero because all the items were created successfully?
+        # We need to ensure that process_message is unit tested
+        assert queue_client.get_queue_properties().approximate_message_count == 0
 
 
 def test_streaming_create_items_from_message():
