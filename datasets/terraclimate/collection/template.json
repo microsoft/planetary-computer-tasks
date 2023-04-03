@@ -96,6 +96,7 @@
   "msft:short_description": "High-resolution global dataset of monthly climate and climatic water balance",
   "msft:storage_account": "cpdataeuwest",
   "msft:container": "cpdata",
+  "msft:region": "westeurope",
   "cube:dimensions": {
     "time": {
       "extent": [

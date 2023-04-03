@@ -89,6 +89,7 @@
     }
   ],
   "msft:container": "sentinel-3",
+  "msft:region": "westeurope",
   "msft:storage_account": "sentinel3euwest",
   "msft:short_description": "The [Sentinel-3](https://sentinel.esa.int/web/sentinel/missions/sentinel-3) mission is composed of three versatile satellites designed to provide data continuity for the ERS, ENVISAT and SPOT satellites and to support operational land and ocean observation services. Level 2 OLCI products provide land, water, and atmospheric geophysical parameters computed for Full Resolution and Reduced Resolution.",
   "summaries": {

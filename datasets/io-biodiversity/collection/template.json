@@ -31,6 +31,7 @@
     "msft:short_description": "Global terrestrial biodiversity intactness at 100m resolution for years 2017-2020",
     "msft:storage_account": "pcdata01euw",
     "msft:container": "impact",
+    "msft:region": "westeurope",
     "providers": [
         {
             "name": "Impact Observatory",

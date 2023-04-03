@@ -37,6 +37,7 @@
   ],
   "msft:storage_account": "bingmlbuildings",
   "msft:container": "footprints",
+  "msft:region": "westeurope",
   "msft:short_description": "Machine learning detected buildings footprints.",
   "title": "Microsoft Building Footprints",
   "extent": {
