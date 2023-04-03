@@ -1,0 +1,28 @@
+id: io_biodiversity
+image: ${{ args.registry }}/pctasks-io-biodiversity:latest
+
+args:
+  - registry
+
+code:
+  src: ${{ local.path(./io_biodiversity.py) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: io-biodiversity
+    template: ${{ local.path(./collection) }}
+    class: io_biodiversity:IOBiodiversityIntactness
+    asset_storage:
+      - uri: blob://pcdata01euw/impact/bii-v1
+        token: ${{ pc.get_token(pcdata01euw, impact) }}
+        chunks:
+          options:
+            ends_with: ".tif"
+            chunk_length: 500 # 1224 blobs per year; 4 years of data
+
+    chunk_storage:
+      uri: blob://pcdata01euw/impact-etl-data/pctasks/
