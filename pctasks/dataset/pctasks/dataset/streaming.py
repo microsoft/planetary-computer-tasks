@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import importlib.metadata
 import json
 import logging
@@ -10,13 +9,13 @@ import azure.core.credentials
 import azure.cosmos
 import azure.identity
 import azure.storage.queue
-from pctasks.core.cosmos.containers.items import ItemsContainer
-from pctasks.core.models.item import ItemUpdatedRecord, StacItemRecord
 import pydantic
 import pystac
 from pystac.utils import str_to_datetime
 
+from pctasks.core.cosmos.containers.items import ItemsContainer
 from pctasks.core.models.base import PCBaseModel
+from pctasks.core.models.item import ItemUpdatedRecord, StacItemRecord
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 
@@ -25,11 +24,7 @@ from pctasks.core.storage import StorageFactory
 #     validate_item,
 # )
 from pctasks.task.context import TaskContext
-from pctasks.task.streaming import (
-    NoOutput,
-    StreamingTaskMixin,
-    StreamingTaskOptions,
-)
+from pctasks.task.streaming import NoOutput, StreamingTaskMixin, StreamingTaskOptions
 from pctasks.task.task import Task
 
 logger = logging.getLogger("pctasks.dataset.streaming")
@@ -116,14 +111,6 @@ class StreamingCreateItemsInput(PCBaseModel):
 # TODO: Create a base streaming task
 # - Inherited Ingest streaming task, in pctasks.ingest_task
 # - Inherited CreateItems streaming task, in pctasks.dataset
-
-
-@dataclass
-class ItemsContainers:
-    """Data class to hold all required Items containers"""
-
-    item_container: ItemsContainer[StacItemRecord]
-    item_update_container: ItemsContainer[ItemUpdatedRecord]
 
 
 class StreamingCreateItemsTask(
@@ -246,13 +233,15 @@ class StreamingCreateItemsTask(
                     item_record = StacItemRecord.from_item(item)
                     item_records.append(item_record)
 
-                    update_records.append(ItemUpdatedRecord(
-                        stac_id=item_record.stac_id,
-                        version=item_record.version,
-                        run_id=context.run_id,
-                        storage_event_time=str_to_datetime(parsed_message["time"]),
-                        message_inserted_time=message.inserted_on
-                    ))
+                    update_records.append(
+                        ItemUpdatedRecord(
+                            stac_id=item_record.stac_id,
+                            version=item_record.version,
+                            run_id=context.run_id,
+                            storage_event_time=str_to_datetime(parsed_message["time"]),
+                            message_inserted_time=message.inserted_on,
+                        )
+                    )
 
                 items_record_container.bulk_put(item_records)
                 items_update_container.bulk_put(update_records)

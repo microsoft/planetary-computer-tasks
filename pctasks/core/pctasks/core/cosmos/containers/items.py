@@ -10,15 +10,12 @@ from pctasks.core.cosmos.container import (
     TriggerType,
 )
 from pctasks.core.cosmos.settings import CosmosDBSettings
-from pctasks.core.models.item import (
-    ItemRecord,
-    ItemUpdatedRecord,
-)
+from pctasks.core.models.item import ItemUpdatedRecord, StacItemRecord
 
 # Records that this container can hold
 T = TypeVar(
     "T",
-    ItemRecord,
+    StacItemRecord,
     ItemUpdatedRecord,
 )
 

@@ -1,13 +1,13 @@
 import datetime
 import json
-from pctasks.core.utils import environment
-from pctasks.dev.cosmosdb import temp_cosmosdb_if_emulator
 
 import pystac
 
 from pctasks.core.storage import StorageFactory
+from pctasks.core.utils import environment
 from pctasks.dataset import streaming
 from pctasks.dev.constants import get_azurite_named_key_credential
+from pctasks.dev.cosmosdb import temp_cosmosdb_if_emulator
 from pctasks.dev.queues import TempQueue
 from pctasks.task.context import TaskContext
 from pctasks.task.streaming import StreamingTaskOptions

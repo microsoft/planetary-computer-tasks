@@ -1,10 +1,11 @@
 from datetime import datetime
 from typing import Any, Dict, Optional
+
+import pystac
 from pydantic import Field, validator
 
 from pctasks.core.models.record import Record
 from pctasks.core.utils import StrEnum
-import pystac
 
 
 class ItemRecordType(StrEnum):
@@ -48,9 +49,7 @@ class StacItemRecord(ItemRecord):
         item_id = item.id
         stac_id = f"{collection_id}/{item_id}"
         return cls(
-            stac_id=stac_id,
-            version=item.properties.get("version"),
-            item=item.to_dict()
+            stac_id=stac_id, version=item.properties.get("version"), item=item.to_dict()
         )
 
 
