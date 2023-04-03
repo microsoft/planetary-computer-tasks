@@ -5,14 +5,14 @@ import pytest
 from pypgstac.db import PgstacDB
 
 from pctasks.core.storage import StorageFactory
-from pctasks.dev.constants import AZURITE_ACCOUNT_KEY
-from pctasks.dev.db import temp_pgstac_db
+from pctasks.dev.constants import get_azurite_named_key_credential
 from pctasks.dev.queues import TempQueue
 from pctasks.ingest.models import IngestCollectionsInput
 from pctasks.ingest_task import streaming
 from pctasks.ingest_task.task import IngestTask, IngestTaskInput
 from pctasks.task.context import TaskContext
 from pctasks.task.streaming import StreamingTaskOptions
+from tests.conftest import ingest_test_environment
 
 HERE = pathlib.Path(__file__).parent
 
@@ -29,31 +29,13 @@ def s1_grd_collection():
     )
 
 
-@pytest.fixture
-def conn_str_info(monkeypatch):
-    monkeypatch.setenv("POSTGRES_USER", "username")
-    monkeypatch.setenv("POSTGRES_PASSWORD", "password")
-    monkeypatch.setenv("POSTGRES_DBNAME", "postgis")
-    # monkeypatch.setenv("POSTGRES_USER", "username")
-    monkeypatch.setenv("POSTGRES_PASS", "password")
-    monkeypatch.setenv("POSTGRES_HOST", "localhost")
-    monkeypatch.setenv("POSTGRES_PORT", "5499")
-    monkeypatch.setenv(
-        "DB_CONNECTION_STRING", "postgresql://username:password@localhost:5499/postgis"
-    )
-    # monkeypatch.setenv("PGDATABASE", "postgis")
-    with temp_pgstac_db() as conn_str_info:
-        yield conn_str_info
-
-
-# TODO: currently failing. Need to ingest the collection
-def test_streaming_create_items_task(conn_str_info, s1_grd_collection, document):
+def test_streaming_create_items_task(s1_grd_collection, document):
     # Relies on the servers running
     #   - azurite
     #   - pgstac
     context = TaskContext(run_id="test", storage_factory=StorageFactory())
-    with PgstacDB(conn_str_info.local) as db:
 
+    with ingest_test_environment() as conn_str_info:
         # ingest collection
         task = IngestTask()
         input = IngestTaskInput(
@@ -61,17 +43,14 @@ def test_streaming_create_items_task(conn_str_info, s1_grd_collection, document)
         )
         task.run(input, context)
 
-        with TempQueue(
-            message_decode_policy=None, message_encode_policy=None
-        ) as queue_client:
+        with TempQueue() as queue_client:
             # put some messages on the queue
             for _ in range(10):
                 queue_client.send_message(json.dumps(document))
             task_input = streaming.StreamingIngestItemsInput(
-                collection_id="test",
                 streaming_options=StreamingTaskOptions(
                     queue_url=queue_client.url,
-                    queue_credential=AZURITE_ACCOUNT_KEY,
+                    queue_credential=get_azurite_named_key_credential(),
                     visibility_timeout=10,
                     message_limit=5,
                 ),
@@ -81,7 +60,8 @@ def test_streaming_create_items_task(conn_str_info, s1_grd_collection, document)
             task = streaming.StreamingIngestItemsTask()
             task.run(task_input, context)
 
-            results = list(
-                db.query("select * from items where collection = 'sentinel-1-grd'")
-            )
+            with PgstacDB(conn_str_info.local) as db:
+                results = list(
+                    db.query("select * from items where collection = 'sentinel-1-grd'")
+                )
             assert len(results)

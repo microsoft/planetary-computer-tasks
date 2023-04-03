@@ -24,7 +24,7 @@ RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu
 
 RUN apt-get update && apt-get install -y azure-functions-core-tools-4
 
-# Install Terraform 0.14.4
+# Install Terraform
 
 RUN wget -O terraform.zip https://releases.hashicorp.com/terraform/1.1.2/terraform_1.1.2_linux_amd64.zip
 RUN unzip terraform.zip

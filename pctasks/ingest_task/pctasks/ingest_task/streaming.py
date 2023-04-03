@@ -1,10 +1,12 @@
 import json
 import logging
-from typing import Any, Dict
+import os
+from typing import Any, Dict, List, Optional
 
 import azure.storage.queue
 
 from pctasks.core.models.base import PCBaseModel
+from pctasks.ingest.constants import DB_CONNECTION_STRING_ENV_VAR
 from pctasks.ingest_task.pgstac import PgSTAC
 from pctasks.task.context import TaskContext
 from pctasks.task.streaming import NoOutput, StreamingTaskMixin, StreamingTaskOptions
@@ -23,6 +25,9 @@ class StreamingIngestItemsTask(
     _input_model = StreamingIngestItemsInput
     _output_model = NoOutput
 
+    def get_required_environment_variables(self) -> List[str]:
+        return [DB_CONNECTION_STRING_ENV_VAR]
+
     # Mypy doesn't like us using a more specific type for the input here.
     # I'm not sure what the solution is. You should only call this
     # method with the task type.
@@ -31,7 +36,15 @@ class StreamingIngestItemsTask(
     ) -> Dict[str, Any]:
         from pctasks.ingest_task.task import PgSTAC
 
-        return {"pgstac": PgSTAC.from_env()}
+        conn_str = os.environ[DB_CONNECTION_STRING_ENV_VAR]
+        pgstac = PgSTAC(conn_str)
+
+        return {"pgstac": pgstac}
+
+    def cleanup(self, extra_options: Dict[str, Any]) -> None:
+        pgstac: Optional[PgSTAC] = extra_options.get("pgstac")
+        if pgstac:
+            pgstac.db.close()
 
     def process_message(  # type: ignore[override]
         self,
@@ -50,4 +63,4 @@ class StreamingIngestItemsTask(
         # we're potentially ingesting multiple items.
         # if input.collection_id:
         #     item["collection"] = input.collection_id
-        ingest_item(pgstac, item)  # this hangs, at least on bad data.
+        ingest_item(pgstac, item)

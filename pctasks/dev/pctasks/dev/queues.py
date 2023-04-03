@@ -1,23 +1,18 @@
 from typing import Any, Optional
 from uuid import uuid1
 
-from azure.storage.queue import (
-    BinaryBase64DecodePolicy,
-    BinaryBase64EncodePolicy,
-    QueueClient,
-    QueueServiceClient,
-)
+from azure.storage.queue import QueueClient, QueueServiceClient
 
 from pctasks.core.models.config import QueueConnStrConfig
-from pctasks.core.queues import QueueService
+from pctasks.core.queues import MessageDecodePolicy, MessageEncodePolicy, QueueService
 from pctasks.dev.constants import get_azurite_connection_string
 
 
 class TempQueue:
     def __init__(
         self,
-        message_encode_policy: BinaryBase64EncodePolicy = BinaryBase64EncodePolicy(),
-        message_decode_policy: BinaryBase64DecodePolicy = BinaryBase64DecodePolicy(),
+        message_encode_policy: Optional[MessageEncodePolicy] = None,
+        message_decode_policy: Optional[MessageDecodePolicy] = None,
         suffix: Optional[str] = None,
     ) -> None:
         suffix = suffix or uuid1().hex[:5]

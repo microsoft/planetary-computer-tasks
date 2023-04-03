@@ -1,17 +1,20 @@
 from __future__ import annotations
 
-import dataclasses
+from dataclasses import dataclass
 import importlib.metadata
 import json
 import logging
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import azure.core.credentials
 import azure.cosmos
 import azure.identity
 import azure.storage.queue
+from pctasks.core.cosmos.containers.items import ItemsContainer
+from pctasks.core.models.item import ItemUpdatedRecord, StacItemRecord
 import pydantic
 import pystac
+from pystac.utils import str_to_datetime
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.task import WaitTaskResult
@@ -23,9 +26,6 @@ from pctasks.core.storage import StorageFactory
 # )
 from pctasks.task.context import TaskContext
 from pctasks.task.streaming import (
-    ItemCreatedData,
-    ItemCreatedEvent,
-    ItemCreatedMetrics,
     NoOutput,
     StreamingTaskMixin,
     StreamingTaskOptions,
@@ -118,11 +118,22 @@ class StreamingCreateItemsInput(PCBaseModel):
 # - Inherited CreateItems streaming task, in pctasks.dataset
 
 
+@dataclass
+class ItemsContainers:
+    """Data class to hold all required Items containers"""
+
+    item_container: ItemsContainer[StacItemRecord]
+    item_update_container: ItemsContainer[ItemUpdatedRecord]
+
+
 class StreamingCreateItemsTask(
     StreamingTaskMixin, Task[StreamingCreateItemsInput, NoOutput]
 ):
     _input_model = StreamingCreateItemsInput
     _output_model = NoOutput
+
+    def get_required_environment_variables(self) -> List[str]:
+        return ["PCTASKS_COSMOSDB__URL"]
 
     # Mypy doesn't like us using a more specific type for the input here.
     # I'm not sure what the solution is. You should only call this
@@ -130,17 +141,13 @@ class StreamingCreateItemsTask(
     def get_extra_options(  # type: ignore[override]
         self, input: StreamingCreateItemsInput, context: TaskContext
     ) -> Dict[str, Any]:
-        # TODO: Used DefaultAzureCredential in dev / test too.
-        credential: Union[str, azure.core.credentials.TokenCredential]
-        if input.cosmos_credential:
-            credential = input.cosmos_credential
-        else:
-            credential = azure.identity.DefaultAzureCredential()
-        container_proxy = (
-            azure.cosmos.CosmosClient(input.cosmos_endpoint, credential)
-            .get_database_client(input.db_name)
-            .get_container_client(input.container_name)
-        )
+
+        items_record_container = ItemsContainer(StacItemRecord)
+        items_record_container.__enter__()
+
+        items_update_container = ItemsContainer(ItemUpdatedRecord)
+        items_update_container.__enter__()
+
         create_items_function = input.create_items_function
         if isinstance(create_items_function, str):
             logger.info("Loading create_items_function")
@@ -149,9 +156,16 @@ class StreamingCreateItemsTask(
         assert callable(create_items_function)
 
         return {
-            "container_proxy": container_proxy,
+            "items_containers": (items_record_container, items_update_container),
             "create_items_function": create_items_function,
         }
+
+    def cleanup(self, extra_options: Dict[str, Any]) -> None:
+        items_record_container, items_update_container = extra_options[
+            "items_container"
+        ]
+        items_record_container.__exit__(None, None, None)
+        items_update_container.__exit__(None, None, None)
 
     def create_items(  # type ignore[override]
         self,
@@ -183,14 +197,18 @@ class StreamingCreateItemsTask(
         message: azure.storage.queue.QueueMessage,
         input: StreamingCreateItemsInput,
         context: TaskContext,
-        container_proxy: azure.cosmos.ContainerProxy,
+        items_containers: Tuple[
+            ItemsContainer[StacItemRecord], ItemsContainer[ItemUpdatedRecord]
+        ],
         create_items_function: Callable[[str, StorageFactory], List[pystac.Item]],
     ) -> None:
+        items_record_container, items_update_container = items_containers
+
         logger.info("Processing message id=%s", message.id)
-        parsed_message = json.loads(message.content)
+        parsed_message = json.loads(message.content)  # type: ignore
         if not callable(input.create_items_function):
             # Why isn't this already done?
-            logger.info("Loading create_items_functio")
+            logger.info("Loading create_items_function")
             entrypoint = importlib.metadata.EntryPoint(
                 "", input.create_items_function, ""
             )
@@ -214,22 +232,32 @@ class StreamingCreateItemsTask(
             logger.exception("Error in create item")
             raise
         else:
-            for item in items:
-                # TODO: Proper error handling here.
-                if isinstance(item, pystac.Item):
+            if isinstance(items, WaitTaskResult):
+                # TODO: Handle WaitTaskResult
+                logger.warning("Unimplemented WaitTaskResult")
+            else:
+
+                item_records: List[StacItemRecord] = []
+                update_records: List[ItemUpdatedRecord] = []
+
+                for item in items:
+                    # TODO: Proper error handling here.
                     logger.info("Created item id=%s", item.id)
-                    data = ItemCreatedData(
-                        item=item.to_dict(),
-                        metrics=ItemCreatedMetrics(
-                            storage_event_time=parsed_message["time"],
-                            message_inserted_time=message.inserted_on.strftime(
-                                "%Y-%m-%dT%H:%M:%S.%fZ"
-                            ),
-                        ),
-                    )
-                    event = dataclasses.asdict(ItemCreatedEvent(data=data))
-                    container_proxy.upsert_item(event)
-                    logger.info("Persisted event id=%s", event["id"])
+                    item_record = StacItemRecord.from_item(item)
+                    item_records.append(item_record)
+
+                    update_records.append(ItemUpdatedRecord(
+                        stac_id=item_record.stac_id,
+                        version=item_record.version,
+                        run_id=context.run_id,
+                        storage_event_time=str_to_datetime(parsed_message["time"]),
+                        message_inserted_time=message.inserted_on
+                    ))
+
+                items_record_container.bulk_put(item_records)
+                items_update_container.bulk_put(update_records)
+
+                logger.info("Persisted records.")
 
 
 def create_item_from_item_uri(

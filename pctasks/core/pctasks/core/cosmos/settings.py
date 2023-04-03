@@ -14,6 +14,7 @@ from pctasks.core.settings import PCTasksSettings
 DEFAULT_DATABASE_NAME = "pctasks"
 DEFAULT_WORKFLOW_RUNS_CONTAINER = "workflow-runs"
 DEFAULT_WORKFLOWS_CONTAINER = "workflows"
+DEFAULT_ITEMS_CONTAINER = "items"
 DEFAULT_RECORDS_CONTAINER = "records"
 
 DEFAULT_SINGLE_PARTITION_KEY_VALUE = "partition_key"
@@ -37,6 +38,7 @@ class CosmosDBSettings(PCTasksSettings):
     database: str = DEFAULT_DATABASE_NAME
     workflows_container_name: str = DEFAULT_WORKFLOWS_CONTAINER
     workflow_runs_container_name: str = DEFAULT_WORKFLOW_RUNS_CONTAINER
+    items_container_name: str = DEFAULT_ITEMS_CONTAINER
     records_container_name: str = DEFAULT_RECORDS_CONTAINER
 
     max_bulk_put_size: int = 250
@@ -53,6 +55,14 @@ class CosmosDBSettings(PCTasksSettings):
                 f"-{self.test_container_suffix}"
             )
         return self.workflow_runs_container_name
+
+    def get_items_container_name(self) -> str:
+        if self.test_container_suffix:
+            return (
+                f"tmp-{self.items_container_name}"
+                f"-{self.test_container_suffix}"
+            )
+        return self.items_container_name
 
     def get_records_container_name(self) -> str:
         if self.test_container_suffix:

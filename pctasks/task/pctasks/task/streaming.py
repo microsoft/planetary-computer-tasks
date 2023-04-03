@@ -1,4 +1,3 @@
-import dataclasses
 import datetime
 import logging
 import math
@@ -7,6 +6,7 @@ import urllib.parse
 import uuid
 from typing import Any, Dict, Optional, Protocol, Union
 
+import azure.identity
 import azure.storage.queue
 
 from pctasks.core.models.base import PCBaseModel
@@ -87,6 +87,10 @@ class StreamingTaskMixin:
     ) -> Dict[str, Any]:
         return {}
 
+    def cleanup(self, extra_options: Dict[str, Any]) -> None:
+        """Method that will always be called as streaming run exits."""
+        pass
+
     def run(self, input: StreamingTaskInput, context: TaskContext) -> NoOutput:
         # queue_credential should only be used for testing with azurite.
         # Otherwise, use managed identities.
@@ -105,38 +109,42 @@ class StreamingTaskMixin:
             "Processing messages from queue=%s", input.streaming_options.queue_url
         )
 
-        while message_count < max_messages:
-            # mypy upgrade
-            for message in qc.receive_messages(  # type: ignore
-                visibility_timeout=input.streaming_options.visibility_timeout
-            ):
-                try:
-                    self.process_message(
-                        message=message,
-                        input=input,
-                        context=context,
-                        **extra_options,
-                    )
-                except Exception:
-                    logger.exception("Failed to process message")
-                else:
-                    # TODO: warning if we've passed the visibility timeout
-                    logger.info("Processed message id=%s", message.id)
-                    # mypy upgrade
-                    qc.delete_message(message)  # type: ignore
-
-                message_count += 1
-                if (
-                    input.streaming_options.message_limit
-                    and message_count >= input.streaming_options.message_limit
+        try:
+            while message_count < max_messages:
+                # mypy upgrade
+                for message in qc.receive_messages(  # type: ignore
+                    visibility_timeout=input.streaming_options.visibility_timeout
                 ):
-                    logger.info("Hit limit=%d", message_count)
-                    continue
-            # We've drained the queue. Now we'll pause slightly before checking again.
-            # TODO: some kind of exponential backoff here. From 0 - 5-10 seconds.
-            n = 5
-            logger.info("Sleeping for %s seconds", n)
-            time.sleep(n)
+                    try:
+                        self.process_message(
+                            message=message,
+                            input=input,
+                            context=context,
+                            **extra_options,
+                        )
+                    except Exception:
+                        logger.exception("Failed to process message")
+                    else:
+                        # TODO: warning if we've passed the visibility timeout
+                        logger.info("Processed message id=%s", message.id)
+                        # mypy upgrade
+                        qc.delete_message(message)  # type: ignore
+
+                    message_count += 1
+                    if (
+                        input.streaming_options.message_limit
+                        and message_count >= input.streaming_options.message_limit
+                    ):
+                        logger.info("Hit limit=%d", message_count)
+                        continue
+                # We've drained the queue.
+                # Now we'll pause slightly before checking again.
+                # TODO: some kind of exponential backoff here. From 0 - 5-10 seconds.
+                n = 5
+                logger.info("Sleeping for %s seconds", n)
+                time.sleep(n)
+        finally:
+            self.cleanup(extra_options)
 
         logger.info("Finishing run")
         return NoOutput()
@@ -160,26 +168,3 @@ def transform_url(event_url: str) -> str:
         account_name = parsed.netloc.split(".")[0]
         return f"blob://{account_name}{parsed.path}"
     return event_url
-
-
-@dataclasses.dataclass
-class ItemCreatedMetrics:
-    storage_event_time: str
-    message_inserted_time: str
-
-
-@dataclasses.dataclass
-class ItemCreatedData:
-    item: Dict[str, Any]
-    metrics: ItemCreatedMetrics
-
-
-@dataclasses.dataclass
-class ItemCreatedEvent:
-    data: ItemCreatedData
-    specversion: str = "1.0"
-    type: str = "com.microsoft.planetarycomputer/item-created"
-    source: str = "pctasks"
-    id: str = dataclasses.field(default_factory=event_id_factory)
-    time: str = dataclasses.field(default_factory=time_factory)
-    datacontenttype: str = "application/json"
