@@ -21,6 +21,7 @@ def validate_collection(collection: Dict) -> Tuple[str, List[str]]:
         "msft:short_description",
         "msft:storage_account",
         "msft:container",
+        "msft:region",
         "title",
     ]
     errors = [
