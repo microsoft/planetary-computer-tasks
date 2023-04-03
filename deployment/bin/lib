@@ -145,3 +145,9 @@ function prepare_funcs() {
 
     popd || exit
 }
+
+function get_cidr_range() {
+    runnerIpAddress=$(curl -s https://ifconfig.me/all.json | jq -r ".ip_addr")
+    IFS='.' read -r -a ip_parts <<< "$runnerIpAddress"
+    echo "${ip_parts[0]}.${ip_parts[1]}.0.0/16"
+}
