@@ -64,6 +64,7 @@
     "msft:short_description": "Global land cover product at 10 meter resolution based on Sentinel-1 and Sentinel-2 data",
     "msft:storage_account": "ai4edataeuwest",
     "msft:container": "esa-worldcover",
+    "msft:region": "westeurope",
     "providers": [
         {
             "name": "ESA",
