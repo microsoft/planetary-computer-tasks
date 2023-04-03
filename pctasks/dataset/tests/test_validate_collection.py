@@ -18,6 +18,7 @@ collection: Dict[str, Any] = {
     "msft:short_description": "short",
     "msft:storage_account": "account",
     "msft:container": "container",
+    "msft:region": "westeurope",
     "providers": [
         {
             "name": "Microsoft",
@@ -59,6 +60,7 @@ def test_validate_required_keys() -> None:
         "msft:short_description",
         "msft:storage_account",
         "msft:container",
+        "msft:region",
         "title",
     ]
     for key in required_keys:
@@ -120,3 +122,10 @@ def test_has_license_link() -> None:
 
     _, [error] = validate.validate_collection(c)
     assert error == "must have license link"
+
+
+def test_msft_region_format() -> None:
+    c = copy.deepcopy(collection)
+    c["msft:region"] = "West Europe"
+    _, [error] = validate.validate_collection(c)
+    assert error == "'msft:region' should not contain any spaces."

@@ -96,6 +96,9 @@ def validate_collection(collection: Dict) -> Tuple[str, List[str]]:
     if not has_license_link:
         errors.append("must have license link")
 
+    region = collection.get("msft:region", "")
+    if region.count(" "):
+        errors.append("'msft:region' should not contain any spaces.")
     return cid, errors
 
     # if errors:
