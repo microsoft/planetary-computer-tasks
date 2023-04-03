@@ -1,9 +1,6 @@
-import datetime
 import logging
 import math
 import time
-import urllib.parse
-import uuid
 from typing import Any, Dict, Optional, Protocol, Union
 
 import azure.identity
@@ -124,6 +121,7 @@ class StreamingTaskMixin:
                         )
                     except Exception:
                         logger.exception("Failed to process message")
+                        # TODO: make sure this is getting logged loudly, even in tests.
                     else:
                         # TODO: warning if we've passed the visibility timeout
                         logger.info("Processed message id=%s", message.id)
@@ -148,23 +146,3 @@ class StreamingTaskMixin:
 
         logger.info("Finishing run")
         return NoOutput()
-
-
-def event_id_factory() -> str:
-    return str(uuid.uuid4())
-
-
-def time_factory() -> str:
-    # TODO: can this be a datetime in python?
-    return datetime.datetime.utcnow().isoformat() + "Z"
-
-
-def transform_url(event_url: str) -> str:
-    # Why is this needed?
-    # To transform from EventGrid / Blob style HTTP urls to
-    # pctask's blob:// style urls.
-    if event_url.startswith("http"):
-        parsed = urllib.parse.urlparse(event_url)
-        account_name = parsed.netloc.split(".")[0]
-        return f"blob://{account_name}{parsed.path}"
-    return event_url

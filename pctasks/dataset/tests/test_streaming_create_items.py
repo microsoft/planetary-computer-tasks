@@ -4,10 +4,8 @@ import json
 import pystac
 
 from pctasks.core.storage import StorageFactory
-from pctasks.core.utils import environment
 from pctasks.dataset import streaming
-from pctasks.dev.constants import get_azurite_named_key_credential
-from pctasks.dev.cosmosdb import temp_cosmosdb_if_emulator
+from pctasks.dev.constants import AZURITE_ACCOUNT_KEY
 from pctasks.dev.queues import TempQueue
 from pctasks.task.context import TaskContext
 from pctasks.task.streaming import StreamingTaskOptions
@@ -17,7 +15,7 @@ class CreateItems:
     def __init__(self):
         self.count = 0
 
-    def __call__(self, asset_uri: str, storage_factory: StorageFactory):
+    def __call__(self, asset_uri, storage_factory):
         self.count += 1
         result = pystac.Item(
             "id",
@@ -40,13 +38,20 @@ def test_streaming_create_items_task():
     ) as queue_client:
         # put some messages on the queue
         for _ in range(10):
-            queue_client.send_message(json.dumps({"data": {"url": "test.tif"}}))
+            queue_client.send_message(
+                json.dumps(
+                    {
+                        "data": {"url": "test.tif"},
+                        "time": "2023-03-27T21:12:27.7409548Z",
+                    }
+                )
+            )
         task_input = streaming.StreamingCreateItemsInput(
             collection_id="test",
             create_items_function=create_items,
             streaming_options=StreamingTaskOptions(
                 queue_url=queue_client.url,
-                queue_credential=get_azurite_named_key_credential(),
+                queue_credential=AZURITE_ACCOUNT_KEY,
                 visibility_timeout=10,
                 message_limit=5,
             ),
@@ -80,28 +85,28 @@ def test_streaming_create_items_from_message():
     with TempQueue(
         message_decode_policy=None, message_encode_policy=None
     ) as queue_client:
-        with temp_cosmosdb_if_emulator() as db:
-            container_suffix = db.settings.test_container_suffix
-            with environment(
-                **{"PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX": container_suffix}
-            ):
-                # put some messages on the queue
-                for _ in range(10):
-                    queue_client.send_message(
-                        json.dumps({"data": {"url": json.dumps(item.to_dict())}})
-                    )
-
-                task_input = streaming.StreamingCreateItemsInput(
-                    collection_id="test",
-                    create_items_function=create_items,
-                    streaming_options=StreamingTaskOptions(
-                        queue_url=queue_client.url,
-                        queue_credential=get_azurite_named_key_credential(),
-                        visibility_timeout=10,
-                        message_limit=5,
-                    ),
+        # put some messages on the queue
+        for _ in range(10):
+            queue_client.send_message(
+                json.dumps(
+                    {
+                        "data": {"url": json.dumps(item.to_dict())},
+                        "time": "2023-03-27T21:12:27.7409548Z",
+                    }
                 )
-                context = TaskContext(run_id="test", storage_factory=StorageFactory())
+            )
 
-                task.run(task_input, context)
+        task_input = streaming.StreamingCreateItemsInput(
+            collection_id="test",
+            create_items_function=create_items,
+            streaming_options=StreamingTaskOptions(
+                queue_url=queue_client.url,
+                queue_credential=AZURITE_ACCOUNT_KEY,
+                visibility_timeout=10,
+                message_limit=5,
+            ),
+        )
+        context = TaskContext(run_id="test", storage_factory=StorageFactory())
+
+        task.run(task_input, context)
     assert create_items.items[0].to_dict() == item.to_dict()

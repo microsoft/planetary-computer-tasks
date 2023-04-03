@@ -27,7 +27,7 @@ class ItemRecord(Record):
         return v
 
     def get_id(self) -> str:
-        return f"{self.stac_id}:{self.version}:{self.type}"
+        return f"{self.collection_id}:{self.item_id}:{self.version}:{self.type}"
 
     @property
     def collection_id(self) -> str:
@@ -71,4 +71,4 @@ class ItemUpdatedRecord(ItemRecord):
     message_inserted_time: Optional[datetime] = None
 
     def get_id(self) -> str:
-        return f"{self.stac_id}:{self.version}:{self.type}:{self.run_id}"
+        return f"{self.collection_id}:{self.item_id}:{self.version}:{self.type}"

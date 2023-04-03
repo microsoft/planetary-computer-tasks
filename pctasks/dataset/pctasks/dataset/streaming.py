@@ -149,7 +149,7 @@ class StreamingCreateItemsTask(
 
     def cleanup(self, extra_options: Dict[str, Any]) -> None:
         items_record_container, items_update_container = extra_options[
-            "items_container"
+            "items_containers"
         ]
         items_record_container.__exit__(None, None, None)
         items_update_container.__exit__(None, None, None)
@@ -162,7 +162,6 @@ class StreamingCreateItemsTask(
         collection_id: str,
         skip_validation: bool = False,
     ) -> Union[List[pystac.Item], WaitTaskResult]:
-        # url = transform_url(message_data["url"])
         url = message_data["url"]
         items = create_items_function(url, storage_factory)
 
