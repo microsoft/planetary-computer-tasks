@@ -60,6 +60,7 @@
     "msft:short_description": "ESA CCI global land cover maps in NetCDF format",
     "msft:storage_account": "landcoverdata",
     "msft:container": "esa-cci-lc",
+    "msft:region": "westeurope",
     "msft:group_id": "esa-cci-lc",
     "providers": [
         {

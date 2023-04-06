@@ -24,6 +24,7 @@ collection.extra_fields.update(
         ),
         "msft:storage_account": "landcoverdata",
         "msft:container": "usda-cdl",
+        "msft:region": "westeurope",
     }
 )
 collection.providers.append(

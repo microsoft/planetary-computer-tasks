@@ -40,6 +40,7 @@
     "msft:short_description": "Preliminary gridded surface observations of daily temperature and precipitation for the continental United States",
     "msft:storage_account": "nclimgridwesteurope",
     "msft:container": "nclimgrid-cogs",
+    "msft:region": "westeurope",
     "msft:group_id": "noaa-nclimgrid",
     "providers": [
         {

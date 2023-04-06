@@ -24,6 +24,7 @@
   ],
   "msft:short_description": "A network of low-cost air quality sensing network for cities and led by the Urban Innovation Group at Microsoft Research",
   "msft:container": "eclipse",
+  "msft:region": "westeurope",
   "msft:storage_account": "ai4edataeuwest",
   "table:columns": [
     {
