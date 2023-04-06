@@ -150,6 +150,7 @@
         }
     },
     "msft:container": "floods",
+    "msft:region": "westeurope",
     "cube:dimensions": {
         "lat": {
             "axis": "y",

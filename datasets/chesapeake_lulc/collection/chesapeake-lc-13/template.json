@@ -38,6 +38,7 @@
     "msft:short_description": "Chesapeake Bay Watershed land cover product with 13 classes at 1m resolution.",
     "msft:storage_account": "landcoverdata",
     "msft:container": "chesapeake",
+    "msft:region": "westeurope",
     "msft:group_id": "chesapeake-lulc",
     "providers": [
         {

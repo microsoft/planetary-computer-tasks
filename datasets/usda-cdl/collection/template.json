@@ -795,6 +795,7 @@
   "msft:short_description": "The UDA Cropland Data Layer is an annual raster, geo-referenced, crop-specific land cover data layer produced using satellite imagery and extensive agricultural ground truth collected during the current growing season.",
   "msft:storage_account": "landcoverdata",
   "msft:container": "usda-cdl",
+  "msft:region": "westeurope",
   "title": "USDA Cropland Data Layers (CDLs)",
   "extent": {
     "spatial": {

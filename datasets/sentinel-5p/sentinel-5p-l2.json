@@ -76,6 +76,7 @@
     }
   ],
   "msft:container": "sentinel-5p",
+  "msft:region": "westeurope",
   "msft:storage_account": "sentinel5euwest",
   "msft:short_description": "The Copernicus [Sentinel-5 Precursor mission](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-5p) is dedicated to monitoring our atmosphere and consists of one satellite carrying the TROPOspheric Monitoring Instrument (TROPOMI). Level 2 data provide total columns of ozone, sulfur dioxide, nitrogen dioxide, carbon monoxide and formaldehyde, tropospheric columns of ozone, vertical profiles of ozone and cloud & aerosol information.",
   "summaries": {

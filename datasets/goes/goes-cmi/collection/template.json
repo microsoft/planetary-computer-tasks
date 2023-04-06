@@ -27,6 +27,7 @@
     "msft:short_description": "High temporal cadence cloud and moisture imagery over the Western Hemisphere from the Advanced Baseline Imager (ABI) instrument.",
     "msft:storage_account": "goeseuwest",
     "msft:container": "noaa-goes-cogs",
+    "msft:region": "westeurope",
     "msft:group_id": "goes",
     "providers": [
         {
