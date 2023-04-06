@@ -23,3 +23,5 @@ collections:
           options:
             extensions: [.json]
             chunk_length: 5000 # Larger? There are 1.33 million blobs in storage
+    chunk_storage:
+      uri: blob://sentinel5euwest/sentinel-5p-etl-data/pctasks-chunks/
