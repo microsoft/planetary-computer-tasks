@@ -56,13 +56,13 @@
     ],
     "assets": {
         "thumbnail": {
-            "title": "Sentinel-5P Level-2 NetCDF",
+            "title": "Sentinel-5P Level-2 NetCDF Thumbnail",
             "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-5p-l2-netcdf-thumb.png",
             "media_type": "image/png"
         },
         "geoparquet-items": {
             "href": "abfs://items/sentinel-5p-l2-netcdf.parquet",
-            "title": "GeoParquet STAC items",
+            "title": "GeoParquet STAC Items",
             "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
             "type": "application/x-parquet",
             "roles": [
