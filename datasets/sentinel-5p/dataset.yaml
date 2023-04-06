@@ -21,10 +21,5 @@ collections:
         token: ${{ pc.get_token(sentinel5euwest, sentinel-5p-stac) }}
         chunks:
           options:
-            name_starts_with: L2__AER_AI/
             extensions: [.json]
-            chunk_length: 100
-            limit: 200
-
-    chunk_storage:
-      uri: blob://sentinel5euwest/sentinel-5p-etl-data/pctasks-chunks/
+            chunk_length: 5000 # Larger? There are 1.33 million blobs in storage

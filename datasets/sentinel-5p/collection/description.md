@@ -4,16 +4,16 @@ The Sentinel-5 Precursor mission aims to reduce the global atmospheric data gap 
 
 This STAC Collection provides Sentinel-5 Precursor Level 2 data, in NetCDF format, since April 2018 for the following products:
 
-* [`L2__AER_AI`](http://www.tropomi.eu/data-products/uv-aerosol-index): UV aerosol index
+* [`L2__AER_AI`](http://www.tropomi.eu/data-products/uv-aerosol-index): Ultraviolet aerosol index
 * [`L2__AER_LH`](http://www.tropomi.eu/data-products/aerosol-layer-height): Aerosol layer height
-* [`L2__CH4___`](http://www.tropomi.eu/data-products/methane): Methane (CH<sub>4</sub>)
-* [`L2__CLOUD_`](http://www.tropomi.eu/data-products/cloud): Cloud
-* [`L2__CO____`](http://www.tropomi.eu/data-products/carbon-monoxide): Carbon monoxide (CO)
-* [`L2__HCHO__`](http://www.tropomi.eu/data-products/formaldehyde): Formaldehyde (HCHO)
-* [`L2__NO2___`](http://www.tropomi.eu/data-products/nitrogen-dioxide): Nitrogen dioxide (NO<sub>2</sub>)
-* [`L2__O3____`](http://www.tropomi.eu/data-products/total-ozone-column): Ozone (O<sub>3</sub>)
-* [`L2__O3_TCL`](http://www.tropomi.eu/data-products/tropospheric-ozone-column): Tropospheric ozone
-* [`L2__SO2___`](http://www.tropomi.eu/data-products/sulphur-dioxide): Sulfur dioxide (SO<sub>2</sub>)
+* [`L2__CH4___`](http://www.tropomi.eu/data-products/methane): Methane (CH<sub>4</sub>) total column
+* [`L2__CLOUD_`](http://www.tropomi.eu/data-products/cloud): Cloud fraction, albedo, and top pressure
+* [`L2__CO____`](http://www.tropomi.eu/data-products/carbon-monoxide): Carbon monoxide (CO) total column
+* [`L2__HCHO__`](http://www.tropomi.eu/data-products/formaldehyde): Formaldehyde (HCHO) total column
+* [`L2__NO2___`](http://www.tropomi.eu/data-products/nitrogen-dioxide): Nitrogen dioxide (NO<sub>2</sub>) total column
+* [`L2__O3____`](http://www.tropomi.eu/data-products/total-ozone-column): Ozone (O<sub>3</sub>) total column
+* [`L2__O3_TCL`](http://www.tropomi.eu/data-products/tropospheric-ozone-column): Ozone (O<sub>3</sub>) tropospheric column
+* [`L2__SO2___`](http://www.tropomi.eu/data-products/sulphur-dioxide): Sulfur dioxide (SO<sub>2</sub>) total column
 * [`L2__NP_BD3`](http://www.tropomi.eu/data-products/auxiliary): Cloud from the Suomi NPP mission, band 3
 * [`L2__NP_BD6`](http://www.tropomi.eu/data-products/auxiliary): Cloud from the Suomi NPP mission, band 6
 * [`L2__NP_BD7`](http://www.tropomi.eu/data-products/auxiliary): Cloud from the Suomi NPP mission, band 7
