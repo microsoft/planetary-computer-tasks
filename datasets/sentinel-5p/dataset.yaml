@@ -6,6 +6,7 @@ args:
 
 code:
   src: ${{ local.path(./sentinel_5p.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}

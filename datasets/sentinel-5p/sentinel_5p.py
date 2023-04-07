@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import List, Union
 
 import pystac
+from stactools.core.utils.antimeridian import Strategy, fix_item
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
@@ -78,7 +79,7 @@ class Sentinel5pNetCDFCollection(Collection):
         # providers should be supplied in the collection, not the item
         properties.pop("providers", None)
 
-        # add the custom product properties to a single property object
+        # combine the product custom properties to a single object
         product_custom_fields = {}
         keys = [k for k in properties.keys() if str(k).startswith(product)]
         if keys:
@@ -98,6 +99,14 @@ class Sentinel5pNetCDFCollection(Collection):
         assert len(parts) == 2
         resolution = f"{float(parts[0])}x{float(parts[1])}km"
         properties["s5p:spatial_resolution"] = resolution
+
+        # correct bad datetimes
+        for k, v in properties.items():
+            if k.endswith("datetime") and v.endswith("ZZ"):
+                properties[k] = v[:-2] + "Z"
+        for k, v in properties[f"s5p:{product}"].items():
+            if k.endswith("datetime") and v.endswith("ZZ"):
+                properties[f"s5p:{product}"][k] = v[:-2] + "Z"
 
         item_dict["properties"] = properties
 
@@ -119,7 +128,7 @@ class Sentinel5pNetCDFCollection(Collection):
             if link["rel"] == "license":
                 links.remove(link)
 
-        # add a unique link to the product landing page (or user manual if no landing page)
+        # add a unique link to the product landing page
         about_href = ABOUT_LINKS.get(product)
         links.append(
             {
@@ -131,4 +140,8 @@ class Sentinel5pNetCDFCollection(Collection):
 
         item_dict["links"] = links
 
-        return [pystac.Item.from_dict(item_dict)]
+        # fix antimeridian
+        item = pystac.Item.from_dict(item_dict)
+        fix_item(item, Strategy.NORMALIZE)
+
+        return [item]
