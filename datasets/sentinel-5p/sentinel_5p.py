@@ -28,9 +28,9 @@ ABOUT_LINKS = {
     "o3": "http://www.tropomi.eu/data-products/total-ozone-column",
     "o3_tcl": "http://www.tropomi.eu/data-products/tropospheric-ozone-column",
     "so2": "http://www.tropomi.eu/data-products/sulphur-dioxide",
-    "np_bd3": "https://sentinel.esa.int/web/sentinel/technical-guides/sentinel-5p/products-algorithms",  # noqa
-    "np_bd6": "https://sentinel.esa.int/web/sentinel/technical-guides/sentinel-5p/products-algorithms",  # noqa
-    "np_bd7": "https://sentinel.esa.int/web/sentinel/technical-guides/sentinel-5p/products-algorithms",  # noqa
+    "npbd3": "https://sentinel.esa.int/web/sentinel/technical-guides/sentinel-5p/products-algorithms",  # noqa
+    "npbd6": "https://sentinel.esa.int/web/sentinel/technical-guides/sentinel-5p/products-algorithms",  # noqa
+    "npbd7": "https://sentinel.esa.int/web/sentinel/technical-guides/sentinel-5p/products-algorithms",  # noqa
 }
 
 ASSET_TITLES = {
@@ -44,9 +44,9 @@ ASSET_TITLES = {
     "o3": "TROPOMI/S5P L2 Ozone Total Column",
     "o3_tcl": "TROPOMI/S5P L2 Ozone Tropospheric Column",
     "so2": "TROPOMI/S5P L2 Sulphur Dioxide Total Column",
-    "np_bd3": "TROPOMI/S5P VIIRS/NPP Band 3 Cloud Mask",
-    "np_bd6": "TROPOMI/S5P VIIRS/NPP Band 6 Cloud Mask",
-    "np_bd7": "TROPOMI/S5P VIIRS/NPP Band 7 Cloud Mask",
+    "npbd3": "TROPOMI/S5P VIIRS/NPP Band 3 Cloud Mask",
+    "npbd6": "TROPOMI/S5P VIIRS/NPP Band 6 Cloud Mask",
+    "npbd7": "TROPOMI/S5P VIIRS/NPP Band 7 Cloud Mask",
 }
 
 handler = logging.StreamHandler()
@@ -71,6 +71,8 @@ class Sentinel5pNetCDFCollection(Collection):
         if not match:
             raise ValueError(f"Could not parse filename {Path(json_path).stem}")
         product = match.groupdict()["product"].strip("_").lower()
+        if product.startswith("np"):
+            product = product.replace("_", "")
         collection_identifier = match.groupdict()["collection"]
 
         # ---- PROPERTIES ----
@@ -104,9 +106,10 @@ class Sentinel5pNetCDFCollection(Collection):
         for k, v in properties.items():
             if k.endswith("datetime") and v.endswith("ZZ"):
                 properties[k] = v[:-2] + "Z"
-        for k, v in properties[f"s5p:{product}"].items():
-            if k.endswith("datetime") and v.endswith("ZZ"):
-                properties[f"s5p:{product}"][k] = v[:-2] + "Z"
+        if f"s5p:{product}" in properties:
+            for k, v in properties[f"s5p:{product}"].items():
+                if k.endswith("datetime") and v.endswith("ZZ"):
+                    properties[f"s5p:{product}"][k] = v[:-2] + "Z"
 
         item_dict["properties"] = properties
 
