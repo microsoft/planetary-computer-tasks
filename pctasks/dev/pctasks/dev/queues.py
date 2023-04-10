@@ -34,6 +34,9 @@ class TempQueue:
     def __exit__(self, *args: Any) -> None:
         self._queue_service.__exit__(*args)
         if self._service_client:
-            self._service_client.delete_queue(self.queue_config.queue_name)
+            try:
+                self._service_client.delete_queue(self.queue_config.queue_name)
+            except azure.core.exceptions.ResourceNotFoundError:
+                pass
             self._service_client.close()
             self._service_client = None
