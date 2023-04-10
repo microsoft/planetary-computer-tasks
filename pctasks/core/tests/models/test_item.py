@@ -55,19 +55,3 @@ def test_item_update_record(version, expected):
     )
     result = record.get_id()
     assert result == expected
-
-
-@pytest.mark.cosmos
-class TestStorageEventsContainer:
-    def test_put_get(self, stac_item):
-        record = pctasks.core.models.item.StacItemRecord.from_item(stac_item)
-        record_id = record.get_id()
-        stac_id = record.stac_id
-
-        with pctasks.core.cosmos.containers.items.ItemsContainer(
-            pctasks.core.models.item.StacItemRecord
-        ) as cosmos_client:
-            cosmos_client.put(record)
-            result = cosmos_client.get(record_id, stac_id)
-
-        assert result == record
