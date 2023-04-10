@@ -114,7 +114,7 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
     ) -> Union[List[pystac.Item], WaitTaskResult]:
         storage_factory = context.storage_factory
         results: List[pystac.Item] = []
-
+        # TODO: do this for streaming, deduplicate
         if args.asset_uri:
             try:
                 start_time = time.monotonic()
@@ -133,10 +133,12 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
             elif result is None:
                 logger.warning(f"No items created from {args.asset_uri}")
             else:
-                results = validate_create_items_result(
-                    result,
-                    collection_id=args.collection_id,
-                    skip_validation=args.options.skip_validation,
+                results.extend(
+                    validate_create_items_result(
+                        result,
+                        collection_id=args.collection_id,
+                        skip_validation=args.options.skip_validation,
+                    )
                 )
         elif args.asset_chunk_info:
             chunk_storage, chunk_path = storage_factory.get_storage_for_file(
@@ -167,10 +169,12 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                     if not result:
                         logger.warning(f"No items created from {asset_uri}")
                     else:
-                        results = validate_create_items_result(
-                            result,
-                            collection_id=args.collection_id,
-                            skip_validation=args.options.skip_validation,
+                        results.extend(
+                            validate_create_items_result(
+                                result,
+                                collection_id=args.collection_id,
+                                skip_validation=args.options.skip_validation,
+                            )
                         )
 
         else:
