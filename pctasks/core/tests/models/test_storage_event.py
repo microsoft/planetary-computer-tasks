@@ -45,4 +45,3 @@ def test_storage_events_record(event_body):
 
     assert record.get_id() == "831e1650-001e-001b-66ab-eeb76e069631"
     assert StorageEventRecord.migrate(event_body)
-
