@@ -4,6 +4,7 @@ from tempfile import TemporaryDirectory
 from typing import List, Union
 
 import pystac
+import pytest
 from pystac.utils import str_to_datetime
 
 from pctasks.core.models.task import CompletedTaskResult, WaitTaskResult
@@ -12,7 +13,13 @@ from pctasks.core.storage.local import LocalStorage
 from pctasks.core.utils.stac import validate_stac
 from pctasks.dataset.chunks.models import ChunkInfo
 from pctasks.dataset.items.models import CreateItemsOutput
-from pctasks.dataset.items.task import CreateItemsInput, CreateItemsTask
+from pctasks.dataset.items.task import (
+    CreateItemsError,
+    CreateItemsInput,
+    CreateItemsTask,
+    validate_create_items_result,
+    validate_item,
+)
 from pctasks.dev.test_utils import run_test_task
 from pctasks.task.utils import get_task_path
 
@@ -89,3 +96,55 @@ def test_wait_for_assets():
 
     task_result = run_test_task(args.dict(), TASK_PATH)
     assert isinstance(task_result, WaitTaskResult)
+
+
+def test_validate_item_sets_collection_id():
+    (item,) = create_mock_item(asset_uri="test.tif", storage_factory=None)
+    result = validate_item(item, collection_id="test-collection")
+    assert result.collection_id == "test-collection"
+
+
+def test_validate_item_with_collection_id():
+    (item,) = create_mock_item(asset_uri="test.tif", storage_factory=None)
+    item.collection_id = "test-collection"
+    result = validate_item(item, collection_id=None)
+    assert result.collection_id == "test-collection"
+
+
+def test_validate_item_mismatching_collection_id_raises():
+    (item,) = create_mock_item(asset_uri="test.tif", storage_factory=None)
+    item.collection_id = "test-collection"
+
+    with pytest.raises(
+        CreateItemsError,
+        match="Item test has collection test-collection but expected other-collection",
+    ):
+        validate_item(item, collection_id="other-collection")
+
+
+def test_validate_item_missing_collection_id_raises():
+    (item,) = create_mock_item(asset_uri="test.tif", storage_factory=None)
+    with pytest.raises(CreateItemsError, match="Item test has no collection ID"):
+        validate_item(item, collection_id=None)
+
+
+def test_validate_item_validates_item():
+    (item,) = create_mock_item(asset_uri="test.tif", storage_factory=None)
+    item.datetime = None
+    # this is not valid
+
+    with pytest.raises(pystac.errors.STACError):
+        validate_item(item, collection_id="test-collection")
+
+
+def test_validate_create_items_result():
+    result = create_mock_item(asset_uri="test.tif", storage_factory=None)
+    validate_create_items_result(result, collection_id="test-collection")
+
+
+def test_validate_create_items_raises():
+    result = create_mock_item(asset_uri="test.tif", storage_factory=None)
+    with pytest.raises(CreateItemsError):
+        validate_create_items_result(result, collection_id=None)
+
+    validate_create_items_result(result, collection_id=None, skip_validation=True)

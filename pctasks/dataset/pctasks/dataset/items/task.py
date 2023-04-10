@@ -1,7 +1,7 @@
 import logging
 import os
 import time
-from typing import Callable, List, Union
+from typing import Callable, List, Optional, Union
 
 import orjson
 import pystac
@@ -34,6 +34,70 @@ def asset_chunk_id_to_ndjson_chunk_id(asset_chunk_id: str) -> str:
     return os.path.join(folder_name, "items.ndjson")
 
 
+def validate_item(item: pystac.Item, collection_id: Optional[str]) -> pystac.Item:
+    """
+    Validate a pystac Item.
+
+    This method will validate
+
+    1. That the item is a valid STAC item (using its JSON Schema)
+    2. Verify that the item has a ``collection_id`` is set or sets it to
+       ``collection_id`` if that's provided. If it's set in both places,
+       then they must match.
+
+    Parameters
+    ----------
+    item: pystac.Item
+    collection_id: str
+        The ID of the STAC collection this item will be ingested to.
+
+    Returns
+    -------
+    item: pystac.Item
+        The validated STAC item.
+    """
+    if collection_id:
+        if item.collection_id and item.collection_id != collection_id:
+            raise CreateItemsError(
+                f"Item {item.id} has collection {item.collection_id} "
+                f"but expected {collection_id}"
+            )
+        else:
+            item = item.clone()  # only copy if needed
+            item.collection_id = collection_id
+    else:
+        if not item.collection_id:
+            raise CreateItemsError(f"Item {item.id} has no collection ID set.")
+
+    # Avoid validation error for missing collection link
+    remove_collection_link = False
+
+    if item.collection_id and not item.get_single_link("collection"):
+        # TODO: avoid mutating `item`.
+        # For valid items, users shouldn't ever see this link we add. But if
+        # `item.validate()` throws an exception they'll get back an item with a
+        # new link.
+        item.add_link(pystac.Link(rel="collection", target="http://example.com"))
+        remove_collection_link = True
+
+    item.validate()
+
+    if remove_collection_link:
+        item.remove_links("collection")
+
+    return item
+
+
+def validate_create_items_result(
+    items: List[pystac.Item],
+    collection_id: Optional[str],
+    skip_validation: bool = False,
+) -> List[pystac.Item]:
+    if not skip_validation:
+        items = [validate_item(item, collection_id=collection_id) for item in items]
+    return items
+
+
 class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
     _input_model = CreateItemsInput
     _output_model = CreateItemsOutput
@@ -51,36 +115,6 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
         storage_factory = context.storage_factory
         results: List[pystac.Item] = []
 
-        def _validate(items: List[pystac.Item]) -> None:
-            if not args.options.skip_validation:
-                for item in items:
-                    # Avoid validation error for missing collection link
-                    remove_collection_link = False
-                    if item.collection_id and not item.get_single_link("collection"):
-                        item.add_link(
-                            pystac.Link(rel="collection", target="http://example.com")
-                        )
-                        remove_collection_link = True
-                    item.validate()
-                    if remove_collection_link:
-                        item.remove_links("collection")
-
-        def _ensure_collection(items: List[pystac.Item]) -> None:
-            for item in items:
-                if args.collection_id:
-                    if item.collection_id and item.collection_id != args.collection_id:
-                        raise CreateItemsError(
-                            f"Item {item.id} has collection {item.collection_id} "
-                            f"but expected {args.collection_id}"
-                        )
-                    else:
-                        item.collection_id = args.collection_id
-                else:
-                    if not item.collection_id:
-                        raise CreateItemsError(
-                            f"Item {item.id} has no collection ID set."
-                        )
-
         if args.asset_uri:
             try:
                 start_time = time.monotonic()
@@ -96,13 +130,14 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                 ) from e
             if isinstance(result, WaitTaskResult):
                 return result
+            elif result is None:
+                logger.warning(f"No items created from {args.asset_uri}")
             else:
-                if not result:
-                    logger.warning(f"No items created from {args.asset_uri}")
-                else:
-                    _validate(result)
-                    _ensure_collection(result)
-                    results.extend(result)
+                results = validate_create_items_result(
+                    result,
+                    collection_id=args.collection_id,
+                    skip_validation=args.options.skip_validation,
+                )
         elif args.asset_chunk_info:
             chunk_storage, chunk_path = storage_factory.get_storage_for_file(
                 args.asset_chunk_info.uri
@@ -132,9 +167,11 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                     if not result:
                         logger.warning(f"No items created from {asset_uri}")
                     else:
-                        _validate(result)
-                        _ensure_collection(result)
-                        results.extend(result)
+                        results = validate_create_items_result(
+                            result,
+                            collection_id=args.collection_id,
+                            skip_validation=args.options.skip_validation,
+                        )
 
         else:
             # Should be prevented by validator
