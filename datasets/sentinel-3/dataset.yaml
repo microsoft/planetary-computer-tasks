@@ -1,12 +1,29 @@
-id: sentinel-1-grd
+id: sentinel-3
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+  - registry
+
+code:
+  src: ${{ local.path(./sentinel_3/) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
 collections:
-  id: sentinel-1-grd
-  containers:
-    assets: sentinel1euwest/s1-grd
-    stac: sentinel1euwest/s1-grd-stac
-    etl-data: sentinel1euwest/s1-grd-etl-info
-triggers:
-  storage:
-    account: sentinel1euwest
-    container: s1-grd-stac
-    filter: "*.json"
+  id: sentinel-3-olci-lfr-l2-netcdf
+  template: ${{ local.path(./collection) }}
+  class: sentinel_3.sentinel_3_olci_lfr_l2_netcdf:Collection
+  asset_storage:
+    - uri: blob://sentinel3euwest/sentinel-3-stac/
+      token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+      chunks:
+        options:
+          name_starts_with: OLCI/OL_2_LFR___/
+          extensions: [.json]
+          chunk_length: 5000
+  chunk_storage:
+    uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-olci-lfr-l2-netcdf
