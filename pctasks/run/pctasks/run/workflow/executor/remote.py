@@ -5,6 +5,8 @@ import time
 from concurrent import futures
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
+from azure.storage.queue import BinaryBase64DecodePolicy, BinaryBase64EncodePolicy
+
 from pctasks.core.cosmos.container import CosmosDBContainer
 from pctasks.core.cosmos.containers.workflow_runs import WorkflowRunsContainer
 from pctasks.core.logging import StorageLogger
@@ -237,6 +239,8 @@ class RemoteWorkflowExecutor:
         with QueueService.from_connection_string(
             connection_string=queue_settings.connection_string,
             queue_name=queue_settings.queue_name,
+            message_encode_policy=BinaryBase64EncodePolicy(),
+            message_decode_policy=BinaryBase64DecodePolicy(),
         ) as queue:
             msg_id = queue.send_message(notification_submit_message.dict())
             logger.info(f"  - Notification sent, queue id {msg_id}")
@@ -349,7 +353,6 @@ class RemoteWorkflowExecutor:
                     time.monotonic() - _last_runner_poll_time
                     > self.config.run_settings.task_poll_seconds
                 ):
-
                     current_tasks = {
                         jps.partition_id: {
                             jps.current_task.task_id: jps.current_task.task_runner_id  # noqa: E501
@@ -370,7 +373,6 @@ class RemoteWorkflowExecutor:
                     # the status of the current task.
 
                     if job_part_state.current_task:
-
                         task_state = job_part_state.current_task
                         part_run_record_id = job_part_state.job_part_run_record_id
 
@@ -408,7 +410,6 @@ class RemoteWorkflowExecutor:
                         #
 
                         if task_state.status == TaskStateStatus.NEW:
-
                             # New task, submit it
 
                             update_task_run_status(
@@ -435,12 +436,10 @@ class RemoteWorkflowExecutor:
                             )
 
                         elif task_state.status == TaskStateStatus.SUBMITTED:
-
                             # Job is running...
                             pass
 
                         elif task_state.status == TaskStateStatus.RUNNING:
-
                             # Job is still running...
                             if not task_state.status_updated:
                                 update_task_run_status(
@@ -453,7 +452,6 @@ class RemoteWorkflowExecutor:
                                 task_state.status_updated = True
 
                         elif task_state.status == TaskStateStatus.WAITING:
-
                             # If we just moved the job state to waiting,
                             # update the record.
 
@@ -468,7 +466,6 @@ class RemoteWorkflowExecutor:
                                 task_state.status_updated = True
 
                         elif task_state.status == TaskStateStatus.FAILED:
-
                             logger.warning(
                                 f"Task failed: {job_part_state.job_id} "
                                 f"- {task_state.task_id}"
@@ -506,7 +503,6 @@ class RemoteWorkflowExecutor:
                             _report_status()
 
                         elif task_state.status == TaskStateStatus.COMPLETED:
-
                             logger.info(
                                 f"Task completed: {job_part_state.job_id}:{part_id}"
                                 f":{task_state.task_id}"
@@ -600,7 +596,6 @@ class RemoteWorkflowExecutor:
         self,
         submit_message: WorkflowSubmitMessage,
     ) -> Dict[str, Any]:
-
         workflow = submit_message.get_workflow_with_templated_args()
         trigger_event = map_opt(lambda e: e.dict(), submit_message.trigger_event)
         run_id = submit_message.run_id
@@ -620,7 +615,6 @@ class RemoteWorkflowExecutor:
         log_storage = run_settings.get_log_storage()
 
         with StorageLogger.from_uri(log_uri, log_storage=log_storage):
-
             logger.info("***********************************")
             logger.info(f"Workflow: {submit_message.workflow.id}")
             logger.info(f"Run Id: {run_id}")
@@ -636,7 +630,6 @@ class RemoteWorkflowExecutor:
             ) as wf_run_container, WorkflowRunsContainer(
                 JobPartitionRunRecord, db=self.config.get_cosmosdb()
             ) as jp_container:
-
                 workflow_run = wf_run_container.get(run_id, partition_key=run_id)
 
                 if not workflow_run:
@@ -654,12 +647,10 @@ class RemoteWorkflowExecutor:
                 job_outputs: Dict[str, Union[Dict[str, Any], List[Dict[str, Any]]]] = {}
                 workflow_failed = False
                 try:
-
                     workflow_jobs = list(workflow.definition.jobs.values())
                     sorted_jobs = sort_jobs(workflow_jobs)
                     logger.info(f"Running jobs: {[j.id for j in sorted_jobs]}")
                     for job_def in sorted_jobs:
-
                         # For each job, create the job partitions
                         # through the task pool, submit all initial
                         # tasks, and then wait for all tasks to complete
