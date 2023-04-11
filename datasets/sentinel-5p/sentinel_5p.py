@@ -3,8 +3,10 @@ import re
 from pathlib import Path
 from typing import List, Union
 
+import antimeridian
 import pystac
-from stactools.core.utils.antimeridian import Strategy, fix_item
+import shapely.geometry
+from shapely.geometry import Polygon
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
@@ -48,6 +50,11 @@ ASSET_TITLES = {
     "npbd6": "TROPOMI/S5P VIIRS/NPP Band 6 Cloud Mask",
     "npbd7": "TROPOMI/S5P VIIRS/NPP Band 7 Cloud Mask",
 }
+
+O3_TCL_GEOMETRY = shapely.geometry.mapping(
+    Polygon([(-180, -19.75), (180, -19.75), (180, 19.75), (-180, 19.75)])
+)
+O3_TCL_BBOX = [-180, -19.75, 180, 19.75]
 
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter("[%(levelname)s]:%(asctime)s: %(message)s"))
@@ -143,8 +150,15 @@ class Sentinel5pNetCDFCollection(Collection):
 
         item_dict["links"] = links
 
-        # fix antimeridian
+        # fix antimeridian, except for o3_tcl, where we do some hardcode hacks instead
         item = pystac.Item.from_dict(item_dict)
-        fix_item(item, Strategy.NORMALIZE)
+        if product == "o3_tcl":
+            item.geometry = O3_TCL_GEOMETRY
+            item.bbox = O3_TCL_BBOX
+        else:
+            polygon = shapely.geometry.shape(item.geometry)
+            geometry = antimeridian.fix_polygon(polygon)
+            item.bbox = list(geometry.bounds)
+            item.geometry = shapely.geometry.mapping(geometry)
 
         return [item]

@@ -1,1 +1,1 @@
-stactools
+antimeridian @ git+https://github.com/gadomski/antimeridian@18bbfae538da7ac4110f86179f9d61b3834d0a1f
