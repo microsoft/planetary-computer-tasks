@@ -93,7 +93,33 @@
   },
   "sci:doi": "10.25921/RE9P-PT57",
   "sci:citation": "Huang, Boyin; Liu, Chunying; Banzon, Viva F.; Freeman, Eric; Graham, Garrett; Hankins, Bill; Smith, Thomas M.; Zhang, Huai-Min. (2020): NOAA 0.25-degree Daily Optimum Interpolation Sea Surface Temperature (OISST), Version 2.1. NOAA National Centers for Environmental Information. https://doi.org/10.25921/RE9P-PT57.",
+  "msft:short_description": "The NOAA 1/4° daily Optimum Interpolation Sea Surface Temperature (or daily OISST) Climate Data Record (CDR) provides complete ocean temperature fields constructed by combining bias-adjusted observations from different platforms (satellites, ships, buoys) on a regular global grid, with gaps filled in by interpolation.",
+  "msft:storage_account": "noaacdr",
+  "msft:container": "sea-surface-temperature-optimum-interpolation",
+  "msft:group_id": "noaa-cdr",
+  "msft:region": "eastus",
   "title": "Sea Surface Temperature - Optimum Interpolation CDR",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -180.0,
+          -90.0,
+          180.0,
+          90.0
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "1981-09-01T00:00:00Z",
+          null
+        ]
+      ]
+    }
+  },
+  "license": "proprietary",
   "keywords": [
     "Global",
     "Climate",
@@ -121,32 +147,6 @@
       "url": "https://planetarycomputer.microsoft.com"
     }
   ],
-  "msft:short_description": "The NOAA 1/4° daily Optimum Interpolation Sea Surface Temperature (or daily OISST) Climate Data Record (CDR) provides complete ocean temperature fields constructed by combining bias-adjusted observations from different platforms (satellites, ships, buoys) on a regular global grid, with gaps filled in by interpolation.",
-  "msft:storage_account": "noaacdr",
-  "msft:container": "sea-surface-temperature-optimum-interpolation",
-  "msft:group_id": "noaa-cdr",
-  "msft:region": "eastus",
-  "extent": {
-    "spatial": {
-      "bbox": [
-        [
-          -180.0,
-          -90.0,
-          180.0,
-          90.0
-        ]
-      ]
-    },
-    "temporal": {
-      "interval": [
-        [
-          "1981-09-01T00:00:00Z",
-          null
-        ]
-      ]
-    }
-  },
-  "license": "proprietary",
   "assets": {
     "thumbnail": {
       "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-cdr-sea-surface-temperature-optimum-interpolation-thumb.png",

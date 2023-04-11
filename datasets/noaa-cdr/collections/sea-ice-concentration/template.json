@@ -472,38 +472,12 @@
   },
   "sci:doi": "10.7265/efmz-2t65",
   "sci:citation": "Meier, W. N., F. Fetterer, A. K. Windnagel, and S. Stewart. 2021. NOAA/NSIDC Climate Data Record of Passive Microwave Sea Ice Concentration, Version 4. [Indicate subset used]. Boulder, Colorado USA. NSIDC: National Snow and Ice Data Center https://doi.org/10.7265/efmz-2t65. ",
-  "title": "Sea Ice Concentration CDR",
-  "keywords": [
-    "Climate",
-    "NOAA",
-    "Sea ice",
-    "Polar"
-  ],
-  "providers": [
-    {
-      "name": "National Snow and Ice Data Center",
-      "description": "The National Snow and Ice Data Center (NSIDC) at the University of Colorado Boulder (CU Boulder), part of the CU Boulder Cooperative Institute for Research in Environmental Sciences (CIRES), conducts innovative research and provides open data to understand how the frozen parts of Earth affect the rest of the planet and impact society.",
-      "roles": [
-        "producer",
-        "processor",
-        "licensor"
-      ],
-      "url": "https://nsidc.org/data/g02202/versions/4"
-    },
-    {
-      "name": "Microsoft",
-      "roles": [
-        "processor",
-        "host"
-      ],
-      "url": "https://planetarycomputer.microsoft.com"
-    }
-  ],
   "msft:short_description": "The Sea Ice Concentration Climate Data Record (CDR) provides a consistent daily and monthly time series of sea ice concentrations for both the north and south Polar Regions on a 25 km x 25 km grid.",
   "msft:storage_account": "noaacdr",
   "msft:container": "sea-ice-concentration",
   "msft:group_id": "noaa-cdr",
   "msft:region": "eastus",
+  "title": "Sea Ice Concentration CDR",
   "extent": {
     "spatial": {
       "bbox": [
@@ -537,6 +511,32 @@
     }
   },
   "license": "proprietary",
+  "keywords": [
+    "Climate",
+    "NOAA",
+    "Sea ice",
+    "Polar"
+  ],
+  "providers": [
+    {
+      "name": "National Snow and Ice Data Center",
+      "description": "The National Snow and Ice Data Center (NSIDC) at the University of Colorado Boulder (CU Boulder), part of the CU Boulder Cooperative Institute for Research in Environmental Sciences (CIRES), conducts innovative research and provides open data to understand how the frozen parts of Earth affect the rest of the planet and impact society.",
+      "roles": [
+        "producer",
+        "processor",
+        "licensor"
+      ],
+      "url": "https://nsidc.org/data/g02202/versions/4"
+    },
+    {
+      "name": "Microsoft",
+      "roles": [
+        "processor",
+        "host"
+      ],
+      "url": "https://planetarycomputer.microsoft.com"
+    }
+  ],
   "assets": {
     "thumbnail": {
       "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-cdr-sea-ice-concentration-thumb.png",

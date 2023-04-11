@@ -36,7 +36,33 @@
       ]
     }
   },
+  "msft:short_description": "The Ocean Heat Content Climate Data Record (CDR) is a set of ocean heat content anomaly (OHCA) time-series for 1955-present on 3-monthly, yearly, and pentadal (five-yearly) scales.",
+  "msft:storage_account": "noaacdr",
+  "msft:container": "ocean-heat-content",
+  "msft:group_id": "noaa-cdr",
+  "msft:region": "eastus",
   "title": "Global Ocean Heat Content CDR NetCDFs",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -180.0,
+          -90.0,
+          180.0,
+          90.0
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "1972-03-01T00:00:00Z",
+          "2022-03-31T23:59:59Z"
+        ]
+      ]
+    }
+  },
+  "license": "proprietary",
   "keywords": [
     "Global",
     "Climate",
@@ -64,6 +90,19 @@
       "url": "https://planetarycomputer.microsoft.com"
     }
   ],
+  "summaries": {
+    "noaa_cdr:interval": [
+      "monthly",
+      "seasonal",
+      "yearly",
+      "pentadal"
+    ],
+    "noaa_cdr:max_depth": [
+      100,
+      700,
+      2000
+    ]
+  },
   "assets": {
     "geoparquet-items": {
       "href": "abfs://items/noaa-cdr-ocean-heat-content-netcdf.parquet",
@@ -80,31 +119,5 @@
         "stac-items"
       ]
     }
-  },
-  "msft:short_description": "The Ocean Heat Content Climate Data Record (CDR) is a set of ocean heat content anomaly (OHCA) time-series for 1955-present on 3-monthly, yearly, and pentadal (five-yearly) scales.",
-  "msft:storage_account": "noaacdr",
-  "msft:container": "ocean-heat-content",
-  "msft:group_id": "noaa-cdr",
-  "msft:region": "eastus",
-  "extent": {
-    "spatial": {
-      "bbox": [
-        [
-          -180.0,
-          -90.0,
-          180.0,
-          90.0
-        ]
-      ]
-    },
-    "temporal": {
-      "interval": [
-        [
-          "1972-03-01T00:00:00Z",
-          "2022-03-31T23:59:59Z"
-        ]
-      ]
-    }
-  },
-  "license": "proprietary"
+  }
 }
