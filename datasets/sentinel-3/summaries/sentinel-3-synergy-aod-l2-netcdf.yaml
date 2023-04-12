@@ -1,0 +1,69 @@
+name: Summarize Sentinel 3 synergy-aod Items
+
+dataset: sentinel-3-synergy-aod-l2-netcdf
+id: summarize-sentinel-3-synergy-aod-l2-netcdf
+
+args:
+- registry
+
+jobs:
+  create-splits:
+    tasks:
+    - id: list-prefixes
+      image: ${{ args.registry }}/pctasks-task-base:latest
+      task: pctasks.task.common.list_prefixes:task
+      args:
+        src_uri: blob://sentinel3euwest/sentinel-3-stac/SYNERGY/SY_2_AOD___/
+        depth: 2
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+  summarize-map:
+    foreach:
+      items: ${{ jobs.create-splits.tasks.list-prefixes.output.uris }}
+    tasks:
+    - id: list-files
+      image: ${{ args.registry }}/pctasks-task-base:latest
+      task: pctasks.task.common.list_files:task
+      args:
+        src_uri: ${{ item }}
+        extensions:
+          - .json
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+    - id: summarize-map
+      image: ${{ args.registry }}/pctasks-task-base:latest
+      task: pctasks.task.common.summarize:map_task
+      args:
+        uris: ${{ tasks.list-files.output.uris }}
+        include_keys:
+          - assets
+          - properties
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
+  summarize-reduce:
+    tasks:
+    - id: summarize-reduce
+      image: ${{ args.registry }}/pctasks-task-base:latest
+      task: pctasks.task.common.summarize:reduce_task
+      args:
+        summaries: ${{ jobs.summarize-map.tasks.summarize-map.output.summary }}
+    - id: write-output
+      image: ${{ args.registry }}/pctasks-task-base:latest
+      task: pctasks.task.common.write:task
+      args:
+        uri: blob://sentinel3euwest/sentinel-3-etl-data/summaries/sentinel-3-synergy-aod-l2-netcdf.json
+        content: ${{ tasks.summarize-reduce.output.summary }}
+      environment:
+        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+      schema_version: 1.0.0
