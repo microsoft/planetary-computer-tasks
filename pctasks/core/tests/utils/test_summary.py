@@ -333,3 +333,58 @@ def test_several_asset_descriptions():
             values=[StringValueCount(value=f"Image {i}", count=5) for i in range(20)],
         ).dict()
     )
+
+
+import pathlib
+
+import pytest
+
+from pctasks.core.utils.summary import ObjectSummary, make_collection
+
+
+@pytest.fixture
+def s3_frp_summary():
+    p = HERE.parent.parent.parent.parent.joinpath(
+        "datasets/sentinel-3/summaries/sentinel-3-olci-lfr-l2-netcdf.json"
+    )
+    return ObjectSummary.parse_file(p)
+
+
+def test_make_collection(s3_frp_summary):
+    result = make_collection(s3_frp_summary, "id")
+
+    expected = {
+        "stac_version": "1.0.0",
+        "id": "id",
+        "type": "Collection",
+        "description": "{{ collection.description }}",
+        "keywords": [],
+        "stac_extensions": [],
+        "summaries": {
+            "platform": ["Sentinel-3A", "Sentinel-3B"],
+            "constellation": ["Sentinel-3"],
+            "instruments": [["OLCI"]],
+            # "sat:platform_international_designator": ["2016-011A", "2018-039A"],
+            # "sat:orbit_state": ["descending", "ascending"],
+            # "s3:productType": ["OL_2_LFR___"],
+            # "s3:gsd": [300],
+            # "s3:salineWaterPixels_percentage": [0, 100],
+            # "s3:coastalPixels_percentage": [0, 100],
+            # "s3:freshInlandWaterPixels_percentage": [0, 100],
+            # "s3:tidalRegionPixels_percentage": [0, 100],
+            # "s3:landPixels_percentage": [0, 100],
+            # "s3:invalidPixels_percentage": [0, 100],
+            # "s3:cosmeticPixels_percentage": [0, 100],
+            # "s3:duplicatedPixels_percentage": [0, 100],
+            # "s3:saturatedPixels_percentage": [0, 100],
+            # "s3:dubiousSamples_percentage": [0, 100],
+            # "s5p:collection_identifier": [
+            #     "01",
+            #     "02",
+            #     "03"
+            # ]
+        },
+    }
+    assert result == expected
+    assert 0
+    ...
