@@ -64,3 +64,36 @@ resource "azurerm_role_assignment" "network" {
   role_definition_name = "Network Contributor"
   principal_id         = azurerm_kubernetes_cluster.pctasks.identity[0].principal_id
 }
+
+
+resource "azurerm_kubernetes_cluster_node_pool" "dask" {
+  name                  = "dask"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.pctasks.id
+  vm_size               = "Standard_E8s_v3"
+  enable_auto_scaling   = true
+  min_count             = 0
+  max_count             = 100
+  # In theory, there's no reason for the orchestrator
+  # to differ from the default. But we added this node pool later,
+  # after the default had shifted, so we had to specify this.
+  # Next time, this can be removed.
+  orchestrator_version  = "1.23.15"
+
+  node_labels = {
+    node_group = "dask"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes that are auto-populated by AKS
+      vnet_subnet_id,
+      node_taints,
+      zones,
+    ]
+  }
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "AI4E"
+  }
+}

@@ -284,6 +284,12 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         --wait \
         --timeout 2m0s
 
+    echo "==================="
+    echo "== dask-operator =="
+    echo "==================="
+    # We want the operator running in the default namespace, and watching
+    # for clusters in all namespaces.
+    helm upgrade --install dask-operator dask/dask-kubernetes-operator
 
     ######################
     # Gather environment #
