@@ -1,0 +1,354 @@
+{
+    "stac_version": "1.0.0",
+    "type": "Collection",
+    "id": "sentinel-3-olci-lfr-l2-netcdf",
+    "title": "Sentinel-3 Land (Full Resolution)",
+    "description": "{{ collection.description }}",
+    "license": "proprietary",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice",
+            "type": "application/pdf",
+            "title": "Sentinel Data License"
+        },
+        {
+            "rel": "about",
+            "href": "https://sentinel.esa.int/web/sentinel/user-guides/sentinel-3-olci/product-types/level-2-land",
+            "type": "text/html",
+            "title": "Level-2 Land LRR and LFR"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/sat/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.1.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+    ],
+    "keywords": [
+        "ESA",
+        "Copernicus",
+        "Sentinel",
+        "Land",
+        "Biomass"
+    ],
+    "msft:short_description": "Sentinel-3 Land Full Resolution vegetation index, chlorophyll index, and water vapor.",
+    "msft:storage_account": "sentinel3euwest",
+    "msft:container": "sentinel-3",
+    "msft:region": "westeurope",
+    "providers": [
+        {
+            "name": "ESA",
+            "roles": [
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://earth.esa.int/web/guest/home"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "title": "Sentinel-5P Level-2 NetCDF Thumbnail",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-5p-l2-netcdf-thumb.png",
+            "media_type": "image/png"
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/sentinel-3-olci-lfr-l2-netcdf.parquet",
+            "title": "GeoParquet STAC Items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "MS"
+            }
+        }
+    },
+    "summaries": {
+        "constellation": [
+            "Sentinel-3"
+        ],
+        "platform": [
+            "Sentinel-3A",
+            "Sentinel-3B"
+        ],
+        "instruments": [
+            "OLCI"
+        ],
+        "sat:platform_international_designator": [
+            "2016-011A",
+            "2018-039A"
+        ],
+        "sat:orbit_state": [
+            "descending",
+            "ascending"
+        ],
+        "s3:productType": [
+            "OL_2_LFR___"
+        ],
+        "s3:gsd": [
+            300
+        ],
+        "s3:saline_water": [
+            0,
+            100
+        ],
+        "s3:coastal": [
+            0,
+            100
+        ],
+        "s3:fresh_inland_water": [
+            0,
+            100
+        ],
+        "s3:tidal_region": [
+            0,
+            100
+        ],
+        "s3:land": [
+            0,
+            100
+        ],
+        "s3:cosmetic": [
+            0,
+            100
+        ],
+        "s3:duplicated": [
+            0,
+            100
+        ],
+        "s3:saturated": [
+            0,
+            100
+        ],
+        "s3:dubious": [
+            0,
+            100
+        ],
+        "raster:valid_percent": [
+            0,
+            100
+        ]
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2016-04-25T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "item_assets": {
+        "safe_manifest": {
+            "title": "SAFE product manifest",
+            "type": "application/xml",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "ogvi": {
+            "title": "OLCI global Vegetal Index",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "eo:bands": [
+                {
+                    "name": "Oa03",
+                    "description": "Band 3 - Chlorophyll absorption maximum, biogeochemistry, vegetation",
+                    "center_wavelength": 0.4425,
+                    "band_width": 0.01
+                },
+                {
+                    "name": "Oa10",
+                    "description": "Band 10 - Chlorophyll fluorescence peak, red edge",
+                    "center_wavelength": 0.68125,
+                    "band_width": 0.0075
+                },
+                {
+                    "name": "Oa17",
+                    "description": "Band 17 - Atmospheric / aerosol correction, clouds, pixel co-registration",
+                    "center_wavelength": 0.865,
+                    "band_width": 0.02
+                }
+            ]
+        },
+        "otci": {
+            "title": "OLCI Terrestrial Chlorophyll Index",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "eo:bands": [
+                {
+                    "name": "Oa10",
+                    "description": "Band 10 - Chlorophyll fluorescence peak, red edge",
+                    "center_wavelength": 0.68125,
+                    "band_width": 0.0075
+                },
+                {
+                    "name": "Oa11",
+                    "description": "Band 11 - Chlorophyll fluorescence baseline, red edge transition",
+                    "center_wavelength": 0.70875,
+                    "band_width": 0.01
+                },
+                {
+                    "name": "Oa12",
+                    "description": "Band 12 - O2 absorption / clouds, vegetation",
+                    "center_wavelength": 0.75375,
+                    "band_width": 0.0075
+                }
+            ]
+        },
+        "iwv": {
+            "title": "Integrated water vapour column",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "eo:bands": [
+                {
+                    "name": "Oa18",
+                    "description": "Band 18 - Water vapour absorption reference. Common reference band with SLSTR. Vegetation monitoring",
+                    "center_wavelength": 0.885,
+                    "band_width": 0.01
+                },
+                {
+                    "name": "Oa19",
+                    "description": "Band 19 - Water vapour absorption, vegetation monitoring (maximum REFLECTANCE)",
+                    "center_wavelength": 0.900,
+                    "band_width": 0.01
+                }
+            ]
+        },
+        "rcOgvi": {
+            "title": "Rectified Reflectance",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "eo:bands": [
+                {
+                    "name": "Oa10",
+                    "description": "Band 10 - Chlorophyll fluorescence peak, red edge",
+                    "center_wavelength": 0.68125,
+                    "band_width": 0.0075
+                },
+                {
+                    "name": "Oa17",
+                    "description": "Band 17 - Atmospheric / aerosol correction, clouds, pixel co-registration",
+                    "center_wavelength": 0.865,
+                    "band_width": 0.02
+                }
+            ]
+        },
+        "lqsf": {
+            "title": "Land Quality and Science Flags",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "timeCoordinates": {
+            "title": "Time Coordinates Annotations",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "geoCoordinates": {
+            "title": "Geo Coordinates Annotations",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "tieGeoCoordinates": {
+            "title": "Tie-Point Geo Coordinate Annotations",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "tieGeometries": {
+            "title": "Tie-Point Geometries Annotations",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "tieMeteo": {
+            "title": "Tie-Point Meteo Annotations",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "instrumentData": {
+            "title": "Instrument Annotation",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "gifapar": {
+            "title": "Green Instantaneous FAPAR",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "eo:bands": [
+                {
+                    "name": "Oa03",
+                    "description": "Band 3 - Chlorophyll absorption maximum, biogeochemistry, vegetation",
+                    "center_wavelength": 0.4425,
+                    "band_width": 0.01
+                },
+                {
+                    "name": "Oa10",
+                    "description": "Band 10 - Chlorophyll fluorescence peak, red edge",
+                    "center_wavelength": 0.68125,
+                    "band_width": 0.0075
+                },
+                {
+                    "name": "Oa17",
+                    "description": "Band 17 - Atmospheric / aerosol correction, clouds, pixel co-registration",
+                    "center_wavelength": 0.865,
+                    "band_width": 0.02
+                }
+            ]
+        },
+        "rcGifapar": {
+            "title": "Rectified Reflectance",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        }
+    }
+}

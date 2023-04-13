@@ -5,8 +5,7 @@ args:
   - registry
 
 code:
-  src: ${{ local.path(./sentinel_3/) }}
-  requirements: ${{ local.path(./requirements.txt) }}
+  src: ${{ local.path(./sentinel_3) }}
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -15,7 +14,7 @@ environment:
 
 collections:
   - id: sentinel-3-olci-lfr-l2-netcdf
-    template: ${{ local.path(./collection) }}
+    template: ${{ local.path(./collection/sentinel-3-olci-lfr-l2-netcdf/) }}
     class: sentinel_3.sentinel_3_olci_lfr_l2_netcdf:Collection
     asset_storage:
       - uri: blob://sentinel3euwest/sentinel-3-stac/
@@ -25,6 +24,7 @@ collections:
             name_starts_with: OLCI/OL_2_LFR___/
             extensions: [.json]
             chunk_length: 5000
+            limit: 100
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-olci-lfr-l2-netcdf
 
