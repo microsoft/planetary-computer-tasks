@@ -661,3 +661,63 @@ class BlobStorage(Storage):
         return cls.from_account_key(
             f"blob://{credential.account_name}/{container_name}", credential.account_key
         )
+
+
+def maybe_rewrite_blob_storage_url(url: str) -> str:
+    """
+    Rewrite HTTP blob-storage URLs to blob:// URLs.
+
+    If `url` isn't a blob-storage style URL, it's returned unmodified.
+
+    Parameters
+    ----------
+    url: str
+        The URL (or path) to a file.
+
+    Returns
+    -------
+    str
+        The rewritten URL. Blob Storage URLs are modified to use the `blob://`
+        style. Non-blob storage URLs are returned unmodified.
+
+    Examples
+    --------
+    Blob storage URLs are rewritten
+
+    >>> maybe_rewrite_blob_storage_url(
+    ...     "https://example.blob.core.windows.net/container/path/file.txt"
+    ... )
+    'blob://example/container/path/file.txt'
+
+    Azurite-style URLs *are* rewritten
+
+    >>> maybe_rewrite_blob_storage_url(
+    ...     "https://azurite:10000/devstoreaccount1/container/path/file.txt"
+    ... )
+    'blob://azurite:10000/devstoreaccount1/container/path/file.txt'
+
+    >>> maybe_rewrite_blob_storage_url(
+    ...     "https://localhost:10000/devstoreaccount1/container/path/file.txt"
+    ... )
+    'blob://localhost:10000/devstoreaccount1/container/path/file.txt'
+
+    Local paths are not affected
+
+    >>> maybe_rewrite_blob_storage_url("path/file.txt")
+    'path/file.txt'
+    """
+    parsed = urlparse(url)
+
+    if parsed.netloc.endswith(".blob.core.windows.net"):
+        account = parsed.netloc.split(".", 1)[0].strip("/")
+        # TODO: this could maybe fail if the path is just to the container.
+        container, path = parsed.path.strip("/").split("/", 1)
+
+        url = f"blob://{account}/{container}/{path}"
+
+    elif parsed.netloc.startswith(("azurite", "localhost", "127.0.0.1")):
+        # should we *just* do port 10000?
+        # Look at BlobStorage.__init__ maybe
+        url = f"blob://{parsed.path.strip('/')}"
+
+    return url
