@@ -893,7 +893,7 @@ def make_collection(
         "stac_version": "1.0.0",
         "id": collection_id,
         "type": "Collection",
-        "description":description,
+        "description": description,
         "links": links or [],
         "title": title,
         "keywords": keywords or [],
@@ -909,7 +909,7 @@ def make_collection(
         summary_value = summary.keys["properties"].summary.keys[key]
         value = None
         # if key == "constellation":
-            # breakpoint()
+        # breakpoint()
         if summary_value.type == "distinct":
             if summary_value.type == "string":
                 value = summary_value.values[0]
@@ -925,31 +925,88 @@ def make_collection(
 
     return collection
 
+
 def make_collection(
     summary: ObjectSummary,
     collection_id: str,
     keywords: list[str] | None = None,
     stac_extensions: list[str] | None = None,
-    extra_fields: dict[str, Any] | None = None,
     title: str | None = None,
     description: str = "{{ collection.description }}",
-    links: list[str] | None = [],
-):
+    links: list[str] | None = None,
+    assets: dict[str, dict] | None = None,
+    extra_summary_exclude: set[str] | None = None,
+    item_assets_exclude: set[str] | None = None,
+    extra_fields: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """
+    Create a STAC collection from an ObjectSummary.
+
+    Parameters
+    ----------
+    summary
+        The summary of the items in the collection, built from analyzing many items
+        and merging the results.
+    collection_id
+        The ID of the STAC collection.
+    keywords
+        An optional list of keywords to include in the collection.
+    stac_extensions
+        An optional list of STAC extensions to include in the collection.
+    title
+        An optional title for the collection.
+    description
+        An optional description for the collection.  
+    links
+        Optional list of links to include in the collection.
+    assets
+        Optional mapping of collection-level assets for the collection.
+    extra_summary_exclude
+        Additional keys to exclude from ``summaries``. By default, all
+        keys in the ``properties`` will be included *except*
+
+        - datetime
+        - start_datetime
+        - end_datetime
+
+    item_assets_exclude
+        A set of keys to exclude from the automatic ``item_assets``.
+        For example, passing ``item_assets_exclude={'eo:bands'}`` will
+        prevent the ``eo:bands`` property from being included in
+        the ``item_assets`` for any asset that does have ``eo:bands``.
+
+    extra_fields
+        A mapping of additional fields to include on the collection.
+
+    Returns
+    -------
+    dict
+        The dictionary containing the STAC collection.
+
+    Notes
+    -----
+    This returns ...
+    """
+    # TODO: auto-include item_assets when finding some
+    # TODO: flag to enable / disable item_assets, summaries
+    # TODO: Cusom merge for `geometry` type to get the union (for extent)
     asset_summary = summary.keys["assets"].summary
 
     item_assets = {}
+    item_assets_exclude = item_assets_exclude or set()
 
     for k, asset_summary in summary.keys["assets"].summary.keys.items():
         # assuming we'll move these from description to title
         # TODO: assert one
-        item_assets[k] = {
-            # "title": asset_summary.summary.keys["description"].values[0].value,
-            "type": asset_summary.summary.keys["type"].values[0].value,
-            "roles": asset_summary.summary.keys["roles"].values[0].value,
-        }
+        item_assets[k] = {}
+
+        for field, value in asset_summary.summary.keys.items():
+            if value.type == "distinct" and field not in item_assets_exclude:
+                item_assets[k][field] = (
+                    asset_summary.summary.keys[field].values[0].value
+                )
 
         if eo_bands := asset_summary.summary.keys.get("eo:bands"):
-            print("x!")
             item_assets[k]["eo:bands"] = [
                 {
                     "name": band.keys["name"].values[0].value,
@@ -964,29 +1021,46 @@ def make_collection(
         "stac_version": "1.0.0",
         "id": collection_id,
         "type": "Collection",
-        "description":description,
+        "description": description,
         "links": links or [],
-        "title": title,
         "keywords": keywords or [],
         "stac_extensions": stac_extensions or [],
         "summaries": {},
         "item_assets": item_assets,
     }
 
-    summary_keys = ["constellation", "platform", "instruments"]
+    optional = {"title": title, "assets": assets}
+    for k, v in optional.items():
+        if v is not None:
+            collection[k] = v
 
-    for key in summary_keys:
-        print(key)
-        summary_value = summary.keys["properties"].summary.keys[key]
+    exclude = {
+        "start_datetime",
+        "end_datetime",
+        "datetime",
+    }
+
+    exclude |= extra_summary_exclude or set()
+
+    properties = summary.keys["properties"].summary
+
+    for key, summary_value in properties.keys.items():
+        if key in exclude:
+            continue
         value = None
         # if key == "constellation":
-            # breakpoint()
+        # breakpoint()
         if summary_value.type == "distinct":
             if summary_value.type == "string":
                 value = summary_value.values[0]
                 value = [value.value]
             else:
                 value = [value.value for value in summary_value.values]
+        elif summary_value.type in ("int-range", "float-range"):
+            value = {
+                "minimum": summary_value.min,
+                "maximum": summary_value.max,
+            }
         else:
             value = [x.value for x in summary_value.values]
 
