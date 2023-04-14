@@ -16,9 +16,6 @@ class ItemRecordType(StrEnum):
 class ItemRecord(Record):
     type: ItemRecordType
     stac_id: str
-    # XXX: 'version' feels like it's duplicated between .properties.version
-    # and this, for StacItemRecord. Do we want that? Potential for drifting.
-    version: Optional[str]
 
     @validator("stac_id")
     def _stac_id_validator(cls, v: str) -> str:
@@ -28,8 +25,8 @@ class ItemRecord(Record):
         return v
 
     def get_id(self) -> str:
-        # XXX: What's the expected value with version=None? ':None:' or ::?
-        return f"{self.collection_id}:{self.item_id}:{self.version}:{self.type}"
+        version = getattr(self, "version", "")
+        return f"{self.collection_id}:{self.item_id}:{version}:{self.type}"
 
     @property
     def collection_id(self) -> str:
@@ -70,6 +67,10 @@ class StacItemRecord(ItemRecord):
             stac_id=stac_id, version=item.properties.get("version"), item=item.to_dict()
         )
 
+    @property
+    def version(self) -> str:
+        return self.item.get("properties", {}).get("version", "")
+
 
 class ItemUpdatedRecord(ItemRecord):
     """Record that records an item update.
@@ -87,3 +88,8 @@ class ItemUpdatedRecord(ItemRecord):
 
     storage_event_time: Optional[datetime] = None
     message_inserted_time: Optional[datetime] = None
+    version: Optional[str]
+
+    @validator("version")
+    def _version_validator(cls, v: Optional[str]) -> str:
+        return v or ""

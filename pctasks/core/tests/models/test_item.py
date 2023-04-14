@@ -27,7 +27,7 @@ def test_from_item(stac_item: pystac.Item):
     assert result.stac_id == "my-collection/my-item"
     assert result.collection_id == "my-collection"
     assert result.item_id == "my-item"
-    assert result.get_id() == "my-collection:my-item:None:StacItem"
+    assert result.get_id() == "my-collection:my-item::StacItem"
 
 
 def test_id_validator(stac_item: pystac.Item):
@@ -45,7 +45,7 @@ def test_get_version(stac_item: pystac.Item):
 @pytest.mark.parametrize(
     "version, expected",
     [
-        (None, "my-collection:my-item:None:ItemUpdated"),
+        (None, "my-collection:my-item::ItemUpdated"),
         ("2", "my-collection:my-item:2:ItemUpdated"),
     ],
 )
