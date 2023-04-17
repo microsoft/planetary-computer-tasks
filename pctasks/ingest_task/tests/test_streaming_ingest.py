@@ -19,6 +19,11 @@ HERE = pathlib.Path(__file__).parent
 
 @pytest.fixture
 def document():
+    """
+    A document in the `items` container in Cosmos DB
+
+    The STAC item under .data.item is a sentinel-1-grd item.
+    """
     return json.loads((HERE / "items_document.json").read_text())
 
 
