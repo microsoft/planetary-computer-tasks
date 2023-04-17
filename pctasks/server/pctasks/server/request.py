@@ -1,8 +1,20 @@
 import logging
-from typing import Optional
+from typing import Dict, Optional, Union
+from urllib.parse import urlparse
 
 from fastapi import Request
 
+from pctasks.server.constants import (
+    DIMENSION_KEYS,
+    HEADER_REQUEST_ID,
+    HTTP_METHOD,
+    HTTP_PATH,
+    HTTP_URL,
+    QS_REQUEST_ENTITY,
+    SERVICE_NAME,
+    X_AZURE_REF,
+    X_REQUEST_ENTITY,
+)
 from pctasks.server.settings import ServerSettings
 
 # Headers containing user data from API Management
@@ -19,6 +31,15 @@ API_KEY_HEADER = "X-API-KEY"
 logger = logging.getLogger(__name__)
 
 
+def get_request_entity(request: Request) -> Union[str, None]:
+    """Get the request entity from the given request. If not present as a
+    header, attempt to parse from the query string
+    """
+    return request.headers.get(X_REQUEST_ENTITY) or request.query_params.get(
+        QS_REQUEST_ENTITY
+    )
+
+
 class ParsedRequest:
     def __init__(self, request: Request) -> None:
         settings = ServerSettings.get()
@@ -27,6 +48,11 @@ class ParsedRequest:
         self.dev_api_key = settings.dev_api_key
         self.dev_auth_token = settings.dev_auth_token
         self.access_key = settings.access_key
+
+    @property
+    def path(self) -> str:
+        parsed_url = urlparse(f"{self._request.url}")
+        return parsed_url.path
 
     @property
     def is_authenticated(self) -> bool:
@@ -115,3 +141,37 @@ class ParsedRequest:
         if not result:
             return None
         return result
+
+    @property
+    def custom_dimensions(self) -> Dict[str, Optional[str]]:
+        """Retrieves some common information from the request to log to App Insights"""
+
+        # 'request_id' header that can tie a traces entry to a request entry
+        # in App Insights. This is set by the API Management gateway.
+        # The header is in the format 'request_id: 1234.5678' where the first
+        # part is the request id that is logged in the traces entry.
+        request_id = _remove_after_dot(self._request.headers.get(HEADER_REQUEST_ID))
+
+        dimensions: Dict[str, Optional[str]] = {
+            "ref_id": self._request.headers.get(X_AZURE_REF),
+            "request_entity": get_request_entity(self._request),
+            "service": SERVICE_NAME,
+            HTTP_URL: str(self._request.url),
+            HTTP_METHOD: str(self._request.method),
+            HTTP_PATH: self.path,
+            DIMENSION_KEYS.REQUEST_ID: request_id,
+            DIMENSION_KEYS.SUBSCRIPTION_KEY: self.subscription_key,
+            DIMENSION_KEYS.USER_EMAIL: self.user_email,
+            DIMENSION_KEYS.REQUEST_URL: str(self._request.url),
+        }
+
+        return dimensions
+
+
+def _remove_after_dot(s: Optional[str]) -> Optional[str]:
+    if not s:
+        return None
+    parts = s.split(".")
+    if len(parts) == 1:
+        return s
+    return parts[0] + "."

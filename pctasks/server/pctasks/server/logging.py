@@ -1,13 +1,21 @@
 import logging
 import sys
-from typing import Optional, Tuple, cast
-from urllib.parse import urlparse
+from typing import Any, Dict, Optional, Tuple, Union, cast
 
 from fastapi import Request
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 import pctasks.server
+from pctasks.server.constants import DIMENSION_KEYS, SERVICE_NAME
+from pctasks.server.request import ParsedRequest
 from pctasks.server.settings import ServerSettings
+
+logger = logging.getLogger(__name__)
+
+
+PACKAGES = {
+    SERVICE_NAME: "pctasks",
+}
 
 
 # Prevent successful health check pings from being logged
@@ -87,6 +95,47 @@ def init_logging(service_name: str) -> None:
         logger.info("Not adding Azure log handler since no instrumentation key defined")
 
 
-def request_to_path(request: Request) -> str:
-    parsed_url = urlparse(f"{request.url}")
-    return parsed_url.path
+def get_custom_dimensions(
+    request: Union[Request, ParsedRequest], dimensions: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
+    """Merge the base dimensions with the given dimensions."""
+    if isinstance(request, Request):
+        request = ParsedRequest(request)
+
+    base_dimensions: Dict[str, Optional[str]] = {
+        **request.custom_dimensions,
+    }
+
+    if dimensions:
+        base_dimensions.update(dimensions)
+
+    return {"custom_dimensions": base_dimensions}
+
+
+def log_request(
+    parsed_request: ParsedRequest,
+    msg: str,
+    workflow_id: Optional[str] = None,
+    run_id: Optional[str] = None,
+    job_id: Optional[str] = None,
+    partition_id: Optional[str] = None,
+    task_id: Optional[str] = None,
+) -> None:
+    """Log the given request with the given status code."""
+    route_dimensions: Dict[str, Any] = {}
+
+    if workflow_id:
+        route_dimensions[DIMENSION_KEYS.WORKFLOW_ID] = workflow_id
+    if run_id:
+        route_dimensions[DIMENSION_KEYS.RUN_ID] = run_id
+    if job_id:
+        route_dimensions[DIMENSION_KEYS.JOB_ID] = job_id
+    if partition_id:
+        route_dimensions[DIMENSION_KEYS.PARTITION_ID] = partition_id
+    if task_id:
+        route_dimensions[DIMENSION_KEYS.TASK_ID] = task_id
+
+    logger.info(
+        msg,
+        extra=get_custom_dimensions(parsed_request, route_dimensions),
+    )

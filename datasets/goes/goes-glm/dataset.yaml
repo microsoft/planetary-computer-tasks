@@ -1,5 +1,5 @@
 id: goes_glm
-image: ${{ args.registry }}/pctasks-goes-glm:2023.2.7
+image: ${{ args.registry }}/pctasks-goes-glm:2023.4.17.0
 
 args:
 - registry
@@ -24,26 +24,27 @@ collections:
         chunks:
           options:
             ends_with: .nc
-            chunk_length: 10000
+            chunk_length: 50000
           splits:
             - prefix: GLM-L2-LCFA/
               depth: 2
-      - uri: blob://goeseuwest/noaa-goes17/
-        token: ${{ pc.get_token(goeseuwest, noaa-goes17) }}
-        chunks:
-          options:
-            ends_with: .nc
-            chunk_length: 10000
-          splits:
-            - prefix: GLM-L2-LCFA/
-              depth: 2
+      # GOES-17 is just parked now.
+      # - uri: blob://goeseuwest/noaa-goes17/
+      #   token: ${{ pc.get_token(goeseuwest, noaa-goes17) }}
+      #   chunks:
+      #     options:
+      #       ends_with: .nc
+      #       chunk_length: 50000
+      #     splits:
+      #       - prefix: GLM-L2-LCFA/
+      #         depth: 2
 
       - uri: blob://goeseuwest/noaa-goes18/
         token: ${{ pc.get_token(goeseuwest, noaa-goes18) }}
         chunks:
           options:
             ends_with: .nc
-            chunk_length: 10000
+            chunk_length: 50000
           splits:
             - prefix: GLM-L2-LCFA/
               depth: 2

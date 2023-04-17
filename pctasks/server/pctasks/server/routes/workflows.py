@@ -28,6 +28,7 @@ from pctasks.core.models.workflow import (
 )
 from pctasks.run.workflow import get_workflow_runner
 from pctasks.server.dependencies import PageParams, SortParams
+from pctasks.server.logging import log_request
 from pctasks.server.request import ParsedRequest
 
 logger = logging.getLogger(__name__)
@@ -51,6 +52,7 @@ async def list_workflows(
     sort_params: SortParams = Depends(SortParams.dependency),
 ) -> RecordListResponse[WorkflowRecord]:
     parsed_request = ParsedRequest(request)
+    log_request(parsed_request, "List workflows")
 
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
@@ -74,11 +76,21 @@ async def list_workflows(
     summary="Create a workflow.",
     response_class=ORJSONResponse,
 )
-async def create_workflow(request: Request, workflow: Workflow) -> ORJSONResponse:
+async def create_workflow(
+    request: Request, workflow_id: str, workflow: Workflow
+) -> ORJSONResponse:
     parsed_request = ParsedRequest(request)
+    log_request(
+        parsed_request,
+        f"Create workflow: {workflow_id}",
+        workflow_id=workflow_id,
+    )
 
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
+
+    if workflow.id != workflow_id:
+        raise HTTPException(status_code=400, detail="Workflow ID does not match URL")
 
     record = WorkflowRecord(workflow_id=workflow.id, workflow=workflow)
 
@@ -97,11 +109,21 @@ async def create_workflow(request: Request, workflow: Workflow) -> ORJSONRespons
     summary="Update a workflow.",
     response_class=ORJSONResponse,
 )
-async def update_workflow(request: Request, workflow: Workflow) -> ORJSONResponse:
+async def update_workflow(
+    request: Request, workflow_id: str, workflow: Workflow
+) -> ORJSONResponse:
     parsed_request = ParsedRequest(request)
+    log_request(
+        parsed_request,
+        f"Update workflow: {workflow_id}",
+        workflow_id=workflow_id,
+    )
 
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
+
+    if workflow.id != workflow_id:
+        raise HTTPException(status_code=400, detail="Workflow ID does not match URL")
 
     record = WorkflowRecord(workflow_id=workflow.id, workflow=workflow)
 
@@ -125,6 +147,11 @@ async def update_workflow(request: Request, workflow: Workflow) -> ORJSONRespons
 )
 async def fetch_workflow(request: Request, workflow_id: str) -> WorkflowRecordResponse:
     parsed_request = ParsedRequest(request)
+    log_request(
+        parsed_request,
+        f"Fetch workflow: {workflow_id}",
+        workflow_id=workflow_id,
+    )
 
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
@@ -150,6 +177,11 @@ async def submit_workflow(
     request: Request, workflow_id: str, submit_request: WorkflowSubmitRequest
 ) -> WorkflowSubmitResult:
     parsed_request = ParsedRequest(request)
+    log_request(
+        parsed_request,
+        f"Submit workflow: {workflow_id}",
+        workflow_id=workflow_id,
+    )
 
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")
@@ -201,6 +233,11 @@ async def list_workflow_runs(
     page_params: PageParams = Depends(PageParams.dependency),
 ) -> RecordListResponse[WorkflowRunRecord]:
     parsed_request = ParsedRequest(request)
+    log_request(
+        parsed_request,
+        f"List workflow runs: {workflow_id}",
+        workflow_id=workflow_id,
+    )
 
     if not parsed_request.is_authenticated:
         raise HTTPException(status_code=401, detail="Unauthorized")

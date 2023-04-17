@@ -6,21 +6,21 @@ with open("README.md") as f:
     desc = f.read()
 
 install_requires = [
-    "azure-identity==1.*",
+    "azure-identity>=1.0.0,<2",
     "azure-storage-blob==12.9",  # Issues with 12.11 generating sas from account keys
     # https://github.com/microsoft/planetary-computer-tasks/issues/136
-    "azure-storage-queue>=12.0.0",
-    "azure-data-tables>=12.0.0",
-    "azure-cosmos==4.3.*",
+    "azure-storage-queue>=12.6.0",
+    "azure-data-tables>=12.0.0,<13",
+    "azure-cosmos>=4.3.0,<4.4.0",
     "pydantic>=1.9,<2.0.0",
-    "orjson==3.*",
+    "orjson>=3.0.0,<4",
     "strictyaml>=1.6",
     "stac-validator>=3.1.0",
     "opencensus-ext-azure==1.1.0",
     "opencensus-ext-logging==0.1.1",
     "pyyaml>=5.3",
-    "aiohttp==3.8.*",
-    "planetary-computer>=0.4.0"
+    "aiohttp>=3.8.0,<3.9",
+    "planetary-computer>=0.4.0",
 ]
 
 extra_reqs = {

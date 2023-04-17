@@ -63,6 +63,7 @@
     "msft:short_description": "Tiled ESA CCI global land cover maps in COG format",
     "msft:storage_account": "landcoverdata",
     "msft:container": "esa-cci-lc",
+    "msft:region": "westeurope",
     "msft:group_id": "esa-cci-lc",
     "providers": [
         {

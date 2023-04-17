@@ -4,8 +4,6 @@ tokens:
     containers:
       noaa-goes16:
         token: ${{ pc.get_token(goeseuwest, noaa-goes16) }}
-      noaa-goes17:
-        token: ${{ pc.get_token(goeseuwest, noaa-goes17) }}
       noaa-goes18:
         token: ${{ pc.get_token(goeseuwest, noaa-goes18) }}
 args:
@@ -16,7 +14,7 @@ jobs:
     id: create-splits
     tasks:
     - id: create-splits
-      image: ${{ args.registry }}/pctasks-goes-glm:2023.2.7
+      image: ${{ args.registry }}/pctasks-goes-glm:2023.2.23.0
       code:
         src: datasets/goes/goes-glm/goes_glm.py
       task: goes_glm:GoesGlmCollection.create_splits_task
@@ -28,30 +26,19 @@ jobs:
             depth: 2
           sas_token: ${{ pc.get_token(goeseuwest, noaa-goes16) }}
           chunk_options:
-            chunk_length: 10000
+            chunk_length: 50000
             ends_with: .nc
             list_folders: false
             chunk_file_name: uris-list
             chunk_extension: .csv
             since: ${{ args.since }}
-        - uri: blob://goeseuwest/noaa-goes17/
-          splits:
-          - p1refix: GLM-L2-LCFA/2023/
-            depth: 2
-          sas_token: ${{ pc.get_token(goeseuwest, noaa-goes17) }}
-          chunk_options:
-            chunk_length: 10000
-            ends_with: .nc
-            list_folders: false
-            chunk_file_name: uris-list
-            chunk_extension: .csv
         - uri: blob://goeseuwest/noaa-goes18/
           splits:
           - prefix: GLM-L2-LCFA/2023/
             depth: 2
           sas_token: ${{ pc.get_token(goeseuwest, noaa-goes18) }}
           chunk_options:
-            chunk_length: 10000
+            chunk_length: 50000
             ends_with: .nc
             list_folders: false
             chunk_file_name: uris-list
@@ -66,7 +53,7 @@ jobs:
     id: create-chunks
     tasks:
     - id: create-chunks
-      image: ${{ args.registry }}/pctasks-goes-glm:2023.2.7
+      image: ${{ args.registry }}/pctasks-goes-glm:2023.2.23.0
       code:
         src: datasets/goes/goes-glm/goes_glm.py
       task: pctasks.dataset.chunks.task:create_chunks_task
@@ -87,7 +74,7 @@ jobs:
     id: process-chunk
     tasks:
     - id: create-items
-      image: ${{ args.registry }}/pctasks-goes-glm:2023.2.7
+      image: ${{ args.registry }}/pctasks-goes-glm:2023.2.23.0
       code:
         src: datasets/goes/goes-glm/goes_glm.py
       task: goes_glm:GoesGlmCollection.create_items_task

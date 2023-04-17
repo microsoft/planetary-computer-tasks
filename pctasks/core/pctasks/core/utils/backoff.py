@@ -5,6 +5,8 @@ import time
 from dataclasses import dataclass, field
 from typing import Any, Callable, Coroutine, List, Optional, TypeVar
 
+import azure.core.exceptions
+
 T = TypeVar("T")
 
 
@@ -56,11 +58,11 @@ def get_exception_status_code(e: Exception) -> Optional[int]:
                 pass
             except ValueError:
                 pass
-    elif isinstance(e, FileNotFoundError):
-        # fsspec will raise a FileNotFoundError
-        # if a request is throttled; check inner exception.
-        if e.__cause__ and isinstance(e.__cause__, Exception):
-            status_code = get_exception_status_code(e.__cause__)
+
+    # If no status code was found in the current exception, check the
+    # inner exceptions
+    if status_code is None and e.__cause__ and isinstance(e.__cause__, Exception):
+        status_code = get_exception_status_code(e.__cause__)
 
     return status_code
 
@@ -70,9 +72,13 @@ def is_common_throttle_exception(e: Exception) -> bool:
     if status_code is not None and status_code in (502, 503, 429):
         return True
 
-    if "connection reset by peer" in str(e).lower():
+    if "connection reset by peer" in str(e).lower() or status_code == 104:
         # If the connection was reset by peer, this could be throttling or
         # an intermittent issue.
+        # urllib3.exceptions.ProtocolError uses 104 for connection reset by peer
+        return True
+
+    if isinstance(e, azure.core.exceptions.IncompleteReadError):
         return True
 
     return False

@@ -2,6 +2,9 @@ import os
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+import pytest
+
+from pctasks.core.storage.blob import maybe_rewrite_blob_storage_url
 from pctasks.dev.blob import temp_azurite_blob_storage
 from pctasks.dev.constants import AZURITE_ACCOUNT_NAME, TEST_DATA_CONTAINER
 
@@ -100,3 +103,26 @@ def test_blob_download_timeout():
                     storage_stream_downloader._request_options.pop("timeout", None)
                     is None
                 )
+
+
+@pytest.mark.parametrize(
+    "url, expected",
+    [
+        (
+            "https://example.blob.core.windows.net/container/path/file.txt",
+            "blob://example/container/path/file.txt",
+        ),
+        (
+            "https://azurite:10000/devstoreaccount1/container/path/file.txt",
+            "blob://devstoreaccount1/container/path/file.txt",
+        ),
+        (
+            "https://localhost:10000/devstoreaccount1/container/path/file.txt",
+            "blob://devstoreaccount1/container/path/file.txt",
+        ),
+        ("path/file.txt", "path/file.txt"),
+    ],
+)
+def test_maybe_rewrite_blob_storage_url(url, expected):
+    result = maybe_rewrite_blob_storage_url(url)
+    assert result == expected

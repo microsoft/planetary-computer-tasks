@@ -30,9 +30,10 @@
     "Land Use",
     "Sentinel"
   ],
-  "msft:short_description": "Global land cover information with 9 classes for for 2017-2021 at 10m resolution",
+  "msft:short_description": "Global land cover information with 9 classes for for 2017-2022 at 10m resolution",
   "msft:storage_account": "ai4edataeuwest",
   "msft:container": "io-lulc",
+  "msft:region": "westeurope",
   "msft:group_id": "io-land-cover",
   "providers": [
     {
@@ -175,7 +176,7 @@
       "interval": [
         [
           "2017-01-01T00:00:00Z",
-          "2022-01-01T00:00:00Z"
+          "2023-01-01T00:00:00Z"
         ]
       ]
     }

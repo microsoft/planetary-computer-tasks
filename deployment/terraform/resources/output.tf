@@ -138,6 +138,12 @@ output "api_management_name" {
   value = azurerm_api_management.pctasks.name
 }
 
+# Application Insights
+
+output "instrumentation_key" {
+  value = azurerm_application_insights.pctasks.instrumentation_key
+}
+
 ## PCTasks Server
 
 output "pctasks_server_sp_tenant_id" {
