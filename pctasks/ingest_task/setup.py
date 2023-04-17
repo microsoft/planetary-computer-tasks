@@ -10,7 +10,6 @@ install_requires = [
     "pctasks.ingest>=0.1.0",
     "pypgstac[psycopg]==0.7.3",
     "pystac>=1.0.0,<2",
-    "smart-open==4.2.0",
     "orjson>=3.5.2",
     "python-dateutil==2.8.2",
     "fire==0.4.0",
