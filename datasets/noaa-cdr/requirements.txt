@@ -1,1 +1,1 @@
-stactools-noaa-cdr @ git+https://github.com/stactools-packages/noaa-cdr@ab65c73ec3246f41b5f07ac0be0f9928f7fbb6b6
+stactools-noaa-cdr @ git+https://github.com/stactools-packages/noaa-cdr@56061afd2d90aaaa3a783e2082228dbece266826
