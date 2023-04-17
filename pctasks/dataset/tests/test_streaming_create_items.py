@@ -20,8 +20,8 @@ from pctasks.task.streaming import StreamingTaskOptions
 
 BLANK_ITEM = pystac.Item(
     "id",
-    geometry={},
-    bbox=None,
+    geometry={"type": "Point", "coordinates": [0, 0]},
+    bbox=[0, 0, 0, 0],
     datetime=datetime.datetime(2000, 1, 1),
     properties={},
 )
