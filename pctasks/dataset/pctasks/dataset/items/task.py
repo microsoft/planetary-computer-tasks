@@ -1,3 +1,4 @@
+import contextlib
 import logging
 import os
 import time
@@ -73,14 +74,16 @@ def validate_item(item: pystac.Item, collection_id: Optional[str]) -> pystac.Ite
     remove_collection_link = False
 
     if item.collection_id and not item.get_single_link("collection"):
-        # TODO: avoid mutating `item`.
-        # For valid items, users shouldn't ever see this link we add. But if
-        # `item.validate()` throws an exception they'll get back an item with a
-        # new link.
         item.add_link(pystac.Link(rel="collection", target="http://example.com"))
         remove_collection_link = True
 
-    item.validate()
+    try:
+        item.validate()
+    finally:
+        if remove_collection_link:
+            with contextlib.suppress(Exception):
+                item.remove_links("collection")
+        raise
 
     if remove_collection_link:
         item.remove_links("collection")
