@@ -6,8 +6,8 @@ Import machinery for loading code from Azure Blob Storage.
 # would directly hook into the `import` statement.
 # For background, checkout out Recipe 10.11 in the Python Cookbook (3rd edition)
 from __future__ import annotations
-import io
 
+import io
 import logging
 import pathlib
 import site

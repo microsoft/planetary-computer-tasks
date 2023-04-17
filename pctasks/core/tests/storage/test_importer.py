@@ -2,10 +2,10 @@ import importlib.metadata
 import subprocess
 import sys
 import unittest.mock
+import zipfile
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional
-import zipfile
 
 from pctasks.core.importer import ensure_code, ensure_requirements, write_code
 from pctasks.core.storage.blob import BlobStorage
@@ -110,7 +110,6 @@ def test_ensure_requirements_target_dir():
         finally:
             if target_dir in sys.path:
                 sys.path.remove(target_dir)
-
 
 
 def test_write_code():
