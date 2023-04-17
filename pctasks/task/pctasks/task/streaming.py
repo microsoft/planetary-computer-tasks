@@ -120,8 +120,8 @@ class StreamingTaskMixin:
                             **extra_options,
                         )
                     except Exception:
+                        # TODO: Clean up the logging on failures. We log here and in dataset.streaming:process_message
                         logger.exception("Failed to process message")
-                        # TODO: make sure this is getting logged loudly, even in tests.
                         if message.dequeue_count >= 3:
                             logger.info("Deleting message after 3 failures. id=%s", message.id)
                             qc.delete_message(message)  # type: ignore

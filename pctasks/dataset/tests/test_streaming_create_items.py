@@ -17,6 +17,7 @@ from pctasks.dev.constants import AZURITE_ACCOUNT_KEY
 from pctasks.dev.queues import TempQueue
 from pctasks.task.context import TaskContext
 from pctasks.task.streaming import StreamingTaskOptions
+from pctasks.dev.azurite import setup_azurite
 
 BLANK_ITEM = pystac.Item(
     "id",
@@ -169,8 +170,7 @@ def test_streaming_create_items_rewrite_url(monkeypatch):
     monkeypatch.setenv(AZURITE_STORAGE_ACCOUNT_ENV_VAR, "devstoreaccount1")
     monkeypatch.setenv(AZURITE_HOST_ENV_VAR, "localhost")
     monkeypatch.setenv(AZURITE_PORT_ENV_VAR, "10000")
-
-    # TODO: temp_storage stuff. actually read the file.
+    setup_azurite()
 
     with temp_azurite_blob_storage() as root_storage:
         root_storage.write_bytes(
@@ -240,9 +240,7 @@ def test_streaming_create_items_task_invalid_item(caplog):
         )
         context = TaskContext(run_id="test", storage_factory=StorageFactory())
 
-
-        with caplog.at_level(logging.CRITICAL, logger="pctasks.task.streaming"):
+        with caplog.at_level(logging.ERROR):
             task.run(task_input, context)
 
-    # assert caplog.records
-    assert 0
+    assert caplog.records
