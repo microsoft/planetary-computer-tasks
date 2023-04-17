@@ -83,7 +83,6 @@ def validate_item(item: pystac.Item, collection_id: Optional[str]) -> pystac.Ite
         if remove_collection_link:
             with contextlib.suppress(Exception):
                 item.remove_links("collection")
-        raise
 
     if remove_collection_link:
         item.remove_links("collection")
