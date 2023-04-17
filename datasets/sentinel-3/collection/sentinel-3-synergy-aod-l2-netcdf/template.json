@@ -1,0 +1,225 @@
+{
+    "stac_version": "1.0.0",
+    "type": "Collection",
+    "id": "sentinel-3-synergy-aod-l2-netcdf",
+    "title": "Sentinel-3 Global Aerosol",
+    "description": "{{ collection.description }}",
+    "license": "proprietary",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice",
+            "type": "application/pdf",
+            "title": "Sentinel Data License"
+        },
+        {
+            "rel": "about",
+            "href": "https://sentinels.copernicus.eu/web/sentinel/level-2-aod",
+            "type": "text/html",
+            "title": "Sentinel-3 Global Aerosol Product User Guide"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/sat/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/eo/v1.1.0/schema.json"
+    ],
+    "keywords": [
+        "Sentinel",
+        "Copernicus",
+        "ESA",
+        "Satellite",
+        "Global",
+        "Aerosol"
+    ],
+    "msft:short_description": "Sentinel-3 global aerosol and surface reflectance at super-pixel (4.5km) resolution.",
+    "msft:storage_account": "sentinel3euwest",
+    "msft:container": "sentinel-3",
+    "msft:region": "westeurope",
+    "providers": [
+        {
+            "name": "ESA",
+            "roles": [
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://earth.esa.int/web/guest/home"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "title": "Sentinel-3 Global Aerosol Thumbnail",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-3-synergy-aod-l2-netcdf-thumb.png",
+            "media_type": "image/png"
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/sentinel-3-synergy-aod-l2-netcdf.parquet",
+            "title": "GeoParquet STAC Items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "AS"
+            }
+        }
+    },
+    "summaries": {
+        "constellation": [
+            "Sentinel-3"
+        ],
+        "platform": [
+            "Sentinel-3A",
+            "Sentinel-3B"
+        ],
+        "sat:platform_international_designator": [
+            "2016-011A",
+            "2018-039A"
+        ],
+        "sat:orbit_state": [
+            "ascending",
+            "descending"
+        ],
+        "eo:cloud_cover": {
+            "minimum": 0,
+            "maximum": 100
+        },
+        "s3:product_type": [
+            "SY_2_AOD___"
+        ],
+        "s3:saline_water": {
+            "minimum": 0,
+            "maximum": 100
+        },
+        "s3:land": {
+            "minimum": 0,
+            "maximum": 100
+        },
+        "eo:bands": [
+            {
+                "name": "SYN_440",
+                "description": "OLCI channel Oa03",
+                "center_wavelength": 0.4425,
+                "full_width_half_max": 0.01
+            },
+            {
+                "name": "SYN_550",
+                "description": "SLSTR nadir and oblique channel S1",
+                "center_wavelength": 0.55,
+                "full_width_half_max": 0.02
+            },
+            {
+                "name": "SYN_670",
+                "description": "SLSTR nadir and oblique channel S2",
+                "center_wavelength": 0.659,
+                "full_width_half_max": 0.02
+            },
+            {
+                "name": "SYN_865",
+                "description": "OLCI channel Oa17, SLSTR nadir and oblique channel S2",
+                "center_wavelength": 0.865,
+                "full_width_half_max": 0.02
+            },
+            {
+                "name": "SYN_1600",
+                "description": "SLSTR nadir and oblique channel S5",
+                "center_wavelength": 1.61,
+                "full_width_half_max": 0.06
+            },
+            {
+                "name": "SYN_2250",
+                "description": "SLSTR nadir and oblique channel S6",
+                "center_wavelength": 2.25,
+                "full_width_half_max": 0.05
+            }
+        ]
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2020-04-16T19:36:28.012367Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "item_assets": {
+        "safe_manifest": {
+            "description": "SAFE product manifest",
+            "type": "application/xml",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "ntc_aod": {
+            "description": "Global aerosol parameters and surface reflectance",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "eo:bands": [
+                {
+                    "name": "SYN_440",
+                    "description": "OLCI channel Oa03",
+                    "center_wavelength": 0.4425,
+                    "full_width_half_max": 0.01
+                },
+                {
+                    "name": "SYN_550",
+                    "description": "SLSTR nadir and oblique channel S1",
+                    "center_wavelength": 0.55,
+                    "full_width_half_max": 0.02
+                },
+                {
+                    "name": "SYN_670",
+                    "description": "SLSTR nadir and oblique channel S2",
+                    "center_wavelength": 0.659,
+                    "full_width_half_max": 0.02
+                },
+                {
+                    "name": "SYN_865",
+                    "description": "OLCI channel Oa17, SLSTR nadir and oblique channel S2",
+                    "center_wavelength": 0.865,
+                    "full_width_half_max": 0.02
+                },
+                {
+                    "name": "SYN_1600",
+                    "description": "SLSTR nadir and oblique channel S5",
+                    "center_wavelength": 1.61,
+                    "full_width_half_max": 0.06
+                },
+                {
+                    "name": "SYN_2250",
+                    "description": "SLSTR nadir and oblique channel S6",
+                    "center_wavelength": 2.25,
+                    "full_width_half_max": 0.05
+                }
+            ]
+        }
+    }
+}

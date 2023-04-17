@@ -1,0 +1,30 @@
+id: sentinel-3
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+  - registry
+
+code:
+  src: ${{ local.path(./sentinel_3/sentinel_3_synergy_aod_l2_netcdf.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: sentinel-3-synergy-aod-l2-netcdf
+    template: ${{ local.path(./collection/sentinel-3-synergy-aod-l2-netcdf) }}
+    class: sentinel_3_synergy_aod_l2_netcdf:Collection
+    asset_storage:
+      - uri: blob://sentinel3euwest/sentinel-3-stac/
+        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+        chunks:
+          options:
+            name_starts_with: SYNERGY/SY_2_AOD___/
+            extensions: [.json]
+            chunk_length: 100
+            limit: 200
+    chunk_storage:
+      uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-aod-l2-netcdf
