@@ -1,9 +1,14 @@
 #!/bin/bash
 
+set -o errexit
+set -o errtrace
+set -o nounset
+set -o pipefail
+
+
 python3 -m pip install build
 
 for subpackage in pctasks/*
 do
     python3 -m build "$subpackage" -o dist
 done
-
