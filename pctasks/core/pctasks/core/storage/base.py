@@ -133,21 +133,15 @@ class Storage(ABC):
 
     def upload_code(self, file_path: str) -> str:
         """Upload a Python module or package."""
+        from pctasks.core.importer import write_code
+
         path = pathlib.Path(file_path)
 
         if not path.exists():
             raise OSError(f"Path {path} does not exist.")
 
-        if path.is_file():
-            data = path.read_bytes()
-            name = path.name
-        else:
-            buf = io.BytesIO()
-            with zipfile.PyZipFile(buf, "w") as zf:
-                zf.writepy(str(path))
-
-            data = buf.getvalue()
-            name = path.with_suffix(".zip").name
+        name, buf = write_code(file_path)
+        data = buf.read()
 
         token = hashlib.md5(data).hexdigest()
         dst_path = f"{token}/{name}"

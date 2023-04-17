@@ -6,6 +6,7 @@ Import machinery for loading code from Azure Blob Storage.
 # would directly hook into the `import` statement.
 # For background, checkout out Recipe 10.11 in the Python Cookbook (3rd edition)
 from __future__ import annotations
+import io
 
 import logging
 import pathlib
@@ -14,7 +15,7 @@ import subprocess
 import sys
 import zipfile
 from tempfile import TemporaryDirectory
-from typing import List, Optional
+from typing import List, Optional, Tuple, Union
 
 from pctasks.core.storage import Storage
 
@@ -133,3 +134,32 @@ def ensure_code(
         sys.path.insert(0, str(output_path))
 
     return pathlib.Path(output_path)
+
+
+def write_code(
+    file_path: pathlib.Path,
+) -> Tuple[str, Union[io.BufferedReader, io.BytesIO]]:
+    """
+    Like :meth:`zipfile.PyZipFile.writepy`, but doesn't use ``.pyc`` files.
+
+    Parameters
+    ----------
+    file_path: pathlib.Path
+        The the Path object that's the directory of code you want to upload.
+    """
+    file_path = pathlib.Path(file_path)
+
+    file_obj: Union[io.BufferedReader, io.BytesIO]
+    if file_path.is_file():
+        file_obj = file_path.open("rb")
+        name = file_path.name
+
+    else:
+        name = file_path.with_suffix(".zip").name
+        file_obj = io.BytesIO()
+        with zipfile.ZipFile(file_obj, "w") as zf:
+            for path in file_path.glob("**/*.py"):
+                zf.write(path, path.relative_to(file_path.parent))
+
+        file_obj.seek(0)
+    return name, file_obj
