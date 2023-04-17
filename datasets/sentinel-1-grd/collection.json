@@ -72,6 +72,7 @@
       }
     ],
     "msft:container": "s1-grd",
+    "msft:region": "westeurope",
     "msft:storage_account": "sentinel1euwest",
     "msft:short_description": "Sentinel-1 comprises a constellation of two polar-orbiting satellites, operating day and night performing C-band synthetic aperture radar imaging. Level-1 Ground Range Detected (GRD) products consist of focused SAR data that has been detected, multi-looked and projected to ground range using an Earth ellipsoid model.",
     "summaries": {

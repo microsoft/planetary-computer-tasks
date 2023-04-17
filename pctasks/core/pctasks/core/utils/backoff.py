@@ -5,6 +5,8 @@ import time
 from dataclasses import dataclass, field
 from typing import Any, Callable, Coroutine, List, Optional, TypeVar
 
+import azure.core.exceptions
+
 T = TypeVar("T")
 
 
@@ -74,6 +76,9 @@ def is_common_throttle_exception(e: Exception) -> bool:
         # If the connection was reset by peer, this could be throttling or
         # an intermittent issue.
         # urllib3.exceptions.ProtocolError uses 104 for connection reset by peer
+        return True
+
+    if isinstance(e, azure.core.exceptions.IncompleteReadError):
         return True
 
     return False

@@ -1,0 +1,31 @@
+id: esa-worldcover
+image: ${{ args.registry }}/pctasks-esa-worldcover:latest
+
+args:
+  - registry
+
+code:
+  src: ${{ local.path(./esa_worldcover.py) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: esa-worldcover
+    template: ${{ local.path(./collection) }}
+    class: esa_worldcover:ESAWorldCoverCollection
+    asset_storage:
+      - uri: blob://ai4edataeuwest/esa-worldcover/
+        chunks:
+          options:
+            extensions: [.tif]
+            # The 'name_starts_with' filter will run a single year only. This
+            # is helpful since this is an annual product -> next year we can
+            # update this field and create only the items needed.
+            name_starts_with: v100/2020/map
+            chunk_length: 200
+            # limit: 40
+    chunk_storage:
+      uri: blob://ai4edataeuwest/esa-worldcover-etl-data/pctasks/
