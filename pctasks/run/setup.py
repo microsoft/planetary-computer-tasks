@@ -9,10 +9,10 @@ install_requires = [
     "pctasks.core>=0.1.0",
     "pctasks.task>=0.1.0",
     "pctasks.client>=0.1.0",
-    "azure-batch==11.*",
-    "azure-keyvault-secrets==4.*",
-    "argo-workflows==6.3.*",
-    "networkx==2.*",
+    "azure-batch>=11.0.0,<12",
+    "azure-keyvault-secrets>=4.0.0,<5",
+    "argo-workflows>=6.3.0,<6.4",
+    "networkx>=2.0.0,<3",
     "kubernetes",
 ]
 
