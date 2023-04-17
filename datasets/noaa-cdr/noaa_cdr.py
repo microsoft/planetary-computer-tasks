@@ -67,7 +67,7 @@ class OceanHeatContentNetcdfCollection(Collection):
         with TemporaryDirectory() as temporary_directory:
             path = os.path.join(temporary_directory, os.path.basename(asset_path))
             asset_storage.download_file(asset_path, path)
-            item = stactools.noaa_cdr.stac.create_item(path, decode_times=False)
+            item = stactools.noaa_cdr.ocean_heat_content.stac.create_netcdf_item(path)
             item.assets[
                 stactools.noaa_cdr.constants.NETCDF_ASSET_KEY
             ].href = asset_storage.get_url(asset_path)
