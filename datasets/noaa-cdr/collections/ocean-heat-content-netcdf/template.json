@@ -104,6 +104,14 @@
     ]
   },
   "assets": {
+    "thumbnail": {
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-cdr-ocean-heat-content-netcdf-thumb.png",
+      "type": "image/png",
+      "title": "Ocean Heat Content NetCDF CDR thumbnail",
+      "roles": [
+        "thumbnail"
+      ]
+    },
     "geoparquet-items": {
       "href": "abfs://items/noaa-cdr-ocean-heat-content-netcdf.parquet",
       "type": "application/x-parquet",

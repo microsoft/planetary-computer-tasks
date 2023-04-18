@@ -91,6 +91,14 @@
     }
   ],
   "assets": {
+    "thumbnail": {
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-cdr-sea-surface-temperature-whoi-netcdf-thumb.png",
+      "type": "image/png",
+      "title": "Sea Surface Temperature - WHOI NetCDF CDR thumbnail",
+      "roles": [
+        "thumbnail"
+      ]
+    },
     "geoparquet-items": {
       "href": "abfs://items/noaa-cdr-sea-surface-temperature-whoi-netcdf.parquet",
       "type": "application/x-parquet",
