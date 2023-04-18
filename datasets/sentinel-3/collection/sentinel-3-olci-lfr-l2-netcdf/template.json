@@ -96,11 +96,14 @@
             "descending",
             "ascending"
         ],
-        "s3:productType": [
+        "s3:processing_timeliness": [
+            "NT"
+        ],
+        "s3:product_type": [
             "OL_2_LFR___"
         ],
-        "s3:gsd": [
-            300
+        "s3:product_name": [
+            "LFR"
         ],
         "s3:saline_water": [
             0,
@@ -137,10 +140,6 @@
         "s3:dubious": [
             0,
             100
-        ],
-        "raster:valid_percent": [
-            0,
-            100
         ]
     },
     "extent": {
@@ -164,7 +163,7 @@
         }
     },
     "item_assets": {
-        "safe_manifest": {
+        "safe-manifest": {
             "title": "SAFE product manifest",
             "type": "application/xml",
             "roles": [
