@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 from pctasks.core.constants import MICROSOFT_OWNER
 from pctasks.core.models.base import ForeachConfig, PCBaseModel, RunRecordId
+from pctasks.core.models.record import Record
 from pctasks.core.models.utils import tzutc_now
 from pctasks.core.utils import StrEnum
 
@@ -18,6 +19,58 @@ class CloudEvent(PCBaseModel):
     time: str = Field(default_factory=lambda: tzutc_now().isoformat())
     data_content_type: str = Field(default="application/json", alias="datacontenttype")
     data: Union[Dict[str, Any], BaseModel]
+
+
+class StorageEventType(StrEnum):
+    # Doesn't have an update
+    CREATED = "Microsoft.Storage.BlobCreated"
+    DELETED = "Microsoft.Storage.BlobDeleted"
+
+
+class StorageEventData(PCBaseModel):
+    """
+    A model for Blob Storage Events.
+
+    https://learn.microsoft.com/en-us/azure/event-grid/event-schema-blob-storage?tabs=cloud-event-schema
+    """
+
+    api: str
+    clientRequestId: str
+    requestId: str
+    eTag: str
+    contentType: str
+    contentLength: Optional[int]
+    contentOffset: Optional[int]
+    blobType: str
+    url: str
+    sequencer: str
+    storageDiagnostics: Dict[str, str]
+
+
+class StorageEvent(CloudEvent):
+    type: StorageEventType
+    data: StorageEventData
+
+
+class StorageEventRecord(StorageEvent, Record):
+    """
+    A Cosmos DB record for storage events.
+
+    Cloud Events are valid Cosmos DB records, so we just inherit the
+    additional methods from Record to satisfy mypy.
+    """
+
+    # We need to repeat this type definition to please mypy, which
+    # didn't like the "conflicting" definitions for 'type', despite
+    # them both being strings at the end of the day.
+    type: StorageEventType
+
+    def get_id(self) -> str:
+        return self.id
+
+    @staticmethod
+    def migrate(item: Dict[str, Any]) -> Dict[str, Any]:
+        return item
 
 
 class STACItemEventType(StrEnum):
