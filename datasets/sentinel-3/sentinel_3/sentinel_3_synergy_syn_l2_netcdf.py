@@ -34,10 +34,6 @@ class Collection(pctasks.dataset.collection.Collection):
         if asset_directory[-11:-9] != "NT":
             return []
 
-        # Item id contains trailing underscores to pad out a 17 character
-        # instance id
-        item_dict["id"] = item_dict["id"].rstrip("_")
-
         # ---- PROPERTIES ----
         properties = item_dict.pop("properties")
 
@@ -70,15 +66,6 @@ class Collection(pctasks.dataset.collection.Collection):
         # than either the OLCI or SLSTR sensor GSDs. Also, s3:gsd is a *custom*
         # field with two gsd values that, IMO, is unlikely to be searched.
         properties.pop("s3:gsd", None)
-
-        # Across the synergy products, the shape fields are inconsistent in:
-        #   - location (properties vs. assets)
-        #   - format (list vs. dict)
-        #   - prefix (s3: vs. syn:)
-        #   - and contents (columns, rows vs. removed pixels vs. tiepoint_count vs. ...)
-        # For now, I'm going to force them always to be on the asset to avoid
-        # polluting properties, but we might want to just remove them.
-        s3_shape = properties.pop("s3:shape")
 
         # Use underscores instead of camel case for consistency
         new_properties = {}
@@ -120,9 +107,9 @@ class Collection(pctasks.dataset.collection.Collection):
                     band["full_width_half_max"] = nano2micro(band["band_width"])
                     band.pop("band_width")
 
-            # as mentioned above, place the custom shape field on the asset
-            if key == "NTC_AOD":
-                value["s3:shape"] = s3_shape
+            # standardize the shape prefix to "s3:" across collections
+            if "syn:shape" in value:
+                value["s3:shape"] = value.pop("syn:shape")
 
             # make it clear that resolution is a custom field
             if "resolution" in value:
@@ -146,7 +133,7 @@ class Collection(pctasks.dataset.collection.Collection):
 
 if __name__ == "__main__":
     c = Collection()
-    asset_uri = "/Users/pjh/dev/planetary-computer-tasks/pjh/sentinel-3/S3A_SY_2_AOD_20200416T191421_20200416T195835_2654_057_156_____.json"
+    asset_uri = "/Users/pjh/dev/planetary-computer-tasks/pjh/sentinel-3/S3A_SY_2_SYN_20180922T164930_20180922T165230_0180_036_083_3060.json"
     storage_factory = StorageFactory()
     item_list = c.create_item(asset_uri, storage_factory)
 

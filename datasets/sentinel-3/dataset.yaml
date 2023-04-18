@@ -14,16 +14,46 @@ environment:
   AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
 
 collections:
-  id: sentinel-3-olci-lfr-l2-netcdf
-  template: ${{ local.path(./collection) }}
-  class: sentinel_3.sentinel_3_olci_lfr_l2_netcdf:Collection
-  asset_storage:
-    - uri: blob://sentinel3euwest/sentinel-3-stac/
-      token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
-      chunks:
-        options:
-          name_starts_with: OLCI/OL_2_LFR___/
-          extensions: [.json]
-          chunk_length: 5000
-  chunk_storage:
-    uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-olci-lfr-l2-netcdf
+  - id: sentinel-3-olci-lfr-l2-netcdf
+    template: ${{ local.path(./collection) }}
+    class: sentinel_3.sentinel_3_olci_lfr_l2_netcdf:Collection
+    asset_storage:
+      - uri: blob://sentinel3euwest/sentinel-3-stac/
+        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+        chunks:
+          options:
+            name_starts_with: OLCI/OL_2_LFR___/
+            extensions: [.json]
+            chunk_length: 5000
+    chunk_storage:
+      uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-olci-lfr-l2-netcdf
+
+  - id: sentinel-3-synergy-aod-l2-netcdf
+    template: ${{ local.path(./collection/sentinel-3-synergy-aod-l2-netcdf) }}
+    class: sentinel_3.sentinel_3_synergy_aod_l2_netcdf:Collection
+    asset_storage:
+      - uri: blob://sentinel3euwest/sentinel-3-stac/
+        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+        chunks:
+          options:
+            name_starts_with: SYNERGY/SY_2_AOD___/
+            extensions: [.json]
+            chunk_length: 100
+            limit: 200
+    chunk_storage:
+      uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-aod-l2-netcdf
+
+  - id: sentinel-3-synergy-syn-l2-netcdf
+    template: ${{ local.path(./collection/sentinel-3-synergy-syn-l2-netcdf) }}
+    class: sentinel_3.sentinel_3_synergy_syn_l2_netcdf:Collection
+    asset_storage:
+      - uri: blob://sentinel3euwest/sentinel-3-stac/
+        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+        chunks:
+          options:
+            name_starts_with: SYNERGY/SY_2_SYN___/
+            extensions: [.json]
+            chunk_length: 100
+            limit: 200
+    chunk_storage:
+      uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-syn-l2-netcdf

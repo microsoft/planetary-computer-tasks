@@ -33,7 +33,7 @@
         "Global",
         "Aerosol"
     ],
-    "msft:short_description": "Sentinel-3 global aerosol and surface reflectance at super-pixel (4.5km) resolution.",
+    "msft:short_description": "Sentinel-3 Level-2 global aerosol and surface reflectance at super-pixel (4.5km) resolution.",
     "msft:storage_account": "sentinel3euwest",
     "msft:container": "sentinel-3",
     "msft:region": "westeurope",
@@ -100,6 +100,9 @@
         },
         "s3:product_type": [
             "SY_2_AOD___"
+        ],
+        "s3:processing_timeliness": [
+            "NT"
         ],
         "s3:saline_water": {
             "minimum": 0,
@@ -169,15 +172,15 @@
         }
     },
     "item_assets": {
-        "safe_manifest": {
+        "safe-manifest": {
             "description": "SAFE product manifest",
             "type": "application/xml",
             "roles": [
                 "metadata"
             ]
         },
-        "ntc_aod": {
-            "description": "Global aerosol parameters and surface reflectance",
+        "NTC_AOD": {
+            "description": "Global aerosol parameters",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
