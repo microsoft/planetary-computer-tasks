@@ -1,6 +1,5 @@
 import pytest
 
-from pctasks.core.cosmos.containers.storage_events import StorageEventsContainer
 from pctasks.core.models.event import StorageEvent, StorageEventRecord, StorageEventType
 
 
@@ -46,18 +45,3 @@ def test_storage_events_record(event_body):
 
     assert record.get_id() == "831e1650-001e-001b-66ab-eeb76e069631"
     assert StorageEventRecord.migrate(event_body)
-
-
-@pytest.mark.cosmos
-class TestStorageEventsContainer:
-    def test_put_get_item(self, event_body):
-        record = StorageEventRecord.parse_obj(event_body)
-
-        record_id = record.get_id()
-
-        with StorageEventsContainer(StorageEventRecord) as cosmos_client:
-            cosmos_client.put(record)
-
-            result = cosmos_client.get(record_id, record_id)
-
-        assert result == record

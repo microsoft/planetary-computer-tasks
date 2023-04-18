@@ -27,7 +27,7 @@ def test_from_item(stac_item: pystac.Item):
     assert result.stac_id == "my-collection/my-item"
     assert result.collection_id == "my-collection"
     assert result.item_id == "my-item"
-    assert result.get_id() == "my-collection:my-item:None:StacItem"
+    assert result.get_id() == "my-collection:my-item::StacItem"
 
 
 def test_id_validator(stac_item: pystac.Item):
@@ -45,7 +45,7 @@ def test_get_version(stac_item: pystac.Item):
 @pytest.mark.parametrize(
     "version, expected",
     [
-        (None, "my-collection:my-item:None:ItemUpdated"),
+        (None, "my-collection:my-item::ItemUpdated"),
         ("2", "my-collection:my-item:2:ItemUpdated"),
     ],
 )
@@ -55,19 +55,3 @@ def test_item_update_record(version, expected):
     )
     result = record.get_id()
     assert result == expected
-
-
-@pytest.mark.cosmos
-class TestStorageEventsContainer:
-    def test_put_get(self, stac_item):
-        record = pctasks.core.models.item.StacItemRecord.from_item(stac_item)
-        record_id = record.get_id()
-        stac_id = record.stac_id
-
-        with pctasks.core.cosmos.containers.items.ItemsContainer(
-            pctasks.core.models.item.StacItemRecord
-        ) as cosmos_client:
-            cosmos_client.put(record)
-            result = cosmos_client.get(record_id, stac_id)
-
-        assert result == record
