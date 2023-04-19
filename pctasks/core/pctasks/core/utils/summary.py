@@ -859,78 +859,6 @@ def make_collection(
     collection_id: str,
     keywords: list[str] | None = None,
     stac_extensions: list[str] | None = None,
-    extra_fields: dict[str, Any] | None = None,
-    title: str | None = None,
-    description: str = "{{ collection.description }}",
-    links: list[str] | None = [],
-):
-    asset_summary = summary.keys["assets"].summary
-
-    item_assets = {}
-
-    for k, asset_summary in summary.keys["assets"].summary.keys.items():
-        # assuming we'll move these from description to title
-        # TODO: assert one
-        item_assets[k] = {
-            # "title": asset_summary.summary.keys["description"].values[0].value,
-            "type": asset_summary.summary.keys["type"].values[0].value,
-            "roles": asset_summary.summary.keys["roles"].values[0].value,
-        }
-
-        if eo_bands := asset_summary.summary.keys.get("eo:bands"):
-            print("x!")
-            item_assets[k]["eo:bands"] = [
-                {
-                    "name": band.keys["name"].values[0].value,
-                    "description": band.keys["description"].values[0].value,
-                    "center_wavelength": band.keys["center_wavelength"].values[0].value,
-                    "band_width": band.keys["band_width"].values[0].value,
-                }
-                for band in eo_bands.values
-            ]
-
-    collection = {
-        "stac_version": "1.0.0",
-        "id": collection_id,
-        "type": "Collection",
-        "description": description,
-        "links": links or [],
-        "title": title,
-        "keywords": keywords or [],
-        "stac_extensions": stac_extensions or [],
-        "summaries": {},
-        "item_assets": item_assets,
-    }
-
-    summary_keys = ["constellation", "platform", "instruments"]
-
-    for key in summary_keys:
-        print(key)
-        summary_value = summary.keys["properties"].summary.keys[key]
-        value = None
-        # if key == "constellation":
-        # breakpoint()
-        if summary_value.type == "distinct":
-            if summary_value.type == "string":
-                value = summary_value.values[0]
-                value = [value.value]
-            else:
-                value = [value.value for value in summary_value.values]
-        else:
-            value = [x.value for x in summary_value.values]
-
-        collection["summaries"][key] = value
-
-    collection.update(extra_fields or {})
-
-    return collection
-
-
-def make_collection(
-    summary: ObjectSummary,
-    collection_id: str,
-    keywords: list[str] | None = None,
-    stac_extensions: list[str] | None = None,
     title: str | None = None,
     description: str = "{{ collection.description }}",
     links: list[str] | None = None,
@@ -956,7 +884,7 @@ def make_collection(
     title
         An optional title for the collection.
     description
-        An optional description for the collection.  
+        An optional description for the collection.
     links
         Optional list of links to include in the collection.
     assets
