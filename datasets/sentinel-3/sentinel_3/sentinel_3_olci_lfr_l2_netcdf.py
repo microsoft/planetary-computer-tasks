@@ -149,3 +149,7 @@ if __name__ == "__main__":
     assert item.properties["s3:product_type"] == "OL_2_LFR___"
     assert item.properties["s3:product_name"] == "LFR"
     assert item.properties["raster:bands"] == [{"statistics": {"valid_percent": 97.0}}]
+
+    with open("sentinel-3-olci-lfr-l2.json", "w") as f:
+        import json
+        f.write(json.dumps(item.to_dict(), indent=2))
