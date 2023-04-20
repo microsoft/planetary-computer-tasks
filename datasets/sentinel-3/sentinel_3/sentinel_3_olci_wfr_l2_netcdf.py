@@ -2,7 +2,9 @@ import decimal
 from pathlib import Path
 from typing import List, Union
 
+import antimeridian
 import pystac
+import shapely.geometry
 
 import pctasks.dataset.collection
 from pctasks.core.models.task import WaitTaskResult
@@ -127,6 +129,13 @@ class Collection(pctasks.dataset.collection.Collection):
         properties["s3:spatial_resolution"] = list(parts)
 
         item = pystac.Item.from_dict(item_dict)
+
+        # ---- GEOMETRY ----
+        polygon = shapely.geometry.shape(item.geometry)
+        geometry = antimeridian.fix_polygon(polygon)
+        item.bbox = list(geometry.bounds)
+        item.geometry = shapely.geometry.mapping(geometry)
+
         return [item]
 
 
