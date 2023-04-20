@@ -24,9 +24,24 @@ collections:
             name_starts_with: OLCI/OL_2_LFR___/
             extensions: [.json]
             chunk_length: 5000
-            limit: 100
+            limit: 100  # TODO: remove limit
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-olci-lfr-l2-netcdf
+
+  - id: sentinel-3-olci-wfr-l2-netcdf
+    template: ${{ local.path(./collection/sentinel-3-olci-wfr-l2-netcdf/) }}
+    class: sentinel_3.sentinel_3_olci_wfr_l2_netcdf:Collection
+    asset_storage:
+      - uri: blob://sentinel3euwest/sentinel-3-stac/
+        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+        chunks:
+          options:
+            name_starts_with: OLCI/OL_2_WFR___/
+            extensions: [.json]
+            chunk_length: 5000
+            limit: 100  # TODO: remove limit
+    chunk_storage:
+      uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-olci-wfr-l2-netcdf
 
   - id: sentinel-3-synergy-aod-l2-netcdf
     template: ${{ local.path(./collection/sentinel-3-synergy-aod-l2-netcdf) }}
