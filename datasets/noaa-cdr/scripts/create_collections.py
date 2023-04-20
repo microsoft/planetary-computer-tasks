@@ -98,13 +98,21 @@ class CollectionFileContent:
 
 def create_collection(name: str) -> None:
     collection_file_content = CollectionFileContent.from_name(name)
+    collection = collection_file_content.template
+    collection_file_content.description += f"""\n
+These Cloud Optimized GeoTIFFs (COGs) were created from NetCDF files which are delivered to Azure as part of the [NOAA Open Data Dissemination (NODD) Program](https://www.noaa.gov/information-technology/open-data-dissemination).
+For the NetCDF files, see collection `{collection['id']}-netcdf`.
+"""
     collection_file_content.write(name)
 
 
 def create_netcdf_collection(name: str) -> None:
     collection_file_content = CollectionFileContent.from_name(name)
     collection = collection_file_content.template
-    collection_file_content.description += f"\n\nThis is a NetCDF-only collection, for Cloud-Optimized GeoTIFFS use collection '{collection['id']}'."
+    collection_file_content.description += f"""\n
+This is a NetCDF-only collection, for Cloud-Optimized GeoTIFFs use collection `{collection['id']}`.
+The NetCDF files are delivered to Azure as part of the [NOAA Open Data Dissemination (NODD) Program](https://www.noaa.gov/information-technology/open-data-dissemination).
+"""
     collection["id"] += "-netcdf"
     collection["item_assets"] = {
         NETCDF_ASSET_KEY: {
@@ -113,7 +121,12 @@ def create_netcdf_collection(name: str) -> None:
         }
     }
     collection["title"] += " NetCDFs"
-    del collection["assets"]["thumbnail"]
+    collection["assets"]["thumbnail"]["href"] = collection["assets"]["thumbnail"][
+        "href"
+    ].replace("-thumb.png", "-netcdf-thumb.png")
+    collection["assets"]["thumbnail"]["title"] = (
+        collection["assets"]["thumbnail"]["title"]
+    ).replace("CDR thumbnail", "(NetCDF) CDR thumbnail")
     collection["assets"]["geoparquet-items"][
         "href"
     ] = f"abfs://items/noaa-cdr-{name}-netcdf.parquet"

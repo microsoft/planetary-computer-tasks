@@ -1,1 +1,4 @@
 The Sea Ice Concentration Climate Data Record (CDR) provides a consistent daily and monthly time series of sea ice concentrations for both the north and south Polar Regions on a 25 km x 25 km grid. These data can be used to estimate how much of the ocean surface is covered by ice, and monitor changes in sea ice concentration. The CDR combines concentration estimates using two algorithms developed at the NASA Goddard Space Flight Center (GSFC). Gridded brightness temperatures acquired from a number of Defense Meteorological Satellite Program (DMSP) passive microwave radiometers provide the necessary input to produce the dataset.
+
+These Cloud Optimized GeoTIFFs (COGs) were created from NetCDF files which are delivered to Azure as part of the [NOAA Open Data Dissemination (NODD) Program](https://www.noaa.gov/information-technology/open-data-dissemination).
+For the NetCDF files, see collection `noaa-cdr-sea-ice-concentration-netcdf`.

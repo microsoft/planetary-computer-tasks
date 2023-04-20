@@ -27,7 +27,7 @@
     "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
   ],
   "sci:doi": "10.7289/v53f4mvp",
-  "sci:citation": "Levitus, Sydney; Antonov, John I.; Boyer, Tim P.; Baranova, Olga K.; García, Hernán E.; Locarnini, Ricardo A.; Mishonov, Alexey V.; Reagan, James R.; [Seidov, Dan; Yarosh, Evgeney; Zweng, Melissa M. (2017). NCEI ocean heat content, temperature anomalies, salinity anomalies, thermosteric sea level anomalies, halosteric sea level anomalies, and total steric sea level anomalies from 1955 to present calculated from in situ oceanographic subsurface profile data (NCEI Accession 0164586).NOAA National Centers for Environmental Information. Dataset. https://doi.org/10.7289/v53f4mvp.",
+  "sci:citation": "Levitus, Sydney; Antonov, John I.; Boyer, Tim P.; Baranova, Olga K.; García, Hernán E.; Locarnini, Ricardo A.; Mishonov, Alexey V.; Reagan, James R.; [Seidov, Dan; Yarosh, Evgeney; Zweng, Melissa M. (2017). NCEI ocean heat content, temperature anomalies, salinity anomalies, thermosteric sea level anomalies, halosteric sea level anomalies, and total steric sea level anomalies from 1955 to present calculated from in situ oceanographic subsurface profile data (NCEI Accession 0164586). NOAA National Centers for Environmental Information. Dataset. https://doi.org/10.7289/v53f4mvp.",
   "item_assets": {
     "netcdf": {
       "type": "application/netcdf",
@@ -107,7 +107,7 @@
     "thumbnail": {
       "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-cdr-ocean-heat-content-netcdf-thumb.png",
       "type": "image/png",
-      "title": "Ocean Heat Content NetCDF CDR thumbnail",
+      "title": "Global Ocean Heat Content (NetCDF) CDR thumbnail",
       "roles": [
         "thumbnail"
       ]
