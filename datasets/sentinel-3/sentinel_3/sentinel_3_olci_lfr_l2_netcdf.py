@@ -74,14 +74,7 @@ class Collection(pctasks.dataset.collection.Collection):
         properties["s3:duplicated"] = properties.pop("s3:duplicatedPixels_percentage")
         properties["s3:saturated"] = properties.pop("s3:saturatedPixels_percentage")
         properties["s3:dubious"] = properties.pop("s3:dubiousSamples_percentage")
-
-        # use raster for invalid_pixels
-        valid_percent = 100 - properties.pop("s3:invalidPixels_percentage")
-        properties["raster:bands"] = [{"statistics": {"valid_percent": valid_percent}}]
-
-        item_dict["stac_extensions"].append(
-            "https://stac-extensions.github.io/raster/v1.1.0/schema.json"
-        )
+        properties["s3:invalid"] = properties.pop("s3:invalidPixels_percentage")
 
         item_dict["properties"] = properties
 
@@ -148,7 +141,6 @@ if __name__ == "__main__":
     assert item.properties["start_datetime"] == "2023-04-01T00:45:26.790564Z"
     assert item.properties["s3:product_type"] == "OL_2_LFR___"
     assert item.properties["s3:product_name"] == "LFR"
-    assert item.properties["raster:bands"] == [{"statistics": {"valid_percent": 97.0}}]
 
     with open("sentinel-3-olci-lfr-l2.json", "w") as f:
         import json
