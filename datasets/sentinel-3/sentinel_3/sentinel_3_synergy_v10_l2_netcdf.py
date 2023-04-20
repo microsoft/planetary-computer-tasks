@@ -16,25 +16,28 @@ class Collection(BaseSentinelCollection):
         storage, json_path = storage_factory.get_storage_for_file(asset_uri)
         item_dict = storage.read_json(json_path)
 
-        item_dict = cls.base_updates(item_dict, fix_geometry=True, buffer0=True)
+        item_dict = cls.base_updates(item_dict)
         if item_dict is None:
             return []
 
         # Item id contains unnecessary trailing underscores
         item_dict["id"] = item_dict["id"].rstrip("_")
 
-        # Grab the custom shape field for placement on the assets for consistency
-        # with the other sentinel-3 collections
-        s3_shape = item_dict["properties"].pop("s3:shape")
+        for asset in item_dict["assets"].values():
+            # standardize the shape property
+            if "v10:shape" in asset:
+                assert "resolution" in asset
+                shape = asset.pop("v10:shape")
+                resolution = asset.pop("resolution")
 
-        for asset_key, asset in item_dict["assets"].items():
-            if asset_key == "NTC_AOD":
-                # Place the custom shape field on the asset. Reverse the order
-                # to be in [row, column] order.
-                asset["s3:shape"] = s3_shape[::-1]
+                latitude = next((d["latitude"] for d in shape if "latitude" in d))
+                longitude = next((d["longitude"] for d in shape if "longitude" in d))
+                # Use [row, column] order to align with the ordering
+                # provided in the netcdf descriptions and the order used by
+                # xarray, numpy, and rasterio.
+                asset["s3:shape"] = [latitude, longitude]
 
                 # Reverse the provided resolution order to match the shape order
-                resolution = asset.pop("resolution")
                 asset["s3:spatial_resolution"] = resolution[::-1]
 
         return [pystac.Item.from_dict(item_dict)]

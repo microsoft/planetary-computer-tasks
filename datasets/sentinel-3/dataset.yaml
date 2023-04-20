@@ -53,8 +53,8 @@ collections:
           options:
             name_starts_with: SYNERGY/SY_2_AOD___/
             extensions: [.json]
-            chunk_length: 100
-            limit: 200
+            chunk_length: 5000
+            limit: 100  # TODO: remove limit
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-aod-l2-netcdf
 
@@ -68,7 +68,52 @@ collections:
           options:
             name_starts_with: SYNERGY/SY_2_SYN___/
             extensions: [.json]
-            chunk_length: 100
-            limit: 200
+            chunk_length: 5000
+            limit: 100  # TODO: remove limit
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-syn-l2-netcdf
+
+  - id: sentinel-3-synergy-v10-l2-netcdf
+    template: ${{ local.path(./collection/sentinel-3-synergy-v10-l2-netcdf) }}
+    class: sentinel_3.sentinel_3_synergy_v10_l2_netcdf:Collection
+    asset_storage:
+      - uri: blob://sentinel3euwest/sentinel-3-stac/
+        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+        chunks:
+          options:
+            name_starts_with: SYNERGY/SY_2_V10___/
+            extensions: [.json]
+            chunk_length: 5000
+            limit: 100  # TODO: remove limit
+    chunk_storage:
+      uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-v10-l2-netcdf
+
+  - id: sentinel-3-synergy-vg1-l2-netcdf
+    template: ${{ local.path(./collection/sentinel-3-synergy-vg1-l2-netcdf) }}
+    class: sentinel_3.sentinel_3_synergy_vg1_l2_netcdf:Collection
+    asset_storage:
+      - uri: blob://sentinel3euwest/sentinel-3-stac/
+        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+        chunks:
+          options:
+            name_starts_with: SYNERGY/SY_2_VG1___/
+            extensions: [.json]
+            chunk_length: 5000
+            limit: 100  # TODO: remove limit
+    chunk_storage:
+      uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-vg1-l2-netcdf
+
+  - id: sentinel-3-synergy-vgp-l2-netcdf
+    template: ${{ local.path(./collection/sentinel-3-synergy-vgp-l2-netcdf) }}
+    class: sentinel_3.sentinel_3_synergy_vgp_l2_netcdf:Collection
+    asset_storage:
+      - uri: blob://sentinel3euwest/sentinel-3-stac/
+        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+        chunks:
+          options:
+            name_starts_with: SYNERGY/SY_2_VGP___/
+            extensions: [.json]
+            chunk_length: 5000
+            limit: 100  # TODO: remove limit
+    chunk_storage:
+      uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-vgp-l2-netcdf

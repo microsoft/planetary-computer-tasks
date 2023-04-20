@@ -96,11 +96,11 @@
       "2016-011A",
       "2018-039A"
     ],
-    "sat:orbit_state" : [
+    "sat:orbit_state": [
       "ascending",
       "descending"
     ],
-    "sat:absolute_orbit" : {
+    "sat:absolute_orbit": {
       "minimum": 1
     },
     "sat:relative_orbi": {
@@ -111,7 +111,7 @@
       "minimum": 0,
       "maximum": 100
     },
-    "s3:mode" : [
+    "s3:mode": [
       "EO"
     ],
     "s3:productType": [

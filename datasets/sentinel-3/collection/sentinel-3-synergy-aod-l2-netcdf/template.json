@@ -33,7 +33,7 @@
         "Global",
         "Aerosol"
     ],
-    "msft:short_description": "Sentinel-3 Level-2 global aerosol and surface reflectance at super-pixel (4.5km) resolution.",
+    "msft:short_description": "Sentinel-3 global aerosol and surface reflectance at super-pixel (4.5km) resolution (SYNERGY AOD).",
     "msft:storage_account": "sentinel3euwest",
     "msft:container": "sentinel-3",
     "msft:region": "westeurope",
@@ -86,6 +86,10 @@
             "Sentinel-3A",
             "Sentinel-3B"
         ],
+        "instruments": [
+            "OLCI",
+            "SLSTR"
+        ],
         "sat:platform_international_designator": [
             "2016-011A",
             "2018-039A"
@@ -100,6 +104,9 @@
         },
         "s3:product_type": [
             "SY_2_AOD___"
+        ],
+        "s3:product_name": [
+            "AOD"
         ],
         "s3:processing_timeliness": [
             "NT"

@@ -34,7 +34,7 @@
         "Reflectance",
         "Aerosol"
     ],
-    "msft:short_description": "Sentinel-3 Level-2 surface reflectance and aerosol over land.",
+    "msft:short_description": "Sentinel-3 surface reflectance and aerosol over land (SYNERGY SYN).",
     "msft:storage_account": "sentinel3euwest",
     "msft:container": "sentinel-3",
     "msft:region": "westeurope",
@@ -87,6 +87,10 @@
             "Sentinel-3A",
             "Sentinel-3B"
         ],
+        "instruments": [
+            "OLCI",
+            "SLSTR"
+        ],
         "sat:platform_international_designator": [
             "2016-011A",
             "2018-039A"
@@ -101,6 +105,9 @@
         },
         "s3:product_type": [
             "SY_2_SYN___"
+        ],
+        "s3:product_name": [
+            "SYN"
         ],
         "s3:processing_timeliness": [
             "NT"
