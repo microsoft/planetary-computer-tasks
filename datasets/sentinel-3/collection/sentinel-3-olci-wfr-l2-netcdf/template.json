@@ -97,12 +97,36 @@
         }
     },
     "summaries": {
+        "constellation": [
+            "Sentinel-3"
+        ],
+        "platform": [
+            "Sentinel-3A",
+            "Sentinel-3B"
+        ],
+        "instruments": [
+            "OLCI"
+        ],
         "sat:platform_international_designator": [
             "2016-011A",
             "2018-039A"
         ],
-        "instruments": [
-            "OLCI"
+        "sat:orbit_state": [
+            "descending",
+            "ascending"
+        ],
+        "s3:processing_timeliness": [
+            "NT"
+        ],
+        "eo:cloud_cover": {
+            "minimum": 0,
+            "maximum": 100
+        },        
+        "s3:product_type": [
+            "OL_2_WFR___"
+        ],
+        "s3:product_name": [
+            "WFR"
         ],
         "s3:saline_water": {
             "minimum": 0.0,
@@ -143,13 +167,6 @@
         "s3:invalid": [
             0,
             100
-        ],
-        "platform": [
-            "Sentinel-3A",
-            "Sentinel-3B"
-        ],
-        "constellation": [
-            "Sentinel-3"
         ]
     },
     "item_assets": {
