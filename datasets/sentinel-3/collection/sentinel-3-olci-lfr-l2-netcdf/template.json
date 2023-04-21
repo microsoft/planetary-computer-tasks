@@ -105,7 +105,7 @@
         "s3:product_name": [
             "LFR"
         ],
-        "eo_bands": [
+        "eo:bands": [
             {
                 "name": "Oa03",
                 "description": "Band 3 - Chlorophyll absorption maximum, biogeochemistry, vegetation",

@@ -106,7 +106,7 @@
         "s3:processing_timeliness": [
             "NT"
         ],
-        "eo_bands": [
+        "eo:bands": [
             {
                 "name": "F1",
                 "description": "Band 10 - Active fire",
