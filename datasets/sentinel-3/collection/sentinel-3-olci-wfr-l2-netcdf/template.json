@@ -127,46 +127,6 @@
         ],
         "s3:product_name": [
             "WFR"
-        ],
-        "s3:saline_water": {
-            "minimum": 0.0,
-            "maximum": 100
-        },
-        "s3:coastal": {
-            "minimum": 0.0,
-            "maximum": 100
-        },
-        "s3:fresh_inland_water": {
-            "minimum": 0.0,
-            "maximum": 100
-        },
-        "s3:tidal_region": {
-            "minimum": 0.0,
-            "maximum": 100
-        },
-        "s3:land": {
-            "minimum": 0.0,
-            "maximum": 100
-        },
-        "s3:cosmetic": {
-            "minimum": 0.0,
-            "maximum": 100
-        },
-        "s3:duplicated": {
-            "minimum": 0.001367,
-            "maximum": 100
-        },
-        "s3:saturated": {
-            "minimum": 0.0,
-            "maximum": 100
-        },
-        "s3:dubious": {
-            "minimum": 0.0,
-            "maximum": 100
-        },
-        "s3:invalid": [
-            0,
-            100
         ]
     },
     "item_assets": {

@@ -103,48 +103,8 @@
         ],
         "s3:product_name": [
             "LFR"
-        ],
-        "s3:saline_water": [
-            0,
-            100
-        ],
-        "s3:coastal": [
-            0,
-            100
-        ],
-        "s3:fresh_inland_water": [
-            0,
-            100
-        ],
-        "s3:tidal_region": [
-            0,
-            100
-        ],
-        "s3:land": [
-            0,
-            100
-        ],
-        "s3:cosmetic": [
-            0,
-            100
-        ],
-        "s3:duplicated": [
-            0,
-            100
-        ],
-        "s3:saturated": [
-            0,
-            100
-        ],
-        "s3:dubious": [
-            0,
-            100
-        ],
-        "s3:invalid": [
-            0,
-            100
         ]
-    },
+   },
     "extent": {
         "spatial": {
             "bbox": [
