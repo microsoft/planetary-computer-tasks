@@ -46,8 +46,18 @@ class BaseSentinelCollection(pctasks.dataset.collection.Collection):  # type: ig
         if asset_directory[-11:-9] != "NT":
             return None
 
+        # Strip any trailing underscores from the ID
+        item_dict["id"] = item_dict["id"].rstrip("_")
+
         # ---- PROPERTIES ----
         properties = item_dict.pop("properties")
+
+        # Update placeholder platform ID to the final version
+        sat_id = "sat:platform_international_designator"
+        if properties[sat_id] == "0000-000A":
+            properties[sat_id] = "2016-011A"
+        elif properties[sat_id] == "0000-000B":
+            properties[sat_id] = "2018-039A"
 
         if properties["instruments"] == ["SYNERGY"]:
             # "SYNERGY" is not a instrument
@@ -100,13 +110,6 @@ class BaseSentinelCollection(pctasks.dataset.collection.Collection):  # type: ig
                 new_properties[new_key] = properties[key]
             else:
                 new_properties[key] = properties[key]
-
-        # Update placeholder platform ID to the final version
-        sat_id = "sat:platform_international_designator"
-        if properties[sat_id] == "0000-000A":
-            properties[sat_id] = "2016-011A"
-        elif properties[sat_id] == "0000-000B":
-            properties[sat_id] = "2018-039A"
 
         item_dict["properties"] = new_properties
 

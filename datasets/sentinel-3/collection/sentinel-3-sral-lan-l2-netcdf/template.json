@@ -104,31 +104,7 @@
         ],
         "s3:processing_timeliness": [
             "NT"
-        ],
-        "s3:land": {
-            "minimum": 0,
-            "maximum": 100
-        },
-        "s3:closed_sea": {
-            "minimum": 0,
-            "maximum": 100
-        },
-        "s3:continental_ice": {
-            "minimum": 0,
-            "maximum": 100
-        },
-        "s3:open_ocean": {
-            "minimum": 0,
-            "maximum": 100
-        },
-        "s3:lrm_mode": {
-            "minimum": 0,
-            "maximum": 100
-        },
-        "s3:sar_mode": {
-            "minimum": 0,
-            "maximum": 100
-        }
+        ]
     },
     "extent": {
         "spatial": {

@@ -27,15 +27,12 @@ class Collection(BaseSentinelCollection):
         if item_dict is None:
             return []
 
-        # Item id contains unnecessary trailing underscores
-        item_dict["id"] = item_dict["id"].rstrip("_")
-
         for asset_key, asset in item_dict["assets"].items():
             if "shape" in asset:
-                # Shape is a list of single entry dicts containing the length
-                # of a series of 1D variables. Removing since we can't format
-                # to match the other collections, which are a single 2D list for
-                # the primary 2D variable.
+                # Shape is a list of single entry dicts, each dict containing
+                # the length of a series of 1D variables. Removing since we
+                # can't format to match the other collections, which are a
+                # single 2D list for the primary 2D variable.
                 asset.pop("shape")
 
             # update descriptions

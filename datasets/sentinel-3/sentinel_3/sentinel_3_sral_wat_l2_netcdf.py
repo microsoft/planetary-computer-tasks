@@ -11,7 +11,7 @@ ASSET_DESCRIPTIONS = {
     "standardMeasurement": "Standard measurement data file",
     "enhancedMeasurement": "Enhanced measurement data file",
     "reducedMeasurement": "Reduced measurement data file",
-    "eopmetadata": "Product metadata file produced by EUMETSAT",
+    "eopmetadata": "Product metadata file produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",  # noqa
 }
 
 
@@ -27,9 +27,6 @@ class Collection(BaseSentinelCollection):
         item_dict = cls.base_updates(item_dict, fix_geometry=True, buffer0=True)
         if item_dict is None:
             return []
-
-        # Item id contains unnecessary trailing underscores
-        item_dict["id"] = item_dict["id"].rstrip("_")
 
         for asset_key, asset in item_dict["assets"].items():
             if "shape" in asset:

@@ -2,10 +2,28 @@ from pathlib import Path
 from typing import List, Union
 
 import pystac
+from sentinel_3.sentinel_3_base import BaseSentinelCollection
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
-from sentinel_3.sentinel_3_base import BaseSentinelCollection
+
+ASSET_DESCRIPTIONS = {
+    "chlNn": "Neural net chlorophyll concentration",
+    "chlOc4me": "OC4Me algorithm chlorophyll concentration",
+    "iopNn": "Inherent optical properties of water",
+    "iwv": "Integrated water vapour column",
+    "par": "Photosynthetically active radiation",
+    "wAer": "Aerosol over water",
+    "geoCoordinates": "Geo coordinate annotations",
+    "instrumentData": "Instrument annotations",
+    "tieGeoCoordinates": "Tie-point geo coordinate annotations",
+    "tieGeometries": "Tie-point geometry annotations",
+    "tieMeteo": "Tie-point meteo annotations",
+    "timeCoordinates": "Time coordinate annotations",
+    "wqsf": "Water quality and science flags",
+    "eopmetadata": "Metadata produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",  # noqa: E501
+    "browse_jpg": "Preview image produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",  # noqa: E501
+}
 
 
 class Collection(BaseSentinelCollection):
@@ -21,33 +39,19 @@ class Collection(BaseSentinelCollection):
             # Skip any NT scenes
             return []
 
-        asset_directory = Path(item_dict["assets"]["safe-manifest"]["href"]).parent.name
-        assert asset_directory.endswith(".SEN3")
+        # Grab the shape; we'll move it to assets to be consistent with the
+        # other collections
+        shape = item_dict["properties"].pop("s3:shape")
 
-        # Item id contains unnecessary trailing underscores
-        item_dict["id"] = item_dict["id"].rstrip("_")
+        for asset_key, asset in item_dict["assets"].items():
+            if "resolution" in asset:
+                # flip to row, column order
+                asset["s3:resolution"] = asset.pop("resolution")[::-1]
+                # add shape, flip to row, column order
+                asset["s3:shape"] = shape[::-1]
 
-        # ---- PROPERTIES ----
-        properties = item_dict["properties"]
+            # clean up descriptions
+            if asset_key in ASSET_DESCRIPTIONS:
+                asset["description"] = ASSET_DESCRIPTIONS[asset_key]
 
-        # ---- ASSETS ----
-        assets = item_dict["assets"]
-        resolutions = set()
-
-        for v in assets.values():
-            resolution = v.pop("resolution", None)
-            if resolution:
-                resolutions.add(tuple(resolution))
-
-        # There is a lonely "resolution" field on the ntc_aod asset that
-        # is not part of the STAC spec. This would normally go in "raster:bands",
-        # but we are not using that extension. Propose moving this to Item
-        # properties under "s3:spatial_resolution", which matches Sentinel-5P.
-        assert len(resolutions) == 1, len(resolutions)
-        parts = resolutions.pop()
-        assert len(parts) == 2, len(parts)
-        properties["s3:spatial_resolution"] = list(parts)
-
-        item = pystac.Item.from_dict(item_dict)
-
-        return [item]
+        return [pystac.Item.from_dict(item_dict)]

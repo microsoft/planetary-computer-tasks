@@ -1,0 +1,200 @@
+{
+    "stac_version": "1.0.0",
+    "type": "Collection",
+    "id": "sentinel-3-slstr-wst-l2-netcdf",
+    "title": "Sentinel-3 Sea Surface Temperature",
+    "description": "{{ collection.description }}",
+    "license": "proprietary",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice",
+            "type": "application/pdf",
+            "title": "Sentinel Data License"
+        },
+        {
+            "rel": "about",
+            "href": "https://sentinel.esa.int/web/sentinel/user-guides/sentinel-3-slstr/product-types/level-2-wst",
+            "type": "text/html",
+            "title": "Sentinel-3 Sea Surface Temperature Product User Guide"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/sat/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/eo/v1.1.0/schema.json"
+    ],
+    "keywords": [
+        "Sentinel",
+        "Copernicus",
+        "ESA",
+        "Satellite",
+        "Temperature",
+        "Ocean"
+    ],
+    "msft:short_description": "Sentinel-3 sea surface temperature (SLSTR WST).",
+    "msft:storage_account": "sentinel3euwest",
+    "msft:container": "sentinel-3",
+    "msft:region": "westeurope",
+    "providers": [
+        {
+            "name": "ESA",
+            "roles": [
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://earth.esa.int/web/guest/home"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "title": "Sentinel-3 Sea Surface Temperature Thumbnail",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-3-slstr-wst-l2-netcdf-thumb.png",
+            "media_type": "image/png"
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/sentinel-3-slstr-wst-l2-netcdf.parquet",
+            "title": "GeoParquet STAC Items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "MS"
+            }
+        }
+    },
+    "summaries": {
+        "constellation": [
+            "Sentinel-3"
+        ],
+        "platform": [
+            "Sentinel-3A",
+            "Sentinel-3B"
+        ],
+        "instruments": [
+            "SLSTR"
+        ],
+        "sat:platform_international_designator": [
+            "2016-011A",
+            "2018-039A"
+        ],
+        "sat:orbit_state": [
+            "ascending",
+            "descending"
+        ],
+        "s3:product_type": [
+            "SL_2_WST___"
+        ],
+        "s3:product_name": [
+            "WST"
+        ],
+        "s3:processing_timeliness": [
+            "NT"
+        ],
+        "eo_bands": [
+            {
+                "name": "S7",
+                "description": "Band 7 - SST, LST, Active fire",
+                "center_wavelength": 3.742,
+                "full_width_half_max": 0.398
+            },
+            {
+                "name": "S8",
+                "description": "Band 8 - SST, LST, Active fire",
+                "center_wavelength": 10.854,
+                "full_width_half_max": 0.776
+            },
+            {
+                "name": "S9",
+                "description": "Band 9 - SST, LST",
+                "center_wavelength": 12.0225,
+                "full_width_half_max": 0.905
+            }
+        ]
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2017-10-31T23:59:57.451604Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "item_assets": {
+        "safe-manifest": {
+            "type": "application/xml",
+            "description": "SAFE product manifest",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "L2P": {
+            "type": "application/x-netcdf",
+            "description": "Skin Sea Surface Temperature (SST) values",
+            "eo:bands": [
+                {
+                    "name": "S7",
+                    "description": "Band 7 - SST, LST, Active fire",
+                    "center_wavelength": 3.742,
+                    "full_width_half_max": 0.398
+                },
+                {
+                    "name": "S8",
+                    "description": "Band 8 - SST, LST, Active fire",
+                    "center_wavelength": 10.854,
+                    "full_width_half_max": 0.776
+                },
+                {
+                    "name": "S9",
+                    "description": "Band 9 - SST, LST",
+                    "center_wavelength": 12.0225,
+                    "full_width_half_max": 0.905
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "eopmetadata": {
+            "type": "application/xml",
+            "description": "Metadata produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "browse_jpg": {
+            "type": "image/jpeg",
+            "description": "Preview image produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",
+            "roles": [
+                "thumbnail"
+            ]
+        }
+    }
+}

@@ -1,0 +1,289 @@
+{
+    "stac_version": "1.0.0",
+    "type": "Collection",
+    "id": "sentinel-3-slstr-frp-l2-netcdf",
+    "title": "Sentinel-3 Fire Radiative Power",
+    "description": "{{ collection.description }}",
+    "license": "proprietary",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice",
+            "type": "application/pdf",
+            "title": "Sentinel Data License"
+        },
+        {
+            "rel": "about",
+            "href": "https://sentinel.esa.int/web/sentinel/user-guides/sentinel-3-slstr/product-types/level-2-frp",
+            "type": "text/html",
+            "title": "Sentinel-3 Fire Radiative Power Product User Guide"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/sat/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/eo/v1.1.0/schema.json"
+    ],
+    "keywords": [
+        "Sentinel",
+        "Copernicus",
+        "ESA",
+        "Satellite",
+        "Temperature",
+        "Fire"
+    ],
+    "msft:short_description": "Sentinel-3 fire detection over land (SLSTR FRP).",
+    "msft:storage_account": "sentinel3euwest",
+    "msft:container": "sentinel-3",
+    "msft:region": "westeurope",
+    "providers": [
+        {
+            "name": "ESA",
+            "roles": [
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://earth.esa.int/web/guest/home"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "title": "Sentinel-3 Fire Radiative Power Thumbnail",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-3-slstr-frp-l2-netcdf-thumb.png",
+            "media_type": "image/png"
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/sentinel-3-slstr-frp-l2-netcdf.parquet",
+            "title": "GeoParquet STAC Items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "W"
+            }
+        }
+    },
+    "summaries": {
+        "constellation": [
+            "Sentinel-3"
+        ],
+        "platform": [
+            "Sentinel-3A",
+            "Sentinel-3B"
+        ],
+        "instruments": [
+            "SLSTR"
+        ],
+        "sat:platform_international_designator": [
+            "2016-011A",
+            "2018-039A"
+        ],
+        "sat:orbit_state": [
+            "ascending",
+            "descending"
+        ],
+        "s3:product_type": [
+            "SL_2_FRP___"
+        ],
+        "s3:product_name": [
+            "FRP"
+        ],
+        "s3:processing_timeliness": [
+            "NT"
+        ],
+        "eo_bands": [
+            {
+                "name": "F1",
+                "description": "Band 10 - Active fire",
+                "center_wavelength": 3.742,
+                "full_width_half_max": 0.398
+            },
+            {
+                "name": "S5",
+                "description": "Band 5 - Cloud clearing, ice, snow, vegetation monitoring",
+                "center_wavelength": 1.6134,
+                "full_width_half_max": 0.06068
+            },
+            {
+                "name": "S6",
+                "description": "Band 6 - Vegetation state and cloud clearing",
+                "center_wavelength": 2.2557,
+                "full_width_half_max": 0.05015
+            },
+            {
+                "name": "S7",
+                "description": "Band 7 - SST, LST, Active fire",
+                "center_wavelength": 3.742,
+                "full_width_half_max": 0.398
+            }
+        ]
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2020-08-08T23:11:15.617203Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "item_assets": {
+        "safe-manifest": {
+            "type": "application/xml",
+            "description": "SAFE product manifest",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "FRP_IN": {
+            "type": "application/x-netcdf",
+            "description": "Fire radiative power (FRP) dataset",
+            "eo:bands": [
+                {
+                    "name": "S5",
+                    "description": "Band 5 - Cloud clearing, ice, snow, vegetation monitoring",
+                    "center_wavelength": 1.6134,
+                    "full_width_half_max": 0.06068
+                },
+                {
+                    "name": "S6",
+                    "description": "Band 6 - Vegetation state and cloud clearing",
+                    "center_wavelength": 2.2557,
+                    "full_width_half_max": 0.05015
+                },
+                {
+                    "name": "S7",
+                    "description": "Band 7 - SST, LST, Active fire",
+                    "center_wavelength": 3.742,
+                    "full_width_half_max": 0.398
+                },
+                {
+                    "name": "F1",
+                    "description": "Band 10 - Active fire",
+                    "center_wavelength": 3.742,
+                    "full_width_half_max": 0.398
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "SLSTR_CARTESIAN_FN": {
+            "type": "application/x-netcdf",
+            "description": "Full resolution cartesian coordinates for the 1km f1 grid, nadir view",
+            "roles": [
+                "data"
+            ]
+        },
+        "SLSTR_CARTESIAN_IN": {
+            "type": "application/x-netcdf",
+            "description": "Full resolution cartesian coordinates for the 1km tir grid, nadir view",
+            "roles": [
+                "data"
+            ]
+        },
+        "SLSTR_CARTESIAN_TX": {
+            "type": "application/x-netcdf",
+            "description": "16km cartesian coordinates",
+            "roles": [
+                "data"
+            ]
+        },
+        "SLSTR_FLAGS_FN": {
+            "type": "application/x-netcdf",
+            "description": "Global flags for the 1km f1 grid, nadir view",
+            "roles": [
+                "data"
+            ]
+        },
+        "SLSTR_FLAGS_IN": {
+            "type": "application/x-netcdf",
+            "description": "Global flags for the 1km tir grid, nadir view",
+            "roles": [
+                "data"
+            ]
+        },
+        "SLSTR_GEODETIC_FN": {
+            "type": "application/x-netcdf",
+            "description": "Full resolution geodetic coordinates for the 1km f1 grid, nadir view",
+            "roles": [
+                "data"
+            ]
+        },
+        "SLSTR_GEODETIC_IN": {
+            "type": "application/x-netcdf",
+            "description": "Full resolution geodetic coordinates for the 1km tir grid, nadir view",
+            "roles": [
+                "data"
+            ]
+        },
+        "SLSTR_GEODETIC_TX": {
+            "type": "application/x-netcdf",
+            "description": "16km geodetic coordinates",
+            "roles": [
+                "data"
+            ]
+        },
+        "SLSTR_GEOMETRY_TN": {
+            "type": "application/x-netcdf",
+            "description": "16km solar and satellite geometry annotations, nadir view",
+            "roles": [
+                "data"
+            ]
+        },
+        "SLSTR_INDICES_FN": {
+            "type": "application/x-netcdf",
+            "description": "Scan, pixel and detector annotations for the 1km f1 grid, nadir view",
+            "roles": [
+                "data"
+            ]
+        },
+        "SLSTR_INDICES_IN": {
+            "type": "application/x-netcdf",
+            "description": "Scan, pixel and detector annotations for the 1km tir grid, nadir view",
+            "roles": [
+                "data"
+            ]
+        },
+        "SLSTR_MET_TX": {
+            "type": "application/x-netcdf",
+            "description": "Meteorological parameters regridded onto the 16km tie points",
+            "roles": [
+                "data"
+            ]
+        },
+        "SLSTR_TIME_IN": {
+            "type": "application/x-netcdf",
+            "description": "Time annotations for the 1 km grid",
+            "roles": [
+                "data"
+            ]
+        }
+    }
+}

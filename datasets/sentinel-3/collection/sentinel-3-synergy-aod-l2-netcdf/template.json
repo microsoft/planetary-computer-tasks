@@ -98,10 +98,6 @@
             "ascending",
             "descending"
         ],
-        "eo:cloud_cover": {
-            "minimum": 0,
-            "maximum": 100
-        },
         "s3:product_type": [
             "SY_2_AOD___"
         ],
@@ -111,14 +107,6 @@
         "s3:processing_timeliness": [
             "NT"
         ],
-        "s3:saline_water": {
-            "minimum": 0,
-            "maximum": 100
-        },
-        "s3:land": {
-            "minimum": 0,
-            "maximum": 100
-        },
         "eo:bands": [
             {
                 "name": "SYN_440",

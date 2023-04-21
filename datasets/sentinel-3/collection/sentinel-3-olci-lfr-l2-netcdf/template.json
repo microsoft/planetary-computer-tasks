@@ -16,13 +16,14 @@
             "rel": "about",
             "href": "https://sentinel.esa.int/web/sentinel/user-guides/sentinel-3-olci/product-types/level-2-land",
             "type": "text/html",
-            "title": "Level-2 Land LRR and LFR"
+            "title": "Sentinel-3 Land (LRR and LFR) Product User Guide"
         }
     ],
     "stac_extensions": [
         "https://stac-extensions.github.io/sat/v1.0.0/schema.json",
         "https://stac-extensions.github.io/table/v1.2.0/schema.json",
-        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/eo/v1.1.0/schema.json"
     ],
     "keywords": [
         "ESA",
@@ -56,7 +57,7 @@
     "assets": {
         "thumbnail": {
             "title": "Sentinel-5P Level-2 NetCDF Thumbnail",
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-5p-l2-netcdf-thumb.png",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-3-olci-lfr-l2-netcdf-thumb.png",
             "media_type": "image/png"
         },
         "geoparquet-items": {
@@ -103,8 +104,52 @@
         ],
         "s3:product_name": [
             "LFR"
+        ],
+        "eo_bands": [
+            {
+                "name": "Oa03",
+                "description": "Band 3 - Chlorophyll absorption maximum, biogeochemistry, vegetation",
+                "center_wavelength": 0.4425,
+                "full_width_half_max": 0.01
+            },
+            {
+                "name": "Oa10",
+                "description": "Band 10 - Chlorophyll fluorescence peak, red edge",
+                "center_wavelength": 0.68125,
+                "full_width_half_max": 0.0075
+            },
+            {
+                "name": "Oa11",
+                "description": "Band 11 - Chlorophyll fluorescence baseline, red edge transition",
+                "center_wavelength": 0.70875,
+                "full_width_half_max": 0.01
+            },
+            {
+                "name": "Oa12",
+                "description": "Band 12 - O2 absorption / clouds, vegetation",
+                "center_wavelength": 0.75375,
+                "full_width_half_max": 0.0075
+            },
+            {
+                "name": "Oa17",
+                "description": "Band 17 - Atmospheric / aerosol correction, clouds, pixel co-registration",
+                "center_wavelength": 0.865,
+                "full_width_half_max": 0.02
+            },
+            {
+                "name": "Oa18",
+                "description": "Band 18 - Water vapour absorption reference. Common reference band with SLSTR. Vegetation monitoring",
+                "center_wavelength": 0.885,
+                "full_width_half_max": 0.01
+            },
+            {
+                "name": "Oa19",
+                "description": "Band 19 - Water vapour absorption, vegetation monitoring (maximum REFLECTANCE)",
+                "center_wavelength": 0.9,
+                "full_width_half_max": 0.01
+            }
         ]
-   },
+    },
     "extent": {
         "spatial": {
             "bbox": [
@@ -119,7 +164,7 @@
         "temporal": {
             "interval": [
                 [
-                    "2016-04-25T00:00:00Z",
+                    "2016-04-25T11:33:47.368562Z",
                     null
                 ]
             ]
@@ -127,187 +172,187 @@
     },
     "item_assets": {
         "safe-manifest": {
-            "description": "SAFE product manifest",
             "type": "application/xml",
+            "description": "SAFE product manifest",
             "roles": [
                 "metadata"
             ]
         },
         "ogvi": {
-            "description": "OLCI global Vegetal Index",
             "type": "application/x-netcdf",
-            "roles": [
-                "data"
-            ],
+            "description": "OLCI Global Vegetation Index (OGVI)",
             "eo:bands": [
                 {
                     "name": "Oa03",
                     "description": "Band 3 - Chlorophyll absorption maximum, biogeochemistry, vegetation",
                     "center_wavelength": 0.4425,
-                    "band_width": 0.01
+                    "full_width_half_max": 0.01
                 },
                 {
                     "name": "Oa10",
                     "description": "Band 10 - Chlorophyll fluorescence peak, red edge",
                     "center_wavelength": 0.68125,
-                    "band_width": 0.0075
+                    "full_width_half_max": 0.0075
                 },
                 {
                     "name": "Oa17",
                     "description": "Band 17 - Atmospheric / aerosol correction, clouds, pixel co-registration",
                     "center_wavelength": 0.865,
-                    "band_width": 0.02
+                    "full_width_half_max": 0.02
                 }
-            ]
-        },
-        "otci": {
-            "description": "OLCI Terrestrial Chlorophyll Index",
-            "type": "application/x-netcdf",
-            "roles": [
-                "data"
             ],
-            "eo:bands": [
-                {
-                    "name": "Oa10",
-                    "description": "Band 10 - Chlorophyll fluorescence peak, red edge",
-                    "center_wavelength": 0.68125,
-                    "band_width": 0.0075
-                },
-                {
-                    "name": "Oa11",
-                    "description": "Band 11 - Chlorophyll fluorescence baseline, red edge transition",
-                    "center_wavelength": 0.70875,
-                    "band_width": 0.01
-                },
-                {
-                    "name": "Oa12",
-                    "description": "Band 12 - O2 absorption / clouds, vegetation",
-                    "center_wavelength": 0.75375,
-                    "band_width": 0.0075
-                }
-            ]
-        },
-        "iwv": {
-            "description": "Integrated water vapour column",
-            "type": "application/x-netcdf",
-            "roles": [
-                "data"
-            ],
-            "eo:bands": [
-                {
-                    "name": "Oa18",
-                    "description": "Band 18 - Water vapour absorption reference. Common reference band with SLSTR. Vegetation monitoring",
-                    "center_wavelength": 0.885,
-                    "band_width": 0.01
-                },
-                {
-                    "name": "Oa19",
-                    "description": "Band 19 - Water vapour absorption, vegetation monitoring (maximum REFLECTANCE)",
-                    "center_wavelength": 0.900,
-                    "band_width": 0.01
-                }
-            ]
-        },
-        "rcOgvi": {
-            "description": "Rectified Reflectance",
-            "type": "application/x-netcdf",
-            "roles": [
-                "data"
-            ],
-            "eo:bands": [
-                {
-                    "name": "Oa10",
-                    "description": "Band 10 - Chlorophyll fluorescence peak, red edge",
-                    "center_wavelength": 0.68125,
-                    "band_width": 0.0075
-                },
-                {
-                    "name": "Oa17",
-                    "description": "Band 17 - Atmospheric / aerosol correction, clouds, pixel co-registration",
-                    "center_wavelength": 0.865,
-                    "band_width": 0.02
-                }
-            ]
-        },
-        "lqsf": {
-            "description": "Land Quality and Science Flags",
-            "type": "application/x-netcdf",
-            "roles": [
-                "data"
-            ]
-        },
-        "timeCoordinates": {
-            "description": "Time Coordinates Annotations",
-            "type": "application/x-netcdf",
-            "roles": [
-                "data"
-            ]
-        },
-        "geoCoordinates": {
-            "description": "Geo Coordinates Annotations",
-            "type": "application/x-netcdf",
-            "roles": [
-                "data"
-            ]
-        },
-        "tieGeoCoordinates": {
-            "description": "Tie-Point Geo Coordinate Annotations",
-            "type": "application/x-netcdf",
-            "roles": [
-                "data"
-            ]
-        },
-        "tieGeometries": {
-            "description": "Tie-Point Geometries Annotations",
-            "type": "application/x-netcdf",
-            "roles": [
-                "data"
-            ]
-        },
-        "tieMeteo": {
-            "description": "Tie-Point Meteo Annotations",
-            "type": "application/x-netcdf",
-            "roles": [
-                "data"
-            ]
-        },
-        "instrumentData": {
-            "description": "Instrument Annotation",
-            "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
         "gifapar": {
-            "description": "Green Instantaneous FAPAR",
             "type": "application/x-netcdf",
-            "roles": [
-                "data"
-            ],
+            "description": "Green instantaneous Fraction of Absorbed Photosynthetically Active Radiation (FAPAR)",
             "eo:bands": [
                 {
                     "name": "Oa03",
                     "description": "Band 3 - Chlorophyll absorption maximum, biogeochemistry, vegetation",
                     "center_wavelength": 0.4425,
-                    "band_width": 0.01
+                    "full_width_half_max": 0.01
                 },
                 {
                     "name": "Oa10",
                     "description": "Band 10 - Chlorophyll fluorescence peak, red edge",
                     "center_wavelength": 0.68125,
-                    "band_width": 0.0075
+                    "full_width_half_max": 0.0075
                 },
                 {
                     "name": "Oa17",
                     "description": "Band 17 - Atmospheric / aerosol correction, clouds, pixel co-registration",
                     "center_wavelength": 0.865,
-                    "band_width": 0.02
+                    "full_width_half_max": 0.02
                 }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "otci": {
+            "type": "application/x-netcdf",
+            "description": "OLCI Terrestrial Chlorophyll Index (OTCI)",
+            "eo:bands": [
+                {
+                    "name": "Oa10",
+                    "description": "Band 10 - Chlorophyll fluorescence peak, red edge",
+                    "center_wavelength": 0.68125,
+                    "full_width_half_max": 0.0075
+                },
+                {
+                    "name": "Oa11",
+                    "description": "Band 11 - Chlorophyll fluorescence baseline, red edge transition",
+                    "center_wavelength": 0.70875,
+                    "full_width_half_max": 0.01
+                },
+                {
+                    "name": "Oa12",
+                    "description": "Band 12 - O2 absorption / clouds, vegetation",
+                    "center_wavelength": 0.75375,
+                    "full_width_half_max": 0.0075
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "iwv": {
+            "type": "application/x-netcdf",
+            "description": "Integrated water vapour column",
+            "eo:bands": [
+                {
+                    "name": "Oa18",
+                    "description": "Band 18 - Water vapour absorption reference. Common reference band with SLSTR. Vegetation monitoring",
+                    "center_wavelength": 0.885,
+                    "full_width_half_max": 0.01
+                },
+                {
+                    "name": "Oa19",
+                    "description": "Band 19 - Water vapour absorption, vegetation monitoring (maximum REFLECTANCE)",
+                    "center_wavelength": 0.9,
+                    "full_width_half_max": 0.01
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "rcOgvi": {
+            "type": "application/x-netcdf",
+            "description": "Rectified reflectance",
+            "eo:bands": [
+                {
+                    "name": "Oa10",
+                    "description": "Band 10 - Chlorophyll fluorescence peak, red edge",
+                    "center_wavelength": 0.68125,
+                    "full_width_half_max": 0.0075
+                },
+                {
+                    "name": "Oa17",
+                    "description": "Band 17 - Atmospheric / aerosol correction, clouds, pixel co-registration",
+                    "center_wavelength": 0.865,
+                    "full_width_half_max": 0.02
+                }
+            ],
+            "roles": [
+                "data"
             ]
         },
         "rcGifapar": {
-            "description": "Rectified Reflectance",
             "type": "application/x-netcdf",
+            "description": "Rectified reflectance",
+            "roles": [
+                "data"
+            ]
+        },
+        "lqsf": {
+            "type": "application/x-netcdf",
+            "description": "Land quality and science flags",
+            "roles": [
+                "data"
+            ]
+        },
+        "timeCoordinates": {
+            "type": "application/x-netcdf",
+            "description": "Time coordinate annotations",
+            "roles": [
+                "data"
+            ]
+        },
+        "geoCoordinates": {
+            "type": "application/x-netcdf",
+            "description": "Geo coordinate annotations",
+            "roles": [
+                "data"
+            ]
+        },
+        "tieGeoCoordinates": {
+            "type": "application/x-netcdf",
+            "description": "Tie-point geo coordinate annotations",
+            "roles": [
+                "data"
+            ]
+        },
+        "tieGeometries": {
+            "type": "application/x-netcdf",
+            "description": "Tie-point geometry annotations",
+            "roles": [
+                "data"
+            ]
+        },
+        "tieMeteo": {
+            "type": "application/x-netcdf",
+            "description": "Tie-point meteo annotations",
+            "roles": [
+                "data"
+            ]
+        },
+        "instrumentData": {
+            "type": "application/x-netcdf",
+            "description": "Instrument annotations",
             "roles": [
                 "data"
             ]

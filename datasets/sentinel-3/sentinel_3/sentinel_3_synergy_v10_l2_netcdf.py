@@ -20,9 +20,6 @@ class Collection(BaseSentinelCollection):
         if item_dict is None:
             return []
 
-        # Item id contains unnecessary trailing underscores
-        item_dict["id"] = item_dict["id"].rstrip("_")
-
         for asset in item_dict["assets"].values():
             # standardize the shape property
             if "v10:shape" in asset:

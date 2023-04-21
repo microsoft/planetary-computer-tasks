@@ -8,19 +8,17 @@ from pctasks.core.storage import StorageFactory
 
 ASSET_DESCRIPTIONS = {
     "safe-manifest": "SAFE product manifest",
-    "gifapar": "Green instantaneous Fraction of Absorbed Photosynthetically Active Radiation (FAPAR)",  # noqa
-    "ogvi": "OLCI Global Vegetation Index (OGVI)",
-    "otci": "OLCI Terrestrial Chlorophyll Index (OTCI)",
-    "iwv": "Integrated water vapour column",
-    "rcOgvi": "Rectified reflectance",
-    "rcGifapar": "Rectified reflectance",
-    "lqsf": "Land quality and science flags",
-    "timeCoordinates": "Time coordinate annotations",
-    "geoCoordinates": "Geo coordinate annotations",
-    "tieGeoCoordinates": "Tie-point geo coordinate annotations",
-    "tieGeometries": "Tie-point geometry annotations",
-    "tieMeteo": "Tie-point meteo annotations",
-    "instrumentData": "Instrument annotations",
+    "LST_IN": "Land Surface Temperature (LST) values",
+    "LST_ANCILLARY_DS": "LST ancillary measurement dataset",
+    "SLSTR_FLAGS_IN": "Global flags for the 1km TIR grid, nadir view",
+    "SLSTR_INDICES_IN": "Scan, pixel and detector indices annotations for the 1km TIR grid, nadir view",  # noqa: E501
+    "SLSTR_TIME_IN": "Time annotations for the 1km grid",
+    "SLSTR_GEODETIC_IN": "Full resolution geodetic coordinates for the 1km TIR grid, nadir view",
+    "SLSTR_CARTESIAN_IN": "Full resolution cartesian coordinates for the 1km TIR grid, nadir view",
+    "SLSTR_GEOMETRY_TN": "16km solar and satellite geometry annotations, nadir view",
+    "SLSTR_GEODETIC_TX": "16km geodetic coordinates",
+    "SLSTR_CARTESIAN_TX": "16km cartesian coordinates",
+    "SLSTR_MET_TX": "Meteorological parameters regridded onto the 16km tie points",
 }
 
 
@@ -29,12 +27,12 @@ class Collection(BaseSentinelCollection):
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
+
         storage, json_path = storage_factory.get_storage_for_file(asset_uri)
         item_dict = storage.read_json(json_path)
 
         item_dict = cls.base_updates(item_dict, fix_geometry=True, buffer0=True)
         if item_dict is None:
-            # Skip any NT scenes
             return []
 
         # Grab the shape; we'll move it to assets to be consistent with the
@@ -48,7 +46,7 @@ class Collection(BaseSentinelCollection):
                 # add shape, flip to row, column order
                 asset["s3:shape"] = shape[::-1]
 
-            # clean up descriptions
+            # make the descriptions consistent
             asset["description"] = ASSET_DESCRIPTIONS[asset_key]
 
         return [pystac.Item.from_dict(item_dict)]

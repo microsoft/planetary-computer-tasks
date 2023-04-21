@@ -97,12 +97,8 @@
             "ascending",
             "descending"
         ],
-        "eo:cloud_cover": {
-            "minimum": 0,
-            "maximum": 100
-        },
         "s3:product_type": [
-            "SY_2_SYN___"
+            "SY_2_V10___"
         ],
         "s3:product_name": [
             "V10"
@@ -110,14 +106,6 @@
         "s3:processing_timeliness": [
             "NT"
         ],
-        "s3:land": {
-            "minimum": 0,
-            "maximum": 100
-        },
-        "s3:snow_or_ice": {
-            "minimum": 0,
-            "maximum": 100
-        },
         "eo:bands": [
             {
                 "name": "B0",

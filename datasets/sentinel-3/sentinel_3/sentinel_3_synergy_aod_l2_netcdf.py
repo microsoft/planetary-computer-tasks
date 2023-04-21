@@ -20,10 +20,7 @@ class Collection(BaseSentinelCollection):
         if item_dict is None:
             return []
 
-        # Item id contains unnecessary trailing underscores
-        item_dict["id"] = item_dict["id"].rstrip("_")
-
-        # Grab the custom shape field for placement on the assets for consistency
+        # Grab the custom shape field and place on the assets for consistency
         # with the other sentinel-3 collections
         s3_shape = item_dict["properties"].pop("s3:shape")
 
@@ -34,7 +31,6 @@ class Collection(BaseSentinelCollection):
                 asset["s3:shape"] = s3_shape[::-1]
 
                 # Reverse the provided resolution order to match the shape order
-                resolution = asset.pop("resolution")
-                asset["s3:spatial_resolution"] = resolution[::-1]
+                asset["s3:spatial_resolution"] = asset.pop("resolution")[::-1]
 
         return [pystac.Item.from_dict(item_dict)]

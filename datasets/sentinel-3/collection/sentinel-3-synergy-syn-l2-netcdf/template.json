@@ -99,10 +99,6 @@
             "ascending",
             "descending"
         ],
-        "eo:cloud_cover": {
-            "minimum": 0,
-            "maximum": 100
-        },
         "s3:product_type": [
             "SY_2_SYN___"
         ],
@@ -112,26 +108,6 @@
         "s3:processing_timeliness": [
             "NT"
         ],
-        "s3:saline_water": {
-            "minimum": 0,
-            "maximum": 100
-        },
-        "s3:land": {
-            "minimum": 0,
-            "maximum": 100
-        },
-        "s3:coastal": {
-            "minimum": 0,
-            "maximum": 100
-        },
-        "s3:fresh_inland_water": {
-            "minimum": 0,
-            "maximum": 100
-        },
-        "s3:tidal_region": {
-            "minimum": 0,
-            "maximum": 100
-        },
         "eo:bands": [
             {
                 "name": "Oa01",

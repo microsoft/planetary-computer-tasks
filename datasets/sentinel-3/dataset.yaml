@@ -132,7 +132,7 @@ collections:
             chunk_length: 5000
             limit: 100  # TODO: remove limit
     chunk_storage:
-      uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-sral-lan-l2-netcd
+      uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-sral-lan-l2-netcdf
 
   - id: sentinel-3-sral-wat-l2-netcdf
     template: ${{ local.path(./collection/sentinel-3-sral-wat-l2-netcdf) }}
@@ -147,4 +147,49 @@ collections:
             chunk_length: 5000
             limit: 100  # TODO: remove limit
     chunk_storage:
-      uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-sral-wat-l2-netcdff
+      uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-sral-wat-l2-netcdf
+
+  - id: sentinel-3-slstr-frp-l2-netcdf
+    template: ${{ local.path(./collection/sentinel-3-slstr-frp-l2-netcdf) }}
+    class: sentinel_3.sentinel_3_slstr_frp_l2_netcdf:Collection
+    asset_storage:
+      - uri: blob://sentinel3euwest/sentinel-3-stac/
+        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+        chunks:
+          options:
+            name_starts_with: SRAL/SL_2_FRP___/
+            extensions: [.json]
+            chunk_length: 5000
+            limit: 100  # TODO: remove limit
+    chunk_storage:
+      uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-slstr-frp-l2-netcdf
+
+  - id: sentinel-3-slstr-lst-l2-netcdf
+    template: ${{ local.path(./collection/sentinel-3-slstr-lst-l2-netcdf) }}
+    class: sentinel_3.sentinel_3_slstr_lst_l2_netcdf:Collection
+    asset_storage:
+      - uri: blob://sentinel3euwest/sentinel-3-stac/
+        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+        chunks:
+          options:
+            name_starts_with: SRAL/SL_2_LST___/
+            extensions: [.json]
+            chunk_length: 5000
+            limit: 100  # TODO: remove limit
+    chunk_storage:
+      uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-slstr-lst-l2-netcdf
+
+  - id: sentinel-3-slstr-wst-l2-netcdf
+    template: ${{ local.path(./collection/sentinel-3-slstr-wst-l2-netcdf) }}
+    class: sentinel_3.sentinel_3_slstr_wst_l2_netcdf:Collection
+    asset_storage:
+      - uri: blob://sentinel3euwest/sentinel-3-stac/
+        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+        chunks:
+          options:
+            name_starts_with: SRAL/SL_2_WST___/
+            extensions: [.json]
+            chunk_length: 5000
+            limit: 100  # TODO: remove limit
+    chunk_storage:
+      uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-slstr-wst-l2-netcdf
