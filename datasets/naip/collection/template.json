@@ -28,6 +28,7 @@
   "msft:short_description": "NAIP provides US-wide, high-resolution aerial imagery.  This dataset includes NAIP images from 2010 to the present.",
   "msft:storage_account": "naipeuwest",
   "msft:container": "naip",
+  "msft:region": "westeurope",
   "providers": [
     {
       "name": "USDA Farm Service Agency",
@@ -122,7 +123,7 @@
       "interval": [
         [
           "2010-01-01T00:00:00Z",
-          "2020-12-31T00:00:00Z"
+          "2021-12-31T00:00:00Z"
         ]
       ]
     }
