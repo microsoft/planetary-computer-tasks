@@ -35,15 +35,9 @@ class Collection(BaseSentinelCollection):
         resolutions = set()
 
         for v in assets.values():
-            # Move description to title
-            title = v.pop("description", None)
-            if title:
-                v["title"] = title
-
             resolution = v.pop("resolution", None)
             if resolution:
                 resolutions.add(tuple(resolution))
-
 
         # There is a lonely "resolution" field on the ntc_aod asset that
         # is not part of the STAC spec. This would normally go in "raster:bands",
@@ -88,4 +82,5 @@ if __name__ == "__main__":
 
     with open("sentinel-3-olci-lfr-l2.json", "w") as f:
         import json
+
         f.write(json.dumps(item.to_dict(), indent=2))

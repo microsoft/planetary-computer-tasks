@@ -171,7 +171,7 @@
     },
     "item_assets": {
         "safe-manifest": {
-            "title": "SAFE product manifest",
+            "description": "SAFE product manifest",
             "type": "application/xml",
             "roles": [
                 "metadata"
@@ -179,7 +179,7 @@
         },
         "Oa01_reflectance": {
             "type": "application/x-netcdf",
-            "title": "Reflectance for OLCI acquisition band Oa01",
+            "description": "Reflectance for OLCI acquisition band Oa01",
             "resolution": [
                 270,
                 294
@@ -198,7 +198,7 @@
         },
         "Oa02_reflectance": {
             "type": "application/x-netcdf",
-            "title": "Reflectance for OLCI acquisition band Oa02",
+            "description": "Reflectance for OLCI acquisition band Oa02",
             "resolution": [
                 270,
                 294
@@ -217,7 +217,7 @@
         },
         "Oa03_reflectance": {
             "type": "application/x-netcdf",
-            "title": "Reflectance for OLCI acquisition band Oa03",
+            "description": "Reflectance for OLCI acquisition band Oa03",
             "resolution": [
                 270,
                 294
@@ -236,7 +236,7 @@
         },
         "Oa04_reflectance": {
             "type": "application/x-netcdf",
-            "title": "Reflectance for OLCI acquisition band Oa04",
+            "description": "Reflectance for OLCI acquisition band Oa04",
             "resolution": [
                 270,
                 294
@@ -255,7 +255,7 @@
         },
         "Oa05_reflectance": {
             "type": "application/x-netcdf",
-            "title": "Reflectance for OLCI acquisition band Oa05",
+            "description": "Reflectance for OLCI acquisition band Oa05",
             "resolution": [
                 270,
                 294
@@ -274,7 +274,7 @@
         },
         "Oa06_reflectance": {
             "type": "application/x-netcdf",
-            "title": "Reflectance for OLCI acquisition band Oa06",
+            "description": "Reflectance for OLCI acquisition band Oa06",
             "resolution": [
                 270,
                 294
@@ -293,7 +293,7 @@
         },
         "Oa07_reflectance": {
             "type": "application/x-netcdf",
-            "title": "Reflectance for OLCI acquisition band Oa07",
+            "description": "Reflectance for OLCI acquisition band Oa07",
             "resolution": [
                 270,
                 294
@@ -312,7 +312,7 @@
         },
         "Oa08_reflectance": {
             "type": "application/x-netcdf",
-            "title": "Reflectance for OLCI acquisition band Oa08",
+            "description": "Reflectance for OLCI acquisition band Oa08",
             "resolution": [
                 270,
                 294
@@ -331,7 +331,7 @@
         },
         "Oa09_reflectance": {
             "type": "application/x-netcdf",
-            "title": "Reflectance for OLCI acquisition band Oa09",
+            "description": "Reflectance for OLCI acquisition band Oa09",
             "resolution": [
                 270,
                 294
@@ -350,7 +350,7 @@
         },
         "Oa10_reflectance": {
             "type": "application/x-netcdf",
-            "title": "Reflectance for OLCI acquisition band Oa10",
+            "description": "Reflectance for OLCI acquisition band Oa10",
             "resolution": [
                 270,
                 294
@@ -369,7 +369,7 @@
         },
         "Oa11_reflectance": {
             "type": "application/x-netcdf",
-            "title": "Reflectance for OLCI acquisition band Oa11",
+            "description": "Reflectance for OLCI acquisition band Oa11",
             "resolution": [
                 270,
                 294
@@ -388,7 +388,7 @@
         },
         "Oa12_reflectance": {
             "type": "application/x-netcdf",
-            "title": "Reflectance for OLCI acquisition band Oa12",
+            "description": "Reflectance for OLCI acquisition band Oa12",
             "resolution": [
                 270,
                 294
@@ -407,7 +407,7 @@
         },
         "Oa16_reflectance": {
             "type": "application/x-netcdf",
-            "title": "Reflectance for OLCI acquisition band Oa16",
+            "description": "Reflectance for OLCI acquisition band Oa16",
             "resolution": [
                 270,
                 294
@@ -426,7 +426,7 @@
         },
         "Oa17_reflectance": {
             "type": "application/x-netcdf",
-            "title": "Reflectance for OLCI acquisition band Oa17",
+            "description": "Reflectance for OLCI acquisition band Oa17",
             "resolution": [
                 270,
                 294
@@ -445,7 +445,7 @@
         },
         "Oa18_reflectance": {
             "type": "application/x-netcdf",
-            "title": "Reflectance for OLCI acquisition band Oa18",
+            "description": "Reflectance for OLCI acquisition band Oa18",
             "resolution": [
                 270,
                 294
@@ -464,7 +464,7 @@
         },
         "Oa21_reflectance": {
             "type": "application/x-netcdf",
-            "title": "Reflectance for OLCI acquisition band Oa21",
+            "description": "Reflectance for OLCI acquisition band Oa21",
             "resolution": [
                 270,
                 294
@@ -483,7 +483,7 @@
         },
         "chlNn": {
             "type": "application/x-netcdf",
-            "title": "Neural Net Chlorophyll concentration",
+            "description": "Neural Net Chlorophyll concentration",
             "resolution": [
                 270,
                 294
@@ -592,7 +592,7 @@
         },
         "chlOc4me": {
             "type": "application/x-netcdf",
-            "title": "OC4Me algorithm Chlorophyll concentration",
+            "description": "OC4Me algorithm Chlorophyll concentration",
             "resolution": [
                 270,
                 294
@@ -629,7 +629,7 @@
         },
         "iopNn": {
             "type": "application/x-netcdf",
-            "title": "Inherent Optical Properties of water",
+            "description": "Inherent Optical Properties of water",
             "resolution": [
                 270,
                 294
@@ -672,7 +672,7 @@
         },
         "iwv": {
             "type": "application/x-netcdf",
-            "title": "Integrated water vapour column",
+            "description": "Integrated water vapour column",
             "resolution": [
                 270,
                 294
@@ -697,7 +697,7 @@
         },
         "par": {
             "type": "application/x-netcdf",
-            "title": "Photosynthetically Active Radiation",
+            "description": "Photosynthetically Active Radiation",
             "resolution": [
                 270,
                 294
@@ -708,7 +708,7 @@
         },
         "trsp": {
             "type": "application/x-netcdf",
-            "title": "Transparency properties of water",
+            "description": "Transparency properties of water",
             "resolution": [
                 270,
                 294
@@ -733,7 +733,7 @@
         },
         "tsmNn": {
             "type": "application/x-netcdf",
-            "title": "Total suspended matter concentration",
+            "description": "Total suspended matter concentration",
             "resolution": [
                 270,
                 294
@@ -842,7 +842,7 @@
         },
         "wAer": {
             "type": "application/x-netcdf",
-            "title": "Aerosol Over Water",
+            "description": "Aerosol Over Water",
             "resolution": [
                 270,
                 294
@@ -873,7 +873,7 @@
         },
         "geoCoordinates": {
             "type": "application/x-netcdf",
-            "title": "Geo Coordinates Annotations",
+            "description": "Geo Coordinates Annotations",
             "resolution": [
                 270,
                 294
@@ -884,7 +884,7 @@
         },
         "instrumentData": {
             "type": "application/x-netcdf",
-            "title": "Instrument Annotation",
+            "description": "Instrument Annotation",
             "resolution": [
                 270,
                 294
@@ -895,7 +895,7 @@
         },
         "tieGeoCoordinates": {
             "type": "application/x-netcdf",
-            "title": "Tie-Point Geo Coordinate Annotations",
+            "description": "Tie-Point Geo Coordinate Annotations",
             "resolution": [
                 270,
                 294
@@ -906,7 +906,7 @@
         },
         "tieGeometries": {
             "type": "application/x-netcdf",
-            "title": "Tie-Point Geometries Annotations",
+            "description": "Tie-Point Geometries Annotations",
             "resolution": [
                 270,
                 294
@@ -917,7 +917,7 @@
         },
         "tieMeteo": {
             "type": "application/x-netcdf",
-            "title": "Tie-Point Meteo Annotations",
+            "description": "Tie-Point Meteo Annotations",
             "resolution": [
                 270,
                 294
@@ -928,7 +928,7 @@
         },
         "timeCoordinates": {
             "type": "application/x-netcdf",
-            "title": "Time Coordinates Annotations",
+            "description": "Time Coordinates Annotations",
             "resolution": [
                 270,
                 294
@@ -939,7 +939,7 @@
         },
         "wqsf": {
             "type": "application/x-netcdf",
-            "title": "Water Quality and Science Flags",
+            "description": "Water Quality and Science Flags",
             "resolution": [
                 270,
                 294
@@ -950,14 +950,14 @@
         },
         "browse_jpg": {
             "type": "image/jpeg",
-            "title": "Product preview file produced by EUMETSAT",
+            "description": "Product preview file produced by EUMETSAT",
             "roles": [
                 "thumbnail"
             ]
         },
         "eopmetadata": {
             "type": "application/xml",
-            "title": "Product metadata file produced by EUMETSAT",
+            "description": "Product metadata file produced by EUMETSAT",
             "roles": [
                 "metadata"
             ]

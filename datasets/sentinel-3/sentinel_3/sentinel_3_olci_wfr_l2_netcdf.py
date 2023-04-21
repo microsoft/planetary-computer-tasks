@@ -35,11 +35,6 @@ class Collection(BaseSentinelCollection):
         resolutions = set()
 
         for v in assets.values():
-            # Move description to title
-            title = v.pop("description", None)
-            if title:
-                v["title"] = title
-
             resolution = v.pop("resolution", None)
             if resolution:
                 resolutions.add(tuple(resolution))

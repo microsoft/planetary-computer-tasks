@@ -167,14 +167,14 @@
     },
     "item_assets": {
         "safe-manifest": {
-            "title": "SAFE product manifest",
+            "description": "SAFE product manifest",
             "type": "application/xml",
             "roles": [
                 "metadata"
             ]
         },
         "ogvi": {
-            "title": "OLCI global Vegetal Index",
+            "description": "OLCI global Vegetal Index",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
@@ -201,7 +201,7 @@
             ]
         },
         "otci": {
-            "title": "OLCI Terrestrial Chlorophyll Index",
+            "description": "OLCI Terrestrial Chlorophyll Index",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
@@ -228,7 +228,7 @@
             ]
         },
         "iwv": {
-            "title": "Integrated water vapour column",
+            "description": "Integrated water vapour column",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
@@ -249,7 +249,7 @@
             ]
         },
         "rcOgvi": {
-            "title": "Rectified Reflectance",
+            "description": "Rectified Reflectance",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
@@ -270,56 +270,56 @@
             ]
         },
         "lqsf": {
-            "title": "Land Quality and Science Flags",
+            "description": "Land Quality and Science Flags",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
         "timeCoordinates": {
-            "title": "Time Coordinates Annotations",
+            "description": "Time Coordinates Annotations",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
         "geoCoordinates": {
-            "title": "Geo Coordinates Annotations",
+            "description": "Geo Coordinates Annotations",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
         "tieGeoCoordinates": {
-            "title": "Tie-Point Geo Coordinate Annotations",
+            "description": "Tie-Point Geo Coordinate Annotations",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
         "tieGeometries": {
-            "title": "Tie-Point Geometries Annotations",
+            "description": "Tie-Point Geometries Annotations",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
         "tieMeteo": {
-            "title": "Tie-Point Meteo Annotations",
+            "description": "Tie-Point Meteo Annotations",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
         "instrumentData": {
-            "title": "Instrument Annotation",
+            "description": "Instrument Annotation",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
         "gifapar": {
-            "title": "Green Instantaneous FAPAR",
+            "description": "Green Instantaneous FAPAR",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
@@ -346,7 +346,7 @@
             ]
         },
         "rcGifapar": {
-            "title": "Rectified Reflectance",
+            "description": "Rectified Reflectance",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
