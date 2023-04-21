@@ -13,7 +13,7 @@ class BaseSentinelCollection(pctasks.dataset.collection.Collection):  # type: ig
     def base_updates(
         item_dict: Dict[str, Any], fix_geometry: bool = False, buffer0: bool = False
     ) -> Optional[Dict[str, Any]]:
-        """Apply updates common to all Sentinel-3 collections.
+        """Apply item updates.
 
         Args:
             item_dict (Dict[str, Any]): The Item dictionary as read from Azure.
@@ -31,8 +31,12 @@ class BaseSentinelCollection(pctasks.dataset.collection.Collection):  # type: ig
         def nano2micro(value: float) -> float:
             """Converts nanometers to micrometers while handling floating
             point arithmetic errors."""
-            # handles floating point arithmetic errors
             return float(Decimal(str(value)) / Decimal("1000"))
+
+        def hz2ghz(value: float) -> float:
+            """Converts hertz to gigahertz while handling floating point
+            arithmetic errors."""
+            return float(Decimal(str(value)) / Decimal("1000000000"))
 
         # Skip item if it is not a NT (Not Time critical) product.
         asset_directory = Path(item_dict["assets"]["safe-manifest"]["href"]).parent.name
@@ -48,11 +52,10 @@ class BaseSentinelCollection(pctasks.dataset.collection.Collection):  # type: ig
         if properties["instruments"] == ["SYNERGY"]:
             # "SYNERGY" is not a instrument
             properties["instruments"] = ["OLCI", "SLSTR"]
-            # The data is derived from sensors with different resolutions, so
-            # a single gsd value (as per the STAC spec) is not appropriate. I
-            # don't think the supplied custom field containing nested gsd values
-            # is relevant either, so I'm removing it.
-            properties.pop("s3:gsd", None)
+
+        # The gsd field does not align with the STAC spec, but it does contain
+        # correct information on the different sensor gsd values. Leaving for now.
+        # properties.pop("s3:gsd", None)
 
         # Add the processing timelessness to the properties
         properties["s3:processing_timeliness"] = timeliness
@@ -90,8 +93,10 @@ class BaseSentinelCollection(pctasks.dataset.collection.Collection):  # type: ig
                 # strip "_pixels_percentages" to match eo:cloud_cover pattern
                 if new_key.endswith("_pixels_percentage"):
                     new_key = new_key.replace("_pixels_percentage", "")
-                if new_key.endswith("_pixelss_percentage"):
+                elif new_key.endswith("_pixelss_percentage"):
                     new_key = new_key.replace("_pixelss_percentage", "")
+                elif new_key.endswith("_percentage"):
+                    new_key = new_key.replace("_percentage", "")
                 new_properties[new_key] = properties[key]
             else:
                 new_properties[key] = properties[key]
@@ -115,6 +120,10 @@ class BaseSentinelCollection(pctasks.dataset.collection.Collection):  # type: ig
             # remove local paths
             asset.pop("file:local_path", None)
 
+            # Add a description to the safe_manifest asset
+            if asset_key == "safe-manifest":
+                asset["description"] = "SAFE product manifest"
+
             # correct eo:bands
             if "eo:bands" in asset:
                 for band in asset["eo:bands"]:
@@ -122,9 +131,17 @@ class BaseSentinelCollection(pctasks.dataset.collection.Collection):  # type: ig
                     band["full_width_half_max"] = nano2micro(band["band_width"])
                     band.pop("band_width")
 
-            # Add a description to the safe_manifest asset
-            if asset_key == "safe-manifest":
-                asset["description"] = "SAFE product manifest"
+            # Tune up the radar altimetry bands. Radar altimetry is different
+            # enough than radar imagery that the existing SAR extension doesn't
+            # quite work (plus, the SAR extension doesn't have a band object).
+            # We'll use a band construct similar to eo:bands, but follow the
+            # naming and unit conventions in the SAR extension.
+            if "sral:bands" in asset:
+                asset["s3:radar_bands"] = asset.pop("sral:bands")
+                for band in asset["s3:radar_bands"]:
+                    band["frequency_band"] = band.pop("name")
+                    band["center_frequency"] = hz2ghz(band.pop("central_frequency"))
+                    band["band_width"] = hz2ghz(band.pop("band_width_in_Hz"))
 
         item_dict["assets"] = assets
 

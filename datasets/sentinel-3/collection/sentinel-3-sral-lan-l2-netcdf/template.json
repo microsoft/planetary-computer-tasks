@@ -1,0 +1,219 @@
+{
+    "stac_version": "1.0.0",
+    "type": "Collection",
+    "id": "sentinel-3-sral-lan-l2-netcdf",
+    "title": "Sentinel-3 Land Radar Altimetry",
+    "description": "{{ collection.description }}",
+    "license": "proprietary",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice",
+            "type": "application/pdf",
+            "title": "Sentinel Data License"
+        },
+        {
+            "rel": "about",
+            "href": "https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-3-altimetry/product-types",
+            "type": "text/html",
+            "title": "Sentinel-3 Land Radar Altimetry Product User Guide"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/sat/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+    ],
+    "keywords": [
+        "Sentinel",
+        "Copernicus",
+        "ESA",
+        "Satellite",
+        "Radar",
+        "Altimetry"
+    ],
+    "msft:short_description": "Sentinel-3 radar altimetry over land (SRAL LAN).",
+    "msft:storage_account": "sentinel3euwest",
+    "msft:container": "sentinel-3",
+    "msft:region": "westeurope",
+    "providers": [
+        {
+            "name": "ESA",
+            "roles": [
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://earth.esa.int/web/guest/home"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "title": "Sentinel-3 Land Radar Altimetry Thumbnail",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-3-sral-lan-l2-netcdf-thumb.png",
+            "media_type": "image/png"
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/sentinel-3-sral-lan-l2-netcdf.parquet",
+            "title": "GeoParquet STAC Items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "QS"
+            }
+        }
+    },
+    "summaries": {
+        "constellation": [
+            "Sentinel-3"
+        ],
+        "platform": [
+            "Sentinel-3A",
+            "Sentinel-3B"
+        ],
+        "instruments": [
+            "SRAL"
+        ],
+        "sat:platform_international_designator": [
+            "2016-011A",
+            "2018-039A"
+        ],
+        "sat:orbit_state": [
+            "ascending",
+            "descending"
+        ],
+        "s3:product_type": [
+            "SR_2_LAN___"
+        ],
+        "s3:product_name": [
+            "LAN"
+        ],
+        "s3:processing_timeliness": [
+            "NT"
+        ],
+        "s3:land": {
+            "minimum": 0,
+            "maximum": 100
+        },
+        "s3:closed_sea": {
+            "minimum": 0,
+            "maximum": 100
+        },
+        "s3:continental_ice": {
+            "minimum": 0,
+            "maximum": 100
+        },
+        "s3:open_ocean": {
+            "minimum": 0,
+            "maximum": 100
+        },
+        "s3:lrm_mode": {
+            "minimum": 0,
+            "maximum": 100
+        },
+        "s3:sar_mode": {
+            "minimum": 0,
+            "maximum": 100
+        }
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2016-03-01T14:07:51.632846Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "item_assets": {
+        "safe-manifest": {
+            "type": "application/xml",
+            "description": "SAFE product manifest",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "standardMeasurement": {
+            "type": "application/x-netcdf",
+            "description": "Standard measurement data file",
+            "s3:radar_bands": [
+                {
+                    "description": "Band C - Ionospheric correction",
+                    "frequency_band": "C",
+                    "center_frequency": 5.409999872,
+                    "band_width": 0.29
+                },
+                {
+                    "description": "Band Ku - Range measurements",
+                    "frequency_band": "Ku",
+                    "center_frequency": 13.575000064,
+                    "band_width": 0.32
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "enhancedMeasurement": {
+            "type": "application/x-netcdf",
+            "description": "Enhanced measurement data file",
+            "s3:radar_bands": [
+                {
+                    "description": "Band C - Ionospheric correction",
+                    "frequency_band": "C",
+                    "center_frequency": 5.409999872,
+                    "band_width": 0.29
+                },
+                {
+                    "description": "Band Ku - Range measurements",
+                    "frequency_band": "Ku",
+                    "center_frequency": 13.575000064,
+                    "band_width": 0.32
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "reducedMeasurement": {
+            "type": "application/x-netcdf",
+            "description": "Reduced measurement data file",
+            "s3:radar_bands": [
+                {
+                    "description": "Band Ku - Range measurements",
+                    "frequency_band": "Ku",
+                    "center_frequency": 13.575000064,
+                    "band_width": 0.32
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        }
+    }
+}
