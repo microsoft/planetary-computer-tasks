@@ -101,6 +101,13 @@ class BaseSentinelCollection(pctasks.dataset.collection.Collection):  # type: ig
             else:
                 new_properties[key] = properties[key]
 
+        # Update placeholder platform ID to the final version
+        sat_id = "sat:platform_international_designator"
+        if properties[sat_id] == "0000-000A":
+            properties[sat_id] = "2016-011A"
+        elif properties[sat_id] == "0000-000B":
+            properties[sat_id] = "2018-039A"
+
         item_dict["properties"] = new_properties
 
         # ---- LINKS ----
