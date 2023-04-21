@@ -24,3 +24,12 @@ Each collection has its own module
 (`sentinel_3/sentinel_3_olci_lfr_l2_netcdf.py`). The name of the module should
 match the name of the collection. The module should have a class named
 `Collection` that is the pctasks `dataset.Collection` subclass.
+
+## Tests
+
+The `datasets/sentinel-3/tests` directory contains some tests. Run those with
+
+
+```
+$ PYTHONPATH=datasets/sentinel-3 python -m pytest datasets/sentinel-3/tests/
+```
