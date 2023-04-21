@@ -79,6 +79,13 @@ class Collection(pctasks.dataset.collection.Collection):
         properties["s3:dubious"] = properties.pop("s3:dubiousSamples_percentage")
         properties["s3:invalid"] = properties.pop("s3:invalidPixels_percentage")
 
+        # Update placeholder platform ID to the final version
+        sat_id = "sat:platform_international_designator"
+        if properties[sat_id] == "0000-000A":
+            properties[sat_id] = "2016-011A"
+        elif properties[sat_id] == "0000-000B":
+            properties[sat_id] = "2018-039A"
+
         item_dict["properties"] = properties
 
         # ---- LINKS ----
