@@ -40,10 +40,11 @@ class Collection(BaseSentinelCollection):
                 # add shape, flip to row, column order
                 asset["s3:shape"] = shape[::-1]
 
-            # Fix up descriptions
-            asset["description"] = ASSET_DESCRIPTIONS[asset_key]
+            # clean up descriptions
+            if asset_key in ASSET_DESCRIPTIONS:
+                asset["description"] = ASSET_DESCRIPTIONS[asset_key]
 
-            # Existign titles are just the filenames
+            # Existing titles are just the filenames
             if asset_key == "eopmetadata" or asset_key == "browse_jpg":
                 asset.pop("title", None)
 

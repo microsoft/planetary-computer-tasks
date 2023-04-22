@@ -138,7 +138,7 @@
         "standardMeasurement": {
             "type": "application/x-netcdf",
             "description": "Standard measurement data file",
-            "s3:radar_bands": [
+            "s3:altimetry_bands": [
                 {
                     "description": "Band C - Ionospheric correction",
                     "frequency_band": "C",
@@ -159,7 +159,7 @@
         "enhancedMeasurement": {
             "type": "application/x-netcdf",
             "description": "Enhanced measurement data file",
-            "s3:radar_bands": [
+            "s3:altimetry_bands": [
                 {
                     "description": "Band C - Ionospheric correction",
                     "frequency_band": "C",
@@ -180,7 +180,7 @@
         "reducedMeasurement": {
             "type": "application/x-netcdf",
             "description": "Reduced measurement data file",
-            "s3:radar_bands": [
+            "s3:altimetry_bands": [
                 {
                     "description": "Band Ku - Range measurements",
                     "frequency_band": "Ku",

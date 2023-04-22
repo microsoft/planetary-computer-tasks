@@ -49,6 +49,7 @@ class Collection(BaseSentinelCollection):
                 asset["s3:shape"] = shape[::-1]
 
             # clean up descriptions
-            asset["description"] = ASSET_DESCRIPTIONS[asset_key]
+            if asset_key in ASSET_DESCRIPTIONS:
+                asset["description"] = ASSET_DESCRIPTIONS[asset_key]
 
         return [pystac.Item.from_dict(item_dict)]

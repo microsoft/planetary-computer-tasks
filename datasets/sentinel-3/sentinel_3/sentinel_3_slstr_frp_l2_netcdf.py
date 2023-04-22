@@ -24,7 +24,7 @@ class Collection(BaseSentinelCollection):
         # other collections
         shape = item_dict["properties"].pop("s3:shape")
 
-        for asset_key, asset in item_dict["assets"].items():
+        for asset in item_dict["assets"].values():
             if "resolution" in asset:
                 # flip to row, column order
                 asset["s3:resolution"] = asset.pop("resolution")[::-1]

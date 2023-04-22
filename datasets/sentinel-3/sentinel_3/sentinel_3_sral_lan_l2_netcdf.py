@@ -35,8 +35,9 @@ class Collection(BaseSentinelCollection):
                 # single 2D list for the primary 2D variable.
                 asset.pop("shape")
 
-            # update descriptions
-            asset["description"] = ASSET_DESCRIPTIONS[asset_key]
+            # clean up descriptions
+            if asset_key in ASSET_DESCRIPTIONS:
+                asset["description"] = ASSET_DESCRIPTIONS[asset_key]
 
         # eo extension is not used
         item_dict["stac_extensions"] = [

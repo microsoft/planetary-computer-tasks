@@ -32,7 +32,7 @@
         "Land",
         "Biomass"
     ],
-    "msft:short_description": "Sentinel-3 Land Full Resolution vegetation index, chlorophyll index, and water vapor.",
+    "msft:short_description": "Sentinel-3 Land Full Resolution vegetation index, chlorophyll index, and water vapor (OLCI LFR).",
     "msft:storage_account": "sentinel3euwest",
     "msft:container": "sentinel-3",
     "msft:region": "westeurope",

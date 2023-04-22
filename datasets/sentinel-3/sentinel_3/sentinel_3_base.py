@@ -147,8 +147,8 @@ class BaseSentinelCollection(pctasks.dataset.collection.Collection):  # type: ig
             # We'll use a band construct similar to eo:bands, but follow the
             # naming and unit conventions in the SAR extension.
             if "sral:bands" in asset:
-                asset["s3:radar_bands"] = asset.pop("sral:bands")
-                for band in asset["s3:radar_bands"]:
+                asset["s3:altimetry_bands"] = asset.pop("sral:bands")
+                for band in asset["s3:altimetry_bands"]:
                     band["frequency_band"] = band.pop("name")
                     band["center_frequency"] = hz2ghz(band.pop("central_frequency"))
                     band["band_width"] = hz2ghz(band.pop("band_width_in_Hz"))

@@ -157,7 +157,7 @@ collections:
         token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
         chunks:
           options:
-            name_starts_with: SRAL/SL_2_FRP___/
+            name_starts_with: SLSTR/SL_2_FRP___/
             extensions: [.json]
             chunk_length: 5000
             limit: 100  # TODO: remove limit
@@ -172,7 +172,7 @@ collections:
         token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
         chunks:
           options:
-            name_starts_with: SRAL/SL_2_LST___/
+            name_starts_with: SLSTR/SL_2_LST___/
             extensions: [.json]
             chunk_length: 5000
             limit: 100  # TODO: remove limit
@@ -187,7 +187,7 @@ collections:
         token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
         chunks:
           options:
-            name_starts_with: SRAL/SL_2_WST___/
+            name_starts_with: SLSTR/SL_2_WST___/
             extensions: [.json]
             chunk_length: 5000
             limit: 100  # TODO: remove limit
