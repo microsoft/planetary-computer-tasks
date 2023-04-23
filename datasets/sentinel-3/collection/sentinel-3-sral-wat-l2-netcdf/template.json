@@ -101,7 +101,7 @@
             "SR_2_WAT___"
         ],
         "s3:product_name": [
-            "WAT"
+            "sral-wat"
         ],
         "s3:processing_timeliness": [
             "NT"
@@ -135,7 +135,7 @@
                 "metadata"
             ]
         },
-        "standardMeasurement": {
+        "standard-measurement": {
             "type": "application/x-netcdf",
             "description": "Standard measurement data file",
             "s3:altimetry_bands": [
@@ -156,7 +156,7 @@
                 "data"
             ]
         },
-        "enhancedMeasurement": {
+        "enhanced-measurement": {
             "type": "application/x-netcdf",
             "description": "Enhanced measurement data file",
             "s3:altimetry_bands": [
@@ -177,7 +177,7 @@
                 "data"
             ]
         },
-        "reducedMeasurement": {
+        "reduced-measurement": {
             "type": "application/x-netcdf",
             "description": "Reduced measurement data file",
             "s3:altimetry_bands": [
@@ -192,9 +192,9 @@
                 "data"
             ]
         },
-        "eopmetadata": {
+        "eop-metadata": {
             "type": "application/xml",
-            "description": "Product metadata file produced by EUMETSAT",
+            "description": "Product metadata file produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",
             "roles": [
                 "metadata"
             ]

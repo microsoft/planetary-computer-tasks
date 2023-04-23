@@ -101,7 +101,7 @@
             "SL_2_LST___"
         ],
         "s3:product_name": [
-            "LST"
+            "slstr-lst"
         ],
         "s3:processing_timeliness": [
             "NT"
@@ -149,7 +149,7 @@
                 "metadata"
             ]
         },
-        "LST_IN": {
+        "lst-in": {
             "type": "application/x-netcdf",
             "description": "Land Surface Temperature (LST) values",
             "eo:bands": [
@@ -170,70 +170,70 @@
                 "data"
             ]
         },
-        "LST_ANCILLARY_DS": {
+        "lst-ancillary-ds": {
             "type": "application/x-netcdf",
             "description": "LST ancillary measurement dataset",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_FLAGS_IN": {
+        "slstr-flags-in": {
             "type": "application/x-netcdf",
             "description": "Global flags for the 1km TIR grid, nadir view",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_INDICES_IN": {
+        "slstr-indices-in": {
             "type": "application/x-netcdf",
             "description": "Scan, pixel and detector indices annotations for the 1km TIR grid, nadir view",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_TIME_IN": {
+        "slstr-time-in": {
             "type": "application/x-netcdf",
             "description": "Time annotations for the 1km grid",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_GEODETIC_IN": {
+        "slstr-geodetic-in": {
             "type": "application/x-netcdf",
             "description": "Full resolution geodetic coordinates for the 1km TIR grid, nadir view",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_CARTESIAN_IN": {
+        "slstr-cartesian-in": {
             "type": "application/x-netcdf",
             "description": "Full resolution cartesian coordinates for the 1km TIR grid, nadir view",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_GEOMETRY_TN": {
+        "slstr-geometry-tn": {
             "type": "application/x-netcdf",
             "description": "16km solar and satellite geometry annotations, nadir view",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_GEODETIC_TX": {
+        "slstr-geodetic-tx": {
             "type": "application/x-netcdf",
             "description": "16km geodetic coordinates",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_CARTESIAN_TX": {
+        "slstr-cartesian-tx": {
             "type": "application/x-netcdf",
             "description": "16km cartesian coordinates",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_MET_TX": {
+        "slstr-met-tx": {
             "type": "application/x-netcdf",
             "description": "Meteorological parameters regridded onto the 16km tie points",
             "roles": [

@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import List, Union
 
 import pystac
@@ -8,21 +7,21 @@ from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 
 ASSET_DESCRIPTIONS = {
-    "chlNn": "Neural net chlorophyll concentration",
-    "chlOc4me": "OC4Me algorithm chlorophyll concentration",
-    "iopNn": "Inherent optical properties of water",
+    "chl-nn": "Neural net chlorophyll concentration",
+    "chl-oc4me": "OC4Me algorithm chlorophyll concentration",
+    "iop-nn": "Inherent optical properties of water",
     "iwv": "Integrated water vapour column",
     "par": "Photosynthetically active radiation",
-    "wAer": "Aerosol over water",
-    "geoCoordinates": "Geo coordinate annotations",
-    "instrumentData": "Instrument annotations",
-    "tieGeoCoordinates": "Tie-point geo coordinate annotations",
-    "tieGeometries": "Tie-point geometry annotations",
-    "tieMeteo": "Tie-point meteo annotations",
-    "timeCoordinates": "Time coordinate annotations",
+    "w-aer": "Aerosol over water",
+    "geo-coordinates": "Geo coordinate annotations",
+    "instrument-data": "Instrument annotations",
+    "tie-geo-coordinates": "Tie-point geo coordinate annotations",
+    "tie-geometries": "Tie-point geometry annotations",
+    "tie-meteo": "Tie-point meteo annotations",
+    "time-coordinates": "Time coordinate annotations",
     "wqsf": "Water quality and science flags",
-    "eopmetadata": "Metadata produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",  # noqa: E501
-    "browse_jpg": "Preview image produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",  # noqa: E501
+    "eop-metadata": "Metadata produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",  # noqa: E501
+    "browse-jpg": "Preview image produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",  # noqa: E501
 }
 
 

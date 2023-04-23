@@ -103,7 +103,7 @@
             "SY_2_SYN___"
         ],
         "s3:product_name": [
-            "SYN"
+            "synergy-syn"
         ],
         "s3:processing_timeliness": [
             "NT"
@@ -439,7 +439,7 @@
                 "metadata"
             ]
         },
-        "Syn_Oa01_reflectance": {
+        "syn-oa01-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with OLCI channel 01",
             "eo:bands": [
@@ -454,7 +454,7 @@
                 "data"
             ]
         },
-        "syn_oa02_reflectance": {
+        "syn-oa02-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with OLCI channel 02",
             "eo:bands": [
@@ -469,7 +469,7 @@
                 "data"
             ]
         },
-        "Syn_Oa03_reflectance": {
+        "syn-oa03-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with OLCI channel 03",
             "eo:bands": [
@@ -484,7 +484,7 @@
                 "data"
             ]
         },
-        "Syn_Oa04_reflectance": {
+        "syn-oa04-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with OLCI channel 04",
             "eo:bands": [
@@ -499,7 +499,7 @@
                 "data"
             ]
         },
-        "Syn_Oa05_reflectance": {
+        "syn-oa05-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with OLCI channel 05",
             "eo:bands": [
@@ -514,7 +514,7 @@
                 "data"
             ]
         },
-        "Syn_Oa06_reflectance": {
+        "syn-oa06-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with OLCI channel 06",
             "eo:bands": [
@@ -529,7 +529,7 @@
                 "data"
             ]
         },
-        "Syn_Oa07_reflectance": {
+        "syn-oa07-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with OLCI channel 07",
             "eo:bands": [
@@ -544,7 +544,7 @@
                 "data"
             ]
         },
-        "Syn_Oa08_reflectance": {
+        "syn-oa08-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with OLCI channel 08",
             "eo:bands": [
@@ -559,7 +559,7 @@
                 "data"
             ]
         },
-        "Syn_Oa09_reflectance": {
+        "syn-oa09-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with OLCI channel 09",
             "eo:bands": [
@@ -574,7 +574,7 @@
                 "data"
             ]
         },
-        "Syn_Oa10_reflectance": {
+        "syn-oa10-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with OLCI channel 10",
             "eo:bands": [
@@ -589,7 +589,7 @@
                 "data"
             ]
         },
-        "Syn_Oa11_reflectance": {
+        "syn-oa11-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with OLCI channel 11",
             "eo:bands": [
@@ -604,7 +604,7 @@
                 "data"
             ]
         },
-        "Syn_Oa12_reflectance": {
+        "syn-oa12-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with OLCI channel 12",
             "eo:bands": [
@@ -619,7 +619,7 @@
                 "data"
             ]
         },
-        "Syn_Oa16_reflectance": {
+        "syn-oa16-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with OLCI channel 16",
             "eo:bands": [
@@ -634,7 +634,7 @@
                 "data"
             ]
         },
-        "Syn_Oa17_reflectance": {
+        "syn-oa17-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with OLCI channel 17",
             "eo:bands": [
@@ -649,7 +649,7 @@
                 "data"
             ]
         },
-        "Syn_Oa18_reflectance": {
+        "syn-oa18-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with OLCI channel 18",
             "eo:bands": [
@@ -664,7 +664,7 @@
                 "data"
             ]
         },
-        "Syn_Oa21_reflectance": {
+        "syn-oa21-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with OLCI channel 21",
             "eo:bands": [
@@ -679,7 +679,7 @@
                 "data"
             ]
         },
-        "Syn_S1N_reflectance": {
+        "syn-s1n-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with SLSTR channel 01 acquired in nadir view",
             "eo:bands": [
@@ -694,7 +694,7 @@
                 "data"
             ]
         },
-        "Syn_S2N_reflectance": {
+        "syn-s2n-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with SLSTR channel 02 acquired in nadir view",
             "eo:bands": [
@@ -709,7 +709,7 @@
                 "data"
             ]
         },
-        "Syn_S3N_reflectance": {
+        "syn-s3n-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with SLSTR channel 03 acquired in nadir view",
             "eo:bands": [
@@ -724,7 +724,7 @@
                 "data"
             ]
         },
-        "Syn_S5N_reflectance": {
+        "syn-s5n-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with SLSTR channel 05 acquired in nadir view",
             "eo:bands": [
@@ -739,7 +739,7 @@
                 "data"
             ]
         },
-        "Syn_S6N_reflectance": {
+        "syn-s6n-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with SLSTR channel 06 acquired in nadir view",
             "eo:bands": [
@@ -754,7 +754,7 @@
                 "data"
             ]
         },
-        "Syn_S1O_reflectance": {
+        "syn-s1o-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with SLSTR channel 01 acquired in oblique view",
             "eo:bands": [
@@ -769,7 +769,7 @@
                 "data"
             ]
         },
-        "Syn_S2O_reflectance": {
+        "syn-s2o-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with SLSTR channel 02 acquired in oblique view",
             "eo:bands": [
@@ -784,7 +784,7 @@
                 "data"
             ]
         },
-        "Syn_S3O_reflectance": {
+        "syn-s3o-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with SLSTR channel 03 acquired in oblique view",
             "eo:bands": [
@@ -799,7 +799,7 @@
                 "data"
             ]
         },
-        "Syn_S5O_reflectance": {
+        "syn-s5o-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with SLSTR channel 05 acquired in oblique view",
             "eo:bands": [
@@ -814,7 +814,7 @@
                 "data"
             ]
         },
-        "Syn_S6O_reflectance": {
+        "syn-s6o-reflectance": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance associated with SLSTR channel 06 acquired in oblique view",
             "eo:bands": [
@@ -829,7 +829,7 @@
                 "data"
             ]
         },
-        "Syn_ATO550": {
+        "syn-ato550": {
             "type": "application/x-netcdf",
             "description": "Aerosol Optical Thickness Data Set",
             "eo:bands": [
@@ -964,7 +964,7 @@
                 "data"
             ]
         },
-        "Syn_Angstrom_exp550": {
+        "syn-angstrom-exp550": {
             "type": "application/x-netcdf",
             "description": "Aerosol Angstrom Exponent Data Set",
             "eo:bands": [
@@ -1099,7 +1099,7 @@
                 "data"
             ]
         },
-        "Syn_SDR_removed_pixels": {
+        "syn-sdr-removed-pixels": {
             "type": "application/x-netcdf",
             "description": "Surface directional reflectance and aerosol parameters associated with removed pixel",
             "eo:bands": [
@@ -1246,14 +1246,14 @@
                 "data"
             ]
         },
-        "Syn_AMIN": {
+        "syn-amin": {
             "type": "application/x-netcdf",
             "description": "L2 Aerosol model index number data",
             "roles": [
                 "data"
             ]
         },
-        "Syn_flags": {
+        "syn-flags": {
             "type": "application/x-netcdf",
             "description": "Classification and quality Flags associated with OLCI, SLSTR and SYNERGY products",
             "roles": [
@@ -1274,35 +1274,35 @@
                 "data"
             ]
         },
-        "annotations_removed_pixels": {
+        "annotations-removed-pixels": {
             "type": "application/x-netcdf",
             "description": "Annotations parameters associated with removed pixel",
             "roles": [
                 "data"
             ]
         },
-        "tiepoints_olci": {
+        "tiepoints-olci": {
             "type": "application/x-netcdf",
             "description": "Low resolution georeferencing data and Sun and View angles associated with OLCI products",
             "roles": [
                 "data"
             ]
         },
-        "tiepoints_slstr_n": {
+        "tiepoints-slstr-n": {
             "type": "application/x-netcdf",
             "description": "Low resolution georeferencing data and Sun and View angles associated with SLSTR nadir view products",
             "roles": [
                 "data"
             ]
         },
-        "tiepoints_slstr_o": {
+        "tiepoints-slstr-o": {
             "type": "application/x-netcdf",
             "description": "Low resolution georeferencing data and Sun and View angles associated with SLSTR oblique view products",
             "roles": [
                 "data"
             ]
         },
-        "tiepoints_meteo": {
+        "tiepoints-meteo": {
             "type": "application/x-netcdf",
             "description": "ECMWF meteorology data",
             "roles": [

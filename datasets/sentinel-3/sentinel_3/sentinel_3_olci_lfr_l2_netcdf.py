@@ -12,15 +12,15 @@ ASSET_DESCRIPTIONS = {
     "ogvi": "OLCI Global Vegetation Index (OGVI)",
     "otci": "OLCI Terrestrial Chlorophyll Index (OTCI)",
     "iwv": "Integrated water vapour column",
-    "rcOgvi": "Rectified reflectance",
-    "rcGifapar": "Rectified reflectance",
+    "rc-ogvi": "Rectified reflectance",
+    "rc-gifapar": "Rectified reflectance",
     "lqsf": "Land quality and science flags",
-    "timeCoordinates": "Time coordinate annotations",
-    "geoCoordinates": "Geo coordinate annotations",
-    "tieGeoCoordinates": "Tie-point geo coordinate annotations",
-    "tieGeometries": "Tie-point geometry annotations",
-    "tieMeteo": "Tie-point meteo annotations",
-    "instrumentData": "Instrument annotations",
+    "time-coordinates": "Time coordinate annotations",
+    "geo-coordinates": "Geo coordinate annotations",
+    "tie-geo-coordinates": "Tie-point geo coordinate annotations",
+    "tie-geometries": "Tie-point geometry annotations",
+    "tie-meteo": "Tie-point meteo annotations",
+    "instrument-data": "Instrument annotations",
 }
 
 

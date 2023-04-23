@@ -123,7 +123,7 @@
             "OL_2_WFR___"
         ],
         "s3:product_name": [
-            "WFR"
+            "olci-wfr"
         ],
         "eo:bands": [
             {
@@ -238,7 +238,7 @@
                 "metadata"
             ]
         },
-        "Oa01_reflectance": {
+        "oa01-reflectance": {
             "type": "application/x-netcdf",
             "description": "Reflectance for OLCI acquisition band Oa01",
             "eo:bands": [
@@ -253,7 +253,7 @@
                 "data"
             ]
         },
-        "Oa02_reflectance": {
+        "oa02-reflectance": {
             "type": "application/x-netcdf",
             "description": "Reflectance for OLCI acquisition band Oa02",
             "eo:bands": [
@@ -268,7 +268,7 @@
                 "data"
             ]
         },
-        "Oa03_reflectance": {
+        "oa03-reflectance": {
             "type": "application/x-netcdf",
             "description": "Reflectance for OLCI acquisition band Oa03",
             "eo:bands": [
@@ -283,7 +283,7 @@
                 "data"
             ]
         },
-        "Oa04_reflectance": {
+        "oa04-reflectance": {
             "type": "application/x-netcdf",
             "description": "Reflectance for OLCI acquisition band Oa04",
             "eo:bands": [
@@ -298,7 +298,7 @@
                 "data"
             ]
         },
-        "Oa05_reflectance": {
+        "oa05-reflectance": {
             "type": "application/x-netcdf",
             "description": "Reflectance for OLCI acquisition band Oa05",
             "eo:bands": [
@@ -313,7 +313,7 @@
                 "data"
             ]
         },
-        "Oa06_reflectance": {
+        "oa06-reflectance": {
             "type": "application/x-netcdf",
             "description": "Reflectance for OLCI acquisition band Oa06",
             "eo:bands": [
@@ -328,7 +328,7 @@
                 "data"
             ]
         },
-        "Oa07_reflectance": {
+        "oa07-reflectance": {
             "type": "application/x-netcdf",
             "description": "Reflectance for OLCI acquisition band Oa07",
             "eo:bands": [
@@ -343,7 +343,7 @@
                 "data"
             ]
         },
-        "Oa08_reflectance": {
+        "oa08-reflectance": {
             "type": "application/x-netcdf",
             "description": "Reflectance for OLCI acquisition band Oa08",
             "eo:bands": [
@@ -358,7 +358,7 @@
                 "data"
             ]
         },
-        "Oa09_reflectance": {
+        "oa09-reflectance": {
             "type": "application/x-netcdf",
             "description": "Reflectance for OLCI acquisition band Oa09",
             "eo:bands": [
@@ -373,7 +373,7 @@
                 "data"
             ]
         },
-        "Oa10_reflectance": {
+        "oa10-reflectance": {
             "type": "application/x-netcdf",
             "description": "Reflectance for OLCI acquisition band Oa10",
             "eo:bands": [
@@ -388,7 +388,7 @@
                 "data"
             ]
         },
-        "Oa11_reflectance": {
+        "oa11-reflectance": {
             "type": "application/x-netcdf",
             "description": "Reflectance for OLCI acquisition band Oa11",
             "eo:bands": [
@@ -403,7 +403,7 @@
                 "data"
             ]
         },
-        "Oa12_reflectance": {
+        "oa12-reflectance": {
             "type": "application/x-netcdf",
             "description": "Reflectance for OLCI acquisition band Oa12",
             "eo:bands": [
@@ -418,7 +418,7 @@
                 "data"
             ]
         },
-        "Oa16_reflectance": {
+        "oa16-reflectance": {
             "type": "application/x-netcdf",
             "description": "Reflectance for OLCI acquisition band Oa16",
             "eo:bands": [
@@ -433,7 +433,7 @@
                 "data"
             ]
         },
-        "Oa17_reflectance": {
+        "oa17-reflectance": {
             "type": "application/x-netcdf",
             "description": "Reflectance for OLCI acquisition band Oa17",
             "eo:bands": [
@@ -448,7 +448,7 @@
                 "data"
             ]
         },
-        "Oa18_reflectance": {
+        "oa18-reflectance": {
             "type": "application/x-netcdf",
             "description": "Reflectance for OLCI acquisition band Oa18",
             "eo:bands": [
@@ -463,7 +463,7 @@
                 "data"
             ]
         },
-        "Oa21_reflectance": {
+        "oa21-reflectance": {
             "type": "application/x-netcdf",
             "description": "Reflectance for OLCI acquisition band Oa21",
             "eo:bands": [
@@ -478,7 +478,7 @@
                 "data"
             ]
         },
-        "chlNn": {
+        "chl-nn": {
             "type": "application/x-netcdf",
             "description": "Neural net chlorophyll concentration",
             "eo:bands": [
@@ -583,7 +583,7 @@
                 "data"
             ]
         },
-        "chlOc4me": {
+        "chl-oc4me": {
             "type": "application/x-netcdf",
             "description": "OC4Me algorithm chlorophyll concentration",
             "eo:bands": [
@@ -616,7 +616,7 @@
                 "data"
             ]
         },
-        "iopNn": {
+        "iop-nn": {
             "type": "application/x-netcdf",
             "description": "Inherent optical properties of water",
             "eo:bands": [
@@ -704,7 +704,7 @@
                 "data"
             ]
         },
-        "tsmNn": {
+        "tsm-nn": {
             "type": "application/x-netcdf",
             "description": "Total suspended matter concentration",
             "eo:bands": [
@@ -809,7 +809,7 @@
                 "data"
             ]
         },
-        "wAer": {
+        "w-aer": {
             "type": "application/x-netcdf",
             "description": "Aerosol over water",
             "eo:bands": [
@@ -836,42 +836,42 @@
                 "data"
             ]
         },
-        "geoCoordinates": {
+        "geo-coordinates": {
             "type": "application/x-netcdf",
             "description": "Geo coordinate annotations",
             "roles": [
                 "data"
             ]
         },
-        "instrumentData": {
+        "instrument-data": {
             "type": "application/x-netcdf",
             "description": "Instrument annotations",
             "roles": [
                 "data"
             ]
         },
-        "tieGeoCoordinates": {
+        "tie-geo-coordinates": {
             "type": "application/x-netcdf",
             "description": "Tie-point geo coordinate annotations",
             "roles": [
                 "data"
             ]
         },
-        "tieGeometries": {
+        "tie-geometries": {
             "type": "application/x-netcdf",
             "description": "Tie-point geometry annotations",
             "roles": [
                 "data"
             ]
         },
-        "tieMeteo": {
+        "tie-meteo": {
             "type": "application/x-netcdf",
             "description": "Tie-point meteo annotations",
             "roles": [
                 "data"
             ]
         },
-        "timeCoordinates": {
+        "time-coordinates": {
             "type": "application/x-netcdf",
             "description": "Time coordinate annotations",
             "roles": [
@@ -885,17 +885,15 @@
                 "data"
             ]
         },
-        "eopmetadata": {
+        "eop-metadata": {
             "type": "application/xml",
-            "title": "EOPMetadata.xml",
             "description": "Metadata produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",
             "roles": [
                 "metadata"
             ]
         },
-        "browse_jpg": {
+        "browse-jpg": {
             "type": "image/jpeg",
-            "title": "browse.jpg",
             "description": "Preview image produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",
             "roles": [
                 "thumbnail"

@@ -8,17 +8,17 @@ from pctasks.core.storage import StorageFactory
 
 ASSET_DESCRIPTIONS = {
     "safe-manifest": "SAFE product manifest",
-    "LST_IN": "Land Surface Temperature (LST) values",
-    "LST_ANCILLARY_DS": "LST ancillary measurement dataset",
-    "SLSTR_FLAGS_IN": "Global flags for the 1km TIR grid, nadir view",
-    "SLSTR_INDICES_IN": "Scan, pixel and detector indices annotations for the 1km TIR grid, nadir view",  # noqa: E501
-    "SLSTR_TIME_IN": "Time annotations for the 1km grid",
-    "SLSTR_GEODETIC_IN": "Full resolution geodetic coordinates for the 1km TIR grid, nadir view",
-    "SLSTR_CARTESIAN_IN": "Full resolution cartesian coordinates for the 1km TIR grid, nadir view",
-    "SLSTR_GEOMETRY_TN": "16km solar and satellite geometry annotations, nadir view",
-    "SLSTR_GEODETIC_TX": "16km geodetic coordinates",
-    "SLSTR_CARTESIAN_TX": "16km cartesian coordinates",
-    "SLSTR_MET_TX": "Meteorological parameters regridded onto the 16km tie points",
+    "lst-in": "Land Surface Temperature (LST) values",
+    "st-ancillary-ds": "LST ancillary measurement dataset",
+    "slstr-flags-in": "Global flags for the 1km TIR grid, nadir view",
+    "slstr-indices-in": "Scan, pixel and detector indices annotations for the 1km TIR grid, nadir view",  # noqa: E501
+    "slstr-time-in": "Time annotations for the 1km grid",
+    "slstr-geodetic-in": "Full resolution geodetic coordinates for the 1km TIR grid, nadir view",
+    "slstr-cartesian-in": "Full resolution cartesian coordinates for the 1km TIR grid, nadir view",
+    "slstr-geometry-tn": "16km solar and satellite geometry annotations, nadir view",
+    "slstr-geodetic-tx": "16km geodetic coordinates",
+    "slstr-cartesian-tx": "16km cartesian coordinates",
+    "slstr-met-tx": "Meteorological parameters regridded onto the 16km tie points",
 }
 
 

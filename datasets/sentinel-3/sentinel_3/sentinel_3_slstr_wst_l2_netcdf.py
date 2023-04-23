@@ -8,9 +8,9 @@ from pctasks.core.storage import StorageFactory
 
 ASSET_DESCRIPTIONS = {
     "safe-manifest": "SAFE product manifest",
-    "L2P": "Skin Sea Surface Temperature (SST) values",
-    "eopmetadata": "Metadata produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",  # noqa: E501
-    "browse_jpg": "Preview image produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",  # noqa: E501
+    "l2p": "Skin Sea Surface Temperature (SST) values",
+    "eop-metadata": "Metadata produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",  # noqa: E501
+    "browse-jpg": "Preview image produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",  # noqa: E501
 }
 
 
@@ -43,9 +43,5 @@ class Collection(BaseSentinelCollection):
             # clean up descriptions
             if asset_key in ASSET_DESCRIPTIONS:
                 asset["description"] = ASSET_DESCRIPTIONS[asset_key]
-
-            # Existing titles are just the filenames
-            if asset_key == "eopmetadata" or asset_key == "browse_jpg":
-                asset.pop("title", None)
 
         return [pystac.Item.from_dict(item_dict)]

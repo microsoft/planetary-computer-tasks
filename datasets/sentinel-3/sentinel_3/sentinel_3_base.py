@@ -8,6 +8,21 @@ import shapely.geometry
 
 import pctasks.dataset.collection
 
+PRODUCT_NAMES = {
+    "OL_2_LFR___": "olci-lfr",
+    "OL_2_WFR___": "olci-wfr",
+    "SL_2_FRP___": "slstr-frp",
+    "SL_2_LST___": "slstr-lst",
+    "SL_2_WST___": "slstr-wst",
+    "SR_2_LAN___": "sral-lan",
+    "SR_2_WAT___": "sral-wat",
+    "SY_2_AOD___": "synergy-aod",
+    "SY_2_SYN___": "synergy-syn",
+    "SY_2_V10___": "synergy-v10",
+    "SY_2_VG1___": "synergy-vg1",
+    "SY_2_VGP___": "synergy-vgp",
+}
+
 
 class BaseSentinelCollection(pctasks.dataset.collection.Collection):  # type: ignore
     def base_updates(
@@ -63,17 +78,11 @@ class BaseSentinelCollection(pctasks.dataset.collection.Collection):  # type: ig
             # "SYNERGY" is not a instrument
             properties["instruments"] = ["OLCI", "SLSTR"]
 
-        # The gsd field does not align with the STAC spec, but it does contain
-        # correct information on the different sensor gsd values. Leaving for now.
-        # properties.pop("s3:gsd", None)
-
         # Add the processing timelessness to the properties
         properties["s3:processing_timeliness"] = timeliness
 
         # Add a user-friendly name
-        properties["s3:product_name"] = (
-            properties["s3:productType"].rstrip("_").split("_")[-1]
-        )
+        properties["s3:product_name"] = PRODUCT_NAMES[properties["s3:productType"]]
 
         # Providers should be supplied in the Collection, not the Item
         properties.pop("providers", None)
@@ -126,6 +135,7 @@ class BaseSentinelCollection(pctasks.dataset.collection.Collection):  # type: ig
         # ---- ASSETS ----
         assets = item_dict.pop("assets")
 
+        new_assets = {}
         for asset_key, asset in assets.items():
             # remove local paths
             asset.pop("file:local_path", None)
@@ -153,7 +163,24 @@ class BaseSentinelCollection(pctasks.dataset.collection.Collection):  # type: ig
                     band["center_frequency"] = hz2ghz(band.pop("central_frequency"))
                     band["band_width"] = hz2ghz(band.pop("band_width_in_Hz"))
 
-        item_dict["assets"] = assets
+            # Some titles are just the filenames
+            if asset_key == "eopmetadata" or asset_key == "browse_jpg":
+                asset.pop("title", None)
+
+            # Make asset keys kebab-case
+            new_asset_key = ""
+            for first, second in zip(asset_key, asset_key[1:]):
+                new_asset_key += first
+                if first.islower() and second.isupper():
+                    new_asset_key += "-"
+            new_asset_key += asset_key[-1]
+            new_asset_key = new_asset_key.replace("_", "-")
+            new_asset_key = new_asset_key.lower()
+            if asset_key == "eopmetadata":
+                new_asset_key = "eop-metadata"
+            new_assets[new_asset_key] = asset
+
+        item_dict["assets"] = new_assets
 
         # ---- GEOMETRY ----
         if fix_geometry:

@@ -101,7 +101,7 @@
             "SL_2_WST___"
         ],
         "s3:product_name": [
-            "WST"
+            "slstr-wst"
         ],
         "s3:processing_timeliness": [
             "NT"
@@ -155,7 +155,7 @@
                 "metadata"
             ]
         },
-        "L2P": {
+        "l2p": {
             "type": "application/x-netcdf",
             "description": "Skin Sea Surface Temperature (SST) values",
             "eo:bands": [
@@ -182,14 +182,14 @@
                 "data"
             ]
         },
-        "eopmetadata": {
+        "eop-metadata": {
             "type": "application/xml",
             "description": "Metadata produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",
             "roles": [
                 "metadata"
             ]
         },
-        "browse_jpg": {
+        "browse-jpg": {
             "type": "image/jpeg",
             "description": "Preview image produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",
             "roles": [

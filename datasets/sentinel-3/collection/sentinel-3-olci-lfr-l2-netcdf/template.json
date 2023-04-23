@@ -103,7 +103,7 @@
             "OL_2_LFR___"
         ],
         "s3:product_name": [
-            "LFR"
+            "olci-lfr"
         ],
         "eo:bands": [
             {
@@ -205,33 +205,6 @@
                 "data"
             ]
         },
-        "gifapar": {
-            "type": "application/x-netcdf",
-            "description": "Green instantaneous Fraction of Absorbed Photosynthetically Active Radiation (FAPAR)",
-            "eo:bands": [
-                {
-                    "name": "Oa03",
-                    "description": "Band 3 - Chlorophyll absorption maximum, biogeochemistry, vegetation",
-                    "center_wavelength": 0.4425,
-                    "full_width_half_max": 0.01
-                },
-                {
-                    "name": "Oa10",
-                    "description": "Band 10 - Chlorophyll fluorescence peak, red edge",
-                    "center_wavelength": 0.68125,
-                    "full_width_half_max": 0.0075
-                },
-                {
-                    "name": "Oa17",
-                    "description": "Band 17 - Atmospheric / aerosol correction, clouds, pixel co-registration",
-                    "center_wavelength": 0.865,
-                    "full_width_half_max": 0.02
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
         "otci": {
             "type": "application/x-netcdf",
             "description": "OLCI Terrestrial Chlorophyll Index (OTCI)",
@@ -280,7 +253,7 @@
                 "data"
             ]
         },
-        "rcOgvi": {
+        "rc-ogvi": {
             "type": "application/x-netcdf",
             "description": "Rectified reflectance",
             "eo:bands": [
@@ -301,13 +274,6 @@
                 "data"
             ]
         },
-        "rcGifapar": {
-            "type": "application/x-netcdf",
-            "description": "Rectified reflectance",
-            "roles": [
-                "data"
-            ]
-        },
         "lqsf": {
             "type": "application/x-netcdf",
             "description": "Land quality and science flags",
@@ -315,44 +281,78 @@
                 "data"
             ]
         },
-        "timeCoordinates": {
+        "time-coordinates": {
             "type": "application/x-netcdf",
             "description": "Time coordinate annotations",
             "roles": [
                 "data"
             ]
         },
-        "geoCoordinates": {
+        "geo-coordinates": {
             "type": "application/x-netcdf",
             "description": "Geo coordinate annotations",
             "roles": [
                 "data"
             ]
         },
-        "tieGeoCoordinates": {
+        "tie-geo-coordinates": {
             "type": "application/x-netcdf",
             "description": "Tie-point geo coordinate annotations",
             "roles": [
                 "data"
             ]
         },
-        "tieGeometries": {
+        "tie-geometries": {
             "type": "application/x-netcdf",
             "description": "Tie-point geometry annotations",
             "roles": [
                 "data"
             ]
         },
-        "tieMeteo": {
+        "tie-meteo": {
             "type": "application/x-netcdf",
             "description": "Tie-point meteo annotations",
             "roles": [
                 "data"
             ]
         },
-        "instrumentData": {
+        "instrument-data": {
             "type": "application/x-netcdf",
             "description": "Instrument annotations",
+            "roles": [
+                "data"
+            ]
+        },
+        "gifapar": {
+            "type": "application/x-netcdf",
+            "description": "Green instantaneous Fraction of Absorbed Photosynthetically Active Radiation (FAPAR)",
+            "eo:bands": [
+                {
+                    "name": "Oa03",
+                    "description": "Band 3 - Chlorophyll absorption maximum, biogeochemistry, vegetation",
+                    "center_wavelength": 0.4425,
+                    "full_width_half_max": 0.01
+                },
+                {
+                    "name": "Oa10",
+                    "description": "Band 10 - Chlorophyll fluorescence peak, red edge",
+                    "center_wavelength": 0.68125,
+                    "full_width_half_max": 0.0075
+                },
+                {
+                    "name": "Oa17",
+                    "description": "Band 17 - Atmospheric / aerosol correction, clouds, pixel co-registration",
+                    "center_wavelength": 0.865,
+                    "full_width_half_max": 0.02
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "rc-gifapar": {
+            "type": "application/x-netcdf",
+            "description": "Rectified reflectance",
             "roles": [
                 "data"
             ]

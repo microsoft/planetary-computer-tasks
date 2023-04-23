@@ -100,7 +100,7 @@
             "SR_2_LAN___"
         ],
         "s3:product_name": [
-            "LAN"
+            "sral-lan"
         ],
         "s3:processing_timeliness": [
             "NT"
@@ -134,7 +134,7 @@
                 "metadata"
             ]
         },
-        "standardMeasurement": {
+        "standard-measurement": {
             "type": "application/x-netcdf",
             "description": "Standard measurement data file",
             "s3:altimetry_bands": [
@@ -155,7 +155,7 @@
                 "data"
             ]
         },
-        "enhancedMeasurement": {
+        "enhanced-measurement": {
             "type": "application/x-netcdf",
             "description": "Enhanced measurement data file",
             "s3:altimetry_bands": [
@@ -176,7 +176,7 @@
                 "data"
             ]
         },
-        "reducedMeasurement": {
+        "reduced-measurement": {
             "type": "application/x-netcdf",
             "description": "Reduced measurement data file",
             "s3:altimetry_bands": [

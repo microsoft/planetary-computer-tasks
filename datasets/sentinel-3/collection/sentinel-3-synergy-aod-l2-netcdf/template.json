@@ -102,12 +102,24 @@
             "SY_2_AOD___"
         ],
         "s3:product_name": [
-            "AOD"
+            "synergy-aod"
         ],
         "s3:processing_timeliness": [
             "NT"
         ],
         "eo:bands": [
+            {
+                "name": "SYN_1600",
+                "description": "SLSTR nadir and oblique channel S5",
+                "center_wavelength": 1.61,
+                "full_width_half_max": 0.06
+            },
+            {
+                "name": "SYN_2250",
+                "description": "SLSTR nadir and oblique channel S6",
+                "center_wavelength": 2.25,
+                "full_width_half_max": 0.05
+            },
             {
                 "name": "SYN_440",
                 "description": "OLCI channel Oa03",
@@ -131,18 +143,6 @@
                 "description": "OLCI channel Oa17, SLSTR nadir and oblique channel S2",
                 "center_wavelength": 0.865,
                 "full_width_half_max": 0.02
-            },
-            {
-                "name": "SYN_1600",
-                "description": "SLSTR nadir and oblique channel S5",
-                "center_wavelength": 1.61,
-                "full_width_half_max": 0.06
-            },
-            {
-                "name": "SYN_2250",
-                "description": "SLSTR nadir and oblique channel S6",
-                "center_wavelength": 2.25,
-                "full_width_half_max": 0.05
             }
         ]
     },
@@ -168,17 +168,18 @@
     },
     "item_assets": {
         "safe-manifest": {
-            "description": "SAFE product manifest",
             "type": "application/xml",
+            "description": "SAFE product manifest",
             "roles": [
                 "metadata"
             ]
         },
-        "NTC_AOD": {
-            "description": "Global aerosol parameters",
+        "ntc-aod": {
             "type": "application/x-netcdf",
-            "roles": [
-                "data"
+            "description": "Global aerosol parameters",
+            "resolution": [
+                4500,
+                4500
             ],
             "eo:bands": [
                 {
@@ -217,6 +218,9 @@
                     "center_wavelength": 2.25,
                     "full_width_half_max": 0.05
                 }
+            ],
+            "roles": [
+                "data"
             ]
         }
     }

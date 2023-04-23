@@ -8,10 +8,10 @@ from pctasks.core.storage import StorageFactory
 
 ASSET_DESCRIPTIONS = {
     "safe-manifest": "SAFE product manifest",
-    "standardMeasurement": "Standard measurement data file",
-    "enhancedMeasurement": "Enhanced measurement data file",
-    "reducedMeasurement": "Reduced measurement data file",
-    "eopmetadata": "Product metadata file produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",  # noqa
+    "standard-measurement": "Standard measurement data file",
+    "enhanced-measurement": "Enhanced measurement data file",
+    "reduced-measurement": "Reduced measurement data file",
+    "eop-metadata": "Product metadata file produced by the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT)",  # noqa
 }
 
 
@@ -39,10 +39,6 @@ class Collection(BaseSentinelCollection):
             # clean up descriptions
             if asset_key in ASSET_DESCRIPTIONS:
                 asset["description"] = ASSET_DESCRIPTIONS[asset_key]
-
-            # the eopmetadata asset title is not useful
-            if asset_key == "eopmetadata":
-                asset.pop("title")
 
         # eo extension is not used
         item_dict["stac_extensions"] = [

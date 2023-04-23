@@ -8,9 +8,9 @@ from pctasks.core.storage import StorageFactory
 
 ASSET_DESCRIPTIONS = {
     "safe-manifest": "SAFE product manifest",
-    "standardMeasurement": "Standard measurement data file",
-    "enhancedMeasurement": "Enhanced measurement data file",
-    "reducedMeasurement": "Reduced measurement data file",
+    "standard-measurement": "Standard measurement data file",
+    "enhanced-measurement": "Enhanced measurement data file",
+    "reduced-measurement": "Reduced measurement data file",
 }
 
 

@@ -101,7 +101,7 @@
             "SL_2_FRP___"
         ],
         "s3:product_name": [
-            "FRP"
+            "slstr-frp"
         ],
         "s3:processing_timeliness": [
             "NT"
@@ -161,9 +161,9 @@
                 "metadata"
             ]
         },
-        "FRP_IN": {
+        "frp-in": {
             "type": "application/x-netcdf",
-            "description": "Fire radiative power (FRP) dataset",
+            "description": "Fire Radiative Power (FRP) dataset",
             "eo:bands": [
                 {
                     "name": "S5",
@@ -194,93 +194,93 @@
                 "data"
             ]
         },
-        "SLSTR_CARTESIAN_FN": {
+        "slstr-cartesian-fn": {
             "type": "application/x-netcdf",
-            "description": "Full resolution cartesian coordinates for the 1km f1 grid, nadir view",
+            "description": "Full resolution cartesian coordinates for the 1km F1 grid, nadir view",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_CARTESIAN_IN": {
+        "slstr-cartesian-in": {
             "type": "application/x-netcdf",
-            "description": "Full resolution cartesian coordinates for the 1km tir grid, nadir view",
+            "description": "Full resolution cartesian coordinates for the 1km TIR grid, nadir view",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_CARTESIAN_TX": {
+        "slstr-cartesian-tx": {
             "type": "application/x-netcdf",
             "description": "16km cartesian coordinates",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_FLAGS_FN": {
+        "slstr-flags-fn": {
             "type": "application/x-netcdf",
-            "description": "Global flags for the 1km f1 grid, nadir view",
+            "description": "Global flags for the 1km F1 grid, nadir view",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_FLAGS_IN": {
+        "slstr-flags-in": {
             "type": "application/x-netcdf",
-            "description": "Global flags for the 1km tir grid, nadir view",
+            "description": "Global flags for the 1km TIR grid, nadir view",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_GEODETIC_FN": {
+        "slstr-geodetic-fn": {
             "type": "application/x-netcdf",
-            "description": "Full resolution geodetic coordinates for the 1km f1 grid, nadir view",
+            "description": "Full resolution geodetic coordinates for the 1km F1 grid, nadir view",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_GEODETIC_IN": {
+        "slstr-geodetic-in": {
             "type": "application/x-netcdf",
-            "description": "Full resolution geodetic coordinates for the 1km tir grid, nadir view",
+            "description": "Full resolution geodetic coordinates for the 1km TIR grid, nadir view",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_GEODETIC_TX": {
+        "slstr-geodetic-tx": {
             "type": "application/x-netcdf",
             "description": "16km geodetic coordinates",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_GEOMETRY_TN": {
+        "slstr-geometry-tn": {
             "type": "application/x-netcdf",
             "description": "16km solar and satellite geometry annotations, nadir view",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_INDICES_FN": {
+        "slstr-indices-fn": {
             "type": "application/x-netcdf",
-            "description": "Scan, pixel and detector annotations for the 1km f1 grid, nadir view",
+            "description": "Scan, pixel and detector annotations for the 1km F1 grid, nadir view",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_INDICES_IN": {
+        "slstr-indices-in": {
             "type": "application/x-netcdf",
-            "description": "Scan, pixel and detector annotations for the 1km tir grid, nadir view",
+            "description": "Scan, pixel and detector annotations for the 1km TIR grid, nadir view",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_MET_TX": {
+        "slstr-met-tx": {
             "type": "application/x-netcdf",
             "description": "Meteorological parameters regridded onto the 16km tie points",
             "roles": [
                 "data"
             ]
         },
-        "SLSTR_TIME_IN": {
+        "slstr-time-in": {
             "type": "application/x-netcdf",
-            "description": "Time annotations for the 1 km grid",
+            "description": "Time annotations for the 1 KM grid",
             "roles": [
                 "data"
             ]
