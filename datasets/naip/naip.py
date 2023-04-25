@@ -117,13 +117,9 @@ class NAIPCollection(Collection):
             logger.debug("Creating thumbnail %s", thumbnail_path)
             thumbnail_f = functools.partial(create_thumbnail, cog_href, thumbnail_name)
             with_backoff(thumbnail_f, is_throttle=lambda x: True)
-            kwargs = {}
-            if isinstance(cog_storage, BlobStorage):
-                kwargs["content_settings"] = azure.storage.blob.ContentSettings(
-                    content_type="image/jpeg"
-                )
-
-            cog_storage.upload_file(thumbnail_name, thumbnail_path, **kwargs)
+            cog_storage.upload_file(
+                thumbnail_name, thumbnail_path, content_type=pystac.MediaType.JPEG.value
+            )
 
         assert cog_storage.file_exists(thumbnail_path)
 

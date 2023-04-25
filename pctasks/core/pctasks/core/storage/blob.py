@@ -29,6 +29,7 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     ContainerSasPermissions,
+    ContentSettings,
     generate_container_sas,
 )
 
@@ -539,17 +540,23 @@ class BlobStorage(Storage):
         input_path: str,
         target_path: str,
         overwrite: bool = True,
-        **kwargs: Any,
+        content_type: Optional[str] = None,
     ) -> None:
         """
         Upload a file to blob storage.
 
         Parameters
         ----------
-        **kwargs:
-            Additional keyword arguments are provided to
-            :class:`azure.storage.blob.BlobClient.upload_blob`.
+        content_type: str, optional
+            The content type of the file. If provided, it will be set in
+            the :class:`azure.storage.blob.ContentSettings` argument passed
+            to :meth:`azure.storage.blob.BlobClient.upload_blob`.
         """
+        kwargs = {}
+        if content_type:
+            kwargs["content_settings"] = ContentSettings(
+                content_type=content_type
+            )
         with self._get_client() as client:
             with client.container.get_blob_client(
                 self._add_prefix(target_path)
