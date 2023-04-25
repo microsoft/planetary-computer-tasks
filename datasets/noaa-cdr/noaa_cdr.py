@@ -1,5 +1,6 @@
 import logging
 import os.path
+from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Union
 
@@ -9,7 +10,7 @@ import stactools.noaa_cdr.sea_ice_concentration.stac
 import stactools.noaa_cdr.sea_surface_temperature_optimum_interpolation.stac
 import stactools.noaa_cdr.sea_surface_temperature_whoi.stac
 import stactools.noaa_cdr.stac
-from pystac import Item, MediaType
+from pystac import Item, Link, MediaType
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
@@ -29,7 +30,7 @@ class OceanHeatContentCollection(Collection):
     ) -> Union[List[Item], WaitTaskResult]:
         directory = "/".join(asset_uri.split("/")[:-1])
         asset_storage = storage_factory.get_storage(directory)
-        files = asset_storage.list_files(extensions=[".nc"])
+        files = list(asset_storage.list_files(extensions=[".nc"]))
         cog_storage = storage_factory.get_storage(cog_uri("ocean-heat-content"))
         cog_files = cog_storage.list_files(extensions=[".tif"])
         cog_hrefs = [cog_storage.get_url(file) for file in cog_files]
@@ -44,7 +45,6 @@ class OceanHeatContentCollection(Collection):
                 directory=temporary_directory,
                 cog_hrefs=cog_hrefs,
             )
-            # TODO add a derived-from link
             for item in items:
                 for key, asset in item.assets.items():
                     if asset.href.startswith(
@@ -55,6 +55,26 @@ class OceanHeatContentCollection(Collection):
                         cog_storage.upload_file(asset.href, file_name)
                         asset.href = cog_url
                         item.assets[key] = asset
+                for file in files:
+                    id = Path(file).with_suffix("").stem
+                    parts = id.split("_")
+                    max_depth = int(parts[-2].split("-")[-1])
+                    interval = parts[-1]
+                    # We use startswith rather than equals for interval because
+                    # the filenames have "pentad" instead of "pendtadal"
+                    if item.properties[
+                        "noaa_cdr:max_depth"
+                    ] == max_depth and item.properties["noaa_cdr:interval"].startswith(
+                        interval
+                    ):
+                        item.add_link(
+                            Link(
+                                rel="derived-from",
+                                target=f"collections/noaa-cdr-ocean-heat-content-netcdf/items/{id}",
+                                media_type=MediaType.GEOJSON,
+                                title="Source NetCDF item",
+                            )
+                        )
         return items
 
 
