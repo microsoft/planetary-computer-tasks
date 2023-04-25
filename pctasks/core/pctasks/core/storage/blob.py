@@ -554,9 +554,7 @@ class BlobStorage(Storage):
         """
         kwargs = {}
         if content_type:
-            kwargs["content_settings"] = ContentSettings(
-                content_type=content_type
-            )
+            kwargs["content_settings"] = ContentSettings(content_type=content_type)
         with self._get_client() as client:
             with client.container.get_blob_client(
                 self._add_prefix(target_path)
