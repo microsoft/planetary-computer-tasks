@@ -48,7 +48,6 @@ def _init_azlogger() -> None:
         logger.debug("Initializing AzureLogHandler")
         try:
             azhandler = AzureLogHandler()
-            assert azhandler is not None
         except ValueError:
             # missing instrumentation key
             azhandler = False
@@ -56,7 +55,6 @@ def _init_azlogger() -> None:
         else:
             azhandler.setLevel(logging.INFO)
             azlogger.addHandler(azhandler)
-            assert len(azlogger.handlers) > 0
 
 
 @contextlib.contextmanager

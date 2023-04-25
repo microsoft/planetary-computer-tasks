@@ -21,6 +21,7 @@ from pctasks.dataset.items.task import (
 )
 from pctasks.dev.test_utils import run_test_task
 from pctasks.task.utils import get_task_path
+import pctasks.dataset.items.task
 
 HERE = Path(__file__)
 TEST_ASSETS_PATH = HERE.parent.parent / "data-files" / "test-assets"
@@ -110,6 +111,10 @@ def test_log_to_monitor(monkeypatch, caplog):
     responses.post(
         "https://westus-0.in.applicationinsights.azure.com//v2.1/track",
     )
+
+    # Ensure that any previous tests initializing logging (without an instrumentation key)
+    # didn't mess up our handler
+    monkeypatch.setattr(pctasks.dataset.items.task, "azhandler", None)
 
     with caplog.at_level(logging.INFO):
         with traced_create_item("blob://test/test/asset.tif", "test-collection"):
