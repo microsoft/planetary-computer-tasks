@@ -112,8 +112,8 @@ def test_log_to_monitor(monkeypatch, caplog):
         "https://westus-0.in.applicationinsights.azure.com//v2.1/track",
     )
 
-    # Ensure that any previous tests initializing logging (without an instrumentation key)
-    # didn't mess up our handler
+    # Ensure that any previous tests initializing logging
+    # (without an instrumentation key) didn't mess up our handler
     monkeypatch.setattr(pctasks.dataset.items.task, "azhandler", None)
 
     with caplog.at_level(logging.INFO):
