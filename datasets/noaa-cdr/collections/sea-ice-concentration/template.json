@@ -28,7 +28,7 @@
   ],
   "item_assets": {
     "netcdf": {
-      "type": "application/netcdf",
+      "type": "application/x-netcdf",
       "roles": [
         "data"
       ]
