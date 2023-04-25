@@ -10,6 +10,7 @@ pystac[validation]==1.*
 
 azure-functions
 azure-functions-durable
+responses
 
 # Mypy stubs
 
