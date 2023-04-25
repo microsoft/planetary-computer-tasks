@@ -1,7 +1,7 @@
 module "resources" {
   source = "../resources"
 
-  environment           = var.username
+  environment           = "dev"
   region                = var.region
 
   pctasks_server_image_tag = var.pctasks_server_image_tag
@@ -36,8 +36,8 @@ module "resources" {
   pctasks_server_sp_client_secret = var.pctasks_server_sp_client_secret
   pctasks_server_sp_object_id = var.pctasks_server_sp_object_id
 
-  k8s_version = "1.24.6"
-  k8s_orchestrator_version = "1.24.6"
+  k8s_version = "1.26.3"
+  k8s_orchestrator_version = "1.26.3"
 
   stac_db_connection_string =  var.stac_db_connection_string
 

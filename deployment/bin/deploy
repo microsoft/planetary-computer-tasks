@@ -103,10 +103,6 @@ if [[ -z ${TERRAFORM_DIR} ]]; then
     exit 1
 fi
 
-if [[ "${TERRAFORM_DIR}" == *"dev"* ]]; then
-    DEV_DEPLOY=1
-fi
-
 setup_env
 
 # ---------------------------------------------------
@@ -137,7 +133,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     source ${TERRAFORM_DIR}/env.sh
 
 
-    if [ -z "${SKIP_FETCH_TF_VARS}${SKIP_TF}${DEV_DEPLOY}" ]; then
+    if [ -z "${SKIP_FETCH_TF_VARS}${SKIP_TF}" ]; then
 
         if [ -f "${TERRAFORM_DIR}/values.tfvars" ]; then
             mv ${TERRAFORM_DIR}/values.tfvars ${TERRAFORM_DIR}/values.bak.tfvars
@@ -151,19 +147,15 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         VARS_OPT="-var-file=values.tfvars"
     else
         echo "ERROR: You must create a values.tfvars file in ${TERRAFORM_DIR} before deploying"
-        echo "For non-dev deployments must be pulled from keyvault, or if --skip-fetch-tf-vars is passed"
-        echo "or using a dev deployement, you must create it manually"
+        echo "values.tfvars must be pulled from keyvault, or if --skip-fetch-tf-vars is passed"
         echo "See the deployment documentation for more information"
         exit 1
     fi
 
     if [ -z "${SKIP_TF}" ]; then
 
-        # Check dev deployment setup
         AUTO_APPROVE_OPT=""
-        if [ -z "${DEV_DEPLOY}" ]; then
-            AUTO_APPROVE_OPT="-auto-approve"
-        elif [ "${SKIP_CONFIRM}" ]; then
+        if [ "${SKIP_CONFIRM}" ]; then
             AUTO_APPROVE_OPT="-auto-approve"
         fi
 
