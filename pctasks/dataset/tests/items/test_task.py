@@ -1,9 +1,12 @@
 import json
+import logging
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Union
 
 import pystac
+import pytest
+import responses
 from pystac.utils import str_to_datetime
 
 from pctasks.core.models.task import CompletedTaskResult, WaitTaskResult
@@ -12,7 +15,11 @@ from pctasks.core.storage.local import LocalStorage
 from pctasks.core.utils.stac import validate_stac
 from pctasks.dataset.chunks.models import ChunkInfo
 from pctasks.dataset.items.models import CreateItemsOutput
-from pctasks.dataset.items.task import CreateItemsInput, CreateItemsTask
+from pctasks.dataset.items.task import (
+    CreateItemsInput,
+    CreateItemsTask,
+    traced_create_item,
+)
 from pctasks.dev.test_utils import run_test_task
 from pctasks.task.utils import get_task_path
 
@@ -89,3 +96,34 @@ def test_wait_for_assets():
 
     task_result = run_test_task(args.dict(), TASK_PATH)
     assert isinstance(task_result, WaitTaskResult)
+
+
+@responses.activate
+def test_log_to_monitor(monkeypatch, caplog):
+    monkeypatch.setenv(
+        "APPLICATIONINSIGHTS_CONNECTION_STRING",
+        "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/",  # noqa: E501
+    )
+    logger = logging.getLogger("monitor.pctasks.dataset.items.task")
+
+    # opencensus will log an error about the instrumentation key being invalid
+    opencensus_logger = logging.getLogger("opencensus.ext.azure")
+    opencensus_logger.setLevel(logging.CRITICAL)
+
+    responses.post(
+        "https://westus-0.in.applicationinsights.azure.com//v2.1/track",
+    )
+
+    with caplog.at_level(logging.INFO):
+        with traced_create_item("blob://test/test/asset.tif", "test-collection"):
+            pass
+
+        record = caplog.records[1]
+        assert record.custom_dimensions.pop("duration_seconds")
+        assert record.custom_dimensions == {
+            "asset_uri": "blob://test/test/asset.tif",
+            "collection_id": "test-collection",
+            "type": "pctasks.create_item",
+        }
+
+    assert len(logger.handlers) == 1
