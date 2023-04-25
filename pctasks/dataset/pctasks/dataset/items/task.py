@@ -2,7 +2,7 @@ import contextlib
 import logging
 import os
 import time
-from typing import Callable, List, Optional, Union
+from typing import Callable, Iterator, List, Optional, Union
 
 import orjson
 import pystac
@@ -39,7 +39,7 @@ def asset_chunk_id_to_ndjson_chunk_id(asset_chunk_id: str) -> str:
     return os.path.join(folder_name, "items.ndjson")
 
 
-def _init_azlogger():
+def _init_azlogger() -> None:
     # AzureLogHandler is slow to initialize
     # do it once here
     global azhandler
@@ -63,13 +63,13 @@ def traced_create_item(
     collection_id: Optional[str],
     i: Optional[int] = None,
     asset_count: Optional[int] = None,
-):
+) -> Iterator[None]:
     _init_azlogger()
     start_time = time.monotonic()
     yield
     end_time = time.monotonic()
 
-    if i is not None:
+    if i is not None and asset_count is not None:
         # asset_chunk_info case
         logger.info(
             f"({((i+1)/asset_count)*100:06.2f}%) "

@@ -5,7 +5,6 @@ from tempfile import TemporaryDirectory
 from typing import List, Union
 
 import pystac
-import pytest
 import responses
 from pystac.utils import str_to_datetime
 
