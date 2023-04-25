@@ -29,7 +29,6 @@
   "item_assets": {
     "netcdf": {
       "type": "application/netcdf",
-      "updated": "2022-09-28T09:14:00Z",
       "roles": [
         "data"
       ]
