@@ -8,6 +8,7 @@ import pystac
 import responses
 from pystac.utils import str_to_datetime
 
+import pctasks.dataset.items.task
 from pctasks.core.models.task import CompletedTaskResult, WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.core.storage.local import LocalStorage
@@ -21,7 +22,6 @@ from pctasks.dataset.items.task import (
 )
 from pctasks.dev.test_utils import run_test_task
 from pctasks.task.utils import get_task_path
-import pctasks.dataset.items.task
 
 HERE = Path(__file__)
 TEST_ASSETS_PATH = HERE.parent.parent / "data-files" / "test-assets"
