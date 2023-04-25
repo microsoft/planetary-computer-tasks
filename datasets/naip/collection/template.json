@@ -1,0 +1,173 @@
+{
+  "stac_version": "1.0.0",
+  "type": "Collection",
+  "id": "naip",
+  "title": "NAIP: National Agriculture Imagery Program",
+  "description": "{{ collection.description }}",
+  "license": "proprietary",
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://www.fsa.usda.gov/help/policies-and-links/",
+      "title": "Public Domain"
+    }
+  ],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+  ],
+  "keywords": [
+    "NAIP",
+    "Aerial",
+    "Imagery",
+    "USDA",
+    "AFPO",
+    "Agriculture",
+    "United States"
+  ],
+  "msft:short_description": "NAIP provides US-wide, high-resolution aerial imagery.  This dataset includes NAIP images from 2010 to the present.",
+  "msft:storage_account": "naipeuwest",
+  "msft:container": "naip",
+  "msft:region": "westeurope",
+  "providers": [
+    {
+      "name": "USDA Farm Service Agency",
+      "roles": [
+        "producer",
+        "licensor"
+      ],
+      "url": "https://www.fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/"
+    },
+    {
+      "name": "Esri",
+      "roles": [
+        "processor"
+      ],
+      "url": "https://www.esri.com/"
+    },
+    {
+      "name": "Microsoft",
+      "roles": [
+        "host",
+        "processor"
+      ],
+      "url": "https://planetarycomputer.microsoft.com"
+    }
+  ],
+  "assets": {
+    "thumbnail": {
+      "title": "NAIP thumbnail",
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/naip.png",
+      "type": "image/png",
+      "roles": [
+        "thumbnail"
+      ]
+    },
+    "geoparquet-items": {
+      "href": "abfs://items/naip.parquet",
+      "title": "GeoParquet STAC items",
+      "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+      "type": "application/x-parquet",
+      "roles": [
+        "stac-items"
+      ],
+      "table:storage_options": {
+        "account_name": "pcstacitems"
+      },
+      "msft:partition_info": {
+        "is_partitioned": true,
+        "partition_frequency": "AS"
+      }
+    }
+  },
+  "summaries": {
+    "gsd": [
+      0.6,
+      1.0
+    ],
+    "eo:bands": [
+      {
+        "name": "Red",
+        "common_name": "red",
+        "description": "visible red"
+      },
+      {
+        "name": "Green",
+        "common_name": "green",
+        "description": "visible green"
+      },
+      {
+        "name": "Blue",
+        "common_name": "blue",
+        "description": "visible blue"
+      },
+      {
+        "name": "NIR",
+        "common_name": "nir",
+        "description": "near-infrared"
+      }
+    ]
+  },
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -124.784,
+          24.744,
+          -66.951,
+          49.346
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2010-01-01T00:00:00Z",
+          "2021-12-31T00:00:00Z"
+        ]
+      ]
+    }
+  },
+  "item_assets": {
+    "image": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "RGBIR COG tile",
+      "eo:bands": [
+        {
+          "name": "Red",
+          "common_name": "red"
+        },
+        {
+          "name": "Green",
+          "common_name": "green"
+        },
+        {
+          "name": "Blue",
+          "common_name": "blue"
+        },
+        {
+          "name": "NIR",
+          "common_name": "nir",
+          "description": "near-infrared"
+        }
+      ],
+      "roles": [
+        "data"
+      ]
+    },
+    "metadata": {
+      "type": "text/plain",
+      "title": "FGDC Metdata",
+      "roles": [
+        "metadata"
+      ]
+    },
+    "thumbnail": {
+      "type": "image/jpeg",
+      "title": "Thumbnail",
+      "roles": [
+        "thumbnail"
+      ]
+    }
+  }
+}
