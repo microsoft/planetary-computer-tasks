@@ -233,21 +233,6 @@
               "value": 1
             }
           ]
-        },
-        {
-          "name": "",
-          "offset": 7,
-          "length": 1,
-          "classes": [
-            {
-              "name": "not_",
-              "value": 0
-            },
-            {
-              "name": "",
-              "value": 1
-            }
-          ]
         }
       ],
       "roles": [
