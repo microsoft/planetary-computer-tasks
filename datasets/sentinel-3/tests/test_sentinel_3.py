@@ -29,7 +29,21 @@ def test_olci_lfr():
     assert item.properties["s3:processing_timeliness"] == "NT"
     assert item.properties["start_datetime"] == "2023-04-01T00:45:26.790564Z"
     assert item.properties["s3:product_type"] == "OL_2_LFR___"
-    assert item.properties["s3:product_name"] == "LFR"
+    assert item.properties["s3:product_name"] == "olci-lfr"
+    assert set(item.assets) == {
+        "geo-coordinates",
+        "gifapar",
+        "instrument-data",
+        "iwv",
+        "lqsf",
+        "otci",
+        "rc-gifapar",
+        "safe-manifest",
+        "tie-geo-coordinates",
+        "tie-geometries",
+        "tie-meteo",
+        "time-coordinates",
+    }
 
     assert S3_KEYS <= set(item.properties.keys())
 
@@ -45,5 +59,43 @@ def test_olci_wfr():
     assert item.properties["s3:processing_timeliness"] == "NT"
     assert item.properties["start_datetime"] == "2023-01-01T00:00:29.538087Z"
     assert item.properties["s3:product_type"] == "OL_2_WFR___"
-    assert item.properties["s3:product_name"] == "WFR"
+    assert item.properties["s3:product_name"] == "olci-wfr"
+
+    assert set(item.assets) == {
+        "browse-jpg",
+        "chl-nn",
+        "chl-oc4me",
+        "eop-metadata",
+        "geo-coordinates",
+        "instrument-data",
+        "iop-nn",
+        "iwv",
+        "oa01-reflectance",
+        "oa02-reflectance",
+        "oa03-reflectance",
+        "oa04-reflectance",
+        "oa05-reflectance",
+        "oa06-reflectance",
+        "oa07-reflectance",
+        "oa08-reflectance",
+        "oa09-reflectance",
+        "oa10-reflectance",
+        "oa11-reflectance",
+        "oa12-reflectance",
+        "oa16-reflectance",
+        "oa17-reflectance",
+        "oa18-reflectance",
+        "oa21-reflectance",
+        "par",
+        "safe-manifest",
+        "tie-geo-coordinates",
+        "tie-geometries",
+        "tie-meteo",
+        "time-coordinates",
+        "trsp",
+        "tsm-nn",
+        "w-aer",
+        "wqsf",
+    }
+
     assert S3_KEYS <= set(item.properties.keys())
