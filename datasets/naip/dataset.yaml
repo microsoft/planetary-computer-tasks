@@ -1,5 +1,5 @@
 id: naip
-image: ${{ args.registry }}/pctasks-naip:2023.4.24.1
+image: ${{ args.registry }}/pctasks-naip:2023.4.25.2
 
 args:
   - registry
@@ -12,6 +12,7 @@ environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
   AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
   AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+  APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
 
 collections:
   - id: naip
