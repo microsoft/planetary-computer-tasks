@@ -103,8 +103,6 @@ def test_log_to_monitor(monkeypatch, caplog):
         "APPLICATIONINSIGHTS_CONNECTION_STRING",
         "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/",  # noqa: E501
     )
-    logger = logging.getLogger("monitor.pctasks.dataset.items.task")
-
     # opencensus will log an error about the instrumentation key being invalid
     opencensus_logger = logging.getLogger("opencensus.ext.azure")
     opencensus_logger.setLevel(logging.CRITICAL)
@@ -125,4 +123,5 @@ def test_log_to_monitor(monkeypatch, caplog):
             "type": "pctasks.create_item",
         }
 
-    assert len(logger.handlers) == 1
+    azlogger = logging.getLogger("monitor.pctasks.dataset.items.task")
+    assert len(azlogger.handlers) == 1
