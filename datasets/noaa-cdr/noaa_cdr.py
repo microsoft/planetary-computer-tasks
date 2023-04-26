@@ -1,3 +1,4 @@
+import socket
 import logging
 import os.path
 from pathlib import Path
@@ -17,6 +18,10 @@ from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
 
 logger = logging.getLogger(__name__)
+
+# Experiencing a rare hang in `_ssl` when downloading from Blob Storage.
+# Unsure if this will help.
+socket.setdefaulttimeout(600)
 
 
 def cog_uri(name: str) -> str:
