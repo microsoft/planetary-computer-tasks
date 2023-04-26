@@ -1,4 +1,3 @@
-import os
 import functools
 from dataclasses import dataclass
 import re
@@ -6,13 +5,11 @@ import logging
 from typing import List, Union
 
 
-import azure.storage.blob
 import subprocess
 import pystac
 from pctasks.core.utils.backoff import with_backoff
 from stactools.naip import stac
 
-from pctasks.core.storage.blob import BlobStorage
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
@@ -21,8 +18,8 @@ from pctasks.dataset.collection import Collection
 logger = logging.getLogger("pctasks.naip")
 
 naip_regex = re.compile(
-    r"v002/(?P<state>[^/]+)/(?P<year>[^/]+)/"
-    r"(?P<image_dir>[^/]+)/(?P<area>[^/]+)/(?P<fname>[^/]+).tif"
+    r"v002/(?P<state>[^/]+)/(?P<year>[^/]+)/(?P<image_dir>[^/]+)/"
+    r"(?P<area>[^/]+)/?(?P<subarea>\d*?)/?/(?P<fname>[^/]+).tif"
 )
 
 
@@ -51,6 +48,9 @@ class YearMismatchErrorRecord:
 
 
 def create_thumbnail(cog_signed_href: str, thumbnail_name: str) -> str:
+    # We've observed occasional hangs with gdal_translate.
+    # In this call we'll set `timeout=30`. It's expected that callers retry
+    # on subprocess.TimeoutExpired
     subprocess.check_output(
         [
             "gdal_translate",
@@ -65,7 +65,8 @@ def create_thumbnail(cog_signed_href: str, thumbnail_name: str) -> str:
             "3",
             f"/vsicurl/{cog_signed_href}",
             thumbnail_name,
-        ]
+        ],
+        timeout=30,
     )
     return thumbnail_name
 
@@ -73,7 +74,7 @@ def create_thumbnail(cog_signed_href: str, thumbnail_name: str) -> str:
 class NAIPCollection(Collection):
     @classmethod
     def create_item(
-        cls, asset_uri: str, storage_factory: StorageFactory
+        cls, asset_uri: str, storage_factory: StorageFactory, upload: bool = True,
     ) -> Union[List[pystac.Item], WaitTaskResult]:
         cog_storage, cog_path = storage_factory.get_storage_for_file(asset_uri)
 
@@ -117,11 +118,11 @@ class NAIPCollection(Collection):
             logger.debug("Creating thumbnail %s", thumbnail_path)
             thumbnail_f = functools.partial(create_thumbnail, cog_href, thumbnail_name)
             with_backoff(thumbnail_f, is_throttle=lambda x: True)
-            cog_storage.upload_file(
-                thumbnail_name, thumbnail_path, content_type=pystac.MediaType.JPEG.value
-            )
-
-        assert cog_storage.file_exists(thumbnail_path)
+            if upload:
+                cog_storage.upload_file(
+                    thumbnail_name, thumbnail_path, content_type=pystac.MediaType.JPEG.value
+                )
+                assert cog_storage.file_exists(thumbnail_path)
 
         thumbnail_href = cog_storage.get_url(thumbnail_path)
 

@@ -1,5 +1,5 @@
 id: naip
-image: ${{ args.registry }}/pctasks-naip:2023.4.25.2
+image: ${{ args.registry }}/pctasks-naip:2023.4.26.0
 
 args:
   - registry
