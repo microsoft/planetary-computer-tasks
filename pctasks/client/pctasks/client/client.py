@@ -2,7 +2,6 @@ import io
 import logging
 import os
 import pathlib
-import zipfile
 from time import perf_counter
 from typing import Any, Dict, Iterable, Optional, Type, TypeVar, Union
 from urllib.parse import urlparse
@@ -18,6 +17,7 @@ from pctasks.client.errors import (
     WorkflowNotFoundError,
 )
 from pctasks.client.settings import ClientSettings
+from pctasks.core.importer import write_code
 from pctasks.core.models.record import Record
 from pctasks.core.models.response import (
     JobPartitionRunRecordListResponse,
@@ -180,17 +180,7 @@ class PCTasksClient:
             raise OSError(f"Path {path} does not exist.")
 
         file_obj: Union[io.BufferedReader, io.BytesIO]
-        if path.is_file():
-            file_obj = path.open("rb")
-            name = path.name
-
-        else:
-            file_obj = io.BytesIO()
-            with zipfile.PyZipFile(file_obj, "w") as zf:
-                zf.writepy(str(path))
-            file_obj.seek(0)
-
-            name = path.with_suffix(".zip").name
+        name, file_obj = write_code(path)
 
         try:
             resp = self._call_api(
