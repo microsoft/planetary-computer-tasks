@@ -1,5 +1,5 @@
 id: noaa-cdr
-image: ${{ args.registry }}/pctasks-task-base:latest
+image: ${{ args.registry }}/pctasks-noaa-cdr:2023.4.26.0
 args:
   - registry
 code:
@@ -9,6 +9,7 @@ environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
   AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
   AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+  APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
 collections:
   - id: noaa-cdr-ocean-heat-content
     template: ${{ local.path(./collections/ocean-heat-content) }}
@@ -58,6 +59,7 @@ collections:
           options:
             name_starts_with: data/v2.1/avhrr
             extensions: [.nc]
+            chunk_length: 300  # about 40 workers
     chunk_storage:
       uri: blob://noaacdr/etl-data/sea-surface-temperature-optimum-interpolation
   - id: noaa-cdr-sea-surface-temperature-whoi
@@ -69,6 +71,7 @@ collections:
           options:
             name_starts_with: data
             extensions: [.nc]
+            chunk_length: 300  # about 40 workers
     chunk_storage:
       uri: blob://noaacdr/etl-data/sea-surface-temperature-whoi
   - id: noaa-cdr-sea-surface-temperature-whoi-netcdf
@@ -80,5 +83,6 @@ collections:
           options:
             name_starts_with: data
             extensions: [.nc]
+            chunk_length: 300  # about 40 workers
     chunk_storage:
       uri: blob://noaacdr/etl-data/sea-surface-temperature-whoi-netcdf
