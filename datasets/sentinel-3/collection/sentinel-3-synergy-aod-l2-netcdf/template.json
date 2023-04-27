@@ -177,10 +177,6 @@
         "ntc-aod": {
             "type": "application/x-netcdf",
             "description": "Global aerosol parameters",
-            "resolution": [
-                4500,
-                4500
-            ],
             "eo:bands": [
                 {
                     "name": "SYN_440",

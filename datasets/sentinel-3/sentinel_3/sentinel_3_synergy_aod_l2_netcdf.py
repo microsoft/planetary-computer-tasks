@@ -25,7 +25,7 @@ class Collection(BaseSentinelCollection):
         s3_shape = item_dict["properties"].pop("s3:shape")
 
         for asset_key, asset in item_dict["assets"].items():
-            if asset_key == "NTC_AOD":
+            if asset_key == "ntc-aod":
                 # Place the custom shape field on the asset. Reverse the order
                 # to be in [row, column] order.
                 asset["s3:shape"] = s3_shape[::-1]
