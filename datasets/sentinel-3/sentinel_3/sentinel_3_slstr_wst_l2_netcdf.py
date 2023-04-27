@@ -36,7 +36,7 @@ class Collection(BaseSentinelCollection):
                 # resolution is a text string, not a list of numbers
                 assert asset["resolution"] == "1 km at nadir"
                 asset.pop("resolution")
-                asset["s3:resolution"] = [1000, 1000]
+                asset["s3:spatial_resolution"] = [1000, 1000]
                 # add shape, flip to row, column order
                 asset["s3:shape"] = shape[::-1]
 
