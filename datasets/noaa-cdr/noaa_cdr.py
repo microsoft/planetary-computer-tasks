@@ -3,7 +3,7 @@ import logging
 import os.path
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List, Union
+from typing import Any, List, Union
 
 import stactools.noaa_cdr.constants
 import stactools.noaa_cdr.ocean_heat_content.stac
@@ -13,6 +13,8 @@ import stactools.noaa_cdr.sea_surface_temperature_whoi.stac
 import stactools.noaa_cdr.stac
 from pystac import Item, Link, MediaType
 
+from pctasks.core.storage import Storage
+from pctasks.core.storage.blob import BlobStorage
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
@@ -28,6 +30,13 @@ def cog_uri(name: str) -> str:
     return f"blob://noaacdr/cogs/{name}"
 
 
+def get_download_kwargs(storage) -> dict[str, Any]:
+    kwargs = {}
+    if isinstance(storage, Storage):
+        kwargs["timeout_seconds"] = 120
+    return kwargs
+
+
 class OceanHeatContentCollection(Collection):
     @classmethod
     def create_item(
@@ -39,11 +48,14 @@ class OceanHeatContentCollection(Collection):
         cog_storage = storage_factory.get_storage(cog_uri("ocean-heat-content"))
         cog_files = cog_storage.list_files(extensions=[".tif"])
         cog_hrefs = [cog_storage.get_url(file) for file in cog_files]
+
         with TemporaryDirectory() as temporary_directory:
             local_netcdf_paths = []
             for file in files:
                 path = os.path.join(temporary_directory, os.path.basename(file))
-                asset_storage.download_file(file, path)
+                asset_storage.download_file(
+                    file, path, **get_download_kwargs(asset_storage)
+                )
                 local_netcdf_paths.append(path)
             items = stactools.noaa_cdr.ocean_heat_content.stac.create_items(
                 hrefs=local_netcdf_paths,
@@ -91,7 +103,9 @@ class OceanHeatContentNetcdfCollection(Collection):
         asset_storage, asset_path = storage_factory.get_storage_for_file(asset_uri)
         with TemporaryDirectory() as temporary_directory:
             path = os.path.join(temporary_directory, os.path.basename(asset_path))
-            asset_storage.download_file(asset_path, path)
+            asset_storage.download_file(
+                asset_path, path, **get_download_kwargs(asset_storage)
+            )
             item = stactools.noaa_cdr.ocean_heat_content.stac.create_netcdf_item(path)
             item.assets[
                 stactools.noaa_cdr.constants.NETCDF_ASSET_KEY
@@ -117,7 +131,9 @@ class SeaIceConcentrationCollection(Collection):
         with TemporaryDirectory() as temporary_directory:
             file_name = os.path.basename(asset_path)
             outfile = os.path.join(temporary_directory, file_name)
-            asset_storage.download_file(asset_path, outfile)
+            asset_storage.download_file(
+                asset_path, outfile, **get_download_kwargs(asset_storage)
+            )
             item = stactools.noaa_cdr.sea_ice_concentration.stac.create_item(outfile)
             item.assets[
                 stactools.noaa_cdr.constants.NETCDF_ASSET_KEY
@@ -150,7 +166,9 @@ class SeaSurfaceTemperatureOptimumInterpolationCollection(Collection):
         with TemporaryDirectory() as temporary_directory:
             file_name = os.path.basename(asset_path)
             outfile = os.path.join(temporary_directory, file_name)
-            asset_storage.download_file(asset_path, outfile)
+            asset_storage.download_file(
+                asset_path, outfile, **get_download_kwargs(asset_storage)
+            )
             item = stactools.noaa_cdr.sea_surface_temperature_optimum_interpolation.stac.create_item(  # noqa
                 outfile
             )
@@ -181,7 +199,9 @@ class SeaSurfaceTemperatureWhoiCollection(Collection):
         with TemporaryDirectory() as temporary_directory:
             file_name = os.path.basename(asset_path)
             outfile = os.path.join(temporary_directory, file_name)
-            asset_storage.download_file(asset_path, outfile)
+            asset_storage.download_file(
+                asset_path, outfile, **get_download_kwargs(asset_storage)
+            )
             items = (
                 stactools.noaa_cdr.sea_surface_temperature_whoi.stac.create_cog_items(
                     outfile, temporary_directory
@@ -206,7 +226,9 @@ class SeaSurfaceTemperatureWhoiNetcdfCollection(Collection):
         with TemporaryDirectory() as temporary_directory:
             file_name = os.path.basename(asset_path)
             outfile = os.path.join(temporary_directory, file_name)
-            asset_storage.download_file(asset_path, outfile)
+            asset_storage.download_file(
+                asset_path, outfile, **get_download_kwargs(asset_storage)
+            )
             item = stactools.noaa_cdr.stac.create_item(outfile, temporary_directory)
             item.assets[
                 stactools.noaa_cdr.constants.NETCDF_ASSET_KEY

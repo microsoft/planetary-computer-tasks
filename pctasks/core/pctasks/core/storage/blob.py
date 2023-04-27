@@ -506,16 +506,16 @@ class BlobStorage(Storage):
         is_binary: bool = True,
         timeout_seconds: Optional[int] = None,
     ) -> None:
+        kwargs = {}
+        if timeout_seconds is not None:
+            kwargs["timeout"] = timeout_seconds
+
         with self._get_client() as client:
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 with open(output_path, "wb" if is_binary else "w") as f:
                     try:
                         # timeout raises an azure.core.exceptions.HttpResponseError: ("Connection broken: ConnectionResetError(104, 'Connection reset by peer')"  # noqa
-                        with_backoff(
-                            lambda: blob.download_blob(
-                                timeout=timeout_seconds
-                            ).readinto(f)
-                        )
+                        with_backoff(lambda: blob.download_blob(**kwargs).readinto(f))
                     except azure.core.exceptions.ResourceNotFoundError:
                         raise FileNotFoundError(f"File {file_path} not found in {self}")
 
