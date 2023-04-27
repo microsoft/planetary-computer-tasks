@@ -1,0 +1,30 @@
+id: naip
+image: ${{ args.registry }}/pctasks-naip:2023.4.25.2
+
+args:
+  - registry
+  - year
+
+code:
+  src: ${{ local.path(./naip.py) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+  APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+
+collections:
+  - id: naip
+    template: ${{ local.path(./collection) }}
+    class: naip:NAIPCollection
+    asset_storage:
+      - uri: blob://naipeuwest/naip/
+        chunks:
+          options:
+            extensions: [.tif]
+            name_starts_with: v002/
+            chunk_length: 3000
+            matches: ".*?_(\\d{3})_${{args.year}}"
+    chunk_storage:
+      uri: blob://naipeuwest/naip-etl-data/pctasks/
