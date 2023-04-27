@@ -60,29 +60,31 @@ def _init_azlogger() -> None:
 
 
 class CreateItemsTimeoutError(TimeoutError):
-    ...
+    """
+    An error raised when the create items function times out.
+    """
 
 
 def create_item_with_timeout(
     create_items_func: CreateItemFunc, timeout: Optional[int] = None
 ) -> CreateItemFunc:
     """
-     A wrapper for `create_items_func` to enforce a timeout.
+    A wrapper for `create_items_func` to enforce a timeout.
 
-     Parameters
-     ----------
-     create_items_func: callable
-         The create items function to run under the timeout
-     timeout: int, optional
-         The timeout in seconds.
+    Parameters
+    ----------
+    create_items_func: callable
+        The create items function to run under the timeout
+    timeout: int, optional
+        The timeout in seconds.
 
-     Notes
+    Notes
     -----
-     When `timeout` is specified, this registers a signal handler for
-     ``signal.SIGALRM``. Your ``create_items_func`` must finished within
-     ``timeout`` seconds. If it's not finished, the call is forcibly
-     interrupted. We'll try the function up to 3 times before raising
-     a :class:`CreateItemsTimeoutError`.
+    When `timeout` is specified, this registers a signal handler for
+    ``signal.SIGALRM``. Your ``create_items_func`` must finished within
+    ``timeout`` seconds. If it's not finished, the call is forcibly
+    interrupted. We'll try the function up to 3 times before raising
+    a :class:`CreateItemsTimeoutError`.
     """
     if timeout is None:
         return create_items_func
@@ -168,12 +170,9 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
         storage_factory = context.storage_factory
         results: List[pystac.Item] = []
 
-        if args.options.timeout is not None:
-            create_item_func = create_item_with_timeout(
-                self._create_item, timeout=args.options.timeout
-            )
-        else:
-            create_item_func = self._create_item
+        create_item_func = create_item_with_timeout(
+            self._create_item, timeout=args.options.timeout
+        )
 
         def _validate(items: List[pystac.Item]) -> None:
             if not args.options.skip_validation:

@@ -296,6 +296,29 @@ option is not required. The `--submit` option will submit the generated workflow
 if not supplied, then the workflow will be printed to stdout, which can be submitted later through
 the `pctasks workflow submit` command.
 
+## Timeouts, Retries
+
+Your `create_item` function should be resilient. Wherever possible it should set
+timeouts on network requests and retry extensively.
+
+That said, some operations might be prone to hanging and not easily
+interruptible. For these cases, pctasks can run your code under a `timeout`. In
+your `dataset.yaml`, set
+
+```yaml
+# ...
+collections:
+  - id: my-collection
+    create_items:
+      timeout: 60  # timeout in seconds *per call*
+```
+
+That timeout is the maximum amount of time that pctasks will allow for each call
+to your `create_item` function.
+
+If your code doesn't finish within the deadline, pctasks will retry a few times
+before giving up with a `CreateItemsTimeoutError`.
+
 ## Dynamic updates
 
 You generate a workflow from a `dataset.yaml` to use in dynamic updates with the

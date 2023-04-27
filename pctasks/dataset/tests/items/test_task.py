@@ -152,3 +152,11 @@ def test_create_item_with_timeout():
     result = create_item_with_timeout(create_item, 1)(0)
     assert result is None
     assert call_count == 4
+
+
+def test_create_item_with_timeout_no_timeout():
+    def create_item():
+        pass
+
+    f = create_item_with_timeout(create_item, None)
+    assert f is create_item
