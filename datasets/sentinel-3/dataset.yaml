@@ -25,7 +25,7 @@ collections:
             name_starts_with: OLCI/OL_2_LFR___/
             extensions: [.json]
             chunk_length: 5000
-            limit: 100  # TODO: remove limit
+            limit: 500  # TODO: remove limit
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-olci-lfr-l2-netcdf
 
@@ -40,7 +40,7 @@ collections:
             name_starts_with: OLCI/OL_2_WFR___/
             extensions: [.json]
             chunk_length: 5000
-            limit: 100  # TODO: remove limit
+            limit: 500  # TODO: remove limit
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-olci-wfr-l2-netcdf
 
@@ -55,7 +55,7 @@ collections:
             name_starts_with: SYNERGY/SY_2_AOD___/
             extensions: [.json]
             chunk_length: 5000
-            limit: 100  # TODO: remove limit
+            limit: 500  # TODO: remove limit
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-aod-l2-netcdf
 
@@ -70,7 +70,7 @@ collections:
             name_starts_with: SYNERGY/SY_2_SYN___/
             extensions: [.json]
             chunk_length: 5000
-            limit: 100  # TODO: remove limit
+            limit: 500  # TODO: remove limit
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-syn-l2-netcdf
 
@@ -85,7 +85,7 @@ collections:
             name_starts_with: SYNERGY/SY_2_V10___/
             extensions: [.json]
             chunk_length: 5000
-            limit: 100  # TODO: remove limit
+            limit: 500  # TODO: remove limit
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-v10-l2-netcdf
 
@@ -100,7 +100,7 @@ collections:
             name_starts_with: SYNERGY/SY_2_VG1___/
             extensions: [.json]
             chunk_length: 5000
-            limit: 100  # TODO: remove limit
+            limit: 500  # TODO: remove limit
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-vg1-l2-netcdf
 
@@ -115,7 +115,7 @@ collections:
             name_starts_with: SYNERGY/SY_2_VGP___/
             extensions: [.json]
             chunk_length: 5000
-            limit: 100  # TODO: remove limit
+            limit: 500  # TODO: remove limit
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-vgp-l2-netcdf
 
@@ -130,7 +130,7 @@ collections:
             name_starts_with: SRAL/SR_2_LAN___/
             extensions: [.json]
             chunk_length: 5000
-            limit: 100  # TODO: remove limit
+            limit: 500  # TODO: remove limit
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-sral-lan-l2-netcdf
 
@@ -145,7 +145,7 @@ collections:
             name_starts_with: SRAL/SR_2_WAT___/
             extensions: [.json]
             chunk_length: 5000
-            limit: 100  # TODO: remove limit
+            limit: 500  # TODO: remove limit
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-sral-wat-l2-netcdf
 
@@ -160,7 +160,7 @@ collections:
             name_starts_with: SLSTR/SL_2_FRP___/
             extensions: [.json]
             chunk_length: 5000
-            limit: 100  # TODO: remove limit
+            limit: 500  # TODO: remove limit
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-slstr-frp-l2-netcdf
 
@@ -175,7 +175,7 @@ collections:
             name_starts_with: SLSTR/SL_2_LST___/
             extensions: [.json]
             chunk_length: 5000
-            limit: 100  # TODO: remove limit
+            limit: 500  # TODO: remove limit
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-slstr-lst-l2-netcdf
 
@@ -190,6 +190,6 @@ collections:
             name_starts_with: SLSTR/SL_2_WST___/
             extensions: [.json]
             chunk_length: 5000
-            limit: 100  # TODO: remove limit
+            limit: 500  # TODO: remove limit
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-slstr-wst-l2-netcdf

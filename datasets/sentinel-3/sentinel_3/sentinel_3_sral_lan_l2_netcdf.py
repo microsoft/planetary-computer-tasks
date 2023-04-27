@@ -23,7 +23,7 @@ class Collection(BaseSentinelCollection):
         storage, json_path = storage_factory.get_storage_for_file(asset_uri)
         item_dict = storage.read_json(json_path)
 
-        item_dict = cls.base_updates(item_dict, fix_geometry=True, buffer0=True)
+        item_dict = cls.base_updates(item_dict)
         if item_dict is None:
             return []
 
