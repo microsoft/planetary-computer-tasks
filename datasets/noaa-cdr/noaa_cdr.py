@@ -1,6 +1,6 @@
-import socket
 import logging
 import os.path
+import socket
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any, List, Union
@@ -13,10 +13,8 @@ import stactools.noaa_cdr.sea_surface_temperature_whoi.stac
 import stactools.noaa_cdr.stac
 from pystac import Item, Link, MediaType
 
-from pctasks.core.storage import Storage
-from pctasks.core.storage.blob import BlobStorage
 from pctasks.core.models.task import WaitTaskResult
-from pctasks.core.storage import StorageFactory
+from pctasks.core.storage import Storage, StorageFactory
 from pctasks.dataset.collection import Collection
 
 logger = logging.getLogger(__name__)
@@ -229,7 +227,7 @@ class SeaSurfaceTemperatureWhoiNetcdfCollection(Collection):
             asset_storage.download_file(
                 asset_path, outfile, **get_download_kwargs(asset_storage)
             )
-            item = stactools.noaa_cdr.stac.create_item(outfile, temporary_directory)
+            item = stactools.noaa_cdr.stac.create_item(outfile)
             item.assets[
                 stactools.noaa_cdr.constants.NETCDF_ASSET_KEY
             ].href = asset_storage.get_url(asset_path)
