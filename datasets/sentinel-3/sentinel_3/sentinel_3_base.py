@@ -45,16 +45,15 @@ def recursive_round(coordinates: List[Any], precision: int) -> List[Any]:
         precision (int): Number of decimal places to use for rounding.
 
     Returns:
-        List[Any]: a list (possibly nested) of numbers rounded to the given
-            precision.
+        List[Any]: The list of numbers rounded to the given precision.
     """
-    for idx, value in enumerate(coordinates):
+    rounded: List[Any] = []
+    for value in coordinates:
         if isinstance(value, (int, float)):
-            coordinates[idx] = round(value, precision)
+            rounded.append(round(value, precision))
         else:
-            coordinates[idx] = list(value)  # handle any tuples
-            coordinates[idx] = recursive_round(coordinates[idx], precision)
-    return coordinates
+            rounded.append(recursive_round(list(value), precision))
+    return rounded
 
 
 def nano2micro(value: float) -> float:
