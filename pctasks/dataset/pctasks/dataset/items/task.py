@@ -1,8 +1,10 @@
 import contextlib
+import functools
 import logging
 import os
+import signal
 import time
-from typing import Callable, Iterator, List, Optional, Union
+from typing import Any, Callable, Iterator, List, Optional, Union
 
 import orjson
 import pystac
@@ -55,6 +57,61 @@ def _init_azlogger() -> None:
         else:
             azhandler.setLevel(logging.INFO)
             azlogger.addHandler(azhandler)
+
+
+class CreateItemsTimeoutError(TimeoutError):
+    ...
+
+
+def create_item_with_timeout(
+    create_items_func: CreateItemFunc, timeout: Optional[int] = None
+) -> CreateItemFunc:
+    """
+     A wrapper for `create_items_func` to enforce a timeout.
+
+     Parameters
+     ----------
+     create_items_func: callable
+         The create items function to run under the timeout
+     timeout: int, optional
+         The timeout in seconds.
+
+     Notes
+    -----
+     When `timeout` is specified, this registers a signal handler for
+     ``signal.SIGALRM``. Your ``create_items_func`` must finished within
+     ``timeout`` seconds. If it's not finished, the call is forcibly
+     interrupted. We'll try the function up to 3 times before raising
+     a :class:`CreateItemsTimeoutError`.
+    """
+    if timeout is None:
+        return create_items_func
+
+    # Do this once
+    def handler(signal_received: Any, frame: Any) -> Any:
+        raise CreateItemsTimeoutError(
+            f"Timed out during create items after {timeout} seconds"
+        )
+
+    signal.signal(signal.SIGALRM, handler)
+
+    @functools.wraps(create_items_func)
+    def inner(*args: Any, **kwargs: Any) -> Union[List[pystac.Item], WaitTaskResult]:
+        assert timeout is not None
+        for i in range(3):
+            try:
+                signal.alarm(timeout)
+                result = create_items_func(*args, **kwargs)
+                signal.alarm(0)  # clear the signal
+            except CreateItemsTimeoutError as e:
+                logger.warning(f"Timeout during create items (attempt {i + 1}/3)")
+                err = e
+            else:
+                return result
+        else:
+            raise err
+
+    return inner
 
 
 @contextlib.contextmanager
@@ -111,6 +168,13 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
         storage_factory = context.storage_factory
         results: List[pystac.Item] = []
 
+        if args.options.timeout is not None:
+            create_item_func = create_item_with_timeout(
+                self._create_item, timeout=args.options.timeout
+            )
+        else:
+            create_item_func = self._create_item
+
         def _validate(items: List[pystac.Item]) -> None:
             if not args.options.skip_validation:
                 for item in items:
@@ -144,7 +208,7 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
         if args.asset_uri:
             try:
                 with traced_create_item(args.asset_uri, args.collection_id):
-                    result = self._create_item(args.asset_uri, storage_factory)
+                    result = create_item_func(args.asset_uri, storage_factory)
             except Exception as e:
                 raise CreateItemsError(
                     f"Failed to create item from {args.asset_uri}"
@@ -171,7 +235,7 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                     with traced_create_item(
                         asset_uri, args.collection_id, i=i, asset_count=asset_count
                     ):
-                        result = self._create_item(asset_uri, storage_factory)
+                        result = create_item_func(asset_uri, storage_factory)
                 except Exception as e:
                     raise CreateItemsError(
                         f"Failed to create item from {asset_uri}"

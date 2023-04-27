@@ -18,6 +18,13 @@ class CreateItemsOptions(PCBaseModel):
     skip_validation: bool = False
     """Skip validation through PySTAC of the STAC Items."""
 
+    timeout: Optional[int] = None
+    """Timeout (in seconds) for the create items task to finish."""
+
+    @classmethod
+    def from_collection(cls, collection: CollectionDefinition) -> "CreateItemsOptions":
+        return cls(**collection.create_items.dict())
+
 
 class CreateItemsInput(PCBaseModel):
     asset_uri: Optional[str] = None
@@ -105,6 +112,7 @@ class CreateItemsTaskConfig(TaskDefinition):
     ) -> "CreateItemsTaskConfig":
         chunk_storage_config = collection.chunk_storage
         items_chunk_folder = f"{chunkset_id}/{ITEM_CHUNKS_PREFIX}"
+        options = options or CreateItemsOptions.from_collection(collection)
 
         return cls.create(
             image=ds.image,

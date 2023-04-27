@@ -1,10 +1,12 @@
 import json
 import logging
+import time
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Union
 
 import pystac
+import pytest
 import responses
 from pystac.utils import str_to_datetime
 
@@ -18,6 +20,8 @@ from pctasks.dataset.items.models import CreateItemsOutput
 from pctasks.dataset.items.task import (
     CreateItemsInput,
     CreateItemsTask,
+    CreateItemsTimeoutError,
+    create_item_with_timeout,
     traced_create_item,
 )
 from pctasks.dev.test_utils import run_test_task
@@ -130,3 +134,21 @@ def test_log_to_monitor(monkeypatch, caplog):
 
     azlogger = logging.getLogger("monitor.pctasks.dataset.items.task")
     assert len(azlogger.handlers) == 1
+
+
+def test_create_item_with_timeout():
+    call_count = 0
+
+    def create_item(x: float) -> None:
+        nonlocal call_count
+        call_count += 1
+        time.sleep(x)
+
+    with pytest.raises(CreateItemsTimeoutError):
+        create_item_with_timeout(create_item, 1)(1.1)
+
+    assert call_count == 3
+
+    result = create_item_with_timeout(create_item, 1)(0)
+    assert result is None
+    assert call_count == 4
