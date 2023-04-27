@@ -1,5 +1,5 @@
 id: noaa-cdr
-image: ${{ args.registry }}/pctasks-noaa-cdr:2023.04.27.1
+image: ${{ args.registry }}/pctasks-noaa-cdr:2023.4.27.2
 args:
   - registry
 code:
@@ -60,8 +60,11 @@ collections:
             name_starts_with: data/v2.1/avhrr
             extensions: [.nc]
             chunk_length: 300 # about 40 workers
+    create_items:
+      timeout: 600
     chunk_storage:
       uri: blob://noaacdr/etl-data/sea-surface-temperature-optimum-interpolation
+
   - id: noaa-cdr-sea-surface-temperature-whoi
     template: ${{ local.path(./collections/sea-surface-temperature-whoi) }}
     class: noaa_cdr:SeaSurfaceTemperatureWhoiCollection
@@ -74,6 +77,9 @@ collections:
             chunk_length: 300 # about 40 workers
     chunk_storage:
       uri: blob://noaacdr/etl-data/sea-surface-temperature-whoi
+    create_items:
+      timeout: 600
+
   - id: noaa-cdr-sea-surface-temperature-whoi-netcdf
     template: ${{ local.path(./collections/sea-surface-temperature-whoi-netcdf) }}
     class: noaa_cdr:SeaSurfaceTemperatureWhoiNetcdfCollection
@@ -86,3 +92,5 @@ collections:
             chunk_length: 300 # about 40 workers
     chunk_storage:
       uri: blob://noaacdr/etl-data/sea-surface-temperature-whoi-netcdf
+    create_items:
+      timeout: 600
