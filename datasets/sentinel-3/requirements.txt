@@ -1,1 +1,1 @@
-antimeridian==0.2.0
+antimeridian==0.2.2
