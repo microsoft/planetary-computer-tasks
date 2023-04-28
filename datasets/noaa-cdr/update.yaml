@@ -1,0 +1,27 @@
+# Datsaet.yaml for the dynamically updated noaa-cdr-sea-surface-temperature-optimum-interpolation
+id: noaa-cdr
+image: ${{ args.registry }}/pctasks-noaa-cdr:2023.4.28.0
+args:
+  - registry
+  - since
+code:
+  src: ${{ local.path(./noaa_cdr.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+  APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+collections:
+  - id: noaa-cdr-sea-surface-temperature-optimum-interpolation
+    template: ${{ local.path(./collections/sea-surface-temperature-optimum-interpolation) }}
+    class: noaa_cdr:SeaSurfaceTemperatureOptimumInterpolationCollection
+    asset_storage:
+      - uri: blob://noaacdr/sea-surface-temp-optimum-interpolation
+        chunks:
+          options:
+            name_starts_with: data/v2.1/avhrr
+            extensions: [.nc]
+            chunk_length: 300 # about 40 workers
+    chunk_storage:
+      uri: blob://noaacdr/etl-data/sea-surface-temperature-optimum-interpolation
