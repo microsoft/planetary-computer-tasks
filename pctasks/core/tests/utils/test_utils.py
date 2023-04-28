@@ -1,5 +1,6 @@
 import unittest.mock
 
+import azure.core.exceptions
 import pytest
 import requests
 
@@ -21,6 +22,16 @@ def test_backoff():
         response.request = request
         response.status_code = 502
         raise requests.HTTPError("502 Error", request=request, response=response)
+
+    # Mock time.sleep to keep the test fast
+    with unittest.mock.patch("pctasks.core.utils.backoff.time.sleep"):
+        with pytest.raises(BackoffError):
+            with_backoff(f)
+
+
+def test_backoff_incomplete_read_error():
+    def f():
+        raise azure.core.exceptions.IncompleteReadError()
 
     # Mock time.sleep to keep the test fast
     with unittest.mock.patch("pctasks.core.utils.backoff.time.sleep"):

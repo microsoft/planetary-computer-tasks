@@ -61,6 +61,14 @@ function render_values() {
 function cluster_login() {
     echo "Logging into the cluster..."
 
+    if [ -z "${RESOURCE_GROUP}" ]; then
+        RESOURCE_GROUP=$1
+    fi
+
+    if [ -z "${CLUSTER_NAME}" ]; then
+        CLUSTER_NAME=$2
+    fi
+
     az login --service-principal \
         --username ${ARM_CLIENT_ID} \
         --password ${ARM_CLIENT_SECRET} \
@@ -70,7 +78,7 @@ function cluster_login() {
         --resource-group ${RESOURCE_GROUP} \
         --name ${CLUSTER_NAME} \
         --subscription ${ARM_SUBSCRIPTION_ID} \
-         --overwrite-existing \
+        --overwrite-existing \
         --file=kubeconfig
 
     # kubelogin mutates every entry in the kubeconfig
@@ -135,4 +143,10 @@ function prepare_funcs() {
     cp requirements-deploy.txt requirements.txt
 
     popd || exit
+}
+
+function get_cidr_range() {
+    runnerIpAddress=$(curl -s https://ifconfig.me/all.json | jq -r ".ip_addr")
+    IFS='.' read -r -a ip_parts <<< "$runnerIpAddress"
+    echo "${ip_parts[0]}.${ip_parts[1]}.0.0/16"
 }

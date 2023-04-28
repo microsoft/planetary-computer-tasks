@@ -7,6 +7,7 @@
   "description": "{{ collection.description }}",
   "msft:storage_account": "sentinel1euwestrtc",
   "msft:container": "sentinel1-grd-rtc",
+  "msft:region": "westeurope",
   "msft:requires_account": true,
   "msft:group_id": "sentinel-1",
   "license": "CC-BY-4.0",

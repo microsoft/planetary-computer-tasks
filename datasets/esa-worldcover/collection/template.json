@@ -1,0 +1,269 @@
+{
+    "stac_version": "1.0.0",
+    "type": "Collection",
+    "id": "esa-worldcover",
+    "title": "ESA WorldCover",
+    "description": "{{ collection.description }}",
+    "license": "CC-BY-4.0",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://spdx.org/licenses/CC-BY-4.0.html",
+            "type": "text/html",
+            "title": "Creative Commons Attribution 4.0 International License"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.5281/zenodo.5571936 ",
+            "type": "text/html",
+            "title": "2020 Data DOI"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.5281/zenodo.7254221",
+            "type": "text/html",
+            "title": "2021 Data DOI"
+        },
+        {
+            "rel": "about",
+            "href": "https://esa-worldcover.s3.amazonaws.com/v100/2020/docs/WorldCover_PUM_V1.0.pdf",
+            "type": "application/pdf",
+            "title": "2020 Product Version 1.0.0 User Manual"
+        },
+        {
+            "rel": "about",
+            "href": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/docs/WorldCover_PUM_V2.0.pdf",
+            "type": "application/pdf",
+            "title": "2021 Product Version 2.0.0 User Manual"
+        },
+        {
+            "rel": "about",
+            "href": "https://worldcover2020.esa.int/data/docs/WorldCover_PVR_V1.1.pdf",
+            "type": "application/pdf",
+            "title": "2020 Product Version 1.0.0 Validation Report"
+        },
+        {
+            "rel": "about",
+            "href": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/docs/WorldCover_PVR_V2.0.pdf",
+            "type": "application/pdf",
+            "title": "2021 Product Version 2.0.0 Validation Report"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "keywords": [
+        "Global",
+        "Land Cover",
+        "Sentinel",
+        "ESA"
+    ],
+    "msft:short_description": "Global land cover product at 10 meter resolution based on Sentinel-1 and Sentinel-2 data",
+    "msft:storage_account": "ai4edataeuwest",
+    "msft:container": "esa-worldcover",
+    "msft:region": "westeurope",
+    "providers": [
+        {
+            "name": "ESA",
+            "roles": [
+                "licensor",
+                "producer"
+            ],
+            "url": "https://esa-worldcover.org"
+        },
+        {
+            "name": "ESA WorldCover Consortium",
+            "description": "The WorldCover product is developed by a consortium led by VITO Remote Sensing together with partners Brockmann Consult, CS SI, Gamma Remote Sensing AG, IIASA and Wageningen University",
+            "roles": [
+                "processor"
+            ],
+            "url": "https://esa-worldcover.org"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "title": "ESA WorldCover thumbnail",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/esa-worldcover-thumb.png",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/esa-worldcover.parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "msft:partition_info": {
+                "is_partitioned": false
+            }
+        }
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180.0,
+                    -60.0,
+                    180.0,
+                    82.75
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2020-01-01T00:00:00Z",
+                    "2021-12-31T23:59:59Z"
+                ]
+            ]
+        }
+    },
+    "summaries": {
+        "platform": [
+            "sentinel-1a",
+            "sentinel-1b",
+            "sentinel-2a",
+            "sentinel-2b"
+        ],
+        "instruments": [
+            "c-sar",
+            "msi"
+        ],
+        "mission": [
+            "sentinel-1",
+            "sentinel-2"
+        ],
+        "esa_worldcover:product_version": [
+            "1.0.0",
+            "2.0.0"
+        ]
+    },
+    "item_assets": {
+        "map": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Land Cover Classes",
+            "description": "Discrete classification according to the Land Cover Classification System scheme developed by the United Nations Food and Agriculture Organization",
+            "classification:classes": [
+                {
+                    "value": 10,
+                    "description": "Tree cover",
+                    "color-hint": "006400"
+                },
+                {
+                    "value": 20,
+                    "description": "Shrubland",
+                    "color-hint": "FFBB22"
+                },
+                {
+                    "value": 30,
+                    "description": "Grassland",
+                    "color-hint": "FFFF4C"
+                },
+                {
+                    "value": 40,
+                    "description": "Cropland",
+                    "color-hint": "F096FF"
+                },
+                {
+                    "value": 50,
+                    "description": "Built-up",
+                    "color-hint": "FA0000"
+                },
+                {
+                    "value": 60,
+                    "description": "Bare / sparse vegetation",
+                    "color-hint": "B4B4B4"
+                },
+                {
+                    "value": 70,
+                    "description": "Snow and ice",
+                    "color-hint": "F0F0F0"
+                },
+                {
+                    "value": 80,
+                    "description": "Permanent water bodies",
+                    "color-hint": "0064C8"
+                },
+                {
+                    "value": 90,
+                    "description": "Herbaceous wetland",
+                    "color-hint": "0096A0"
+                },
+                {
+                    "value": 95,
+                    "description": "Mangroves",
+                    "color-hint": "00CF75"
+                },
+                {
+                    "value": 100,
+                    "description": "Moss and lichen",
+                    "color-hint": "FAE6A0"
+                }
+            ],
+            "raster:bands": [
+                {
+                    "name": "Band1",
+                    "description": "Classification values",
+                    "nodata": 0,
+                    "sampling": "area",
+                    "data_type": "uint8",
+                    "spatial_resolution": 10
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "input_quality": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Classification Input Data Quality",
+            "description": "Per pixel quality indicator showing the quality of the input data.",
+            "raster:bands": [
+                {
+                    "name": "Band1",
+                    "description": "Number of Sentinel-1 GAMMA0 observations used in the classification workflow",
+                    "nodata": -1,
+                    "sampling": "area",
+                    "data_type": "int16",
+                    "spatial_resolution": 60
+                },
+                {
+                    "name": "Band2",
+                    "description": "Number of Sentinel-2 L2A observations used in the classification workflow",
+                    "nodata": -1,
+                    "sampling": "area",
+                    "data_type": "int16",
+                    "spatial_resolution": 60
+                },
+                {
+                    "name": "Band3",
+                    "description": "Percentage (0-100) of invalid S2 observations discarded in the classification workflow (after cloud and cloud shadow filtering)",
+                    "nodata": -1,
+                    "sampling": "area",
+                    "data_type": "int16",
+                    "spatial_resolution": 60
+                }
+            ],
+            "roles": [
+                "metadata"
+            ]
+        }
+    }
+}

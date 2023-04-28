@@ -1,0 +1,550 @@
+{
+  "type": "Collection",
+  "id": "noaa-cdr-sea-ice-concentration",
+  "stac_version": "1.0.0",
+  "description": "{{ collection.description }}",
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://www.ncei.noaa.gov/pub/data/sds/cdr/CDRs/Sea_Ice_Concentration/UseAgreement_01B-11.pdf",
+      "type": "application/pdf",
+      "title": "NOAA CDR Sea Ice Concentration Use Agreement"
+    },
+    {
+      "rel": "about",
+      "href": "https://www.ncei.noaa.gov/products/climate-data-records/sea-ice-concentration",
+      "type": "text/html",
+      "title": "Sea Ice Concentration CDR"
+    },
+    {
+      "rel": "cite-as",
+      "href": "https://doi.org/10.7265/efmz-2t65"
+    }
+  ],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/raster/v1.1.0/schema.json"
+  ],
+  "item_assets": {
+    "netcdf": {
+      "type": "application/x-netcdf",
+      "roles": [
+        "data"
+      ]
+    },
+    "cdr_seaice_conc": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "raster:bands": [
+        {
+          "nodata": 255,
+          "data_type": "uint8",
+          "scale": 0.009999999776482582,
+          "spatial_resolution": 25000.0
+        }
+      ],
+      "classification:classes": [
+        {
+          "value": 251,
+          "name": "pole_hole"
+        },
+        {
+          "value": 252,
+          "name": "lakes"
+        },
+        {
+          "value": 253,
+          "name": "coastal"
+        },
+        {
+          "value": 254,
+          "name": "land_mask"
+        },
+        {
+          "value": 255,
+          "name": "missing_data"
+        }
+      ],
+      "roles": [
+        "data"
+      ]
+    },
+    "nsidc_bt_seaice_conc": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "raster:bands": [
+        {
+          "nodata": 255,
+          "data_type": "uint8",
+          "scale": 0.009999999776482582,
+          "spatial_resolution": 25000.0
+        }
+      ],
+      "classification:classes": [
+        {
+          "value": 251,
+          "name": "pole_hole"
+        },
+        {
+          "value": 252,
+          "name": "unused"
+        },
+        {
+          "value": 253,
+          "name": "coastal"
+        },
+        {
+          "value": 254,
+          "name": "land_mask"
+        },
+        {
+          "value": 255,
+          "name": "missing_data"
+        }
+      ],
+      "roles": [
+        "data"
+      ]
+    },
+    "nsidc_nt_seaice_conc": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "raster:bands": [
+        {
+          "nodata": 255,
+          "data_type": "uint8",
+          "scale": 0.009999999776482582,
+          "spatial_resolution": 25000.0
+        }
+      ],
+      "roles": [
+        "data"
+      ]
+    },
+    "qa_of_cdr_seaice_conc": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "raster:bands": [
+        {
+          "nodata": 0,
+          "data_type": "uint8",
+          "spatial_resolution": 25000.0
+        }
+      ],
+      "classification:bitfields": [
+        {
+          "name": "BT_weather_filter_applied",
+          "offset": 0,
+          "length": 1,
+          "classes": [
+            {
+              "name": "BT_weather_filter_not_applied",
+              "value": 0
+            },
+            {
+              "name": "BT_weather_filter_applied",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "name": "NT_weather_filter_applied",
+          "offset": 1,
+          "length": 1,
+          "classes": [
+            {
+              "name": "NT_weather_filter_not_applied",
+              "value": 0
+            },
+            {
+              "name": "NT_weather_filter_applied",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "name": "BT_land_spillover_filter_applied",
+          "offset": 2,
+          "length": 1,
+          "classes": [
+            {
+              "name": "BT_land_spillover_filter_not_applied",
+              "value": 0
+            },
+            {
+              "name": "BT_land_spillover_filter_applied",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "name": "NT_land_spillover_filter_applied",
+          "offset": 3,
+          "length": 1,
+          "classes": [
+            {
+              "name": "NT_land_spillover_filter_not_applied",
+              "value": 0
+            },
+            {
+              "name": "NT_land_spillover_filter_applied",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "name": "valid_ice_mask_applied",
+          "offset": 4,
+          "length": 1,
+          "classes": [
+            {
+              "name": "valid_ice_mask_not_applied",
+              "value": 0
+            },
+            {
+              "name": "valid_ice_mask_applied",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "name": "spatial_interpolation_applied",
+          "offset": 5,
+          "length": 1,
+          "classes": [
+            {
+              "name": "spatial_interpolation_not_applied",
+              "value": 0
+            },
+            {
+              "name": "spatial_interpolation_applied",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "name": "temporal_interpolation_applied",
+          "offset": 6,
+          "length": 1,
+          "classes": [
+            {
+              "name": "temporal_interpolation_not_applied",
+              "value": 0
+            },
+            {
+              "name": "temporal_interpolation_applied",
+              "value": 1
+            }
+          ]
+        }
+      ],
+      "roles": [
+        "data"
+      ]
+    },
+    "spatial_interpolation_flag": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "raster:bands": [
+        {
+          "nodata": 0,
+          "data_type": "uint8",
+          "spatial_resolution": 25000.0
+        }
+      ],
+      "classification:bitfields": [
+        {
+          "name": "19v_tb_value_interpolated",
+          "offset": 0,
+          "length": 1,
+          "classes": [
+            {
+              "name": "19v_tb_value_not_interpolated",
+              "value": 0
+            },
+            {
+              "name": "19v_tb_value_interpolated",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "name": "19h_tb_value_interpolated",
+          "offset": 1,
+          "length": 1,
+          "classes": [
+            {
+              "name": "19h_tb_value_not_interpolated",
+              "value": 0
+            },
+            {
+              "name": "19h_tb_value_interpolated",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "name": "22v_tb_value_interpolated",
+          "offset": 2,
+          "length": 1,
+          "classes": [
+            {
+              "name": "22v_tb_value_not_interpolated",
+              "value": 0
+            },
+            {
+              "name": "22v_tb_value_interpolated",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "name": "37v_tb_value_interpolated",
+          "offset": 3,
+          "length": 1,
+          "classes": [
+            {
+              "name": "37v_tb_value_not_interpolated",
+              "value": 0
+            },
+            {
+              "name": "37v_tb_value_interpolated",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "name": "37h_tb_value_interpolated",
+          "offset": 4,
+          "length": 1,
+          "classes": [
+            {
+              "name": "37h_tb_value_not_interpolated",
+              "value": 0
+            },
+            {
+              "name": "37h_tb_value_interpolated",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "name": "pole_hole_value_interpolated",
+          "offset": 5,
+          "length": 1,
+          "classes": [
+            {
+              "name": "pole_hole_value_not_interpolated",
+              "value": 0
+            },
+            {
+              "name": "pole_hole_value_interpolated",
+              "value": 1
+            }
+          ]
+        }
+      ],
+      "roles": [
+        "data"
+      ]
+    },
+    "stdev_of_cdr_seaice_conc": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "raster:bands": [
+        {
+          "nodata": "nan",
+          "data_type": "float32",
+          "spatial_resolution": 25000.0
+        }
+      ],
+      "classification:classes": [
+        {
+          "value": 251,
+          "name": "pole_hole"
+        },
+        {
+          "value": 252,
+          "name": "lakes"
+        },
+        {
+          "value": 253,
+          "name": "coastal"
+        },
+        {
+          "value": 254,
+          "name": "land_mask"
+        },
+        {
+          "value": 255,
+          "name": "missing_data"
+        }
+      ],
+      "roles": [
+        "data"
+      ]
+    },
+    "temporal_interpolation_flag": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "raster:bands": [
+        {
+          "nodata": 0,
+          "data_type": "uint8",
+          "spatial_resolution": 25000.0
+        }
+      ],
+      "classification:classes": [
+        {
+          "value": 1,
+          "name": "1_day_following"
+        },
+        {
+          "value": 2,
+          "name": "2_days_following"
+        },
+        {
+          "value": 3,
+          "name": "3_days_following"
+        },
+        {
+          "value": 4,
+          "name": "4_days_following"
+        },
+        {
+          "value": 5,
+          "name": "5_days_following"
+        },
+        {
+          "value": 10,
+          "name": "1_day_prior"
+        },
+        {
+          "value": 11,
+          "name": "mean_of_prior_and_following_1_day"
+        },
+        {
+          "value": 20,
+          "name": "2_days_prior"
+        },
+        {
+          "value": 22,
+          "name": "mean_of_prior_and_following_2_days"
+        },
+        {
+          "value": 30,
+          "name": "3_days_prior"
+        },
+        {
+          "value": 33,
+          "name": "mean_of_prior_and_following_3_days"
+        },
+        {
+          "value": 40,
+          "name": "4_days_prior"
+        },
+        {
+          "value": 44,
+          "name": "mean_of_prior_and_following_4_days"
+        },
+        {
+          "value": 50,
+          "name": "5_days_prior"
+        },
+        {
+          "value": 55,
+          "name": "mean_of_prior_and_following_5_days"
+        }
+      ],
+      "roles": [
+        "data"
+      ]
+    }
+  },
+  "sci:doi": "10.7265/efmz-2t65",
+  "sci:citation": "Meier, W. N., F. Fetterer, A. K. Windnagel, and S. Stewart. 2021. NOAA/NSIDC Climate Data Record of Passive Microwave Sea Ice Concentration, Version 4. [Indicate subset used]. Boulder, Colorado USA. NSIDC: National Snow and Ice Data Center https://doi.org/10.7265/efmz-2t65. ",
+  "msft:short_description": "The Sea Ice Concentration Climate Data Record (CDR) provides a consistent daily and monthly time series of sea ice concentrations for both the north and south Polar Regions on a 25 km x 25 km grid.",
+  "msft:storage_account": "noaacdr",
+  "msft:container": "sea-ice-concentration",
+  "msft:group_id": "noaa-cdr",
+  "msft:region": "eastus",
+  "title": "Sea Ice Concentration CDR",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -180.0,
+          -90,
+          180,
+          90
+        ],
+        [
+          -180,
+          31.1,
+          180.0,
+          90
+        ],
+        [
+          -180,
+          -90,
+          180.0,
+          -39.36
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "1978-10-25T00:00:00Z",
+          null
+        ]
+      ]
+    }
+  },
+  "license": "proprietary",
+  "keywords": [
+    "Climate",
+    "NOAA",
+    "Sea ice",
+    "Polar"
+  ],
+  "providers": [
+    {
+      "name": "National Snow and Ice Data Center",
+      "description": "The National Snow and Ice Data Center (NSIDC) at the University of Colorado Boulder (CU Boulder), part of the CU Boulder Cooperative Institute for Research in Environmental Sciences (CIRES), conducts innovative research and provides open data to understand how the frozen parts of Earth affect the rest of the planet and impact society.",
+      "roles": [
+        "producer",
+        "processor",
+        "licensor"
+      ],
+      "url": "https://nsidc.org/data/g02202/versions/4"
+    },
+    {
+      "name": "Microsoft",
+      "roles": [
+        "processor",
+        "host"
+      ],
+      "url": "https://planetarycomputer.microsoft.com"
+    }
+  ],
+  "assets": {
+    "thumbnail": {
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-cdr-sea-ice-concentration-thumb.png",
+      "type": "image/png",
+      "title": "Sea Ice Concentration CDR thumbnail",
+      "roles": [
+        "thumbnail"
+      ]
+    },
+    "geoparquet-items": {
+      "href": "abfs://items/noaa-cdr-sea-ice-concentration.parquet",
+      "type": "application/x-parquet",
+      "title": "GeoParquet STAC items",
+      "description": "Snapshot of the collection's STAC items exported to GeoParquet format",
+      "msft:partition_info": {
+        "is_partitioned": false
+      },
+      "table:storage_options": {
+        "account_name": "pcstacitems"
+      },
+      "roles": [
+        "stac-items"
+      ]
+    }
+  }
+}

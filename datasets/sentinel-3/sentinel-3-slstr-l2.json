@@ -73,6 +73,7 @@
     }
   ],
   "msft:container": "sentinel-3",
+  "msft:region": "westeurope",
   "msft:storage_account": "sentinel3euwest",
   "msft:short_description": "The [Sentinel-3](https://sentinel.esa.int/web/sentinel/missions/sentinel-3) mission is composed of three versatile satellites designed to provide data continuity for the ERS, ENVISAT and SPOT satellites and to support operational land and ocean observation services. The SLSTR Level-2 processing includes five types of products: WCT products providing the sea surface temperature for single and dual view, for two or three channels, WST products providing L2P sea surface temperature, following the GHRSST specifications, LST products providing land surface temperature, FRP products providing global (over land and water) fire radiative power, and AOD products providing global (over land and water) aerosol optical depth.",
   "summaries": {

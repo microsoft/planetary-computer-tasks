@@ -8,7 +8,7 @@ with open("README.md") as f:
 install_requires = [
     "pctasks.core>=0.1.0",
     "pctasks.run>=0.1.0",
-    "fastapi==0.78.*",
+    "fastapi==0.78.0,<0.79",
     "python-multipart==0.0.5"
 ]
 

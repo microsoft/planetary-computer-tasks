@@ -11,6 +11,8 @@ pctasks:
     appRootPath: "/tasks"
     debug: "FALSE"
 
+    instrumentationKey: "{{ tf.instrumentation_key }}"
+
     access_key:
       enabled: true
       value: "{{ tf.kv_access_key }}"

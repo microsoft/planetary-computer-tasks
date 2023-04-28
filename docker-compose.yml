@@ -2,7 +2,7 @@ version: "2.1"
 services:
   azurite:
     container_name: pctasks-azurite
-    image: mcr.microsoft.com/azure-storage/azurite:3.17.1
+    image: mcr.microsoft.com/azure-storage/azurite:3.23.0
     hostname: azurite
     command: "azurite --silent --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost
       0.0.0.0 -l /workspace"
@@ -15,14 +15,13 @@ services:
 
   database:
     container_name: pctasks-database
-    image: ghcr.io/stac-utils/pgstac:v0.6.13
+    image: ghcr.io/stac-utils/pgstac:v0.7.3
     environment:
       - POSTGRES_USER=username
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=postgis
       - PGUSER=username
       - PGPASSWORD=password
-      - PGHOST=localhost
       - PGDATABASE=postgis
     ports:
       - "5499:5432"
