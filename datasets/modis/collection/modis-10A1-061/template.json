@@ -171,6 +171,7 @@
   "msft:storage_account": "modiseuwest",
   "msft:container": "modis-061",
   "msft:group_id": "modis",
+  "msft:region": "westeurope",
   "title": "MODIS Snow Cover Daily",
   "extent": {
     "spatial": {
