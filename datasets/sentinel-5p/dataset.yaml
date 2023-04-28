@@ -22,7 +22,8 @@ collections:
         chunks:
           options:
             extensions: [.json]
-            chunk_length: 5000 # Larger? There are 1.33 million blobs in storage
+            chunk_length: 5000
+            limit: 200  # TODO: Remove this
     chunk_storage:
       uri: blob://sentinel5euwest/sentinel-5p-etl-data/pctasks-chunks/
 
