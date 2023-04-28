@@ -115,11 +115,38 @@
             "L2__O3____",
             "L2__SO2___"
         ],
+        "s5p:product_name": [
+            "aer-ai",
+            "aer-lh",
+            "ch4",
+            "cloud",
+            "co",
+            "hcho",
+            "no2",
+            "np-bd3",
+            "np-bd6",
+            "np-bd7",
+            "o3-tcl",
+            "o3",
+            "so2"
+        ],
         "s5p:spatial_resolution": [
-            "5.5x3.5km",
-            "5.5x7.0km",
-            "7.0x3.5km",
-            "7.0x7.0km"
+            [
+                5500,
+                3500
+            ],
+            [
+                5500,
+                7000
+            ],
+            [
+                7000,
+                3500
+            ],
+            [
+                7000,
+                7000
+            ]
         ]
     },
     "extent": {
@@ -143,92 +170,92 @@
         }
     },
     "item_assets": {
-        "aer_ai": {
-            "title": "TROPOMI/S5P L2 Ultraviolet Aerosol Index",
+        "aer-ai": {
+            "title": "Ultraviolet Aerosol Index",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
-        "aer_lh": {
-            "title": "TROPOMI/S5P L2 Aerosol Layer Height",
+        "aer-lh": {
+            "title": "Aerosol Layer Height",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
         "ch4": {
-            "title": "TROPOMI/S5P L2 Methane Total Column",
+            "title": "Methane Total Column",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
         "cloud": {
-            "title": "TROPOMI/S5P L2 Cloud Fraction, Albedo, and Top Pressure",
+            "title": "Cloud Fraction, Albedo, and Top Pressure",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
         "co": {
-            "title": "TROPOMI/S5P L2 Carbon Monoxide Total Column",
+            "title": "Carbon Monoxide Total Column",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
         "hcho": {
-            "title": "TROPOMI/S5P L2 Formaldehyde Total Column",
+            "title": "Formaldehyde Total Column",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
         "no2": {
-            "title": "TROPOMI/S5P L2 Nitrogen Dioxide Total Column",
+            "title": "Nitrogen Dioxide Total Column",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
         "o3": {
-            "title": "TROPOMI/S5P L2 Ozone Total Column",
+            "title": "Ozone Total Column",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
-        "o3_tcl": {
-            "title": "TROPOMI/S5P L2 Ozone Tropospheric Column",
+        "o3-tcl": {
+            "title": "Ozone Tropospheric Column",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
         "so2": {
-            "title": "TROPOMI/S5P L2 Sulphur Dioxide Total Column",
+            "title": "Sulphur Dioxide Total Column",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
-        "np_bd3": {
-            "title": "TROPOMI/S5P VIIRS/NPP Band 3 Cloud Mask",
+        "np-bd3": {
+            "title": "VIIRS/NPP Band 3 Cloud Mask",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
-        "np_bd6": {
-            "title": "TROPOMI/S5P VIIRS/NPP Band 6 Cloud Mask",
+        "np-bd6": {
+            "title": "VIIRS/NPP Band 6 Cloud Mask",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
             ]
         },
-        "np_bd7": {
-            "title": "TROPOMI/S5P VIIRS/NPP Band 7 Cloud Maskt",
+        "np-bd7": {
+            "title": "VIIRS/NPP Band 7 Cloud Maskt",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
