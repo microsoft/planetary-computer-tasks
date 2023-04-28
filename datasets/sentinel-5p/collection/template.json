@@ -237,7 +237,7 @@
             ]
         },
         "np-bd7": {
-            "title": "VIIRS/NPP Band 7 Cloud Maskt",
+            "title": "VIIRS/NPP Band 7 Cloud Mask",
             "type": "application/x-netcdf",
             "roles": [
                 "data"
