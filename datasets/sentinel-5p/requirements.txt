@@ -1,1 +1,1 @@
-antimeridian @ git+https://github.com/gadomski/antimeridian.git@cw-only
+antimeridian==0.2.2

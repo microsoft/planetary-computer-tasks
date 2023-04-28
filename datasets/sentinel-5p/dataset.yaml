@@ -1,12 +1,11 @@
 id: sentinel_5p
-image: ${{ args.registry }}/pctasks-task-base:latest
+image: ${{ args.registry }}/pctasks-sentinel-5p:latest
 
 args:
   - registry
 
 code:
   src: ${{ local.path(./sentinel_5p.py) }}
-  requirements: ${{ local.path(./requirements.txt) }}
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -26,3 +25,4 @@ collections:
             chunk_length: 5000 # Larger? There are 1.33 million blobs in storage
     chunk_storage:
       uri: blob://sentinel5euwest/sentinel-5p-etl-data/pctasks-chunks/
+
