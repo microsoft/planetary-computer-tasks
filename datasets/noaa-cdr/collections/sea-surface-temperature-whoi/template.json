@@ -1,0 +1,137 @@
+{
+  "type": "Collection",
+  "id": "noaa-cdr-sea-surface-temperature-whoi",
+  "stac_version": "1.0.0",
+  "description": "{{ collection.description }}",
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://www.ncei.noaa.gov/pub/data/sds/cdr/CDRs/Sea%20Surface%20Temperature%20-%20WHOI/UseAgreement_01B-27a.pdf",
+      "type": "application/pdf",
+      "title": "NOAA CDR Sea Surface Temperature - WHOI Use Agreement"
+    },
+    {
+      "rel": "about",
+      "href": "https://www.ncei.noaa.gov/products/climate-data-records/sea-surface-temperature-whoi",
+      "type": "text/html",
+      "title": "Sea Surface Temperature - WHOI CDR"
+    },
+    {
+      "rel": "cite-as",
+      "href": "https://doi.org/10.7289/V5FB510W"
+    }
+  ],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/raster/v1.1.0/schema.json"
+  ],
+  "item_assets": {
+    "sea_surface_temperature": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "raster:bands": [
+        {
+          "nodata": "nan",
+          "data_type": "float32",
+          "unit": "degree Celsius"
+        }
+      ],
+      "roles": [
+        "data"
+      ]
+    },
+    "fill_missing_qc": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "raster:bands": [
+        {
+          "nodata": "nan",
+          "data_type": "float32"
+        }
+      ],
+      "roles": [
+        "data"
+      ]
+    }
+  },
+  "sci:doi": "10.7289/V5FB510W",
+  "sci:citation": "Clayson, Carol Anne; Brown, Jeremiah; and NOAA CDR Program (2016). NOAA Climate Data Record (CDR) of Sea Surface Temperature - WHOI, Version 2. NOAA National Climatic Data Center. doi:10.7289/V5FB510W",
+  "msft:short_description": "The Sea Surface Temperature-Woods Hole Oceanographic Institution (WHOI) Climate Data Record (CDR) is one of three CDRs which combine to form the NOAA Ocean Surface Bundle (OSB) CDR. The resultant sea surface temperature (SST) data are produced through modeling the diurnal variability in combination with AVHRR SST observations.",
+  "msft:storage_account": "noaacdr",
+  "msft:container": "sea-surface-temperature-whoi",
+  "msft:group_id": "noaa-cdr",
+  "msft:region": "eastus",
+  "title": "Sea Surface Temperature - WHOI CDR",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -180.0,
+          -90,
+          180,
+          90
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "1988-01-01T00:00:00Z",
+          null
+        ]
+      ]
+    }
+  },
+  "license": "proprietary",
+  "keywords": [
+    "Global",
+    "Climate",
+    "NOAA",
+    "Ocean",
+    "Temperature"
+  ],
+  "providers": [
+    {
+      "name": "National Centers for Environmental Information",
+      "description": "NCEI is the Nation's leading authority for environmental data, and manage one of the largest archives of atmospheric, coastal, geophysical, and oceanic research in the world. NCEI contributes to the NESDIS mission by developing new products and services that span the science disciplines and enable better data discovery.",
+      "roles": [
+        "producer",
+        "processor",
+        "licensor"
+      ],
+      "url": "https://www.ncei.noaa.gov/"
+    },
+    {
+      "name": "Microsoft",
+      "roles": [
+        "processor",
+        "host"
+      ],
+      "url": "https://planetarycomputer.microsoft.com"
+    }
+  ],
+  "assets": {
+    "thumbnail": {
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-cdr-sea-surface-temperature-whoi-thumb.png",
+      "type": "image/png",
+      "title": "Sea Surface Temperature - WHOI CDR thumbnail",
+      "roles": [
+        "thumbnail"
+      ]
+    },
+    "geoparquet-items": {
+      "href": "abfs://items/noaa-cdr-sea-surface-temperature-whoi.parquet",
+      "type": "application/x-parquet",
+      "title": "GeoParquet STAC items",
+      "description": "Snapshot of the collection's STAC items exported to GeoParquet format",
+      "msft:partition_info": {
+        "is_partitioned": false
+      },
+      "table:storage_options": {
+        "account_name": "pcstacitems"
+      },
+      "roles": [
+        "stac-items"
+      ]
+    }
+  }
+}
