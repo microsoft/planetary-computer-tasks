@@ -20,6 +20,7 @@ Helper functions and classes for dealing with local or remote file systems.
    pctasks.core.storage.StorageFactory
    pctasks.core.storage.blob.BlobUri
    pctasks.core.storage.blob.BlobStorage
+   pctasks.core.storage.blob.maybe_rewrite_blob_storage_url
 ```
 
 ## `pctasks.task`

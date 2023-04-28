@@ -29,6 +29,7 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     ContainerSasPermissions,
+    ContentSettings,
     generate_container_sas,
 )
 
@@ -539,7 +540,21 @@ class BlobStorage(Storage):
         input_path: str,
         target_path: str,
         overwrite: bool = True,
+        content_type: Optional[str] = None,
     ) -> None:
+        """
+        Upload a file to blob storage.
+
+        Parameters
+        ----------
+        content_type: str, optional
+            The content type of the file. If provided, it will be set in
+            the :class:`azure.storage.blob.ContentSettings` argument passed
+            to :meth:`azure.storage.blob.BlobClient.upload_blob`.
+        """
+        kwargs = {}
+        if content_type:
+            kwargs["content_settings"] = ContentSettings(content_type=content_type)
         with self._get_client() as client:
             with client.container.get_blob_client(
                 self._add_prefix(target_path)
@@ -547,7 +562,7 @@ class BlobStorage(Storage):
 
                 def _upload() -> None:
                     with open(input_path, "rb") as f:
-                        blob.upload_blob(f, overwrite=overwrite)
+                        blob.upload_blob(f, overwrite=overwrite, **kwargs)
 
                 with_backoff(_upload)
 
@@ -661,3 +676,63 @@ class BlobStorage(Storage):
         return cls.from_account_key(
             f"blob://{credential.account_name}/{container_name}", credential.account_key
         )
+
+
+def maybe_rewrite_blob_storage_url(url: str) -> str:
+    """
+    Rewrite HTTP blob-storage URLs to blob:// URLs.
+
+    If `url` isn't a blob-storage style URL, it's returned unmodified.
+
+    Parameters
+    ----------
+    url: str
+        The URL (or path) to a file.
+
+    Returns
+    -------
+    str
+        The rewritten URL. Blob Storage URLs are modified to use the `blob://`
+        style. Non-blob storage URLs are returned unmodified.
+
+    Examples
+    --------
+    Blob storage URLs are rewritten
+
+    >>> maybe_rewrite_blob_storage_url(
+    ...     "https://example.blob.core.windows.net/container/path/file.txt"
+    ... )
+    'blob://example/container/path/file.txt'
+
+    Azurite-style URLs *are* rewritten
+
+    >>> maybe_rewrite_blob_storage_url(
+    ...     "https://azurite:10000/devstoreaccount1/container/path/file.txt"
+    ... )
+    'blob://azurite:10000/devstoreaccount1/container/path/file.txt'
+
+    >>> maybe_rewrite_blob_storage_url(
+    ...     "https://localhost:10000/devstoreaccount1/container/path/file.txt"
+    ... )
+    'blob://localhost:10000/devstoreaccount1/container/path/file.txt'
+
+    Local paths are not affected
+
+    >>> maybe_rewrite_blob_storage_url("path/file.txt")
+    'path/file.txt'
+    """
+    parsed = urlparse(url)
+
+    if parsed.netloc.endswith(".blob.core.windows.net"):
+        account = parsed.netloc.split(".", 1)[0].strip("/")
+        # TODO: this could maybe fail if the path is just to the container.
+        container, path = parsed.path.strip("/").split("/", 1)
+
+        url = f"blob://{account}/{container}/{path}"
+
+    elif parsed.netloc.startswith(("azurite", "localhost", "127.0.0.1")):
+        # should we *just* do port 10000?
+        # Look at BlobStorage.__init__ maybe
+        url = f"blob://{parsed.path.strip('/')}"
+
+    return url

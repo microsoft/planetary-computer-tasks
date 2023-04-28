@@ -15,13 +15,15 @@ T = TypeVar("T")
 
 
 class PgSTAC:
+    db: PgstacDB
+
     def __init__(self, pg_connection_string: str) -> None:
         self.db = PgstacDB(pg_connection_string, debug=True)
         # self.db.connect()
         self.loader = Loader(self.db)
 
     def _with_connection_retry(self, func: Callable[[], T], retries: int = 0) -> T:
-        """Tries a function against the DB, retires on connection timout."""
+        """Tries a function against the DB, retires on connection timeout."""
         MAX_RETRIES = 1
         try:
             return func()

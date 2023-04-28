@@ -2,11 +2,12 @@ import importlib.metadata
 import subprocess
 import sys
 import unittest.mock
+import zipfile
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional
 
-from pctasks.core.importer import ensure_code, ensure_requirements
+from pctasks.core.importer import ensure_code, ensure_requirements, write_code
 from pctasks.core.storage.blob import BlobStorage
 from pctasks.dev.blob import temp_azurite_blob_storage
 
@@ -109,3 +110,20 @@ def test_ensure_requirements_target_dir():
         finally:
             if target_dir in sys.path:
                 sys.path.remove(target_dir)
+
+
+def test_write_code():
+    with TemporaryDirectory() as temp_dir:
+        p = Path(temp_dir)
+        pkg = p / "my_package"
+        module = pkg / "my_file.py"
+        module.parent.mkdir(exist_ok=True)
+        module.touch()
+
+        name, buf = write_code(pkg)
+
+    assert name == "my_package.zip"
+
+    with zipfile.ZipFile(buf) as zf:
+        assert len(zf.filelist) == 1
+        assert zf.filelist[0].filename == "my_package/my_file.py"
