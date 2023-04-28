@@ -13,14 +13,22 @@ environment:
   AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
   APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
 
+# Just stub collections update the collection metadata
 collections:
   - id: modis-10A1-061
     template: ${{ local.path(./collection/modis-10A1-061/) }}
     class: ""
-    asset_storage: false
-    chunk_storage: false
+    asset_storage:
+      - uri: ""
+      - uri: ""
+    chunk_storage:
+      uri: ""
+  - id: modis-10A2-061
+    template: ${{ local.path(./collection/modis-10A2-061/) }}
+    class: ""
+    asset_storage:
+      - uri: ""
+      - uri: ""
+    chunk_storage:
+      uri: ""
 
-
-  # - id: modis-10A1-062
-  #   template: ${{ local.path(./collection/modis-10A1-062/) }}
-  #   class: ""
