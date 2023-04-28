@@ -114,17 +114,12 @@ class StorageDefinition(PCBaseModel):
         return get_storage(self.uri, sas_token=self.token)
 
 
-class CreateItemsDefinition(PCBaseModel):
-    timeout: Optional[int] = None
-
-
 class CollectionDefinition(PCBaseModel):
     id: str
     template: Optional[str] = None
     collection_class: str = Field(alias="class")
     asset_storage: List[StorageDefinition]
     chunk_storage: StorageDefinition
-    create_items: CreateItemsDefinition = CreateItemsDefinition()
 
     def get_tokens(self) -> Dict[str, StorageAccountTokens]:
         """Collects SAS tokens from any container configs."""
