@@ -8,7 +8,7 @@ This dataset includes data on three primary variables:
 * terrestrial Chlorophyll index file
 * integrated water vapor over water file.
 
-Each variable is contained within a separate NetCDF file, and is cataloged by an asset on each Item (`ogvi` for the vegetation index, )
+Each variable is contained within a separate NetCDF file, and is cataloged as an asset in each Item.
 
 Several associated variables are also provided in the annotations data files:
 
@@ -25,6 +25,5 @@ The full resolution product offers a spatial sampling of approximately 300 m.
 This collection contains Level-2 data in NetCDF files. The values in the data files have been
 converted from Top of Atmosphere radiance to reflectance, and includes various corrections for gaseous absorption and pixel classification.
 See [processing overview](https://sentinel.esa.int/web/sentinel/technical-guides/sentinel-3-olci/level-2/processing) for more.
-
 
 [olci-l2]: https://sentinel.esa.int/web/sentinel/technical-guides/sentinel-3-olci/level-2/land-products
