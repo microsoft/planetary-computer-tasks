@@ -31,7 +31,11 @@ def cog_uri(name: str) -> str:
 def get_download_kwargs(storage) -> dict[str, Any]:
     kwargs = {}
     if isinstance(storage, Storage):
+        # timeout_seconds is a server-side timeout
         kwargs["timeout_seconds"] = 120
+        # these two are client-side timeouts (eventually passed to urllib3)
+        kwargs["connection_timeout"] = 240
+        kwargs["read_timeout"] = 120
     return kwargs
 
 

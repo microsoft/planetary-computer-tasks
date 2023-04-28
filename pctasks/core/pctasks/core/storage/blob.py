@@ -505,8 +505,8 @@ class BlobStorage(Storage):
         output_path: str,
         is_binary: bool = True,
         timeout_seconds: Optional[int] = None,
+        **kwargs: Any,
     ) -> None:
-        kwargs = {}
         if timeout_seconds is not None:
             kwargs["timeout"] = timeout_seconds
 
