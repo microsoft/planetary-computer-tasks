@@ -1,12 +1,11 @@
 id: sentinel-3
-image: ${{ args.registry }}/pctasks-task-base:latest
+image: ${{ args.registry }}/pctasks-sentinel-3:latest
 
 args:
   - registry
 
 code:
   src: ${{ local.path(./sentinel_3) }}
-  requirements: ${{ local.path(./requirements.txt) }}
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
