@@ -1,3 +1,4 @@
+from itertools import groupby
 from typing import List, Optional
 
 
@@ -59,6 +60,9 @@ def get_winding(coords: List[List[float]], max_delta_lon: float) -> Optional[str
     for i, point in enumerate(coords):
         coords[i] = [((point[0] + 180) % 360) - 180, point[1]]
 
+    # duplicate points will cause a divide by zero problem
+    coords = [c for c, _ in groupby(coords)]
+
     # get center latitude against which we will check for crossings
     lats = [coord[1] for coord in coords]
     center_lat = (max(lats) + min(lats)) / 2
@@ -66,11 +70,11 @@ def get_winding(coords: List[List[float]], max_delta_lon: float) -> Optional[str
     # find all longitude crossings of the center latitude
     lon_crossings = []
     for coord1, coord2 in zip(coords, coords[1:]):
-        if coord1[1] > center_lat and coord2[1] < center_lat:
+        if coord1[1] >= center_lat and coord2[1] < center_lat:
             lon_crossings.append(
                 [crossing_longitude(coord1, coord2, center_lat, max_delta_lon), -1]
             )
-        elif coord1[1] < center_lat and coord2[1] > center_lat:
+        elif coord1[1] <= center_lat and coord2[1] > center_lat:
             lon_crossings.append(
                 [crossing_longitude(coord1, coord2, center_lat, max_delta_lon), 1]
             )
