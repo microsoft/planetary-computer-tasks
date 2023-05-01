@@ -213,47 +213,45 @@ class BaseSentinelCollection(pctasks.dataset.collection.Collection):  # type: ig
         item_dict["assets"] = new_assets
 
         # ---- GEOMETRY ----
-        # slstr-lst strip geometries are incorrect, so we set them to cover the
-        # whole globe for now
+        geometry_dict = item_dict["geometry"]
+        assert geometry_dict["type"] == "Polygon"
+
+        if item_dict["properties"]["s3:product_name"] in [
+            "synergy-v10",
+            "synergy-vg1",
+        ]:
+            max_delta_lon = 300
+        else:
+            max_delta_lon = 120
+
+        coords = geometry_dict["coordinates"][0]
+        winding = get_winding(coords, max_delta_lon)
+        if winding == "CW":
+            geometry_dict["coordinates"][0] = coords[::-1]
+        elif winding is None:
+            logger.warning(
+                f"Could not determine winding order of polygon in "
+                f"Item: '{item_dict['id']}'"
+            )
+
+        geometry = shapely.geometry.shape(geometry_dict)
+
+        # slstr-lst strip geometries are incorrect, so we apply a hack
         if item_dict["properties"][
             "s3:product_name"
         ] == "slstr-lst" and original_id.endswith("_____"):
-            box = shapely.geometry.box(-180, -90, 180, 90)
-            item_dict["bbox"] = list(box.bounds)
-            item_dict["geometry"] = shapely.geometry.mapping(box)
+            geometry = antimeridian.fix_polygon(geometry, force_north_pole=True)
         else:
-            if item_dict["properties"]["s3:product_name"] in [
-                "synergy-v10",
-                "synergy-vg1",
-            ]:
-                max_delta_lon = 300
-            else:
-                max_delta_lon = 120
-
-            geometry_dict = item_dict["geometry"]
-            assert geometry_dict["type"] == "Polygon"
-
-            coords = geometry_dict["coordinates"][0]
-            winding = get_winding(coords, max_delta_lon)
-            if winding == "CW":
-                geometry_dict["coordinates"][0] = coords[::-1]
-            elif winding is None:
-                logger.warning(
-                    f"Could not determine winding order of polygon in "
-                    f"Item: '{item_dict['id']}'"
-                )
-
-            geometry = shapely.geometry.shape(geometry_dict)
             geometry = antimeridian.fix_polygon(geometry)
-            if not geometry.is_valid:
-                geometry = geometry.buffer(0)
 
-            item_dict["bbox"] = list(geometry.bounds)
-            item_dict["geometry"] = shapely.geometry.mapping(geometry)
+        if not geometry.is_valid:
+            geometry = geometry.buffer(0)
 
-            item_dict["geometry"]["coordinates"] = recursive_round(
-                list(item_dict["geometry"]["coordinates"]), precision=4
-            )
-            item_dict["bbox"] = recursive_round(list(item_dict["bbox"]), precision=4)
+        item_dict["bbox"] = list(geometry.bounds)
+        item_dict["geometry"] = shapely.geometry.mapping(geometry)
+        item_dict["geometry"]["coordinates"] = recursive_round(
+            list(item_dict["geometry"]["coordinates"]), precision=4
+        )
+        item_dict["bbox"] = recursive_round(list(item_dict["bbox"]), precision=4)
 
         return item_dict
