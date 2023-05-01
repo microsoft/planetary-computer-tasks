@@ -1,5 +1,5 @@
 id: sentinel-3
-image: ${{ args.registry }}/pctasks-sentinel-3:latest
+image: ${{ args.registry }}/pctasks-sentinel-3:2023.5.1.0
 
 args:
   - registry
@@ -19,12 +19,12 @@ collections:
     asset_storage:
       - uri: blob://sentinel3euwest/sentinel-3-stac/
         token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+        # create-chunks took ~8 minutes. Consider splitting by year.
         chunks:
           options:
             name_starts_with: OLCI/OL_2_LFR___/
             extensions: [.json]
             chunk_length: 5000
-            limit: 500  # TODO: remove limit
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-olci-lfr-l2-netcdf
 
