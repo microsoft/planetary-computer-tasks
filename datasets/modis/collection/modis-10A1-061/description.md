@@ -1,0 +1,1 @@
+This global Level-3 (L3) data set provides a daily composite of snow cover and albedo derived from the 'MODIS Snow Cover 5-Min L2 Swath 500m' data set. Each data granule is a 10degx10deg tile projected to a 500 m sinusoidal grid.

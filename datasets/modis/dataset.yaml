@@ -1,0 +1,34 @@
+id: modis
+image: ${{ args.registry }}/pctasks-basic:latest
+
+args:
+  - registry
+
+code:
+  src: ${{ local.path(./modis.py) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+  APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+
+# Just stub collections update the collection metadata
+collections:
+  - id: modis-10A1-061
+    template: ${{ local.path(./collection/modis-10A1-061/) }}
+    class: ""
+    asset_storage:
+      - uri: ""
+      - uri: ""
+    chunk_storage:
+      uri: ""
+  - id: modis-10A2-061
+    template: ${{ local.path(./collection/modis-10A2-061/) }}
+    class: ""
+    asset_storage:
+      - uri: ""
+      - uri: ""
+    chunk_storage:
+      uri: ""
+
