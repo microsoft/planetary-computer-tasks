@@ -1,11 +1,7 @@
-This collection provides [SLSTR Level-2 Water Surface Temperature](https://sentinel.esa.int/web/sentinel/user-guides/sentinel-3-slstr/product-types/level-2-wst) (WST) products containing data on sea surfae temperature measurements on a 1km grid.
+This Collection provides Sentinel-3 [SLSTR Level-2 Water Surface Temperature](https://sentinel.esa.int/web/sentinel/user-guides/sentinel-3-slstr/product-types/level-2-wst) products containing data on sea surface temperature measurements on a 1km grid. Each product consists of a single NetCDF file containing all data variables:
 
-## Data files
-
-All variables are contained in a single NetCDF file:
-
-- SST value
-- SST total uncertainty.
+- Sea Surface Temperature (SST) value
+- SST total uncertainty
 - Latitude and longitude coordinates
 - SST time deviation
 - Single Sensor Error Statistic (SSES) bias and standard deviation estimate
@@ -15,6 +11,6 @@ All variables are contained in a single NetCDF file:
 - Top Of Atmosphere (TOA) Brightness Temperature (BT)
 - TOA noise equivalent BT
 
-## Processing overview
+More information about the product and data processing can be found in the [User Guide](https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-3-slstr/product-types/level-2-wst) and [Technical Guide](https://sentinel.esa.int/web/sentinel/technical-guides/sentinel-3-slstr/level-2/sst-processing).
 
-The collection contains Level-2 data in NetCDF format. See the [processing overview](https://sentinel.esa.int/web/sentinel/technical-guides/sentinel-3-slstr/level-2/sst-processing) for more information about data processing.
+This Collection contains Level-2 data in NetCDF files from October 2017 to present.
