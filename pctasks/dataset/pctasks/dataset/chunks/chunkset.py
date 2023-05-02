@@ -118,6 +118,10 @@ class ChunkSet:
                 self._all_storage.write_bytes(
                     chunk_id, b"\n".join(cast(List[bytes], lines))
                 )
+        else:
+            # We'll just write an empty file to ensure that the ingest stage
+            # doesn't fail.
+            self._all_storage.write_bytes(chunk_id, b"")
 
     def mark_success(self, chunk_id: str) -> None:
         """Marks a chunk file as succeeded"""

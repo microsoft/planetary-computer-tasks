@@ -6,6 +6,8 @@ from planetary_computer.sas import get_token
 
 from pctasks.core.models.task import CompletedTaskResult
 from pctasks.core.models.tokens import ContainerTokens, StorageAccountTokens
+from pctasks.core.storage import StorageFactory
+from pctasks.dataset.chunks.chunkset import ChunkSet
 from pctasks.dataset.chunks.constants import ALL_CHUNK_PREFIX
 from pctasks.dataset.chunks.models import ChunksOutput
 from pctasks.dataset.chunks.task import CreateChunksInput, create_chunks_task
@@ -205,3 +207,14 @@ def test_task_list_folders():
                 for line in f:
                     assert Path(line).exists
                     assert Path(line.strip()).is_dir()
+
+
+def test_empty_chunkset(tmp_path):
+    storage_factory = StorageFactory()
+    storage = storage_factory.get_storage(f"{tmp_path}/chunksets/")
+
+    items_chunk_id = "chunk0"
+    chunkset = ChunkSet(storage)
+    chunkset.write_chunk(items_chunk_id, [])
+
+    assert storage.file_exists(f"all/{items_chunk_id}")
