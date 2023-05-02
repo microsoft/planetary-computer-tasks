@@ -8,7 +8,6 @@ with open("README.md") as f:
 install_requires = [
     "azure-identity>=1.0.0,<2",
     "azure-storage-blob",
-    # https://github.com/microsoft/planetary-computer-tasks/issues/136
     "azure-storage-queue>=12.6.0",
     "azure-data-tables>=12.0.0,<13",
     "azure-cosmos>=4.3.0,<4.4.0",
