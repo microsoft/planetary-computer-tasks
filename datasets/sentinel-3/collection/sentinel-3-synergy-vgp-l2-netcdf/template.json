@@ -2,7 +2,7 @@
     "stac_version": "1.0.0",
     "type": "Collection",
     "id": "sentinel-3-synergy-vgp-l2-netcdf",
-    "title": "Sentinel-3 Top of Atmosphere Reflectance",
+    "title": "Sentinel-3 Top of Atmosphere Reflectance (SPOT VEGETATION Continuity)",
     "description": "{{ collection.description }}",
     "license": "proprietary",
     "links": [
@@ -16,7 +16,7 @@
             "rel": "about",
             "href": "https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-3-synergy/product-types/level-2-vgp",
             "type": "text/html",
-            "title": "Sentinel-3 Top of Atmosphere Reflectance Product User Guide"
+            "title": "Sentinel-3 Top of Atmosphere Reflectance Product (SPOT VEGETATION Continuity) User Guide"
         }
     ],
     "stac_extensions": [
@@ -32,7 +32,7 @@
         "Satellite",
         "Reflectance"
     ],
-    "msft:short_description": "Sentinel-3 top of atmosphere reflectance (SYNERGY VGP).",
+    "msft:short_description": "Sentinel-3 top of atmosphere reflectance (SYNERGY VGP), a SPOT VEGETATION continuity product.",
     "msft:storage_account": "sentinel3euwest",
     "msft:container": "sentinel-3",
     "msft:region": "westeurope",
@@ -56,8 +56,8 @@
     ],
     "assets": {
         "thumbnail": {
-            "title": "Sentinel-3 1-Day Surface Reflectance and NDVI Thumbnail",
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-3-synergy-synergy-vgp-l2-netcdf-thumb.png",
+            "title": "Sentinel-3 Top of Atmosphere Reflectance (SPOT VEGETATION Continuity) Thumbnail",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-3-synergy-vgp-l2-netcdf-thumb.png",
             "media_type": "image/png"
         },
         "geoparquet-items": {

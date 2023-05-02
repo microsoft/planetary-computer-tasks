@@ -2,7 +2,7 @@
     "stac_version": "1.0.0",
     "type": "Collection",
     "id": "sentinel-3-synergy-v10-l2-netcdf",
-    "title": "Sentinel-3 10-Day Surface Reflectance and NDVI",
+    "title": "Sentinel-3 10-Day Surface Reflectance and NDVI (SPOT VEGETATION Continuity)",
     "description": "{{ collection.description }}",
     "license": "proprietary",
     "links": [
@@ -16,7 +16,7 @@
             "rel": "about",
             "href": "https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-3-synergy/product-types/level-2-vg1-v10",
             "type": "text/html",
-            "title": "Sentinel-3 10-Day Surface Reflectance and NDVI Product User Guide"
+            "title": "Sentinel-3 10-Day Surface Reflectance and NDVI Product (SPOT VEGETATION Continuity) User Guide"
         }
     ],
     "stac_extensions": [
@@ -33,7 +33,7 @@
         "Reflectance",
         "NDVI"
     ],
-    "msft:short_description": "Sentinel-3 10-day surface reflectance and NDVI (SYNERGY V10).",
+    "msft:short_description": "Sentinel-3 10-day surface reflectance and NDVI (SYNERGY V10), a SPOT VEGETATION continuity product.",
     "msft:storage_account": "sentinel3euwest",
     "msft:container": "sentinel-3",
     "msft:region": "westeurope",
@@ -57,7 +57,7 @@
     ],
     "assets": {
         "thumbnail": {
-            "title": "Sentinel-3 10-Day Surface Reflectance and NDVI Thumbnail",
+            "title": "Sentinel-3 10-Day Surface Reflectance and NDVI (SPOT VEGETATION Continuity) Thumbnail",
             "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-3-synergy-v10-l2-netcdf-thumb.png",
             "media_type": "image/png"
         },
