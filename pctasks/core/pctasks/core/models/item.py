@@ -61,10 +61,7 @@ class StacItemRecord(ItemRecord):
         collection_id = item.collection_id
         item_id = item.id
         stac_id = f"{collection_id}/{item_id}"
-        return cls(
-            stac_id=stac_id,
-            item=item.to_dict()
-        )
+        return cls(stac_id=stac_id, item=item.to_dict())
 
     @property
     def version(self) -> str:
