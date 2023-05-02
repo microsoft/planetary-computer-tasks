@@ -50,8 +50,6 @@ class StacItemRecord(ItemRecord):
     stac_id: str
         The "STAC identifier" which is the STAC collection ID and Item ID joined
         by a single ``/``
-    version: str, optional
-        The STAC version identifier.
     """
 
     type: ItemRecordType = Field(default=ItemRecordType.STAC_ITEM, const=True)
