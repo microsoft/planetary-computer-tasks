@@ -45,6 +45,14 @@ def opt_submit(fn: Callable[..., Any]) -> Callable[..., Any]:
     return fn
 
 
+def opt_confirm(fn: Callable[..., Any]) -> Callable[..., Any]:
+    _opt = click.option(
+        "-y", "--confirm", is_flag=True, help="Auto-approve submission confirmation."
+    )
+    _opt(fn)
+    return fn
+
+
 def opt_workflow_id(fn: Callable[..., Any]) -> Callable[..., Any]:
     _opt = click.option(
         "--workflow-id",
