@@ -33,3 +33,15 @@ The `datasets/sentinel-3/tests` directory contains some tests. Run those with
 ```
 $ PYTHONPATH=datasets/sentinel-3 python -m pytest datasets/sentinel-3/tests/
 ```
+
+### Dynamic updates
+
+```console
+$ ls datasets/sentinel-3/collection/ | xargs -I {}  \
+    pctasks dataset process-items '${{ args.since }}' \
+        -d datasets/sentinel-3/update.yaml \
+        -c {} \
+        --workflow-id={}-update \
+        --is-update-workflow \
+        --upsert
+```
