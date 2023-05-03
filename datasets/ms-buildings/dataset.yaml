@@ -1,5 +1,5 @@
 id: ms-buildings
-image: ${{ args.registry }}/pctasks-msbuildings:2023.5.2.3
+image: ${{ args.registry }}/pctasks-msbuildings:2023.5.3.0
 
 args:
 - registry
