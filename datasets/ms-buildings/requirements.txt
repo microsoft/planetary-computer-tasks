@@ -1,0 +1,2 @@
+git+https://github.com/stactools-packages/msbuildings.git@e7731afde6a1a767827c2c98b12cb414c08add6c
+adlfs
