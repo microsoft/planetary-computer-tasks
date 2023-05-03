@@ -32,6 +32,7 @@
         "Radar",
         "Altimetry"
     ],
+    "msft:group_id": "sentinel-3",
     "msft:short_description": "Sentinel-3 radar altimetry over land (SRAL LAN).",
     "msft:storage_account": "sentinel3euwest",
     "msft:container": "sentinel-3",

@@ -32,6 +32,7 @@
         "Water",
         "Ocean"
     ],
+    "msft:group_id": "sentinel-3",
     "msft:short_description": "Sentinel-3 Land Full Resolution water and atmospheric geophysical products (OLCI WFR).",
     "msft:storage_account": "sentinel3euwest",
     "msft:container": "sentinel-3",

@@ -33,6 +33,7 @@
         "Global",
         "Aerosol"
     ],
+    "msft:group_id": "sentinel-3",
     "msft:short_description": "Sentinel-3 global aerosol and surface reflectance at super-pixel (4.5km) resolution (SYNERGY AOD).",
     "msft:storage_account": "sentinel3euwest",
     "msft:container": "sentinel-3",

@@ -32,6 +32,7 @@
         "Satellite",
         "Reflectance"
     ],
+    "msft:group_id": "sentinel-3",
     "msft:short_description": "Sentinel-3 top of atmosphere reflectance (SYNERGY VGP, a SPOT VEGETATION Continuity Product).",
     "msft:storage_account": "sentinel3euwest",
     "msft:container": "sentinel-3",

@@ -33,6 +33,7 @@
         "Temperature",
         "Land"
     ],
+    "msft:group_id": "sentinel-3",
     "msft:short_description": "Sentinel-3 land surface temperature (SLSTR LST).",
     "msft:storage_account": "sentinel3euwest",
     "msft:container": "sentinel-3",

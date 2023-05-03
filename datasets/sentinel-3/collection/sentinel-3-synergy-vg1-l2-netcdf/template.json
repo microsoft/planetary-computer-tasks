@@ -33,6 +33,7 @@
         "Reflectance",
         "NDVI"
     ],
+    "msft:group_id": "sentinel-3",
     "msft:short_description": "Sentinel-3 1-day surface reflectance and NDVI (SYNERGY VG1, a SPOT VEGETATION Continuity Product).",
     "msft:storage_account": "sentinel3euwest",
     "msft:container": "sentinel-3",

@@ -33,6 +33,7 @@
         "Temperature",
         "Fire"
     ],
+    "msft:group_id": "sentinel-3",
     "msft:short_description": "Sentinel-3 fire detection over land (SLSTR FRP).",
     "msft:storage_account": "sentinel3euwest",
     "msft:container": "sentinel-3",
