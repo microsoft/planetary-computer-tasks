@@ -3,6 +3,7 @@ image: ${{ args.registry }}/pctasks-sentinel-3:2023.5.1.0
 
 args:
   - registry
+  - since
 
 code:
   src: ${{ local.path(./sentinel_3) }}
