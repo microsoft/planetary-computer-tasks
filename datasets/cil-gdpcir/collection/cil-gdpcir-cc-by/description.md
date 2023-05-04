@@ -26,34 +26,36 @@ The spatial domain covers all 0.25-degree grid cells, indexed by the grid center
 | CAS                  | FGOALS-g3 [^1]    | SSP2-4.5, SSP3-7.0, and SSP5-8.5           | Public domain datasets |
 | INM                  | INM-CM4-8         | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | Public domain datasets |
 | INM                  | INM-CM5-0         | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | Public domain datasets |
-| BCC                  | BCC-CSM2-MR       | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | CC-BY-40]              |
-| CMCC                 | CMCC-CM2-SR5      | ssp1-2.6, ssp2-4.5, ssp3-7.0, ssp5-8.5     | CC-BY-40]              |
-| CMCC                 | CMCC-ESM2         | ssp1-2.6, ssp2-4.5, ssp3-7.0, ssp5-8.5     | CC-BY-40]              |
-| CSIRO-ARCCSS         | ACCESS-CM2        | SSP2-4.5 and SSP3-7.0                      | CC-BY-40]              |
-| CSIRO                | ACCESS-ESM1-5     | SSP1-2.6, SSP2-4.5, and SSP3-7.0           | CC-BY-40]              |
-| MIROC                | MIROC-ES2L        | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | CC-BY-40]              |
-| MIROC                | MIROC6            | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | CC-BY-40]              |
-| MOHC                 | HadGEM3-GC31-LL   | SSP1-2.6, SSP2-4.5, and SSP5-8.5           | CC-BY-40]              |
-| MOHC                 | UKESM1-0-LL       | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | CC-BY-40]              |
-| MPI-M                | MPI-ESM1-2-LR     | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | CC-BY-40]              |
-| MPI-M/DKRZ [^2]      | MPI-ESM1-2-HR     | SSP1-2.6 and SSP5-8.5                      | CC-BY-40]              |
-| NCC                  | NorESM2-LM        | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | CC-BY-40]              |
-| NCC                  | NorESM2-MM        | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | CC-BY-40]              |
-| NOAA-GFDL            | GFDL-CM4          | SSP2-4.5 and SSP5-8.5                      | CC-BY-40]              |
-| NOAA-GFDL            | GFDL-ESM4         | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | CC-BY-40]              |
-| NUIST                | NESM3             | SSP1-2.6, SSP2-4.5, and SSP5-8.5           | CC-BY-40]              |
-| EC-Earth-Consortium  | EC-Earth3         | ssp1-2.6, ssp2-4.5, ssp3-7.0, and ssp5-8.5 | CC-BY-40]              |
-| EC-Earth-Consortium  | EC-Earth3-AerChem | ssp370                                     | CC-BY-40]              |
-| EC-Earth-Consortium  | EC-Earth3-CC      | ssp245 and ssp585                          | CC-BY-40]              |
-| EC-Earth-Consortium  | EC-Earth3-Veg     | ssp1-2.6, ssp2-4.5, ssp3-7.0, and ssp5-8.5 | CC-BY-40]              |
-| EC-Earth-Consortium  | EC-Earth3-Veg-LR  | ssp1-2.6, ssp2-4.5, ssp3-7.0, and ssp5-8.5 | CC-BY-40]              |
-| CCCma                | CanESM5           | ssp1-2.6, ssp2-4.5, ssp3-7.0, ssp5-8.5     | CC-BY-SA-40]           |
+| BCC                  | BCC-CSM2-MR       | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | CC-BY-40               |
+| CMCC                 | CMCC-CM2-SR5      | ssp1-2.6, ssp2-4.5, ssp3-7.0, ssp5-8.5     | CC-BY-40               |
+| CMCC                 | CMCC-ESM2         | ssp1-2.6, ssp2-4.5, ssp3-7.0, ssp5-8.5     | CC-BY-40               |
+| CSIRO-ARCCSS         | ACCESS-CM2        | SSP2-4.5 and SSP3-7.0                      | CC-BY-40               |
+| CSIRO                | ACCESS-ESM1-5     | SSP1-2.6, SSP2-4.5, and SSP3-7.0           | CC-BY-40               |
+| MIROC                | MIROC-ES2L        | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | CC-BY-40               |
+| MIROC                | MIROC6            | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | CC-BY-40               |
+| MOHC                 | HadGEM3-GC31-LL   | SSP1-2.6, SSP2-4.5, and SSP5-8.5           | CC-BY-40               |
+| MOHC                 | UKESM1-0-LL       | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | CC-BY-40               |
+| MPI-M                | MPI-ESM1-2-LR     | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | CC-BY-40               |
+| MPI-M/DKRZ [^2]      | MPI-ESM1-2-HR     | SSP1-2.6 and SSP5-8.5                      | CC-BY-40               |
+| NCC                  | NorESM2-LM        | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | CC-BY-40               |
+| NCC                  | NorESM2-MM        | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | CC-BY-40               |
+| NOAA-GFDL            | GFDL-CM4          | SSP2-4.5 and SSP5-8.5                      | CC-BY-40               |
+| NOAA-GFDL            | GFDL-ESM4         | SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5 | CC-BY-40               |
+| NUIST                | NESM3             | SSP1-2.6, SSP2-4.5, and SSP5-8.5           | CC-BY-40               |
+| EC-Earth-Consortium  | EC-Earth3         | ssp1-2.6, ssp2-4.5, ssp3-7.0, and ssp5-8.5 | CC-BY-40               |
+| EC-Earth-Consortium  | EC-Earth3-AerChem | ssp370                                     | CC-BY-40               |
+| EC-Earth-Consortium  | EC-Earth3-CC      | ssp245 and ssp585                          | CC-BY-40               |
+| EC-Earth-Consortium  | EC-Earth3-Veg     | ssp1-2.6, ssp2-4.5, ssp3-7.0, and ssp5-8.5 | CC-BY-40               |
+| EC-Earth-Consortium  | EC-Earth3-Veg-LR  | ssp1-2.6, ssp2-4.5, ssp3-7.0, and ssp5-8.5 | CC-BY-40               |
+| CCCma                | CanESM5           | ssp1-2.6, ssp2-4.5, ssp3-7.0, ssp5-8.5     | CC-BY-40[^3]           |
 
 *Notes:*
 
 [^1]: At the time of running, no ssp1-2.6 precipitation data was available. Therefore, we provide `tasmin` and `tamax` for this model and experiment, but not `pr`. All other model/experiment combinations in the above table include all three variables.
 
 [^2]: The institution which ran MPI-ESM1-2-HR’s historical (CMIP) simulations is `MPI-M`, while the future (ScenarioMIP) simulations were run by `DKRZ`. Therefore, the institution component of `MPI-ESM1-2-HR` filepaths differ between `historical` and `SSP` scenarios.
+
+[^3]: This dataset was previously licensed as [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), but was relicensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) in March, 2023. 
 
 ## Project methods
 
