@@ -7,7 +7,6 @@ The [Global Downscaled Projections for Climate Impacts Research](https://github.
 GDPCIR data can be accessed on the Microsoft Planetary Computer. The dataset is made of of three collections, distinguished by data license:
 * [Public domain (CC0-1.0) collection](https://planetarycomputer.microsoft.com/dataset/cil-gdpcir-cc0)
 * [Attribution (CC BY 4.0) collection](https://planetarycomputer.microsoft.com/dataset/cil-gdpcir-cc-by)
-* [Attribution-ShareAlike (CC BY SA 4.0) collection](https://planetarycomputer.microsoft.com/dataset/cil-gdpcir-cc-by-sa)
 
 Each modeling center with bias corrected and downscaled data in this collection falls into one of these license categories - see the [table below](/dataset/cil-gdpcir-cc-by#available-institutions-models-and-scenarios-by-license-collection) to see which model is in each collection, and see the section below on [Citing, Licensing, and using data produced by this project](/dataset/cil-gdpcir-cc-by#citing-licensing-and-using-data-produced-by-this-project) for citations and additional information about each license.
 
@@ -414,14 +413,10 @@ The following bias corrected and downscaled model simulations are licensed under
 
   > Good, Peter; Sellar, Alistair; Tang, Yongming; Rumbold, Steve; Ellis, Rich; Kelley, Douglas; Kuhlbrodt, Till; Walton, Jeremy **(2019)**. *MOHC UKESM1.0-LL model output prepared for CMIP6 ScenarioMIP*. SSP1-2.6 version 20190708; SSP2-4.5 version 20190715; SSP3-7.0 version 20190726; SSP5-8.5 version 20190726. Earth System Grid Federation. https://doi.org/10.22033/ESGF/CMIP6.1567
 
-
-#### CC-BY-SA-4.0
-
-The following bias corrected and downscaled model simulations are licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/). Note that this license requires citation of the source model output (included here) and requires that derived works be shared under the same license. Please see https://creativecommons.org/licenses/by-sa/4.0/ for more information. Access the collection on Planetary Computer at https://planetarycomputer.microsoft.com/dataset/cil-gdpcir-cc-by-sa.
-
 * **CanESM5**
 
-  License description: [data_licenses/CanESM5.txt](https://raw.githubusercontent.com/ClimateImpactLab/downscaleCMIP6/master/data_licenses/CanESM5.txt)
+  License description: [data_licenses/CanESM5.txt](https://raw.githubusercontent.com/ClimateImpactLab/downscaleCMIP6/master/data_licenses/CanESM5.txt). Note: this dataset was previously licensed
+  under CC BY-SA 4.0, but was relicensed as CC BY 4.0 in March, 2023.
 
   CMIP Citation:
 

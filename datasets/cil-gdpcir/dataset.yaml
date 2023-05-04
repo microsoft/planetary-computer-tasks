@@ -17,8 +17,16 @@ collections:
         token: ${{ pc.get_token(rhgeuwest, cil-gdpcir-stac) }}
         chunks:
           options:
-            name_starts_with: CC-BY
+            name_starts_with: CC-BY-4.0
             chunk_length: 1000
+
+      - uri: blob://rhgeuwest/cil-gdpcir-stac
+        token: ${{ pc.get_token(rhgeuwest, cil-gdpcir-stac) }}
+        chunks:
+          options:
+            name_starts_with: CC-BY-SA-4.0
+            chunk_length: 1000
+
     chunk_storage:
       uri: blob://rhgeuwest/cil-gdpcir-etl-data/chunks/cc-by
 
