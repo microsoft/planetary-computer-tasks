@@ -25,7 +25,7 @@ def handle_blob_event(event: CloudEvent) -> bool:
                     submit_messages.append(
                         WorkflowSubmitMessage(
                             run_id=uuid4().hex,
-                            workflow=Workflow.from_definition(reg.workflow)
+                            workflow=Workflow.from_definition(reg.workflow),
                             trigger_event=event,
                         )
                     )
