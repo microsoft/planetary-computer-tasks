@@ -66,6 +66,9 @@ class ChunkOptions(PCBaseModel):
     limit: Optional[int] = None
     """Limit the number of URIs to process. """
 
+    min_depth: Optional[int] = None
+    """Minimum number of directories to descend into."""
+
     max_depth: Optional[int] = None
     """Maximum number of directories to descend into."""
 

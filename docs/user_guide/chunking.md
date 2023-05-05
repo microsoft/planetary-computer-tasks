@@ -36,6 +36,7 @@ chunks:
     ends_with: manifest.xml  # Only include asset URIs that end with this string.
     matches: .*/scene-\d+.tif  # Only include asset URIs that match this regex."""
     max_depth: 10  # Maximum number of directories to descend into.
+    min_depth: 10  # Minimum number of directories to descend into. Useful for listing a subfolder.
     list_folders: true  # Whether to list files (the default) or folders instead of files.
     chunk_file_name: uri-list  # Chunk file name.
     chunk_extension: .csv  # Extensions of the chunk file names.
