@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from pctasks.core.message_handler import MessageHandler
 from pctasks.core.models.event import CloudEvent
-from pctasks.core.models.workflow import WorkflowSubmitMessage
+from pctasks.core.models.workflow import Workflow, WorkflowSubmitMessage
 from pctasks.core.queues import QueueService
 from pctasks.router.settings import RouterSettings
 
@@ -25,7 +25,7 @@ def handle_blob_event(event: CloudEvent) -> bool:
                     submit_messages.append(
                         WorkflowSubmitMessage(
                             run_id=uuid4().hex,
-                            workflow=reg.workflow,
+                            workflow=Workflow.from_definition(reg.workflow)
                             trigger_event=event,
                         )
                     )
