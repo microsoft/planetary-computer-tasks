@@ -15,7 +15,8 @@ extra_reqs = {
     "dev": [
         "pytest",
         "pytest-cov",
-        "pre-commit"
+        "pre-commit",
+        "responses",
     ],
     "docs": ["mkdocs", "mkdocs-material", "pdocs"],
 }

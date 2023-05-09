@@ -1,8 +1,14 @@
 id: ms-buildings
-image: ${{ args.registry }}/pctasks-task-base:latest
+image: ${{ args.registry }}/pctasks-msbuildings:2023.5.3.0
 
 args:
 - registry
+# Prefix is a date like prefix=delta/2023-04-25/ml-buildings.parquet/
+- prefix
+
+code:
+  src: ${{ local.path(./ms_buildings.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -12,14 +18,19 @@ environment:
 collections:
   - id: ms-buildings
     template: ${{ local.path(./collection) }}
-    class: pctasks.dataset.collection:PremadeItemCollection
+    class: ms_buildings:MSBuildingsCollection
+
     asset_storage:
-      # the STAC items
-      - uri: blob://bingmlbuildings/msbuildings-stac
+      # Targeting chunk lines like the following:
+      #   global/2023-04-25/ml-buildings.parquet/RegionName=Abyei/quadkey=122321003
+      - uri: blob://bingmlbuildings/footprints/
         chunks:
           options:
-            chunk_length: 3000
-            extensions:
-              - ".json"
+            name_starts_with: ${{args.prefix}}
+            list_folders: true
+            limit: 10
+            min_depth: 3
+            max_depth: 4
+            chunk_length: 500
     chunk_storage:
-      uri: blob://bingmlbuildings/msbuildings-etl-data/chunks
+      uri: blob://bingmlbuildings/msbuildings-etl-data/msbuildings/

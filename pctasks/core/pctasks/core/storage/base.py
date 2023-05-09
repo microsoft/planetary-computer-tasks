@@ -1,12 +1,10 @@
 import hashlib
-import io
 import logging
 import pathlib
-import zipfile
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime as Datetime
-from typing import Any, Dict, Generator, Iterable, List, Optional, Tuple
+from typing import Any, Dict, Generator, Iterable, List, Optional, Tuple, Union
 
 import orjson
 
@@ -131,23 +129,17 @@ class Storage(ABC):
     ) -> None:
         """Upload bytes to a storage file."""
 
-    def upload_code(self, file_path: str) -> str:
+    def upload_code(self, file_path: Union[str, pathlib.Path]) -> str:
         """Upload a Python module or package."""
+        from pctasks.core.importer import write_code
+
         path = pathlib.Path(file_path)
 
         if not path.exists():
             raise OSError(f"Path {path} does not exist.")
 
-        if path.is_file():
-            data = path.read_bytes()
-            name = path.name
-        else:
-            buf = io.BytesIO()
-            with zipfile.PyZipFile(buf, "w") as zf:
-                zf.writepy(str(path))
-
-            data = buf.getvalue()
-            name = path.with_suffix(".zip").name
+        name, buf = write_code(path)
+        data = buf.read()
 
         token = hashlib.md5(data).hexdigest()
         dst_path = f"{token}/{name}"

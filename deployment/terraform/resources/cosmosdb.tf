@@ -80,3 +80,23 @@ resource "azurerm_cosmosdb_sql_container" "leases" {
   partition_key_path    = "/id"
   partition_key_version = 1
 }
+
+## Storage Events (for low-latency ingest)
+
+resource "azurerm_cosmosdb_sql_container" "storage-events" {
+  name                = "storage-events"
+  resource_group_name = data.azurerm_cosmosdb_account.pctasks.resource_group_name
+  account_name        = data.azurerm_cosmosdb_account.pctasks.name
+  database_name       = azurerm_cosmosdb_sql_database.pctasks.name
+  partition_key_path  = "/id"
+}
+
+## Items (for source of truth and low-latency ingest)
+
+resource "azurerm_cosmosdb_sql_container" "items" {
+  name                = "items"
+  resource_group_name = data.azurerm_cosmosdb_account.pctasks.resource_group_name
+  account_name        = data.azurerm_cosmosdb_account.pctasks.name
+  database_name       = azurerm_cosmosdb_sql_database.pctasks.name
+  partition_key_path  = "/stac_id"
+}

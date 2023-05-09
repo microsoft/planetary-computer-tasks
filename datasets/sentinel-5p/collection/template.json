@@ -1,0 +1,247 @@
+{
+    "stac_version": "1.0.0",
+    "type": "Collection",
+    "id": "sentinel-5p-l2-netcdf",
+    "title": "Sentinel-5P Level-2",
+    "description": "{{ collection.description }}",
+    "license": "proprietary",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice",
+            "type": "application/pdf",
+            "title": "Sentinel Data License"
+        },
+        {
+            "rel": "about",
+            "href": "https://sentinel.esa.int/web/sentinel/missions/sentinel-5p",
+            "type": "text/html",
+            "title": "Sentinel-5 Precursor Mission"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/sat/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+    ],
+    "keywords": [
+        "ESA",
+        "Copernicus",
+        "Sentinel",
+        "Air Quality",
+        "Climate Change",
+        "Forecasting"
+    ],
+    "msft:short_description": "Sentinel-5P Level 2 atmospheric monitoring products in NetCDF format",
+    "msft:storage_account": "sentinel5euwest",
+    "msft:container": "sentinel-5p",
+    "msft:region": "westeurope",
+    "providers": [
+        {
+            "name": "ESA",
+            "roles": [
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://earth.esa.int/web/guest/home"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "title": "Sentinel-5P Level-2 NetCDF Thumbnail",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-5p-l2-netcdf-thumb.png",
+            "media_type": "image/png"
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/sentinel-5p-l2-netcdf.parquet",
+            "title": "GeoParquet STAC Items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "MS"
+            }
+        }
+    },
+    "summaries": {
+        "constellation": [
+            "Sentinel-5P"
+        ],
+        "platform": [
+            "Sentinel 5 Precursor"
+        ],
+        "instruments": [
+            "TROPOMI"
+        ],
+        "sat:platform_international_designator": [
+            "2017-064A"
+        ],
+        "s5p:collection_identifier": [
+            "01",
+            "02",
+            "03"
+        ],
+        "s5p:processing_mode": [
+            "NRTI",
+            "OFFL",
+            "RPRO"
+        ],
+        "s5p:product_type": [
+            "L2__AER_AI",
+            "L2__AER_LH",
+            "L2__CH4___",
+            "L2__CLOUD_",
+            "L2__CO____",
+            "L2__HCHO__",
+            "L2__NO2___",
+            "L2__NP_BD3",
+            "L2__NP_BD6",
+            "L2__NP_BD7",
+            "L2__O3_TCL",
+            "L2__O3____",
+            "L2__SO2___"
+        ],
+        "s5p:product_name": [
+            "aer-ai",
+            "aer-lh",
+            "ch4",
+            "cloud",
+            "co",
+            "hcho",
+            "no2",
+            "np-bd3",
+            "np-bd6",
+            "np-bd7",
+            "o3-tcl",
+            "o3",
+            "so2"
+        ]
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2018-04-30T00:18:50Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "item_assets": {
+        "aer-ai": {
+            "title": "Ultraviolet Aerosol Index",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "aer-lh": {
+            "title": "Aerosol Layer Height",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "ch4": {
+            "title": "Methane Total Column",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "cloud": {
+            "title": "Cloud Fraction, Albedo, and Top Pressure",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "co": {
+            "title": "Carbon Monoxide Total Column",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "hcho": {
+            "title": "Formaldehyde Total Column",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "no2": {
+            "title": "Nitrogen Dioxide Total Column",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "o3": {
+            "title": "Ozone Total Column",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "o3-tcl": {
+            "title": "Ozone Tropospheric Column",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "so2": {
+            "title": "Sulphur Dioxide Total Column",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "np-bd3": {
+            "title": "VIIRS/NPP Band 3 Cloud Mask",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "np-bd6": {
+            "title": "VIIRS/NPP Band 6 Cloud Mask",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        },
+        "np-bd7": {
+            "title": "VIIRS/NPP Band 7 Cloud Mask",
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ]
+        }
+    }
+}

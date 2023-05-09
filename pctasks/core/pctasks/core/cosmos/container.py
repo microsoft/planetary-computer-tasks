@@ -35,7 +35,7 @@ from pctasks.core.cosmos.database import (
 )
 from pctasks.core.cosmos.page import Page
 from pctasks.core.cosmos.settings import CosmosDBSettings
-from pctasks.core.models.run import Record
+from pctasks.core.models.record import Record
 from pctasks.core.models.utils import tzutc_now
 from pctasks.core.utils import grouped
 from pctasks.core.utils.backoff import BackoffStrategy, with_backoff, with_backoff_async

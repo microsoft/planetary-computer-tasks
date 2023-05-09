@@ -2,10 +2,11 @@ import contextlib
 import logging
 import os
 import time
-from typing import Callable, List, Optional, Union
+from typing import Callable, Iterator, List, Optional, Union
 
 import orjson
 import pystac
+from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 from pctasks.core.models.task import FailedTaskResult, WaitTaskResult
 from pctasks.core.storage import StorageFactory
@@ -15,6 +16,9 @@ from pctasks.task.context import TaskContext
 from pctasks.task.task import Task
 
 logger = logging.getLogger(__name__)
+azlogger = logging.getLogger("monitor.pctasks.dataset.items.task")
+azlogger.setLevel(logging.INFO)
+azhandler = None  # initialized later in `_init_azlogger`
 
 
 class CreateItemsError(Exception):
@@ -100,6 +104,61 @@ def validate_create_items_result(
     return items
 
 
+def _init_azlogger() -> None:
+    # AzureLogHandler is slow to initialize
+    # do it once here
+    global azhandler
+
+    if azhandler is None:
+        logger.debug("Initializing AzureLogHandler")
+        try:
+            azhandler = AzureLogHandler()
+        except ValueError:
+            # missing instrumentation key
+            azhandler = False
+            logger.warning("Unable to initialize AzureLogHandler")
+        else:
+            azhandler.setLevel(logging.INFO)
+            azlogger.addHandler(azhandler)
+
+
+@contextlib.contextmanager
+def traced_create_item(
+    asset_uri: str,
+    collection_id: Optional[str],
+    i: Optional[int] = None,
+    asset_count: Optional[int] = None,
+) -> Iterator[None]:
+    _init_azlogger()
+    start_time = time.monotonic()
+    yield
+    end_time = time.monotonic()
+
+    if i is not None and asset_count is not None:
+        # asset_chunk_info case
+        logger.info(
+            f"({((i+1)/asset_count)*100:06.2f}%) "
+            f"[{end_time - start_time:.2f}s] "
+            f" - {asset_uri} "
+            f"({i+1} of {asset_count})"
+        )
+    else:
+        # asset_uri case
+        logger.info(
+            f"Created items from {asset_uri} in " f"{end_time - start_time:.2f}s"
+        )
+
+    properties = {
+        "custom_dimensions": {
+            "type": "pctasks.create_item",
+            "collection_id": collection_id,
+            "asset_uri": asset_uri,
+            "duration_seconds": end_time - start_time,
+        }
+    }
+    azlogger.info("Created item", extra=properties)
+
+
 class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
     _input_model = CreateItemsInput
     _output_model = CreateItemsOutput
@@ -119,13 +178,8 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
         # TODO: do this for streaming, deduplicate
         if args.asset_uri:
             try:
-                start_time = time.monotonic()
-                result = self._create_item(args.asset_uri, storage_factory)
-                end_time = time.monotonic()
-                logger.info(
-                    f"Created items from {args.asset_uri} in "
-                    f"{end_time - start_time:.2f}s"
-                )
+                with traced_create_item(args.asset_uri, args.collection_id):
+                    result = self._create_item(args.asset_uri, storage_factory)
             except Exception as e:
                 raise CreateItemsError(
                     f"Failed to create item from {args.asset_uri}"
@@ -152,15 +206,10 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                 chunk_lines = chunk_lines[: args.options.limit]
             for i, asset_uri in enumerate(chunk_lines):
                 try:
-                    start_time = time.monotonic()
-                    result = self._create_item(asset_uri, storage_factory)
-                    end_time = time.monotonic()
-                    logger.info(
-                        f"({((i+1)/asset_count)*100:06.2f}%) "
-                        f"[{end_time - start_time:.2f}s] "
-                        f" - {asset_uri} "
-                        f"({i+1} of {asset_count})"
-                    )
+                    with traced_create_item(
+                        asset_uri, args.collection_id, i=i, asset_count=asset_count
+                    ):
+                        result = self._create_item(asset_uri, storage_factory)
                 except Exception as e:
                     raise CreateItemsError(
                         f"Failed to create item from {asset_uri}"

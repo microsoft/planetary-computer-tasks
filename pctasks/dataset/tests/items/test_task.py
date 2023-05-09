@@ -1,12 +1,15 @@
 import json
+import logging
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Union
 
 import pystac
 import pytest
+import responses
 from pystac.utils import str_to_datetime
 
+import pctasks.dataset.items.task
 from pctasks.core.models.task import CompletedTaskResult, WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.core.storage.local import LocalStorage
@@ -17,6 +20,7 @@ from pctasks.dataset.items.task import (
     CreateItemsError,
     CreateItemsInput,
     CreateItemsTask,
+    traced_create_item,
     validate_create_items_result,
     validate_item,
 )
@@ -151,3 +155,37 @@ def test_validate_create_items_raises():
         validate_create_items_result(result, collection_id=None)
 
     validate_create_items_result(result, collection_id=None, skip_validation=True)
+
+
+@responses.activate
+def test_log_to_monitor(monkeypatch, caplog):
+    monkeypatch.setenv(
+        "APPLICATIONINSIGHTS_CONNECTION_STRING",
+        "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/",  # noqa: E501
+    )
+    # opencensus will log an error about the instrumentation key being invalid
+    opencensus_logger = logging.getLogger("opencensus.ext.azure")
+    opencensus_logger.setLevel(logging.CRITICAL)
+
+    responses.post(
+        "https://westus-0.in.applicationinsights.azure.com//v2.1/track",
+    )
+
+    # Ensure that any previous tests initializing logging
+    # (without an instrumentation key) didn't mess up our handler
+    monkeypatch.setattr(pctasks.dataset.items.task, "azhandler", None)
+
+    with caplog.at_level(logging.INFO):
+        with traced_create_item("blob://test/test/asset.tif", "test-collection"):
+            pass
+
+        record = caplog.records[1]
+        assert record.custom_dimensions.pop("duration_seconds")
+        assert record.custom_dimensions == {
+            "asset_uri": "blob://test/test/asset.tif",
+            "collection_id": "test-collection",
+            "type": "pctasks.create_item",
+        }
+
+    azlogger = logging.getLogger("monitor.pctasks.dataset.items.task")
+    assert len(azlogger.handlers) == 1

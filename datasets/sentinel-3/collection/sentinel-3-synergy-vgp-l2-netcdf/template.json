@@ -1,0 +1,282 @@
+{
+    "stac_version": "1.0.0",
+    "type": "Collection",
+    "id": "sentinel-3-synergy-vgp-l2-netcdf",
+    "title": "Sentinel-3 Top of Atmosphere Reflectance (SPOT VEGETATION)",
+    "description": "{{ collection.description }}",
+    "license": "proprietary",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice",
+            "type": "application/pdf",
+            "title": "Sentinel Data License"
+        },
+        {
+            "rel": "about",
+            "href": "https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-3-synergy/product-types/level-2-vgp",
+            "type": "text/html",
+            "title": "Sentinel-3 Top of Atmosphere Reflectance Product (SPOT VEGETATION) User Guide"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/sat/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/eo/v1.1.0/schema.json"
+    ],
+    "keywords": [
+        "Sentinel",
+        "Copernicus",
+        "ESA",
+        "Satellite",
+        "Reflectance"
+    ],
+    "msft:group_id": "sentinel-3",
+    "msft:short_description": "Sentinel-3 top of atmosphere reflectance (SYNERGY VGP, a SPOT VEGETATION Continuity Product).",
+    "msft:storage_account": "sentinel3euwest",
+    "msft:container": "sentinel-3",
+    "msft:region": "westeurope",
+    "providers": [
+        {
+            "name": "ESA",
+            "roles": [
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://earth.esa.int/web/guest/home"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "title": "Sentinel-3 Top of Atmosphere Reflectance (SPOT VEGETATION) Thumbnail",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-3-synergy-vgp-l2-netcdf-thumb.png",
+            "media_type": "image/png"
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/sentinel-3-synergy-vgp-l2-netcdf.parquet",
+            "title": "GeoParquet STAC Items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "QS"
+            }
+        }
+    },
+    "summaries": {
+        "constellation": [
+            "Sentinel-3"
+        ],
+        "platform": [
+            "Sentinel-3A",
+            "Sentinel-3B"
+        ],
+        "instruments": [
+            "OLCI",
+            "SLSTR"
+        ],
+        "sat:platform_international_designator": [
+            "2016-011A",
+            "2018-039A"
+        ],
+        "sat:orbit_state": [
+            "ascending",
+            "descending"
+        ],
+        "s3:product_type": [
+            "SY_2_VGP___"
+        ],
+        "s3:product_name": [
+            "synergy-vgp"
+        ],
+        "s3:processing_timeliness": [
+            "NT"
+        ],
+        "eo:bands": [
+            {
+                "name": "B0",
+                "description": "OLCI channels Oa02, Oa03",
+                "center_wavelength": 0.45,
+                "full_width_half_max": 0.02
+            },
+            {
+                "name": "B2",
+                "description": "OLCI channels Oa06, Oa07, Oa08, Oa09, Oa10",
+                "center_wavelength": 0.645,
+                "full_width_half_max": 0.035
+            },
+            {
+                "name": "B3",
+                "description": "OLCI channels Oa16, Oa17, Oa18, Oa21",
+                "center_wavelength": 0.835,
+                "full_width_half_max": 0.055
+            },
+            {
+                "name": "MIR",
+                "description": "SLSTR nadir and oblique channels S5, S6",
+                "center_wavelength": 1.665,
+                "full_width_half_max": 0.085
+            }
+        ]
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2018-10-08T08:09:40.491227Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "item_assets": {
+        "safe-manifest": {
+            "type": "application/xml",
+            "description": "SAFE product manifest",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "b0": {
+            "type": "application/x-netcdf",
+            "description": "Top of atmosphere reflectance data set associated with the VGT-B0 channel",
+            "eo:bands": [
+                {
+                    "name": "B0",
+                    "description": "OLCI channels Oa02, Oa03",
+                    "center_wavelength": 0.45,
+                    "full_width_half_max": 0.02
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "b2": {
+            "type": "application/x-netcdf",
+            "description": "Top of atmosphere reflectance data set associated with the VGT-B2 channel",
+            "eo:bands": [
+                {
+                    "name": "B2",
+                    "description": "OLCI channels Oa06, Oa07, Oa08, Oa09, Oa10",
+                    "center_wavelength": 0.645,
+                    "full_width_half_max": 0.035
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "b3": {
+            "type": "application/x-netcdf",
+            "description": "Top of atmosphere reflectance data set associated with the VGT-B3 channel",
+            "eo:bands": [
+                {
+                    "name": "B3",
+                    "description": "OLCI channels Oa16, Oa17, Oa18, Oa21",
+                    "center_wavelength": 0.835,
+                    "full_width_half_max": 0.055
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "mir": {
+            "type": "application/x-netcdf",
+            "description": "Top of atmosphere Reflectance data set associated with the VGT-MIR channel",
+            "eo:bands": [
+                {
+                    "name": "MIR",
+                    "description": "SLSTR nadir and oblique channels S5, S6",
+                    "center_wavelength": 1.665,
+                    "full_width_half_max": 0.085
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "vaa": {
+            "type": "application/x-netcdf",
+            "description": "View azimuth angle data",
+            "roles": [
+                "data"
+            ]
+        },
+        "vza": {
+            "type": "application/x-netcdf",
+            "description": "View zenith angle data",
+            "roles": [
+                "data"
+            ]
+        },
+        "saa": {
+            "type": "application/x-netcdf",
+            "description": "Solar azimuth angle data",
+            "roles": [
+                "data"
+            ]
+        },
+        "sza": {
+            "type": "application/x-netcdf",
+            "description": "Solar zenith angle data",
+            "roles": [
+                "data"
+            ]
+        },
+        "ag": {
+            "type": "application/x-netcdf",
+            "description": "Aerosol optical thickness data",
+            "roles": [
+                "data"
+            ]
+        },
+        "og": {
+            "type": "application/x-netcdf",
+            "description": "Total ozone column data",
+            "roles": [
+                "data"
+            ]
+        },
+        "wvg": {
+            "type": "application/x-netcdf",
+            "description": "Total column water vapour data",
+            "roles": [
+                "data"
+            ]
+        },
+        "sm": {
+            "type": "application/x-netcdf",
+            "description": "Status map data",
+            "roles": [
+                "data"
+            ]
+        }
+    }
+}

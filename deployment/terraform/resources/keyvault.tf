@@ -41,6 +41,12 @@ resource "azurerm_key_vault_secret" "task-client-secret" {
   key_vault_id = data.azurerm_key_vault.pctasks.id
 }
 
+resource "azurerm_key_vault_secret" "task-application-insights-connection-string" {
+  name = "task-application-insights-connection-string"
+  value = azurerm_application_insights.pctasks.connection_string
+  key_vault_id = data.azurerm_key_vault.pctasks.id
+}
+
 # API Management access key
 
 data "azurerm_key_vault" "deploy_secrets" {
