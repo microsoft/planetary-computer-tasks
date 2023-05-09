@@ -23,27 +23,31 @@ additional properties on the streaming tasks within the workflow:
 
 2. The workflow should set the top-level `is_streaming` property to `true`.
 
+See
+<https://github.com/microsoft/planetary-computer-tasks/blob/main/examples/workflow.yaml>
+for an example.
+
 In addition to these schema-level requirements, there are some expectations in
-how the workflow behaves at runtime. In general, streaming tasks should expect
-to run indefinitely. They should continuously process messages from a queue, 
-and leave starting, stopping, and scaling to the pctasks framework.
+how the workflow behaves at runtime. In general, streaming tasks should run
+indefinitely. They should continuously process messages from a queue, and leave
+starting, stopping, and scaling to the pctasks framework (we use Kubernetes
+Deployments and [KEDA] for that).
 
 ## Registering a streaming workflow
 
 A streaming workflow is registered with `pctasks` like any other workflow,
 using the `pctasks` CLI:
 
-
 ```
 $ pctasks workflow create path/to/workflow.yaml
 ```
 
-This will store the workflow in `pctask`'s database, but won't actually start
+This will store the workflow in `pctasks`' database, but won't actually start
 processing items from the stream.
 
 ## Running a streaming workflow
 
-To actually start processing with a streaming workkflow, you need to "submit"
+To actually start processing with a streaming workflow, you need to "submit"
 the workflow.
 
 ```
@@ -134,14 +138,35 @@ az cosmosdb sql role assignment create \
 
 ## Implementation notes
 
-There are a few steps between task submission and the task actually running.
-This section documents those. It's mostly useful for developers of `pctasks`,
-rather than end users.
+This section describes the implementation of streaming workflows. It's mostly
+useful for developers of `pctasks`, rather than end users. We'll refer to this
+architecture diagram, which demonstrates a pipeline that generates STAC items
+for new objects in Blob Storage, and ingests those items to a PgSTAC database:
 
-1. The client submits the workflow to be run. `pctasks workflow submit` or some
-   other command that includes a `-s`.
-2. The `pctasks-server` receives the request and creates an Argo Workflow.
-3. The Argo Workflow makes a `Deployment` and a `ScaledObject` and completes
-   successfully.
-4. The `Deployment` begins processing messages from the queue specified in the
-   workflow.
+![Low latency workflow](../_static/low-latency-workflows.svg)
+
+Blob storage events kick off the whole process. These are configured outside of
+`pctasks`. The events should all write to the same storage queue (see green
+circle 1).
+
+An Azure Function processes messages off this queue, writing those storage
+events to a `storage-events` container in Cosmos DB. This is implemented in the
+`StorageEventsQueue` function.
+
+A second Azure Function processes messages off the `storage-events` container's
+change feed. This function dispatches blob storage events to the appropriate
+dataset queue for that storage event (see green circle 2). This is implemented
+in the `StorageEventsCF` function.
+
+When the user submits a streaming workflow with `pctasks workflow submit`, we
+create a Kubernetes Deployment and a KEDA `ScaledObject` (see green circle 3).
+This deployment will run the (user-provided) `create_item` code to make a STAC
+item from the URL of the object triggering the Storage Event. The output is
+written to the `items` container in Cosmos DB.
+
+A third Azure Function monitors this `items` container for new items using its
+change feed. It will forward the new items to a publish queue. An `ingest`
+deployment (created once per database -- not once per dataset) will handle
+ingesting these items into the PgSTAC database (see green circle 4).
+
+[KEDA]: https://keda.sh/
