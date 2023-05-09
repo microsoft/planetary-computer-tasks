@@ -56,8 +56,8 @@ class StreamingIngestItemsTask(
         from pctasks.ingest_task.task import ingest_item
 
         # this should be a valid pystac item
-        item = json.loads(message.content)
-
+        # TODO: structured messages!
+        item = json.loads(message.content)["data"]["item"]
         logger.info("Loading item collection=%s id=%s", item["collection"], item["id"])
         # note: we rely on the collection ID being set, since
         # we're potentially ingesting multiple items.
