@@ -10,8 +10,6 @@ from pctasks.ingest.constants import DB_CONNECTION_STRING_ENV_VAR
 @contextmanager
 def ingest_test_environment() -> Generator[ConnStrInfo, None, None]:
     db_secret = os.getenv("SECRETS_DB_CONNECTION_STRING")
-    # Why doesn't this set it automatically?
-    # Why doesn't this use DEV_DB_CONNECTION_STRING?
 
     if not db_secret:
         raise ValueError("SECRETS_DB_CONNECTION_STRING must be set")
