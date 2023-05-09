@@ -23,6 +23,8 @@ CONTAINERS: List[Tuple[Callable[[CosmosDBSettings], str], str]] = [
     (lambda settings: settings.get_workflow_runs_container_name(), "/run_id"),
     (lambda settings: settings.get_workflows_container_name(), "/workflow_id"),
     (lambda settings: settings.get_records_container_name(), "/type"),
+    (lambda settings: settings.get_items_container_name(), "/stac_id"),
+    (lambda settings: settings.get_storage_events_container_name(), "/id"),
 ]
 
 
