@@ -180,15 +180,13 @@ def cosmos_items_container():
 
 @pytest.fixture
 def ingested_collection(conn_str_info, root_storage, host_env):
-    collection_id = "test-collection"
-
-    assets_storage = root_storage.get_substorage(f"{collection_id}/assets")
+    assets_storage = root_storage.get_substorage(f"{COLLECTION_ID}/assets")
     chunks_storage = root_storage.get_substorage("chunks")
 
     copy_dir_to_azurite(assets_storage, TEST_DATA / "assets")
 
     args = {
-        "collection_id": collection_id,
+        "collection_id": COLLECTION_ID,
         "collection_template": str(TEST_DATA / "collection_template"),
         "assets_uri": assets_storage.get_uri(),
         "chunks_uri": chunks_storage.get_uri(),
@@ -205,7 +203,7 @@ def ingested_collection(conn_str_info, root_storage, host_env):
             "-d",
             str(HERE / "dataset.yaml"),
             "-c",
-            collection_id,
+            COLLECTION_ID,
             "-u",
             "-s",
         ]
@@ -221,9 +219,9 @@ def ingested_collection(conn_str_info, root_storage, host_env):
     with PgstacDB(conn_str_info.local) as db:
         res = db.query_one(
             "SELECT id FROM collections WHERE id=%s",
-            (collection_id,),
+            (COLLECTION_ID,),
         )
-        assert res == collection_id
+        assert res == COLLECTION_ID
 
     yield
 
@@ -231,7 +229,9 @@ def ingested_collection(conn_str_info, root_storage, host_env):
 @pytest.fixture
 def stac_item_blob(root_storage: BlobStorage):
     body = TEST_DATA.joinpath("modis/items.ndjson").read_text().split("\n")[0]
-    root_storage.write_text("data/item.json", body)
+    data = json.loads(body)
+    data["collection"] = COLLECTION_ID
+    root_storage.write_text("data/item.json", json.dumps(data))
 
 
 @pytest.fixture
@@ -471,7 +471,6 @@ def test_streaming(
     deadline = time.monotonic() + 60
 
     # Checkpoint 1: the event is in Cosmos DB
-    # Assert that the event made it to cosmos DB
 
     start = time.monotonic()
     while time.monotonic() < deadline:
@@ -490,9 +489,9 @@ def test_streaming(
     # Checkpoint 2: The asset has been processed. The item is in Cosmos DB
     # Azure Function will forward from Cosmos -> dataset queue
     # Then our pctasks task will process it.
-    # stac_id = "test-collection-streaming/MOD14A1.A2000049.h00v08.061.2020041150332"
+    # stac_id = "test-collection/MOD14A1.A2000049.h00v08.061.2020041150332"
     document_id = (
-        "test-collection:MOD14A1.A2000049.h00v08.061.2020041150332:None:StacItem"
+        f"{COLLECTION_ID}:MOD14A1.A2000049.h00v08.061.2020041150332::StacItem"
     )
     start = time.monotonic()
     while time.monotonic() < deadline:
@@ -511,7 +510,6 @@ def test_streaming(
 
     # ----------------------------------------------------------------------------
     # Ingest Items
-    # Actually, this will rely on the Change Feed stuff. Is that working?
 
     start = time.monotonic()
     deadline = start + DEFAULT_TIMEOUT
@@ -529,7 +527,7 @@ def test_streaming(
             features = json.loads(res)["features"]
 
             if len(features) == 0:
-                print(f"Waiting for pgstac ingest {(time.monotonic() - start):.0f}s")
+                print(f"Waiting for pgstac ingest at {conn_str_info.local} {(time.monotonic() - start):.0f}s")
                 time.sleep(1)
             else:
                 break

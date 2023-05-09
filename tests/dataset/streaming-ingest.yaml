@@ -22,7 +22,7 @@ jobs:
           max_replica_count: 1
           polling_interval: 30
           trigger_queue_length: 100
-        collection_id: "test-collection-streaming"
+        collection_id: "test-collection"
         extra_env:
           AZURITE_HOST: "azurite"
           AZURITE_PORT: 10000

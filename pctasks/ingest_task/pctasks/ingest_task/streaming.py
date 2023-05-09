@@ -15,6 +15,10 @@ from pctasks.task.task import Task
 logger = logging.getLogger(__name__)
 
 
+class StreamingIngestMessage(PCBaseModel):
+    data: Dict[str, Any]
+
+
 class StreamingIngestItemsInput(PCBaseModel):
     streaming_options: StreamingTaskOptions
 
@@ -57,7 +61,7 @@ class StreamingIngestItemsTask(
 
         # this should be a valid pystac item
         # TODO: structured messages!
-        item = json.loads(message.content)["data"]["item"]
+        item = json.loads(message.content)
         logger.info("Loading item collection=%s id=%s", item["collection"], item["id"])
         # note: we rely on the collection ID being set, since
         # we're potentially ingesting multiple items.

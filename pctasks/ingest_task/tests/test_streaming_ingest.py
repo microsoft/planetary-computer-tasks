@@ -51,7 +51,9 @@ def test_streaming_create_items_task(s1_grd_collection, document):
         with TempQueue() as queue_client:
             # put some messages on the queue
             for _ in range(10):
-                queue_client.send_message(json.dumps(document))
+                # In PublishItemsCF.__init__, we extract the item out
+                # of the raw document.
+                queue_client.send_message(json.dumps(document["data"]["item"]))
             task_input = streaming.StreamingIngestItemsInput(
                 streaming_options=StreamingTaskOptions(
                     queue_url=queue_client.url,

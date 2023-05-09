@@ -45,10 +45,10 @@ async def main(documents: func.DocumentList) -> None:
         async with qc:
             for document in documents:
                 if document["type"] == "StacItem":
-                    logging.info("Processing document %s", document)
+                    logging.info("Processing document %s", document["id"])
                     message = transform_document(document)
                     await qc.send_message(message)
-                    logging.info("Processed document %s", document)
+                    logging.info("Processed document %s", document["id"])
 
 
 def transform_document(document: func.Document) -> str:
