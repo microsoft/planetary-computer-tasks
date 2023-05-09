@@ -1,4 +1,1 @@
 stactools-goes-glm==0.2.3
-azure-identity
-azure-cosmos
-azure-storage-queue
