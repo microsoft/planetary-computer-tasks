@@ -490,9 +490,7 @@ def test_streaming(
     # Azure Function will forward from Cosmos -> dataset queue
     # Then our pctasks task will process it.
     # stac_id = "test-collection/MOD14A1.A2000049.h00v08.061.2020041150332"
-    document_id = (
-        f"{COLLECTION_ID}:MOD14A1.A2000049.h00v08.061.2020041150332::StacItem"
-    )
+    document_id = f"{COLLECTION_ID}:MOD14A1.A2000049.h00v08.061.2020041150332::StacItem"
     start = time.monotonic()
     while time.monotonic() < deadline:
         try:
@@ -527,7 +525,9 @@ def test_streaming(
             features = json.loads(res)["features"]
 
             if len(features) == 0:
-                print(f"Waiting for pgstac ingest at {conn_str_info.local} {(time.monotonic() - start):.0f}s")
+                print(
+                    f"Waiting for pgstac ingest at {conn_str_info.local} {(time.monotonic() - start):.0f}s"
+                )
                 time.sleep(1)
             else:
                 break
