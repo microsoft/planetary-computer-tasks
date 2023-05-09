@@ -78,14 +78,15 @@ def validate_item(item: pystac.Item, collection_id: Optional[str]) -> pystac.Ite
     remove_collection_link = False
 
     if item.collection_id and not item.get_single_link("collection"):
-        # TODO: avoid mutating `item`.
-        # For valid items, users shouldn't ever see this link we add. But if
-        # `item.validate()` throws an exception they'll get back an item with a
-        # new link.
         item.add_link(pystac.Link(rel="collection", target="http://example.com"))
         remove_collection_link = True
 
-    item.validate()
+    try:
+        item.validate()
+    finally:
+        if remove_collection_link:
+            with contextlib.suppress(Exception):
+                item.remove_links("collection")
 
     if remove_collection_link:
         item.remove_links("collection")
@@ -174,7 +175,6 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
     ) -> Union[List[pystac.Item], WaitTaskResult]:
         storage_factory = context.storage_factory
         results: List[pystac.Item] = []
-
         if args.asset_uri:
             try:
                 with traced_create_item(args.asset_uri, args.collection_id):
@@ -188,10 +188,12 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
             elif result is None:
                 logger.warning(f"No items created from {args.asset_uri}")
             else:
-                results = validate_create_items_result(
-                    result,
-                    collection_id=args.collection_id,
-                    skip_validation=args.options.skip_validation,
+                results.extend(
+                    validate_create_items_result(
+                        result,
+                        collection_id=args.collection_id,
+                        skip_validation=args.options.skip_validation,
+                    )
                 )
         elif args.asset_chunk_info:
             chunk_storage, chunk_path = storage_factory.get_storage_for_file(
@@ -217,10 +219,12 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                     if not result:
                         logger.warning(f"No items created from {asset_uri}")
                     else:
-                        results = validate_create_items_result(
-                            result,
-                            collection_id=args.collection_id,
-                            skip_validation=args.options.skip_validation,
+                        results.extend(
+                            validate_create_items_result(
+                                result,
+                                collection_id=args.collection_id,
+                                skip_validation=args.options.skip_validation,
+                            )
                         )
 
         else:

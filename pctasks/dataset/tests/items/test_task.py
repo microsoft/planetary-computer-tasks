@@ -136,9 +136,12 @@ def test_validate_item_validates_item():
     (item,) = create_mock_item(asset_uri="test.tif", storage_factory=None)
     item.datetime = None
     # this is not valid
+    item.collection_id = "test-collection"
 
-    with pytest.raises(pystac.errors.STACError):
-        validate_item(item, collection_id="test-collection")
+    with pytest.raises(pystac.errors.STACValidationError):
+        validate_item(item, collection_id=None)
+
+    assert item.links == []
 
 
 def test_validate_create_items_result():
