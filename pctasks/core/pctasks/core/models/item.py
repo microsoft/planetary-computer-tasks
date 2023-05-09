@@ -50,8 +50,6 @@ class StacItemRecord(ItemRecord):
     stac_id: str
         The "STAC identifier" which is the STAC collection ID and Item ID joined
         by a single ``/``
-    version: str, optional
-        The STAC version identifier.
     """
 
     type: ItemRecordType = Field(default=ItemRecordType.STAC_ITEM, const=True)
@@ -63,9 +61,7 @@ class StacItemRecord(ItemRecord):
         collection_id = item.collection_id
         item_id = item.id
         stac_id = f"{collection_id}/{item_id}"
-        return cls(
-            stac_id=stac_id, version=item.properties.get("version"), item=item.to_dict()
-        )
+        return cls(stac_id=stac_id, item=item.to_dict())
 
     @property
     def version(self) -> str:

@@ -1,6 +1,6 @@
 flake8==4.*
 black==22.*
-mypy==0.982
+mypy==1.2.0
 pytest==6.*
 isort==5.*
 pytest-asyncio==0.18.*
@@ -10,6 +10,7 @@ pystac[validation]==1.*
 
 azure-functions
 azure-functions-durable
+responses
 
 # Mypy stubs
 

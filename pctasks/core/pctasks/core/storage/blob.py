@@ -29,6 +29,7 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     ContainerSasPermissions,
+    ContentSettings,
     generate_container_sas,
 )
 
@@ -519,17 +520,17 @@ class BlobStorage(Storage):
         output_path: str,
         is_binary: bool = True,
         timeout_seconds: Optional[int] = None,
+        **kwargs: Any,
     ) -> None:
+        if timeout_seconds is not None:
+            kwargs["timeout"] = timeout_seconds
+
         with self._get_client() as client:
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 with open(output_path, "wb" if is_binary else "w") as f:
                     try:
                         # timeout raises an azure.core.exceptions.HttpResponseError: ("Connection broken: ConnectionResetError(104, 'Connection reset by peer')"  # noqa
-                        with_backoff(
-                            lambda: blob.download_blob(
-                                timeout=timeout_seconds
-                            ).readinto(f)
-                        )
+                        with_backoff(lambda: blob.download_blob(**kwargs).readinto(f))
                     except azure.core.exceptions.ResourceNotFoundError:
                         raise FileNotFoundError(f"File {file_path} not found in {self}")
 
@@ -554,7 +555,21 @@ class BlobStorage(Storage):
         input_path: str,
         target_path: str,
         overwrite: bool = True,
+        content_type: Optional[str] = None,
     ) -> None:
+        """
+        Upload a file to blob storage.
+
+        Parameters
+        ----------
+        content_type: str, optional
+            The content type of the file. If provided, it will be set in
+            the :class:`azure.storage.blob.ContentSettings` argument passed
+            to :meth:`azure.storage.blob.BlobClient.upload_blob`.
+        """
+        kwargs = {}
+        if content_type:
+            kwargs["content_settings"] = ContentSettings(content_type=content_type)
         with self._get_client() as client:
             with client.container.get_blob_client(
                 self._add_prefix(target_path)
@@ -562,7 +577,7 @@ class BlobStorage(Storage):
 
                 def _upload() -> None:
                     with open(input_path, "rb") as f:
-                        blob.upload_blob(f, overwrite=overwrite)
+                        blob.upload_blob(f, overwrite=overwrite, **kwargs)
 
                 with_backoff(_upload)
 

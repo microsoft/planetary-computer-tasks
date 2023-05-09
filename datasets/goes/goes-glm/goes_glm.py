@@ -1,3 +1,4 @@
+import socket
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Union
@@ -24,6 +25,11 @@ class GoesGlmCollection(Collection):
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
+        # Last-ditch attempt to enforce timeouts in the socket / ssl code
+        timeout = socket.getdefaulttimeout()
+        if timeout is None:
+            socket.setdefaulttimeout(60)
+        
         nc_storage, nc_asset_path = storage_factory.get_storage_for_file(asset_uri)
 
         if isinstance(nc_storage, pctasks.core.storage.blob.BlobStorage):
