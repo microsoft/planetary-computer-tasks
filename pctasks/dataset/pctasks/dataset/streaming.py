@@ -245,8 +245,6 @@ def create_item_from_item_uri(
     ... )
     [<Item id=S1A_IW_GRDH_1SDH_20230228T091754_20230228T091816_047434_05B1CE_rtc>]
     """
-    logger.warning("create_item_from_item_uri: %s", asset_uri)
-    logger.warning("storage type: %s", type(storage_factory).__name__)
     storage, path = storage_factory.get_storage_for_file(asset_uri)
     logger.debug("Reading file. asset_uri=%s path=%s", asset_uri, path)
 
@@ -260,5 +258,4 @@ def create_item_from_message(
     asset_uri: Dict[str, Any], storage_factory: StorageFactory
 ) -> Union[List[pystac.Item], WaitTaskResult]:
     # Just shoving the STAC item in the "url" field of the message.
-    # data = json.loads(asset_uri)
     return [pystac.Item.from_dict(asset_uri)]

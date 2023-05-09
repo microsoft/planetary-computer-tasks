@@ -101,6 +101,8 @@ def validate_create_items_result(
     if not skip_validation:
         items = [validate_item(item, collection_id=collection_id) for item in items]
     return items
+
+
 def _init_azlogger() -> None:
     # AzureLogHandler is slow to initialize
     # do it once here
@@ -172,7 +174,6 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
     ) -> Union[List[pystac.Item], WaitTaskResult]:
         storage_factory = context.storage_factory
         results: List[pystac.Item] = []
-        # TODO: do this for streaming, deduplicate
 
         if args.asset_uri:
             try:

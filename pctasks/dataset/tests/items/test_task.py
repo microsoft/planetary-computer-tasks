@@ -20,10 +20,12 @@ from pctasks.dataset.items.task import (
     CreateItemsError,
     CreateItemsInput,
     CreateItemsTask,
+    traced_create_item,
     validate_create_items_result,
     validate_item,
 )
 from pctasks.dev.test_utils import run_test_task
+from pctasks.task.utils import get_task_path
 
 HERE = Path(__file__)
 TEST_ASSETS_PATH = HERE.parent.parent / "data-files" / "test-assets"

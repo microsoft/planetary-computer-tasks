@@ -12,12 +12,12 @@ from pctasks.core.constants import (
 )
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset import streaming
+from pctasks.dev.azurite import setup_azurite
 from pctasks.dev.blob import temp_azurite_blob_storage
 from pctasks.dev.constants import AZURITE_ACCOUNT_KEY
 from pctasks.dev.queues import TempQueue
 from pctasks.task.context import TaskContext
 from pctasks.task.streaming import StreamingTaskOptions
-from pctasks.dev.azurite import setup_azurite
 
 BLANK_ITEM = pystac.Item(
     "id",
