@@ -174,7 +174,7 @@ def test_streaming_create_items_rewrite_url(monkeypatch):
     }.items():
         if key not in os.environ:
             monkeypatch.setenv(key, value)
-    
+
     host = os.environ[AZURITE_HOST_ENV_VAR]
     port = os.environ[AZURITE_PORT_ENV_VAR]
     setup_azurite()
