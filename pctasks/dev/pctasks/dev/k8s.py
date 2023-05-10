@@ -6,8 +6,9 @@ def get_streaming_task_definition() -> pctasks.core.models.task.TaskDefinition:
     image = "localhost:5001/pctasks-task-base:latest"
     cosmos = "https://pclowlatencytesttom.documents.azure.com:443/"
     function = "pctasks.dataset.streaming.create_item_from_item_uri"
+    # Not sure what's going on with the type here.
     return pctasks.core.models.task.TaskDefinition(
-        **{
+        **{  # type: ignore [arg-type]
             "id": "create-items",
             "image": image,
             "task": "pctasks.dataset.streaming:StreamingCreateItemsTask",
