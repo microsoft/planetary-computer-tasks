@@ -1,7 +1,7 @@
 import pctasks.core.models.task
 
 
-def get_streaming_task_definition():
+def get_streaming_task_definition() -> pctasks.core.models.task.TaskDefinition:
     """A task definition for a streaming workflow."""
     image = "localhost:5001/pctasks-task-base:latest"
     cosmos = "https://pclowlatencytesttom.documents.azure.com:443/"
