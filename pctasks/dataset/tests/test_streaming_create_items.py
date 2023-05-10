@@ -15,7 +15,7 @@ from pctasks.core.storage import StorageFactory
 from pctasks.dataset import streaming
 from pctasks.dev.azurite import setup_azurite
 from pctasks.dev.blob import temp_azurite_blob_storage
-from pctasks.dev.constants import AZURITE_ACCOUNT_KEY
+from pctasks.dev.constants import get_azurite_named_key_credential
 from pctasks.dev.queues import TempQueue
 from pctasks.task.context import TaskContext
 from pctasks.task.streaming import StreamingTaskOptions
@@ -60,7 +60,7 @@ def test_process_message():
         streaming_options=StreamingTaskOptions(
             # process_message doesn't actually touch the queue
             queue_url="http://example.com",
-            queue_credential=AZURITE_ACCOUNT_KEY,
+            queue_credential=get_azurite_named_key_credential(),
             visibility_timeout=10,
             message_limit=5,
         ),
@@ -100,7 +100,7 @@ def test_streaming_create_items_task():
             create_items_function=create_items,
             streaming_options=StreamingTaskOptions(
                 queue_url=queue_client.url,
-                queue_credential=AZURITE_ACCOUNT_KEY,
+                queue_credential=get_azurite_named_key_credential(),
                 visibility_timeout=10,
                 message_limit=5,
             ),
@@ -150,7 +150,7 @@ def test_streaming_create_items_from_message():
             create_items_function=create_items,
             streaming_options=StreamingTaskOptions(
                 queue_url=queue_client.url,
-                queue_credential=AZURITE_ACCOUNT_KEY,
+                queue_credential=get_azurite_named_key_credential(),
                 visibility_timeout=10,
                 message_limit=5,
             ),
@@ -240,7 +240,7 @@ def test_streaming_create_items_task_invalid_item(caplog):
             create_items_function=create_items,
             streaming_options=StreamingTaskOptions(
                 queue_url=queue_client.url,
-                queue_credential=AZURITE_ACCOUNT_KEY,
+                queue_credential=get_azurite_named_key_credential(),
                 visibility_timeout=1,
                 message_limit=5,
             ),
