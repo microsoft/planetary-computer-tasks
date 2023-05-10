@@ -526,7 +526,8 @@ def test_streaming(
 
             if len(features) == 0:
                 print(
-                    f"Waiting for pgstac ingest at {conn_str_info.local} {(time.monotonic() - start):.0f}s"
+                    f"Waiting for pgstac ingest at {conn_str_info.local} "
+                    f"{(time.monotonic() - start):.0f}s"
                 )
                 time.sleep(1)
             else:
