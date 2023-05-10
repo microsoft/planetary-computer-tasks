@@ -1,6 +1,7 @@
 import datetime
 import json
 import logging
+import os
 
 import azure.storage.queue
 import pystac
@@ -105,7 +106,6 @@ def test_streaming_create_items_task():
             ),
         )
         context = TaskContext(run_id="test", storage_factory=StorageFactory())
-
         task.run(task_input, context)
         assert create_items.count == 10
         # Hmm is this zero because all the items were created successfully?
@@ -167,9 +167,16 @@ def test_streaming_create_items_rewrite_url(monkeypatch):
 
     This also verifies that the URL rewriting from https:// URLs to blob:// works.
     """
-    monkeypatch.setenv(AZURITE_STORAGE_ACCOUNT_ENV_VAR, "devstoreaccount1")
-    monkeypatch.setenv(AZURITE_HOST_ENV_VAR, "localhost")
-    monkeypatch.setenv(AZURITE_PORT_ENV_VAR, "10000")
+    for key, value in {
+        AZURITE_STORAGE_ACCOUNT_ENV_VAR: "devstoreaccount1",
+        AZURITE_HOST_ENV_VAR: "localhost",
+        AZURITE_PORT_ENV_VAR: "10000",
+    }.items():
+        if key not in os.environ:
+            monkeypatch.setenv(key, value)
+    
+    host = os.environ[AZURITE_HOST_ENV_VAR]
+    port = os.environ[AZURITE_PORT_ENV_VAR]
     setup_azurite()
 
     with temp_azurite_blob_storage() as root_storage:
@@ -178,7 +185,7 @@ def test_streaming_create_items_rewrite_url(monkeypatch):
         )
 
         url = root_storage.get_url("data/item.json")
-        assert url.startswith("http://localhost:10000")
+        assert url.startswith(f"http://{host}:{port}")
 
         task = streaming.StreamingCreateItemsTask()
 
