@@ -124,3 +124,4 @@ kubeconfig
 Gemfile
 Gemfile.lock
 _site/
+cluster/kind-internal-config

@@ -4,6 +4,7 @@ mypy==1.2.0
 pytest==6.*
 isort==5.*
 pytest-asyncio==0.18.*
+kubernetes
 
 planetary-computer
 pystac[validation]==1.*

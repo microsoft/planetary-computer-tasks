@@ -81,6 +81,9 @@ services:
       - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_NAME=devstoreaccount1
       - PCTASKS_NOTIFICATIONS__TABLES_ACCOUNT_KEY=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
 
+      ## Kubernetes
+      - KUBECONFIG=/opt/src/cluster/kind-internal-config
+
   integration-tests:
     container_name: pctasks-integration-tests
     image: pctasks-dev

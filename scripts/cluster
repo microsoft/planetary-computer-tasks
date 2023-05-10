@@ -80,6 +80,7 @@ function create_cluster {
             create cluster --name ${KIND_CLUSTER_NAME} \
             --config cluster/kind-config.yaml
     fi
+    kind export kubeconfig --name kind-pctasks --kubeconfig cluster/kind-internal-config --internal
 
     echo " -- REGISTERING LOCAL IMAGE REGISTRY"
     cat <<EOF | kubectl apply -f -

@@ -1,11 +1,16 @@
 import base64
+import os
 
 import kubernetes
 import pytest
 
-import pctasks.core.constants
 import pctasks.core.models.task
 import pctasks.run.workflow.kubernetes
+from pctasks.core.constants import (
+    AZURITE_HOST_ENV_VAR,
+    AZURITE_PORT_ENV_VAR,
+    AZURITE_STORAGE_ACCOUNT_ENV_VAR,
+)
 from pctasks.core.cosmos.settings import CosmosDBSettings
 from pctasks.core.models.config import BlobConfig
 from pctasks.core.models.workflow import (
@@ -28,14 +33,13 @@ TEST_NAMESPACE = "pctasks-test"
 @pytest.fixture
 def task_definition():
     """A task definition for a streaming workflow."""
-    image = "pccomponentstest.azurecr.io/pctasks-goes-glm-streaming:2023.2.16.7"
+    image = "localhost:5001/pctasks-task-base:latest"
     cosmos = "https://pclowlatencytesttom.documents.azure.com:443/"
     function = "pctasks.dataset.streaming.create_item_from_item_uri"
     return pctasks.core.models.task.TaskDefinition(
         **{
             "id": "create-items",
             "image": image,
-            "code": {"src": "blob://pctasksteststaging/code/test-tom/goes_glm.py"},
             "task": "pctasks.dataset.streaming:StreamingCreateItemsTask",
             "args": {
                 "streaming_options": {
@@ -108,6 +112,10 @@ def run_settings():
         "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq"
         "/K1SZFPTOtr/KBHBeksoGMGw=="
     )
+
+    host = os.environ.get(AZURITE_HOST_ENV_VAR, "localhost")
+    blob_port = int(os.environ.get(AZURITE_PORT_ENV_VAR, "10000"))
+
     return RunSettings(
         notification_queue={
             "account_url": "queue://devstoreaccount1/notifications",
@@ -115,10 +123,10 @@ def run_settings():
             "queue_name": "notifications",
             "sas_token": "sas",
         },
-        tables_account_url="http://127.0.0.1:10001",
+        tables_account_url=f"http://{host}:10001",
         tables_account_name="devstoreaccount1",
         tables_account_key="devstoreaccount1",
-        blob_account_url="http://127.0.0.1:10000",
+        blob_account_url=f"http://{host}:{blob_port}",
         blob_account_name="devstoreaccount1",
         blob_account_key=key,
         keyvault_url="https://devstoreaccount1.vault.azure.net/",
@@ -129,6 +137,7 @@ def run_settings():
         streaming_taskio_sp_client_secret="test-client-secret",
         streaming_taskio_sp_tenant_id="test-tenant-id",
         streaming_task_namespace=TEST_NAMESPACE,
+        local_secrets=True,
     )
 
 
@@ -280,11 +289,14 @@ def test_get_name_prefix(queue_url, expected):
 # https://github.com/kubernetes-client/python/issues/2024
 @pytest.mark.filterwarnings("ignore:HTTPResponse.getheaders:DeprecationWarning")
 def test_execute_workflow(namespace, task_definition, run_settings, monkeypatch):
-    monkeypatch.setenv(
-        pctasks.core.constants.AZURITE_STORAGE_ACCOUNT_ENV_VAR, "devstoreaccount1"
-    )
-    monkeypatch.setenv(pctasks.core.constants.AZURITE_HOST_ENV_VAR, "127.0.0.1")
-    monkeypatch.setenv(pctasks.core.constants.AZURITE_PORT_ENV_VAR, "10000")
+    for k, v in {
+        AZURITE_STORAGE_ACCOUNT_ENV_VAR: "devstoreaccount1",
+        AZURITE_HOST_ENV_VAR: "127.0.0.1",
+        AZURITE_PORT_ENV_VAR: "10000",
+    }.items():
+        if k not in os.environ:
+            monkeypatch.setenv(k, v)
+
     settings = WorkflowExecutorConfig(
         run_settings=run_settings,
         cosmosdb_settings=CosmosDBSettings(),
