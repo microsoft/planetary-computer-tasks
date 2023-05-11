@@ -34,7 +34,7 @@ jobs:
       # Integration Tests
 
       - name: Install Kind
-        uses: helm/kind-action@1.5.0
+        uses: helm/kind-action@v1.4.0
         with:
           install_only: true
         if: ${{ github.base_ref  == 'main' }}
