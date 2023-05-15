@@ -224,7 +224,13 @@ def build_streaming_deployment(
         args=["task", "run", input_uri],
         env=env,
     )
-    common_labels = {"node_group": "pc-lowlatency"}
+
+    queue_name = get_name_prefix(task_definition.args["streaming_options"]["queue_url"])
+
+    common_labels = {
+        "node_group": "pc-lowlatency",
+        "planetarycomputer.microsoft.com/queue_url": queue_name
+    }
 
     # TODO: enable node_selector. Disabled for testing in kind.
     pod_spec = V1PodSpec(
