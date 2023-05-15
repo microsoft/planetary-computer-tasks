@@ -400,20 +400,22 @@ def print_status(core_api: client.CoreV1Api, label_selector: str) -> None:
     print("=" * 80)
 
 
+@pytest.mark.usefixtures(
+    "cluster",
+    "cosmos_credentials",
+    "dataset_queue",
+    "ingest_queue",
+    "ingested_collection",
+    "stac_item_blob",
+    "process_items_task",
+    "ingest_items_task",
+)
 def test_streaming(
-    cluster,
-    cosmos_credentials,
     events_queue,
-    dataset_queue,
-    ingest_queue,
     conn_str_info,
-    ingested_collection,
     root_storage,
     cosmos_storage_events_container,
     cosmos_items_container,
-    stac_item_blob,
-    process_items_task,
-    ingest_items_task,
     core_api,
 ):
     """
@@ -539,10 +541,8 @@ def test_streaming(
 
     start = time.monotonic()
     deadline = start + DEFAULT_TIMEOUT
-    label_selector = (
-        "planetarycomputer.microsoft.com/queue_url=devstoreaccount1-ingest"
-    )
- 
+    label_selector = "planetarycomputer.microsoft.com/queue_url=devstoreaccount1-ingest"
+
     with PgstacDB(conn_str_info.local) as db:
         while time.monotonic() < deadline:
             res = db.search(
