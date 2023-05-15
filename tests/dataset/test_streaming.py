@@ -29,6 +29,7 @@ WORKFLOWS = HERE / ".." / "workflows"
 COLLECTION_ID = "test-collection"
 DEPLOYMENT_NAME = f"devstoreaccount1-{COLLECTION_ID}-deployment"
 INGEST_DEPLOYMENT_NAME = "devstoreaccount1-ingest-deployment"
+TEST_NAMESPACE = "argo"
 
 print(__name__)
 
@@ -49,7 +50,8 @@ def cluster():
     yield
     try:
         deployment = apps.read_namespaced_deployment(
-            f"azurite.10001-devstoreaccount1.{COLLECTION_ID}-stream-deployment", "argo"
+            f"azurite.10001-devstoreaccount1.{COLLECTION_ID}-stream-deployment",
+            TEST_NAMESPACE,
         )
     except client.rest.ApiException as e:
         if e.status == 404:
@@ -107,7 +109,7 @@ def cleanup_kubernetes():
     apps = client.AppsV1Api()
     yield
     apps.delete_namespaced_deployment(
-        f"devstoreaccount1-{COLLECTION_ID}-stream-deployment", "argo"
+        f"devstoreaccount1-{COLLECTION_ID}-stream-deployment", TEST_NAMESPACE
     )
 
 
@@ -273,7 +275,7 @@ def process_items_task(dataset_queue, conn_str_info, host_env):
         try:
             deployment = apps.read_namespaced_deployment(
                 DEPLOYMENT_NAME,
-                "argo",
+                TEST_NAMESPACE,
             )
         except client.ApiException:
             print(f"Waiting for items deployment ({(time.monotonic() - start):.0f}s)")
@@ -288,12 +290,12 @@ def process_items_task(dataset_queue, conn_str_info, host_env):
         time.sleep(1)
         deployment = apps.read_namespaced_deployment(
             DEPLOYMENT_NAME,
-            "argo",
+            TEST_NAMESPACE,
         )
 
     deployment = apps.read_namespaced_deployment(
         DEPLOYMENT_NAME,
-        "argo",
+        TEST_NAMESPACE,
     )
     # This is eventually true
     assert deployment.status.ready_replicas == 1
@@ -342,10 +344,10 @@ def ingest_items_task(ingest_queue, conn_str_info, host_env):
         try:
             deployment = apps.read_namespaced_deployment(
                 INGEST_DEPLOYMENT_NAME,
-                "argo",
+                TEST_NAMESPACE,
             )
         except client.ApiException:
-            print(f"Waiting for items deployment ({(time.monotonic() - start):.0f}s)")
+            print(f"Waiting for ingest deployment ({(time.monotonic() - start):.0f}s)")
             time.sleep(1)
             continue
         else:
@@ -357,12 +359,12 @@ def ingest_items_task(ingest_queue, conn_str_info, host_env):
         time.sleep(1)
         deployment = apps.read_namespaced_deployment(
             INGEST_DEPLOYMENT_NAME,
-            "argo",
+            TEST_NAMESPACE,
         )
 
     deployment = apps.read_namespaced_deployment(
         INGEST_DEPLOYMENT_NAME,
-        "argo",
+        TEST_NAMESPACE,
     )
     # This is eventually true
     assert deployment.status.ready_replicas == 1
@@ -375,6 +377,27 @@ def ingest_items_task(ingest_queue, conn_str_info, host_env):
         )
     except Exception as e:
         print(e)
+
+
+@pytest.fixture
+def core_api(cluster):
+    config.load_kube_config()
+    return client.CoreV1Api()
+
+
+def print_status(core_api: client.CoreV1Api, label_selector: str) -> None:
+    pods = core_api.list_namespaced_pod(TEST_NAMESPACE, label_selector=label_selector)
+    print("Listing pod status...")
+
+    for pod in pods.items:
+        s = f" Pod: {pod.metadata.name} [{pod.status.phase}] "
+        print(f"{s:-^80}")
+        for line in core_api.read_namespaced_pod_log(
+            pod.metadata.name, pod.metadata.namespace, since_seconds=5
+        ).splitlines():
+            print(f"\t{line}")
+
+    print("=" * 80)
 
 
 def test_streaming(
@@ -391,6 +414,7 @@ def test_streaming(
     stac_item_blob,
     process_items_task,
     ingest_items_task,
+    core_api,
 ):
     """
     An end-to-end integration test for streaming workloads.
@@ -492,12 +516,16 @@ def test_streaming(
     # stac_id = "test-collection/MOD14A1.A2000049.h00v08.061.2020041150332"
     document_id = f"{COLLECTION_ID}:MOD14A1.A2000049.h00v08.061.2020041150332::StacItem"
     start = time.monotonic()
+    label_selector = (
+        "planetarycomputer.microsoft.com/queue_url=devstoreaccount1-test-collection"
+    )
     while time.monotonic() < deadline:
         try:
             result = cosmos_items_container.get(document_id, document_id)
             result
         except Exception:
             print(f"Waiting for item document {(time.monotonic() - start):.0f}s")
+            print_status(core_api, label_selector=label_selector)
             time.sleep(0.5)
         else:
             break
@@ -511,6 +539,10 @@ def test_streaming(
 
     start = time.monotonic()
     deadline = start + DEFAULT_TIMEOUT
+    label_selector = (
+        "planetarycomputer.microsoft.com/queue_url=devstoreaccount1-ingest"
+    )
+ 
     with PgstacDB(conn_str_info.local) as db:
         while time.monotonic() < deadline:
             res = db.search(
@@ -529,6 +561,7 @@ def test_streaming(
                     f"Waiting for pgstac ingest at {conn_str_info.local} "
                     f"{(time.monotonic() - start):.0f}s"
                 )
+                print_status(core_api, label_selector=label_selector)
                 time.sleep(1)
             else:
                 break
