@@ -229,7 +229,7 @@ def build_streaming_deployment(
 
     common_labels = {
         "node_group": "pc-lowlatency",
-        "planetarycomputer.microsoft.com/queue_url": queue_name
+        "planetarycomputer.microsoft.com/queue_url": queue_name,
     }
 
     # TODO: enable node_selector. Disabled for testing in kind.
