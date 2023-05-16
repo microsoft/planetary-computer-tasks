@@ -511,6 +511,7 @@ def test_streaming(
             break
     else:
         raise AssertionError("Timeout getting event document")
+    print("Storage Event is in Cosmos DB")
 
     # Checkpoint 2: The asset has been processed. The item is in Cosmos DB
     # Azure Function will forward from Cosmos -> dataset queue
@@ -533,6 +534,8 @@ def test_streaming(
             break
     else:
         raise AssertionError("Timeout getting items document.")
+
+    print("Item is in Cosmos DB")
 
     # Checkpoint 3: The item has been ingested into pgstac
 
@@ -568,5 +571,6 @@ def test_streaming(
         else:
             raise AssertionError("Timeout getting pgstac item.")
 
+    print("Item is in PgSTAC")
     feature = features[0]
     assert feature
