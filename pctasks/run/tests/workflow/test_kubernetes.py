@@ -18,7 +18,11 @@ def test_build_streaming_deployment():
         taskio_client_id="test-client-id",
         taskio_client_secret="test-client-secret",
     )
-    labels = {"node_group": "pc-lowlatency"}
+    labels = {
+        "node_group": "pc-lowlatency",
+        "planetarycomputer.microsoft.com/queue_url": "devstoreaccount1-test",
+    }
+
     assert result.metadata.name == "devstoreaccount1-test-deployment"
     assert result.metadata.labels == labels
     assert result.spec.selector["matchLabels"] == labels
