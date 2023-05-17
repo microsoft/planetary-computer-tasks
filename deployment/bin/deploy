@@ -258,7 +258,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
     echo "Adding KEDA roles and rolebindings"
     # This namespace must match where argo runs its workflows
-    kubectl -n pc apply -f helm/argo-workflow-keda-rbac.yaml
+    kubectl -n pc apply -f helm/argo-workflow-keda-rbac-prod.yaml
 
     echo "===================="
     echo "== PCTasksIngress =="
