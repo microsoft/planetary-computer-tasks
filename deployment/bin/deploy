@@ -251,8 +251,14 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         --wait \
         --timeout 2m0s
 
+    # TODO: Figure out how to apply to set this with helm
     echo "Creating KEDA trigger auth"
-    kubectl apply -f helm/keda-trigger-authentication.yaml
+    # This namespace must match where argo runs its workflows
+    kubectl -n pc apply -f helm/keda-trigger-authentication.yaml
+
+    echo "Adding KEDA roles and rolebindings"
+    # This namespace must match where argo runs its workflows
+    kubectl -n pc apply -f helm/argo-workflow-keda-rbac.yaml
 
     echo "===================="
     echo "== PCTasksIngress =="

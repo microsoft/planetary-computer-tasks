@@ -30,6 +30,9 @@ from pctasks.task.constants import (
 )
 
 logger = logging.getLogger(__name__)
+# This must match the TriggerAuthentication in
+# deploy/helm/keda-trigger-authentication.yaml
+KEDA_QUEUE_CONNECTION_STRING_AUTH_NAME = "queue-connection-string-auth"
 
 
 def submit_task(
@@ -163,7 +166,9 @@ def build_streaming_scaler(task_definition: TaskDefinition) -> dict[str, Any]:
             "triggers": [
                 {
                     "type": "azure-queue",
-                    "authenticationRef": {"name": "queue-connection-string-auth"},
+                    "authenticationRef": {
+                        "name": KEDA_QUEUE_CONNECTION_STRING_AUTH_NAME
+                    },
                     "metadata": {
                         "queueName": queue_name,
                         "queueLength": str(
