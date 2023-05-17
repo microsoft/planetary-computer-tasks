@@ -4,6 +4,7 @@ args:
 - queue_url
 - account_name
 - account_key
+- test_container_suffix
 jobs:
   ingest-items:
     id: ingest-items
@@ -28,6 +29,7 @@ jobs:
           AZURITE_PORT: 10000
           AZURITE_STORAGE_ACCOUNT: "devstoreaccount1"
           DB_CONNECTION_STRING: ${{ args.db_connection_string }}
+          PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX: ${{ args.test_container_suffix }}
       env:
         DB_CONNECTION_STRING: ${{ args.db_connection_string }}
       schema_version: 1.0.0

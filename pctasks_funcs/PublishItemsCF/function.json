@@ -7,7 +7,7 @@
             "direction": "in",
             "connectionStringSetting": "FUNC_COSMOSDB_CONN_STR",
             "databaseName": "pctasks",
-            "collectionName": "items"
+            "collectionName": "%FUNC_ITEMS_COLLECTION_NAME%"
         }
     ]
 }

@@ -13,7 +13,7 @@ HERE = pathlib.Path(__file__).parent
 @pytest.fixture
 def document() -> func.Document:
     data = json.load(pathlib.Path(HERE / "items_document.json").open())
-    return func.Document(data)
+    return func.Document(data["data"])
 
 
 def test_transform_document(document):

@@ -6,6 +6,7 @@ args:
 - queue_url
 - account_name
 - account_key
+- test_container_suffix
 jobs:
   create-items:
     id: create-items
@@ -36,6 +37,7 @@ jobs:
           DB_CONNECTION_STRING: ${{ args.db_connection_string }}
           PCTASKS_COSMOSDB__URL: ${{ args.cosmosdb_url}}
           PCTASKS_COSMOSDB__KEY: ${{ args.cosmosdb_account_key}}
+          PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX: ${{ args.test_container_suffix }}
 
       env:
         DB_CONNECTION_STRING: ${{ args.db_connection_string }}

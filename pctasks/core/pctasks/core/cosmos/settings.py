@@ -61,14 +61,13 @@ class CosmosDBSettings(PCTasksSettings):
     def get_storage_events_container_name(self) -> str:
         if self.test_container_suffix:
             return (
-                f"tmp-{self.storage_events_container_name}"
-                f"-{self.test_container_suffix}"
+                f"{self.storage_events_container_name}{self.test_container_suffix}"
             )
         return self.storage_events_container_name
 
     def get_items_container_name(self) -> str:
         if self.test_container_suffix:
-            return f"tmp-{self.items_container_name}" f"-{self.test_container_suffix}"
+            return f"{self.items_container_name}{self.test_container_suffix}"
         return self.items_container_name
 
     def get_records_container_name(self) -> str:

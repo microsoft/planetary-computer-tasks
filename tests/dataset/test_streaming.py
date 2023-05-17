@@ -170,6 +170,7 @@ def root_storage() -> BlobStorage:
 def cosmos_storage_events_container():
     logging.info("Connecting to storage-events cosmos container")
     with StorageEventsContainer(StorageEvent) as cosmos_client:
+        print(f"initialized storage-events container at {cosmos_client.name}")
         yield cosmos_client
 
 
@@ -177,6 +178,7 @@ def cosmos_storage_events_container():
 def cosmos_items_container():
     logging.info("Connecting to items cosmos container")
     with ItemsContainer(StacItemRecord) as cosmos_client:
+        print(f"initialized items container at {cosmos_client.name}")
         yield cosmos_client
 
 
@@ -261,6 +263,9 @@ def process_items_task(dataset_queue, conn_str_info, host_env):
             "--arg",
             "cosmosdb_account_key",
             os.environ["PCTASKS_COSMOSDB__KEY"],
+            "--arg",
+            "test_container_suffix",
+            os.environ["PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX"],
         ]
     )
     assert process_items_result.exit_code == 0
@@ -330,6 +335,9 @@ def ingest_items_task(ingest_queue, conn_str_info, host_env):
             "--arg",
             "account_key",
             ingest_queue.credential.account_key,
+            "--arg",
+            "test_container_suffix",
+            os.environ["PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX"],
         ]
     )
     assert process_items_result.exit_code == 0
@@ -392,10 +400,11 @@ def print_status(core_api: client.CoreV1Api, label_selector: str) -> None:
     for pod in pods.items:
         s = f" Pod: {pod.metadata.name} [{pod.status.phase}] "
         print(f"{s:-^80}")
-        for line in core_api.read_namespaced_pod_log(
-            pod.metadata.name, pod.metadata.namespace, since_seconds=5
-        ).splitlines():
-            print(f"\t{line}")
+        if pod.status.phase == "Running":
+            for line in core_api.read_namespaced_pod_log(
+                pod.metadata.name, pod.metadata.namespace, since_seconds=5
+            ).splitlines():
+                print(f"\t{line}")
 
     print("=" * 80)
 
@@ -517,15 +526,18 @@ def test_streaming(
     # Azure Function will forward from Cosmos -> dataset queue
     # Then our pctasks task will process it.
     # stac_id = "test-collection/MOD14A1.A2000049.h00v08.061.2020041150332"
+    # TODO: add some random thing to  this ID and delete after test run.
     document_id = f"{COLLECTION_ID}:MOD14A1.A2000049.h00v08.061.2020041150332::StacItem"
+    stac_id = f"{COLLECTION_ID}/MOD14A1.A2000049.h00v08.061.2020041150332"
     start = time.monotonic()
     label_selector = (
         "planetarycomputer.microsoft.com/queue_url=devstoreaccount1-test-collection"
     )
     while time.monotonic() < deadline:
         try:
-            result = cosmos_items_container.get(document_id, document_id)
-            result
+            result = cosmos_items_container.get(document_id, stac_id)
+            if result is None:
+                raise KeyError(document_id)
         except Exception:
             print(f"Waiting for item document {(time.monotonic() - start):.0f}s")
             print_status(core_api, label_selector=label_selector)

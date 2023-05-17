@@ -7,7 +7,7 @@
       "direction": "in",
       "connectionStringSetting": "FUNC_COSMOSDB_CONN_STR",
       "databaseName": "pctasks",
-      "collectionName": "storage-events"
+      "collectionName": "%FUNC_STORAGE_EVENTS_COLLECTION_NAME%"
     }
   ]
 }

@@ -117,6 +117,9 @@ class StreamingCreateItemsTask(
         items_record_container.__enter__()
         items_update_container.__enter__()
 
+        logger.info("Writing STAC items to %s", items_record_container.name)
+        logger.info("Writing Update records to %s", items_update_container.name)
+
         return {
             "items_containers": (items_record_container, items_update_container),
             "create_items_function": create_items_function,
