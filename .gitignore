@@ -119,10 +119,11 @@ sas-tokens.json
 docs/generated
 
 kubeconfig
+cluster/kind-internal-config
 
 # gh-pages
 Gemfile
 Gemfile.lock
 _site/
-cluster/kind-internal-config
+
 docs/reference/generated/
