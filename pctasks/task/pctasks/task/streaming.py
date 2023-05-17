@@ -1,3 +1,4 @@
+import datetime
 import logging
 import math
 import time
@@ -130,9 +131,18 @@ class StreamingTaskMixin:
                             qc.delete_message(message)  # type: ignore
 
                     else:
-                        # TODO: warning if we've passed the visibility timeout
                         logger.info("Processed message id=%s", message.id)
-                        # mypy upgrade
+                        time_to_visible = (
+                            message.next_visible_on
+                            - datetime.datetime.now(tz=datetime.timezone.utc)
+                        )
+
+                        if time_to_visible < 0:
+                            logger.warning(
+                                "Deleting message that is already visible. Consider setting a "
+                                "higher visibility timeout. message_id=%s",
+                                message.id,
+                            )
                         qc.delete_message(message)  # type: ignore
 
                     message_count += 1
