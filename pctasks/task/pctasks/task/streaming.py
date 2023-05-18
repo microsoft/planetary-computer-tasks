@@ -139,8 +139,8 @@ class StreamingTaskMixin:
 
                         if time_to_visible < 0:
                             logger.warning(
-                                "Deleting message that is already visible. Consider setting a "
-                                "higher visibility timeout. message_id=%s",
+                                "Deleting message that is already visible. Consider "
+                                "setting a higher visibility timeout. message_id=%s",
                                 message.id,
                             )
                         qc.delete_message(message)  # type: ignore
