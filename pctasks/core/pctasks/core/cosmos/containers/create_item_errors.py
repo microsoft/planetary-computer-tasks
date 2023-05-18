@@ -24,6 +24,7 @@ class CreateItemErrorsContainer(CosmosDBContainer[T]):
     """
     CosmosDB Container for error records from the user's ``create_item`` function.
     """
+
     def __init__(
         self,
         model_type: Type[T],

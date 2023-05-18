@@ -1,10 +1,10 @@
 import pytest
 
 from pctasks.core.models.event import (
+    CreateItemErrorRecord,
     StorageEvent,
     StorageEventRecord,
     StorageEventType,
-    CreateItemErrorRecord,
 )
 
 
