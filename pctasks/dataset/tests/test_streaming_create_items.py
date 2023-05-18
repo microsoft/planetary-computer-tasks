@@ -2,15 +2,18 @@ import datetime
 import json
 import logging
 import os
+import pathlib
 
 import azure.storage.queue
 import pystac
+import pytest
 
 from pctasks.core.constants import (
     AZURITE_HOST_ENV_VAR,
     AZURITE_PORT_ENV_VAR,
     AZURITE_STORAGE_ACCOUNT_ENV_VAR,
 )
+from pctasks.core.models.event import StorageEventData
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset import streaming
 from pctasks.dev.azurite import setup_azurite
@@ -19,6 +22,8 @@ from pctasks.dev.constants import get_azurite_named_key_credential
 from pctasks.dev.queues import TempQueue
 from pctasks.task.context import TaskContext
 from pctasks.task.streaming import StreamingTaskOptions
+
+HERE = pathlib.Path(__file__).parent
 
 BLANK_ITEM = pystac.Item(
     "id",
@@ -39,20 +44,24 @@ class CreateItems:
         return [result]
 
 
-# XXX: These should probably mock Cosmos, so that we don't trigger change feed.
+class BuggyCreateItems:
+    def __init__(self):
+        self.count = 0
+
+    def __call__(self, asset_uri, storage_factory):
+        self.count += 1
+        raise ZeroDivisionError(asset_uri)
 
 
-def test_process_message():
+@pytest.fixture
+def storage_event():
+    return json.loads((HERE / "data-files/storage-event.json").read_text())
+
+
+def test_process_message(storage_event):
     task = streaming.StreamingCreateItemsTask()
     create_items = CreateItems()
-    message = azure.storage.queue.QueueMessage(
-        content=json.dumps(
-            {
-                "data": {"url": "test.tif"},
-                "time": "2023-03-27T21:12:27.7409548Z",
-            }
-        )
-    )
+    message = azure.storage.queue.QueueMessage(content=json.dumps(storage_event))
     context = TaskContext(run_id="test", storage_factory=StorageFactory())
     task_input = streaming.StreamingCreateItemsInput(
         collection_id="test",
@@ -61,7 +70,7 @@ def test_process_message():
             # process_message doesn't actually touch the queue
             queue_url="http://example.com",
             queue_credential=get_azurite_named_key_credential(),
-            visibility_timeout=10,
+            visibility_timeout=9,
             message_limit=5,
         ),
     )
@@ -76,7 +85,7 @@ def test_process_message():
     )
 
 
-def test_streaming_create_items_task():
+def test_streaming_create_items_task(storage_event):
     # This implicitly uses
     # - azurite for queues, ...
     task = streaming.StreamingCreateItemsTask()
@@ -86,15 +95,10 @@ def test_streaming_create_items_task():
         message_decode_policy=None, message_encode_policy=None
     ) as queue_client:
         # put some messages on the queue
+        storage_event["data"]["url"] = "test.tif"
+        storage_event["time"] = "2023-03-27T21:12:27.7409548Z"
         for _ in range(10):
-            queue_client.send_message(
-                json.dumps(
-                    {
-                        "data": {"url": "test.tif"},
-                        "time": "2023-03-27T21:12:27.7409548Z",
-                    }
-                )
-            )
+            queue_client.send_message(json.dumps(storage_event))
         task_input = streaming.StreamingCreateItemsInput(
             collection_id="test",
             create_items_function=create_items,
@@ -113,7 +117,7 @@ def test_streaming_create_items_task():
         assert queue_client.get_queue_properties().approximate_message_count == 0
 
 
-def test_streaming_create_items_from_message():
+def test_streaming_create_items_from_message(storage_event):
     task = streaming.StreamingCreateItemsTask()
 
     class MyCreateItems:
@@ -130,20 +134,15 @@ def test_streaming_create_items_from_message():
     item = pystac.Item(
         "id", {}, None, datetime.datetime(2000, 1, 1), {}, collection="test"
     )
+    storage_event["data"]["url"] = json.dumps(item.to_dict())
+    storage_event["time"] = "2023-03-27T21:12:27.7409548Z"
 
     with TempQueue(
         message_decode_policy=None, message_encode_policy=None
     ) as queue_client:
         # put some messages on the queue
         for _ in range(10):
-            queue_client.send_message(
-                json.dumps(
-                    {
-                        "data": {"url": json.dumps(item.to_dict())},
-                        "time": "2023-03-27T21:12:27.7409548Z",
-                    }
-                )
-            )
+            queue_client.send_message(json.dumps(storage_event))
 
         task_input = streaming.StreamingCreateItemsInput(
             collection_id="test",
@@ -161,7 +160,7 @@ def test_streaming_create_items_from_message():
     assert create_items.items[0].to_dict() == item.to_dict()
 
 
-def test_streaming_create_items_rewrite_url(monkeypatch):
+def test_streaming_create_items_rewrite_url(monkeypatch, storage_event):
     """
     Test ensuring that the streaming create items task can read from blob storage.
 
@@ -185,6 +184,9 @@ def test_streaming_create_items_rewrite_url(monkeypatch):
         )
 
         url = root_storage.get_url("data/item.json")
+        storage_event["data"]["url"] = url
+        message_data = StorageEventData.parse_obj(storage_event["data"])
+
         assert url.startswith(f"http://{host}:{port}")
 
         task = streaming.StreamingCreateItemsTask()
@@ -194,7 +196,6 @@ def test_streaming_create_items_rewrite_url(monkeypatch):
             result = streaming.create_item_from_item_uri(asset_uri, storage_factory)
             return result
 
-        message_data = {"url": url}
         context = TaskContext(run_id="test", storage_factory=StorageFactory())
 
         result = task.create_items(
@@ -251,3 +252,40 @@ def test_streaming_create_items_task_invalid_item(caplog):
             task.run(task_input, context)
 
     assert caplog.records
+
+
+def test_streaming_create_items_handles_errors(storage_event):
+    task = streaming.StreamingCreateItemsTask()
+    create_items = BuggyCreateItems()
+    storage_event["data"]["url"] = "test.tif"
+    storage_event["time"] = "2023-03-27T21:12:27.7409548Z"
+
+    message = azure.storage.queue.QueueMessage(content=json.dumps(storage_event))
+    message.id = "test-message"
+    message.dequeue_count = 1
+
+    task_input = streaming.StreamingCreateItemsInput(
+        collection_id="test",
+        create_items_function=create_items,
+        streaming_options=StreamingTaskOptions(
+            queue_url="http://example.com/",
+            queue_credential=get_azurite_named_key_credential(),
+            visibility_timeout=10,
+            message_limit=5,
+        ),
+    )
+
+    ok, errors = task.process_message(
+        message,
+        input=task_input,
+        context=TaskContext(run_id="test", storage_factory=StorageFactory()),
+        create_items_function=task_input.create_items_function,
+        items_containers=None,
+    )
+
+    assert ok == []
+    assert len(errors) == 1
+    error = errors[0]
+    assert error.traceback
+    assert error.get_id() == "831e1650-001e-001b-66ab-eeb76e069631:test:1"
+    assert error.run_id == "test"

@@ -17,6 +17,7 @@ DEFAULT_WORKFLOWS_CONTAINER = "workflows"
 DEFAULT_ITEMS_CONTAINER = "items"
 DEFAULT_RECORDS_CONTAINER = "records"
 DEFAULT_STORAGE_EVENTS_CONTAINER_NAME = "storage-events"
+DEFAULT_CREATE_ITEM_ERRORS_CONTAINER_NAME = "create-item-errors"
 
 DEFAULT_SINGLE_PARTITION_KEY_VALUE = "partition_key"
 
@@ -42,6 +43,7 @@ class CosmosDBSettings(PCTasksSettings):
     items_container_name: str = DEFAULT_ITEMS_CONTAINER
     records_container_name: str = DEFAULT_RECORDS_CONTAINER
     storage_events_container_name: str = DEFAULT_STORAGE_EVENTS_CONTAINER_NAME
+    create_item_errors_container_name: str = DEFAULT_CREATE_ITEM_ERRORS_CONTAINER_NAME
 
     max_bulk_put_size: int = 250
 
@@ -59,6 +61,9 @@ class CosmosDBSettings(PCTasksSettings):
 
     def get_records_container_name(self) -> str:
         return f"{self.records_container_name}{self.test_container_suffix}"
+
+    def get_create_item_errors_container_name(self) -> str:
+        return f"{self.create_item_errors_container_name}{self.test_container_suffix}"
 
     @validator("test_container_suffix", always=True)
     def _validate_test_container_suffix(cls, v: Optional[str]) -> str:

@@ -31,8 +31,6 @@ DEPLOYMENT_NAME = f"devstoreaccount1-{COLLECTION_ID}-deployment"
 INGEST_DEPLOYMENT_NAME = "devstoreaccount1-ingest-deployment"
 TEST_NAMESPACE = "argo"
 
-print(__name__)
-
 setup_logging(logging.DEBUG)
 setup_logging_for_module("tests.dataset.test_streaming", logging.DEBUG)
 setup_logging_for_module("pctasks", logging.DEBUG)

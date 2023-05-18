@@ -73,6 +73,34 @@ class StorageEventRecord(StorageEvent, Record):
         return item
 
 
+class CreateItemError(StorageEvent):
+    """
+    A Cosmos DB record for errors that occur during `create_item`.
+    """
+
+    type: StorageEventType
+    run_id: str
+    traceback: str
+    dequeue_count: int
+
+    def get_id(self) -> str:
+        return ":".join([self.id, self.run_id, str(self.dequeue_count)])
+
+
+class CreateItemErrorRecord(CreateItemError, Record):
+    # We need to repeat this type definition to please mypy, which
+    # didn't like the "conflicting" definitions for 'type', despite
+    # them both being strings at the end of the day.
+    type: StorageEventType
+
+    def get_id(self) -> str:
+        return ":".join([self.id, self.run_id, str(self.dequeue_count)])
+
+    @staticmethod
+    def migrate(item: Dict[str, Any]) -> Dict[str, Any]:
+        return item
+
+
 class STACItemEventType(StrEnum):
     CREATED = "Microsoft.PlanetaryComputer.ItemCreated"
     UPDATED = "Microsoft.PlanetaryComputer.ItemUpdated"

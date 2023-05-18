@@ -2,7 +2,7 @@ import datetime
 import logging
 import math
 import time
-from typing import Any, Dict, Optional, Protocol, Union
+from typing import Any, Dict, List, Optional, Protocol, Tuple, Union
 
 import azure.identity
 import azure.storage.queue
@@ -77,7 +77,24 @@ class StreamingTaskMixin:
         input: StreamingTaskInput,
         context: TaskContext,
         **extra_options: Dict[str, Any],
+    ) -> Tuple[List[Any], List[Any]]:
+        """
+        Process messages from the the queue.
+
+        Subclasses must implement this method. They should return a tuple of
+        two lists. The first is the list of OK results, and the second is the
+        list of errors.
+
+        Pair this with the ``finalize_method`` to persist these records.
+        """
+        raise NotImplementedError
+
+    def finalize_message(
+        self, ok: List[Any], errors: List[Any], extra_options: Dict[str, Any]
     ) -> None:
+        """
+        Finalize the results from ``process_message``.
+        """
         raise NotImplementedError
 
     def get_extra_options(
@@ -114,15 +131,17 @@ class StreamingTaskMixin:
                     visibility_timeout=input.streaming_options.visibility_timeout
                 ):
                     try:
-                        self.process_message(
+                        ok, errors = self.process_message(
                             message=message,
                             input=input,
                             context=context,
                             **extra_options,
                         )
+                        self.finalize_message(ok, errors, extra_options)
                     except Exception:
                         # TODO: Clean up the logging on failures. We log here and in
                         # dataset.streaming:process_message
+                        # TODO: Implement a dead letter queue
                         logger.exception("Failed to process message")
                         if message.dequeue_count >= 3:
                             logger.info(
@@ -137,7 +156,7 @@ class StreamingTaskMixin:
                             - datetime.datetime.now(tz=datetime.timezone.utc)
                         )
 
-                        if time_to_visible < 0:
+                        if time_to_visible < datetime.timedelta(0):
                             logger.warning(
                                 "Deleting message that is already visible. Consider "
                                 "setting a higher visibility timeout. message_id=%s",

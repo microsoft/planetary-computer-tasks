@@ -68,3 +68,8 @@ class StreamingIngestItemsTask(
         # if input.collection_id:
         #     item["collection"] = input.collection_id
         ingest_item(pgstac, item)
+
+    def finalize_message(
+        self, ok: List[Any], errors: List[Any], extra_options: Dict[str, Any]
+    ) -> None:
+        pass

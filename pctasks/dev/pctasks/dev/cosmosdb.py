@@ -194,11 +194,6 @@ def setup_cosmosdb() -> None:
 
 
 def rm_test_containers(settings: CosmosDBSettings, all: bool = False) -> None:
-    if "PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX" not in os.environ:
-        raise RuntimeError(
-            "PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX must be set to "
-            "remove test containers"
-        )
     def _rm() -> None:
         cosmos_client = settings.get_client()
         db = cosmos_client.get_database_client(settings.database)
@@ -210,12 +205,15 @@ def rm_test_containers(settings: CosmosDBSettings, all: bool = False) -> None:
                     print(f"Deleting container {container_name}")
                     db.delete_container(container_name)
         else:
+            if "PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX" not in os.environ:
+                raise RuntimeError(
+                    "PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX must be set to "
+                    "remove test containers"
+                )
+
             for container_name, _ in CONTAINERS:
                 name = container_name(settings)
                 if name in existing_containers:
-                    # if not name.startswith("tmp"):
-                        # print(f"Skipping non-tmp container: {name}")
-                        # continue
                     print(f"Deleting container: {name}")
                     db.delete_container(name)
 
@@ -300,7 +298,6 @@ def temp_cosmosdb_if_emulator(
     settings = CosmosDBSettings.get()
 
     if settings.is_cosmosdb_emulator():
-
         suffix = uuid1().hex[:5]
         db_name = f"tmp-{suffix}"
 

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import importlib.metadata
-import json
 import logging
+import traceback
 from typing import Any, Callable, Dict, List, Tuple, Union
 
 import azure.core.credentials
@@ -13,8 +13,14 @@ import pydantic
 import pystac
 from pystac.utils import str_to_datetime
 
+from pctasks.core.cosmos.containers.create_item_errors import CreateItemErrorsContainer
 from pctasks.core.cosmos.containers.items import ItemsContainer
 from pctasks.core.models.base import PCBaseModel
+from pctasks.core.models.event import (
+    CreateItemErrorRecord,
+    StorageEvent,
+    StorageEventData,
+)
 from pctasks.core.models.item import ItemUpdatedRecord, StacItemRecord
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
@@ -25,6 +31,9 @@ from pctasks.task.streaming import NoOutput, StreamingTaskMixin, StreamingTaskOp
 from pctasks.task.task import Task
 
 logger = logging.getLogger("pctasks.dataset.streaming")
+
+OK_T = List[Tuple[List[StacItemRecord], List[ItemUpdatedRecord]]]
+ErrorsT = List[CreateItemErrorRecord]
 
 
 class StreamingCreateItemsOptions(PCBaseModel):
@@ -104,8 +113,8 @@ class StreamingCreateItemsTask(
         self, input: StreamingCreateItemsInput, context: TaskContext
     ) -> Dict[str, Any]:
         items_record_container = ItemsContainer(StacItemRecord)
-
         items_update_container = ItemsContainer(ItemUpdatedRecord)
+        create_item_errors_container = CreateItemErrorsContainer(CreateItemErrorRecord)
 
         create_items_function = input.create_items_function
         if isinstance(create_items_function, str):
@@ -116,31 +125,39 @@ class StreamingCreateItemsTask(
 
         items_record_container.__enter__()
         items_update_container.__enter__()
+        create_item_errors_container.__enter__()
 
         logger.info("Writing STAC items to %s", items_record_container.name)
         logger.info("Writing Update records to %s", items_update_container.name)
 
         return {
-            "items_containers": (items_record_container, items_update_container),
+            "items_containers": (
+                items_record_container,
+                items_update_container,
+                create_item_errors_container,
+            ),
             "create_items_function": create_items_function,
         }
 
     def cleanup(self, extra_options: Dict[str, Any]) -> None:
-        items_record_container, items_update_container = extra_options[
-            "items_containers"
-        ]
+        (
+            items_record_container,
+            items_update_container,
+            create_item_errors_container,
+        ) = extra_options["items_containers"]
         items_record_container.__exit__(None, None, None)
         items_update_container.__exit__(None, None, None)
+        create_item_errors_container.__exit__(None, None, None)
 
     def create_items(
         self,
-        message_data: dict[str, Any],
+        message_data: StorageEventData,
         create_items_function: Callable[[str, StorageFactory], List[pystac.Item]],
         storage_factory: StorageFactory,
         collection_id: str,
         skip_validation: bool = False,
     ) -> Union[List[pystac.Item], WaitTaskResult]:
-        url = message_data["url"]
+        url = message_data.url
         # Transform event-grid https:// urls to blob:// urls
         url = maybe_rewrite_blob_storage_url(url)
         logger.info("Processing url %s", url)
@@ -161,17 +178,14 @@ class StreamingCreateItemsTask(
         input: StreamingCreateItemsInput,
         context: TaskContext,
         items_containers: Tuple[
-            ItemsContainer[StacItemRecord], ItemsContainer[ItemUpdatedRecord]
+            ItemsContainer[StacItemRecord],
+            ItemsContainer[ItemUpdatedRecord],
+            CreateItemErrorsContainer,
         ],
         create_items_function: Callable[[str, StorageFactory], List[pystac.Item]],
-    ) -> None:
-        items_record_container, items_update_container = items_containers
-
+    ) -> Tuple[OK_T, ErrorsT]:
         logger.info("Processing message id=%s", message.id)
-        # TODO: think about parsing this into a structured object.
-        # Right now we use "data" and "time" from cloud event
-        # Just be careful about performance.
-        parsed_message = json.loads(message.content)  # type: ignore
+        parsed_message = StorageEvent.parse_raw(message.content)
         if not callable(input.create_items_function):
             # Why isn't this already done?
             logger.info("Loading create_items_function")
@@ -183,19 +197,32 @@ class StreamingCreateItemsTask(
             input.create_items_function
         )  # convince mypy that this is the function.
         create_items_function = input.create_items_function
+        ok: OK_T = []
+        errors: ErrorsT = []
 
         try:
             items = self.create_items(
-                parsed_message["data"],
+                parsed_message.data,
                 create_items_function=create_items_function,
                 storage_factory=context.storage_factory,
                 collection_id=input.collection_id,
             )
         except Exception:
-            # what to do here?
-            # We probably want to shove these to some other "errors" container
             logger.exception("Error in create item")
-            raise
+            error = CreateItemErrorRecord(
+                type=parsed_message.type,
+                spec_version=parsed_message.spec_version,
+                source=parsed_message.source,
+                subject=parsed_message.subject,
+                id=parsed_message.id,
+                time=parsed_message.time,
+                data_content_type=parsed_message.data_content_type,
+                data=parsed_message.data,
+                run_id=context.run_id,
+                traceback=traceback.format_exc(),
+                dequeue_count=message.dequeue_count,
+            )
+            errors.append(error)
         else:
             if isinstance(items, WaitTaskResult):
                 # This idealy won't happen in practice. Ideally the event
@@ -216,15 +243,40 @@ class StreamingCreateItemsTask(
                             stac_id=item_record.stac_id,
                             version=item_record.version,
                             run_id=context.run_id,
-                            storage_event_time=str_to_datetime(parsed_message["time"]),
+                            storage_event_time=str_to_datetime(parsed_message.time),
                             message_inserted_time=message.inserted_on,
                         )
                     )
 
-                items_record_container.bulk_put(item_records)
-                items_update_container.bulk_put(update_records)
+                ok.append((item_records, update_records))
+        return ok, errors
 
-                logger.info("Persisted records.")
+    def finalize_message(
+        self,
+        ok: OK_T,
+        errors: ErrorsT,
+        extra_options: Dict[str, Any],
+    ) -> None:
+        """
+        Finalize processing of a message.
+
+        This handles all of the I/O components, including
+
+        1. Writing successes to the items and updates containers
+        2. Writing errors to the errors container
+        """
+        (
+            items_record_container,
+            items_update_container,
+            create_item_errors_container,
+        ) = extra_options["items_containers"]
+
+        for item_records, update_records in ok:
+            items_record_container.bulk_put(item_records)
+            items_update_container.bulk_put(update_records)
+        for error in errors:
+            create_item_errors_container.put(error)
+        logger.info("Persisted records.")
 
 
 def create_item_from_item_uri(
