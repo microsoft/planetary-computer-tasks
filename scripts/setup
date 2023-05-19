@@ -121,6 +121,10 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
         echo " -- BUILDING CONTAINERS"
         scripts/update ${NO_AUX}
+
+        echo " -- STARTING SERVERS"
+        scripts/server --detached ${NO_AUX}
+
     fi
 
     if [ -z "${COSMOS_ONLY}" ]; then
@@ -149,11 +153,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         docker-compose ${COSMOSDB_EMULATOR} -f docker-compose.console.yml run --rm \
             dev \
             pctasks-dev cosmosdb setup
-    fi
-
-    if [ -z "${AZURITE_ONLY}${COSMOS_ONLY}" ]; then
-        echo " -- STARTING SERVERS"
-        scripts/server --detached ${NO_AUX}
     fi
 
     echo "Done."
