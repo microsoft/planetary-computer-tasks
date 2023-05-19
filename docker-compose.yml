@@ -139,6 +139,9 @@ services:
       - AZURITE_STORAGE_ACCOUNT=devstoreaccount1
       # Local dev secrets file
       - DEV_SECRETS_FILE=/opt/src/dev-secrets.yaml
+      # Cosmos DB
+      - PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX
+
     command:
       [
         "uvicorn",
