@@ -15,6 +15,8 @@ Runs the development servers
     Run the servers in detached mode
 --no-aux-servers
     Don't run non-essential devevelopment environment servers
+--no-azure-functions
+    Don't run Azure Functions    
 down
     Stop the servers
 "
@@ -23,6 +25,7 @@ down
 DETACHED_ARG=""
 STOP_SERVERS=""
 AUX_SERVERS="-f docker-compose.aux.yml"
+AZURE_FUNCTIONS="-f docker-compose.azure-functions.yml"
 
 while [[ "$#" -gt 0 ]]; do case $1 in
     down)
@@ -35,6 +38,10 @@ while [[ "$#" -gt 0 ]]; do case $1 in
         ;;
     --no-aux-servers)
         AUX_SERVERS=""
+        shift
+        ;;
+    --no-azure-functions)
+        AZURE_FUNCTIONS=""
         shift
         ;;
     --help)
@@ -56,7 +63,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         docker-compose -f docker-compose.yml -f docker-compose.aux.yml -f docker-compose.cosmosdb.yml down
     else
         echo "Starting servers"
-        docker-compose -f docker-compose.yml ${AUX_SERVERS} ${COSMOSDB_EMULATOR} \
+        docker-compose -f docker-compose.yml ${AUX_SERVERS} ${COSMOSDB_EMULATOR} ${AZURE_FUNCTIONS} \
         up ${DETACHED_ARG} "$@"
     fi
 fi
