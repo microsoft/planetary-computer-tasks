@@ -2,7 +2,6 @@
 """
 Sets up the Cosmos DB emulator.
 """
-import os
 import time
 from contextlib import contextmanager
 from typing import Callable, Dict, Iterator, List, Optional, Tuple
@@ -203,14 +202,12 @@ def rm_test_containers(settings: CosmosDBSettings, all: bool = False) -> None:
                     print(f"Deleting container {container_name}")
                     db.delete_container(container_name)
         else:
-            if "PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX" not in os.environ:
-                raise RuntimeError(
-                    "PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX must be set to "
-                    "remove test containers"
-                )
             for container_name, _ in CONTAINERS:
                 name = container_name(settings)
                 if name in existing_containers:
+                    if not name.startswith("tmp"):
+                        print(f"Skipping non-tmp container: {name}")
+                        continue
                     print(f"Deleting container: {name}")
                     db.delete_container(name)
 
@@ -319,7 +316,9 @@ def temp_cosmosdb_if_emulator(
 
     else:
         settings = settings.copy()
-        if not settings.test_container_suffix:
+        if settings.test_container_suffix:
+            settings.test_container_suffix += uuid1().hex[:5]
+        else:
             settings.test_container_suffix = uuid1().hex[:5]
         cosmos_client = settings.get_client()
         db = cosmos_client.get_database_client(settings.database)

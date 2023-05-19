@@ -7,7 +7,7 @@
             "direction": "in",
             "connectionStringSetting": "FUNC_COSMOSDB_CONN_STR",
             "databaseName": "pctasks",
-            "collectionName": "%FUNC_WORKFLOW_RUNS_COLLECTION_NAME%"
+            "collectionName": "workflow-runs"
         }
     ]
 }
