@@ -1,0 +1,41 @@
+id: landsat
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./landsat.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: landsat-c2-l1
+    template: ${{ local.path(./collection/landsat-c2-l1) }}
+    class: landsat:LandsatC2L1Collection
+    asset_storage:
+      - uri: blob://landsateuwest/landsat-c2/level-1/standard/
+        chunks:
+          options:
+            matches: LM[^/]+_MTL.xml
+            chunk_length: 5  # testing only
+            limit: 10  # testing only
+    chunk_storage:
+      uri: blob://landsateuwest/landsat-c2-etl-data/pctasks/landsat-c2-l1/
+
+  - id: landsat-c2-l2 
+    template: ${{ local.path(./collection/landsat-c2-l2) }}
+    class: landsat:LandsatC2L2Collection
+    asset_storage:
+      - uri: blob://landsateuwest/landsat-c2/level-2/standard/
+        chunks:
+          options:
+            matches: L(T04|T05|E|C)[^/]+_MTL.xml
+            chunk_length: 5  # testing only
+            limit: 10  # testing only
+    chunk_storage:
+      uri: blob://landsateuwest/landsat-c2-etl-data/pctasks/landsat-c2-l2/
