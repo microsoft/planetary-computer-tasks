@@ -46,35 +46,23 @@ class CosmosDBSettings(PCTasksSettings):
     max_bulk_put_size: int = 250
 
     def get_workflows_container_name(self) -> str:
-        if self.test_container_suffix:
-            return f"tmp-{self.workflows_container_name}-{self.test_container_suffix}"
-        return self.workflows_container_name
+        return f"{self.workflows_container_name}{self.test_container_suffix}"
 
     def get_workflow_runs_container_name(self) -> str:
-        if self.test_container_suffix:
-            return (
-                f"tmp-{self.workflow_runs_container_name}"
-                f"-{self.test_container_suffix}"
-            )
-        return self.workflow_runs_container_name
+        return f"{self.workflow_runs_container_name}{self.test_container_suffix}"
 
     def get_storage_events_container_name(self) -> str:
-        if self.test_container_suffix:
-            return (
-                f"tmp-{self.storage_events_container_name}"
-                f"-{self.test_container_suffix}"
-            )
-        return self.storage_events_container_name
+        return f"{self.storage_events_container_name}{self.test_container_suffix}"
 
     def get_items_container_name(self) -> str:
-        if self.test_container_suffix:
-            return f"tmp-{self.items_container_name}" f"-{self.test_container_suffix}"
-        return self.items_container_name
+        return f"{self.items_container_name}{self.test_container_suffix}"
 
     def get_records_container_name(self) -> str:
-        if self.test_container_suffix:
-            return f"tmp-{self.records_container_name}-{self.test_container_suffix}"
-        return self.records_container_name
+        return f"{self.records_container_name}{self.test_container_suffix}"
+
+    @validator("test_container_suffix", always=True)
+    def _validate_test_container_suffix(cls, v: Optional[str]) -> str:
+        return v or ""
 
     @validator("connection_string")
     def _validate_connection_string(cls, v: Optional[str]) -> Optional[str]:
