@@ -43,7 +43,7 @@ jobs:
       # Integration Tests
 
       - name: Install Kind
-        uses: helm/kind-action@deab45fc8df9de5090a604e8ec11778eea7170bd
+        uses: helm/kind-action@v1.4.0
         with:
           install_only: true
 
