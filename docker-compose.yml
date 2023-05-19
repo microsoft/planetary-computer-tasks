@@ -178,6 +178,34 @@ services:
     ports:
       - 5001:5000
 
+  functions:
+    container_name: pctasks-functions
+    image: pctasks-functions
+    build:
+      context: .
+      dockerfile: pctasks_funcs/Dockerfile
+    volumes:
+      - ./pctasks:/home/site/pctasks
+      - ./pctasks_funcs:/home/site/wwwroot
+    ports:
+      - "7071:7071" # Functions
+    environment:
+      - AzureWebJobsStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
+      - WEBSITE_HOSTNAME=functions:7071
+
+      # Must use IP address to avoid SSL errors
+      - PCTASKS_COSMOSDB__URL=${PCTASKS_COSMOSDB__URL:-https://172.16.238.246:8081/}
+      - PCTASKS_COSMOSDB__KEY=${PCTASKS_COSMOSDB__KEY:-C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==}
+      # Set trigger app setting separately to avoid issues with __ in env var names
+      - FUNC_COSMOSDB_CONN_STR=AccountEndpoint=${PCTASKS_COSMOSDB__URL:-https://172.16.238.246:8081/};AccountKey=${PCTASKS_COSMOSDB__KEY:-C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==};
+      # Isolate Change Feed functions for unit tests.
+      - PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX=${PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX-}
+      # Used in the various function.json to dynmically set the Cosmos DB container to watch.
+      - FUNC_WORKFLOWS_COLLECTION_NAME=workflows${PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX-}
+      - FUNC_WORKFLOW_RUNS_COLLECTION_NAME=workflow-runs${PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX-}
+
+      - COSMOSDB_EMULATOR_HOST=172.16.238.246
+
 networks:
   default:
     # Network created during scripts/setup

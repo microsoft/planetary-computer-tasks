@@ -123,8 +123,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         scripts/update ${NO_AUX}
 
         echo " -- STARTING SERVERS"
-        # Azure Functions are started after we've set up Cosmos
-        scripts/server --detached ${NO_AUX} --no-azure-functions
+        scripts/server --detached ${NO_AUX}
 
     fi
 
@@ -154,11 +153,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         docker-compose ${COSMOSDB_EMULATOR} -f docker-compose.console.yml run --rm \
             dev \
             pctasks-dev cosmosdb setup
-    fi
-
-    if [ -z "${AZURITE_ONLY}${COSMOS_ONLY}" ]; then
-        echo " -- STARTING Azure Functions"
-        docker-compose -f docker-compose.azure-functions.yaml up --detach
     fi
 
     echo "Done."
