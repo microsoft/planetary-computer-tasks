@@ -54,7 +54,7 @@ jobs:
         if: ${{ github.base_ref  == 'main' }}
 
       - name: Get docker-compose logs
-        run: docker-commpose logs
+        run: docker-compose logs
         if: always()
 
       - name: Clean up CosmosDB test containers
