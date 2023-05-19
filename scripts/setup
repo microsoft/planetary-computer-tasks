@@ -121,6 +121,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
         echo " -- BUILDING CONTAINERS"
         scripts/update ${NO_AUX}
+    fi
 
     if [ -z "${COSMOS_ONLY}" ]; then
         echo " -- SETTING UP AZURITE"
