@@ -1,5 +1,5 @@
 id: landsat
-image: ${{ args.registry }}/pctasks-task-base:latest
+image: ${{ args.registry }}/pctasks-landsat:latest
 
 args:
 - registry
@@ -16,9 +16,10 @@ environment:
 collections:
   - id: landsat-c2-l1
     template: ${{ local.path(./collection/landsat-c2-l1) }}
-    class: landsat:LandsatC2L1Collection
+    class: landsat:LandsatC2Collection
     asset_storage:
       - uri: blob://landsateuwest/landsat-c2/level-1/standard/
+        token: ${{ pc.get_token(landsateuwest, landsat-c2) }}
         chunks:
           options:
             matches: LM[^/]+_MTL.xml
@@ -29,9 +30,10 @@ collections:
 
   - id: landsat-c2-l2 
     template: ${{ local.path(./collection/landsat-c2-l2) }}
-    class: landsat:LandsatC2L2Collection
+    class: landsat:LandsatC2Collection
     asset_storage:
       - uri: blob://landsateuwest/landsat-c2/level-2/standard/
+        token: ${{ pc.get_token(landsateuwest, landsat-c2) }}
         chunks:
           options:
             matches: L(T04|T05|E|C)[^/]+_MTL.xml

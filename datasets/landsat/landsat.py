@@ -8,10 +8,6 @@ from stactools.landsat import stac
 from stactools.core.utils.antimeridian import Strategy
 from azure.core.exceptions import ResourceNotFoundError
 
-# from pctasks.core.pctasks.core.models.task import WaitTaskResult
-# from pctasks.core.pctasks.core.storage import StorageFactory
-# from pctasks.dataset.pctasks.dataset.collection import Collection
-
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
@@ -24,7 +20,7 @@ logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
 
-class LandsatC2L1Collection(Collection):
+class LandsatC2Collection(Collection):  # type: ignore
     @classmethod
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
@@ -52,11 +48,10 @@ class LandsatC2L1Collection(Collection):
 
         try:
             item = stac.create_stac_item(
-                mtl_xml_href=mtl_path,
+                mtl_xml_href=storage.get_authenticated_url(mtl_path),
                 legacy_l8=False,
                 use_usgs_geometry=True,
                 antimeridian_strategy=Strategy.NORMALIZE,
-                read_href_modifier=storage.sign,
             )
             # We provide our own preview thumbnail
             item.assets.pop("thumbnail", None)
@@ -67,20 +62,3 @@ class LandsatC2L1Collection(Collection):
             return []
 
         return [item]
-
-
-if __name__ == "__main__":
-    hrefs = [
-        "/Users/pjh/data/landsat-c2/level-1/standard/mss/1972/005/037/LM01_L1GS_005037_19720823_20200909_02_T2/LM01_L1GS_005037_19720823_20200909_02_T2_MTL.xml",
-        "/Users/pjh/data/landsat-c2/level-2/standard/tm/1986/010/067/LT05_L2SP_010067_19860424_20200918_02_T2/LT05_L2SP_010067_19860424_20200918_02_T2_MTL.xml",
-        "/Users/pjh/data/landsat-c2/level-2/standard/oli-tirs/2022/160/076/LC08_L2SP_160076_20220305_20220314_02_T1/LC08_L2SP_160076_20220305_20220314_02_T1_MTL.xml",
-        "/Users/pjh/data/landsat-c2/level-2/standard/etm/2010/021/030/LE07_L2SP_021030_20100109_20200911_02_T1/LE07_L2SP_021030_20100109_20200911_02_T1_MTL.xml"
-    ]
-    for href in hrefs:
-        storage_factory = StorageFactory()
-        c = LandsatC2L1Collection()
-        item = c.create_item(href, storage_factory)[0]
-        item.validate()
-        import json
-        with open(f"{item.id}.json", "w") as f:
-            json.dump(item.to_dict(), f, indent=4)
