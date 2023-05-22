@@ -9,6 +9,7 @@ from tests.constants import DEFAULT_TIMEOUT
 TIMEOUT_SECONDS = DEFAULT_TIMEOUT
 
 
+@pytest.mark.usefixtures("cosmosdb_containers")
 def test_invalid_image():
 
     run_id = run_workflow(
