@@ -3,7 +3,7 @@
 The dataset is split into two Collections:
 
 - Level-1 data from the mss sensor: `landsat-c2-l1`
-- Level-2 data from the tm, etm+, oli, and tiirs sensors: `landsat-c2-l2`
+- Level-2 data from the tm, etm+, oli, and tirs sensors: `landsat-c2-l2`
 
 ## Building the Docker image
 
