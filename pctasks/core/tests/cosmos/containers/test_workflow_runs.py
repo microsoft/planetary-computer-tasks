@@ -153,7 +153,7 @@ def test_job_part_pagination(cosmosdb_containers):
 
 
 def test_job_part_bulk_put(cosmosdb_containers):
-    run_id = "test-run"
+    run_id = "test-run-bulk-put"
     job_id = "test-job"
     dataset_id = "test-dataset"
     workflow_run = WorkflowRunRecord(
