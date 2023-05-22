@@ -99,8 +99,6 @@ async def create_workflow(
         if existing:
             raise HTTPException(status_code=409, detail="Workflow already exists")
 
-        logger.warning("Writing to %s", container.name)
-
         await container.put(record)
 
     return ORJSONResponse({"workflow_id": workflow.id})
