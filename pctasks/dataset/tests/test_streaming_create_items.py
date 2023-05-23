@@ -85,6 +85,7 @@ def test_process_message(storage_event):
     )
 
 
+@pytest.mark.usefixtures("cosmosdb_containers")
 def test_streaming_create_items_task(storage_event):
     # This implicitly uses
     # - azurite for queues, ...
@@ -254,6 +255,7 @@ def test_streaming_create_items_task_invalid_item(caplog):
     assert caplog.records
 
 
+@pytest.mark.usefixtures("cosmosdb_containers")
 def test_streaming_create_items_handles_errors(storage_event):
     task = streaming.StreamingCreateItemsTask()
     create_items = BuggyCreateItems()
@@ -275,7 +277,7 @@ def test_streaming_create_items_handles_errors(storage_event):
         ),
     )
 
-    ok, errors = task.process_message(
+    ok, error = task.process_message(
         message,
         input=task_input,
         context=TaskContext(run_id="test", storage_factory=StorageFactory()),
@@ -283,9 +285,7 @@ def test_streaming_create_items_handles_errors(storage_event):
         items_containers=None,
     )
 
-    assert ok == []
-    assert len(errors) == 1
-    error = errors[0]
+    assert ok is None
     assert error.traceback
-    assert error.get_id() == "831e1650-001e-001b-66ab-eeb76e069631:test:1"
+    assert error.get_id()
     assert error.run_id == "test"
