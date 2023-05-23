@@ -77,7 +77,7 @@ class StreamingTaskMixin:
         input: StreamingTaskInput,
         context: TaskContext,
         **extra_options: Dict[str, Any],
-    ) -> Tuple[List[Any], List[Any]]:
+    ) -> Tuple[Any, Any]:
         """
         Process messages from the the queue.
 

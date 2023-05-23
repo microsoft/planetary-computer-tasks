@@ -59,7 +59,7 @@ class StreamingIngestItemsTask(
         input: StreamingIngestItemsInput,
         context: TaskContext,
         pgstac: PgSTAC,
-    ) -> None:
+    ) -> Tuple[Any, Any]:
         # What errors can occur here?
         # 1. This message might not be valid JSON.
         # 2. The pgstac ingest might fail.
