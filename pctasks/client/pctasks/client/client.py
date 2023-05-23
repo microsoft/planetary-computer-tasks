@@ -123,7 +123,10 @@ class PCTasksClient:
         resp = self._call_api_resp(method, path, params, **kwargs)
         return resp.json()
 
-    def _confirm(self, op_name: str) -> None:
+    def _confirm(self, op_name: str, auto_confirm: bool) -> None:
+        if auto_confirm:
+            return
+
         if self.settings.confirmation_required:
             confirmed = Confirm.ask(
                 f"Send '{op_name}' request to {self.settings.endpoint}?"
@@ -248,6 +251,7 @@ class PCTasksClient:
         self,
         workflow_definition: WorkflowDefinition,
         workflow_id: Optional[str] = None,
+        auto_confirm: bool = False,
     ) -> None:
         if not workflow_id:
             if not workflow_definition.workflow_id:
@@ -263,7 +267,7 @@ class PCTasksClient:
             id=workflow_id,
             definition=workflow_definition,
         )
-        self._confirm("create workflow")
+        self._confirm("create workflow", auto_confirm=auto_confirm)
         self._upsert_workflow(workflow_id, workflow, "POST")
 
     def get_workflow(self, workflow_id: str) -> Optional[WorkflowRecord]:
@@ -281,6 +285,7 @@ class PCTasksClient:
         self,
         workflow_definition: WorkflowDefinition,
         workflow_id: Optional[str] = None,
+        auto_confirm: bool = False,
     ) -> None:
         if not workflow_id:
             if not workflow_definition.workflow_id:
@@ -296,13 +301,14 @@ class PCTasksClient:
             id=workflow_id,
             definition=workflow_definition,
         )
-        self._confirm("update workflow")
+        self._confirm("update workflow", auto_confirm=auto_confirm)
         self._upsert_workflow(workflow_id, workflow, "PUT")
 
     def upsert_workflow(
         self,
         workflow_definition: WorkflowDefinition,
         workflow_id: Optional[str] = None,
+        auto_confirm: bool = False,
     ) -> None:
         if not workflow_id:
             if not workflow_definition.workflow_id:
@@ -317,27 +323,30 @@ class PCTasksClient:
                 id=workflow_id,
                 definition=workflow_definition,
             )
-            self._confirm("create workflow")
+            self._confirm("create workflow", auto_confirm=auto_confirm)
             self._upsert_workflow(workflow_id, workflow, "POST")
         else:
             workflow = Workflow(
                 id=workflow_id,
                 definition=workflow_definition,
             )
-            self._confirm("update workflow")
+            self._confirm("update workflow", auto_confirm=auto_confirm)
             self._upsert_workflow(workflow_id, workflow, "PUT")
 
     def delete_workflow(self, workflow_id: str) -> None:
         raise NotImplementedError()
 
     def submit_workflow(
-        self, workflow_id: str, request: Optional[WorkflowSubmitRequest] = None
+        self,
+        workflow_id: str,
+        request: Optional[WorkflowSubmitRequest] = None,
+        auto_confirm: bool = False,
     ) -> WorkflowSubmitResult:
         """Submits a workflow for processing.
 
         Returns a WorkflowSubmitResult which contains the run ID.
         """
-        self._confirm("Submit")
+        self._confirm("Submit", auto_confirm=auto_confirm)
 
         request = request or WorkflowSubmitRequest()
 
@@ -377,6 +386,7 @@ class PCTasksClient:
         workflow_definition: WorkflowDefinition,
         request: Optional[WorkflowSubmitRequest] = None,
         workflow_id: Optional[str] = None,
+        auto_confirm: bool = False,
     ) -> WorkflowSubmitResult:
         if not workflow_id:
             if not workflow_definition.workflow_id:
@@ -387,7 +397,7 @@ class PCTasksClient:
                 )
             workflow_id = workflow_definition.workflow_id
         self.upsert_workflow(workflow_definition, workflow_id)
-        return self.submit_workflow(workflow_id, request)
+        return self.submit_workflow(workflow_id, request, auto_confirm=auto_confirm)
 
     def list_workflow_runs(
         self,
