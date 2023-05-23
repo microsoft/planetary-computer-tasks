@@ -410,6 +410,7 @@ def print_status(core_api: client.CoreV1Api, label_selector: str) -> None:
 @pytest.mark.usefixtures(
     "cluster",
     "cosmos_credentials",
+    "cosmosdb_containers",
     "dataset_queue",
     "ingest_queue",
     "ingested_collection",
