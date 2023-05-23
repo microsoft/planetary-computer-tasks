@@ -35,7 +35,8 @@ class CosmosDBSettings(PCTasksSettings):
     url: Optional[str] = None
     key: Optional[str] = None
 
-    test_container_suffix: Optional[str] = ""
+    # Cast to empty string if `None` is provided
+    test_container_suffix: Optional[str] = None
 
     database: str = DEFAULT_DATABASE_NAME
     workflows_container_name: str = DEFAULT_WORKFLOWS_CONTAINER

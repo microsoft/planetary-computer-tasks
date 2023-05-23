@@ -210,7 +210,6 @@ def rm_test_containers(settings: CosmosDBSettings, all: bool = False) -> None:
                     "PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX must be set to "
                     "remove test containers"
                 )
-
             for container_name, _ in CONTAINERS:
                 name = container_name(settings)
                 if name in existing_containers:

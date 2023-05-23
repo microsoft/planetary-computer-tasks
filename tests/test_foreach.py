@@ -8,6 +8,8 @@ import logging
 import textwrap
 from pathlib import Path
 
+import pytest
+
 from pctasks.cli.cli import setup_logging, setup_logging_for_module
 from pctasks.dev.blob import copy_dir_to_azurite, temp_azurite_blob_storage
 from pctasks.dev.test_utils import (
@@ -26,6 +28,7 @@ TIMEOUT_SECONDS = DEFAULT_TIMEOUT
 logger = logging.getLogger(__name__)
 
 
+@pytest.mark.usefixtures("cosmosdb_containers")
 def test_foreach_simple_workflow():
     workflow = textwrap.dedent(
         """\
@@ -109,6 +112,7 @@ def test_foreach_simple_workflow():
             assert expected[path] == output_storage.read_text(path)
 
 
+@pytest.mark.usefixtures("cosmosdb_containers")
 def test_foreach_full_workflow():
 
     with temp_azurite_blob_storage() as root_storage:
