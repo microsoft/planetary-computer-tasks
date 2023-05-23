@@ -3,7 +3,7 @@ from __future__ import annotations
 import importlib.metadata
 import logging
 import traceback
-from typing import Any, Callable, Dict, List, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import azure.core.credentials
 import azure.cosmos
@@ -11,16 +11,11 @@ import azure.identity
 import azure.storage.queue
 import pydantic
 import pystac
-from pystac.utils import str_to_datetime
 
 from pctasks.core.cosmos.containers.create_item_errors import CreateItemErrorsContainer
 from pctasks.core.cosmos.containers.items import ItemsContainer
 from pctasks.core.models.base import PCBaseModel
-from pctasks.core.models.event import (
-    CreateItemErrorRecord,
-    StorageEvent,
-    StorageEventData,
-)
+from pctasks.core.models.event import CreateItemError, StorageEvent, StorageEventData
 from pctasks.core.models.item import ItemUpdatedRecord, StacItemRecord
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
@@ -31,9 +26,6 @@ from pctasks.task.streaming import NoOutput, StreamingTaskMixin, StreamingTaskOp
 from pctasks.task.task import Task
 
 logger = logging.getLogger("pctasks.dataset.streaming")
-
-OK_T = List[Tuple[List[StacItemRecord], List[ItemUpdatedRecord]]]
-ErrorsT = List[CreateItemErrorRecord]
 
 
 class StreamingCreateItemsOptions(PCBaseModel):
@@ -114,7 +106,7 @@ class StreamingCreateItemsTask(
     ) -> Dict[str, Any]:
         items_record_container = ItemsContainer(StacItemRecord)
         items_update_container = ItemsContainer(ItemUpdatedRecord)
-        create_item_errors_container = CreateItemErrorsContainer(CreateItemErrorRecord)
+        create_item_errors_container = CreateItemErrorsContainer(CreateItemError)
 
         create_items_function = input.create_items_function
         if isinstance(create_items_function, str):
@@ -177,13 +169,14 @@ class StreamingCreateItemsTask(
         message: azure.storage.queue.QueueMessage,
         input: StreamingCreateItemsInput,
         context: TaskContext,
+        # TODO: remove from here.
         items_containers: Tuple[
             ItemsContainer[StacItemRecord],
             ItemsContainer[ItemUpdatedRecord],
             CreateItemErrorsContainer,
         ],
         create_items_function: Callable[[str, StorageFactory], List[pystac.Item]],
-    ) -> Tuple[OK_T, ErrorsT]:
+    ) -> Tuple[Optional[List[pystac.Item]], Optional[CreateItemError]]:
         logger.info("Processing message id=%s", message.id)
         parsed_message = StorageEvent.parse_raw(message.content)
         if not callable(input.create_items_function):
@@ -197,8 +190,6 @@ class StreamingCreateItemsTask(
             input.create_items_function
         )  # convince mypy that this is the function.
         create_items_function = input.create_items_function
-        ok: OK_T = []
-        errors: ErrorsT = []
 
         try:
             items = self.create_items(
@@ -209,52 +200,27 @@ class StreamingCreateItemsTask(
             )
         except Exception:
             logger.exception("Error in create item")
-            error = CreateItemErrorRecord(
-                type=parsed_message.type,
-                spec_version=parsed_message.spec_version,
-                source=parsed_message.source,
-                subject=parsed_message.subject,
-                id=parsed_message.id,
-                time=parsed_message.time,
-                data_content_type=parsed_message.data_content_type,
-                data=parsed_message.data,
-                run_id=context.run_id,
+            error = CreateItemError(
+                input=parsed_message,
                 traceback=traceback.format_exc(),
-                dequeue_count=message.dequeue_count,
+                attempt=message.dequeue_count,
+                run_id=context.run_id,
             )
-            errors.append(error)
+            return (None, error)
         else:
             if isinstance(items, WaitTaskResult):
-                # This idealy won't happen in practice. Ideally the event
+                # This ideally won't happen in practice. Ideally the event
                 # grid subscriptions are written such that they're only sent
                 # when we're ready to process the item.
                 raise Exception("Unexpected WaitTaskResult")
             else:
-                item_records: List[StacItemRecord] = []
-                update_records: List[ItemUpdatedRecord] = []
-
-                for item in items:
-                    logger.info("Created item id=%s", item.id)
-                    item_record = StacItemRecord.from_item(item)
-                    item_records.append(item_record)
-
-                    update_records.append(
-                        ItemUpdatedRecord(
-                            stac_id=item_record.stac_id,
-                            version=item_record.version,
-                            run_id=context.run_id,
-                            storage_event_time=str_to_datetime(parsed_message.time),
-                            message_inserted_time=message.inserted_on,
-                        )
-                    )
-
-                ok.append((item_records, update_records))
-        return ok, errors
+                return (items, None)
 
     def finalize_message(
         self,
-        ok: OK_T,
-        errors: ErrorsT,
+        message: azure.storage.queue.QueueMessage,
+        context: TaskContext,
+        result: Tuple[Optional[List[pystac.Item]], Optional[CreateItemError]],
         extra_options: Dict[str, Any],
     ) -> None:
         """
@@ -270,12 +236,32 @@ class StreamingCreateItemsTask(
             items_update_container,
             create_item_errors_container,
         ) = extra_options["items_containers"]
+        ok, err = result
 
-        for item_records, update_records in ok:
+        if ok:
+            item_records = []
+            update_records = []
+
+            for item in ok:
+                logger.info("Created item id=%s", item.id)
+                item_record = StacItemRecord.from_item(item)
+                item_records.append(item_record)
+                update_records.append(
+                    ItemUpdatedRecord(
+                        stac_id=item_record.stac_id,
+                        version=item_record.version,
+                        run_id=context.run_id,
+                        # TODO: Check if this is worth keeping.
+                        # storage_event_time=str_to_datetime(parsed_message.time),
+                        message_inserted_time=message.inserted_on,
+                    )
+                )
+
             items_record_container.bulk_put(item_records)
             items_update_container.bulk_put(update_records)
-        for error in errors:
-            create_item_errors_container.put(error)
+
+        if err:
+            create_item_errors_container.put(err)
         logger.info("Persisted records.")
 
 

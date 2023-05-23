@@ -9,9 +9,9 @@ from pctasks.core.cosmos.container import (
     TriggerType,
 )
 from pctasks.core.cosmos.settings import CosmosDBSettings
-from pctasks.core.models.event import CreateItemError
+from pctasks.core.models.item import ItemIngestErrorRecord
 
-T = CreateItemError
+T = ItemIngestErrorRecord
 
 PARTITION_KEY = "/id"
 
@@ -20,9 +20,9 @@ STORED_PROCEDURES: Dict[ContainerOperation, Dict[Type[BaseModel], str]] = {}
 TRIGGERS: Dict[ContainerOperation, Dict[TriggerType, str]] = {}
 
 
-class CreateItemErrorsContainer(CosmosDBContainer[T]):
+class IngestItemErrorsContainer(CosmosDBContainer[T]):
     """
-    CosmosDB Container for error records from the user's ``create_item`` function.
+    CosmosDB Container for error records that failed to ingest into PgSTAC.
     """
 
     def __init__(
@@ -32,7 +32,7 @@ class CreateItemErrorsContainer(CosmosDBContainer[T]):
         settings: Optional[CosmosDBSettings] = None,
     ) -> None:
         super().__init__(
-            lambda settings: settings.get_create_item_errors_container_name(),
+            lambda settings: settings.get_ingest_item_errors_container_name(),
             PARTITION_KEY,
             model_type=model_type,
             db=db,

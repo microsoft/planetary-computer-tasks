@@ -90,7 +90,11 @@ class StreamingTaskMixin:
         raise NotImplementedError
 
     def finalize_message(
-        self, ok: List[Any], errors: List[Any], extra_options: Dict[str, Any]
+        self,
+        message: azure.storage.queue.QueueMessage,
+        context: TaskContext,
+        result: Tuple[List[Any], Any],
+        extra_options: Dict[str, Any],
     ) -> None:
         """
         Finalize the results from ``process_message``.
@@ -131,13 +135,13 @@ class StreamingTaskMixin:
                     visibility_timeout=input.streaming_options.visibility_timeout
                 ):
                     try:
-                        ok, errors = self.process_message(
+                        result = self.process_message(
                             message=message,
                             input=input,
                             context=context,
                             **extra_options,
                         )
-                        self.finalize_message(ok, errors, extra_options)
+                        self.finalize_message(message, context, result, extra_options)
                     except Exception:
                         # TODO: Clean up the logging on failures. We log here and in
                         # dataset.streaming:process_message

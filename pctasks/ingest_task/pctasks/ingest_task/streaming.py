@@ -1,13 +1,16 @@
 import json
 import logging
 import os
-from typing import Any, Dict, List, Optional
+import traceback
+from typing import Any, Dict, List, Optional, Tuple
 
 import azure.storage.queue
 
 from pctasks.core.models.base import PCBaseModel
+from pctasks.core.models.item import IngestErrorType, ItemIngestErrorRecord
 from pctasks.ingest.constants import DB_CONNECTION_STRING_ENV_VAR
 from pctasks.ingest_task.pgstac import PgSTAC
+from pctasks.ingest_task.task import ingest_item
 from pctasks.task.context import TaskContext
 from pctasks.task.streaming import NoOutput, StreamingTaskMixin, StreamingTaskOptions
 from pctasks.task.task import Task
@@ -57,19 +60,48 @@ class StreamingIngestItemsTask(
         context: TaskContext,
         pgstac: PgSTAC,
     ) -> None:
-        from pctasks.ingest_task.task import ingest_item
+        # What errors can occur here?
+        # 1. This message might not be valid JSON.
+        # 2. The pgstac ingest might fail.
+        err = None
+        try:
+            item = json.loads(message.content)
+        except json.JSONDecodeError:
+            logger.exception("Error decoding message for ingest")
+            err = ItemIngestErrorRecord(
+                type=IngestErrorType.INVALID_DATA,
+                input=message.content,
+                run_id=context.run_id,
+                attempt=message.dequeue_count,
+                traceback=traceback.format_exc(),
+            )
+        else:
+            logger.info(
+                "Loading item collection=%s id=%s", item["collection"], item["id"]
+            )
+            # note: we rely on the collection ID being set, since
+            # we're potentially ingesting multiple items.
+            # if input.collection_id:
+            #     item["collection"] = input.collection_id
+            try:
+                ingest_item(pgstac, item)
+            except Exception:
+                logger.exception("Error during ingest")
+                err = ItemIngestErrorRecord(
+                    type=IngestErrorType.ITEM_INGEST,
+                    input=message.content,
+                    run_id=context.run_id,
+                    attempt=message.dequeue_count,
+                    traceback=traceback.format_exc(),
+                )
 
-        # this should be a valid pystac item
-        # TODO: structured messages!
-        item = json.loads(message.content)
-        logger.info("Loading item collection=%s id=%s", item["collection"], item["id"])
-        # note: we rely on the collection ID being set, since
-        # we're potentially ingesting multiple items.
-        # if input.collection_id:
-        #     item["collection"] = input.collection_id
-        ingest_item(pgstac, item)
+        return (item, err)
 
     def finalize_message(
-        self, ok: List[Any], errors: List[Any], extra_options: Dict[str, Any]
+        self,
+        message: azure.storage.queue.QueueMessage,
+        context: TaskContext,
+        result: Tuple[List[Any], Any],
+        extra_options: Dict[str, Any],
     ) -> None:
         pass

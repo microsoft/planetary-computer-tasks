@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Any, Dict, Optional
+from uuid import uuid4
 
 import pystac
 from pydantic import Field, validator
@@ -89,3 +90,39 @@ class ItemUpdatedRecord(ItemRecord):
     @validator("version")
     def _version_validator(cls, v: Optional[str]) -> str:
         return v or ""
+
+
+class IngestErrorType(StrEnum):
+    # We tried to load an invalid STAC item
+    INVALID_DATA = "InvalidData"
+    # We tried to load a STAC item, but pgstac failed
+    ITEM_INGEST = "ItemIngest"
+
+
+class ItemIngestErrorRecord(Record):
+    """
+    Record for errors that occur during item ingestion.
+
+    Parameters
+    ----------
+    id: unique identifier for the record.
+    type: IngestErrorType
+    input: str
+        The input message that caused the error.
+    run_id: str
+        The run ID of the workflow that caused the error.
+    attempt: int
+        The dequeue count on the message that caused the error.
+    traceback: str
+        The traceback of the exception
+    """
+
+    id: str = Field(default_factory=lambda: uuid4().hex)
+    type: IngestErrorType
+    input: str
+    run_id: str
+    attempt: int
+    traceback: str
+
+    def get_id(self) -> str:
+        return self.id
