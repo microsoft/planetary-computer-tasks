@@ -15,7 +15,11 @@ import pystac
 from pctasks.core.cosmos.containers.create_item_errors import CreateItemErrorsContainer
 from pctasks.core.cosmos.containers.items import ItemsContainer
 from pctasks.core.models.base import PCBaseModel
-from pctasks.core.models.event import CreateItemErrorRecord, StorageEvent, StorageEventData
+from pctasks.core.models.event import (
+    CreateItemErrorRecord,
+    StorageEvent,
+    StorageEventData,
+)
 from pctasks.core.models.item import ItemUpdatedRecord, StacItemRecord
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory

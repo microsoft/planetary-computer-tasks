@@ -77,6 +77,7 @@ class CreateItemErrorRecord(Record):
     """
     Error record for when an item creation fails.
     """
+
     type: str = "CreateItemError"
     id: str = Field(default_factory=lambda: uuid4().hex)
     input: StorageEvent
