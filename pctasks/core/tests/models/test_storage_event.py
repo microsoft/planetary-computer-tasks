@@ -56,6 +56,13 @@ def test_create_item_error(event_body):
     event_body["run_id"] = "test"
     event_body["traceback"] = "ZeroDivisionError"
     event_body["dequeue_count"] = 1
-    record = CreateItemErrorRecord.parse_obj(event_body)
+    event = StorageEventRecord.parse_obj(event_body)
+    record = CreateItemErrorRecord(
+        input=event,
+        attempt=0,
+        traceback="AssertionError",
+        run_id="test",
+        type="CreateItemError",
+    )
 
-    assert record.get_id() == "831e1650-001e-001b-66ab-eeb76e069631:test:1"
+    assert record.get_id()

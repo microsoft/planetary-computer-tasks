@@ -15,7 +15,7 @@ import pystac
 from pctasks.core.cosmos.containers.create_item_errors import CreateItemErrorsContainer
 from pctasks.core.cosmos.containers.items import ItemsContainer
 from pctasks.core.models.base import PCBaseModel
-from pctasks.core.models.event import CreateItemError, StorageEvent, StorageEventData
+from pctasks.core.models.event import CreateItemErrorRecord, StorageEvent, StorageEventData
 from pctasks.core.models.item import ItemUpdatedRecord, StacItemRecord
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
@@ -106,7 +106,7 @@ class StreamingCreateItemsTask(
     ) -> Dict[str, Any]:
         items_record_container = ItemsContainer(StacItemRecord)
         items_update_container = ItemsContainer(ItemUpdatedRecord)
-        create_item_errors_container = CreateItemErrorsContainer(CreateItemError)
+        create_item_errors_container = CreateItemErrorsContainer(CreateItemErrorRecord)
 
         create_items_function = input.create_items_function
         if isinstance(create_items_function, str):
@@ -176,7 +176,7 @@ class StreamingCreateItemsTask(
             CreateItemErrorsContainer,
         ],
         create_items_function: Callable[[str, StorageFactory], List[pystac.Item]],
-    ) -> Tuple[Optional[List[pystac.Item]], Optional[CreateItemError]]:
+    ) -> Tuple[Optional[List[pystac.Item]], Optional[CreateItemErrorRecord]]:
         logger.info("Processing message id=%s", message.id)
         parsed_message = StorageEvent.parse_raw(message.content)
         if not callable(input.create_items_function):
@@ -200,7 +200,7 @@ class StreamingCreateItemsTask(
             )
         except Exception:
             logger.exception("Error in create item")
-            error = CreateItemError(
+            error = CreateItemErrorRecord(
                 input=parsed_message,
                 traceback=traceback.format_exc(),
                 attempt=message.dequeue_count,
@@ -220,7 +220,7 @@ class StreamingCreateItemsTask(
         self,
         message: azure.storage.queue.QueueMessage,
         context: TaskContext,
-        result: Tuple[Optional[List[pystac.Item]], Optional[CreateItemError]],
+        result: Tuple[Optional[List[pystac.Item]], Optional[CreateItemErrorRecord]],
         extra_options: Dict[str, Any],
     ) -> None:
         """

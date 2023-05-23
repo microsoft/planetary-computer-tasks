@@ -9,9 +9,9 @@ from pctasks.core.cosmos.container import (
     TriggerType,
 )
 from pctasks.core.cosmos.settings import CosmosDBSettings
-from pctasks.core.models.event import CreateItemError
+from pctasks.core.models.event import CreateItemErrorRecord
 
-T = CreateItemError
+T = CreateItemErrorRecord
 
 PARTITION_KEY = "/id"
 
