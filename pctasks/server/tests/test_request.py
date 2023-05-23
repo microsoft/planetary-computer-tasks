@@ -1,3 +1,4 @@
+import pytest
 from fastapi.testclient import TestClient
 
 from pctasks.core.utils import ignore_ssl_warnings
@@ -71,6 +72,7 @@ UNAUTHORIZED_REQUESTS = [
 ]
 
 
+@pytest.mark.usefixtures("cosmosdb_containers")
 def test_authorized_requests():
     for headers in AUTHORIZED_REQUESTS:
         with TestClient(app) as client:

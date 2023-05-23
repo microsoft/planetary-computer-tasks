@@ -53,6 +53,10 @@ jobs:
         run: ./scripts/citest-integration
         if: ${{ github.base_ref  == 'main' }}
 
+      - name: Get docker-compose logs
+        run: docker-compose logs
+        if: always()
+
       - name: Clean up CosmosDB test containers
         run: ./scripts/setup --rm-test-containers
         if: always()

@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 from uuid import uuid1
 
+import pytest
 from pypgstac.db import PgstacDB
 
 from pctasks.cli.cli import setup_logging, setup_logging_for_module
@@ -20,6 +21,7 @@ WORKFLOWS = HERE / ".." / "workflows"
 TIMEOUT_SECONDS = DEFAULT_TIMEOUT
 
 
+@pytest.mark.usefixtures("cosmosdb_containers")
 def test_dataset():
     with temp_pgstac_db() as conn_str_info:
         test_tag = uuid1().hex[:5]

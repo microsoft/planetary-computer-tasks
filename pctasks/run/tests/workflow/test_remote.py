@@ -2,6 +2,8 @@ import logging
 from typing import Any, Dict, Optional
 from uuid import uuid4
 
+import pytest
+
 from pctasks.cli.cli import setup_logging
 from pctasks.core.cosmos.containers.workflow_runs import WorkflowRunsContainer
 from pctasks.core.cosmos.containers.workflows import WorkflowsContainer
@@ -72,6 +74,7 @@ def run_workflow(
     return result
 
 
+@pytest.mark.usefixtures("cosmosdb_containers")
 def test_remote_processes_job_with_two_tasks():
     setup_logging(logging.INFO)
     workflow_yaml = """
@@ -117,6 +120,7 @@ schema_version: 1.0.0
         assert len(last_task_output_paths) == 1
 
 
+@pytest.mark.usefixtures("cosmosdb_containers")
 def test_remote_processes_dataset_like_workflow():
     setup_logging(logging.INFO)
     workflow_yaml = """
@@ -189,6 +193,7 @@ schema_version: 1.0.0
         assert len(last_task_output_paths) == 4
 
 
+@pytest.mark.usefixtures("cosmosdb_containers")
 def test_remote_processes_job_with_pc_sas_token():
     setup_logging(logging.INFO)
     workflow_yaml = """
