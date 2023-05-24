@@ -3,6 +3,7 @@ import logging
 import os
 import pathlib
 import time
+import uuid
 
 import azure.storage.queue
 import pytest
@@ -10,9 +11,11 @@ from kubernetes import client, config
 from pypgstac.db import PgstacDB
 
 from pctasks.cli.cli import setup_logging, setup_logging_for_module
+from pctasks.core.cosmos.container import CosmosDBContainer
+from pctasks.core.cosmos.containers.create_item_errors import CreateItemErrorsContainer
 from pctasks.core.cosmos.containers.items import ItemsContainer
 from pctasks.core.cosmos.containers.storage_events import StorageEventsContainer
-from pctasks.core.models.event import StorageEvent
+from pctasks.core.models.event import CreateItemErrorRecord, StorageEvent
 from pctasks.core.models.item import StacItemRecord
 from pctasks.core.storage.blob import BlobStorage
 from pctasks.core.utils import completely_flatten
@@ -122,6 +125,7 @@ def events_queue():
         message_decode_policy=azure.storage.queue.TextBase64DecodePolicy(),
         name="storage-events",
     ) as queue_client:
+        print(f"Created events queue at {queue_client.url}")
         yield queue_client
 
 
@@ -137,6 +141,7 @@ def dataset_queue():
         name=COLLECTION_ID,
     )
     with dataset_queue as queue_client:
+        print(f"Created dataset queue at {queue_client.url}")
         yield queue_client
 
 
@@ -147,6 +152,7 @@ def ingest_queue():
         message_decode_policy=None, message_encode_policy=None, name="ingest"
     )
     with ingest_queue as queue_client:
+        print(f"Created dataset queue at {queue_client.url}")
         yield queue_client
 
 
@@ -177,6 +183,14 @@ def cosmos_items_container():
     logging.info("Connecting to items cosmos container")
     with ItemsContainer(StacItemRecord) as cosmos_client:
         print(f"initialized items container at {cosmos_client.name}")
+        yield cosmos_client
+
+
+@pytest.fixture
+def cosmos_create_item_errors_container():
+    logging.info("Connecting to create-item-errors cosmos container")
+    with CreateItemErrorsContainer(CreateItemErrorRecord) as cosmos_client:
+        print(f"initialized storage-events container at {cosmos_client.name}")
         yield cosmos_client
 
 
@@ -303,7 +317,7 @@ def process_items_task(dataset_queue, conn_str_info, host_env):
     # This is eventually true
     assert deployment.status.ready_replicas == 1
 
-    yield
+    yield process_items_result
 
     logging.info("Deleting create items deployment")
     try:
@@ -415,7 +429,6 @@ def print_status(core_api: client.CoreV1Api, label_selector: str) -> None:
     "ingest_queue",
     "ingested_collection",
     "stac_item_blob",
-    "process_items_task",
     "ingest_items_task",
 )
 def test_streaming(
@@ -424,7 +437,9 @@ def test_streaming(
     root_storage,
     cosmos_storage_events_container,
     cosmos_items_container,
+    cosmos_create_item_errors_container,
     core_api,
+    process_items_task,
 ):
     """
     An end-to-end integration test for streaming workloads.
@@ -491,6 +506,9 @@ def test_streaming(
 
     # OK, now we're all ready to go!
     # Submit an event. Azure Function will move that to Cosmos DB
+    event_id = str(uuid.uuid4())
+    event.id = event_id
+
     events_queue.send_message(event.json())
 
     # This triggers
@@ -501,51 +519,22 @@ def test_streaming(
     # Create Items
     # Submit the task to start the process items deployment
 
-    event_id = "0179968e-401e-000d-1f7b-68d814060798"
-    deadline = time.monotonic() + 60
-
     # Checkpoint 1: the event is in Cosmos DB
-
-    start = time.monotonic()
-    while time.monotonic() < deadline:
-        try:
-            result = cosmos_storage_events_container.get(event_id, event_id)
-        except Exception:
-            print(
-                f"Waiting for storage event document {(time.monotonic() - start):.0f}s"
-            )
-            time.sleep(0.5)
-        else:
-            break
-    else:
-        raise AssertionError("Timeout getting event document")
-    print("Storage Event is in Cosmos DB")
+    result = wait_for_document(event_id, event_id, cosmos_storage_events_container)
 
     # Checkpoint 2: The asset has been processed. The item is in Cosmos DB
     # Azure Function will forward from Cosmos -> dataset queue
     # Then our pctasks task will process it.
     # stac_id = "test-collection/MOD14A1.A2000049.h00v08.061.2020041150332"
     # TODO: add some random thing to  this ID and delete after test run.
+
     document_id = f"{COLLECTION_ID}:MOD14A1.A2000049.h00v08.061.2020041150332::StacItem"
     stac_id = f"{COLLECTION_ID}/MOD14A1.A2000049.h00v08.061.2020041150332"
     start = time.monotonic()
     label_selector = (
         "planetarycomputer.microsoft.com/queue_url=devstoreaccount1-test-collection"
     )
-    while time.monotonic() < deadline:
-        try:
-            result = cosmos_items_container.get(document_id, stac_id)
-            if result is None:
-                raise KeyError(document_id)
-        except Exception:
-            print(f"Waiting for item document {(time.monotonic() - start):.0f}s")
-            print_status(core_api, label_selector=label_selector)
-            time.sleep(0.5)
-        else:
-            break
-    else:
-        raise AssertionError("Timeout getting items document.")
-
+    result = wait_for_document(document_id, stac_id, cosmos_items_container)
     print("Item is in Cosmos DB")
 
     # Checkpoint 3: The item has been ingested into pgstac
@@ -576,7 +565,7 @@ def test_streaming(
                     f"{(time.monotonic() - start):.0f}s"
                 )
                 print_status(core_api, label_selector=label_selector)
-                time.sleep(1)
+                time.sleep(5)
             else:
                 break
         else:
@@ -585,3 +574,46 @@ def test_streaming(
     print("Item is in PgSTAC")
     feature = features[0]
     assert feature
+
+    process_items_run_id = process_items_task.output.strip()
+
+    # Try a failure now. Point the user-defined function at a non-existent URL
+    event_id = str(uuid.uuid4())
+    event.data.url = event.data.url.replace("item.json", "item2.json")
+    event.id = event_id
+    events_queue.send_message(event.json())
+
+    document_id = f"{event_id}:{process_items_run_id}:1"
+    # The user-defined create item function should have been called and gotten a 404
+    # from Blob Storage.
+    # The item should be in the create-items-errors container in Cosmos DB
+    result = wait_for_document(
+        document_id, document_id, cosmos_create_item_errors_container
+    )
+    assert result is not None
+    assert result.type == "CreateItemError"
+    assert "FileNotFoundError:" in result.traceback.strip().split("\n")[-1]
+    assert result.attempt == 1
+    assert result.run_id == process_items_run_id
+
+
+def wait_for_document(
+    id: str, partition_key: str, cosmos_container: CosmosDBContainer, timeout: int = 60
+):
+    start = time.monotonic()
+    deadline = start + timeout
+    key = f"{partition_key}/{id}"
+    while time.monotonic() < deadline:
+        try:
+            result = cosmos_container.get(id, partition_key)
+            if result is None:
+                raise KeyError(f"Document '{key}' not found")
+        except Exception:
+            print(f"Waiting for document '{key}' {(time.monotonic() - start):.0f}s")
+            time.sleep(0.5)
+        else:
+            break
+    else:
+        raise AssertionError(f"Timeout getting document '{key}'")
+    print(f"Storage Event '{key}' is in Cosmos DB")
+    return result

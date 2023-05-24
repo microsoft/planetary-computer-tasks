@@ -205,6 +205,7 @@ class StreamingCreateItemsTask(
         except Exception:
             logger.exception("Error in create item")
             error = CreateItemErrorRecord(
+                id=f"{parsed_message.id}:{context.run_id}:{message.dequeue_count}",
                 input=parsed_message,
                 traceback=traceback.format_exc(),
                 attempt=message.dequeue_count,
