@@ -181,6 +181,7 @@ def submit_workflow(
     workflow_id: str,
     args: Optional[Dict[str, Any]],
     client: Optional[PCTasksClient] = None,
+    auto_confirm: bool = False,
 ) -> int:
     """Submit a workflow to the PCTasks task queue."""
     if not client:
@@ -188,7 +189,9 @@ def submit_workflow(
 
     try:
         submit_result = client.submit_workflow(
-            workflow_id, WorkflowSubmitRequest(args=args) if args else None
+            workflow_id,
+            WorkflowSubmitRequest(args=args) if args else None,
+            auto_confirm=auto_confirm,
         )
     except ConfirmationError:
         cli_print("[red]Submit cancelled by user[/red]")
@@ -240,6 +243,7 @@ def cli_handle_workflow(
     upsert: bool = False,
     upsert_and_submit: bool = False,
     client: Optional[PCTasksClient] = None,
+    auto_confirm: bool = False,
 ) -> int:
     """Handle a workflow definition created through the CLI.
 
@@ -267,10 +271,12 @@ def cli_handle_workflow(
 
     if upsert or upsert_and_submit:
         cli_print(f"[green]  Saving {workflow_id}...[/green]")
-        client.upsert_workflow(workflow_def)
+        client.upsert_workflow(workflow_def, auto_confirm=auto_confirm)
         if upsert_and_submit:
             cli_print(f"[green]  Submitting {workflow_id}...[/green]")
-            return submit_workflow(ctx, workflow_id, args, client=client)
+            return submit_workflow(
+                ctx, workflow_id, args, client=client, auto_confirm=auto_confirm
+            )
         else:
             cli_output(workflow_id)
             return 0

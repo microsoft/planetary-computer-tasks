@@ -6,6 +6,7 @@ import click
 from pctasks.client.workflow.options import opt_args
 from pctasks.dataset.utils import (
     opt_collection,
+    opt_confirm,
     opt_ds_config,
     opt_submit,
     opt_upsert,
@@ -39,6 +40,7 @@ def dataset_cmd(ctx: click.Context) -> None:
     help="The target environment to process the items in.",
 )
 @opt_submit
+@opt_confirm
 @opt_upsert
 @opt_workflow_id
 @click.pass_context
@@ -52,6 +54,7 @@ def create_chunks_cmd(
     limit: Optional[int] = None,
     target: Optional[str] = None,
     submit: bool = False,
+    confirm: bool = False,
     upsert: bool = False,
     workflow_id: Optional[str] = None,
 ) -> None:
@@ -78,6 +81,7 @@ def create_chunks_cmd(
         upsert=upsert,
         target=target,
         workflow_id=workflow_id,
+        auto_confirm=confirm,
     )
 
 
@@ -110,6 +114,7 @@ def create_chunks_cmd(
     help="Make an 'update' workflow by adding 'since' to the runtime arguments.",
 )
 @opt_submit
+@opt_confirm
 @opt_upsert
 @opt_workflow_id
 @click.pass_context
@@ -125,6 +130,7 @@ def process_items_cmd(
     since: Optional[str] = None,
     limit: Optional[int] = None,
     submit: bool = False,
+    confirm: bool = False,
     upsert: bool = False,
     workflow_id: Optional[str] = None,
     is_update_workflow: bool = False,
@@ -159,6 +165,7 @@ def process_items_cmd(
         upsert=upsert,
         workflow_id=workflow_id,
         is_update_workflow=is_update_workflow,
+        auto_confirm=confirm,
     )
 
 
@@ -172,6 +179,7 @@ def process_items_cmd(
     help="The target environment to process the items in.",
 )
 @opt_submit
+@opt_confirm
 @opt_upsert
 @opt_workflow_id
 @click.pass_context
@@ -182,6 +190,7 @@ def ingest_collection_cmd(
     arg: List[Tuple[str, str]] = [],
     target: Optional[str] = None,
     submit: bool = False,
+    confirm: bool = False,
     upsert: bool = False,
     workflow_id: Optional[str] = None,
 ) -> None:
@@ -209,6 +218,7 @@ def ingest_collection_cmd(
         submit=submit,
         upsert=upsert,
         workflow_id=workflow_id,
+        auto_confirm=confirm,
     )
 
 

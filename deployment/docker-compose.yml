@@ -7,7 +7,6 @@ services:
       dockerfile: deployment/Dockerfile
     environment:
       # For Terraform
-      - TF_VAR_username=${USER}
       - ARM_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}
       - ARM_TENANT_ID=${AZURE_TENANT_ID}
       - ARM_CLIENT_ID=${AZURE_CLIENT_ID}

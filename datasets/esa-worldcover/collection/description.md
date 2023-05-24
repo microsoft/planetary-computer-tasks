@@ -6,10 +6,10 @@ Two versions of the WorldCover product are available:
 
 - WorldCover 2020 produced using v100 of the algorithm
   - [WorldCover 2020 v100 User Manual](https://esa-worldcover.s3.eu-central-1.amazonaws.com/v100/2020/docs/WorldCover_PUM_V1.0.pdf)
-  - [WorldCover 2020 v100 Validation Report]((<https://esa-worldcover.s3.eu-central-1.amazonaws.com/v100/2020/docs/WorldCover_PVR_V1.1.pdf>))
+  - [WorldCover 2020 v100 Validation Report](<https://esa-worldcover.s3.eu-central-1.amazonaws.com/v100/2020/docs/WorldCover_PVR_V1.1.pdf>)
 
 - WorldCover 2021 produced using v200 of the algorithm
-  - [WorldCover 2021 v200 User Manual]((<https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/docs/WorldCover_PUM_V2.0.pdf>))
-  - [WorldCover 2021 v200 Validaton Report]((<https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/docs/WorldCover_PVR_V2.0.pdf>))
+  - [WorldCover 2021 v200 User Manual](<https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/docs/WorldCover_PUM_V2.0.pdf>)
+  - [WorldCover 2021 v200 Validaton Report](<https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/docs/WorldCover_PVR_V2.0.pdf>)
 
 Since the WorldCover maps for 2020 and 2021 were generated with different algorithm versions (v100 and v200, respectively), changes between the maps include both changes in real land cover and changes due to the used algorithms.

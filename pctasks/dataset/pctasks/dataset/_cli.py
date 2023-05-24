@@ -41,6 +41,7 @@ def create_chunks_cmd(
     since: Optional[str] = None,
     limit: Optional[int] = None,
     submit: bool = False,
+    auto_confirm: bool = False,
     upsert: bool = False,
     target: Optional[str] = None,
     workflow_id: Optional[str] = None,
@@ -84,6 +85,7 @@ def create_chunks_cmd(
         upsert=upsert,
         upsert_and_submit=submit,
         args={a[0]: a[1] for a in arg},
+        auto_confirm=auto_confirm,
     )
 
 
@@ -99,6 +101,7 @@ def process_items_cmd(
     since: Optional[str] = None,
     limit: Optional[int] = None,
     submit: bool = False,
+    auto_confirm: bool = False,
     upsert: bool = False,
     workflow_id: Optional[str] = None,
     is_update_workflow: bool = False,
@@ -151,6 +154,7 @@ def process_items_cmd(
         upsert=upsert,
         upsert_and_submit=submit,
         args={a[0]: a[1] for a in arg},
+        auto_confirm=auto_confirm,
     )
 
 
@@ -161,6 +165,7 @@ def ingest_collection_cmd(
     arg: List[Tuple[str, str]] = [],
     target: Optional[str] = None,
     submit: bool = False,
+    auto_confirm: bool = False,
     upsert: bool = False,
     workflow_id: Optional[str] = None,
 ) -> None:
@@ -209,6 +214,7 @@ def ingest_collection_cmd(
         upsert=upsert,
         upsert_and_submit=submit,
         args={a[0]: a[1] for a in arg},
+        auto_confirm=auto_confirm,
     )
 
 
