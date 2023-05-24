@@ -3,7 +3,7 @@ from __future__ import annotations
 import importlib.metadata
 import logging
 import traceback
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union
 
 import azure.core.credentials
 import azure.cosmos
@@ -26,7 +26,12 @@ from pctasks.core.storage import StorageFactory
 from pctasks.core.storage.blob import maybe_rewrite_blob_storage_url
 from pctasks.dataset.items.task import validate_create_items_result
 from pctasks.task.context import TaskContext
-from pctasks.task.streaming import NoOutput, StreamingTaskMixin, StreamingTaskOptions
+from pctasks.task.streaming import (
+    NoOutput,
+    StreamingTaskInput,
+    StreamingTaskMixin,
+    StreamingTaskOptions,
+)
 from pctasks.task.task import Task
 
 logger = logging.getLogger("pctasks.dataset.streaming")
@@ -77,6 +82,15 @@ class StreamingCreateItemsInput(PCBaseModel):
         extra = "forbid"
 
 
+class ExtraOptions(TypedDict):
+    items_containers: Tuple[
+        ItemsContainer[StacItemRecord],
+        ItemsContainer[ItemUpdatedRecord],
+        CreateItemErrorsContainer,
+    ]
+    create_items_function: Callable[[str, StorageFactory], List[pystac.Item]]
+
+
 class StreamingCreateItemsTask(
     StreamingTaskMixin, Task[StreamingCreateItemsInput, NoOutput]
 ):
@@ -102,12 +116,11 @@ class StreamingCreateItemsTask(
     def get_required_environment_variables(self) -> List[str]:
         return ["PCTASKS_COSMOSDB__URL"]
 
-    # Mypy doesn't like us using a more specific type for the input here.
-    # I'm not sure what the solution is. You should only call this
-    # method with the task type.
-    def get_extra_options(  # type: ignore[override]
-        self, input: StreamingCreateItemsInput, context: TaskContext
-    ) -> Dict[str, Any]:
+    def get_extra_options(
+        self, input: StreamingTaskInput, context: TaskContext
+    ) -> ExtraOptions:
+        # TODO: Why can probably type this properly with a typevar
+        assert isinstance(input, StreamingCreateItemsInput)
         items_record_container = ItemsContainer(StacItemRecord)
         items_update_container = ItemsContainer(ItemUpdatedRecord)
         create_item_errors_container = CreateItemErrorsContainer(CreateItemErrorRecord)
@@ -126,7 +139,7 @@ class StreamingCreateItemsTask(
         logger.info("Writing STAC items to %s", items_record_container.name)
         logger.info("Writing Update records to %s", items_update_container.name)
 
-        return {
+        result: ExtraOptions = {
             "items_containers": (
                 items_record_container,
                 items_update_container,
@@ -134,8 +147,9 @@ class StreamingCreateItemsTask(
             ),
             "create_items_function": create_items_function,
         }
+        return result
 
-    def cleanup(self, extra_options: Dict[str, Any]) -> None:
+    def cleanup(self, extra_options: ExtraOptions) -> None:
         (
             items_record_container,
             items_update_container,
@@ -165,35 +179,19 @@ class StreamingCreateItemsTask(
 
         return items
 
-    # mypy doesn't like the child bringing in extra arguments, which is fair.
-    # We can't get these off `input` though, unless it were
-    # to cache the stuff.
-    def process_message(  # type: ignore
+    def process_message(
         self,
         message: azure.storage.queue.QueueMessage,
-        input: StreamingCreateItemsInput,
+        input: StreamingTaskInput,
         context: TaskContext,
         # TODO: remove from here.
-        items_containers: Tuple[
-            ItemsContainer[StacItemRecord],
-            ItemsContainer[ItemUpdatedRecord],
-            CreateItemErrorsContainer,
-        ],
-        create_items_function: Callable[[str, StorageFactory], List[pystac.Item]],
+        extra_options: ExtraOptions,
     ) -> Tuple[Optional[List[pystac.Item]], Optional[CreateItemErrorRecord]]:
+        assert isinstance(input, StreamingCreateItemsInput)
+        create_items_function = extra_options["create_items_function"]
+
         logger.info("Processing message id=%s", message.id)
         parsed_message = StorageEvent.parse_raw(message.content)
-        if not callable(input.create_items_function):
-            # Why isn't this already done?
-            logger.info("Loading create_items_function")
-            entrypoint = importlib.metadata.EntryPoint(
-                "", input.create_items_function, ""
-            )
-            input.create_items_function = entrypoint.load()
-        assert callable(
-            input.create_items_function
-        )  # convince mypy that this is the function.
-        create_items_function = input.create_items_function
 
         try:
             items = self.create_items(
@@ -226,7 +224,7 @@ class StreamingCreateItemsTask(
         message: azure.storage.queue.QueueMessage,
         context: TaskContext,
         result: Tuple[Optional[List[pystac.Item]], Optional[CreateItemErrorRecord]],
-        extra_options: Dict[str, Any],
+        extra_options: ExtraOptions,
     ) -> None:
         """
         Finalize processing of a message.

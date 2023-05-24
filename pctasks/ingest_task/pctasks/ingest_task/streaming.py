@@ -2,7 +2,7 @@ import json
 import logging
 import os
 import traceback
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, TypedDict
 
 import azure.storage.queue
 
@@ -12,7 +12,12 @@ from pctasks.ingest.constants import DB_CONNECTION_STRING_ENV_VAR
 from pctasks.ingest_task.pgstac import PgSTAC
 from pctasks.ingest_task.task import ingest_item
 from pctasks.task.context import TaskContext
-from pctasks.task.streaming import NoOutput, StreamingTaskMixin, StreamingTaskOptions
+from pctasks.task.streaming import (
+    NoOutput,
+    StreamingTaskInput,
+    StreamingTaskMixin,
+    StreamingTaskOptions,
+)
 from pctasks.task.task import Task
 
 logger = logging.getLogger(__name__)
@@ -26,6 +31,10 @@ class StreamingIngestItemsInput(PCBaseModel):
     streaming_options: StreamingTaskOptions
 
 
+class ExtraOptions(TypedDict):
+    pgstac: PgSTAC
+
+
 class StreamingIngestItemsTask(
     StreamingTaskMixin, Task[StreamingIngestItemsInput, NoOutput]
 ):
@@ -35,31 +44,31 @@ class StreamingIngestItemsTask(
     def get_required_environment_variables(self) -> List[str]:
         return [DB_CONNECTION_STRING_ENV_VAR]
 
-    # Mypy doesn't like us using a more specific type for the input here.
-    # I'm not sure what the solution is. You should only call this
-    # method with the task type.
-    def get_extra_options(  # type: ignore[override]
-        self, input: StreamingIngestItemsInput, context: TaskContext
-    ) -> Dict[str, Any]:
-        from pctasks.ingest_task.task import PgSTAC
+    def get_extra_options(
+        self, input: StreamingTaskInput, context: TaskContext
+    ) -> ExtraOptions:
+        assert isinstance(input, StreamingIngestItemsInput)
 
         conn_str = os.environ[DB_CONNECTION_STRING_ENV_VAR]
         pgstac = PgSTAC(conn_str)
 
         return {"pgstac": pgstac}
 
-    def cleanup(self, extra_options: Dict[str, Any]) -> None:
-        pgstac: Optional[PgSTAC] = extra_options.get("pgstac")
+    def cleanup(self, extra_options: ExtraOptions) -> None:
+        pgstac: Optional[PgSTAC] = extra_options["pgstac"]
         if pgstac:
             pgstac.db.close()
 
-    def process_message(  # type: ignore[override]
+    def process_message(
         self,
         message: azure.storage.queue.QueueMessage,
-        input: StreamingIngestItemsInput,
+        input: StreamingTaskInput,
         context: TaskContext,
-        pgstac: PgSTAC,
-    ) -> Tuple[Any, Any]:
+        extra_options: ExtraOptions,
+    ) -> Tuple[Dict[str, Any], Any]:
+        assert isinstance(input, StreamingIngestItemsInput)
+
+        pgstac = extra_options["pgstac"]
         # What errors can occur here?
         # 1. This message might not be valid JSON.
         # 2. The pgstac ingest might fail.
@@ -101,7 +110,7 @@ class StreamingIngestItemsTask(
         self,
         message: azure.storage.queue.QueueMessage,
         context: TaskContext,
-        result: Tuple[List[Any], Any],
-        extra_options: Dict[str, Any],
+        result: Tuple[Dict[str, Any], Any],
+        extra_options: ExtraOptions,
     ) -> None:
         pass

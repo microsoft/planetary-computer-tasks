@@ -2,7 +2,7 @@ import datetime
 import logging
 import math
 import time
-from typing import Any, Dict, List, Optional, Protocol, Tuple, Union
+from typing import Any, Dict, Optional, Protocol, Tuple, Union
 
 import azure.identity
 import azure.storage.queue
@@ -76,7 +76,7 @@ class StreamingTaskMixin:
         message: azure.storage.queue.QueueMessage,
         input: StreamingTaskInput,
         context: TaskContext,
-        **extra_options: Dict[str, Any],
+        extra_options: Any,
     ) -> Tuple[Any, Any]:
         """
         Process messages from the the queue.
@@ -93,20 +93,18 @@ class StreamingTaskMixin:
         self,
         message: azure.storage.queue.QueueMessage,
         context: TaskContext,
-        result: Tuple[List[Any], Any],
-        extra_options: Dict[str, Any],
+        result: Tuple[Any, Any],
+        extra_options: Any,
     ) -> None:
         """
         Finalize the results from ``process_message``.
         """
         raise NotImplementedError
 
-    def get_extra_options(
-        self, input: StreamingTaskInput, context: TaskContext
-    ) -> Dict[str, Any]:
+    def get_extra_options(self, input: StreamingTaskInput, context: TaskContext) -> Any:
         return {}
 
-    def cleanup(self, extra_options: Dict[str, Any]) -> None:
+    def cleanup(self, extra_options: Any) -> None:
         """Method that will always be called as streaming run exits."""
         pass
 
@@ -139,7 +137,7 @@ class StreamingTaskMixin:
                             message=message,
                             input=input,
                             context=context,
-                            **extra_options,
+                            extra_options=extra_options,
                         )
                         self.finalize_message(message, context, result, extra_options)
                     except Exception:
