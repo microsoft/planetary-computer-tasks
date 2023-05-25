@@ -1,0 +1,31 @@
+id: sentinel-2
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./sentinel2.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: sentinel-2-l2a
+    template: ${{ local.path(./collection) }}
+    class: sentinel2:Sentinel2Collection
+    asset_storage:
+      - uri: blob://sentinel2l2a01/sentinel2-l2/18/N/TN/  # testing only
+        token: ${{ pc.get_token(sentinel2l2a01, sentinel2-l2) }}
+        chunks:
+          options:
+            list_folders: true
+            min_depth: 3  # testing only
+            max_depth: 3  # testing only
+            chunk_length: 5  # testing only
+            limit: 10  # testing only
+    chunk_storage:
+      uri: blob://sentinel2l2a01/sentinel2-l2-info/pctasks-chunks/
