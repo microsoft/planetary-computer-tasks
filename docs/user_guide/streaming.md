@@ -169,4 +169,15 @@ change feed. It will forward the new items to a publish queue. An `ingest`
 deployment (created once per database -- not once per dataset) will handle
 ingesting these items into the PgSTAC database (see green circle 4).
 
+### Azure Functions Configuration
+
+This table documents the additional configuration values in the azure functions. Keys in bold are required.
+
+|                   Key                   |                                                     Description                                                      |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **FUNC_STORAGE_EVENTS_COLLECTION_NAME** | The name of the Cosmos DB container the StorageEventsCF function should monitor.                                     |
+| **FUNC_ITEMS_COLLECTION_NAME**          | The name of the Cosmos DB container the PublishItemsCF function should monitor.                                      |
+| **FUNC_STORAGE_QUEUE_ACCOUNT_URL**      | The URL of the Azure Storage Account containing the various queues.                                                  |
+| FUNC_STORAGE_ACCOUNT_KEY                | An optional access key to interact with storage queues. Ideally, managed identities and Azure RBAC are used instead. |
+
 [KEDA]: https://keda.sh/

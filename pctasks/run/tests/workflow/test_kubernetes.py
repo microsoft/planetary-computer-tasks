@@ -60,3 +60,26 @@ def test_get_deployment_name_azurite():
     ] = "http://localhost:10001/devstoreaccount1/test-queue-stream"
     result = pctasks.run.workflow.kubernetes.get_deployment_name(task_definition)
     assert result == "localhost.10001-devstoreaccount1.test-queue-stream-deployment"
+
+
+def test_extra_env():
+    # We might be able to remove the extra_env concept completely, in which case
+    # remove this test. For now we need it to bootstrap some variables before
+    # pctasks' built-in env variable management kicks in.
+    task_definition = get_streaming_task_definition()
+    task_definition.args["extra_env"] = {"MY_KEY": "MY_VALUE"}
+
+    result = pctasks.run.workflow.kubernetes.build_streaming_deployment(
+        task_definition,
+        input_uri="blob://pctasksteststaging/input",
+        taskio_tenant_id="test-tenant-id",
+        taskio_client_id="test-client-id",
+        taskio_client_secret="test-client-secret",
+    )
+    env = result.spec.template.spec.containers[0].env
+    for var in env:
+        if var.name == "MY_KEY":
+            assert var.value == "MY_VALUE"
+            break
+    else:
+        raise AssertionError("MY_KEY not found in env")

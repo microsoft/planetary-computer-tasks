@@ -74,15 +74,18 @@ def test_process_message(storage_event):
             message_limit=5,
         ),
     )
-    items_containers = task.get_extra_options(task_input, context)["items_containers"]
-
-    task.process_message(
+    extra_options = task.get_extra_options(task_input, context)
+    ok, err = task.process_message(
         message,
         task_input,
         context,
-        items_containers,
-        create_items_function=create_items,
+        extra_options=extra_options,
     )
+    assert err is None
+    assert len(ok) == 1
+    item = ok[0]
+    assert item.id
+    assert item.collection_id
 
 
 @pytest.mark.usefixtures("cosmosdb_containers")
@@ -113,8 +116,6 @@ def test_streaming_create_items_task(storage_event):
         context = TaskContext(run_id="test", storage_factory=StorageFactory())
         task.run(task_input, context)
         assert create_items.count == 10
-        # Hmm is this zero because all the items were created successfully?
-        # We need to ensure that process_message is unit tested
         assert queue_client.get_queue_properties().approximate_message_count == 0
 
 
@@ -277,15 +278,16 @@ def test_streaming_create_items_handles_errors(storage_event):
         ),
     )
 
-    ok, error = task.process_message(
+    context = TaskContext(run_id="test", storage_factory=StorageFactory())
+    extra_options = task.get_extra_options(task_input, context)
+    ok, err = task.process_message(
         message,
-        input=task_input,
-        context=TaskContext(run_id="test", storage_factory=StorageFactory()),
-        create_items_function=task_input.create_items_function,
-        items_containers=None,
+        task_input,
+        context,
+        extra_options=extra_options,
     )
 
     assert ok is None
-    assert error.traceback
-    assert error.get_id()
-    assert error.run_id == "test"
+    assert err.traceback
+    assert err.get_id()
+    assert err.run_id == "test"

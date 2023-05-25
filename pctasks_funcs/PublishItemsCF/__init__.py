@@ -36,7 +36,6 @@ async def main(documents: func.DocumentList) -> None:
     logging.info("Sending messages to %s/%s", account_url, queue_name)
 
     async with credential_ctx:  # type: ignore
-        # TODO: figure out what we want for queue-url.
         qc = azure.storage.queue.aio.QueueClient(
             account_url,
             queue_name,

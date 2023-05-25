@@ -81,9 +81,8 @@ class StreamingTaskMixin:
         """
         Process messages from the the queue.
 
-        Subclasses must implement this method. They should return a tuple of
-        two lists. The first is the list of OK results, and the second is the
-        list of errors.
+        Subclasses must implement this method. They should return a length-2
+        tuple, with the OK results and the error results.
 
         Pair this with the ``finalize_method`` to persist these records.
         """

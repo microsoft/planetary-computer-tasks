@@ -184,7 +184,6 @@ class StreamingCreateItemsTask(
         message: azure.storage.queue.QueueMessage,
         input: StreamingTaskInput,
         context: TaskContext,
-        # TODO: remove from here.
         extra_options: ExtraOptions,
     ) -> Tuple[Optional[List[pystac.Item]], Optional[CreateItemErrorRecord]]:
         assert isinstance(input, StreamingCreateItemsInput)
