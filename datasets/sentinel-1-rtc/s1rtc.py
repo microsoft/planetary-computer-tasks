@@ -1,8 +1,8 @@
-import logging
 from typing import List, Union
 
 import orjson
 from pctasks.core.utils import completely_flatten
+# from pctasks.core.pctasks.core.utils import completely_flatten
 import pystac
 
 from pystac.extensions.eo import EOExtension
@@ -16,8 +16,10 @@ from stactools.core.utils.antimeridian import Strategy, fix_item
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
+# from pctasks.core.pctasks.core.models.task import WaitTaskResult
+# from pctasks.core.pctasks.core.storage import StorageFactory
+# from pctasks.dataset.pctasks.dataset.collection import Collection
 
-logger = logging.getLogger(__name__)
 
 SENTINEL_1_GRD_COLLECTION_ID = "sentinel-1-grd"
 
@@ -57,11 +59,12 @@ ASSET_INFO = {
 }
 
 
-class S1RTCCollection(Collection):
+class S1RTCCollection(Collection):  # type: ignore
     @classmethod
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
+
         storage, path = storage_factory.get_storage_for_file(asset_uri)
         item_dict = orjson.loads(storage.read_bytes(path))
 
@@ -73,11 +76,13 @@ class S1RTCCollection(Collection):
 
         item = pystac.Item.from_dict(item_dict, preserve_dict=False)
 
-        # Avoid non-IW instrument mode items
-        # There was a single EW instrument mode item, avoid it as it
-        # was a mistaken process.
+        # Remove providers
+        item.properties.pop("providers", None)
+
+        # Avoid non-IW instrument mode items. There was a single EW instrument
+        # mode item, avoid it as it was a mistaken process.
         if item.properties["sar:instrument_mode"] != "IW":
-            pass
+            return []
 
         # Add derived-from link
         item.links.append(
@@ -107,7 +112,6 @@ class S1RTCCollection(Collection):
             asset.description = ASSET_INFO[asset_key]["description"]
 
         # Reproject if necessary
-
         assert item.geometry
         needs_reprojection = False
         for coord in completely_flatten(item.geometry["coordinates"]):
@@ -126,3 +130,19 @@ class S1RTCCollection(Collection):
         fix_item(item, Strategy.NORMALIZE)
 
         return [item]
+
+
+if __name__ == "__main__":
+    hrefs = [
+        # "/Users/pjh/data/sentinel-1/catalyst/S1A_IW_GRDH_1SDH_20230526T072022_20230526T072051_048701_05DB6E_rtc.json",
+        # "/Users/pjh/data/sentinel-1/catalyst/S1A_IW_GRDH_1SDV_20141010T035727_20141010T035756_002762_0031AC_rtc.json",
+        "/Users/pjh/data/sentinel-1/catalyst/S1A_IW_GRDH_1SDH_20230501T085348_20230501T085417_048338_05D046_rtc.json",
+    ]
+    for href in hrefs:
+        storage_factory = StorageFactory()
+        c = S1RTCCollection()
+        item = c.create_item(href, storage_factory)[0]
+        item.validate()
+        import json
+        with open(f"{item.id}.json", "w") as f:
+            json.dump(item.to_dict(), f, indent=4)

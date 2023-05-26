@@ -1,12 +1,30 @@
 id: sentinel-1-grd
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./s1grd.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+
+environment:
+  azure_tenant_id: ${{ secrets.task-tenant-id }}
+  azure_client_id: ${{ secrets.task-client-id }}
+  azure_client_secret: ${{ secrets.task-client-secret }}
+
 collections:
-  id: sentinel-1-grd
-  containers:
-    assets: sentinel1euwest/s1-grd
-    stac: sentinel1euwest/s1-grd-stac
-    etl-data: sentinel1euwest/s1-grd-etl-info
-triggers:
-  storage:
-    account: sentinel1euwest
-    container: s1-grd-stac
-    filter: "*.json"
+  - id: sentinel-1-grd
+    template: ${{ local.path(./collection) }}
+    class: s1grd:S1GRDCollection
+    asset_storage:
+      # - uri: blob://sentinel1euwest/s1-grd-stac
+      - uri: blob://sentinel1euwest/s1-grd-stac/GRD/2023/5/  # testing
+        token: ${{ pc.get_token(sentinel1euwest, s1-grd-stac) }}
+        chunks:
+          options:
+            extension: [.json]
+            chunk_length: 5  # testing
+            limit: 10  # testing
+    chunk_storage:
+      uri: blob://sentinel1euwest/s1-grd-etl-data/pctasks-chunks/
