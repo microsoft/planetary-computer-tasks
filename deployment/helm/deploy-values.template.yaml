@@ -40,6 +40,7 @@ pctasks:
 
   run:
     task_runner_type: "batch"
+    streaming_task_namespace: "pc"
 
     task_poll_seconds: 30
 

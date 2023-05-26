@@ -67,6 +67,8 @@ Streaming workflows require a few additional Azure resources to be created:
 4. A Kubernetes secret for accessing the storage queues.
 5. A Helm deployment of KEDA.
 6. A KEDA `TriggerAuthentication` object in the same namespace as the streaming tasks.
+7. A `storage-events` queue that receives event grid notifications from Blob Storage
+8. An `ingest` queue that receives newly created STAC items from the Cosmos DB change feed.
 
 ## Permissions
 

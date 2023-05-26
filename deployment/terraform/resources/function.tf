@@ -31,9 +31,14 @@ resource "azurerm_linux_function_app" "pctasks" {
     "PCTASKS_COSMOSDB__KEY" = data.azurerm_cosmosdb_account.pctasks.primary_key,
     # Set trigger app setting separately to avoid issues with __ in env var names
     "FUNC_COSMOSDB_CONN_STR" = "AccountEndpoint=${data.azurerm_cosmosdb_account.pctasks.endpoint};AccountKey=${data.azurerm_cosmosdb_account.pctasks.primary_key};",
+    # Sets the Storage Account to use for low-latency queues
+    "FUNC_STORAGE_QUEUE_ACCOUNT_URL" = azurerm_storage_account.pctasks.primary_queue_endpoint,
     # Sets the name of the Cosmos DB containers to watch dynamically, to enable changing during unit tests.
     "FUNC_WORKFLOWS_COLLECTION_NAME" = "workflows",
     "FUNC_WORKFLOW_RUNS_COLLECTION_NAME" = "workflow-runs",
+    "FUNC_WORKFLOWS_COLLECTION_NAME" = "workflows",
+    "FUNC_STORAGE_EVENTS_COLLECTION_NAME" = "storage-events",
+    "FUNC_ITEMS_COLLECTION_NAME" = "items",
   }
 
   functions_extension_version = "~4"

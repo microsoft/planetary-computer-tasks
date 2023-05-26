@@ -12,6 +12,7 @@ rules:
       - "apps"
       - "keda.sh"
     resources:
+      - pods
       - deployments
       - scaledobjects
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]

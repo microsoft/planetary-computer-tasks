@@ -69,6 +69,10 @@ variable "task_sp_tenant_id" {
   type    = string
 }
 
+variable "task_sp_object_id" {
+  type    = string
+}
+
 variable "task_sp_client_id" {
   type    = string
 }
@@ -78,6 +82,10 @@ variable "task_sp_client_secret" {
 }
 
 variable "kv_sp_tenant_id" {
+  type    = string
+}
+
+variable "kv_sp_object_id" {
   type    = string
 }
 

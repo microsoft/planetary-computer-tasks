@@ -100,3 +100,33 @@ resource "azurerm_cosmosdb_sql_container" "items" {
   database_name       = azurerm_cosmosdb_sql_database.pctasks.name
   partition_key_path  = "/stac_id"
 }
+
+resource "azurerm_cosmosdb_sql_container" "create-item-errors" {
+  name                = "create-item-errors"
+  resource_group_name = data.azurerm_cosmosdb_account.pctasks.resource_group_name
+  account_name        = data.azurerm_cosmosdb_account.pctasks.name
+  database_name       = azurerm_cosmosdb_sql_database.pctasks.name
+  partition_key_path  = "/id"
+}
+
+resource "azurerm_cosmosdb_sql_container" "ingest-item-errors" {
+  name                = "create-item-errors"
+  resource_group_name = data.azurerm_cosmosdb_account.pctasks.resource_group_name
+  account_name        = data.azurerm_cosmosdb_account.pctasks.name
+  database_name       = azurerm_cosmosdb_sql_database.pctasks.name
+  partition_key_path  = "/id"
+}
+
+## Cosmos DB Permissions
+
+# The Task Service Principal should be able to write to the `items` container.
+resource "azurerm_cosmosdb_sql_role_assignment" "pctasks-streaming-read-write" {
+  resource_group_name = data.azurerm_cosmosdb_account.pctasks.resource_group_name
+  account_name        = data.azurerm_cosmosdb_account.pctasks.name
+  # The "000000000002" role definition grants write permissions.
+  role_definition_id  = "${data.azurerm_cosmosdb_account.pctasks.id}/sqlRoleDefinitions/00000000-0000-0000-0000-000000000002"
+  principal_id        = var.task_sp_object_id
+  # scope               = azurerm_cosmosdb_account.lowlatency.id
+  scope               = "${data.azurerm_cosmosdb_account.pctasks.id}/dbs/${azurerm_cosmosdb_sql_database.pctasks.name}/colls/${azurerm_cosmosdb_sql_container.items.name}"
+
+}
