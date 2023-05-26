@@ -6,9 +6,6 @@ import pystac
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
-# from pctasks.core.pctasks.core.models.task import WaitTaskResult
-# from pctasks.core.pctasks.core.storage import StorageFactory
-# from pctasks.dataset.pctasks.dataset.collection import Collection
 
 
 ASSET_INFO = {
@@ -82,17 +79,3 @@ class S1GRDCollection(Collection):  # type: ignore
                 pass
 
         return [item]
-
-
-if __name__ == "__main__":
-    hrefs = [
-        "/Users/pjh/data/sentinel-1/grd/catalyst/S1A_EW_GRDM_1SDH_20230501T021635_20230501T021740_048334_05D023.json"
-    ]
-    for href in hrefs:
-        storage_factory = StorageFactory()
-        c = S1GRDCollection()
-        item = c.create_item(href, storage_factory)[0]
-        item.validate()
-        import json
-        with open(f"{item.id}.json", "w") as f:
-            json.dump(item.to_dict(), f, indent=4)
