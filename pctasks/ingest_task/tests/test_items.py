@@ -102,5 +102,5 @@ def test_ingest_ndjson_add_service_principal():
 
     if result.environment:
         assert "AZURE_TENANT_ID" not in result.environment
-        assert "AZURE_TENANT_ID" not in result.environment
-        assert "AZURE_TENANT_ID" not in result.environment
+        assert "AZURE_CLIENT_ID" not in result.environment
+        assert "AZURE_CLIENT_SECRET" not in result.environment

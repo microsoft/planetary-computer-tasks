@@ -5,7 +5,6 @@ This Azure Function dispatches updates to the `storage-events` container in
 CosmosDB to the appropriate Blob Storage Queue. It's expected that PCTasks
 workflows will scale in response to messages being sent to that queue.
 """
-import contextlib
 import logging
 import os
 import re
@@ -14,12 +13,12 @@ from typing import Optional
 import azure.functions as func
 import azure.identity.aio
 import azure.storage.queue.aio
+import pctasks_funcs_base
 
 from pctasks.core.models.event import StorageEvent
 
 # TODO: pre-commit-style validator for ensuring these queues exist.
 # TODO: Move to prefix / suffix rules?
-QUEUE_ENDPOINT = "https://pclowlatency.queue.core.windows.net/"
 
 RULES = [
     # GOES-GLM
@@ -77,23 +76,7 @@ async def main(documents: func.DocumentList) -> None:
     # TODO: local.settings.json
     account_url = os.environ["FUNC_STORAGE_QUEUE_ACCOUNT_URL"]
     credential = os.environ.get("FUNC_STORAGE_ACCOUNT_KEY", None)
-
-    if credential is None:
-        credential = azure.identity.aio.DefaultAzureCredential()  # type: ignore
-        credential_ctx = credential
-    else:
-        credential = {  # type: ignore
-            "account_name": os.environ["FUNC_STORAGE_ACCOUNT_NAME"],
-            "account_key": credential,
-        }
-        # async support for contextlib.nullcontext is new in 3.10
-        # credential_ctx = contextlib.nullcontext
-
-        @contextlib.asynccontextmanager
-        async def credential_ctx_():  # type: ignore
-            yield
-
-        credential_ctx = credential_ctx_()
+    credential_ctx = pctasks_funcs_base.credential_context()
 
     async with credential_ctx:  # type: ignore
         for document in documents:

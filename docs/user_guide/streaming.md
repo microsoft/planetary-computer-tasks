@@ -12,7 +12,8 @@ from each per-dataset queue.
 A streaming workflow is similar to other pctasks workflows, but requires a few
 additional properties on the streaming tasks within the workflow:
 
-1. The task must define the streaming-related properties using `args`:
+1. The workflow should have a single job with a single task.
+2. The task must define the streaming-related properties using `args`:
 
    - `queue_url`
    - `visibility_timeout`
@@ -21,7 +22,7 @@ additional properties on the streaming tasks within the workflow:
    - `polling_interval`
    - `trigger_queue_length`
 
-2. The workflow should set the top-level `is_streaming` property to `true`.
+3. The workflow should set the top-level `is_streaming` property to `true`.
 
 See
 <https://github.com/microsoft/planetary-computer-tasks/blob/main/examples/workflow.yaml>
