@@ -9,16 +9,15 @@ code:
   requirements: ${{ local.path(./requirements.txt) }}
 
 environment:
-  azure_tenant_id: ${{ secrets.task-tenant-id }}
-  azure_client_id: ${{ secrets.task-client-id }}
-  azure_client_secret: ${{ secrets.task-client-secret }}
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
 
 collections:
   - id: sentinel-1-rtc
     template: ${{ local.path(./collection) }}
     class: s1rtc:S1RTCCollection
     asset_storage:
-      # - uri: blob://sentinel1euwestrtc/sentinel1-grd-rtc-stac
       - uri: blob://sentinel1euwestrtc/sentinel1-grd-rtc-stac/GRD/2023/5/  # testing
         token: ${{ pc.get_token(sentinel1euwestrtc, sentinel1-grd-rtc-stac) }}
         chunks:
