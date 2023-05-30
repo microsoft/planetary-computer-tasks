@@ -41,6 +41,7 @@ pctasks:
   run:
     task_runner_type: "batch"
     streaming_task_namespace: "pc"
+    streaming_task_node_group: {{ tf.aks_streaming_task_node_group}}
 
     task_poll_seconds: 30
 

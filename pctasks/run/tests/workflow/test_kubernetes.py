@@ -17,6 +17,7 @@ def test_build_streaming_deployment():
         taskio_tenant_id="test-tenant-id",
         taskio_client_id="test-client-id",
         taskio_client_secret="test-client-secret",
+        node_group="pc-lowlatency",
     )
     labels = {
         "node_group": "pc-lowlatency",
@@ -75,6 +76,7 @@ def test_extra_env():
         taskio_tenant_id="test-tenant-id",
         taskio_client_id="test-client-id",
         taskio_client_secret="test-client-secret",
+        node_group="pc-lowlatency",
     )
     env = result.spec.template.spec.containers[0].env
     for var in env:

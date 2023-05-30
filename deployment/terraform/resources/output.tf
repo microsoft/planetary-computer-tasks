@@ -174,3 +174,9 @@ output "cosmosdb_url" {
 output "cosmosdb_key" {
   value = data.azurerm_cosmosdb_account.pctasks.primary_key
 }
+
+## AKS
+
+output "aks_streaming_task_node_group" {
+  value = var.aks_streaming_task_node_group
+}

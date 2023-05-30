@@ -36,7 +36,6 @@ resource "azurerm_linux_function_app" "pctasks" {
     # Sets the name of the Cosmos DB containers to watch dynamically, to enable changing during unit tests.
     "FUNC_WORKFLOWS_COLLECTION_NAME" = "workflows",
     "FUNC_WORKFLOW_RUNS_COLLECTION_NAME" = "workflow-runs",
-    "FUNC_WORKFLOWS_COLLECTION_NAME" = "workflows",
     "FUNC_STORAGE_EVENTS_COLLECTION_NAME" = "storage-events",
     "FUNC_ITEMS_COLLECTION_NAME" = "items",
   }

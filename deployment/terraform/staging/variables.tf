@@ -149,3 +149,10 @@ variable "pctasks_server_sp_client_secret" {
 variable "pctasks_server_sp_object_id" {
   type    = string
 }
+## AKS
+
+variable "aks_streaming_task_node_group" {
+  type        = string
+  default     = "pc-lowlatency"
+  description = "The name of the node group that will run streaming tasks"
+}

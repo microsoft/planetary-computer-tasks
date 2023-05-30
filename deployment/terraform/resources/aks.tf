@@ -68,8 +68,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "tasks" {
   max_count = var.aks_task_pool_max_count
 
   node_labels = {
-    # this should match the value in pctasks
-    node_group = "pc-lowlatency"
+    node_group = var.aks_streaming_task_node_group
   }
 
    lifecycle {

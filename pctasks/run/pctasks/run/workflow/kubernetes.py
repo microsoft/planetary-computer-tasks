@@ -86,6 +86,7 @@ def submit_task(
         run_settings.streaming_taskio_sp_tenant_id,
         run_settings.streaming_taskio_sp_client_id,
         run_settings.streaming_taskio_sp_client_secret,
+        run_settings.streaming_task_node_group,
     )
     scaler = build_streaming_scaler(task)
 
@@ -189,6 +190,7 @@ def build_streaming_deployment(
     taskio_tenant_id: str,
     taskio_client_id: str,
     taskio_client_secret: str,
+    node_group: str,
 ) -> V1Deployment:
     """
     Build, but do not submit, a Kubernetes Deployment for a streaming task.
@@ -233,7 +235,7 @@ def build_streaming_deployment(
     queue_name = get_name_prefix(task_definition.args["streaming_options"]["queue_url"])
 
     common_labels = {
-        "node_group": "pc-lowlatency",
+        "node_group": node_group,
         "planetarycomputer.microsoft.com/queue_url": queue_name,
     }
 

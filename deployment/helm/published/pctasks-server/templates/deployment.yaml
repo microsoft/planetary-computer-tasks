@@ -100,6 +100,8 @@ spec:
               value: "{{ .Values.pctasks.run.streaming_taskio_sp_client_secret }}"
             - name: PCTASKS_RUN__STREAMING_TASK_NAMESPACE
               value: "{{ .Values.pctasks.run.streaming_task_namespace }}"
+            - name: PCTASKS_RUN__STREAMING_TASK_NODE_GROUP
+              value: "{{ .Values.pctasks.run.streaming_task_node_group }}"
 
             # Argo
             - name: PCTASKS_RUN__ARGO_HOST

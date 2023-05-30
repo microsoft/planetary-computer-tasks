@@ -181,6 +181,14 @@ variable "argo_wf_node_group_name"{
   default ="argo-workflows"
 }
 
+## AKS
+
+variable "aks_streaming_task_node_group" {
+  type        = string
+  default     = "pc-lowlatency"
+  description = "The name of the node group that will run streaming tasks"
+}
+
 # ---------------
 # Local variables
 
