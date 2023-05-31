@@ -15,7 +15,7 @@ from pctasks.core.models.workflow import (
 )
 
 
-def test_workflow_runs_pagination(cosmosdb_containers):
+def test_workflow_runs_pagination(temp_cosmosdb_containers):
     workflow_id = "test-workflow"
     run_id_1 = "test-run-1"
     run_id_2 = "test-run-2"
@@ -43,12 +43,12 @@ def test_workflow_runs_pagination(cosmosdb_containers):
         ),
     )
 
-    with WorkflowsContainer(WorkflowRecord, db=cosmosdb_containers) as workflows:
+    with WorkflowsContainer(WorkflowRecord, db=temp_cosmosdb_containers) as workflows:
         workflows.put(workflow)
         assert workflows.get(workflow_id, partition_key=workflow_id)
 
         with WorkflowsContainer(
-            WorkflowRunRecord, db=cosmosdb_containers
+            WorkflowRunRecord, db=temp_cosmosdb_containers
         ) as workflow_runs:
             workflow_run_1 = WorkflowRunRecord(
                 workflow_id=workflow_id,

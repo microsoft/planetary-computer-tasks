@@ -88,10 +88,10 @@ def test_process_message(storage_event):
     assert item.collection_id
 
 
-@pytest.mark.usefixtures("cosmosdb_containers")
+@pytest.mark.usefixtures("temp_cosmosdb_containers")
 def test_streaming_create_items_task(storage_event):
     # This implicitly uses
-    # - azurite for queues, ...
+    # - azurite for queues
     task = streaming.StreamingCreateItemsTask()
     create_items = CreateItems()
 
@@ -256,7 +256,7 @@ def test_streaming_create_items_task_invalid_item(caplog):
     assert caplog.records
 
 
-@pytest.mark.usefixtures("cosmosdb_containers")
+@pytest.mark.usefixtures("temp_cosmosdb_containers")
 def test_streaming_create_items_handles_errors(storage_event):
     task = streaming.StreamingCreateItemsTask()
     create_items = BuggyCreateItems()
