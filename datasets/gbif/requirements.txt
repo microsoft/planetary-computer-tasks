@@ -1,0 +1,6 @@
+git+https://github.com/TomAugspurger/gbif
+git+https://github.com/TomAugspurger/stac-table
+dask
+dask-geopandas
+pytest
+adlfs

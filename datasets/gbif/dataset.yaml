@@ -1,0 +1,29 @@
+id: gbif
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./gbif.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: gbif
+    template: ${{ local.path(./collection/gbif) }}
+    token: ${{ pc.get_token(ai4edataeuwest, gbif) }}
+    class: gbif:GBIFCollection
+    asset_storage:
+      - uri: blob://ai4edataeuwest/gbif/
+        chunks:
+          options:
+            list_folders: true
+            min_depth: 2
+            max_depth: 2
+    chunk_storage:
+      uri: blob://ai4edataeuwest/gbif-etl-data/pctasks-chunks
