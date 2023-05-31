@@ -76,7 +76,7 @@ async def main(documents: func.DocumentList) -> None:
     # TODO: local.settings.json
     account_url = os.environ["FUNC_STORAGE_QUEUE_ACCOUNT_URL"]
     credential = os.environ.get("FUNC_STORAGE_ACCOUNT_KEY", None)
-    credential_ctx = pctasks_funcs_base.credential_context()
+    credential, credential_ctx = pctasks_funcs_base.credential_context(credential)
 
     async with credential_ctx:  # type: ignore
         for document in documents:

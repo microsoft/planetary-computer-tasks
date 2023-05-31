@@ -14,7 +14,7 @@ async def main(documents: func.DocumentList) -> None:
 
     account_url = os.environ["FUNC_STORAGE_QUEUE_ACCOUNT_URL"]
     credential = os.environ.get("FUNC_STORAGE_ACCOUNT_KEY", None)
-    credential_ctx = pctasks_funcs_base.credential_context()
+    credential, credential_ctx = pctasks_funcs_base.credential_context(credential)
 
     queue_name = "ingest"
     logging.info("Sending messages to %s/%s", account_url, queue_name)

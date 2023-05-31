@@ -1,13 +1,13 @@
 import contextlib
 import os
-from typing import Optional
+from typing import Any, Optional, Tuple
 
 import azure.identity.aio
 
 
 def credential_context(
     credential: Optional[str],
-) -> contextlib.AbstractAsyncContextManager:
+) -> Tuple[Any, contextlib.AbstractAsyncContextManager]:
     """
     Get an async credential context.
     """
@@ -29,4 +29,4 @@ def credential_context(
         credential_ctx_ = nullcontext()
 
     assert credential_ctx_ is not None
-    return credential_ctx_
+    return credential, credential_ctx_

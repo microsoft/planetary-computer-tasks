@@ -93,7 +93,7 @@ pctasks:
     # The namespace to use for Streaming Task pods
     streaming_task_namespace: "pc"
     # The node group to use for Streaming Task pods
-    streaming_task_node_group: {{ tf.aks_streaming_task_node_group}}
+    streaming_task_node_group: "pc-lowlatency"
 
     # Workflow runner type, one of:
     #  argo: Run the workflow runner in Argo
