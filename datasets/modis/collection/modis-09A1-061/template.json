@@ -1,0 +1,408 @@
+{
+    "id": "modis-09A1-061",
+    "type": "Collection",
+    "links": [
+        {
+            "rel": "help",
+            "href": "https://lpdaac.usgs.gov/documents/925/MOD09_User_Guide_V61.pdf",
+            "title": "MOD09 User Guide"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://ladsweb.modaps.eosdis.nasa.gov/filespec/MODIS/61/MOD09A1",
+            "title": "MOD09A1 file specification"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://ladsweb.modaps.eosdis.nasa.gov/filespec/MODIS/61/MYD09A1",
+            "title": "MYD09A1 file specification"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.5067/MODIS/MOD09A1.061",
+            "title": "LP DAAC - MOD09A1"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.5067/MODIS/MYD09A1.061",
+            "title": "LP DAAC - MYD09A1"
+        },
+        {
+            "rel": "license",
+            "href": "https://lpdaac.usgs.gov/data/data-citation-and-policies/",
+            "title": "LP DAAC - Data Citation and Policies"
+        }
+    ],
+    "title": "MODIS Surface Reflectance 8-Day (500m)",
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/modis-09A1-061.png",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "MODIS Surface Reflectance 8-Day (500m) thumbnail"
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/modis-09A1-061.parquet",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "MS"
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            }
+        }
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2000-02-18T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "NASA",
+        "MODIS",
+        "Satellite",
+        "Imagery",
+        "Global",
+        "Reflectance",
+        "MOD09A1",
+        "MYD09A1"
+    ],
+    "providers": [
+        {
+            "url": "https://lpdaac.usgs.gov/",
+            "name": "NASA LP DAAC at the USGS EROS Center",
+            "roles": [
+                "producer",
+                "licensor",
+                "processor"
+            ]
+        },
+        {
+            "url": "https://planetarycomputer.microsoft.com",
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ]
+        }
+    ],
+    "summaries": {
+        "platform": [
+            "aqua",
+            "terra"
+        ],
+        "instruments": [
+            "modis"
+        ]
+    },
+    "description": "The Moderate Resolution Imaging Spectroradiometer (MODIS) 09A1 Version 6.1 product provides an estimate of the surface spectral reflectance of MODIS Bands 1 through 7 corrected for atmospheric conditions such as gasses, aerosols, and Rayleigh scattering. Along with the seven 500 meter (m) reflectance bands are two quality layers and four observation bands. For each pixel, a value is selected from all the acquisitions within the 8-day composite period. The criteria for the pixel choice include cloud and solar zenith. When several acquisitions meet the criteria the pixel with the minimum channel 3 (blue) value is used.",
+    "item_assets": {
+        "hdf": {
+            "type": "application/x-hdf",
+            "roles": [
+                "data"
+            ],
+            "title": "Source data containing all bands"
+        },
+        "metadata": {
+            "type": "application/xml",
+            "roles": [
+                "metadata"
+            ],
+            "title": "Federal Geographic Data Committee (FGDC) Metadata"
+        },
+        "sur_refl_b01": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data",
+                "reflectance"
+            ],
+            "title": "Surface Reflectance Band 1 (620-670 nm)",
+            "eo:bands": [
+                {
+                    "name": "sur_refl_b01",
+                    "common_name": "red",
+                    "center_wavelength": 0.645,
+                    "full_width_half_max": 0.5
+                }
+            ],
+            "raster:bands": [
+                {
+                    "scale": 0.0001,
+                    "data_type": "int16",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "sur_refl_b02": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data",
+                "reflectance"
+            ],
+            "title": "Surface Reflectance Band 2 (841-876 nm)",
+            "eo:bands": [
+                {
+                    "name": "sur_refl_b02",
+                    "common_name": "nir08",
+                    "center_wavelength": 0.8585,
+                    "full_width_half_max": 0.35
+                }
+            ],
+            "raster:bands": [
+                {
+                    "scale": 0.0001,
+                    "data_type": "int16",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "sur_refl_b03": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data",
+                "reflectance"
+            ],
+            "title": "Surface Reflectance Band 3 (459-479 nm)",
+            "eo:bands": [
+                {
+                    "name": "sur_refl_b03",
+                    "common_name": "blue",
+                    "center_wavelength": 0.469,
+                    "full_width_half_max": 0.2
+                }
+            ],
+            "raster:bands": [
+                {
+                    "scale": 0.0001,
+                    "data_type": "int16",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "sur_refl_b04": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data",
+                "reflectance"
+            ],
+            "title": "Surface Reflectance Band 4 (545-565 nm)",
+            "eo:bands": [
+                {
+                    "name": "sur_refl_b04",
+                    "common_name": "green",
+                    "center_wavelength": 0.555,
+                    "full_width_half_max": 0.2
+                }
+            ],
+            "raster:bands": [
+                {
+                    "scale": 0.0001,
+                    "data_type": "int16",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "sur_refl_b05": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data",
+                "reflectance"
+            ],
+            "title": "Surface Reflectance Band 5 (1230-1250 nm)",
+            "eo:bands": [
+                {
+                    "name": "sur_refl_b05",
+                    "common_name": "lwir12",
+                    "center_wavelength": 1.24,
+                    "full_width_half_max": 0.2
+                }
+            ],
+            "raster:bands": [
+                {
+                    "scale": 0.0001,
+                    "data_type": "int16",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "sur_refl_b06": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data",
+                "reflectance"
+            ],
+            "title": "Surface Reflectance Band 6 (1628-1652 nm)",
+            "eo:bands": [
+                {
+                    "name": "sur_refl_b06",
+                    "common_name": "swir16",
+                    "center_wavelength": 1.64,
+                    "full_width_half_max": 0.24
+                }
+            ],
+            "raster:bands": [
+                {
+                    "scale": 0.0001,
+                    "data_type": "int16",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "sur_refl_b07": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data",
+                "reflectance"
+            ],
+            "title": "Surface Reflectance Band 7 (2105-2155 nm)",
+            "eo:bands": [
+                {
+                    "name": "sur_refl_b07",
+                    "common_name": "swir22",
+                    "center_wavelength": 2.13,
+                    "full_width_half_max": 0.5
+                }
+            ],
+            "raster:bands": [
+                {
+                    "scale": 0.0001,
+                    "data_type": "int16",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "sur_refl_raz": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "MODIS relative azimuth angle",
+            "raster:bands": [
+                {
+                    "unit": "Degree",
+                    "scale": 0.01,
+                    "data_type": "int16",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "sur_refl_szen": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "MODIS solar zenith angle",
+            "raster:bands": [
+                {
+                    "unit": "Degree",
+                    "scale": 0.01,
+                    "data_type": "int16",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "sur_refl_vzen": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "MODIS view zenith angle",
+            "raster:bands": [
+                {
+                    "unit": "Degree",
+                    "scale": 0.01,
+                    "data_type": "int16",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "sur_refl_qc_500m": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Surface reflectance 500m band quality control flags",
+            "raster:bands": [
+                {
+                    "data_type": "uint32",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "sur_refl_state_500m": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Surface reflectance 500m state flags",
+            "raster:bands": [
+                {
+                    "data_type": "uint16",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "sur_refl_day_of_year": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Day of the year for the pixel",
+            "raster:bands": [
+                {
+                    "unit": "Julian Day",
+                    "data_type": "uint16",
+                    "spatial_resolution": 500
+                }
+            ]
+        }
+    },
+    "stac_version": "1.0.0",
+    "msft:group_id": "modis",
+    "msft:container": "modis-061",
+    "stac_extensions": [
+        "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "sci:publications": [
+        {
+            "doi": "10.5067/MODIS/MOD09A1.061",
+            "citation": "Vermote, E. (2021). <i>MODIS/Terra Surface Reflectance 8-Day L3 Global 500m SIN Grid V061</i> [Data set]. NASA EOSDIS Land Processes DAAC. https://doi.org/10.5067/MODIS/MOD09A1.061"
+        },
+        {
+            "doi": "10.5067/MODIS/MYD09A1.061",
+            "citation": "Vermote, E. (2021). <i>MODIS/Aqua Surface Reflectance 8-Day L3 Global 500m SIN Grid V061</i> [Data set]. NASA EOSDIS Land Processes DAAC. https://doi.org/10.5067/MODIS/MYD09A1.061"
+        }
+    ],
+    "msft:storage_account": "modiseuwest",
+    "msft:short_description": "MODIS Surface Reflectance 8-Day (500m)",
+    "msft:region": "westeurope"
+}

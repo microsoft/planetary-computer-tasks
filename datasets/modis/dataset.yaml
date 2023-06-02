@@ -1,8 +1,8 @@
 id: modis
-image: ${{ args.registry }}/pctasks-basic:latest
+image: ${{ args.registry }}/pctasks-modis:latest
 
 args:
-  - registry
+- registry
 
 code:
   src: ${{ local.path(./modis.py) }}
@@ -11,24 +11,391 @@ environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
   AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
   AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
-  APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
 
-# Just stub collections update the collection metadata
 collections:
+  - id: modis-09A1-061
+    template: ${{ local.path(./collection/modis-09A1-061/) }}
+    class: modis:MODISCollection 
+    asset_storage:
+      # - uri: blob://modiseuwest/modis-061/MOD09A1/
+      - uri: blob://modiseuwest/modis-061/MOD09A1/00/08/2000049/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+      # - uri: blob://modiseuwest/modis-061/MYD09A1/
+      - uri: blob://modiseuwest/modis-061/MYD09A1/00/08/2002185/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+    chunk_storage:
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/09A1/
+
+  - id: modis-09Q1-061
+    template: ${{ local.path(./collection/modis-09Q1-061/) }}
+    class: modis:MODISCollection 
+    asset_storage:
+      - uri: blob://modiseuwest/modis-061/MOD09Q1/00/08/2000049/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+      - uri: blob://modiseuwest/modis-061/MYD09Q1/00/08/2002185/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+    chunk_storage:
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/09Q1/
+
   - id: modis-10A1-061
     template: ${{ local.path(./collection/modis-10A1-061/) }}
-    class: ""
+    class: modis:MODISCollection 
     asset_storage:
-      - uri: ""
-      - uri: ""
+      - uri: blob://modiseuwest/modis-061/MOD10A1/00/08/2000055/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+      - uri: blob://modiseuwest/modis-061/MYD10A1/00/08/2002185/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
     chunk_storage:
-      uri: ""
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/10A1/
+
   - id: modis-10A2-061
     template: ${{ local.path(./collection/modis-10A2-061/) }}
-    class: ""
+    class: modis:MODISCollection 
     asset_storage:
-      - uri: ""
-      - uri: ""
+      - uri: blob://modiseuwest/modis-061/MOD10A2/00/08/2000049/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+      - uri: blob://modiseuwest/modis-061/MYD10A2/00/08/2002185/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
     chunk_storage:
-      uri: ""
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/10A2/
 
+  - id: modis-11A1-061
+    template: ${{ local.path(./collection/modis-11A1-061/) }}
+    class: modis:MODISCollection 
+    asset_storage:
+      - uri: blob://modiseuwest/modis-061/MOD11A1/00/08/2000055/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+      - uri: blob://modiseuwest/modis-061/MYD11A1/00/08/2002186/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+    chunk_storage:
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/11A1/
+
+  - id: modis-11A2-061
+    template: ${{ local.path(./collection/modis-11A2-061/) }}
+    class: modis:MODISCollection 
+    asset_storage:
+      - uri: blob://modiseuwest/modis-061/MOD11A2/00/08/2000049/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+      - uri: blob://modiseuwest/modis-061/MYD11A2/00/08/2002185/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+    chunk_storage:
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/11A2/
+
+  - id: modis-13A1-061
+    template: ${{ local.path(./collection/modis-13A1-061/) }}
+    class: modis:MODISCollection 
+    asset_storage:
+      - uri: blob://modiseuwest/modis-061/MOD13A1/00/08/2000049/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+      - uri: blob://modiseuwest/modis-061/MYD13A1/00/08/2002185/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+    chunk_storage:
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/13A1/
+
+  - id: modis-13Q1-061
+    template: ${{ local.path(./collection/modis-13Q1-061/) }}
+    class: modis:MODISCollection 
+    asset_storage:
+      - uri: blob://modiseuwest/modis-061/MOD13Q1/00/08/2000049/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+      - uri: blob://modiseuwest/modis-061/MYD13Q1/00/08/2002185/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+    chunk_storage:
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/13Q1/
+
+  - id: modis-14A1-061
+    template: ${{ local.path(./collection/modis-14A1-061/) }}
+    class: modis:MODISCollection 
+    asset_storage:
+      - uri: blob://modiseuwest/modis-061/MOD14A1/00/08/2000049/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+      - uri: blob://modiseuwest/modis-061/MYD14A1/00/08/2002185/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+    chunk_storage:
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/14A1/
+
+  - id: modis-14A2-061
+    template: ${{ local.path(./collection/modis-14A2-061/) }}
+    class: modis:MODISCollection 
+    asset_storage:
+      - uri: blob://modiseuwest/modis-061/MOD14A2/00/08/2000049/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+      - uri: blob://modiseuwest/modis-061/MYD14A2/00/08/2002185/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+    chunk_storage:
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/14A2/
+
+  - id: modis-15A2H-061
+    template: ${{ local.path(./collection/modis-15A2H-061/) }}
+    class: modis:MODISCollection 
+    asset_storage:
+      - uri: blob://modiseuwest/modis-061/MOD15A2H/00/08/2000049/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+      - uri: blob://modiseuwest/modis-061/MYD15A2H/00/08/2002185/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+      - uri: blob://modiseuwest/modis-061/MCD15A2H/00/08/2002185/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+    chunk_storage:
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/15A2H/
+
+  - id: modis-15A3H-061
+    template: ${{ local.path(./collection/modis-15A3H-061/) }}
+    class: modis:MODISCollection 
+    asset_storage:
+      - uri: blob://modiseuwest/modis-061/MCD15A3H/00/08/2002185/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+    chunk_storage:
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/15A3H/
+
+  - id: modis-16A3GF-061
+    template: ${{ local.path(./collection/modis-16A3GF-061/) }}
+    class: modis:MODISCollection 
+    asset_storage:
+      - uri: blob://modiseuwest/modis-061/MOD16A3GF/00/08/2000049/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+      - uri: blob://modiseuwest/modis-061/MYD16A3GF/00/08/2002185/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+    chunk_storage:
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/16A3GF/
+
+  - id: modis-17A2H-061
+    template: ${{ local.path(./collection/modis-17A2H-061/) }}
+    class: modis:MODISCollection 
+    asset_storage:
+      - uri: blob://modiseuwest/modis-061/MOD17A2H/00/08/2021001/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+      - uri: blob://modiseuwest/modis-061/MYD17A2H/00/08/2021001/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+    chunk_storage:
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/17A2H/
+
+  - id: modis-17A2HGF-061
+    template: ${{ local.path(./collection/modis-17A2HGF-061/) }}
+    class: modis:MODISCollection 
+    asset_storage:
+      - uri: blob://modiseuwest/modis-061/MOD17A2HGF/00/08/2000009/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+      - uri: blob://modiseuwest/modis-061/MYD17A2HGF/00/08/2002001/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+    chunk_storage:
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/17A2HGF/
+
+  - id: modis-17A3HGF-061
+    template: ${{ local.path(./collection/modis-17A3HGF-061/) }}
+    class: modis:MODISCollection 
+    asset_storage:
+      - uri: blob://modiseuwest/modis-061/MOD17A3HGF/00/08/2001001/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+      - uri: blob://modiseuwest/modis-061/MYD17A3HGF/00/08/2002185/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+    chunk_storage:
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/17A3HGF/
+
+  - id: modis-21A2-061
+    template: ${{ local.path(./collection/modis-21A2-061/) }}
+    class: modis:MODISCollection 
+    asset_storage:
+      - uri: blob://modiseuwest/modis-061/MOD21A2/00/08/2000049/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+      - uri: blob://modiseuwest/modis-061/MYD21A2/00/08/2002185/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+    chunk_storage:
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/21A2/
+
+  - id: modis-43A4-061
+    template: ${{ local.path(./collection/modis-43A4-061/) }}
+    class: modis:MODISCollection 
+    asset_storage:
+      - uri: blob://modiseuwest/modis-061/MCD43A4/00/08/2000055/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+    chunk_storage:
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/43A4/
+
+  - id: modis-64A1-061
+    template: ${{ local.path(./collection/modis-64A1-061/) }}
+    class: modis:MODISCollection 
+    asset_storage:
+      - uri: blob://modiseuwest/modis-061/MCD64A1/00/08/2000032/  # testing
+        token: ${{ pc.get_token(modiseuwest, modis-061) }}
+        chunks:
+          options:
+            extensions: [.hdf]
+            chunk_length: 10  # testing
+            limit: 20  # testing
+    chunk_storage:
+      uri: blob://modiseuwest/modis-061-etl-data/pctasks-chunks/64A1/

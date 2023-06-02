@@ -1,35 +1,60 @@
 {
-    "id": "modis-10A1-061",
+    "id": "modis-15A2H-061",
     "type": "Collection",
     "links": [
         {
-            "rel": "cite-as",
-            "href": "https://doi.org/10.5067/MODIS/MOD10A1.061",
-            "title": "MODIS/Terra Snow Cover Daily L3 Global 500m SIN Grid, Version 61"
+            "rel": "help",
+            "href": "https://lpdaac.usgs.gov/documents/926/MOD15_User_Guide_V61.pdf",
+            "title": "MOD15 User Guide"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://ladsweb.modaps.eosdis.nasa.gov/filespec/MODIS/61/MCD15A2H",
+            "title": "MCD15A2H file specification"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://ladsweb.modaps.eosdis.nasa.gov/filespec/MODIS/61/MOD15A2H",
+            "title": "MOD15A2H file specification"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://ladsweb.modaps.eosdis.nasa.gov/filespec/MODIS/61/MYD15A2H",
+            "title": "MYD15A2H file specification"
         },
         {
             "rel": "cite-as",
-            "href": "https://doi.org/10.5067/MODIS/MYD10A1.061",
-            "title": "MODIS/Aqua Snow Cover Daily L3 Global 500m SIN Grid, Version 61"
+            "href": "https://doi.org/10.5067/MODIS/MCD15A2H.061",
+            "title": "LP DAAC - MCD15A2H"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.5067/MODIS/MOD15A2H.061",
+            "title": "LP DAAC - MOD15A2H"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.5067/MODIS/MYD15A2H.061",
+            "title": "LP DAAC - MYD15A2H"
         },
         {
             "rel": "license",
-            "href": "https://nsidc.org/data/data-programs/nsidc-daac/citing-nsidc-daac",
-            "title": "Use and Copyright | National Snow and Ice Data Center"
+            "href": "https://lpdaac.usgs.gov/data/data-citation-and-policies/",
+            "title": "LP DAAC - Data Citation and Policies"
         }
     ],
-    "title": "MODIS Snow Cover Daily",
+    "title": "MODIS Leaf Area Index/FPAR 8-Day",
     "assets": {
         "thumbnail": {
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/modis-10A1-061.png",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/modis-15A2H-061.png",
             "type": "image/png",
             "roles": [
                 "thumbnail"
             ],
-            "title": "MODIS Snow Cover Daily thumbnail"
+            "title": "MODIS Leaf Area Index/FPAR 8-Day thumbnail"
         },
         "geoparquet-items": {
-            "href": "abfs://items/modis-10A1-061.parquet",
+            "href": "abfs://items/modis-15A2H-061.parquet",
             "type": "application/x-parquet",
             "roles": [
                 "stac-items"
@@ -59,7 +84,7 @@
         "temporal": {
             "interval": [
                 [
-                    "2000-02-24T00:00:00Z",
+                    "2002-07-04T00:00:00Z",
                     null
                 ]
             ]
@@ -71,14 +96,15 @@
         "MODIS",
         "Satellite",
         "Global",
-        "Snow",
-        "MOD10A1",
-        "MYD10A1"
+        "Vegetation",
+        "MCD15A2H",
+        "MOD15A2H",
+        "MYD15A2H"
     ],
     "providers": [
         {
-            "url": "https://nsidc.org",
-            "name": "National Snow and Ice Data Center",
+            "url": "https://lpdaac.usgs.gov/",
+            "name": "NASA LP DAAC at the USGS EROS Center",
             "roles": [
                 "producer",
                 "licensor",
@@ -103,7 +129,7 @@
             "modis"
         ]
     },
-    "description": "This global Level-3 (L3) data set provides a daily composite of snow cover and albedo derived from the 'MODIS Snow Cover 5-Min L2 Swath 500m' data set. Each data granule is a 10degx10deg tile projected to a 500 m sinusoidal grid.",
+    "description": "The Version 6.1 Moderate Resolution Imaging Spectroradiometer (MODIS) Level 4, Combined Fraction of Photosynthetically Active Radiation (FPAR), and Leaf Area Index (LAI) product is an 8-day composite dataset with 500 meter pixel size. The algorithm chooses the best pixel available from within the 8-day period. LAI is defined as the one-sided green leaf area per unit ground area in broadleaf canopies and as one-half the total needle surface area per unit ground area in coniferous canopies. FPAR is defined as the fraction of incident photosynthetically active radiation (400-700 nm) absorbed by the green elements of a vegetation canopy.",
     "item_assets": {
         "hdf": {
             "type": "application/x-hdf",
@@ -112,16 +138,18 @@
             ],
             "title": "Source data containing all bands"
         },
-        "NDSI": {
+        "Lai_500m": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
                 "data"
             ],
-            "title": "Raw NDSI values (i.e. prior to screening).",
+            "title": "Leaf Area Index",
+            "description": "The one-sided green leaf area per unit ground area in broadleaf canopies and as one-half the total needle surface area per unit ground area in coniferous canopies",
             "raster:bands": [
                 {
-                    "scale": 0.0001,
-                    "data_type": "int16",
+                    "unit": "m^2/m^2",
+                    "scale": 0.1,
+                    "data_type": "uint8",
                     "spatial_resolution": 500
                 }
             ]
@@ -133,12 +161,28 @@
             ],
             "title": "Federal Geographic Data Committee (FGDC) Metadata"
         },
-        "orbit_pnt": {
+        "Fpar_500m": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
                 "data"
             ],
-            "title": "Pointer to the orbit of the swath mapped into each grid cell.",
+            "title": "Fraction of Photosynthetically Active Radiation",
+            "description": "The fraction of incident photosynthetically active radiation (400-700 nm) absorbed by the green elements of a vegetation canopy.",
+            "raster:bands": [
+                {
+                    "unit": "Percent",
+                    "scale": 0.01,
+                    "data_type": "uint8",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "FparLai_QC": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Quality for FPAR and LAI",
             "raster:bands": [
                 {
                     "data_type": "uint8",
@@ -146,12 +190,12 @@
                 }
             ]
         },
-        "granule_pnt": {
+        "FparExtra_QC": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
                 "data"
             ],
-            "title": "Pointer for identifying the swath mapped into each grid cell.",
+            "title": "Extra detail Quality for FPAR and LAI",
             "raster:bands": [
                 {
                     "data_type": "uint8",
@@ -159,75 +203,31 @@
                 }
             ]
         },
-        "NDSI_Snow_Cover": {
+        "LaiStdDev_500m": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
                 "data"
             ],
-            "title": "Gridded NDSI snow cover and data flag values.",
+            "title": "Standard deviation of LAI",
             "raster:bands": [
                 {
+                    "unit": "m^2/m^2",
+                    "scale": 0.1,
                     "data_type": "uint8",
                     "spatial_resolution": 500
                 }
             ]
         },
-        "Snow_Albedo_Daily_Tile": {
+        "FparStdDev_500m": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
                 "data"
             ],
-            "title": "Daily snow albedo corresponding to the NDSI_Snow_Cover parameter.",
+            "title": "Standard deviation of FPAR",
             "raster:bands": [
                 {
-                    "data_type": "uint8",
-                    "spatial_resolution": 500
-                }
-            ]
-        },
-        "NDSI_Snow_Cover_Basic_QA": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "roles": [
-                "data"
-            ],
-            "title": "A general estimate of the quality of the algorithm result.",
-            "raster:bands": [
-                {
-                    "data_type": "uint8",
-                    "spatial_resolution": 500
-                }
-            ],
-            "classification:classes": [
-                {
-                    "value": 0,
-                    "description": "best"
-                },
-                {
-                    "value": 1,
-                    "description": "good"
-                },
-                {
-                    "value": 2,
-                    "description": "ok"
-                },
-                {
-                    "value": 3,
-                    "description": "poor (not used)"
-                },
-                {
-                    "value": 4,
-                    "description": "other (not used)"
-                }
-            ]
-        },
-        "NDSI_Snow_Cover_Algorithm_Flags_QA": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "roles": [
-                "data"
-            ],
-            "title": "Algorithm-specific bit flags set for data screens and for inland water.",
-            "raster:bands": [
-                {
+                    "unit": "Percent",
+                    "scale": 0.01,
                     "data_type": "uint8",
                     "spatial_resolution": 500
                 }
@@ -238,7 +238,6 @@
     "msft:group_id": "modis",
     "msft:container": "modis-061",
     "stac_extensions": [
-        "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
         "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
         "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
         "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
@@ -246,15 +245,19 @@
     ],
     "sci:publications": [
         {
-            "doi": "10.5067/MODIS/MOD10A1.061",
-            "citation": "Hall, D. K., &amp; Riggs, G. A. (2021). <i>MODIS/Aqua Snow Cover Daily L3 Global 500m Grid, Version 61</i> [Data set]. NASA National Snow and Ice Data Center DAAC. https://doi.org/10.5067/MODIS/MOD10A1.061"
+            "doi": "10.5067/MODIS/MCD15A2H.061",
+            "citation": "Myneni, R., Knyazikhin, Y., &amp; Park, T. (2021). <i>MODIS/Terra+Aqua Leaf Area Index/FPAR 8-Day L4 Global 500m SIN Grid V061</i> [Data set]. NASA EOSDIS Land Processes DAAC. https://doi.org/10.5067/MODIS/MCD15A2H.061"
         },
         {
-            "doi": "10.5067/MODIS/MYD10A1.061",
-            "citation": "Hall, D. K., &amp; Riggs, G. A. (2021). <i>MODIS/Aqua Snow Cover Daily L3 Global 500m Grid, Version 61</i> [Data set]. NASA National Snow and Ice Data Center DAAC. https://doi.org/10.5067/MODIS/MYD10A1.061"
+            "doi": "10.5067/MODIS/MOD15A2H.061",
+            "citation": "Myneni, R., Knyazikhin, Y., &amp; Park, T. (2021). <i>MODIS/Terra Leaf Area Index/FPAR 8-Day L4 Global 500m SIN Grid V061</i> [Data set]. NASA EOSDIS Land Processes DAAC. https://doi.org/10.5067/MODIS/MOD15A2H.061"
+        },
+        {
+            "doi": "10.5067/MODIS/MYD15A2H.061",
+            "citation": "Myneni, R., Knyazikhin, Y., &amp; Park, T. (2021). <i>MODIS/Aqua Leaf Area Index/FPAR 8-Day L4 Global 500m SIN Grid V061</i> [Data set]. NASA EOSDIS Land Processes DAAC. https://doi.org/10.5067/MODIS/MYD15A2H.061"
         }
     ],
     "msft:storage_account": "modiseuwest",
-    "msft:short_description": "MODIS Snow Cover Daily",
+    "msft:short_description": "MODIS Leaf Area Index/FPAR 8-Day",
     "msft:region": "westeurope"
 }
