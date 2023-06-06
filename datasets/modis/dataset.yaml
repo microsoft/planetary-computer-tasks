@@ -17,16 +17,14 @@ collections:
     template: ${{ local.path(./collection/modis-09A1-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      # - uri: blob://modiseuwest/modis-061/MOD09A1/
-      - uri: blob://modiseuwest/modis-061/MOD09A1/00/08/2000049/  # testing
+      - uri: blob://modiseuwest/modis-061/MOD09A1/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
             extensions: [.hdf]
             chunk_length: 10  # testing
             limit: 20  # testing
-      # - uri: blob://modiseuwest/modis-061/MYD09A1/
-      - uri: blob://modiseuwest/modis-061/MYD09A1/00/08/2002185/  # testing
+      - uri: blob://modiseuwest/modis-061/MYD09A1/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -40,14 +38,14 @@ collections:
     template: ${{ local.path(./collection/modis-09Q1-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MOD09Q1/00/08/2000049/  # testing
+      - uri: blob://modiseuwest/modis-061/MOD09Q1/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
             extensions: [.hdf]
             chunk_length: 10  # testing
             limit: 20  # testing
-      - uri: blob://modiseuwest/modis-061/MYD09Q1/00/08/2002185/  # testing
+      - uri: blob://modiseuwest/modis-061/MYD09Q1/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -61,14 +59,14 @@ collections:
     template: ${{ local.path(./collection/modis-10A1-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MOD10A1/00/08/2000055/  # testing
+      - uri: blob://modiseuwest/modis-061/MOD10A1/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
             extensions: [.hdf]
             chunk_length: 10  # testing
             limit: 20  # testing
-      - uri: blob://modiseuwest/modis-061/MYD10A1/00/08/2002185/  # testing
+      - uri: blob://modiseuwest/modis-061/MYD10A1/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -82,14 +80,14 @@ collections:
     template: ${{ local.path(./collection/modis-10A2-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MOD10A2/00/08/2000049/  # testing
+      - uri: blob://modiseuwest/modis-061/MOD10A2/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
             extensions: [.hdf]
             chunk_length: 10  # testing
             limit: 20  # testing
-      - uri: blob://modiseuwest/modis-061/MYD10A2/00/08/2002185/  # testing
+      - uri: blob://modiseuwest/modis-061/MYD10A2/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -103,14 +101,14 @@ collections:
     template: ${{ local.path(./collection/modis-11A1-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MOD11A1/00/08/2000055/  # testing
+      - uri: blob://modiseuwest/modis-061/MOD11A1/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
             extensions: [.hdf]
             chunk_length: 10  # testing
             limit: 20  # testing
-      - uri: blob://modiseuwest/modis-061/MYD11A1/00/08/2002186/  # testing
+      - uri: blob://modiseuwest/modis-061/MYD11A1/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -124,14 +122,14 @@ collections:
     template: ${{ local.path(./collection/modis-11A2-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MOD11A2/00/08/2000049/  # testing
+      - uri: blob://modiseuwest/modis-061/MOD11A2/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
             extensions: [.hdf]
             chunk_length: 10  # testing
             limit: 20  # testing
-      - uri: blob://modiseuwest/modis-061/MYD11A2/00/08/2002185/  # testing
+      - uri: blob://modiseuwest/modis-061/MYD11A2/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -145,14 +143,14 @@ collections:
     template: ${{ local.path(./collection/modis-13A1-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MOD13A1/00/08/2000049/  # testing
+      - uri: blob://modiseuwest/modis-061/MOD13A1/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
             extensions: [.hdf]
             chunk_length: 10  # testing
             limit: 20  # testing
-      - uri: blob://modiseuwest/modis-061/MYD13A1/00/08/2002185/  # testing
+      - uri: blob://modiseuwest/modis-061/MYD13A1/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -166,14 +164,14 @@ collections:
     template: ${{ local.path(./collection/modis-13Q1-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MOD13Q1/00/08/2000049/  # testing
+      - uri: blob://modiseuwest/modis-061/MOD13Q1/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
             extensions: [.hdf]
             chunk_length: 10  # testing
             limit: 20  # testing
-      - uri: blob://modiseuwest/modis-061/MYD13Q1/00/08/2002185/  # testing
+      - uri: blob://modiseuwest/modis-061/MYD13Q1/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -187,14 +185,14 @@ collections:
     template: ${{ local.path(./collection/modis-14A1-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MOD14A1/00/08/2000049/  # testing
+      - uri: blob://modiseuwest/modis-061/MOD14A1/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
             extensions: [.hdf]
             chunk_length: 10  # testing
             limit: 20  # testing
-      - uri: blob://modiseuwest/modis-061/MYD14A1/00/08/2002185/  # testing
+      - uri: blob://modiseuwest/modis-061/MYD14A1/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -208,14 +206,14 @@ collections:
     template: ${{ local.path(./collection/modis-14A2-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MOD14A2/00/08/2000049/  # testing
+      - uri: blob://modiseuwest/modis-061/MOD14A2/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
             extensions: [.hdf]
             chunk_length: 10  # testing
             limit: 20  # testing
-      - uri: blob://modiseuwest/modis-061/MYD14A2/00/08/2002185/  # testing
+      - uri: blob://modiseuwest/modis-061/MYD14A2/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -229,21 +227,21 @@ collections:
     template: ${{ local.path(./collection/modis-15A2H-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MOD15A2H/00/08/2000049/  # testing
+      - uri: blob://modiseuwest/modis-061/MOD15A2H/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
             extensions: [.hdf]
             chunk_length: 10  # testing
             limit: 20  # testing
-      - uri: blob://modiseuwest/modis-061/MYD15A2H/00/08/2002185/  # testing
+      - uri: blob://modiseuwest/modis-061/MYD15A2H/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
             extensions: [.hdf]
             chunk_length: 10  # testing
             limit: 20  # testing
-      - uri: blob://modiseuwest/modis-061/MCD15A2H/00/08/2002185/  # testing
+      - uri: blob://modiseuwest/modis-061/MCD15A2H/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -257,7 +255,7 @@ collections:
     template: ${{ local.path(./collection/modis-15A3H-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MCD15A3H/00/08/2002185/  # testing
+      - uri: blob://modiseuwest/modis-061/MCD15A3H/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -271,14 +269,14 @@ collections:
     template: ${{ local.path(./collection/modis-16A3GF-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MOD16A3GF/00/08/2000049/  # testing
+      - uri: blob://modiseuwest/modis-061/MOD16A3GF/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
             extensions: [.hdf]
             chunk_length: 10  # testing
             limit: 20  # testing
-      - uri: blob://modiseuwest/modis-061/MYD16A3GF/00/08/2002185/  # testing
+      - uri: blob://modiseuwest/modis-061/MYD16A3GF/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -292,14 +290,14 @@ collections:
     template: ${{ local.path(./collection/modis-17A2H-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MOD17A2H/00/08/2021001/  # testing
+      - uri: blob://modiseuwest/modis-061/MOD17A2H/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
             extensions: [.hdf]
             chunk_length: 10  # testing
             limit: 20  # testing
-      - uri: blob://modiseuwest/modis-061/MYD17A2H/00/08/2021001/  # testing
+      - uri: blob://modiseuwest/modis-061/MYD17A2H/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -313,14 +311,14 @@ collections:
     template: ${{ local.path(./collection/modis-17A2HGF-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MOD17A2HGF/00/08/2000009/  # testing
+      - uri: blob://modiseuwest/modis-061/MOD17A2HGF/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
             extensions: [.hdf]
             chunk_length: 10  # testing
             limit: 20  # testing
-      - uri: blob://modiseuwest/modis-061/MYD17A2HGF/00/08/2002001/  # testing
+      - uri: blob://modiseuwest/modis-061/MYD17A2HGF/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -334,14 +332,14 @@ collections:
     template: ${{ local.path(./collection/modis-17A3HGF-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MOD17A3HGF/00/08/2001001/  # testing
+      - uri: blob://modiseuwest/modis-061/MOD17A3HGF/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
             extensions: [.hdf]
             chunk_length: 10  # testing
             limit: 20  # testing
-      - uri: blob://modiseuwest/modis-061/MYD17A3HGF/00/08/2002185/  # testing
+      - uri: blob://modiseuwest/modis-061/MYD17A3HGF/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -355,14 +353,14 @@ collections:
     template: ${{ local.path(./collection/modis-21A2-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MOD21A2/00/08/2000049/  # testing
+      - uri: blob://modiseuwest/modis-061/MOD21A2/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
             extensions: [.hdf]
             chunk_length: 10  # testing
             limit: 20  # testing
-      - uri: blob://modiseuwest/modis-061/MYD21A2/00/08/2002185/  # testing
+      - uri: blob://modiseuwest/modis-061/MYD21A2/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -376,7 +374,7 @@ collections:
     template: ${{ local.path(./collection/modis-43A4-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MCD43A4/00/08/2000055/  # testing
+      - uri: blob://modiseuwest/modis-061/MCD43A4/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
@@ -390,7 +388,7 @@ collections:
     template: ${{ local.path(./collection/modis-64A1-061/) }}
     class: modis:MODISCollection 
     asset_storage:
-      - uri: blob://modiseuwest/modis-061/MCD64A1/00/08/2000032/  # testing
+      - uri: blob://modiseuwest/modis-061/MCD64A1/
         token: ${{ pc.get_token(modiseuwest, modis-061) }}
         chunks:
           options:
