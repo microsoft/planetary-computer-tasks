@@ -3,12 +3,12 @@ import os
 from tempfile import TemporaryDirectory
 from typing import List, Union
 
-from azure.core.exceptions import ResourceNotFoundError
 import pystac
-import stactools.modis.stac
 import stactools.modis.cog
-from stactools.modis.file import File
+import stactools.modis.stac
+from azure.core.exceptions import ResourceNotFoundError
 from stactools.core.utils.antimeridian import Strategy
+from stactools.modis.file import File
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
@@ -37,9 +37,7 @@ class MODISCollection(Collection):  # type: ignore
             raise ValueError(f"{asset_uri} does not exist")
 
         prefix = os.path.dirname(asset_path)
-        cog_storage = storage_factory.get_storage(
-            os.path.join(COG_CONTAINER, prefix)
-        )
+        cog_storage = storage_factory.get_storage(os.path.join(COG_CONTAINER, prefix))
         cog_paths = list(cog_storage.list_files(extensions=[".tif"]))
         create_cogs = not cog_paths
         if cog_paths:
@@ -48,9 +46,7 @@ class MODISCollection(Collection):  # type: ignore
             logger.debug(f"No COGs found in {prefix}")
 
         with TemporaryDirectory() as temporary_directory:
-            file = File(
-                os.path.join(temporary_directory, os.path.basename(asset_uri))
-            )
+            file = File(os.path.join(temporary_directory, os.path.basename(asset_uri)))
             logger.debug(f"Downloading {asset_uri}")
             asset_storage.download_file(asset_path, file.hdf_href)
             logger.debug(f"Downloading {asset_uri}.xml")
