@@ -12,8 +12,10 @@ from pypgstac.db import PgstacDB
 
 from pctasks.cli.cli import setup_logging, setup_logging_for_module
 from pctasks.core.cosmos.container import CosmosDBContainer
-from pctasks.core.cosmos.containers.create_item_errors import CreateItemErrorsContainer
 from pctasks.core.cosmos.containers.items import ItemsContainer
+from pctasks.core.cosmos.containers.process_item_errors import (
+    ProcessItemErrorsContainer,
+)
 from pctasks.core.cosmos.containers.storage_events import StorageEventsContainer
 from pctasks.core.models.event import CreateItemErrorRecord, StorageEvent
 from pctasks.core.models.item import StacItemRecord
@@ -189,7 +191,7 @@ def cosmos_items_container():
 @pytest.fixture
 def cosmos_create_item_errors_container():
     logging.info("Connecting to create-item-errors cosmos container")
-    with CreateItemErrorsContainer(CreateItemErrorRecord) as cosmos_client:
+    with ProcessItemErrorsContainer(CreateItemErrorRecord) as cosmos_client:
         print(f"initialized storage-events container at {cosmos_client.name}")
         yield cosmos_client
 

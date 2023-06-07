@@ -25,8 +25,7 @@ CONTAINERS: List[Tuple[Callable[[CosmosDBSettings], str], str]] = [
     (lambda settings: settings.get_records_container_name(), "/type"),
     (lambda settings: settings.get_items_container_name(), "/stac_id"),
     (lambda settings: settings.get_storage_events_container_name(), "/id"),
-    (lambda settings: settings.get_create_item_errors_container_name(), "/id"),
-    (lambda settings: settings.get_ingest_item_errors_container_name(), "/id"),
+    (lambda settings: settings.get_process_item_errors_container_name(), "/id"),
 ]
 
 
@@ -316,7 +315,7 @@ def temp_cosmosdb_if_emulator(
                 cosmos_client.delete_database(db_name)
 
     else:
-        settings = settings.copy()
+        # settings = settings.copy()
         settings.test_container_suffix = uuid1().hex[:5]
         cosmos_client = settings.get_client()
         db = cosmos_client.get_database_client(settings.database)

@@ -4,6 +4,10 @@ import pathlib
 import pytest
 from pypgstac.db import PgstacDB
 
+from pctasks.core.cosmos.containers.process_item_errors import (
+    ProcessItemErrorsContainer,
+)
+from pctasks.core.models.event import IngestItemErrorRecord
 from pctasks.core.storage import StorageFactory
 from pctasks.dev.constants import get_azurite_named_key_credential
 from pctasks.dev.queues import TempQueue
@@ -72,3 +76,46 @@ def test_streaming_create_items_task(s1_grd_collection, document):
                     db.query("select * from items where collection = 'sentinel-1-grd'")
                 )
             assert len(results)
+
+
+def test_streaming_ingest_items_task_errors(
+    s1_grd_collection,
+    document,
+):
+    context = TaskContext(run_id="test", storage_factory=StorageFactory())
+
+    with ingest_test_environment():
+        # ingest collection
+        task = IngestTask()
+        input = IngestTaskInput(
+            content=IngestCollectionsInput(collections=[s1_grd_collection])
+        )
+        task.run(input, context)
+
+        with TempQueue() as queue_client:
+            # Put some invalid JSON in the queue to simulate bad data.
+            message = queue_client.send_message(
+                json.dumps(document["data"]["item"]) + "not-json"
+            )
+            task_input = streaming.StreamingIngestItemsInput(
+                streaming_options=StreamingTaskOptions(
+                    queue_url=queue_client.url,
+                    queue_credential=get_azurite_named_key_credential(),
+                    visibility_timeout=10,
+                    message_limit=1,
+                ),
+            )
+
+            # ingest items
+            task = streaming.StreamingIngestItemsTask()
+            task.run(task_input, context)
+
+            errors_container = ProcessItemErrorsContainer(IngestItemErrorRecord)
+
+            record_id = f"{message.id}:test:1"
+            with errors_container:
+                record = errors_container.get(record_id, record_id)
+                assert record is not None
+                assert record.run_id == "test"
+                assert record.attempt == 1
+                assert "JSONDecodeError" in record.traceback

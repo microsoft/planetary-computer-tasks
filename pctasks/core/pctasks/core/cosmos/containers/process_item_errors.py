@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Type
+from typing import Dict, Optional, Type, TypeVar
 
 from pydantic import BaseModel
 
@@ -9,9 +9,15 @@ from pctasks.core.cosmos.container import (
     TriggerType,
 )
 from pctasks.core.cosmos.settings import CosmosDBSettings
-from pctasks.core.models.item import ItemIngestErrorRecord
+from pctasks.core.models.event import CreateItemErrorRecord, IngestItemErrorRecord
 
-T = ItemIngestErrorRecord
+# Records that this container can hold
+T = TypeVar(
+    "T",
+    CreateItemErrorRecord,
+    IngestItemErrorRecord,
+)
+
 
 PARTITION_KEY = "/id"
 
@@ -20,9 +26,9 @@ STORED_PROCEDURES: Dict[ContainerOperation, Dict[Type[BaseModel], str]] = {}
 TRIGGERS: Dict[ContainerOperation, Dict[TriggerType, str]] = {}
 
 
-class IngestItemErrorsContainer(CosmosDBContainer[T]):
+class ProcessItemErrorsContainer(CosmosDBContainer[T]):
     """
-    CosmosDB Container for error records that failed to ingest into PgSTAC.
+    CosmosDB Container for error records from item creation or ingest.
     """
 
     def __init__(
@@ -32,9 +38,9 @@ class IngestItemErrorsContainer(CosmosDBContainer[T]):
         settings: Optional[CosmosDBSettings] = None,
     ) -> None:
         super().__init__(
-            lambda settings: settings.get_ingest_item_errors_container_name(),
+            lambda settings: settings.get_process_item_errors_container_name(),
             PARTITION_KEY,
-            model_type=model_type,
+            model_type=model_type,  # type: ignore[arg-type]
             db=db,
             settings=settings,
             stored_procedures=STORED_PROCEDURES,

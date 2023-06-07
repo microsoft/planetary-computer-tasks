@@ -73,20 +73,50 @@ class StorageEventRecord(StorageEvent, Record):
         return item
 
 
-class CreateItemErrorRecord(Record):
+class IngestItemErrorType(StrEnum):
+    """
+    Error types for when an item creation or ingest fails.
+    """
+
+    # We tried to load an invalid STAC item
+    INVALID_DATA = "InvalidData"
+    # We tried to load a STAC item, but pgstac failed
+    ITEM_INGEST = "ItemIngest"
+
+
+class BaseErrorRecord(Record):
+    id: str = Field(default_factory=lambda: uuid4().hex)
+    run_id: str
+    attempt: int
+    traceback: str
+
+    def get_id(self) -> str:
+        return self.id
+
+
+class CreateItemErrorRecord(BaseErrorRecord):
     """
     Error record for when an item creation fails.
     """
 
-    type: str = "CreateItemError"
-    id: str = Field(default_factory=lambda: uuid4().hex)
+    type: str = "CreateItem"
     input: StorageEvent
-    traceback: str
-    attempt: int
-    run_id: str
 
-    def get_id(self) -> str:
-        return self.id
+
+class IngestErrorType(StrEnum):
+    # We tried to load an invalid STAC item
+    INVALID_DATA = "InvalidData"
+    # We tried to load a STAC item, but pgstac failed
+    ITEM_INGEST = "ItemIngest"
+
+
+class IngestItemErrorRecord(BaseErrorRecord):
+    """
+    Error record for when item ingest fails.
+    """
+
+    type: IngestItemErrorType
+    input: str
 
 
 class STACItemEventType(StrEnum):

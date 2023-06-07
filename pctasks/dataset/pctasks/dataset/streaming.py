@@ -12,8 +12,10 @@ import azure.storage.queue
 import pydantic
 import pystac
 
-from pctasks.core.cosmos.containers.create_item_errors import CreateItemErrorsContainer
 from pctasks.core.cosmos.containers.items import ItemsContainer
+from pctasks.core.cosmos.containers.process_item_errors import (
+    ProcessItemErrorsContainer,
+)
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.event import (
     CreateItemErrorRecord,
@@ -86,7 +88,7 @@ class ExtraOptions(TypedDict):
     items_containers: Tuple[
         ItemsContainer[StacItemRecord],
         ItemsContainer[ItemUpdatedRecord],
-        CreateItemErrorsContainer,
+        ProcessItemErrorsContainer[CreateItemErrorRecord],
     ]
     create_items_function: Callable[[str, StorageFactory], List[pystac.Item]]
 
@@ -123,7 +125,7 @@ class StreamingCreateItemsTask(
         assert isinstance(input, StreamingCreateItemsInput)
         items_record_container = ItemsContainer(StacItemRecord)
         items_update_container = ItemsContainer(ItemUpdatedRecord)
-        create_item_errors_container = CreateItemErrorsContainer(CreateItemErrorRecord)
+        create_item_errors_container = ProcessItemErrorsContainer(CreateItemErrorRecord)
 
         create_items_function = input.create_items_function
         if isinstance(create_items_function, str):
