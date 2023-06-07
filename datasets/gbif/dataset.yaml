@@ -1,5 +1,5 @@
 id: gbif
-image: ${{ args.registry }}/pctasks-task-base:latest
+image: ${{ args.registry }}/pctasks-gbif:20230607.1
 
 args:
 - registry
