@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import Any, Dict, Optional
-from uuid import uuid4
 
 import pystac
 from pydantic import Field, validator
