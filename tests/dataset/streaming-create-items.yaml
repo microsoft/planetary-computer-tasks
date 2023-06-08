@@ -43,6 +43,7 @@ jobs:
         DB_CONNECTION_STRING: ${{ args.db_connection_string }}
         PCTASKS_COSMOSDB__URL: ${{ args.cosmosdb_url}}
         PCTASKS_COSMOSDB__KEY: ${{ args.cosmosdb_account_key}}
+
       schema_version: 1.0.0
 is_streaming: True
 schema_version: 1.0.0

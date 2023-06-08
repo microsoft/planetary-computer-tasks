@@ -350,6 +350,12 @@ def ingest_items_task(ingest_queue, conn_str_info, host_env):
             "account_key",
             ingest_queue.credential.account_key,
             "--arg",
+            "cosmosdb_url",
+            os.environ["PCTASKS_COSMOSDB__URL"],
+            "--arg",
+            "cosmosdb_account_key",
+            os.environ["PCTASKS_COSMOSDB__KEY"],
+            "--arg",
             "test_container_suffix",
             os.environ["PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX"],
         ]
@@ -593,7 +599,7 @@ def test_streaming(
         document_id, document_id, cosmos_create_item_errors_container
     )
     assert result is not None
-    assert result.type == "CreateItemError"
+    assert result.type == "CreateItem"
     assert "FileNotFoundError:" in result.traceback.strip().split("\n")[-1]
     assert result.attempt == 1
     assert result.run_id == process_items_run_id

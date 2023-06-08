@@ -122,7 +122,9 @@ class StreamingTaskMixin:
         max_messages = input.streaming_options.message_limit or math.inf
 
         logger.info(
-            "Processing messages from queue=%s", input.streaming_options.queue_url
+            "Starting streaming task. run_id=%s queue=%s",
+            context.run_id,
+            input.streaming_options.queue_url,
         )
 
         try:

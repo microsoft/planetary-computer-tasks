@@ -1,6 +1,8 @@
 name: "Streaming ingest items example"
 args:
 - db_connection_string
+- cosmosdb_url
+- cosmosdb_account_key
 - queue_url
 - account_name
 - account_key
@@ -29,9 +31,14 @@ jobs:
           AZURITE_PORT: 10000
           AZURITE_STORAGE_ACCOUNT: "devstoreaccount1"
           DB_CONNECTION_STRING: ${{ args.db_connection_string }}
+          PCTASKS_COSMOSDB__URL: ${{ args.cosmosdb_url}}
+          PCTASKS_COSMOSDB__KEY: ${{ args.cosmosdb_account_key}}
           PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX: ${{ args.test_container_suffix }}
       env:
         DB_CONNECTION_STRING: ${{ args.db_connection_string }}
+        PCTASKS_COSMOSDB__URL: ${{ args.cosmosdb_url}}
+        PCTASKS_COSMOSDB__KEY: ${{ args.cosmosdb_account_key}}
+
       schema_version: 1.0.0
 is_streaming: True
 schema_version: 1.0.0

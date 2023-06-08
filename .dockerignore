@@ -1,7 +1,7 @@
 .envrc
-.direnv
-__pycache__
-.mypy_cache
-.pytest_cache
-.terraform
-node_modules
+**/.direnv
+**/__pycache__
+**/.mypy_cache
+**/.pytest_cache
+**/.terraform
+**/node_modules

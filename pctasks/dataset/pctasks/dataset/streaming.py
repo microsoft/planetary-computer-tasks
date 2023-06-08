@@ -265,6 +265,7 @@ class StreamingCreateItemsTask(
             items_update_container.bulk_put(update_records)
 
         if err:
+            logger.info("Writing error id=%s", err.id)
             create_item_errors_container.put(err)
         logger.info("Persisted records.")
 

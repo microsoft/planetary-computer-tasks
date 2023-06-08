@@ -73,17 +73,6 @@ class StorageEventRecord(StorageEvent, Record):
         return item
 
 
-class IngestItemErrorType(StrEnum):
-    """
-    Error types for when an item creation or ingest fails.
-    """
-
-    # We tried to load an invalid STAC item
-    INVALID_DATA = "InvalidData"
-    # We tried to load a STAC item, but pgstac failed
-    ITEM_INGEST = "ItemIngest"
-
-
 class BaseErrorRecord(Record):
     id: str = Field(default_factory=lambda: uuid4().hex)
     run_id: str
@@ -115,7 +104,7 @@ class IngestItemErrorRecord(BaseErrorRecord):
     Error record for when item ingest fails.
     """
 
-    type: IngestItemErrorType
+    type: IngestErrorType
     input: str
 
 

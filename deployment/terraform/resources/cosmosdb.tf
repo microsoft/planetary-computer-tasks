@@ -101,16 +101,8 @@ resource "azurerm_cosmosdb_sql_container" "items" {
   partition_key_path  = "/stac_id"
 }
 
-resource "azurerm_cosmosdb_sql_container" "create-item-errors" {
-  name                = "create-item-errors"
-  resource_group_name = data.azurerm_cosmosdb_account.pctasks.resource_group_name
-  account_name        = data.azurerm_cosmosdb_account.pctasks.name
-  database_name       = azurerm_cosmosdb_sql_database.pctasks.name
-  partition_key_path  = "/id"
-}
-
-resource "azurerm_cosmosdb_sql_container" "ingest-item-errors" {
-  name                = "create-item-errors"
+resource "azurerm_cosmosdb_sql_container" "process-item-errors" {
+  name                = "process-item-errors"
   resource_group_name = data.azurerm_cosmosdb_account.pctasks.resource_group_name
   account_name        = data.azurerm_cosmosdb_account.pctasks.name
   database_name       = azurerm_cosmosdb_sql_database.pctasks.name
