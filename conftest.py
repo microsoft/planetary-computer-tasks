@@ -6,7 +6,7 @@ from pctasks.dev.cosmosdb import temp_cosmosdb_if_emulator
 from pctasks.core.cosmos.database import CosmosDBDatabase, CosmosDBSettings
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def temp_cosmosdb_containers() -> Iterator[CosmosDBDatabase]:
     """
     Temporary Cosmos DB containers for testing.
