@@ -1,5 +1,5 @@
 id: modis
-image: ${{ args.registry }}/pctasks-modis:20231613.1
+image: ${{ args.registry }}/pctasks-modis:20230613.1
 
 args:
 - registry
