@@ -24,7 +24,7 @@ logger.setLevel(logging.INFO)
 COG_CONTAINER = "blob://modiseuwest/modis-061-cogs/"
 
 
-class MODISCollection(Collection):  # type: ignore
+class MODISCollection(Collection):
     @classmethod
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
