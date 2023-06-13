@@ -3,6 +3,7 @@ image: ${{ args.registry }}/pctasks-goes-cmi:20230612.3
 
 args:
 - registry
+- extra-prefix
 
 code:
   src: ${{ local.path(./goes_cmi) }}
@@ -21,13 +22,12 @@ collections:
         token: ${{ pc.get_token(goeseuwest, noaa-goes16) }}
         chunks:
           splits:
-            # Note the 2023 prefix for optimizing asset chunk creation
-            - prefix: ABI-L2-MCMIPC/2023/  # CONUS
-              depth: 2
-            - prefix: ABI-L2-MCMIPM/2023/  # Mesoscale
-              depth: 2
-            - prefix: ABI-L2-MCMIPF/2023/  # Full Disk
-              depth: 2
+            - prefix: ABI-L2-MCMIPC/${{ args.extra-prefix }}  # CONUS
+              depth: 3  # daily
+            - prefix: ABI-L2-MCMIPM/${{ args.extra-prefix }}  # Mesoscale
+              depth: 3  # daily
+            - prefix: ABI-L2-MCMIPF/${{ args.extra-prefix }}  # Full Disk
+              depth: 3  # daily
           options:
             ends_with: .nc
       # # GOES-17 is parked
@@ -36,12 +36,12 @@ collections:
       #   chunks:
       #     splits:
       #       # Note the 2023 prefix for optimizing asset chunk creation
-      #       - prefix: ABI-L2-MCMIPC/2023/  # CONUS
-      #         depth: 2
-      #       - prefix: ABI-L2-MCMIPM/2023/  # Mesoscale
-      #         depth: 2
-      #       - prefix: ABI-L2-MCMIPF/2023/  # Full Disk
-      #         depth: 2
+      #       - prefix: ABI-L2-MCMIPC/${{ args.extra-prefix }}  # CONUS
+      #         depth: 3  # daily
+      #       - prefix: ABI-L2-MCMIPM/${{ args.extra-prefix }}  # Mesoscale
+      #         depth: 3  # daily
+      #       - prefix: ABI-L2-MCMIPF/${{ args.extra-prefix }}  # Full Disk
+      #         depth: 3  # daily
       #     options:
       #       ends_with: .nc
       - uri: blob://goeseuwest/noaa-goes18/
@@ -49,12 +49,12 @@ collections:
         chunks:
           splits:
             # Note the 2023 prefix for optimizing asset chunk creation
-            - prefix: ABI-L2-MCMIPC/2023/  # CONUS
-              depth: 2
-            - prefix: ABI-L2-MCMIPM/2023/  # Mesoscale
-              depth: 2
-            - prefix: ABI-L2-MCMIPF/2023/  # Full Disk
-              depth: 2
+            - prefix: ABI-L2-MCMIPC/${{ args.extra-prefix }}  # CONUS
+              depth: 3  # daily
+            - prefix: ABI-L2-MCMIPM/${{ args.extra-prefix }}  # Mesoscale
+              depth: 3  # daily
+            - prefix: ABI-L2-MCMIPF/${{ args.extra-prefix }}  # Full Disk
+              depth: 3  # daily
           options:
             ends_with: .nc
     chunk_storage:

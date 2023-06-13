@@ -21,3 +21,9 @@ GOES Cloud & Moisture Imagery
 
 - Note L32 in the Dockerfile. It pins Python, gdal, and numpy to older versions. Using Python=3.11 and unpinned gdal and numpy did not work for creating COGs in the Web Mercator (epsg:3857) projection.
 - Note the --force-reinstall --no-binary of rasterio on L70, which cleaned up some rasterio errors.
+
+## Extra args
+
+The `dataset.yaml` is expecting an extra argument named `extra-prefix` to be included in the pctasks call to filter chunk creation:
+
+`--arg extra-prefix "{year}/"`
