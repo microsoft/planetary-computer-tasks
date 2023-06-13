@@ -1,12 +1,12 @@
-import os
 import logging
+import os
 from typing import List, Union
 
 import pystac
-from stactools.landsat.constants import Sensor
-from stactools.landsat import stac
-from stactools.core.utils.antimeridian import Strategy
 from azure.core.exceptions import ResourceNotFoundError
+from stactools.core.utils.antimeridian import Strategy
+from stactools.landsat import stac
+from stactools.landsat.constants import Sensor
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
@@ -20,7 +20,7 @@ logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
 
-class LandsatC2Collection(Collection):  # type: ignore
+class LandsatC2Collection(Collection):
     @classmethod
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
