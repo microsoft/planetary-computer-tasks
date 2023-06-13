@@ -7,7 +7,6 @@ from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
 
-
 ASSET_INFO = {
     "vv": {
         "title": "VV: vertical transmit, vertical receive",
@@ -44,7 +43,7 @@ ASSET_INFO = {
 }
 
 
-class S1GRDCollection(Collection):  # type: ignore
+class S1GRDCollection(Collection):
     @classmethod
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
@@ -66,7 +65,9 @@ class S1GRDCollection(Collection):  # type: ignore
                 asset.description = ASSET_INFO[asset_key]["description"]
 
         # Remove EO extension
-        item.stac_extensions = [ext for ext in item.stac_extensions if "/eo/" not in ext]
+        item.stac_extensions = [
+            ext for ext in item.stac_extensions if "/eo/" not in ext
+        ]
 
         # Convert multipolygons to polygons if possible
         assert item.geometry

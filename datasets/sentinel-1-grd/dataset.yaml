@@ -1,12 +1,12 @@
 id: sentinel-1-grd
-image: ${{ args.registry }}/pctasks-task-base:latest
+image: ${{ args.registry }}/pctasks-sentinel-1-grd:20230613.1
 
 args:
 - registry
+- extra-prefix
 
 code:
   src: ${{ local.path(./s1grd.py) }}
-  requirements: ${{ local.path(./requirements.txt) }}
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -18,12 +18,14 @@ collections:
     template: ${{ local.path(./collection) }}
     class: s1grd:S1GRDCollection
     asset_storage:
-      - uri: blob://sentinel1euwest/s1-grd-stac/GRD/2023/5/  # testing
+      - uri: blob://sentinel1euwest/s1-grd-stac/GRD/
         token: ${{ pc.get_token(sentinel1euwest, s1-grd-stac) }}
         chunks:
+          splits:
+            - prefix: ${{ args.extra-prefix }}
+              depth: 3  # daily
           options:
             extension: [.json]
-            chunk_length: 5  # testing
-            limit: 10  # testing
+            chunk_length: 1000  # daily number of files is ~600-800
     chunk_storage:
       uri: blob://sentinel1euwest/s1-grd-etl-data/pctasks-chunks/

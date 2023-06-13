@@ -1,9 +1,7 @@
 from typing import List, Union
 
 import orjson
-from pctasks.core.utils import completely_flatten
 import pystac
-
 from pystac.extensions.eo import EOExtension
 from pystac.extensions.file import FileExtension
 from pystac.extensions.projection import ProjectionExtension
@@ -14,8 +12,8 @@ from stactools.core.utils.antimeridian import Strategy, fix_item
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
+from pctasks.core.utils import completely_flatten
 from pctasks.dataset.collection import Collection
-
 
 SENTINEL_1_GRD_COLLECTION_ID = "sentinel-1-grd"
 
@@ -55,7 +53,7 @@ ASSET_INFO = {
 }
 
 
-class S1RTCCollection(Collection):  # type: ignore
+class S1RTCCollection(Collection):
     @classmethod
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
