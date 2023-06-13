@@ -1,5 +1,5 @@
-from dataclasses import dataclass
 import os.path
+from dataclasses import dataclass
 
 
 @dataclass

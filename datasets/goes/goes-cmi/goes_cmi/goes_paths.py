@@ -4,8 +4,6 @@ from stactools.goes.enums import PlatformId, ProductAcronym
 from stactools.goes.file_name import ABIL2FileName
 from stactools.goes.product import PRODUCTS
 
-# from pctasks.core.pctasks.core.storage.base import Storage
-
 from pctasks.core.storage.base import Storage
 
 
