@@ -1,18 +1,18 @@
-import os
 import logging
-from typing import List, Union, Optional
+import os
 import re
+from typing import List, Optional, Union
 
 import lxml.etree
 import pystac
-from stactools.sentinel2 import stac
 from stactools.core.utils.antimeridian import Strategy
+from stactools.sentinel2 import stac
 from stactools.sentinel2.safe_manifest import SafeManifest
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
-from pctasks.dataset.collection import Collection
 from pctasks.core.utils.backoff import with_backoff
+from pctasks.dataset.collection import Collection
 
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter("[%(levelname)s]:%(asctime)s: %(message)s"))
@@ -33,13 +33,14 @@ DOWNSAMPLE_ASSETS = {
     "visual": ("10m", 10.0),
 }
 
+
 def is_throttle_exc(e: Exception) -> bool:
     """Checks if there's an XML parse error, which has been seen in throttle
     situations."""
     return isinstance(e, lxml.etree.XMLSyntaxError)
 
 
-class Sentinel2Collection(Collection):  # type: ignore
+class Sentinel2Collection(Collection):
     @classmethod
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
