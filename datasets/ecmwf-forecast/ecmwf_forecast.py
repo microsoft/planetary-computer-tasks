@@ -6,9 +6,6 @@ from stactools.ecmwf_forecast import stac
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.dataset.collection import Collection
-# from pctasks.core.pctasks.core.models.task import WaitTaskResult
-# from pctasks.core.pctasks.core.storage import StorageFactory
-# from pctasks.dataset.pctasks.dataset.collection import Collection
 
 
 class EcmwfCollection(Collection):
