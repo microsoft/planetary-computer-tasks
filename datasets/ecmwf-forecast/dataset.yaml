@@ -1,0 +1,25 @@
+id: ecmwf_forecast
+image: ${{ args.registry }}/pctasks-ecmwf-forecast:20230614.1
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./ecmwf_forecast.py) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: ecmwf-forecast
+    template: ${{ local.path(./collection/ecmwf-forecast) }}
+    class: ecmwf_forecast:EcmwfCollection
+    asset_storage:
+      - uri: blob://ai4edataeuwest/ecmwf/
+        chunks:
+          options:
+            extensions: [.grib2]
+    chunk_storage:
+      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/
