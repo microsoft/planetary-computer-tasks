@@ -1,1 +1,1 @@
-antimeridian==0.2.3
+git+https://github.com/stactools-packages/sentinel3.git@022ba3cd870494a6bc60039d9854af155616a592

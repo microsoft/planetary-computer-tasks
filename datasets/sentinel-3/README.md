@@ -19,12 +19,6 @@ collection/sentinel-3-synergy-vg1-l2-netcdf
 collection/sentinel-3-synergy-vgp-l2-netcdf
 ```
 
-The package `sentinel_3` contains the python code for making the STAC items.
-Each collection has its own module
-(`sentinel_3/sentinel_3_olci_lfr_l2_netcdf.py`). The name of the module should
-match the name of the collection. The module should have a class named
-`Collection` that is the pctasks `dataset.Collection` subclass.
-
 ## Tests
 
 The `datasets/sentinel-3/tests` directory contains some tests. Run those with
@@ -34,7 +28,7 @@ The `datasets/sentinel-3/tests` directory contains some tests. Run those with
 $ PYTHONPATH=datasets/sentinel-3 python -m pytest datasets/sentinel-3/tests/
 ```
 
-### Dynamic updates
+## Dynamic updates
 
 ```console
 $ ls datasets/sentinel-3/collection/ | xargs -I {}  \
@@ -44,4 +38,14 @@ $ ls datasets/sentinel-3/collection/ | xargs -I {}  \
         --workflow-id={}-update \
         --is-update-workflow \
         --upsert
+```
+
+**Notes:**
+
+- Takes about 45 minutes to chunk and create items for all collections using the test batch account
+
+## Docker container
+
+```shell
+az acr build -r {the registry} --subscription {the subscription} -t pctasks-sentinel-3:latest -t pctasks-sentinel-3:{date}.{count} -f datasets/sentinel-3/Dockerfile .
 ```
