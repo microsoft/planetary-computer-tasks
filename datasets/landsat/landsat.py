@@ -28,7 +28,7 @@ class LandsatC2Collection(Collection):
 
         storage, mtl_path = storage_factory.get_storage_for_file(asset_uri)
         if storage.get_file_info(mtl_path).size <= 0:
-            logger.info("MTL file is empty")
+            logger.error(f"MTL file is empty. Skipping Item creation for {asset_uri}")
             return []
         sensor = Sensor(os.path.basename(mtl_path)[1])
 
@@ -37,11 +37,16 @@ class LandsatC2Collection(Collection):
             ang_path = mtl_path.replace("_MTL.xml", "_ANG.txt")
             try:
                 if storage.get_file_info(ang_path).size <= 0:
-                    logger.info("ANG file is empty")
+                    logger.error(
+                        f"ANG file is empty. Skipping Item creation for {asset_uri}"
+                    )
                     return []
             except ResourceNotFoundError as e:
                 logger.exception(e)
-                logger.info("ANG file not found", exc_info=True)
+                logger.info(
+                    f"ANG file not found. Skipping Item creation for {asset_uri}",
+                    exc_info=True,
+                )
                 return []
 
         logger.info(f"Creating Item from MTL href: {mtl_path}")
@@ -58,7 +63,7 @@ class LandsatC2Collection(Collection):
             item.assets.pop("reduced_resolution_browse", None)
         except Exception as e:
             logger.exception(e)
-            logger.info("Error creating Item", exc_info=True)
+            logger.info(f"Error creating Item from {asset_uri}", exc_info=True)
             return []
 
         return [item]
