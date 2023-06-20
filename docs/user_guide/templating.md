@@ -130,6 +130,9 @@ code:
   requirements: ${{ local.path(./requirements.txt) }}
 ```
 
+If the exact name of the path isn't known, you can provide a glob string like `${{local.path(./*.txt)}}`. `pctasks` will evaluate that
+glob on your machine. It should match exactly one file, otherwise an error will be raised.
+
 (pc_template_group)=
 
 ### pc
