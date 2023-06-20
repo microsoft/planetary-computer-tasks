@@ -34,6 +34,19 @@ collections:
     template: ${{ local.path(./collection/landsat-c2-l2) }}
     class: landsat:LandsatC2Collection
     asset_storage:
+      # The blob storage pattern is
+      #
+      # | landsat-c2-l2
+      # |   level-2
+      # |     standard
+      # |       oli-tirs
+      # |         2023
+      # |           024     # Landsat WRS Row
+      # |             020   # Landsat WRS Path
+      # |               LC08_L2SP_014020_20230205_20230209_02_T2
+      # |                 LC08_L2SP_014020_20230205_20230209_02_T2_MTL.xml
+      # |               ...
+      # |                 ...
       - uri: blob://landsateuwest/landsat-c2/level-2/standard/oli-tirs/${{ args.year-prefix }}/
         token: ${{ pc.get_token(landsateuwest, landsat-c2) }}
         chunks:

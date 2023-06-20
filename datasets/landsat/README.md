@@ -7,8 +7,6 @@ The dataset is split into two Collections:
 
 ## Chunking for dynamic ingest
 
-Typical scene directory path: `landsat-c2-l2/level-2/standard/oli-tirs/2023/014/020/LC08_L2SP_014020_20230205_20230209_02_T2`
-
 ### landsat-c2-l2
 
 Results when using a `--since` argument set 1-2 days in the past:
