@@ -3,7 +3,7 @@ image: ${{ args.registry }}/pctasks-sentinel-1-grd:20230613.1
 
 args:
 - registry
-- extra-prefix
+- year-prefix
 
 code:
   src: ${{ local.path(./s1grd.py) }}
@@ -18,14 +18,20 @@ collections:
     template: ${{ local.path(./collection) }}
     class: s1grd:S1GRDCollection
     asset_storage:
-      - uri: blob://sentinel1euwest/s1-grd-stac/GRD/
-        token: ${{ pc.get_token(sentinel1euwest, s1-grd-stac) }}
+      # The blob storage pattern is
+      # | s1-grd-stac
+      # |   2023
+      # |     6
+      # |       20
+      # |         EW
+      # |           DH
+      # |             S1A_EW_GRDM_1SDH_20230620T020009_20230620T020113_049063_05E665.json
+      - uri: blob://sentinel1euwest/s1-grd-stac/GRD/${{ args.year-prefix }}
         chunks:
           splits:
-            - prefix: ${{ args.extra-prefix }}
-              depth: 3  # daily
+            - depth: 2 # daily
           options:
             extension: [.json]
-            chunk_length: 1000  # daily number of files is ~600-800
+            chunk_length: 2000  # daily number of files is ~600-800
     chunk_storage:
       uri: blob://sentinel1euwest/s1-grd-etl-data/pctasks-chunks/
