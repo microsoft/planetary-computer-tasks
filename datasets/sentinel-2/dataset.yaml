@@ -17,14 +17,27 @@ collections:
     template: ${{ local.path(./collection) }}
     class: sentinel2:Sentinel2Collection
     asset_storage:
-      - uri: blob://sentinel2l2a01/sentinel2-l2/18/N/TN/  # testing only
+      # The blob storage pattern is
+      #
+      # | sentinel2-l2/
+      # |   01/      # 60 directories
+      # |     C/     # ~15-20 directories
+      # |       CV/  # ~20-60 directories
+      # |         2022/
+      # |           01/
+      # |             06/
+      # |               S2B_MSIL2A_20220106T210519_N0300_R071_T01CCV_20220108T025453.SAFE/
+      # |                 manifest.safe
+      # |               ...
+      # |                 ...
+      - uri: blob://sentinel2l2a01/sentinel2-l2/
         token: ${{ pc.get_token(sentinel2l2a01, sentinel2-l2) }}
         chunks:
+          splits:
+            - depth: 2  # depth: 1 --> 60 tasks; depth: 2 --> ~1000 tasks
           options:
-            list_folders: true
-            min_depth: 3  # testing only
-            max_depth: 3  # testing only
-            chunk_length: 5  # testing only
-            limit: 10  # testing only
+            extensions: [.safe]
+            chunk_length: 500
+            limit: 500  # testing only
     chunk_storage:
       uri: blob://sentinel2l2a01/sentinel2-l2-info/pctasks-chunks/
