@@ -3,8 +3,16 @@ import pathlib
 from typing import List, Optional
 
 import pystac
+import pytest
+import yaml
 
-from pctasks.core.utils.template import find_value, split_path, template_dict
+from pctasks.core.utils.template import (
+    LocalTemplater,
+    TemplateError,
+    find_value,
+    split_path,
+    template_dict,
+)
 
 HERE = pathlib.Path(__file__).parent
 TEST_COLLECTION = HERE / "../data-files/planet-nicfi-analytic.json"
@@ -69,3 +77,22 @@ def test_template_collection_passthrough() -> None:
 
     templated_collection.set_root(templated_collection)
     templated_collection.validate()
+
+
+def test_local_path_template_glob(tmp_path) -> None:
+    p = tmp_path.joinpath("file-1.json")
+
+    yaml_str = f"""
+    key: ${{{{local.path({tmp_path}/*.json)}}}}
+    """
+    yaml_dict = yaml.safe_load(yaml_str)
+    with pytest.raises(TemplateError, match="0"):
+        templated_dict = LocalTemplater(base_dir=tmp_path).template_dict(yaml_dict)
+
+    p.touch()
+    templated_dict = LocalTemplater(base_dir=tmp_path).template_dict(yaml_dict)
+    assert templated_dict["key"] == str(p)
+
+    tmp_path.joinpath("file-2.json").touch()
+    with pytest.raises(TemplateError, match="2"):
+        templated_dict = LocalTemplater(base_dir=tmp_path).template_dict(yaml_dict)

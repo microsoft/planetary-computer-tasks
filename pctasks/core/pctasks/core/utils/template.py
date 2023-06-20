@@ -1,3 +1,4 @@
+import glob
 import json
 import re
 from abc import ABC, abstractmethod
@@ -286,7 +287,20 @@ class LocalTemplater(Templater):
             path_match = re.match(self._PATH_REGEX, path[0])
             if path_match:
                 file_path = Path(path_match.group(1))
-                return str(self.base_dir / file_path)
+                rel_path = str(self.base_dir / file_path)
+
+                if glob.has_magic(rel_path):
+                    files = glob.glob(rel_path)
+                    if len(files) != 1:
+                        msg = (
+                            f"`local.path' with a glob string must match "
+                            f"exactly one file. Got '{len(files)}' instead."
+                        )
+                        raise TemplateError(msg)
+                    else:
+                        rel_path = files[0]
+
+                return rel_path
 
         return None
 
