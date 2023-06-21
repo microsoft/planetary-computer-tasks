@@ -4,7 +4,7 @@ The [Global Downscaled Projections for Climate Impacts Research](https://github.
 
 ## Accessing the data
 
-GDPCIR data can be accessed on the Microsoft Planetary Computer. The dataset is made of of three collections, distinguished by data license:
+GDPCIR data can be accessed on the Microsoft Planetary Computer. The dataset is made of of two collections, distinguished by data license:
 * [Public domain (CC0-1.0) collection](https://planetarycomputer.microsoft.com/dataset/cil-gdpcir-cc0)
 * [Attribution (CC BY 4.0) collection](https://planetarycomputer.microsoft.com/dataset/cil-gdpcir-cc-by)
 
