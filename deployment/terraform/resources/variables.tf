@@ -6,6 +6,13 @@ variable "region" {
   type = string
 }
 
+# APIM
+
+variable "apim_sku_name" {
+  type    = string
+  default = "Standard_1"
+}
+
 ## AKS
 
 variable "cluster_cert_issuer" {
