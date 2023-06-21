@@ -20,12 +20,13 @@ collections:
     asset_storage:
       # The blob storage pattern is
       # | s1-grd-stac
-      # |   2023
-      # |     6
-      # |       20
-      # |         EW
-      # |           DH
-      # |             S1A_EW_GRDM_1SDH_20230620T020009_20230620T020113_049063_05E665.json
+      # |   GRD
+      # |     2023
+      # |       6
+      # |         20
+      # |           EW
+      # |             DH
+      # |               S1A_EW_GRDM_1SDH_20230620T020009_20230620T020113_049063_05E665.json
       - uri: blob://sentinel1euwest/s1-grd-stac/GRD/${{ args.year-prefix }}
         chunks:
           splits:

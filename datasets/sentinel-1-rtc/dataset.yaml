@@ -20,13 +20,14 @@ collections:
     class: s1rtc:S1RTCCollection
     asset_storage:
       # The blob storage pattern is
-      # | s1-grd-stac
-      # |   2023
-      # |     6
-      # |       20
-      # |         IW
-      # |           DH
-      # |             S1A_IW_GRDH_1SDH_20230620T083454_20230620T083523_049067_05E686_rtc.json
+      # | sentinel1-grd-rtc-stac
+      # |   GRD
+      # |     2023
+      # |       6
+      # |         20
+      # |           IW
+      # |             DH
+      # |               S1A_IW_GRDH_1SDH_20230620T083454_20230620T083523_049067_05E686_rtc.json
       - uri: blob://sentinel1euwestrtc/sentinel1-grd-rtc-stac/GRD/${{ args.year-prefix }}
         chunks:
           splits:
