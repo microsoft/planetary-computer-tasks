@@ -1,0 +1,2 @@
+stactools-landsat==0.2.4
+pystac-client>=0.4.0

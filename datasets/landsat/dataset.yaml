@@ -1,0 +1,77 @@
+id: landsat
+image: ${{ args.registry }}/pctasks-landsat:20230613.1
+
+args:
+- registry
+- year-prefix
+
+code:
+  src: ${{ local.path(./landsat.py) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+  APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+
+collections:
+  # Multispectral Scanner System (MSS) data ends in 2013
+  # - id: landsat-c2-l1
+  #   template: ${{ local.path(./collection/landsat-c2-l1) }}
+  #   class: landsat:LandsatC2Collection
+  #   asset_storage:
+  #     - uri: blob://landsateuwest/landsat-c2/level-1/standard/mss/${{ args.year-prefix }}/
+  #       token: ${{ pc.get_token(landsateuwest, landsat-c2) }}
+  #       splits:
+  #         - depth: 1  # parallelize by Landsat WRS Row
+  #       chunks:
+  #         options:
+  #           ends_with: _MTL.xml
+  #           chunk_length: 5000
+  #   chunk_storage:
+  #     uri: blob://landsateuwest/landsat-c2-etl-data/pctasks/landsat-c2-l1/
+
+  - id: landsat-c2-l2 
+    template: ${{ local.path(./collection/landsat-c2-l2) }}
+    class: landsat:LandsatC2Collection
+    asset_storage:
+      # The blob storage pattern is
+      #
+      # | landsat-c2-l2
+      # |   level-2
+      # |     standard
+      # |       oli-tirs
+      # |         2023
+      # |           024     # Landsat WRS Row
+      # |             020   # Landsat WRS Path
+      # |               LC08_L2SP_014020_20230205_20230209_02_T2
+      # |                 LC08_L2SP_014020_20230205_20230209_02_T2_MTL.xml
+      # |               ...
+      # |                 ...
+      - uri: blob://landsateuwest/landsat-c2/level-2/standard/oli-tirs/${{ args.year-prefix }}/
+        token: ${{ pc.get_token(landsateuwest, landsat-c2) }}
+        chunks:
+          splits:
+            - depth: 1  # parallelize by Landsat WRS Row
+          options:
+            ends_with: _MTL.xml
+            chunk_length: 5000
+      - uri: blob://landsateuwest/landsat-c2/level-2/standard/etm/${{ args.year-prefix }}/
+        token: ${{ pc.get_token(landsateuwest, landsat-c2) }}
+        chunks:
+          splits:
+            - depth: 1  # parallelize by Landsat WRS Row
+          options:
+            ends_with: _MTL.xml
+            chunk_length: 5000
+      # Thematic Mapper (TM) data ends in 2012
+      # - uri: blob://landsateuwest/landsat-c2/level-2/standard/tm/${{ args.year-prefix }}/
+      #   token: ${{ pc.get_token(landsateuwest, landsat-c2) }}
+      #   chunks:
+      #     splits:
+      #       - depth: 1
+      #     options:
+      #       ends_with: _MTL.xml
+      #       chunk_length: 5000
+    chunk_storage:
+      uri: blob://landsateuwest/landsat-c2-etl-data/pctasks/landsat-c2-l2/
