@@ -1,10 +1,7 @@
-import logging
 from typing import List, Union
 
 import orjson
-from pctasks.core.utils import completely_flatten
 import pystac
-
 from pystac.extensions.eo import EOExtension
 from pystac.extensions.file import FileExtension
 from pystac.extensions.projection import ProjectionExtension
@@ -15,9 +12,8 @@ from stactools.core.utils.antimeridian import Strategy, fix_item
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
+from pctasks.core.utils import completely_flatten
 from pctasks.dataset.collection import Collection
-
-logger = logging.getLogger(__name__)
 
 SENTINEL_1_GRD_COLLECTION_ID = "sentinel-1-grd"
 
@@ -62,6 +58,7 @@ class S1RTCCollection(Collection):
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
+
         storage, path = storage_factory.get_storage_for_file(asset_uri)
         item_dict = orjson.loads(storage.read_bytes(path))
 
@@ -73,11 +70,13 @@ class S1RTCCollection(Collection):
 
         item = pystac.Item.from_dict(item_dict, preserve_dict=False)
 
-        # Avoid non-IW instrument mode items
-        # There was a single EW instrument mode item, avoid it as it
-        # was a mistaken process.
+        # Remove providers
+        item.properties.pop("providers", None)
+
+        # Avoid non-IW instrument mode items. There was a single EW instrument
+        # mode item, avoid it as it was a mistaken process.
         if item.properties["sar:instrument_mode"] != "IW":
-            pass
+            return []
 
         # Add derived-from link
         item.links.append(
@@ -107,7 +106,6 @@ class S1RTCCollection(Collection):
             asset.description = ASSET_INFO[asset_key]["description"]
 
         # Reproject if necessary
-
         assert item.geometry
         needs_reprojection = False
         for coord in completely_flatten(item.geometry["coordinates"]):
