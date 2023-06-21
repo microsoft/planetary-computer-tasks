@@ -1,6 +1,9 @@
+from kubernetes.client.models import V1ResourceRequirements
+
 import pctasks.core.models.task
 import pctasks.run.workflow.kubernetes
 from pctasks.dev.k8s import get_streaming_task_definition
+from pctasks.task.streaming import Resources
 
 
 def test_get_deployment_name():
@@ -85,3 +88,29 @@ def test_extra_env():
             break
     else:
         raise AssertionError("MY_KEY not found in env")
+
+
+def test_build_resources():
+    resources = Resources(
+        limits={
+            "cpu": "1",
+            "memory": "1Gi",
+        },
+        requests={
+            "cpu": "0.5",
+            "memory": "512Mi",
+        },
+    )
+    result = pctasks.run.workflow.kubernetes.build_resources(resources)
+    expected = V1ResourceRequirements(
+        limits={
+            "cpu": "1",
+            "memory": "1Gi",
+        },
+        requests={
+            "cpu": "0.5",
+            "memory": "512Mi",
+        },
+    )
+
+    assert result == expected

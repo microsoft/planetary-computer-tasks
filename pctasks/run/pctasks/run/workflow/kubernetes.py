@@ -18,6 +18,7 @@ from kubernetes.client import (
     V1ObjectMeta,
     V1PodSpec,
     V1PodTemplateSpec,
+    V1ResourceRequirements,
 )
 
 from pctasks.core.models.task import TaskDefinition
@@ -28,6 +29,7 @@ from pctasks.task.constants import (
     TASKIO_CLIENT_SECRET_ENV_VAR,
     TASKIO_TENANT_ID_ENV_VAR,
 )
+from pctasks.task.streaming import Resources
 
 logger = logging.getLogger(__name__)
 # This must match the TriggerAuthentication in
@@ -223,6 +225,8 @@ def build_streaming_deployment(
     for k, v in task_definition.args.get("extra_env", {}).items():
         env.append(V1EnvVar(name=k, value=str(v)))
 
+    resources = build_resources(task_definition.args["streaming_options"]["resources"])
+
     container = V1Container(
         name="run-workflow",
         image=task_definition.image,
@@ -230,6 +234,7 @@ def build_streaming_deployment(
         command=["pctasks"],
         args=["task", "run", input_uri],
         env=env,
+        resources=resources,
     )
 
     queue_name = get_name_prefix(task_definition.args["streaming_options"]["queue_url"])
@@ -263,6 +268,19 @@ def build_streaming_deployment(
         spec=deployment_spec,
     )
     return deployment
+
+
+def build_resources(resources: Resources) -> V1ResourceRequirements:
+    return V1ResourceRequirements(
+        limits={
+            "cpu": resources.limits.cpu,
+            "memory": resources.limits.memory,
+        },
+        requests={
+            "cpu": resources.requests.cpu,
+            "memory": resources.requests.memory,
+        },
+    )
 
 
 def create_or_update(

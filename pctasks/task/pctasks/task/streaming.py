@@ -17,6 +17,16 @@ class StreamingTaskInput(Protocol):
     streaming_options: "StreamingTaskOptions"
 
 
+class ResourceValues(PCBaseModel):
+    cpu: Optional[str]
+    memory: Optional[str]
+
+
+class Resources(PCBaseModel):
+    limits: ResourceValues
+    requests: ResourceValues
+
+
 class StreamingTaskOptions(PCBaseModel):
     """
     Base class for all streaming task inputs.
@@ -50,6 +60,9 @@ class StreamingTaskOptions(PCBaseModel):
         forever, relying on some external system (like KEDA) to stop processing.
 
         This is primarily useful for testing.
+    resources: Resources
+        A :class:`Resources` object that defines the CPU and memory requests
+        and limits.
     """
 
     queue_url: str
@@ -60,6 +73,7 @@ class StreamingTaskOptions(PCBaseModel):
     polling_interval: int = 30
     trigger_queue_length: int = 100
     message_limit: Optional[int] = None
+    resources: Resources
 
     class Config:
         extra = "forbid"
