@@ -5,7 +5,7 @@ resource "azurerm_api_management" "pctasks" {
   publisher_name      = "Microsoft"
   publisher_email     = "planetarycomputer@microsoft.com"
 
-  sku_name = "Standard_1"
+  sku_name = var.apim_sku_name
 
   identity {
     type = "SystemAssigned"

@@ -146,3 +146,10 @@ variable "pctasks_server_sp_client_secret" {
 variable "pctasks_server_sp_object_id" {
   type    = string
 }
+
+## APIM
+
+variable "apim_sku_name" {
+  type = string
+  default = "Developer_1"
+}
