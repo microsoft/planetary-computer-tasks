@@ -1,4 +1,4 @@
-generated: '2023-06-21T20:36:25.853706+00:00'
+generated: '2023-06-21T20:45:21.653348+00:00'
 name: Planetary Computer Tasks Script Package Index
 packages:
   planetary-computer-tasks-cdb:
@@ -26,7 +26,7 @@ packages:
     name: planetary-computer-tasks-cdb-2023.2.0
     url: https://microsoft.github.io/planetary-computer-tasks/script-packages/planetary-computer-tasks-cdb-2023.2.0.zip
     version: 2023.2.0
-  - created: '2023-06-21T20:36:25.853706+00:00'
+  - created: '2023-06-21T20:45:21.653348+00:00'
     name: planetary-computer-tasks-cdb-2023.3.0-dev
     url: https://microsoft.github.io/planetary-computer-tasks/script-packages/planetary-computer-tasks-cdb-2023.3.0-dev.zip
     version: 2023.3.0-dev
@@ -55,7 +55,7 @@ packages:
     name: planetary-computer-tasks-func-2023.2.0
     url: https://microsoft.github.io/planetary-computer-tasks/script-packages/planetary-computer-tasks-func-2023.2.0.zip
     version: 2023.2.0
-  - created: '2023-06-21T20:36:25.792114+00:00'
+  - created: '2023-06-21T20:45:21.592391+00:00'
     name: planetary-computer-tasks-func-2023.3.0-dev
     url: https://microsoft.github.io/planetary-computer-tasks/script-packages/planetary-computer-tasks-func-2023.3.0-dev.zip
     version: 2023.3.0-dev
