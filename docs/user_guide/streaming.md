@@ -22,7 +22,9 @@ additional properties on the streaming tasks within the workflow:
    - `polling_interval`
    - `trigger_queue_length`
 
-3. The workflow should set the top-level `is_streaming` property to `true`.
+3. The task must define the CPU and memory resources it requires using `resources`, which directly maps to Kubernetes [container resources](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/).
+
+4. The workflow should set the top-level `is_streaming` property to `true`.
 
 See
 <https://github.com/microsoft/planetary-computer-tasks/blob/main/examples/workflow.yaml>
