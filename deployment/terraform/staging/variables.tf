@@ -141,5 +141,5 @@ variable "pctasks_server_sp_object_id" {
 
 variable "apim_sku_name" {
   type    = string
-  default = "Consumption_0"
+  default = "Developer_1"
 }
