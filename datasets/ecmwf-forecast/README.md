@@ -11,3 +11,11 @@
 ```shell
 az acr build -r {the registry} --subscription {the subscription} -t pctasks-ecmwf-forecast:latest -t pctasks-ecmwf-forecast:{date}.{count} -f datasets/ecmwf-forecast/Dockerfile .
 ```
+
+## Update workflow
+
+The update workflow was registered with
+
+```shell
+pctasks dataset process-items ecmwf-forecast-update --is-update-workflow --dataset datasets/ecmwf-forecast/dataset.yaml -u
+```

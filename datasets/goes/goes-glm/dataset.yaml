@@ -3,6 +3,7 @@ image: ${{ args.registry }}/pctasks-goes-glm:2023.7.6.0
 
 args:
 - registry
+- year-prefix
 
 code:
   src: ${{ local.path(./goes_glm.py) }}
@@ -27,7 +28,7 @@ collections:
             chunk_length: 50000
           splits:
             # Prefixing with 2023 is an optimization for update jobs.
-            - prefix: GLM-L2-LCFA/2023/
+            - prefix: GLM-L2-LCFA/${{args.year-prefix}}/
               depth: 2
       # GOES-17 is just parked now.
       # - uri: blob://goeseuwest/noaa-goes17/
@@ -48,7 +49,7 @@ collections:
             chunk_length: 50000
           splits:
             # Prefixing with 2023 is an optimization for update jobs.
-            - prefix: GLM-L2-LCFA/2023/
+            - prefix: GLM-L2-LCFA/${{args.year-prefix}}/
               depth: 2
 
     chunk_storage:

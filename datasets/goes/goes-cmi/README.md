@@ -26,3 +26,14 @@ GOES Cloud & Moisture Imagery
 
 - Note L32 in the Dockerfile. It pins Python, gdal, and numpy to older versions. Using Python=3.11 and unpinned gdal and numpy did not work for creating COGs in the Web Mercator (epsg:3857) projection.
 - Note the --force-reinstall --no-binary of rasterio on L70, which cleaned up some rasterio errors.
+
+## Dynamic Updates
+
+```
+$ pctasks dataset process-items '${{ args.since }}' \
+    -d datasets/goes/goes-cmi/dataset.yaml \
+    -c goes-cmi \
+    --workflow-id goes-cmi-update \
+    --is-update-workflow \
+    --upsert
+```
