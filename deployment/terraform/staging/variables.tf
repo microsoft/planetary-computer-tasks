@@ -1,8 +1,3 @@
-variable "username" {
-  description = "Username for tagging infrastructure dedicated to you"
-  type        = string
-}
-
 variable "region" {
   description = "Azure region for infrastructure"
   type        = string
