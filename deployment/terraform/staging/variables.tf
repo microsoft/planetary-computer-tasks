@@ -151,6 +151,7 @@ variable "aks_streaming_task_node_group" {
   type        = string
   default     = "pc-lowlatency"
   description = "The name of the node group that will run streaming tasks"
+}
 
 # APIM
 

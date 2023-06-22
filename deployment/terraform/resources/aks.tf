@@ -5,7 +5,9 @@ resource "azurerm_kubernetes_cluster" "pctasks" {
   dns_prefix          = "${local.prefix}-cluster"
   kubernetes_version  = var.k8s_version
 
-
+  oms_agent {
+    log_analytics_workspace_id = azurerm_log_analytics_workspace.pctasks.id
+  }
 
   default_node_pool {
     name                 = "agentpool"
@@ -100,24 +102,25 @@ resource "azurerm_role_assignment" "network" {
 # All the secrets and trigger authentications needed by KEDA must be set in this namespace.
 # This must also match the namespace where argo is deployed, to avoid requiring ClusterRoles
 # / ClusterRoleBindings enabling it to create the low-latency task deployments.
-resource "kubernetes_namespace" "tasks" {
-  metadata {
-    name = "pc"
-  }
-}
+# And it also requires elevated AKS permissions at deploy time :/
+# resource "kubernetes_namespace" "tasks" {
+#   metadata {
+#     name = "pc"
+#   }
+# }
 
 
 # Kubernetes secret for KEDA to monitor storage queues.
 # This is used in the KEDA TriggerAuthentication created during deployment.
-resource "kubernetes_secret" "queue_connection_string" {
-  metadata {
-    # Note: this must match the name inn keda-trigger-authentication.yaml
-    name = "secrets-storage-queue-connection-string"
-    namespace = kubernetes_namespace.tasks.metadata.0.name
-  }
+# resource "kubernetes_secret" "queue_connection_string" {
+#   metadata {
+#     # Note: this must match the name inn keda-trigger-authentication.yaml
+#     name = "secrets-storage-queue-connection-string"
+#     namespace = kubernetes_namespace.tasks.metadata.0.name
+#   }
 
-  data = {
-    ConnectionString = azurerm_storage_account.pctasks.primary_connection_string
-  }
+#   data = {
+#     ConnectionString = azurerm_storage_account.pctasks.primary_connection_string
+#   }
 
-}
+# }

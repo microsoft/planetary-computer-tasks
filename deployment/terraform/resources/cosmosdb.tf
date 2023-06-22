@@ -122,3 +122,15 @@ resource "azurerm_cosmosdb_sql_role_assignment" "pctasks-streaming-read-write" {
   scope               = "${data.azurerm_cosmosdb_account.pctasks.id}/dbs/${azurerm_cosmosdb_sql_database.pctasks.name}/colls/${azurerm_cosmosdb_sql_container.items.name}"
 
 }
+
+# The Task Service Principal should be able to write to the `process-item-errors` container.
+resource "azurerm_cosmosdb_sql_role_assignment" "pctasks-streaming-process-item-errors-read-write" {
+  resource_group_name = data.azurerm_cosmosdb_account.pctasks.resource_group_name
+  account_name        = data.azurerm_cosmosdb_account.pctasks.name
+  # The "000000000002" role definition grants write permissions.
+  role_definition_id  = "${data.azurerm_cosmosdb_account.pctasks.id}/sqlRoleDefinitions/00000000-0000-0000-0000-000000000002"
+  principal_id        = var.task_sp_object_id
+  # scope               = azurerm_cosmosdb_account.lowlatency.id
+  scope               = "${data.azurerm_cosmosdb_account.pctasks.id}/dbs/${azurerm_cosmosdb_sql_database.pctasks.name}/colls/${azurerm_cosmosdb_sql_container.process-item-errors.name}"
+}
+

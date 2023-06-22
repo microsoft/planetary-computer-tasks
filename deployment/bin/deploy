@@ -244,6 +244,15 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         --timeout 2m0s
 
     # TODO: Figure out how to apply to set this with helm
+    echo "Adding KEDA secret"
+    pushd ${TERRAFORM_DIR}
+      SA_CONNECTION_STRING=$(tf_output sa_connection_string)
+    popd
+    # pipe into kubectl apply to ensure create or update works.
+    kubectl -n pc create secret generic secrets-storage-queue-connection-string \
+        --from-literal="ConnectionString=$SA_CONNECTION_STRING" \
+        --dry-run=client -o yaml \
+        | kubectl apply -f -
     echo "Creating KEDA trigger auth"
     # This namespace must match where argo runs its workflows
     kubectl -n pc apply -f helm/keda-trigger-authentication.yaml

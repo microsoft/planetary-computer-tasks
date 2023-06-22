@@ -17,17 +17,18 @@ jobs:
             max_replica_count: 10
             polling_interval: 30
             trigger_queue_length: 100
+            resources:
+              limits:
+                cpu: "0.25"
+                memory: "2Gi"
+              requests:
+                cpu: "0.25"
+                memory: "2Gi"
+
           options:
             skip_validation: false
           create_items_function: goes_glm:GoesGlmCollection.create_item
           collection_id: "goes-glm"
-          resources:
-            limits:
-              cpu: "0.25"
-              memory: "2Gi"
-            requests:
-              cpu: "0.25"
-              memory: "2Gi"
 
         environment:
           AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
