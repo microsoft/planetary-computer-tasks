@@ -31,13 +31,14 @@ collections:
       # |               ...
       # |                 ...
       - uri: blob://sentinel2l2a01/sentinel2-l2/
-        token: ${{ pc.get_token(sentinel2l2a01, sentinel2-l2) }}
         chunks:
           splits:
             - depth: 2  # depth: 1 --> 60 tasks; depth: 2 --> ~1000 tasks
           options:
-            extensions: [.safe]
-            chunk_length: 500
-            limit: 500  # testing only
+            # extensions: [.safe]
+            ends_with: manifest.safe
+            min_depth: 7
+            max_depth: 8
+            chunk_length: 5000
     chunk_storage:
       uri: blob://sentinel2l2a01/sentinel2-l2-info/pctasks-chunks/

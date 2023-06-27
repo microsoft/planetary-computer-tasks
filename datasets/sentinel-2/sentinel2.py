@@ -45,7 +45,9 @@ class Sentinel2Collection(Collection):
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
-        asset_storage, granule_path = storage_factory.get_storage_for_file(asset_uri)
+        # The asset_uri is the path to the manifest.safe file
+        granule_path = os.path.dirname(asset_uri)
+        asset_storage = storage_factory.get_storage(granule_path)
         granule_href = asset_storage.get_url(granule_path)
 
         if not asset_storage.file_exists(os.path.join(granule_path, "manifest.safe")):
@@ -53,7 +55,7 @@ class Sentinel2Collection(Collection):
             return []
 
         manifest = with_backoff(
-            lambda: SafeManifest(granule_href, asset_storage.sign),
+            lambda: SafeManifest(granule_href, asset_storage.sign),  # type: ignore
             is_throttle=is_throttle_exc,
         )
 
