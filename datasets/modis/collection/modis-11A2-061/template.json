@@ -1,0 +1,330 @@
+{
+    "id": "modis-11A2-061",
+    "type": "Collection",
+    "links": [
+        {
+            "rel": "help",
+            "href": "https://lpdaac.usgs.gov/documents/715/MOD11_User_Guide_V61.pdf",
+            "title": "MOD11 User Guide"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://ladsweb.modaps.eosdis.nasa.gov/filespec/MODIS/61/MOD11A2",
+            "title": "MOD11A2 file specification"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://ladsweb.modaps.eosdis.nasa.gov/filespec/MODIS/61/MYD11A2",
+            "title": "MYD11A2 file specification"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.5067/MODIS/MOD11A2.061",
+            "title": "LP DAAC - MOD11A2"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.5067/MODIS/MYD11A2.061",
+            "title": "LP DAAC - MYD11A2"
+        },
+        {
+            "rel": "license",
+            "href": "https://lpdaac.usgs.gov/data/data-citation-and-policies/",
+            "title": "LP DAAC - Data Citation and Policies"
+        }
+    ],
+    "title": "MODIS Land Surface Temperature/Emissivity 8-Day",
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/modis-11A2-061.png",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "MODIS Land Surface Temperature/Emissivity 8-Day thumbnail"
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/modis-11A2-061.parquet",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "MS"
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            }
+        }
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2000-02-18T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "NASA",
+        "MODIS",
+        "Satellite",
+        "Global",
+        "Temperature",
+        "MOD11A2",
+        "MYD11A2"
+    ],
+    "providers": [
+        {
+            "url": "https://lpdaac.usgs.gov/",
+            "name": "NASA LP DAAC at the USGS EROS Center",
+            "roles": [
+                "producer",
+                "licensor",
+                "processor"
+            ]
+        },
+        {
+            "url": "https://planetarycomputer.microsoft.com",
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ]
+        }
+    ],
+    "summaries": {
+        "platform": [
+            "aqua",
+            "terra"
+        ],
+        "instruments": [
+            "modis"
+        ]
+    },
+    "description": "The Moderate Resolution Imaging Spectroradiometer (MODIS) Land Surface Temperature/Emissivity 8-Day Version 6.1 product provides an average 8-day per-pixel Land Surface Temperature and Emissivity (LST&E) with a 1 kilometer (km) spatial resolution in a 1,200 by 1,200 km grid. Each pixel value in the MOD11A2 is a simple average of all the corresponding MOD11A1 LST pixels collected within that 8-day period. The 8-day compositing period was chosen because twice that period is the exact ground track repeat period of the Terra and Aqua platforms. Provided along with the daytime and nighttime surface temperature bands are associated quality control assessments, observation times, view zenith angles, and clear-sky coverages along with bands 31 and 32 emissivities from land cover types.",
+    "item_assets": {
+        "hdf": {
+            "type": "application/x-hdf",
+            "roles": [
+                "data"
+            ],
+            "title": "Source data containing all bands"
+        },
+        "QC_Day": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Quality control for daytime LST and emissivity",
+            "raster:bands": [
+                {
+                    "data_type": "uint8",
+                    "spatial_resolution": 1000
+                }
+            ]
+        },
+        "Emis_31": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Band 31 emissivity",
+            "raster:bands": [
+                {
+                    "scale": 0.002,
+                    "data_type": "uint8",
+                    "spatial_resolution": 1000
+                }
+            ]
+        },
+        "Emis_32": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Band 32 emissivity",
+            "raster:bands": [
+                {
+                    "scale": 0.002,
+                    "data_type": "uint8",
+                    "spatial_resolution": 1000
+                }
+            ]
+        },
+        "QC_Night": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Quality control for nighttime LST and emissivity",
+            "raster:bands": [
+                {
+                    "data_type": "uint8",
+                    "spatial_resolution": 1000
+                }
+            ]
+        },
+        "metadata": {
+            "type": "application/xml",
+            "roles": [
+                "metadata"
+            ],
+            "title": "Federal Geographic Data Committee (FGDC) Metadata"
+        },
+        "LST_Day_1km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data",
+                "temperature"
+            ],
+            "title": "8-day daytime 1km grid Landsurface Temperature",
+            "raster:bands": [
+                {
+                    "unit": "Kelvin",
+                    "scale": 0.02,
+                    "data_type": "uint16",
+                    "spatial_resolution": 1000
+                }
+            ]
+        },
+        "Day_view_angl": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Average view zenith angle of daytime Land-surface Temperature",
+            "raster:bands": [
+                {
+                    "unit": "Degree",
+                    "data_type": "uint8",
+                    "spatial_resolution": 1000
+                }
+            ]
+        },
+        "Day_view_time": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Average time of daytime Landsurface Temperature observation",
+            "raster:bands": [
+                {
+                    "unit": "Hours",
+                    "scale": 0.1,
+                    "data_type": "uint8",
+                    "spatial_resolution": 1000
+                }
+            ]
+        },
+        "LST_Night_1km": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data",
+                "temperature"
+            ],
+            "title": "8-day nighttime 1km grid Landsurface Temperature",
+            "raster:bands": [
+                {
+                    "unit": "Kelvin",
+                    "scale": 0.02,
+                    "data_type": "uint16",
+                    "spatial_resolution": 1000
+                }
+            ]
+        },
+        "Clear_sky_days": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "the days in clear-sky conditions and with validate LSTs",
+            "raster:bands": [
+                {
+                    "data_type": "uint8",
+                    "spatial_resolution": 1000
+                }
+            ]
+        },
+        "Night_view_angl": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "View zenith angle of nighttime Land-surface Temperature ",
+            "raster:bands": [
+                {
+                    "unit": "Degree",
+                    "data_type": "uint8",
+                    "spatial_resolution": 1000
+                }
+            ]
+        },
+        "Night_view_time": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Average view zenith angle of nighttime Land-surface Temperature",
+            "raster:bands": [
+                {
+                    "unit": "Hours",
+                    "scale": 0.1,
+                    "data_type": "uint8",
+                    "spatial_resolution": 1000
+                }
+            ]
+        },
+        "Clear_sky_nights": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "the nights in clear-sky conditions and with validate LSTs",
+            "raster:bands": [
+                {
+                    "data_type": "uint8",
+                    "spatial_resolution": 1000
+                }
+            ]
+        }
+    },
+    "stac_version": "1.0.0",
+    "msft:group_id": "modis",
+    "msft:container": "modis-061",
+    "stac_extensions": [
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "sci:publications": [
+        {
+            "doi": "10.5067/MODIS/MOD11A2.061",
+            "citation": "Wan, Z., Hook, S., &amp; Hulley, G. (2021). <i>MODIS/Terra Land Surface Temperature/Emissivity 8-Day L3 Global 1km SIN Grid V061</i> [Data set]. NASA EOSDIS Land Processes DAAC. https://doi.org/10.5067/MODIS/MOD11A2.061"
+        },
+        {
+            "doi": "10.5067/MODIS/MYD11A2.061",
+            "citation": "Wan, Z., Hook, S., &amp; Hulley, G. (2021). <i>MODIS/Aqua Land Surface Temperature/Emissivity 8-Day L3 Global 1km SIN Grid V061</i> [Data set]. NASA EOSDIS Land Processes DAAC. https://doi.org/10.5067/MODIS/MYD11A2.061"
+        }
+    ],
+    "msft:storage_account": "modiseuwest",
+    "msft:short_description": "MODIS Land Surface Temperature/Emissivity 8-Day",
+    "msft:region": "westeurope"
+}

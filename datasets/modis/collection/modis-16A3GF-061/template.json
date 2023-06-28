@@ -1,0 +1,234 @@
+{
+    "id": "modis-16A3GF-061",
+    "type": "Collection",
+    "links": [
+        {
+            "rel": "help",
+            "href": "https://lpdaac.usgs.gov/documents/931/MOD16_User_Guide_V61.pdf",
+            "title": "MOD16 User Guide"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://ladsweb.modaps.eosdis.nasa.gov/filespec/MODIS/61/MOD16A3GF",
+            "title": "MOD16A3GF file specification"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://ladsweb.modaps.eosdis.nasa.gov/filespec/MODIS/61/MYD16A3GF",
+            "title": "MYD16A3GF file specification"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.5067/MODIS/MOD16A3GF.061",
+            "title": "LP DAAC - MOD16A3GF"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.5067/MODIS/MYD16A3GF.061",
+            "title": "LP DAAC - MYD16A3GF"
+        },
+        {
+            "rel": "license",
+            "href": "https://lpdaac.usgs.gov/data/data-citation-and-policies/",
+            "title": "LP DAAC - Data Citation and Policies"
+        }
+    ],
+    "title": "MODIS Net Evapotranspiration Yearly Gap-Filled",
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/modis-16A3GF-061.png",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "MODIS Net Evapotranspiration Yearly Gap-Filled thumbnail"
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/modis-16A3GF-061.parquet",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "MS"
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            }
+        }
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2001-01-01T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "NASA",
+        "MODIS",
+        "Satellite",
+        "Global",
+        "Vegetation",
+        "MOD16A3GF",
+        "MYD16A3GF"
+    ],
+    "providers": [
+        {
+            "url": "https://lpdaac.usgs.gov/",
+            "name": "NASA LP DAAC at the USGS EROS Center",
+            "roles": [
+                "producer",
+                "licensor",
+                "processor"
+            ]
+        },
+        {
+            "url": "https://planetarycomputer.microsoft.com",
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ]
+        }
+    ],
+    "summaries": {
+        "platform": [
+            "aqua",
+            "terra"
+        ],
+        "instruments": [
+            "modis"
+        ]
+    },
+    "description": "The Moderate Resolution Imaging Spectroradiometer (MODIS) MOD16A3GF Version 6.1 Evapotranspiration/Latent Heat Flux (ET/LE) product is a year-end gap-filled yearly composite dataset produced at 500 meter (m) pixel resolution. The algorithm used for the MOD16 data product collection is based on the logic of the Penman-Monteith equation, which includes inputs of daily meteorological reanalysis data along with MODIS remotely sensed data products such as vegetation property dynamics, albedo, and land cover. The product will be generated at the end of each year when the entire yearly 8-day MOD15A2H/MYD15A2H is available. Hence, the gap-filled product is the improved 16, which has cleaned the poor-quality inputs from yearly Leaf Area Index and Fraction of Photosynthetically Active Radiation (LAI/FPAR) based on the Quality Control (QC) label for every pixel. If any LAI/FPAR pixel did not meet the quality screening criteria, its value is determined through linear interpolation. However, users cannot get this product in near-real time because it will be generated only at the end of a given year. Provided in the product are layers for composited ET, LE, Potential ET (PET), and Potential LE (PLE) along with a quality control layer. Two low resolution browse images, ET and LE, are also available for each granule. The pixel values for the two Evapotranspiration layers (ET and PET) are the sum for all days within the defined year, and the pixel values for the two Latent Heat layers (LE and PLE) are the average of all days within the defined year.",
+    "item_assets": {
+        "hdf": {
+            "type": "application/x-hdf",
+            "roles": [
+                "data"
+            ],
+            "title": "Source data containing all bands"
+        },
+        "ET_500m": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Total of Evapotranspiration",
+            "raster:bands": [
+                {
+                    "unit": "kg/m^2/year",
+                    "scale": 0.1,
+                    "data_type": "uint16",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "LE_500m": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Average of Latent Heat Flux",
+            "raster:bands": [
+                {
+                    "unit": "J/m^2/day",
+                    "scale": 10000,
+                    "data_type": "int16",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "PET_500m": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Total Potential Evapotranspiration",
+            "raster:bands": [
+                {
+                    "unit": "kg/m^2/year",
+                    "scale": 0.1,
+                    "data_type": "uint16",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "PLE_500m": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Average of Potential Latent Heat Flux",
+            "raster:bands": [
+                {
+                    "unit": "J/m^2/day",
+                    "scale": 10000,
+                    "data_type": "int16",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "metadata": {
+            "type": "application/xml",
+            "roles": [
+                "metadata"
+            ],
+            "title": "Federal Geographic Data Committee (FGDC) Metadata"
+        },
+        "ET_QC_500m": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Evapotranspiration Quality Assessment",
+            "raster:bands": [
+                {
+                    "unit": "Percent",
+                    "data_type": "uint8",
+                    "spatial_resolution": 500
+                }
+            ]
+        }
+    },
+    "stac_version": "1.0.0",
+    "msft:group_id": "modis",
+    "msft:container": "modis-061",
+    "stac_extensions": [
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "sci:publications": [
+        {
+            "doi": "10.5067/MODIS/MOD16A3GF.061",
+            "citation": "Running, S., Mu, Q., Zhao, M., &amp; Moreno, A. (2021). <i>MODIS/Terra Net Evapotranspiration Gap-Filled Yearly L4 Global 500m SIN Grid V061</i> [Data set]. NASA EOSDIS Land Processes DAAC. https://doi.org/10.5067/MODIS/MOD16A3GF.061"
+        },
+        {
+            "doi": "10.5067/MODIS/MYD16A3GF.061",
+            "citation": "Running, S., Mu, Q., Zhao, M., &amp; Moreno, A. (2021). <i>MODIS/Aqua Net Evapotranspiration Gap-Filled Yearly L4 Global 500m SIN Grid V061</i> [Data set]. NASA EOSDIS Land Processes DAAC. https://doi.org/10.5067/MODIS/MYD16A3GF.061"
+        }
+    ],
+    "msft:storage_account": "modiseuwest",
+    "msft:short_description": "MODIS Net Evapotranspiration Yearly Gap-Filled",
+    "msft:region": "westeurope"
+}
