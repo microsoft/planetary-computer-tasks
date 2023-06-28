@@ -1,0 +1,42 @@
+id: sentinel_5p
+image: ${{ args.registry }}/pctasks-sentinel-5p:latest
+
+args:
+  - registry
+
+code:
+  src: ${{ local.path(./sentinel_5p.py) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: sentinel-5p-l2-netcdf
+    template: ${{ local.path(./collection) }}
+    class: sentinel_5p:Sentinel5pNetCDFCollection
+    asset_storage:
+      # The blob storage pattern is
+      #
+      # | sentinel-5p-st2ac/
+      # |   TROPOMI/
+      # |     L2_AER_AI/
+      # |       2018/
+      # |         06/
+      # |           28/
+      # |           ...
+      # |     L2_AER_LH
+      # |     ...
+      # |
+      # We want to split by product (L2_AER_AI)
+      - uri: blob://sentinel5euwest/sentinel-5p-stac/TROPOMI/
+        token: ${{ pc.get_token(sentinel5euwest, sentinel-5p-stac) }}
+        chunks:
+          options:
+            extensions: [.json]
+            chunk_length: 5000
+          splits:
+            - depth: 1
+    chunk_storage:
+      uri: blob://sentinel5euwest/sentinel-5p-etl-data/pctasks-chunks/
