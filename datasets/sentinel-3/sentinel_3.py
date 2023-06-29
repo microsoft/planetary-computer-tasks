@@ -1,19 +1,18 @@
-import os
 import logging
-from tempfile import TemporaryDirectory
+import os
 from pathlib import Path
-from typing import Union, List
+from tempfile import TemporaryDirectory
+from typing import List, Union
 
 import pystac
-import urllib3
 import requests
-
+import urllib3
 from stactools.sentinel3.stac import create_item
 
-from pctasks.core.storage import StorageFactory
-from pctasks.core.models.task import WaitTaskResult
-from pctasks.core.utils.backoff import with_backoff, is_common_throttle_exception
 import pctasks.dataset.collection
+from pctasks.core.models.task import WaitTaskResult
+from pctasks.core.storage import StorageFactory
+from pctasks.core.utils.backoff import is_common_throttle_exception, with_backoff
 
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter("[%(levelname)s]:%(asctime)s: %(message)s"))
@@ -166,9 +165,9 @@ FIXUP_FUNCS = {
 
 def backoff_throttle_check(e: Exception) -> bool:
     return (
-        is_common_throttle_exception(e) or
-        isinstance(e, urllib3.exceptions.ReadTimeoutError) or
-        isinstance(e, requests.exceptions.ConnectionError)
+        is_common_throttle_exception(e)
+        or isinstance(e, urllib3.exceptions.ReadTimeoutError)
+        or isinstance(e, requests.exceptions.ConnectionError)
     )
 
 
@@ -189,11 +188,13 @@ class Sentinel3Collections(pctasks.dataset.collection.Collection):
         sen3_storage = storage_factory.get_storage(sen3_archive)
 
         with TemporaryDirectory() as temp_dir:
-            temp_sen3_dir = Path(temp_dir, Path(sen3_archive).name) 
+            temp_sen3_dir = Path(temp_dir, Path(sen3_archive).name)
             temp_sen3_dir.mkdir()
             for path in sen3_storage.list_files():
                 with_backoff(
-                    lambda: sen3_storage.download_file(path, str(Path(temp_sen3_dir, path))),
+                    lambda: sen3_storage.download_file(
+                        path, str(Path(temp_sen3_dir, path))
+                    ),
                     is_throttle=backoff_throttle_check,
                 )
 
