@@ -1,8 +1,10 @@
+from genericpath import isfile
 import logging
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Union
+from hashlib import md5
 
 import pystac
 import requests
@@ -11,7 +13,7 @@ from stactools.sentinel3.stac import create_item
 
 import pctasks.dataset.collection
 from pctasks.core.models.task import WaitTaskResult
-from pctasks.core.storage import StorageFactory
+from pctasks.core.storage import StorageFactory, Storage
 from pctasks.core.utils.backoff import is_common_throttle_exception, with_backoff
 
 handler = logging.StreamHandler()
@@ -22,7 +24,39 @@ logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
 
-def olci_lfr_fixups(item: pystac.Item) -> pystac.Item:
+def browse_jpg_asset(jpg_path: str) -> pystac.Asset:
+    # https://github.com/stactools-packages/sentinel3/issues/28
+    # https://github.com/stactools-packages/sentinel3/issues/24
+    return pystac.Asset(
+        href=jpg_path,
+        media_type=pystac.MediaType.JPEG,
+        description="temp",
+        roles=["thumbnail"],
+        extra_fields={
+            "file:size": os.path.getsize(jpg_path),
+            "file:checksum": md5(open(jpg_path, "rb").read()).hexdigest(),
+        }
+    )
+
+
+def eop_metadata_asset(eop_metadata_path: str) -> pystac.Asset:
+    # https://github.com/stactools-packages/sentinel3/issues/28
+    # https://github.com/stactools-packages/sentinel3/issues/24
+    manifest_text = open(eop_metadata_path, encoding="utf-8").read()
+    manifest_text_encoded = manifest_text.encode(encoding="UTF-8")
+    return pystac.Asset(
+        href=eop_metadata_path,
+        media_type=pystac.MediaType.XML,
+        description="temp",
+        roles=["metadata"],
+        extra_fields={
+            "file:size": os.path.getsize(eop_metadata_path),
+            "file:checksum": md5(manifest_text_encoded).hexdigest(),
+        }
+    )
+
+
+def olci_lfr_fixups(item: pystac.Item, temp_sen3_dir: str) -> pystac.Item:
     asset_descriptions = {
         "safe-manifest": "SAFE product manifest",
         "gifapar": "Green instantaneous Fraction of Absorbed Photosynthetically Active Radiation (FAPAR)",  # noqa
@@ -45,7 +79,15 @@ def olci_lfr_fixups(item: pystac.Item) -> pystac.Item:
     return item
 
 
-def olci_wfr_fixups(item: pystac.Item) -> pystac.Item:
+def olci_wfr_fixups(item: pystac.Item, temp_sen3_dir: str) -> pystac.Item:
+    browse_jpg_path = os.path.join(temp_sen3_dir, "browse.jpg")
+    if os.path.isfile(browse_jpg_path):
+        item.assets["browse-jpg"] = browse_jpg_asset(browse_jpg_path)
+
+    eop_metadata_path = os.path.join(temp_sen3_dir, "EOPMetadata.xml")
+    if os.path.isfile(eop_metadata_path):
+        item.assets["eop-metadata"] = eop_metadata_asset(eop_metadata_path)
+
     asset_descriptions = {
         "chl-nn": "Neural net chlorophyll concentration",
         "chl-oc4me": "OC4Me algorithm chlorophyll concentration",
@@ -66,10 +108,11 @@ def olci_wfr_fixups(item: pystac.Item) -> pystac.Item:
     for asset_key, asset in item.assets.items():
         if asset_key in asset_descriptions:
             asset.description = asset_descriptions[asset_key]
+
     return item
 
 
-def slstr_lst_fixups(item: pystac.Item) -> pystac.Item:
+def slstr_lst_fixups(item: pystac.Item, temp_sen3_dir: str) -> pystac.Item:
     asset_descriptions = {
         "safe-manifest": "SAFE product manifest",
         "lst-in": "Land Surface Temperature (LST) values",
@@ -90,7 +133,15 @@ def slstr_lst_fixups(item: pystac.Item) -> pystac.Item:
     return item
 
 
-def slstr_wst_fixups(item: pystac.Item) -> pystac.Item:
+def slstr_wst_fixups(item: pystac.Item, temp_sen3_dir: str) -> pystac.Item:
+    browse_jpg_path = os.path.join(temp_sen3_dir, "browse.jpg")
+    if os.path.isfile(browse_jpg_path):
+        item.assets["browse-jpg"] = browse_jpg_asset(browse_jpg_path)
+
+    eop_metadata_path = os.path.join(temp_sen3_dir, "EOPMetadata.xml")
+    if os.path.isfile(eop_metadata_path):
+        item.assets["eop-metadata"] = eop_metadata_asset(eop_metadata_path)
+
     asset_descriptions = {
         "safe-manifest": "SAFE product manifest",
         "l2p": "Skin Sea Surface Temperature (SST) values",
@@ -103,7 +154,7 @@ def slstr_wst_fixups(item: pystac.Item) -> pystac.Item:
     return item
 
 
-def sral_lan_fixups(item: pystac.Item) -> pystac.Item:
+def sral_lan_fixups(item: pystac.Item, temp_sen3_dir: str) -> pystac.Item:
     asset_descriptions = {
         "safe-manifest": "SAFE product manifest",
         "standard-measurement": "Standard measurement data file",
@@ -113,10 +164,19 @@ def sral_lan_fixups(item: pystac.Item) -> pystac.Item:
     for asset_key, asset in item.assets.items():
         if asset_key in asset_descriptions:
             asset.description = asset_descriptions[asset_key]
+
+        # https://github.com/stactools-packages/sentinel3/issues/25
+        asset.extra_fields.pop("shape", None)
+        asset.extra_fields.pop("s3:shape", None)
+
     return item
 
 
-def sral_wat_fixups(item: pystac.Item) -> pystac.Item:
+def sral_wat_fixups(item: pystac.Item, temp_sen3_dir: str) -> pystac.Item:
+    eop_metadata_path = os.path.join(temp_sen3_dir, "EOPMetadata.xml")
+    if os.path.isfile(eop_metadata_path):
+        item.assets["eop-metadata"] = eop_metadata_asset(eop_metadata_path)
+
     asset_descriptions = {
         "safe-manifest": "SAFE product manifest",
         "standard-measurement": "Standard measurement data file",
@@ -127,10 +187,15 @@ def sral_wat_fixups(item: pystac.Item) -> pystac.Item:
     for asset_key, asset in item.assets.items():
         if asset_key in asset_descriptions:
             asset.description = asset_descriptions[asset_key]
+
+        # https://github.com/stactools-packages/sentinel3/issues/25
+        asset.extra_fields.pop("shape", None)
+        asset.extra_fields.pop("s3:shape", None)
+
     return item
 
 
-def synergy_vgp_fixups(item: pystac.Item) -> pystac.Item:
+def synergy_vgp_fixups(item: pystac.Item, temp_sen3_dir: str) -> pystac.Item:
     asset_descriptions = {
         "safe-manifest": "SAFE product manifest",
         "b0": "Top of atmosphere reflectance data set associated with the VGT-B0 channel",
@@ -207,12 +272,29 @@ class Sentinel3Collections(pctasks.dataset.collection.Collection):
                 )
                 return []
 
+            fixup_function = FIXUP_FUNCS.get(item.properties["s3:product_name"], None)
+            if fixup_function is not None:
+                item = fixup_function(item, str(temp_sen3_dir))
+
             for asset in item.assets.values():
                 path = Path(asset.href).name
                 asset.href = sen3_storage.get_url(path)
 
-        fixup_function = FIXUP_FUNCS.get(item.properties["s3:product_name"], None)
-        if fixup_function is not None:
-            item = fixup_function(item)
-
         return [item]
+
+
+if __name__ == "__main__":
+    hrefs = [
+        "/Users/pjh/data/sentinel-3/olci/wfr/S3A_OL_2_WFR____20230101T000030_20230101T000330_20230102T115317_0179_094_016_2880_MAR_O_NT_003.SEN3/xfdumanifest.xml",
+        "/Users/pjh/data/sentinel-3/slstr/wst/S3A_SL_2_WST____20230101T002812_20230101T020911_20230102T110315_6059_094_016______MAR_O_NT_003.SEN3/xfdumanifest.xml",
+        "/Users/pjh/data/sentinel-3/sral/wat/S3A_SR_2_WAT____20230101T003251_20230101T011841_20230126T183911_2750_094_016______MAR_O_NT_005.SEN3/xfdumanifest.xml",
+        "/Users/pjh/data/sentinel-3/sral/lan/S3A_SR_2_LAN____20230101T002812_20230101T011841_20230127T030052_3029_094_016______PS1_O_NT_004.SEN3/xfdumanifest.xml",
+    ]
+    for href in hrefs:
+        storage_factory = StorageFactory()
+        c = Sentinel3Collections()
+        item = c.create_item(href, storage_factory)[0]
+        item.validate()
+        import json
+        with open(f"{item.id}.json", "w") as f:
+            json.dump(item.to_dict(), f, indent=4)
