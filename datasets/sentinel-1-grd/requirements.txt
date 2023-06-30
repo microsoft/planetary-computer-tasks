@@ -1,1 +1,1 @@
-stactools==0.3.*
+stactools-sentinel1==0.5.0
