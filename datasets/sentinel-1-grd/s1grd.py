@@ -1,11 +1,26 @@
+import logging
+import os
+from tempfile import TemporaryDirectory
 from typing import List, Union
 
-import orjson
 import pystac
+import requests
+import urllib3
+from stactools.core.utils.antimeridian import Strategy, fix_item
+from stactools.sentinel1.grd import Format
+from stactools.sentinel1.grd.stac import create_item
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
+from pctasks.core.utils.backoff import is_common_throttle_exception, with_backoff
 from pctasks.dataset.collection import Collection
+
+handler = logging.StreamHandler()
+handler.setFormatter(logging.Formatter("[%(levelname)s]:%(asctime)s: %(message)s"))
+handler.setLevel(logging.INFO)
+logger = logging.getLogger(__name__)
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
 
 ASSET_INFO = {
     "vv": {
@@ -40,7 +55,27 @@ ASSET_INFO = {
             "with radiometric terrain correction applied."
         ),
     },
+    "thumbnail": {
+        "title": "Preview Image",
+        "description": (
+            "An averaged, decimated preview image in PNG format. Single "
+            "polarisation products are represented with a grey scale image. "
+            "Dual polarisation products are represented by a single composite "
+            "colour image in RGB with the red channel (R) representing the  "
+            "co-polarisation VV or HH), the green channel (G) represents the "
+            "cross-polarisation (VH or HV) and the blue channel (B) represents "
+            "the ratio of the cross an co-polarisations."
+        ),
+    },
 }
+
+
+def backoff_throttle_check(e: Exception) -> bool:
+    return (
+        is_common_throttle_exception(e)
+        or isinstance(e, urllib3.exceptions.ReadTimeoutError)
+        or isinstance(e, requests.exceptions.ConnectionError)
+    )
 
 
 class S1GRDCollection(Collection):
@@ -49,13 +84,59 @@ class S1GRDCollection(Collection):
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
 
-        storage, path = storage_factory.get_storage_for_file(asset_uri)
-        item_dict = orjson.loads(storage.read_bytes(path))
+        archive = os.path.dirname(asset_uri)
+        archive_storage = storage_factory.get_storage(archive)
 
-        item = pystac.Item.from_dict(item_dict, preserve_dict=False)
+        with TemporaryDirectory() as temp_dir:
+            temp_archive_dir = os.path.join(temp_dir, os.path.basename(archive))
+            os.mkdir(temp_archive_dir)
+            for path in archive_storage.list_files():
+                _, ext = os.path.splitext(path)
+                if ext in [".tiff", ".tif"]:  # large COGs not needed
+                    continue
+                if "/" in path:
+                    head, _ = os.path.split(path)
+                    if not os.path.isdir(os.path.join(temp_archive_dir, head)):
+                        os.makedirs(os.path.join(temp_archive_dir, head))
+                with_backoff(
+                    lambda: archive_storage.download_file(
+                        path, os.path.join(temp_archive_dir, path)
+                    ),
+                    is_throttle=backoff_throttle_check,
+                )
+
+            try:
+                item: pystac.Item = create_item(
+                    temp_archive_dir, archive_format=Format.COG
+                )
+            except FileNotFoundError:
+                logger.exception(
+                    f"Missing file when attempting to create item for {asset_uri}"
+                )
+                return []
+
+            for asset in item.assets.values():
+                path = os.path.basename(asset.href)
+                asset.href = archive_storage.get_url(path)
+
+        # Remove checksum from id
+        item.id = "_".join(item.id.split("_")[0:-1])
 
         # Remove providers
         item.properties.pop("providers", None)
+
+        # Match existing Planetary Computer STAC Items
+        item.common_metadata.constellation = "Sentinel-1"
+        item.clear_links()
+        item.add_link(
+            pystac.Link(
+                rel="license",
+                target=(
+                    "https://sentinel.esa.int/documents/247904/690755/"
+                    "Sentinel_Data_Legal_Notice"
+                ),
+            )
+        )
 
         # Remove eo:bands from assets; fix-up titles and descriptions
         for asset_key, asset in item.assets.items():
@@ -69,14 +150,7 @@ class S1GRDCollection(Collection):
             ext for ext in item.stac_extensions if "/eo/" not in ext
         ]
 
-        # Convert multipolygons to polygons if possible
-        assert item.geometry
-        if item.geometry["type"] == "MultiPolygon":
-            if len(item.geometry["coordinates"]) == 1:
-                item.geometry["coordinates"] = item.geometry["coordinates"][0]
-                item.geometry["type"] = "Polygon"
-            else:
-                # Multipolygons are used to handle antimeridian crossing
-                pass
+        # Fix antimeridian crossing
+        item = fix_item(item, Strategy.SPLIT)
 
         return [item]

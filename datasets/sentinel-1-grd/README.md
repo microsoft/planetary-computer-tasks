@@ -1,11 +1,10 @@
 # planetary-computer-tasks dataset: sentinel-1-grd
 
-STAC Items are built from existing STAC Items in the blob://sentinel1euwest/s1-grd-stac/ container.
-
 ## Chunking for dynamic ingest
 
 - Requires an extra `--arg year-prefix {year}` argument when running `pctasks dataset create-chunks` or `pctasks dataset process-items` commands.
 - Asset chunkfile creation takes about 5 minutes.
+- Item creation takes about 5 minutes for ~1 day of data.
 
 ## Docker image
 
