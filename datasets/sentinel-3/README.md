@@ -42,7 +42,7 @@ $ ls datasets/sentinel-3/collection/ | xargs -I {}  \
 
 **Notes:**
 
-- Takes about 45 minutes to chunk and create items for all collections using the test batch account
+- Takes about 30 minutes to chunk and create items for all collections using the test batch account, a `year-prefix` argument, and a `--since` argument limiting the chunks to a few days.
 
 ## Docker container
 

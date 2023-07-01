@@ -1,10 +1,9 @@
-from genericpath import isfile
 import logging
 import os
+from hashlib import md5
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Union
-from hashlib import md5
 
 import pystac
 import requests
@@ -13,7 +12,7 @@ from stactools.sentinel3.stac import create_item
 
 import pctasks.dataset.collection
 from pctasks.core.models.task import WaitTaskResult
-from pctasks.core.storage import StorageFactory, Storage
+from pctasks.core.storage import Storage, StorageFactory
 from pctasks.core.utils.backoff import is_common_throttle_exception, with_backoff
 
 handler = logging.StreamHandler()
@@ -35,7 +34,7 @@ def browse_jpg_asset(jpg_path: str) -> pystac.Asset:
         extra_fields={
             "file:size": os.path.getsize(jpg_path),
             "file:checksum": md5(open(jpg_path, "rb").read()).hexdigest(),
-        }
+        },
     )
 
 
@@ -52,7 +51,7 @@ def eop_metadata_asset(eop_metadata_path: str) -> pystac.Asset:
         extra_fields={
             "file:size": os.path.getsize(eop_metadata_path),
             "file:checksum": md5(manifest_text_encoded).hexdigest(),
-        }
+        },
     )
 
 
@@ -281,20 +280,3 @@ class Sentinel3Collections(pctasks.dataset.collection.Collection):
                 asset.href = sen3_storage.get_url(path)
 
         return [item]
-
-
-if __name__ == "__main__":
-    hrefs = [
-        "/Users/pjh/data/sentinel-3/olci/wfr/S3A_OL_2_WFR____20230101T000030_20230101T000330_20230102T115317_0179_094_016_2880_MAR_O_NT_003.SEN3/xfdumanifest.xml",
-        "/Users/pjh/data/sentinel-3/slstr/wst/S3A_SL_2_WST____20230101T002812_20230101T020911_20230102T110315_6059_094_016______MAR_O_NT_003.SEN3/xfdumanifest.xml",
-        "/Users/pjh/data/sentinel-3/sral/wat/S3A_SR_2_WAT____20230101T003251_20230101T011841_20230126T183911_2750_094_016______MAR_O_NT_005.SEN3/xfdumanifest.xml",
-        "/Users/pjh/data/sentinel-3/sral/lan/S3A_SR_2_LAN____20230101T002812_20230101T011841_20230127T030052_3029_094_016______PS1_O_NT_004.SEN3/xfdumanifest.xml",
-    ]
-    for href in hrefs:
-        storage_factory = StorageFactory()
-        c = Sentinel3Collections()
-        item = c.create_item(href, storage_factory)[0]
-        item.validate()
-        import json
-        with open(f"{item.id}.json", "w") as f:
-            json.dump(item.to_dict(), f, indent=4)
