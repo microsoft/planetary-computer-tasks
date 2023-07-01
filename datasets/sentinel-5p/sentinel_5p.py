@@ -32,6 +32,9 @@ class Sentinel5pNetCDFCollection(Collection):
             storage.download_file(nc_path, tmp_nc_path)
             item = create_item(tmp_nc_path)
 
+        # Set the asset href to the blob storage URL
+        list(item.assets.values())[0].href = storage.get_url(nc_path)
+
         # providers is supplied in the Collection
         item.properties.pop("providers", None)
 
