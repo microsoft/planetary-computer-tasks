@@ -1,8 +1,9 @@
 id: sentinel_5p
-image: ${{ args.registry }}/pctasks-sentinel-5p:latest
+image: ${{ args.registry }}/pctasks-sentinel-5p:20230630.3
 
 args:
   - registry
+  - year-prefix
 
 code:
   src: ${{ local.path(./sentinel_5p.py) }}
@@ -19,24 +20,81 @@ collections:
     asset_storage:
       # The blob storage pattern is
       #
-      # | sentinel-5p-st2ac/
+      # | sentinel-5p/
       # |   TROPOMI/
       # |     L2_AER_AI/
       # |       2018/
       # |         06/
       # |           28/
-      # |           ...
+      # |             S5P_NRTI_L2__AER_AI_20230601T000349_20230601T000849_29178_03_020500_20230601T010619/
+      # |               S5P_NRTI_L2__AER_AI_20230601T000349_20230601T000849_29178_03_020500_20230601T010619.nc
       # |     L2_AER_LH
       # |     ...
       # |
-      # We want to split by product (L2_AER_AI)
-      - uri: blob://sentinel5euwest/sentinel-5p-stac/TROPOMI/
-        token: ${{ pc.get_token(sentinel5euwest, sentinel-5p-stac) }}
+      - uri: blob://sentinel5euwest/sentinel-5p/TROPOMI/L2__AER_AI/${{ args.year-prefix }}/
         chunks:
           options:
-            extensions: [.json]
-            chunk_length: 5000
-          splits:
-            - depth: 1
+            extensions: [.nc]
+            chunk_length: 200
+      - uri: blob://sentinel5euwest/sentinel-5p/TROPOMI/L2__AER_LH/${{ args.year-prefix }}/
+        chunks:
+          options:
+            extensions: [.nc]
+            chunk_length: 200
+      - uri: blob://sentinel5euwest/sentinel-5p/TROPOMI/L2__CH4___/${{ args.year-prefix }}/
+        chunks:
+          options:
+            extensions: [.nc]
+            chunk_length: 200
+      - uri: blob://sentinel5euwest/sentinel-5p/TROPOMI/L2__CLOUD_/${{ args.year-prefix }}/
+        chunks:
+          options:
+            extensions: [.nc]
+            chunk_length: 200
+      - uri: blob://sentinel5euwest/sentinel-5p/TROPOMI/L2__CO____/${{ args.year-prefix }}/
+        chunks:
+          options:
+            extensions: [.nc]
+            chunk_length: 200
+      - uri: blob://sentinel5euwest/sentinel-5p/TROPOMI/L2__HCHO__/${{ args.year-prefix }}/
+        chunks:
+          options:
+            extensions: [.nc]
+            chunk_length: 200
+      - uri: blob://sentinel5euwest/sentinel-5p/TROPOMI/L2__NO2___/${{ args.year-prefix }}/
+        chunks:
+          options:
+            extensions: [.nc]
+            chunk_length: 200
+      - uri: blob://sentinel5euwest/sentinel-5p/TROPOMI/L2__NP_BD3/${{ args.year-prefix }}/
+        chunks:
+          options:
+            extensions: [.nc]
+            chunk_length: 200
+      - uri: blob://sentinel5euwest/sentinel-5p/TROPOMI/L2__NP_BD6/${{ args.year-prefix }}/
+        chunks:
+          options:
+            extensions: [.nc]
+            chunk_length: 200
+      - uri: blob://sentinel5euwest/sentinel-5p/TROPOMI/L2__NP_BD7/${{ args.year-prefix }}/
+        chunks:
+          options:
+            extensions: [.nc]
+            chunk_length: 200
+      - uri: blob://sentinel5euwest/sentinel-5p/TROPOMI/L2__O3____/${{ args.year-prefix }}/
+        chunks:
+          options:
+            extensions: [.nc]
+            chunk_length: 200
+      - uri: blob://sentinel5euwest/sentinel-5p/TROPOMI/L2__O3_TCL/${{ args.year-prefix }}/
+        chunks:
+          options:
+            extensions: [.nc]
+            chunk_length: 200
+      - uri: blob://sentinel5euwest/sentinel-5p/TROPOMI/L2__SO2___/${{ args.year-prefix }}/
+        chunks:
+          options:
+            extensions: [.nc]
+            chunk_length: 200
     chunk_storage:
       uri: blob://sentinel5euwest/sentinel-5p-etl-data/pctasks-chunks/
