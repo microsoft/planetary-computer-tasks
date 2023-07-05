@@ -1,7 +1,7 @@
 import logging
 import os
 from tempfile import TemporaryDirectory
-from typing import List, Union
+from typing import List, Tuple, Union
 
 import pystac
 import requests
@@ -79,7 +79,7 @@ def backoff_throttle_check(e: Exception) -> bool:
     )
 
 
-def get_item_storage(asset_uri: str, storage_factory: StorageFactory) -> Storage:
+def get_item_storage(asset_uri: str, storage_factory: StorageFactory) -> Tuple[Storage, str]:
     is_blob_storage = asset_uri.startswith("blob://")
     # We also write the individual STAC items to a storage container
     # for another processing stream.
@@ -94,8 +94,8 @@ def get_item_storage(asset_uri: str, storage_factory: StorageFactory) -> Storage
     else:
         prefix = stac_item_container_name
         path = os.path.dirname(asset_uri)
-    stac_item_storage = storage_factory.get_storage(f"{prefix}/{path}.json")
-    return stac_item_storage
+    stac_item_storage = storage_factory.get_storage(prefix)
+    return stac_item_storage, f"{path}.json"
 
 
 class S1GRDCollection(Collection):
@@ -114,7 +114,7 @@ class S1GRDCollection(Collection):
         """
         archive = os.path.dirname(asset_uri)
         archive_storage = storage_factory.get_storage(archive)
-        stac_item_storage = get_item_storage(asset_uri, storage_factory)
+        stac_item_storage, stac_item_path = get_item_storage(asset_uri, storage_factory)
 
         with TemporaryDirectory() as temp_dir:
             temp_archive_dir = os.path.join(temp_dir, os.path.basename(archive))
@@ -183,6 +183,6 @@ class S1GRDCollection(Collection):
         item = fix_item(item, Strategy.SPLIT)
 
         # Write out JSON item for downstream processing
-        stac_item_storage.write_dict(item.to_dict())
+        stac_item_storage.write_dict(stac_item_path, item.to_dict())
 
         return [item]
