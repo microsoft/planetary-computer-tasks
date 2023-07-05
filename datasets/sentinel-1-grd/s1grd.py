@@ -94,11 +94,8 @@ def get_item_storage(asset_uri: str, storage_factory: StorageFactory) -> Storage
     else:
         prefix = stac_item_container_name
         path = os.path.dirname(asset_uri)
-    stac_item_storage = storage_factory.get_storage(
-        f"{prefix}/{path}.json"
-    )
+    stac_item_storage = storage_factory.get_storage(f"{prefix}/{path}.json")
     return stac_item_storage
-
 
 
 class S1GRDCollection(Collection):
