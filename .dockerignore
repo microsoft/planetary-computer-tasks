@@ -5,3 +5,6 @@ __pycache__
 .pytest_cache
 .terraform
 node_modules
+**/.mypy_cache
+**/.pytest_cache
+**/.terraform
