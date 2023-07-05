@@ -183,6 +183,6 @@ class S1GRDCollection(Collection):
         item = fix_item(item, Strategy.SPLIT)
 
         # Write out JSON item for downstream processing
-        stac_item_storage.write_json(item.to_dict())
+        stac_item_storage.write_dict(item.to_dict())
 
         return [item]
