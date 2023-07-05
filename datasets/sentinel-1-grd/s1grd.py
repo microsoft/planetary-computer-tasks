@@ -7,6 +7,7 @@ import pystac
 import requests
 import urllib3
 from stactools.core.utils.antimeridian import Strategy, fix_item
+from pctasks.core.storage.base import Storage
 from stactools.sentinel1.grd import Format
 from stactools.sentinel1.grd.stac import create_item
 
@@ -78,14 +79,45 @@ def backoff_throttle_check(e: Exception) -> bool:
     )
 
 
+def get_item_storage(asset_uri: str, storage_factory: StorageFactory) -> Storage:
+    is_blob_storage = asset_uri.startswith("blob://")
+    # We also write the individual STAC items to a storage container
+    # for another processing stream.
+    stac_item_container_name = os.environ.get(
+        "PCTASKS__S1GRD__STAC_ITEM_CONTAINER", "s1-grd-stac"
+    )
+    account_name = asset_uri.lstrip("blob://").split("/")[0]
+    if is_blob_storage:
+        prefix = f"blob://{account_name}/{stac_item_container_name}"
+        # remove the blob prefix and the manifest.safe suffix
+        path = os.path.dirname(asset_uri.split("/", 4)[-1])
+    else:
+        prefix = stac_item_container_name
+        path = os.path.dirname(asset_uri)
+    stac_item_storage = storage_factory.get_storage(
+        f"{prefix}/{path}.json"
+    )
+    return stac_item_storage
+
+
+
 class S1GRDCollection(Collection):
     @classmethod
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
+        """
+        Create an item from an asset URI.
 
+        Notes
+        -----
+        The asset URIs are like
+
+           blob://<account>/<container>/GRD/2023/6/20/EW/DH/S1A_EW_GRDM_1SDH_20230620T020009_20230620T020113_049063_05E665_5673/manifest.safe  # noqa: E501
+        """
         archive = os.path.dirname(asset_uri)
         archive_storage = storage_factory.get_storage(archive)
+        stac_item_storage = get_item_storage(asset_uri, storage_factory)
 
         with TemporaryDirectory() as temp_dir:
             temp_archive_dir = os.path.join(temp_dir, os.path.basename(archive))
@@ -152,5 +184,8 @@ class S1GRDCollection(Collection):
 
         # Fix antimeridian crossing
         item = fix_item(item, Strategy.SPLIT)
+
+        # Write out JSON item for downstream processing
+        stac_item_storage.write_json(item.to_dict())
 
         return [item]
