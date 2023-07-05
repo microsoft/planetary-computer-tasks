@@ -94,6 +94,9 @@ def get_item_storage(asset_uri: str, storage_factory: StorageFactory) -> Tuple[S
     else:
         prefix = stac_item_container_name
         path = os.path.dirname(asset_uri)
+
+    # Strip the last `_5673` off the asset path
+    path = path.rsplit("_", 1)[0]
     stac_item_storage = storage_factory.get_storage(prefix)
     return stac_item_storage, f"{path}.json"
 
