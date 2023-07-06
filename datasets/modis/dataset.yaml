@@ -28,14 +28,10 @@ collections:
       # |           ...
       - uri: blob://modiseuwest/modis-061/MOD09A1/
         chunks:
-          splits:
-            - depth: 1  # sinusoidal grid column
           options:
             extensions: [.hdf]
       - uri: blob://modiseuwest/modis-061/MYD09A1/
         chunks:
-          splits:
-            - depth: 1  # sinusoidal grid column
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -47,14 +43,10 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD09Q1/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
       - uri: blob://modiseuwest/modis-061/MYD09Q1/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -66,14 +58,10 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD10A1/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
       - uri: blob://modiseuwest/modis-061/MYD10A1/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -85,14 +73,10 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD10A2/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
       - uri: blob://modiseuwest/modis-061/MYD10A2/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -104,14 +88,10 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD11A1/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
       - uri: blob://modiseuwest/modis-061/MYD11A1/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -123,14 +103,10 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD11A2/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
       - uri: blob://modiseuwest/modis-061/MYD11A2/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -142,14 +118,10 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD13A1/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
       - uri: blob://modiseuwest/modis-061/MYD13A1/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -161,14 +133,10 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD13Q1/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
       - uri: blob://modiseuwest/modis-061/MYD13Q1/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -180,14 +148,10 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD14A1/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
       - uri: blob://modiseuwest/modis-061/MYD14A1/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -199,14 +163,10 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD14A2/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
       - uri: blob://modiseuwest/modis-061/MYD14A2/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -218,20 +178,14 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD15A2H/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
       - uri: blob://modiseuwest/modis-061/MYD15A2H/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
       - uri: blob://modiseuwest/modis-061/MCD15A2H/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -243,8 +197,6 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MCD15A3H/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -256,14 +208,10 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD16A3GF/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
       - uri: blob://modiseuwest/modis-061/MYD16A3GF/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -275,14 +223,10 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD17A2H/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
       - uri: blob://modiseuwest/modis-061/MYD17A2H/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -294,14 +238,10 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD17A2HGF/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
       - uri: blob://modiseuwest/modis-061/MYD17A2HGF/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -313,14 +253,10 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD17A3HGF/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
       - uri: blob://modiseuwest/modis-061/MYD17A3HGF/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -332,14 +268,10 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD21A2/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
       - uri: blob://modiseuwest/modis-061/MYD21A2/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -351,8 +283,6 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MCD43A4/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
@@ -364,8 +294,6 @@ collections:
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MCD64A1/
         chunks:
-          splits:
-            - depth: 1
           options:
             extensions: [.hdf]
     chunk_storage:
