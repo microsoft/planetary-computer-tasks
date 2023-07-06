@@ -22,6 +22,64 @@ def dataset_cmd(ctx: click.Context) -> None:
     """PCTasks commands for working with datasets."""
     pass
 
+@click.command("create-splits")
+@opt_ds_config
+@opt_collection
+@opt_args
+@click.option(
+    "-s",
+    "--since",
+    help=("Only process files that have been modified at or after this datetime."),
+)
+@click.option("--limit", type=int, help="Limit prefix listing, used for testing")
+@click.option(
+    "-t",
+    "--target",
+    help="The target environment to process the items in.",
+)
+@opt_submit
+@opt_confirm
+@opt_upsert
+@opt_workflow_id
+@click.pass_context
+def create_splits_cmd(
+    ctx: click.Context,
+    dataset: Optional[str] = None,
+    collection: Optional[str] = None,
+    arg: List[Tuple[str, str]] = [],
+    since: Optional[str] = None,
+    limit: Optional[int] = None,
+    target: Optional[str] = None,
+    submit: bool = False,
+    confirm: bool = False,
+    upsert: bool = False,
+    workflow_id: Optional[str] = None,
+) -> None:
+    """Creates workflow to generate asset chunks for bulk processing.
+
+    Use -u or --upsert to upsert the workflow through the API.
+    Use -s or --submit to upsert and submit the workflow through the API.
+
+    Output: If neither -u or -s is present, Will print the workflow yaml.
+    If -u is present, will print the workflow ID to stdout.
+    If -s is present, will print the run ID to stdout.
+    """
+    from . import _cli
+
+    return _cli.create_splits_cmd(
+        ctx,
+        dataset=dataset,
+        collection=collection,
+        arg=arg,
+        limit=limit,
+        submit=submit,
+        upsert=upsert,
+        target=target,
+        workflow_id=workflow_id,
+        auto_confirm=confirm,
+    )
+
+
 
 @click.command("create-chunks")
 @click.argument("chunkset_id")
@@ -246,6 +304,7 @@ def validate_collection(collection: click.File) -> None:
     _cli.validate_collection_cmd(collection)
 
 
+dataset_cmd.add_command(create_splits_cmd)
 dataset_cmd.add_command(create_chunks_cmd)
 dataset_cmd.add_command(process_items_cmd)
 dataset_cmd.add_command(ingest_collection_cmd)

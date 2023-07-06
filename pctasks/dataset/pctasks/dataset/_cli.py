@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Literal
 
 import click
 from pystac.utils import str_to_datetime
@@ -17,11 +17,13 @@ from pctasks.dataset.splits.models import CreateSplitsOptions
 from pctasks.dataset.template import template_dataset_file
 from pctasks.dataset.validate import validate_collection
 from pctasks.dataset.workflow import (
+    create_splits_workflow,
     create_chunks_workflow,
     create_ingest_collection_workflow,
     create_process_items_workflow,
 )
 
+COMMAND_KINDS = Literal["create-splits", "create-chunks"]
 logger = logging.getLogger(__name__)
 
 
@@ -30,6 +32,102 @@ def _handle_multiple_collections(e: MultipleCollectionsError) -> Exception:
     for c in e.collection_ids:
         cli_print(f" - {c}")
     return click.UsageError("Please specify which collection using --collection")
+
+
+def _create_cmd(
+    kind: str,
+    ctx: click.Context,
+    chunkset_id: str,
+    dataset: Optional[str] = None,
+    collection: Optional[str] = None,
+    arg: List[Tuple[str, str]] = [],
+    since: Optional[str] = None,
+    limit: Optional[int] = None,
+    submit: bool = False,
+    auto_confirm: bool = False,
+    upsert: bool = False,
+    target: Optional[str] = None,
+    workflow_id: Optional[str] = None,
+) -> None:
+    try:
+        ds_config = template_dataset_file(dataset, dict(arg))
+    except (MarkedYAMLError, YamlValidationError) as e:
+        raise click.ClickException(f"Invalid dataset config.\n{e}")
+    except FileNotFoundError:
+        raise click.ClickException(
+            "No dataset config found. Use --config to specify "
+            f"or name your config {DEFAULT_DATASET_YAML_PATH}."
+        )
+
+    if not ds_config:
+        raise click.ClickException("No dataset config found.")
+
+    try:
+        collection_config = ds_config.get_collection(collection)
+    except MultipleCollectionsError as e:
+        raise _handle_multiple_collections(e)
+
+    if kind == "create-splits":
+        workflow_def = create_splits_workflow(
+            dataset=ds_config,
+            collection=collection_config,
+            create_splits_options=CreateSplitsOptions(limit=limit),
+            chunk_options=ChunkOptions(since=map_opt(str_to_datetime, since)),
+            target=target,
+        )
+
+    elif kind == "create-chunks":
+        workflow_def = create_chunks_workflow(
+            dataset=ds_config,
+            collection=collection_config,
+            chunkset_id=chunkset_id,
+            create_splits_options=CreateSplitsOptions(limit=limit),
+            chunk_options=ChunkOptions(since=map_opt(str_to_datetime, since)),
+            target=target,
+        )
+    else:
+        # typing.assert_never(kind)  # python 3.11
+        assert False
+
+    cli_handle_workflow(
+        ctx,
+        workflow_def,
+        workflow_id=workflow_id,
+        upsert=upsert,
+        upsert_and_submit=submit,
+        args={a[0]: a[1] for a in arg},
+        auto_confirm=auto_confirm,
+    )
+
+
+def create_splits_cmd(
+    ctx: click.Context,
+    dataset: Optional[str] = None,
+    collection: Optional[str] = None,
+    arg: List[Tuple[str, str]] = [],
+    since: Optional[str] = None,
+    limit: Optional[int] = None,
+    submit: bool = False,
+    auto_confirm: bool = False,
+    upsert: bool = False,
+    target: Optional[str] = None,
+    workflow_id: Optional[str] = None,
+) -> None:
+    return _create_cmd(
+        "create-splits",
+        ctx=ctx,
+        chunkset_id="",  # unused for splits
+        dataset=dataset,
+        collection=collection,
+        arg=arg,
+        since=since,
+        limit=limit,
+        submit=submit,
+        auto_confirm=auto_confirm,
+        upsert=upsert,
+        target=target,
+        workflow_id=workflow_id,
+    )
 
 
 def create_chunks_cmd(
@@ -51,41 +149,20 @@ def create_chunks_cmd(
     Output: If -s is present, will print the run ID to stdout. Otherwise,
     will print the workflow yaml.
     """
-    try:
-        ds_config = template_dataset_file(dataset, dict(arg))
-    except (MarkedYAMLError, YamlValidationError) as e:
-        raise click.ClickException(f"Invalid dataset config.\n{e}")
-    except FileNotFoundError:
-        raise click.ClickException(
-            "No dataset config found. Use --config to specify "
-            f"or name your config {DEFAULT_DATASET_YAML_PATH}."
-        )
-
-    if not ds_config:
-        raise click.ClickException("No dataset config found.")
-
-    try:
-        collection_config = ds_config.get_collection(collection)
-    except MultipleCollectionsError as e:
-        raise _handle_multiple_collections(e)
-
-    workflow_def = create_chunks_workflow(
-        dataset=ds_config,
-        collection=collection_config,
+    return _create_cmd(
+        "create-chunks",
+        ctx=ctx,
         chunkset_id=chunkset_id,
-        create_splits_options=CreateSplitsOptions(limit=limit),
-        chunk_options=ChunkOptions(since=map_opt(str_to_datetime, since)),
-        target=target,
-    )
-
-    cli_handle_workflow(
-        ctx,
-        workflow_def,
-        workflow_id=workflow_id,
-        upsert=upsert,
-        upsert_and_submit=submit,
-        args={a[0]: a[1] for a in arg},
+        dataset=dataset,
+        collection=collection,
+        arg=arg,
+        since=since,
+        limit=limit,
+        submit=submit,
         auto_confirm=auto_confirm,
+        upsert=upsert,
+        target=target,
+        workflow_id=workflow_id,
     )
 
 
