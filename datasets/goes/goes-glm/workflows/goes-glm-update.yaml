@@ -14,7 +14,7 @@ jobs:
     id: create-splits
     tasks:
     - id: create-splits
-      image: ${{ args.registry }}/pctasks-goes-glm:2023.5.18.0
+      image: ${{ args.registry }}/pctasks-goes-glm:2023.7.5.0
       code:
         src: datasets/goes/goes-glm/goes_glm.py
       task: goes_glm:GoesGlmCollection.create_splits_task
@@ -53,7 +53,7 @@ jobs:
     id: create-chunks
     tasks:
     - id: create-chunks
-      image: ${{ args.registry }}/pctasks-goes-glm:2023.5.18.0
+      image: ${{ args.registry }}/pctasks-goes-glm:2023.7.5.0
       code:
         src: datasets/goes/goes-glm/goes_glm.py
       task: pctasks.dataset.chunks.task:create_chunks_task
@@ -74,7 +74,7 @@ jobs:
     id: process-chunk
     tasks:
     - id: create-items
-      image: ${{ args.registry }}/pctasks-goes-glm:2023.5.18.0
+      image: ${{ args.registry }}/pctasks-goes-glm:2023.7.5.0
       code:
         src: datasets/goes/goes-glm/goes_glm.py
       task: goes_glm:GoesGlmCollection.create_items_task

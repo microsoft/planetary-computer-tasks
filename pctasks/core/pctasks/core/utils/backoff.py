@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from typing import Any, Callable, Coroutine, List, Optional, TypeVar
 
 import azure.core.exceptions
+import requests
 
 T = TypeVar("T")
 
@@ -78,7 +79,14 @@ def is_common_throttle_exception(e: Exception) -> bool:
         # urllib3.exceptions.ProtocolError uses 104 for connection reset by peer
         return True
 
-    if isinstance(e, azure.core.exceptions.IncompleteReadError):
+    if isinstance(
+        e,
+        (
+            azure.core.exceptions.IncompleteReadError,
+            requests.exceptions.ConnectionError,
+            TimeoutError,
+        ),
+    ):
         return True
 
     return False
@@ -137,7 +145,6 @@ def with_backoff(
 
     for next_wait in strategy.get_waits():
         try:
-
             # Try to do the thing and return
             return fn()
 
@@ -172,7 +179,6 @@ async def with_backoff_async(
 
     for next_wait in strategy.get_waits():
         try:
-
             # Try to do the thing and return
             return await fn()
 
