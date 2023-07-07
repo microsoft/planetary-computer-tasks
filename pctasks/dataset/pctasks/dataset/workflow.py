@@ -251,7 +251,7 @@ def create_process_items_workflow(
             workflow_definition = workflow_definition.copy(update={"args": ["since"]})
         else:
             workflow_definition.args.append("since")
-        
+
         for input_ in workflow_definition.jobs["create-splits"].tasks[0].args["inputs"]:
             input_["chunk_options"]["since"] = "${{ args.since }}"
 

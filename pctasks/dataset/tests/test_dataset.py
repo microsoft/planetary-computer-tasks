@@ -92,7 +92,7 @@ def test_process_items() -> None:
 @pytest.mark.parametrize("has_args", [True, False])
 @pytest.mark.parametrize("extra_uri", [True, False])
 def test_process_items_is_update_workflow(tmp_path, has_args, extra_uri) -> None:
-    
+
     workflow_path = tmp_path.joinpath("workflow.yaml")
     workflow_path.write_text(Path(DATASET_PATH).read_text())
 
