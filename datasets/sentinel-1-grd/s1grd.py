@@ -1,7 +1,5 @@
 import logging
 import os
-import json
-import pathlib
 from tempfile import TemporaryDirectory
 from typing import List, Tuple, Union
 
