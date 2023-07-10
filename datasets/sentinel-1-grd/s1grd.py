@@ -137,15 +137,9 @@ class S1GRDCollection(Collection):
                     is_throttle=backoff_throttle_check,
                 )
 
-            try:
-                item: pystac.Item = create_item(
-                    temp_archive_dir, archive_format=Format.COG
-                )
-            except FileNotFoundError:
-                logger.exception(
-                    f"Missing file when attempting to create item for {asset_uri}"
-                )
-                return []
+            item: pystac.Item = create_item(
+                temp_archive_dir, archive_format=Format.COG
+            )
 
             for asset in item.assets.values():
                 path = os.path.basename(asset.href)
