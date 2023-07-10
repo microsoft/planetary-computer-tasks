@@ -33,7 +33,7 @@ def template_dataset_file(
     Returns:
         The dataset model with template values.
     """
-    if not path:
+    if path is None:
         path = DEFAULT_DATASET_YAML_PATH
     p = Path(path)
     if not p.exists():

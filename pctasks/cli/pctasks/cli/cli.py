@@ -92,7 +92,8 @@ def setup_logging_for_module(
     _logger.addHandler(ch)
 
 
-@click.group(name="pctasks", cls=PCTasksGroup)
+# https://github.com/pallets/click/issues/2558
+@click.group(name="pctasks", cls=PCTasksGroup)  # type: ignore[arg-type]
 @click.version_option(__version__)
 @click.option("-v", "--verbose", help=("Use verbose mode"), is_flag=True)
 @click.option("-q", "--quiet", help=("Use quiet mode (no output)"), is_flag=True)

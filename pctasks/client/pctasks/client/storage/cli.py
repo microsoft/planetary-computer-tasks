@@ -8,7 +8,7 @@ def storage_cmd() -> None:
     pass
 
 
-@storage_cmd.command(name="get")
+@storage_cmd.command(name="get")  # type: ignore[arg-type]
 @click.argument("uri")
 @click.option(
     "-o",
@@ -31,7 +31,7 @@ def get_file_command(
     ctx.exit(get_file(ctx, uri=uri, output=output, force=force, token=token))
 
 
-@storage_cmd.command(name="put")
+@storage_cmd.command(name="put")  # type: ignore[arg-type]
 @click.argument("input", type=click.File("rb"))
 @click.argument("uri")
 @click.option("-f", "--force", is_flag=True, help="Overwrite existing files")

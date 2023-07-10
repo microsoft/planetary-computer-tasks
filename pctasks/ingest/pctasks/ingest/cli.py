@@ -6,7 +6,7 @@ from pctasks.core.constants import MICROSOFT_OWNER
 from pctasks.ingest.constants import DEFAULT_INSERT_GROUP_SIZE
 
 
-@click.command("ndjsons")
+@click.command("ndjsons")  # type: ignore[arg-type]
 @click.argument("collection_id")
 @click.argument("ndjson_folder_uri")
 @click.option("-t", "--target", help="Target environment to ingest into.")
@@ -97,7 +97,7 @@ def ingest_ndjson_cmd(
     )
 
 
-@click.command("collection")
+@click.command("collection")  # type: ignore[arg-type]
 @click.argument("path", type=click.Path(exists=True))
 @click.option("-t", "--target", help="Target environment to ingest into.")
 @click.option("--owner", help="The owner of the collection.", default=MICROSOFT_OWNER)

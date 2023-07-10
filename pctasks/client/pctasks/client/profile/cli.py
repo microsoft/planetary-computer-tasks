@@ -6,7 +6,7 @@ def profile_cmd() -> None:
     pass
 
 
-@profile_cmd.command(name="create")
+@profile_cmd.command(name="create")  # type: ignore[arg-type]
 @click.argument("profile")
 @click.pass_context
 def create_profile_command(ctx: click.Context, profile: str) -> None:
@@ -16,7 +16,7 @@ def create_profile_command(ctx: click.Context, profile: str) -> None:
     create_profile(ctx, profile)
 
 
-@profile_cmd.command(name="edit")
+@profile_cmd.command(name="edit")  # type: ignore[arg-type]
 @click.argument("profile")
 @click.pass_context
 def edit_profile_command(ctx: click.Context, profile: str) -> None:
@@ -26,7 +26,7 @@ def edit_profile_command(ctx: click.Context, profile: str) -> None:
     edit_profile(ctx, profile)
 
 
-@profile_cmd.command(name="set")
+@profile_cmd.command(name="set")  # type: ignore[arg-type]
 @click.argument("profile")
 @click.pass_context
 def set_profile_command(ctx: click.Context, profile: str) -> None:
@@ -40,7 +40,7 @@ def set_profile_command(ctx: click.Context, profile: str) -> None:
     set_profile(ctx, profile)
 
 
-@profile_cmd.command(name="show")
+@profile_cmd.command(name="show")  # type: ignore[arg-type]
 @click.argument("profile")
 @click.pass_context
 def show_profile_command(ctx: click.Context, profile: str) -> None:

@@ -56,6 +56,41 @@ def task_tags(
     return merged_tags or None
 
 
+def create_splits_workflow(
+    dataset: DatasetDefinition,
+    collection: CollectionDefinition,
+    create_splits_options: Optional[CreateSplitsOptions] = None,
+    chunk_options: Optional[ChunkOptions] = None,
+    target: Optional[str] = None,
+    tags: Optional[Dict[str, str]] = None,
+) -> WorkflowDefinition:
+
+    create_splits_task = CreateSplitsTaskConfig.from_collection(
+        dataset,
+        collection,
+        options=create_splits_options or CreateSplitsOptions(),
+        chunk_options=chunk_options,
+        environment=dataset.environment,
+        tags=task_tags(collection.id, "create-splits", tags, dataset.task_config),
+    )
+
+    create_splits_job = JobDefinition(id="create-splits", tasks=[create_splits_task])
+    id = f"{collection.id}-create-splits"
+    if collection.id != dataset.id:
+        id = f"{dataset.id}-{id}"
+    return WorkflowDefinition(
+        id=id,
+        name=f"Create splits for {collection.id}",
+        dataset=dataset.id,
+        tokens=collection.get_tokens(),
+        args=dataset.args,
+        jobs={
+            create_splits_job.get_id(): create_splits_job,
+        },
+        target=target,
+    )
+
+
 def create_chunks_workflow(
     dataset: DatasetDefinition,
     collection: CollectionDefinition,

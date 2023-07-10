@@ -11,7 +11,7 @@ from pctasks.task.version import __version__
 logger = logging.getLogger(__name__)
 
 
-@click.group(name="pctasks-dev")
+@click.group(name="pctasks-dev")  # type: ignore[arg-type]
 @click.version_option(__version__)
 @click.option("-v", "--verbose", help=("Use verbose mode"), is_flag=True)
 @click.option("-q", "--quiet", help=("Use quiet mode (no output)"), is_flag=True)
