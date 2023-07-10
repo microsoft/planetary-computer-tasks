@@ -20,6 +20,6 @@ def opt_all(fn: Callable[..., Any]) -> Callable[..., Any]:
 
 
 def opt_status(fn: Callable[..., Any]) -> Callable[..., Any]:
-    _opt = click.option("-s", "--status", help="Filter by status.")  # type: ignore[var-annotated]
+    _opt = click.option("-s", "--status", help="Filter by status.")  # type: ignore[var-annotated]  # noqa: E501
     _opt(fn)
     return fn

@@ -168,7 +168,7 @@ class JobPartitionRunRecord(RunRecord):
         job_definition: JobDefinition,
         run_id: str,
         # TODO(3.11) use StrEnum
-        status: JobPartitionRunStatus = JobPartitionRunStatus.PENDING,  # type: ignore[assignment]
+        status: JobPartitionRunStatus = JobPartitionRunStatus.PENDING,  # type: ignore[assignment]  # noqa: E501
     ) -> "JobPartitionRunRecord":
         job_id = job_definition.get_id()
         return cls(
