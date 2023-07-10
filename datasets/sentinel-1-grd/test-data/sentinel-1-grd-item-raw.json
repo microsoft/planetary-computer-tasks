@@ -1,0 +1,209 @@
+{
+    "type": "Feature",
+    "stac_version": "1.0.0",
+    "id": "S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1",
+    "properties": {
+        "sar:frequency_band": "C",
+        "sar:center_frequency": 5.405,
+        "sar:observation_direction": "right",
+        "sar:instrument_mode": "IW",
+        "sar:polarizations": [
+            "VV",
+            "VH"
+        ],
+        "sar:product_type": "GRD",
+        "sar:resolution_range": 20,
+        "sar:resolution_azimuth": 22,
+        "sar:pixel_spacing_range": 10,
+        "sar:pixel_spacing_azimuth": 10,
+        "sar:looks_range": 5,
+        "sar:looks_azimuth": 1,
+        "sar:looks_equivalent_number": 4.4,
+        "sat:platform_international_designator": "2014-016A",
+        "sat:orbit_state": "descending",
+        "sat:absolute_orbit": 49191,
+        "sat:relative_orbit": 119,
+        "providers": [
+            {
+                "name": "ESA",
+                "roles": [
+                    "producer",
+                    "processor",
+                    "licensor"
+                ],
+                "url": "https://earth.esa.int/eogateway"
+            }
+        ],
+        "platform": "SENTINEL-1A",
+        "constellation": "sentinel-1",
+        "start_datetime": "2023-06-28 21:07:05.989235+00:00",
+        "end_datetime": "2023-06-28 21:07:30.988556+00:00",
+        "s1:instrument_configuration_ID": "7",
+        "s1:datatake_id": "387661",
+        "s1:product_timeliness": "Fast-24h",
+        "s1:processing_level": "1",
+        "s1:resolution": "high",
+        "s1:orbit_source": "RESORB",
+        "s1:slice_number": "14",
+        "s1:total_slices": "15",
+        "s1:shape": [
+            26029,
+            16839
+        ],
+        "datetime": "2023-06-28T21:07:18.488895Z"
+    },
+    "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+            [
+                [
+                    126.98484,
+                    -20.116745
+                ],
+                [
+                    124.573364,
+                    -19.550793
+                ],
+                [
+                    124.963379,
+                    -18.052515
+                ],
+                [
+                    127.354973,
+                    -18.611715
+                ],
+                [
+                    126.98484,
+                    -20.116745
+                ]
+            ]
+        ]
+    },
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://scihub.copernicus.eu/twiki/do/view/SciHubWebPortal/TermsConditions",
+            "title": "Sentinel License"
+        },
+        {
+            "rel": "about",
+            "href": "https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-1-sar/products-algorithms/level-1-algorithms/ground-range-detected",
+            "title": "Sentinel-1 Ground Range Detected (GRD) Technical Guide"
+        }
+    ],
+    "assets": {
+        "safe-manifest": {
+            "href": "/tmp/tmpsskmzq08/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/manifest.safe",
+            "type": "application/xml",
+            "title": "Manifest File",
+            "description": "General product metadata in XML format. Contains a high-level textual description of the product and references to all of product's components, the product metadata, including the product identification and the resource references, and references to the physical location of each component file contained in the product.",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "schema-product-vh": {
+            "href": "/tmp/tmpsskmzq08/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/rfi-iw-vh.xml",
+            "type": "application/xml",
+            "title": "Product Schema",
+            "description": "Describes the main characteristics corresponding to the band: state of the platform during acquisition, image properties, Doppler information, geographic location, etc.",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "schema-product-vv": {
+            "href": "/tmp/tmpsskmzq08/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/annotation/rfi/rfi-iw-vv.xml",
+            "type": "application/xml",
+            "title": "Product Schema",
+            "description": "Describes the main characteristics corresponding to the band: state of the platform during acquisition, image properties, Doppler information, geographic location, etc.",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "schema-calibration-vh": {
+            "href": "/tmp/tmpsskmzq08/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/annotation/calibration/calibration-iw-vh.xml",
+            "type": "application/xml",
+            "title": "Calibration Schema",
+            "description": "Calibration metadata including calibration information and the beta nought, sigma nought, gamma and digital number look-up tables that can be used for absolute product calibration.",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "schema-calibration-vv": {
+            "href": "/tmp/tmpsskmzq08/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/annotation/calibration/calibration-iw-vv.xml",
+            "type": "application/xml",
+            "title": "Calibration Schema",
+            "description": "Calibration metadata including calibration information and the beta nought, sigma nought, gamma and digital number look-up tables that can be used for absolute product calibration.",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "schema-noise-vh": {
+            "href": "/tmp/tmpsskmzq08/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/annotation/calibration/noise-iw-vh.xml",
+            "type": "application/xml",
+            "title": "Noise Schema",
+            "description": "Estimated thermal noise look-up tables",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "schema-noise-vv": {
+            "href": "/tmp/tmpsskmzq08/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/annotation/calibration/noise-iw-vv.xml",
+            "type": "application/xml",
+            "title": "Noise Schema",
+            "description": "Estimated thermal noise look-up tables",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "thumbnail": {
+            "href": "/tmp/tmpsskmzq08/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/preview/quick-look.png",
+            "type": "image/png",
+            "title": "Preview Image",
+            "description": "An averaged, decimated preview image in PNG format. Single polarization products are represented with a grey scale image. Dual polarization products are represented by a single composite colour image in RGB with the red channel (R) representing the  co-polarization VV or HH), the green channel (G) represents the cross-polarization (VH or HV) and the blue channel (B) represents the ratio of the cross an co-polarizations.",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "vh": {
+            "href": "/tmp/tmpsskmzq08/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/measurement/iw-vh.tiff",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "VH",
+            "description": "Actual SAR data that have been processed into an image",
+            "eo:bands": [
+                {
+                    "name": "VH",
+                    "description": "VH band: vertical transmit and horizontal receive"
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "vv": {
+            "href": "/tmp/tmpsskmzq08/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/measurement/iw-vv.tiff",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "VV",
+            "description": "Actual SAR data that have been processed into an image",
+            "eo:bands": [
+                {
+                    "name": "VV",
+                    "description": "VV band: vertical transmit and vertical receive"
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        }
+    },
+    "bbox": [
+        124.573364,
+        -20.116745,
+        127.354973,
+        -18.052515
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/sar/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/sat/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/eo/v1.0.0/schema.json"
+    ]
+}
