@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Type
+from typing import Dict, Optional, Type, TypeAlias
 
 from pydantic import BaseModel
 
@@ -11,7 +11,7 @@ from pctasks.core.cosmos.container import (
 from pctasks.core.cosmos.settings import CosmosDBSettings
 from pctasks.core.models.event import StorageEventRecord
 
-T = StorageEventRecord
+T: TypeAlias = StorageEventRecord
 
 PARTITION_KEY = "/id"
 
