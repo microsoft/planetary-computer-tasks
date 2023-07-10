@@ -12,6 +12,8 @@ $ pctasks dataset process-items '${{ args.since }}' \
     -c goes-glm \
     --workflow-id=goes-glm-update \
     --is-update-workflow \
+    --arg year-prefix 2023 \
+    --arg registry '${{ args.registry }}' \
     > datasets/goes/goes-glm/workflows/goes-glm-update.yaml
 ```
 
@@ -22,4 +24,10 @@ And registered with
 
 ```console
 $ pctasks workflow create datasets/goes/goes-glm/workflows/goes-glm-update.yaml
+```
+
+And updated with
+
+```
+$ pctasks workflow update datasets/goes/goes-glm/workflows/goes-glm-update.yaml
 ```

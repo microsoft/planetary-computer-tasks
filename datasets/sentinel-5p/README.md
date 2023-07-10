@@ -16,7 +16,7 @@ This collection is updated regularly.
 
 ```console
 $ pctasks dataset process-items '${{ args.since }}' \
-    -d datasets/sentinel-5p/update.yaml \
+    -d datasets/sentinel-5p/dataset.yaml \
     -c sentinel-5p-l2-netcdf \
     --workflow-id=sentinel-5p-l2-netcdf-update \
     --is-update-workflow \
