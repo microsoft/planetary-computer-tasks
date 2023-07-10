@@ -23,7 +23,7 @@ def dataset_cmd(ctx: click.Context) -> None:
     pass
 
 
-@click.command("create-splits")
+@click.command("create-splits")  # type: ignore[arg-type]
 @opt_ds_config
 @opt_collection
 @opt_args
@@ -81,7 +81,7 @@ def create_splits_cmd(
     )
 
 
-@click.command("create-chunks")
+@click.command("create-chunks")  # type: ignore[arg-type]
 @click.argument("chunkset_id")
 @opt_ds_config
 @opt_collection
@@ -143,7 +143,7 @@ def create_chunks_cmd(
     )
 
 
-@click.command("process-items")
+@click.command("process-items")  # type: ignore[arg-type]
 @click.argument("chunkset_id")
 @opt_ds_config
 @opt_collection
@@ -227,7 +227,7 @@ def process_items_cmd(
     )
 
 
-@click.command("ingest-collection")
+@click.command("ingest-collection")  # type: ignore[arg-type]
 @opt_ds_config
 @opt_collection
 @opt_args

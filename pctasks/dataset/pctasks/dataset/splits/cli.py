@@ -16,7 +16,7 @@ from pctasks.dataset.utils import opt_collection, opt_ds_config, opt_submit, opt
 logger = logging.getLogger(__name__)
 
 
-@click.command("create-splits")
+@click.command("create-splits")  # type: ignore[arg-type]
 @opt_ds_config
 @opt_collection
 @click.option("--limit", type=int, help="Limit prefix linking, used for testing")
