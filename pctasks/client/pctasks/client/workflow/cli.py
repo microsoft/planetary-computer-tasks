@@ -29,7 +29,7 @@ def workflow_cmd(ctx: click.Context, pretty_print: bool) -> None:
     )
 
 
-@workflow_cmd.command("submit")
+@workflow_cmd.command("submit")  # type: ignore[arg-type]
 @click.argument("workflow_id")
 @opt_args
 @click.pass_context
@@ -47,7 +47,7 @@ def submit_cmd(
     ctx.exit(commands.submit_workflow(ctx, workflow_id, args={a[0]: a[1] for a in arg}))
 
 
-@workflow_cmd.command("upsert-and-submit")
+@workflow_cmd.command("upsert-and-submit")  # type: ignore[arg-type]
 @click.argument("workflow", type=click.File("r"))
 @click.option("-w", "--workflow-id", help="Workflow ID, if not specified in workflow")
 @opt_args
@@ -71,7 +71,7 @@ def upsert_and_submit_cmd(
     )
 
 
-@workflow_cmd.command("create")
+@workflow_cmd.command("create")  # type: ignore[arg-type]
 @click.argument("workflow", type=click.File("r"))
 @click.option("-w", "--workflow-id", help="Workflow ID, if not specified in workflow")
 @opt_args
@@ -95,7 +95,7 @@ def create_cmd(
     )
 
 
-@workflow_cmd.command("update")
+@workflow_cmd.command("update")  # type: ignore[arg-type]
 @click.argument("workflow", type=click.File("r"))
 @click.option("-w", "--workflow-id", help="Workflow ID, if not specified in workflow")
 @opt_args
