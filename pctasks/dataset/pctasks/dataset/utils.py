@@ -40,7 +40,7 @@ def opt_upsert(fn: Callable[..., Any]) -> Callable[..., Any]:
 
 
 def opt_submit(fn: Callable[..., Any]) -> Callable[..., Any]:
-    _opt = click.option("-u", "--upsert", is_flag=True, help="Upsert the workflow.")  # type: ignore[var-annotated]  # noqa: E501
+    _opt = click.option("-s", "--submit", is_flag=True, help="Submit the workflow.")  # type: ignore[var-annotated]  # noqa: E501
     _opt(fn)
     return fn
 
