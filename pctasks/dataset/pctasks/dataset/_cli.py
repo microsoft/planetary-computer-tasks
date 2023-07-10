@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import List, Optional, Tuple, Literal
+from typing import List, Literal, Optional, Tuple
 
 import click
 from pystac.utils import str_to_datetime
@@ -17,10 +17,10 @@ from pctasks.dataset.splits.models import CreateSplitsOptions
 from pctasks.dataset.template import template_dataset_file
 from pctasks.dataset.validate import validate_collection
 from pctasks.dataset.workflow import (
-    create_splits_workflow,
     create_chunks_workflow,
     create_ingest_collection_workflow,
     create_process_items_workflow,
+    create_splits_workflow,
 )
 
 COMMAND_KINDS = Literal["create-splits", "create-chunks"]

@@ -8,7 +8,7 @@ from pctasks.client.workflow.options import opt_args
 logger = logging.getLogger(__name__)
 
 
-@click.group("workflow")
+@click.group("workflow")  # type: ignore[arg-type]
 @click.option(
     "-p",
     "--pretty-print",
@@ -119,7 +119,7 @@ def update_cmd(
     )
 
 
-@workflow_cmd.command("get")
+@workflow_cmd.command("get")  # type: ignore[arg-type]
 @click.argument("workflow_id")
 @click.pass_context
 def get_cmd(
@@ -132,7 +132,7 @@ def get_cmd(
     ctx.exit(commands.get_workflow(ctx, workflow_id=workflow_id))
 
 
-@workflow_cmd.command("list")
+@workflow_cmd.command("list")  # type: ignore[arg-type]
 @click.option("-s", "--sort-by", help="Property to sort by")
 @click.option("-d", "--desc", help="Sort descending", is_flag=True)
 @click.pass_context

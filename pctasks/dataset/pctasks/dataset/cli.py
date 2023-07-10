@@ -22,6 +22,7 @@ def dataset_cmd(ctx: click.Context) -> None:
     """PCTasks commands for working with datasets."""
     pass
 
+
 @click.command("create-splits")
 @opt_ds_config
 @opt_collection
@@ -78,7 +79,6 @@ def create_splits_cmd(
         workflow_id=workflow_id,
         auto_confirm=confirm,
     )
-
 
 
 @click.command("create-chunks")
@@ -295,7 +295,8 @@ def list_collections_cmd(
     return _cli.list_collections_cmd(ctx, dataset, arg=arg)
 
 
-@click.command("validate-collection")
+# https://github.com/pallets/click/issues/2558
+@click.command("validate-collection")  # type: ignore[arg-type]
 @click.argument("collection", type=click.File("rt"))
 def validate_collection(collection: click.File) -> None:
     """Validate a STAC collection."""
