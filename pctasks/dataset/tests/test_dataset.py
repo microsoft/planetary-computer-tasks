@@ -90,8 +90,18 @@ def test_process_items() -> None:
 
 
 @pytest.mark.parametrize("has_args", [True, False])
-def test_process_items_is_update_workflow(has_args) -> None:
-    ds_config = template_dataset_file(DATASET_PATH)
+@pytest.mark.parametrize("extra_uri", [True, False])
+def test_process_items_is_update_workflow(tmp_path, has_args, extra_uri) -> None:
+
+    workflow_path = tmp_path.joinpath("workflow.yaml")
+    workflow_path.write_text(Path(DATASET_PATH).read_text())
+
+    ds_config = template_dataset_file(workflow_path)
+
+    if extra_uri:
+        asset_storage = ds_config.collections[0].asset_storage
+        asset_storage.append(asset_storage[0].copy())
+
     if not has_args:
         ds_config = ds_config.copy(update={"args": None})
         assert ds_config.args is None
@@ -113,6 +123,14 @@ def test_process_items_is_update_workflow(has_args) -> None:
         .args["inputs"][0]["chunk_options"]["since"]
         == "${{ args.since }}"
     )
+
+    if extra_uri:
+        assert (
+            workflow.jobs["create-splits"]
+            .tasks[0]
+            .args["inputs"][1]["chunk_options"]["since"]
+            == "${{ args.since }}"
+        )
 
 
 def test_task_config_tags() -> None:
