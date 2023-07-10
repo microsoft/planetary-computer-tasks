@@ -1,5 +1,6 @@
 import logging
 import os
+import pathlib
 from tempfile import TemporaryDirectory
 from typing import List, Tuple, Union
 
@@ -140,10 +141,7 @@ class S1GRDCollection(Collection):
             item: pystac.Item = create_item(
                 temp_archive_dir, archive_format=Format.COG
             )
-
-            for asset in item.assets.values():
-                path = os.path.basename(asset.href)
-                asset.href = archive_storage.get_url(path)
+            item = rewrite_asset_hrefs(item, archive_storage, temp_archive_dir)
 
         # Remove checksum from id
         item.id = "_".join(item.id.split("_")[0:-1])
@@ -180,6 +178,29 @@ class S1GRDCollection(Collection):
         item = fix_item(item, Strategy.SPLIT)
 
         # Write out JSON item for downstream processing
-        stac_item_storage.write_dict(stac_item_path, item.to_dict())
+        if not stac_item_storage.file_exists(stac_item_path):
+            stac_item_storage.write_dict(stac_item_path, item.to_dict())
 
         return [item]
+
+
+def rewrite_asset_hrefs(item: pystac.Item, storage: Storage, relative_to: str) -> pystac.Item:
+    """
+    Rewrite the item's assets to link to Blob Storage instead of local paths.
+
+    Parameters
+    ----------
+    item: pystac.Item
+        The STAC item from `stactools.sentinel1`
+    storage: Storage
+        The (Blob) storage class to use for generating URLs
+    relative_to: str
+        The (local) root path of the item's assets. This is `temp_archive_dir` above.
+    """
+    item = item.full_copy()
+
+    for asset in item.assets.values():
+        path = pathlib.Path(asset.href).relative_to(relative_to)
+        asset.href = storage.get_url(path)
+
+    return item
