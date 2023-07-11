@@ -189,4 +189,3 @@ def test_process_items_is_update_use_existing_chunks_raises():
             is_update_workflow=True,
             use_existing_chunks=True,
         )
-     
