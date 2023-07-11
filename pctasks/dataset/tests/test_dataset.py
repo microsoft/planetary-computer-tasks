@@ -173,3 +173,20 @@ def test_task_config_tags() -> None:
         workflow.jobs["process-chunk"].tasks[0].tags["batch_pool_id"]
         == "high_memory_pool"
     )
+
+
+def test_process_items_is_update_use_existing_chunks_raises():
+    ds_config = template_dataset_file(DATASET_PATH)
+    collection_config = ds_config.collections[0]
+
+    with pytest.raises(TypeError, match="Cannot set"):
+        create_process_items_workflow(
+            ds_config,
+            collection_config,
+            chunkset_id="my-prefix",
+            ingest=False,
+            target="test",
+            is_update_workflow=True,
+            use_existing_chunks=True,
+        )
+     

@@ -280,6 +280,10 @@ def create_process_items_workflow(
     )
 
     if is_update_workflow:
+        if use_existing_chunks:
+            raise TypeError(
+                "Cannot set both 'is_update_workflow' and 'use_existing_chunks'."
+            )
         workflow_definition = modify_for_update(workflow_definition)
 
     return workflow_definition
