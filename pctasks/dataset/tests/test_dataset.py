@@ -111,7 +111,7 @@ def test_process_items_is_update_workflow(tmp_path, has_args, extra_uri) -> None
     workflow = create_process_items_workflow(
         ds_config,
         collection_config,
-        chunkset_id="${{ args.since }}",
+        chunkset_id="my-prefix",
         ingest=False,
         target="test",
         is_update_workflow=True,
@@ -131,6 +131,19 @@ def test_process_items_is_update_workflow(tmp_path, has_args, extra_uri) -> None
             .args["inputs"][1]["chunk_options"]["since"]
             == "${{ args.since }}"
         )
+
+    result = workflow.jobs["create-chunks"].tasks[0].args["dst_uri"]
+    expected = (
+        "blob://devstoreaccount1/test-data/${{ args.test_prefix }}"
+        "/chunks/my-prefix/${{ args.since }}/assets"
+    )
+    assert result == expected
+    result = workflow.jobs["process-chunk"].tasks[0].args["item_chunkset_uri"]
+    expected = (
+        "blob://devstoreaccount1/test-data/${{ args.test_prefix }}"
+        "/chunks/my-prefix/${{ args.since }}/items"
+    )
+    assert result == expected
 
 
 def test_task_config_tags() -> None:
@@ -160,3 +173,19 @@ def test_task_config_tags() -> None:
         workflow.jobs["process-chunk"].tasks[0].tags["batch_pool_id"]
         == "high_memory_pool"
     )
+
+
+def test_process_items_is_update_use_existing_chunks_raises():
+    ds_config = template_dataset_file(DATASET_PATH)
+    collection_config = ds_config.collections[0]
+
+    with pytest.raises(TypeError, match="Cannot set"):
+        create_process_items_workflow(
+            ds_config,
+            collection_config,
+            chunkset_id="my-prefix",
+            ingest=False,
+            target="test",
+            is_update_workflow=True,
+            use_existing_chunks=True,
+        )
