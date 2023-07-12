@@ -6,7 +6,8 @@ import click
 logger = logging.getLogger(__name__)
 
 
-@click.command("run")
+# https://github.com/pallets/click/issues/2558
+@click.command("run")  # type: ignore[arg-type]
 @click.argument("input_uri")
 @click.option(
     "--sas-token",

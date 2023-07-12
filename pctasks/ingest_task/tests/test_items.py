@@ -100,7 +100,33 @@ def test_ingest_ndjson_add_service_principal():
         ndjson_data=IngestNdjsonInput(ndjson_folder=NdjsonFolder(uri="test/")),
     )
 
-    if result.environment:
-        assert "AZURE_TENANT_ID" not in result.environment
-        assert "AZURE_CLIENT_ID" not in result.environment
-        assert "AZURE_CLIENT_SECRET" not in result.environment
+    assert "AZURE_TENANT_ID" not in result.environment
+    assert "AZURE_TENANT_ID" not in result.environment
+    assert "AZURE_TENANT_ID" not in result.environment
+
+
+def test_empty_ndjson_ingest(tmp_path):
+    """Test ingesting an empty item collection works."""
+
+    task_context = MockTaskContext.default()
+
+    p = tmp_path / "test.ndjson"
+    p.write_text("")
+
+    with ingest_test_environment():
+
+        # Ensure collection is ingested
+        with open(TEST_COLLECTION, "r") as f:
+            ingest_task.run(
+                input=IngestTaskInput(content=json.load(f)),
+                context=task_context,
+            )
+
+        # Ingest Ndjson
+        message_data = IngestTaskInput(
+            content=IngestNdjsonInput(uris=[str(p.absolute())])
+        )
+
+        result = ingest_task.run(input=message_data, context=task_context)
+
+        assert not isinstance(result, FailedTaskResult)

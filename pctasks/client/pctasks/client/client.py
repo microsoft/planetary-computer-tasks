@@ -253,7 +253,7 @@ class PCTasksClient:
         workflow_id: Optional[str] = None,
         auto_confirm: bool = False,
     ) -> None:
-        if not workflow_id:
+        if workflow_id is None:
             if not workflow_definition.workflow_id:
                 raise NoWorkflowIDError(
                     "If no workflow ID is specified, "
@@ -287,7 +287,7 @@ class PCTasksClient:
         workflow_id: Optional[str] = None,
         auto_confirm: bool = False,
     ) -> None:
-        if not workflow_id:
+        if workflow_id is None:
             if not workflow_definition.workflow_id:
                 raise NoWorkflowIDError(
                     "If no workflow ID is specified, "
@@ -310,7 +310,7 @@ class PCTasksClient:
         workflow_id: Optional[str] = None,
         auto_confirm: bool = False,
     ) -> None:
-        if not workflow_id:
+        if workflow_id is None:
             if not workflow_definition.workflow_id:
                 raise NoWorkflowIDError(
                     "If no workflow ID is specified, "
@@ -388,7 +388,7 @@ class PCTasksClient:
         workflow_id: Optional[str] = None,
         auto_confirm: bool = False,
     ) -> WorkflowSubmitResult:
-        if not workflow_id:
+        if workflow_id is None:
             if not workflow_definition.workflow_id:
                 raise NoWorkflowIDError(
                     "If no workflow ID is specified, "

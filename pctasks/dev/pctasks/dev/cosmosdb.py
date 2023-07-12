@@ -257,7 +257,7 @@ def reset_cmd() -> None:
     setup_cosmosdb()
 
 
-@cosmosdb_cmd.command("rm-test-containers")
+@cosmosdb_cmd.command("rm-test-containers")  # type: ignore[arg-type]
 @click.option("-a", "--all", is_flag=True, help="Remove all containers with tmp prefix")
 def rm_test_containers_cmd(all: bool) -> None:
     settings = CosmosDBSettings.get()
