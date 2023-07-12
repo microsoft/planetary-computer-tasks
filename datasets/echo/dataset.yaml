@@ -1,0 +1,22 @@
+id: echo
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./echo.py) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: echo
+    template: ${{ local.path(./collection) }}
+    class: echo:EchoCollection
+    asset_storage:
+      - uri: blob://ai4edataeuwest/echo/
+    chunk_storage:
+      uri: blob://ai4edataeuwest/echo-etl-data/pctasks-chunks

@@ -1,0 +1,60 @@
+{
+    "id": "echo",
+    "type": "Collection",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://creativecommons.org/licenses/by/4.0/",
+            "type": "text/html",
+            "title": "CC BY 4.0"
+        }
+    ],
+    "title": "Echo",
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/gbif.png",
+            "type": "image/png",
+            "title": "Forest Inventory and Analysis"
+        }
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2021-04-13T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "echo"
+    ],
+    "providers": [
+        {
+            "url": "https://planetarycomputer.microsoft.com",
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ]
+        }
+    ],
+    "description": "{{ collection.description }}",
+    "stac_version": "1.0.0",
+    "msft:container": "echo",
+    "stac_extensions": [],
+    "msft:storage_account": "ai4edataeuwest",
+    "msft:short_description": "Echo server",
+    "msft:region": "westeurope"
+}
