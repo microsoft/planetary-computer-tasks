@@ -7,6 +7,7 @@ pytest-asyncio==0.18.*
 
 planetary-computer
 pystac[validation]==1.*
+jsonschema>=4.0.1,<4.18  # Matches the pin in https://github.com/stac-utils/pystac/pull/1189/
 
 azure-functions
 azure-functions-durable
