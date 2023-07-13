@@ -1,0 +1,27 @@
+name: stac-geoparquet
+dataset: microsoft/stac-geoparquet
+id: stac-geoparquet
+
+jobs:
+  stac:
+    tasks:
+      - id: create
+        image: pccomponents.azurecr.io/pctasks-stac-geoparquet:2023.7.10.1
+        code:
+          src: ${{ local.path(pc_stac_geoparquet.py) }}
+        task: pc_stac_geoparquet:StacGeoparquetTask
+        args:
+          table_account_url: "https://pcapi.table.core.windows.net"
+          table_name: "bluecollectionconfig"
+          storage_options_account_name: "pcstacitems"
+          extra_skip:
+            - "chesapeake-lc-13"
+            - "chesapeake-lc-7"
+            - "chesapeake-lu"
+            - "drcog-lulc"
+        environment:
+          APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+          STAC_GEOPARQUET_CONNECTION_INFO: ${{secrets.pgstac-connection-string}}
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
