@@ -34,7 +34,7 @@ def document():
 @pytest.fixture
 def s1_grd_collection():
     return json.loads(
-        (HERE / "../../../datasets/sentinel-1-grd/collection.json").read_text()
+        (HERE / "../../../datasets/sentinel-1-grd/collection/template.json").read_text()
     )
 
 
