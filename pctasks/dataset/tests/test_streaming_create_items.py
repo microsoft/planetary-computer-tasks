@@ -72,6 +72,7 @@ def test_process_message(storage_event):
             queue_credential=get_azurite_named_key_credential(),
             visibility_timeout=9,
             message_limit=5,
+            resources={"limits": {}, "requests": {}},
         ),
     )
     extra_options = task.get_extra_options(task_input, context)

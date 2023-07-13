@@ -64,6 +64,7 @@ def test_streaming_create_items_task(s1_grd_collection, document):
                     queue_credential=get_azurite_named_key_credential(),
                     visibility_timeout=10,
                     message_limit=5,
+                    resources={"limits": {}, "requests": {}},
                 ),
             )
 
@@ -103,6 +104,7 @@ def test_streaming_ingest_items_task_errors(
                     queue_credential=get_azurite_named_key_credential(),
                     visibility_timeout=10,
                     message_limit=1,
+                    resources={"limits": {}, "requests": {}},
                 ),
             )
 
