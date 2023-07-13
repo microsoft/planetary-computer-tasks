@@ -18,13 +18,13 @@ class StreamingTaskInput(Protocol):
 
 
 class ResourceValues(PCBaseModel):
-    cpu: Optional[str]
-    memory: Optional[str]
+    cpu: Optional[str] = None
+    memory: Optional[str] = None
 
 
 class Resources(PCBaseModel):
-    limits: ResourceValues
-    requests: ResourceValues
+    limits: Optional[ResourceValues] = None
+    requests: Optional[ResourceValues] = None
 
 
 class StreamingTaskOptions(PCBaseModel):

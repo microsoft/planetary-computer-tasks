@@ -112,6 +112,7 @@ def test_streaming_create_items_task(storage_event):
                 queue_credential=get_azurite_named_key_credential(),
                 visibility_timeout=10,
                 message_limit=5,
+                resources={"limits": {}, "requests": {}},
             ),
         )
         context = TaskContext(run_id="test", storage_factory=StorageFactory())
@@ -247,6 +248,7 @@ def test_streaming_create_items_task_invalid_item(caplog):
                 queue_credential=get_azurite_named_key_credential(),
                 visibility_timeout=1,
                 message_limit=5,
+                resources={"limits": {}, "requests": {}},
             ),
         )
         context = TaskContext(run_id="test", storage_factory=StorageFactory())
@@ -276,6 +278,7 @@ def test_streaming_create_items_handles_errors(storage_event):
             queue_credential=get_azurite_named_key_credential(),
             visibility_timeout=10,
             message_limit=5,
+            resources={"limits": {}, "requests": {}},
         ),
     )
 
