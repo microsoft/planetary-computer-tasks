@@ -127,3 +127,8 @@ Gemfile.lock
 _site/
 
 docs/reference/generated/
+
+# deployment
+deployment/deploy-values.yaml
+deployment/terraform/*/tf_output.json
+deployment/tf_output.json
