@@ -1,5 +1,9 @@
 name: "Streaming workflow example"
 
+args:
+  - queue_account_url # "https://pctaskstestdev.queue.core.windows.net"
+  - cosmosdb_url #  "https://cdb-pctaskstest-dev.documents.azure.com:443/"
+
 jobs:
   create-items:
     id: create-items
@@ -11,7 +15,7 @@ jobs:
           src: datasets/goes/goes-glm/goes_glm.py
         args:
           streaming_options:
-            queue_url: "https://pctaskstestdev.queue.core.windows.net/goes-glm"
+            queue_url: "${{args.queue_account_url}}/goes-glm"
             visibility_timeout: 30
             min_replica_count: 0
             max_replica_count: 10
@@ -35,8 +39,7 @@ jobs:
           AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
           AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
           APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
-          # TODO: This should be a run setting!
-          PCTASKS_COSMOSDB__URL: "https://cdb-pctaskstest-dev.documents.azure.com:443/"
+          PCTASKS_COSMOSDB__URL: ${{ args.cosmosdb_url }}
         schema_version: 1.0.0
 is_streaming: True
 schema_version: 1.0.0
