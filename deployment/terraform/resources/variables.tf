@@ -188,6 +188,18 @@ variable "argo_wf_node_group_name"{
   default ="argo-workflows"
 }
 
+variable "streaming_taskio_sp_client_id" {
+  type    = string
+}
+
+variable "streaming_taskio_sp_client_secret" {
+  type    = string
+}
+
+variable "streaming_taskio_sp_tenant_id" {
+  type    = string
+}
+
 ## AKS
 
 variable "aks_streaming_task_node_group" {

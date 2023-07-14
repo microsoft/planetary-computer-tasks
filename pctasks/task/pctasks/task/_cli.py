@@ -48,6 +48,7 @@ def run_cmd(
 ) -> None:
     """Runs a task from a JSON-serialized TaskRunMessage."""
 
+    logger.info("Loading taskio credentials")
     taskio_credentials = get_taskio_credentials()
 
     storage, path = get_storage_for_file(
@@ -59,6 +60,7 @@ def run_cmd(
 
     msg_text = storage.read_text(path)
     msg = TaskRunMessage.decode(msg_text)
+    logger.info("Got task run message")
 
     try:
         output = run_task(msg)

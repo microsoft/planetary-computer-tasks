@@ -34,6 +34,19 @@ task_sp_object_id = ""
 task_sp_client_id = ""
 task_sp_client_secret = ""
 
+# Streaming TaskIO Service Principal
+# ---------------------
+# The Streaming TaskIO service principal credentials provided here
+# will are used to read task run messages from and write
+# outputs to pctasks' storage container. This service principal
+# should have Blob Storage Reader permissions on the storage account.
+# They're forwarded through to the run settings with helm, and
+# from thence on to the task container
+
+task_sp_tenant_id = ""
+task_sp_client_id = ""
+task_sp_client_secret = ""
+
 # Task secrets KeyVault Service Principal
 # ---------------------
 # This service principal is used inside the workflow runner process

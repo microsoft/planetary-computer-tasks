@@ -220,12 +220,14 @@ def build_streaming_deployment(
         }.items()
     ]
 
-    # This is really just used for setting the azureite env vars
+    # This is really just used for setting the azurite env vars
     # in testing. Need to set that *before* the container starts.
     for k, v in task_definition.args.get("extra_env", {}).items():
         env.append(V1EnvVar(name=k, value=str(v)))
 
-    resources = build_resources(task_definition.args["streaming_options"]["resources"])
+    resources = build_resources(
+        Resources.parse_obj(task_definition.args["streaming_options"]["resources"])
+    )
 
     container = V1Container(
         name="run-workflow",

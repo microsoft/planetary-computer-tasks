@@ -141,6 +141,14 @@ az cosmosdb sql role assignment create \
     --principal-id "$OBJECT_ID"
 ```
 
+## TaskIO Service Principal
+
+The streaming implementation uses a dedicated Service Principal for interacting
+with pctasks' storage container for loading task run messages and logging outputs.
+
+The primary ETL Service Principal is still used for interacting with the data
+containers.
+
 ## Implementation notes
 
 This section describes the implementation of streaming workflows. It's mostly

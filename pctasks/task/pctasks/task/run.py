@@ -29,6 +29,13 @@ def run_task(
 ) -> TaskResult:
     task_data, task_config = msg.args, msg.config
 
+    if taskio_credentials is None and os.environ.get("TASKIO_CLIENT_ID"):
+        taskio_credentials = ClientSecretCredentials(
+            client_id=os.environ["TASKIO_CLIENT_ID"],
+            client_secret=os.environ["TASKIO_CLIENT_SECRET"],
+            tenant_id=os.environ["TASKIO_TENANT_ID"],
+        )
+
     task_settings = TaskSettings.get()
 
     with StorageLogger.from_task_run_config(task_config):

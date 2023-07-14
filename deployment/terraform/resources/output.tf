@@ -180,3 +180,16 @@ output "cosmosdb_key" {
 output "aks_streaming_task_node_group" {
   value = var.aks_streaming_task_node_group
 }
+
+output "streaming_taskio_sp_tenant_id" {
+  value = var.streaming_taskio_sp_tenant_id
+}
+
+output "streaming_taskio_sp_client_id" {
+  value = var.streaming_taskio_sp_client_id
+}
+
+output "streaming_taskio_sp_client_secret" {
+  value = var.streaming_taskio_sp_client_secret
+  sensitive = true
+}
