@@ -78,8 +78,6 @@ def submit_task(
     objs_api = CustomObjectsApi()
 
     # Build the stuff
-    # XXX: encode the task ID in the name of the object
-    # Make sure to escape properly. Kinda hard.
     input_uri = prepared_task.task_input_blob_config.uri
     task = prepared_task.task_submit_message.definition
     deployment = build_streaming_deployment(
@@ -97,7 +95,7 @@ def submit_task(
     logger.info("Ensuring deployment %s", deployment.metadata.name)
     create_or_update(deployment, apps_api, namespace=namespace)
     logger.info("Ensuring KEDA scaler %s", scaler["metadata"]["name"])
-    # XXX: We should verify that there's only one scaledobject per queue.
+    # TODO: We should verify that there's only one scaledobject per queue.
     # We don't want to accidentally have two things processing the same queue.
     # This should really be done at workflow submission time.
     create_or_update(

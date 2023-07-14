@@ -23,8 +23,8 @@ class ResourceValues(PCBaseModel):
 
 
 class Resources(PCBaseModel):
-    limits: Optional[ResourceValues] = None
-    requests: Optional[ResourceValues] = None
+    limits: ResourceValues = ResourceValues()
+    requests: ResourceValues = ResourceValues()
 
 
 class StreamingTaskOptions(PCBaseModel):
