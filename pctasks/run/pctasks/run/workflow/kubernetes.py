@@ -250,7 +250,7 @@ def build_streaming_deployment(
     pod_spec = V1PodSpec(
         service_account_name="default",
         containers=[container],
-        # node_selector=common_labels,
+        node_selector={"node_group": node_group},
     )
     pod_template_spec = V1PodTemplateSpec(
         metadata=V1ObjectMeta(

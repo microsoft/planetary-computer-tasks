@@ -177,8 +177,8 @@ output "cosmosdb_key" {
 
 ## AKS
 
-output "aks_streaming_task_node_group" {
-  value = var.aks_streaming_task_node_group
+output "aks_streaming_task_node_group_name" {
+  value = var.aks_streaming_task_node_group_name
 }
 
 output "streaming_taskio_sp_tenant_id" {

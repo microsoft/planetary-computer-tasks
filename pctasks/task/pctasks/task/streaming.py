@@ -165,7 +165,6 @@ class StreamingTaskMixin:
                                 "Deleting message after 3 failures. id=%s", message.id
                             )
                             qc.delete_message(message)  # type: ignore
-
                     else:
                         logger.info("Processed message id=%s", message.id)
                         time_to_visible = (
@@ -187,13 +186,14 @@ class StreamingTaskMixin:
                         and message_count >= input.streaming_options.message_limit
                     ):
                         logger.info("Hit limit=%d", message_count)
-                        continue
-                # We've drained the queue.
-                # Now we'll pause slightly before checking again.
-                # TODO: some kind of exponential backoff here. From 0 - 5-10 seconds.
-                n = 5
-                logger.info("Sleeping for %s seconds", n)
-                time.sleep(n)
+                        break  # out of the for loop. The while condition will be false
+                else:
+                    # We've drained the queue.
+                    # Now we'll pause slightly before checking again.
+                    # TODO: some kind of exponential backoff here. From 0 - 5-10 seconds.
+                    n = 5
+                    logger.info("Sleeping for %s seconds", n)
+                    time.sleep(n)
         finally:
             self.cleanup(extra_options)
 

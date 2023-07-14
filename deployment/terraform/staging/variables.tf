@@ -159,7 +159,7 @@ variable "streaming_taskio_sp_tenant_id" {
 
 ## AKS
 
-variable "aks_streaming_task_node_group" {
+variable "aks_streaming_task_node_group_name" {
   type        = string
   default     = "pc-lowlatency"
   description = "The name of the node group that will run streaming tasks"

@@ -38,7 +38,9 @@ def run_task(
 
     task_settings = TaskSettings.get()
 
-    with StorageLogger.from_task_run_config(task_config):
+    with StorageLogger.from_task_run_config(
+        task_config, client_secret_credentials=taskio_credentials
+    ):
 
         logger.info(" === PCTasks ===")
         logger.info(f"  == {task_config.get_run_record_id()} ")

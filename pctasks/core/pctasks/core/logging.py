@@ -13,6 +13,7 @@ from pctasks.core.constants import ENV_VAR_TASK_APPINSIGHTS_KEY
 from pctasks.core.models.base import RunRecordId
 from pctasks.core.models.task import TaskRunConfig
 from pctasks.core.storage import Storage, get_storage
+from pctasks.core.storage.blob import ClientSecretCredentials
 
 logger = logging.getLogger(__name__)
 
@@ -267,11 +268,13 @@ class StorageLogger:
         package: Optional[str] = None,
         level: int = logging.INFO,
         log_format: str = DEFAULT_TASK_LOG_FORMAT,
+        client_secret_credentials: Optional[ClientSecretCredentials] = None,
     ) -> "StorageLogger":
         log_storage = get_storage(
             os.path.dirname(task_run_config.log_blob_config.uri),
             sas_token=task_run_config.log_blob_config.sas_token,
             account_url=task_run_config.log_blob_config.account_url,
+            client_secret_credentials=client_secret_credentials,
         )
 
         return cls(

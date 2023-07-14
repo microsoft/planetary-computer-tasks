@@ -46,6 +46,12 @@ variable "aks_task_group_label" {
   default = "tasks"
 }
 
+variable "aks_task_pool_min_count" {
+  type = number
+  default = 0
+  description = "The minimum number of nodes for running (low-latency) tasks."
+}
+
 variable "aks_task_pool_max_count" {
   type = number
   default = 100
@@ -202,7 +208,7 @@ variable "streaming_taskio_sp_tenant_id" {
 
 ## AKS
 
-variable "aks_streaming_task_node_group" {
+variable "aks_streaming_task_node_group_name" {
   type        = string
   default     = "pc-lowlatency"
   description = "The name of the node group that will run streaming tasks"

@@ -66,11 +66,11 @@ resource "azurerm_kubernetes_cluster_node_pool" "tasks" {
   kubernetes_cluster_id = azurerm_kubernetes_cluster.pctasks.id
   vm_size               = "Standard_D16d_v4"
   enable_auto_scaling = true
-  min_count = 0
+  min_count = var.aks_task_pool_min_count
   max_count = var.aks_task_pool_max_count
 
   node_labels = {
-    node_group = var.aks_streaming_task_node_group
+    node_group = var.aks_streaming_task_node_group_name
   }
 
    lifecycle {
