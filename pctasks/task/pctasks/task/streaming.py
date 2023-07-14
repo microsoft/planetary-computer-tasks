@@ -190,7 +190,7 @@ class StreamingTaskMixin:
                 else:
                     # We've drained the queue.
                     # Now we'll pause slightly before checking again.
-                    # TODO: some kind of exponential backoff here. From 0 - 5-10 seconds.
+                    # TODO: some kind of exponential backoff here.
                     n = 5
                     logger.info("Sleeping for %s seconds", n)
                     time.sleep(n)
