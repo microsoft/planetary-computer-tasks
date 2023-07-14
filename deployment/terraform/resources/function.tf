@@ -47,7 +47,7 @@ resource "azurerm_linux_function_app" "pctasks" {
     application_insights_key = azurerm_application_insights.pctasks.instrumentation_key
 
     application_stack {
-      python_version = "3.8"
+      python_version = "3.10"
     }
   }
 
