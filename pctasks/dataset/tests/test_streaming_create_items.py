@@ -156,6 +156,7 @@ def test_streaming_create_items_from_message(storage_event):
                 queue_credential=get_azurite_named_key_credential(),
                 visibility_timeout=10,
                 message_limit=5,
+                resources={"limits": {}, "requests": {}},
             ),
         )
         context = TaskContext(run_id="test", storage_factory=StorageFactory())
