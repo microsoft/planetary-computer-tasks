@@ -20,6 +20,7 @@ def get_streaming_task_definition() -> pctasks.core.models.task.TaskDefinition:
                     "max_replica_count": 10,
                     "polling_interval": 30,
                     "trigger_queue_length": 100,
+                    "resources": {},
                 },
                 "container_name": "items",
                 "options": {"skip_validation": False},
