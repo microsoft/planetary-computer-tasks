@@ -261,8 +261,10 @@ class StreamingCreateItemsTask(
                     )
                 )
 
-            items_record_container.bulk_put(item_records)
-            items_update_container.bulk_put(update_records)
+            for record in item_records:
+                items_record_container.put(record)
+            for record in update_records:
+                items_update_container.put(record)
 
         if err:
             logger.info("Writing error id=%s", err.id)
