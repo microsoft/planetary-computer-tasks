@@ -388,7 +388,8 @@ def ingest_items_task(ingest_queue, conn_str_info, host_env):
     else:
         # The deadline passed
         raise TimeoutError(
-            f"Timed out waiting for deployment {TEST_NAMESPACE}.{INGEST_DEPLOYMENT_NAME}"
+            f"Timed out waiting for deployment "
+            f"{TEST_NAMESPACE}.{INGEST_DEPLOYMENT_NAME}"
         )
 
     start = time.monotonic()
