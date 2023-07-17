@@ -302,6 +302,10 @@ def process_items_task(dataset_queue, conn_str_info, host_env):
             continue
         else:
             break
+    else:
+        raise TimeoutError(
+            f"Timeout waiting for deployment {TEST_NAMESPACE}.{DEPLOYMENT_NAME}"
+        )
 
     start = time.monotonic()
     while deployment.status.ready_replicas != 1 and time.monotonic() < deadline:
@@ -379,7 +383,13 @@ def ingest_items_task(ingest_queue, conn_str_info, host_env):
             time.sleep(1)
             continue
         else:
+            # The deployment is ready
             break
+    else:
+        # The deadline passed
+        raise TimeoutError(
+            f"Timed out waiting for deployment {TEST_NAMESPACE}.{INGEST_DEPLOYMENT_NAME}"
+        )
 
     start = time.monotonic()
     while deployment.status.available_replicas != 1 and time.monotonic() < deadline:
