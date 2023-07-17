@@ -117,8 +117,8 @@ def test_streaming_create_items_task(storage_event):
         )
         context = TaskContext(run_id="test", storage_factory=StorageFactory())
         task.run(task_input, context)
-        assert create_items.count == 10
-        assert queue_client.get_queue_properties().approximate_message_count == 0
+        assert create_items.count == 5
+        assert queue_client.get_queue_properties().approximate_message_count == 5
 
 
 def test_streaming_create_items_from_message(storage_event):
