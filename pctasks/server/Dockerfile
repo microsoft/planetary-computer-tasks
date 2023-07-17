@@ -7,6 +7,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 ENV CURL_CA_BUNDLE /etc/ssl/certs/ca-certificates.crt
+ENV PIP_NO_CACHE_DIR=1
 
 WORKDIR /opt/src
 
