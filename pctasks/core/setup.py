@@ -21,6 +21,7 @@ install_requires = [
     "aiohttp>=3.8.0,<3.9",
     "planetary-computer>=0.4.0",
     "jsonschema>=4.0.1,<4.18",  # Matches the pin in https://github.com/stac-utils/pystac/pull/1189/
+    "typing-extensions; python_version< '3.10.0'"
 ]
 
 extra_reqs = {
