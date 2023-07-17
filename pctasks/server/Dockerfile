@@ -3,9 +3,11 @@ FROM python:3.9-slim
 ARG DEVELOPMENT=FALSE
 
 RUN apt-get update && \
-    apt-get install -y build-essential git
+    apt-get install -y build-essential git && \
+    rm -rf /var/lib/apt/lists/*
 
 ENV CURL_CA_BUNDLE /etc/ssl/certs/ca-certificates.crt
+ENV PIP_NO_CACHE_DIR=1
 
 WORKDIR /opt/src
 
