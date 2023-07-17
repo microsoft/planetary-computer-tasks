@@ -1,8 +1,5 @@
 FROM python:3.9-slim
 
-RUN apt-get update && \
-    apt-get install -y build-essential git
-
 ENV CURL_CA_BUNDLE /etc/ssl/certs/ca-certificates.crt
 ENV PIP_NO_CACHE_DIR=1
 
