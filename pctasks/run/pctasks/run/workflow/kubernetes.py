@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import urllib.parse
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 import kubernetes.client
 import kubernetes.config
@@ -190,7 +190,7 @@ def build_streaming_deployment(
     taskio_tenant_id: str,
     taskio_client_id: str,
     taskio_client_secret: str,
-    node_group: str,
+    node_group: Optional[str] = None,
 ) -> V1Deployment:
     """
     Build, but do not submit, a Kubernetes Deployment for a streaming task.
@@ -240,10 +240,11 @@ def build_streaming_deployment(
     queue_name = get_name_prefix(task_definition.args["streaming_options"]["queue_url"])
 
     common_labels = {
-        "node_group": node_group,
         "planetarycomputer.microsoft.com/queue_url": queue_name,
         "planetarycomputer.microsoft.com/task_type": "streaming",
     }
+    if node_group:
+        common_labels["node_group"] = node_group
 
     # TODO: enable node_selector. Disabled for testing in kind.
     node_selector = {"node_group": node_group} if node_group else None
