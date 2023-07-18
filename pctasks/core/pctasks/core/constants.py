@@ -9,6 +9,8 @@ DEFAULT_INBOX_QUEUE_NAME = "inbox"
 DEFAULT_SIGNAL_QUEUE_NAME = "tasksignals"
 DEFAULT_WORKFLOW_QUEUE_NAME = "workflows"
 DEFAULT_NOTIFICATIONS_QUEUE_NAME = "notifications"
+DEFAULT_STORAGE_EVENTS_QUEUE_NAME = "storage-events"
+DEFAULT_INGEST_QUEUE_NAME = "ingest"
 
 # Default log container
 DEFAULT_LOG_CONTAINER = "tasklogs"

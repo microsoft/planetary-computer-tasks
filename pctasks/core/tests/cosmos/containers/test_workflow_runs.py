@@ -33,7 +33,7 @@ class MockWorkflowRunsContainer(WorkflowRunsContainer[T]):
         return super().put(*args, **kwargs)
 
 
-def test_job_part_pagination(cosmosdb_containers):
+def test_job_part_pagination(temp_cosmosdb_containers):
     run_id = "test-run"
     job_id = "test-job"
     dataset_id = "test-dataset"
@@ -46,7 +46,7 @@ def test_job_part_pagination(cosmosdb_containers):
     )
 
     with WorkflowRunsContainer(
-        WorkflowRunRecord, db=cosmosdb_containers
+        WorkflowRunRecord, db=temp_cosmosdb_containers
     ) as workflow_runs:
         workflow_runs.put(workflow_run)
 
@@ -86,7 +86,7 @@ def test_job_part_pagination(cosmosdb_containers):
         ]
 
         with WorkflowRunsContainer(
-            JobPartitionRunRecord, db=cosmosdb_containers
+            JobPartitionRunRecord, db=temp_cosmosdb_containers
         ) as job_partition_runs:
             for task_group_run in job_parts:
                 job_partition_runs.put(task_group_run)
@@ -152,7 +152,7 @@ def test_job_part_pagination(cosmosdb_containers):
             assert job_run.job_partition_counts[JobPartitionRunStatus.RUNNING] == 2
 
 
-def test_job_part_bulk_put(cosmosdb_containers):
+def test_job_part_bulk_put(temp_cosmosdb_containers):
     run_id = "test-run-bulk-put"
     job_id = "test-job"
     dataset_id = "test-dataset"
@@ -165,7 +165,7 @@ def test_job_part_bulk_put(cosmosdb_containers):
     )
 
     with WorkflowRunsContainer(
-        WorkflowRunRecord, db=cosmosdb_containers
+        WorkflowRunRecord, db=temp_cosmosdb_containers
     ) as workflow_runs:
         workflow_runs.put(workflow_run)
 
@@ -192,7 +192,7 @@ def test_job_part_bulk_put(cosmosdb_containers):
             )
 
         mock_job_partition_runs = MockWorkflowRunsContainer(
-            JobPartitionRunRecord, db=cosmosdb_containers
+            JobPartitionRunRecord, db=temp_cosmosdb_containers
         )
         with mock_job_partition_runs:
             mock_job_partition_runs.bulk_put(job_parts)

@@ -1,0 +1,12 @@
+{
+    "scriptFile": "__init__.py",
+    "bindings": [
+        {
+            "type": "queueTrigger",
+            "name": "msg",
+            "direction": "in",
+            "queueName": "storage-events",
+            "connectionStringSetting": "FUNC_COSMOSDB_CONN_STR"
+        }
+    ]
+}

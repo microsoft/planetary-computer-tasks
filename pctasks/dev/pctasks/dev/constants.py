@@ -1,4 +1,5 @@
 import os
+from typing import Dict
 
 from pctasks.core.constants import (
     AZURITE_HOST_ENV_VAR,
@@ -34,6 +35,10 @@ def get_azurite_connection_string() -> str:
         f"QueueEndpoint=http://{host}:{blob_port+1}/devstoreaccount1;"
         f"TableEndpoint=http://{host}:{blob_port+2}/devstoreaccount1;"
     )
+
+
+def get_azurite_named_key_credential() -> Dict[str, str]:
+    return {"account_name": "devstoreaccount1", "account_key": AZURITE_ACCOUNT_KEY}
 
 
 AZURITE_ACCOUNT_KEY = (

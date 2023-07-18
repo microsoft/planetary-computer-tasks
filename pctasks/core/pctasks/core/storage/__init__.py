@@ -1,11 +1,15 @@
 import os
-from typing import Optional, Tuple
+from typing import TYPE_CHECKING, Optional, Tuple
 
 from cachetools import Cache, LRUCache, cachedmethod
 
 from pctasks.core.storage import blob, local
 from pctasks.core.storage.base import Storage
 from pctasks.core.tokens import Tokens
+
+if TYPE_CHECKING:
+    # avoid circular import
+    from pctasks.core.storage.blob import ClientSecretCredentials
 
 
 def get_storage(
@@ -14,11 +18,18 @@ def get_storage(
     account_key: Optional[str] = None,
     tokens: Optional[Tokens] = None,
     account_url: Optional[str] = None,
+    client_secret_credentials: Optional["ClientSecretCredentials"] = None,
 ) -> Storage:
     """Gets storage that represents the folder at the uri."""
     if blob.BlobUri.matches(uri):
         blob_uri = blob.BlobUri(uri)
         token: Optional[str] = sas_token
+        if client_secret_credentials:
+            return blob.BlobStorage.from_uri(
+                blob_uri,
+                client_secret_credentials=client_secret_credentials,
+                account_url=account_url,
+            )
         if account_key:
             return blob.BlobStorage.from_account_key(
                 blob_uri,
@@ -43,6 +54,7 @@ def get_storage_for_file(
     account_key: Optional[str] = None,
     tokens: Optional[Tokens] = None,
     account_url: Optional[str] = None,
+    client_secret_credentials: Optional["ClientSecretCredentials"] = None,
 ) -> Tuple[Storage, str]:
     """Returns storage and the path to the file based on that storage."""
     if blob.BlobUri.matches(file_uri):
@@ -53,6 +65,7 @@ def get_storage_for_file(
             account_key=account_key,
             tokens=tokens,
             account_url=account_url,
+            client_secret_credentials=client_secret_credentials,
         )
         path = blob_uri.blob_name or ""
         return (storage, path)

@@ -10,4 +10,5 @@ templating
 storage
 runtime
 chunking
+streaming
 ````

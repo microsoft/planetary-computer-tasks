@@ -90,6 +90,11 @@ pctasks:
     #  local: Run tasks with local executor (dev)
     task_runner_type: "batch"
 
+    # The namespace to use for Streaming Task pods
+    streaming_task_namespace: "pc"
+    # The node group to use for Streaming Task pods
+    streaming_task_node_group: ""
+
     # Workflow runner type, one of:
     #  argo: Run the workflow runner in Argo
     #  local: Run the workflow runner with local executor (dev)

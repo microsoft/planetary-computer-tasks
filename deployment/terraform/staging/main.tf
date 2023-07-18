@@ -16,6 +16,7 @@ module "resources" {
   component_acr_name = var.component_acr_name
 
   task_sp_tenant_id = var.task_sp_tenant_id
+  task_sp_object_id = var.task_sp_object_id
   task_sp_client_id = var.task_sp_client_id
   task_sp_client_secret = var.task_sp_client_secret
 
@@ -24,6 +25,7 @@ module "resources" {
   pctasks_task_kv_resource_group_name = "rg-pctaskstest-staging-westeurope"
 
   kv_sp_tenant_id = var.kv_sp_tenant_id
+  kv_sp_object_id = var.kv_sp_object_id
   kv_sp_client_id = var.kv_sp_client_id
   kv_sp_client_secret = var.kv_sp_client_secret
 

@@ -1,5 +1,5 @@
 from base64 import b64decode
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 from uuid import uuid4
 
 import click
@@ -12,6 +12,7 @@ from pctasks.core.utils import ignore_ssl_warnings
 from pctasks.run.settings import RunSettings, WorkflowExecutorConfig
 from pctasks.run.workflow.executor.remote import RemoteWorkflowExecutor
 from pctasks.run.workflow.executor.simple import SimpleWorkflowExecutor
+from pctasks.run.workflow.executor.streaming import StreamingWorkflowExecutor
 from pctasks.task.context import TaskContext
 
 
@@ -83,7 +84,13 @@ def remote_cmd(
     if new_id:
         submit_message.run_id = uuid4().hex
 
-    with RemoteWorkflowExecutor(executor_config) as runner:
+    executor: Union[StreamingWorkflowExecutor, RemoteWorkflowExecutor]
+    if submit_message.workflow.definition.is_streaming:
+        executor = StreamingWorkflowExecutor(executor_config)
+    else:
+        executor = RemoteWorkflowExecutor(executor_config)
+
+    with executor as runner:
         if executor_config.cosmosdb_settings.is_cosmosdb_emulator():
             # Prevent workflow run logs from being overrun by
             # SSL warnings if using the Cosmos DB emulator

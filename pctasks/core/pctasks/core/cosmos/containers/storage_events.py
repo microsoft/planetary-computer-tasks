@@ -1,7 +1,8 @@
-from typing import Dict, Optional, Type, TypeAlias
+from typing import Dict, Optional, Type
 
 from pydantic import BaseModel
 
+from pctasks.core._compat import TypeAlias
 from pctasks.core.cosmos.container import (
     ContainerOperation,
     CosmosDBContainer,

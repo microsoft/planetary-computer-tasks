@@ -15,3 +15,10 @@ terraform {
 
 data "azurerm_client_config" "current" {
 }
+
+
+# Terraform stuff to include
+# 1. This provider
+# 2. Cosmos DB containers
+# 3. The AKS Node Pool
+# 4. The Kubernetes namespace, secrets
