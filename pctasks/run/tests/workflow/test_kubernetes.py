@@ -25,6 +25,7 @@ def test_build_streaming_deployment():
     labels = {
         "node_group": "pc-lowlatency",
         "planetarycomputer.microsoft.com/queue_url": "devstoreaccount1-test",
+        "planetarycomputer.microsoft.com/task_type": "streaming",
     }
 
     assert result.metadata.name == "devstoreaccount1-test-deployment"

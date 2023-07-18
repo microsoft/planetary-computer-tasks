@@ -108,7 +108,7 @@ class RunSettings(PCTasksSettings):
     streaming_taskio_sp_client_secret: Optional[str] = None
 
     streaming_task_namespace: str = "tasks"
-    streaming_task_node_group: str = "pc-lowlatency"
+    streaming_task_node_group: Optional[str] = None
 
     # Type of task runner to use.
     task_runner_type: TaskRunnerType = TaskRunnerType.BATCH

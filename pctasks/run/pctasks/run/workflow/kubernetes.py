@@ -246,10 +246,11 @@ def build_streaming_deployment(
     }
 
     # TODO: enable node_selector. Disabled for testing in kind.
+    node_selector = {"node_group": node_group} if node_group else None
     pod_spec = V1PodSpec(
         service_account_name="default",
         containers=[container],
-        node_selector={"node_group": node_group},
+        node_selector=node_selector,
     )
     pod_template_spec = V1PodTemplateSpec(
         metadata=V1ObjectMeta(
