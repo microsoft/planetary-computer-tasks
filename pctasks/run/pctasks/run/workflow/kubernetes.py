@@ -242,6 +242,7 @@ def build_streaming_deployment(
     common_labels = {
         "node_group": node_group,
         "planetarycomputer.microsoft.com/queue_url": queue_name,
+        "planetarycomputer.microsoft.com/task_type": "streaming",
     }
 
     # TODO: enable node_selector. Disabled for testing in kind.

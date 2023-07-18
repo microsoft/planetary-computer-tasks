@@ -25,6 +25,13 @@ jobs:
           max_replica_count: 10
           polling_interval: 30
           trigger_queue_length: 100
+          resources:
+            limits:
+              cpu: "0.25"
+              memory: "2Gi"
+            requests:
+              cpu: "0.25"
+              memory: "2Gi"
         create_items_function: pctasks.dataset.streaming:create_item_from_item_uri
         collection_id: "test-collection"
         extra_env:

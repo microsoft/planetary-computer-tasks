@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import pathlib
+import textwrap
 import time
 import uuid
 
@@ -35,6 +36,7 @@ COLLECTION_ID = "test-collection"
 DEPLOYMENT_NAME = f"devstoreaccount1-{COLLECTION_ID}-deployment"
 INGEST_DEPLOYMENT_NAME = "devstoreaccount1-ingest-deployment"
 TEST_NAMESPACE = "argo"
+INGEST_ITEMS_WORKFLOW_ID = "test-streaming-ingest-items"
 
 setup_logging(logging.DEBUG)
 setup_logging_for_module("tests.dataset.test_streaming", logging.DEBUG)
@@ -296,8 +298,11 @@ def process_items_task(dataset_queue, conn_str_info, host_env):
                 DEPLOYMENT_NAME,
                 TEST_NAMESPACE,
             )
-        except client.ApiException:
-            print(f"Waiting for items deployment ({(time.monotonic() - start):.0f}s)")
+        except client.ApiException as e:
+            print(
+                f"Waiting for items deployment ({e.reason}) "
+                f"({(time.monotonic() - start):.0f}s)"
+            )
             time.sleep(1)
             continue
         else:
@@ -336,6 +341,7 @@ def process_items_task(dataset_queue, conn_str_info, host_env):
 
 @pytest.fixture
 def ingest_items_task(ingest_queue, conn_str_info, host_env):
+    logging.info("Submitting ingest items task")
     process_items_result = run_pctasks(
         [
             "workflow",
@@ -365,6 +371,7 @@ def ingest_items_task(ingest_queue, conn_str_info, host_env):
         ]
     )
     assert process_items_result.exit_code == 0
+    run_id = process_items_result.output.strip()
 
     config.load_config()
     apps = client.AppsV1Api()
@@ -378,8 +385,11 @@ def ingest_items_task(ingest_queue, conn_str_info, host_env):
                 INGEST_DEPLOYMENT_NAME,
                 TEST_NAMESPACE,
             )
-        except client.ApiException:
-            print(f"Waiting for ingest deployment ({(time.monotonic() - start):.0f}s)")
+        except client.ApiException as e:
+            print(
+                f"Waiting for ingest deployment ({e.reason}) "
+                f"({(time.monotonic() - start):.0f}s)"
+            )
             time.sleep(1)
             continue
         else:
@@ -387,10 +397,17 @@ def ingest_items_task(ingest_queue, conn_str_info, host_env):
             break
     else:
         # The deadline passed
-        raise TimeoutError(
-            f"Timed out waiting for deployment "
-            f"{TEST_NAMESPACE}.{INGEST_DEPLOYMENT_NAME}"
+        # We need more logs.
+        extra = get_workflow_debug(INGEST_ITEMS_WORKFLOW_ID, run_id)
+        msg = textwrap.dedent(
+            f"""\
+            "Timed out waiting for deployment "
+            "{TEST_NAMESPACE}.{INGEST_DEPLOYMENT_NAME}"
+        """
         )
+
+        msg += "\n" + str(extra)
+        raise TimeoutError(msg)
 
     start = time.monotonic()
     while deployment.status.available_replicas != 1 and time.monotonic() < deadline:
@@ -636,3 +653,10 @@ def wait_for_document(
         raise AssertionError(f"Timeout getting document '{key}'")
     print(f"Storage Event '{key}' is in Cosmos DB")
     return result
+
+
+def get_workflow_debug(workflow_id: str, run_id: str) -> str:
+    list_output = run_pctasks(["runs", "list", "workflows", workflow_id]).stderr.strip()
+    run_status = run_pctasks(["runs", "status", run_id]).stderr.strip()
+
+    return "/".join([list_output, run_status])
