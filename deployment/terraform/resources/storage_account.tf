@@ -60,6 +60,8 @@ resource "azurerm_storage_queue" "queues" {
 }
 
 # Access Policies
+# These require Owner or User Access Administrator permissions on the
+# the storage account.
 
 resource "azurerm_role_assignment" "pctasks-server-blob-access" {
   scope                = azurerm_storage_account.pctasks.id
@@ -92,4 +94,10 @@ resource "azurerm_role_assignment" "pctasks-task-queue-access" {
   scope                = azurerm_storage_account.pctasks.id
   role_definition_name = "Storage Queue Data Contributor"
   principal_id         = var.task_sp_object_id
+}
+
+resource "azurerm_role_assignment" "pctasks-taskio-blob-access" {
+  scope                = azurerm_storage_account.pctasks.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = var.streaming_taskio_sp_object_id
 }

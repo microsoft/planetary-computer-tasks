@@ -66,12 +66,14 @@ data "azurerm_key_vault_secret" "backend_app_id" {
 
 ## Access Policies
 
+# It's unclear who should own this vault access policy.
+# For now, we just need to create it manually.
 # The Key Vault service principal should be able to get secrets.
-resource "azurerm_key_vault_access_policy" "task-sp-get-secrets" {
-  key_vault_id = data.azurerm_key_vault.pctasks.id
-  tenant_id    = var.kv_sp_tenant_id
-  object_id    = var.kv_sp_object_id
-  secret_permissions = [
-    "Get"
-  ]
-}
+# resource "azurerm_key_vault_access_policy" "task-sp-get-secrets" {
+#   key_vault_id = data.azurerm_key_vault.pctasks.id
+#   tenant_id    = var.kv_sp_tenant_id
+#   object_id    = var.kv_sp_object_id
+#   secret_permissions = [
+#     "Get"
+#   ]
+# }
