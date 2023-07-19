@@ -1,0 +1,48 @@
+name: "Streaming workflow example"
+
+args:
+  - registry
+  - queue_account_url # "https://pctaskstestdev.queue.core.windows.net"
+  - cosmosdb_url #  "https://cdb-pctaskstest-dev.documents.azure.com:443/"
+
+jobs:
+  create-items:
+    id: create-items
+    tasks:
+      - id: create-items
+        image: "${{ args.registry }}/pctasks-goes-cmi:2023.7.19.0"
+        task: pctasks.dataset.streaming:StreamingCreateItemsTask
+        code:
+          src: ${{ local.path(./goes_cmi) }}
+        args:
+          streaming_options:
+            queue_url: "${{args.queue_account_url}}/goes-cmi"
+            visibility_timeout: 30
+            min_replica_count: 0
+            max_replica_count: 10
+            polling_interval: 30
+            trigger_queue_length: 100
+            resources:
+              limits:
+                cpu: "1"
+                memory: "2Gi"
+              requests:
+                cpu: "0.8"
+                memory: "2Gi"
+
+          options:
+            skip_validation: false
+          create_items_function: goes_cmi.goes_cmi:GoesCmiCollection.create_item
+          collection_id: "goes-cmi"
+
+        environment:
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+          APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+          PCTASKS_COSMOSDB__URL: ${{ args.cosmosdb_url }}
+        schema_version: 1.0.0
+is_streaming: True
+schema_version: 1.0.0
+id: goes-cmi-streaming-test
+dataset: goes_cmi
