@@ -206,6 +206,11 @@ variable "streaming_taskio_sp_tenant_id" {
   type    = string
 }
 
+variable "streaming_taskio_sp_object_id" {
+  type    = string
+}
+
+
 ## AKS
 
 variable "aks_streaming_task_node_group_name" {

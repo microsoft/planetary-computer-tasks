@@ -39,8 +39,13 @@ module "resources" {
   pctasks_server_sp_client_secret = var.pctasks_server_sp_client_secret
   pctasks_server_sp_object_id = var.pctasks_server_sp_object_id
 
-  k8s_version = "1.24.6"
-  k8s_orchestrator_version = "1.24.6"
+  streaming_taskio_sp_tenant_id = var.streaming_taskio_sp_tenant_id
+  streaming_taskio_sp_client_id = var.streaming_taskio_sp_client_id
+  streaming_taskio_sp_client_secret = var.streaming_taskio_sp_client_secret
+  streaming_taskio_sp_object_id = var.streaming_taskio_sp_object_id
+
+  k8s_version = "1.25.6"
+  k8s_orchestrator_version = "1.25.6"
 
   stac_db_connection_string =  var.stac_db_connection_string
 

@@ -41,6 +41,7 @@ module "resources" {
   streaming_taskio_sp_tenant_id = var.streaming_taskio_sp_tenant_id
   streaming_taskio_sp_client_id = var.streaming_taskio_sp_client_id
   streaming_taskio_sp_client_secret = var.streaming_taskio_sp_client_secret
+  streaming_taskio_sp_object_id = var.streaming_taskio_sp_object_id
 
   k8s_version = "1.26.3"
   k8s_orchestrator_version = "1.26.3"
