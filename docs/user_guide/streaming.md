@@ -36,6 +36,28 @@ indefinitely. They should continuously process messages from a queue, and leave
 starting, stopping, and scaling to the pctasks framework (we use Kubernetes
 Deployments and [KEDA] for that).
 
+## Using Spot Nodes
+
+By default, streaming workflows will use regular (non-spot) nodes. To allow a
+streaming workflow to be scheduled on a spot node, set `allow_spot_instances: true`
+in the `args.streaming_options` of the task definition:
+
+```yaml
+jobs:
+  job-name:
+    id: job-id
+    tasks:
+      - id: task-id
+        image: "..."
+        task: "..."
+        args:
+          streaming_options:
+            allow_spot_instances: true
+```
+
+The Kubernetes Pod running this task will *prefer* to run on a preemptible node.
+It will fall back to a regular node group if necessary.
+
 ## Registering a streaming workflow
 
 A streaming workflow is registered with `pctasks` like any other workflow,

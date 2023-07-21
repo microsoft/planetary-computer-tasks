@@ -10,15 +10,22 @@ from kubernetes.client import (
     ApiException,
     AppsV1Api,
     CustomObjectsApi,
+    V1Affinity,
     V1ConfigMap,
     V1Container,
     V1Deployment,
     V1DeploymentSpec,
     V1EnvVar,
+    V1NodeAffinity,
+    V1NodeSelector,
+    V1NodeSelectorRequirement,
+    V1NodeSelectorTerm,
     V1ObjectMeta,
     V1PodSpec,
     V1PodTemplateSpec,
+    V1PreferredSchedulingTerm,
     V1ResourceRequirements,
+    V1Toleration,
 )
 
 from pctasks.core.models.task import TaskDefinition
@@ -247,11 +254,63 @@ def build_streaming_deployment(
         common_labels["node_group"] = node_group
 
     # TODO: enable node_selector. Disabled for testing in kind.
+    allow_spot_instances = task_definition.args["streaming_options"].get(
+        "allow_spot_instances", False
+    )
     node_selector = {"node_group": node_group} if node_group else None
+    tolerations = []
+    if node_group:
+        affinity = V1Affinity(
+            node_affinity=V1NodeAffinity(
+                required_during_scheduling_ignored_during_execution=V1NodeSelector(
+                    node_selector_terms=[
+                        V1NodeSelectorTerm(
+                            match_expressions=[
+                                V1NodeSelectorRequirement(
+                                    key="node_group", operator="In", values=[node_group]
+                                )
+                            ]
+                        )
+                    ]
+                )
+            )
+        )
+
+        if allow_spot_instances:
+            # add a preference for spot instances, if that's allowed
+            affinity.node_affinity.preferred_during_scheduling_ignored_during_execution = [  # noqa: E501
+                V1PreferredSchedulingTerm(
+                    weight=1,
+                    preference=V1NodeSelectorTerm(
+                        match_expressions=[
+                            V1NodeSelectorRequirement(
+                                key="kubernetes.azure.com/scalesetpriority",
+                                operator="In",
+                                values=["spot"],
+                            )
+                        ]
+                    ),
+                )
+            ]
+    else:
+        affinity = None
+
+    if allow_spot_instances:
+        tolerations.append(
+            V1Toleration(
+                key="kubernetes.azure.com/scalesetpriority",
+                operator="Equal",
+                value="spot",
+                effect="NoSchedule",
+            )
+        )
+
     pod_spec = V1PodSpec(
         service_account_name="default",
         containers=[container],
         node_selector=node_selector,
+        tolerations=tolerations,
+        affinity=affinity,
     )
     pod_template_spec = V1PodTemplateSpec(
         metadata=V1ObjectMeta(

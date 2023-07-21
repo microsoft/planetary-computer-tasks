@@ -73,6 +73,7 @@ class StreamingTaskOptions(PCBaseModel):
     polling_interval: int = 30
     trigger_queue_length: int = 100
     message_limit: Optional[int] = None
+    allow_spot_instances: bool = False
     resources: Resources
 
     class Config:

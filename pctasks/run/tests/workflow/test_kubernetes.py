@@ -1,3 +1,4 @@
+import pytest
 from kubernetes.client.models import V1ResourceRequirements
 
 import pctasks.core.models.task
@@ -12,8 +13,12 @@ def test_get_deployment_name():
     assert result == "devstoreaccount1-test-deployment"
 
 
-def test_build_streaming_deployment():
+@pytest.mark.parametrize("allow_spot_instances", [True, False])
+def test_build_streaming_deployment(allow_spot_instances):
     task_definition = get_streaming_task_definition()
+    if allow_spot_instances:
+        task_definition.args["streaming_options"]["allow_spot_instances"] = True
+
     result = pctasks.run.workflow.kubernetes.build_streaming_deployment(
         task_definition,
         input_uri="blob://pctasksteststaging/input",
@@ -39,6 +44,43 @@ def test_build_streaming_deployment():
         "run",
         "blob://pctasksteststaging/input",
     ]
+
+    if allow_spot_instances:
+        assert result.spec.template.spec.affinity.to_dict() == {
+            "node_affinity": {
+                "preferred_during_scheduling_ignored_during_execution": [
+                    {
+                        "preference": {
+                            "match_expressions": [
+                                {
+                                    "key": "kubernetes.azure.com/scalesetpriority",
+                                    "operator": "In",
+                                    "values": ["spot"],
+                                }
+                            ],
+                            "match_fields": None,
+                        },
+                        "weight": 1,
+                    }
+                ],
+                "required_during_scheduling_ignored_during_execution": {
+                    "node_selector_terms": [
+                        {
+                            "match_expressions": [
+                                {
+                                    "key": "node_group",
+                                    "operator": "In",
+                                    "values": ["pc-lowlatency"],
+                                }
+                            ],
+                            "match_fields": None,
+                        }
+                    ]
+                },
+            },
+            "pod_affinity": None,
+            "pod_anti_affinity": None,
+        }
 
 
 def test_build_streaming_scaler():
