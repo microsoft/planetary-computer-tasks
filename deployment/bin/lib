@@ -14,6 +14,7 @@ function setup_env() {
 
     # Directory for rendered values and templates
     export CONF_DIR="${CONF_DIR:-/opt/conf}"
+    export SRC_DIR="${SRC_DIR:-/opt/src}"
     mkdir -p ${CONF_DIR}
 
     # Paths for genrating deployment values
@@ -135,12 +136,12 @@ function set_tf_vars() {
 
 
 function prepare_funcs() {
-    rm -rf /opt/src/functions_deploy
-    cp -r /opt/src/pctasks_funcs /opt/src/functions_deploy
+    rm -rf "${SRC_DIR}/functions_deploy"
+    cp -r "${SRC_DIR}/pctasks_funcs" "${SRC_DIR}/functions_deploy"
 
-    pushd /opt/src/functions_deploy || exit
+    pushd "${SRC_DIR}/functions_deploy" || exit
     # Create symlink to enable function app building of pctasks
-    ln -s /opt/src/pctasks /opt/src/functions_deploy/pctasks_linked
+    ln -s "${SRC_DIR}/pctasks" "${SRC_DIR}/functions_deploy/pctasks_linked"
     cp requirements-deploy.txt requirements.txt
 
     popd || exit
