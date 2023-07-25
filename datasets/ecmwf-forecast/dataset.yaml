@@ -18,7 +18,7 @@ collections:
     template: ${{ local.path(./collection/ecmwf-forecast) }}
     class: ecmwf_forecast:EcmwfCollection
     asset_storage:
-      - uri:  blob://ai4edataeuwest/ecmwf/
+      - uri: blob://ai4edataeuwest/ecmwf/
         chunks:
           options:
             matches: (enfo|oper|waef|wave)(?!-opendata)
