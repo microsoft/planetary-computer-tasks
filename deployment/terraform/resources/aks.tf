@@ -64,7 +64,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "argowf" {
 resource "azurerm_kubernetes_cluster_node_pool" "tasks" {
   name                  = "tasks"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.pctasks.id
-  vm_size               = "Standard_D16d_v4"
+  vm_size               = "Standard_D3_v2"
   enable_auto_scaling   = true
   min_count             = var.aks_task_pool_min_count
   max_count             = var.aks_task_pool_max_count
@@ -89,10 +89,11 @@ resource "azurerm_kubernetes_cluster_node_pool" "tasks" {
   }
 }
 
+# Node pool *with spot instances* for running tasks.
 resource "azurerm_kubernetes_cluster_node_pool" "tasks-spot" {
   name                  = "tasksspot"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.pctasks.id
-  vm_size               = "Standard_D16d_v4"
+  vm_size               = "Standard_D3_v2"
   enable_auto_scaling   = true
   min_count             = var.aks_task_pool_min_count
   max_count             = var.aks_task_pool_max_count
