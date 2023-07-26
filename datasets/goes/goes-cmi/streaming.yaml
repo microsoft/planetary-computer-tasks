@@ -22,6 +22,7 @@ jobs:
             max_replica_count: 10
             polling_interval: 30
             trigger_queue_length: 100
+            allow_spot_instances: true
             resources:
               limits:
                 cpu: "1"
