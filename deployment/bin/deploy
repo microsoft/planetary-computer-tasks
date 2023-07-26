@@ -342,7 +342,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
         prepare_funcs
 
-        pushd /opt/src/functions_deploy
+        pushd "${SRC_DIR}/functions_deploy"
         func azure functionapp publish ${FUNCTION_APP_NAME} --python
         popd
 

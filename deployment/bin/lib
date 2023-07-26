@@ -13,13 +13,14 @@ function require_env() {
 function setup_env() {
 
     # Directory for rendered values and templates
-    export CONF_DIR='/opt/conf'
+    export CONF_DIR="${CONF_DIR:-/opt/conf}"
+    export SRC_DIR="${SRC_DIR:-/opt/src}"
     mkdir -p ${CONF_DIR}
 
     # Paths for genrating deployment values
     export TEMPLATE_PATH=helm/deploy-values.template.yaml
-    export TF_OUTPUT_FILE=${CONF_DIR}/tf-output.json
-    export DEPLOY_VALUES_FILE=${CONF_DIR}/deploy-values.yaml
+    export TF_OUTPUT_FILE=$(realpath ${CONF_DIR}/tf-output.json)
+    export DEPLOY_VALUES_FILE=$(realpath ${CONF_DIR}/deploy-values.yaml)
 
     export DATE=$(date)
 }
@@ -135,12 +136,12 @@ function set_tf_vars() {
 
 
 function prepare_funcs() {
-    rm -rf /opt/src/functions_deploy
-    cp -r /opt/src/pctasks_funcs /opt/src/functions_deploy
+    rm -rf "${SRC_DIR}/functions_deploy"
+    cp -r "${SRC_DIR}/pctasks_funcs" "${SRC_DIR}/functions_deploy"
 
-    pushd /opt/src/functions_deploy || exit
+    pushd "${SRC_DIR}/functions_deploy" || exit
     # Create symlink to enable function app building of pctasks
-    ln -s /opt/src/pctasks /opt/src/functions_deploy/pctasks_linked
+    ln -s "${SRC_DIR}/pctasks" "${SRC_DIR}/functions_deploy/pctasks_linked"
     cp requirements-deploy.txt requirements.txt
 
     popd || exit

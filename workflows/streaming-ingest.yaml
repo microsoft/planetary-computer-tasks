@@ -1,0 +1,40 @@
+name: "Streaming Ingest"
+id: "streaming-ingest"
+is_streaming: True
+schema_version: 1.0.0
+dataset: any
+args:
+  - registry
+  - queue_account_url # "https://pctaskstestdev.queue.core.windows.net"
+  - cosmosdb_url #  "https://cdb-pctaskstest-dev.documents.azure.com:443/"
+
+jobs:
+  ingest-items:
+    id: ingest-items
+    tasks:
+      - id: ingest-items
+        image: "${{ args.registry }}/pctasks-ingest:latest"
+        task: pctasks.ingest_task.streaming:StreamingIngestItemsTask
+        args:
+          streaming_options:
+            queue_url: ${{ args.queue_account_url }}/ingest
+            visibility_timeout: 30
+            min_replica_count: 0
+            max_replica_count: 1
+            polling_interval: 30
+            trigger_queue_length: 100
+            resources:
+              limits:
+                cpu: "0.5"
+                memory: "2Gi"
+              requests:
+                cpu: "0.5"
+                memory: "2Gi"
+        environment:
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+          PCTASKS_COSMOSDB__URL: ${{ args.cosmosdb_url }}
+          DB_CONNECTION_STRING: ${{ secrets.pgstac-connection-string }}
+          APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+        schema_version: 1.0.0
