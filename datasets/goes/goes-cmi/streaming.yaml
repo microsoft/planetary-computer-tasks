@@ -10,7 +10,7 @@ jobs:
     id: create-items
     tasks:
       - id: create-items
-        image: "${{ args.registry }}/pctasks-goes-cmi:2023.7.19.0"
+        image: "${{ args.registry }}/pctasks-goes-cmi:2023.7.26.0"
         task: pctasks.dataset.streaming:StreamingCreateItemsTask
         code:
           src: ${{ local.path(./goes_cmi) }}

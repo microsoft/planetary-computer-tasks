@@ -253,13 +253,13 @@ def build_streaming_deployment(
     if node_group:
         common_labels["node_group"] = node_group
 
-    # TODO: enable node_selector. Disabled for testing in kind.
     allow_spot_instances = task_definition.args["streaming_options"].get(
         "allow_spot_instances", False
     )
     node_selector = {"node_group": node_group} if node_group else None
     tolerations = []
     if node_group:
+        logger.info("Adding node_affinity=%s", node_group)
         affinity = V1Affinity(
             node_affinity=V1NodeAffinity(
                 required_during_scheduling_ignored_during_execution=V1NodeSelector(
@@ -278,6 +278,7 @@ def build_streaming_deployment(
 
         if allow_spot_instances:
             # add a preference for spot instances, if that's allowed
+            logger.info("Adding spot preference")
             affinity.node_affinity.preferred_during_scheduling_ignored_during_execution = [  # noqa: E501
                 V1PreferredSchedulingTerm(
                     weight=1,
@@ -296,6 +297,7 @@ def build_streaming_deployment(
         affinity = None
 
     if allow_spot_instances:
+        logger.info("Adding spot toleration")
         tolerations.append(
             V1Toleration(
                 key="kubernetes.azure.com/scalesetpriority",
