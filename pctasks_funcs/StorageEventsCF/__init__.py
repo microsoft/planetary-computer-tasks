@@ -51,6 +51,15 @@ RULES = [
         # technically could do pre-made items queue
         "sentinel-1-rtc",
     ),
+    # ecmwf-forecast
+    (
+        re.compile(
+            r"https://ai4edataeuwest\.blob\.core\.windows\.net/ecmwf/.*\.index"  # noqa: E501
+        ),
+        # technically could do pre-made items queue
+        "ecmwf-forecast",
+    ),
+ 
     # For integration tests. It doesn't feel great putting this in here.
     (re.compile(r"http://azurite:10000/devstoreaccount1/"), "test-collection"),
 ]
