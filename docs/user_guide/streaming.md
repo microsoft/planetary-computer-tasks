@@ -84,6 +84,53 @@ Argo Workflow created. That workflow pod is what creates the Kubernetes
 Deployment processing messages from the queue, and the KEDA scaled object
 responsible for scaling the Deployment.
 
+## Dataset queue dispatch
+
+A certain class of streaming workflows, STAC item creation in response to new
+blobs being created, use a well-known set of storage queues and Azure Functions
+to dispatch Event Grid messages to the correct per-dataset queue.
+
+All messages flow into a single `storage-events` Storage Queue. These Event Grid
+System Topics and subscriptions are managed outside of pc-tasks. The
+`StorageEventsQueue` Azure Function gets the raw messages from the queue to Cosmos DB.
+
+The `StorageEventsCF` Azure Function monitors the Cosmos DB container for new
+messages and dispatches them to the appropriate per-dataset queue. When setting
+up a new streaming pipeline for a datasets, you'll need to write some rules to
+configure how messages are dispatched. These configuration rules live in
+`function.tf` terraform module, under
+`azurerm_linux_function_app.pctasks.app_settings`.
+
+Storage events are dispatched based on the `document.data.url` of the
+Cloud Event, which is a URL like
+
+    https://goeseuwest.blob.core.windows.net/noaa-goes16/GLM-L2-LCFA/...
+
+We rely on a naming convention for environment variables to determine which
+storage queues to dispatch to. The pattern is
+
+    PCTASKS_DISPATCH__<QUEUE_NAME>__QUEUE_NAME
+    PCTASKS_DISPATCH__<QUEUE_NAME>__PREFIX
+    PCTASKS_DISPATCH__<QUEUE_NAME>__<SUFFIX>
+
+For example, the rule
+
+    PCTASKS_DISPATCH__GOES_GLM__QUEUE_NAME=goes-glm
+    PCTASKS_DISPATCH__GOES_GLM__PREFIX=https://goeseuwest.blob.core.windows.net/noaa-goes16/GLM-L2-LCFA/
+
+maps to the nested object:
+
+    {
+        "PCTASKS_DISPATCH": {
+            "GOES_GLM": {
+                "QUEUE_NAME": "goes-glm",
+                "PREFIX": "https://goeseuwest.blob.core.windows.net/noaa-goes16/GLM-L2-LCFA/"
+            }
+        }
+    }
+    
+If both a prefix and suffix are defined, then *both* rules must match.
+
 ## Additional Azure Resources
 
 Streaming workflows require a few additional Azure resources to be created:

@@ -34,16 +34,35 @@ resource "azurerm_linux_function_app" "pctasks" {
     # Sets the Storage Account to use for low-latency queues
     "FUNC_STORAGE_QUEUE_ACCOUNT_URL" = azurerm_storage_account.pctasks.primary_queue_endpoint,
     # Sets the name of the Cosmos DB containers to watch dynamically, to enable changing during unit tests.
-    "FUNC_WORKFLOWS_COLLECTION_NAME" = "workflows",
-    "FUNC_WORKFLOW_RUNS_COLLECTION_NAME" = "workflow-runs",
+    "FUNC_WORKFLOWS_COLLECTION_NAME"      = "workflows",
+    "FUNC_WORKFLOW_RUNS_COLLECTION_NAME"  = "workflow-runs",
     "FUNC_STORAGE_EVENTS_COLLECTION_NAME" = "storage-events",
-    "FUNC_ITEMS_COLLECTION_NAME" = "items",
+    "FUNC_ITEMS_COLLECTION_NAME"          = "items",
+    # The storage event -> queue dispatch rules
+    # GOES-GLM
+    "PCTASKS_DISPATCH__GOES16_GLM__QUEUE_NAME"     = "goes-glm",
+    "PCTASKS_DISPATCH__GOES16_GLM__PREFIX"         = "https://goeseuwest.blob.core.windows.net/noaa-goes16/GLM-L2-LCFA/",
+    "PCTASKS_DISPATCH__GOES17_GLM__QUEUE_NAME"     = "goes-glm",
+    "PCTASKS_DISPATCH__GOES17_GLM__PREFIX"         = "https://goeseuwest.blob.core.windows.net/noaa-goes17/GLM-L2-LCFA/",
+    "PCTASKS_DISPATCH__GOES18_GLM__QUEUE_NAME"     = "goes-glm",
+    "PCTASKS_DISPATCH__GOES18_GLM__PREFIX"         = "https://goeseuwest.blob.core.windows.net/noaa-goes18/GLM-L2-LCFA/",
+    # GOES-CMI
+    "PCTASKS_DISPATCH__GOES16_CMI__QUEUE_NAME"     = "goes-cmi",
+    "PCTASKS_DISPATCH__GOES16_CMI__PREFIX"         = "https://goeseuwest.blob.core.windows.net/noaa-goes16/ABI-L2-CMIPM/",
+    "PCTASKS_DISPATCH__GOES17_CMI__QUEUE_NAME"     = "goes-cmi",
+    "PCTASKS_DISPATCH__GOES17_CMI__PREFIX"         = "https://goeseuwest.blob.core.windows.net/noaa-goes17/ABI-L2-CMIPM/",
+    "PCTASKS_DISPATCH__GOES18_CMI__QUEUE_NAME"     = "goes-cmi",
+    "PCTASKS_DISPATCH__GOES18_CMI__PREFIX"         = "https://goeseuwest.blob.core.windows.net/noaa-goes18/ABI-L2-CMIPM/",
+    # ECMWF-forecast
+    "PCTASKS_DISPATCH__ECMWF_FORECAST__QUEUE_NAME" = "ecmwf-forecast",
+    "PCTASKS_DISPATCH__ECMWF_FORECAST__PREFIX"     = "https://ai4edataeuwest.blob.core.windows.net/ecmwf/",
+    "PCTASKS_DISPATCH__ECMWF_FORECAST__SUFFIX"     = ".index",
   }
 
   functions_extension_version = "~4"
   site_config {
-    use_32_bit_worker = false
-    ftps_state        = "Disabled"
+    use_32_bit_worker        = false
+    ftps_state               = "Disabled"
     application_insights_key = azurerm_application_insights.pctasks.instrumentation_key
 
     application_stack {
