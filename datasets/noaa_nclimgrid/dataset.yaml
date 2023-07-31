@@ -12,6 +12,7 @@ environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
   AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
   AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+  APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
 
 collections:
   - id: noaa-nclimgrid-daily-prelim

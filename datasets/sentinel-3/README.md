@@ -33,7 +33,7 @@ $ PYTHONPATH=datasets/sentinel-3 python -m pytest datasets/sentinel-3/tests/
 ```console
 $ ls datasets/sentinel-3/collection/ | xargs -I {}  \
     pctasks dataset process-items '${{ args.since }}' \
-        -d datasets/sentinel-3/update.yaml \
+        -d datasets/sentinel-3/dataset.yaml \
         -c {} \
         --workflow-id={}-update \
         --is-update-workflow \
