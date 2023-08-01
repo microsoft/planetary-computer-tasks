@@ -69,11 +69,10 @@ def dispatch(url: str, rules: list[tuple[str, str | None, str | None]]) -> list[
     Parameters
     ----------
     """
-    # TODO: Decide whether we want 1:1 or 1:many
     queues = []
     for queue_name, prefix, suffix in rules:
-        matches_prefix = (prefix is None) or (url.startswith(prefix))
-        matches_suffix = (suffix is None) or (url.endswith(suffix))
+        matches_prefix = (prefix is None) or url.startswith(prefix)
+        matches_suffix = (suffix is None) or url.endswith(suffix)
 
         if matches_prefix and matches_suffix:
             logging.info(
