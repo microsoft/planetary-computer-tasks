@@ -79,7 +79,10 @@ the workflow.
 $ pctasks workflow submit '<workflow_id>'
 ```
 
-This will cause the actual compute resources to be created.
+This will cause the actual compute resources to be created. You'll first see an
+Argo Workflow created. That workflow pod is what creates the Kubernetes
+Deployment processing messages from the queue, and the KEDA scaled object
+responsible for scaling the Deployment.
 
 ## Additional Azure Resources
 
