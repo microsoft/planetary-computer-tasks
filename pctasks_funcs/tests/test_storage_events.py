@@ -114,6 +114,10 @@ def msg():
             "http://azurite:10000/devstoreaccount1/ABI-L2-CMIPM/2023/096/11/OR_ABI-L2-CMIPM1-M6C10_G16_s20230961135249_e20230961135321_c20230961135389.nc",  # noqa: E501,
             ["test-collection"],
         ),
+        (
+            "https://landsateuwest.blob.core.windows.net/landsat-c2/level-2/standard/oli-tirs/2023/022/028/LC09_L2SP_022028_20230731_20230802_02_T1/LC09_L2SP_022028_20230731_20230802_02_T1_MTL.xml",  # noqa: E501
+            ["landsat-c2-l2"],
+        ),
     ],
 )
 @pytest.mark.usefixtures("dispatch_rules")

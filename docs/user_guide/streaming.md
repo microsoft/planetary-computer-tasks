@@ -58,6 +58,43 @@ jobs:
 The Kubernetes Pod running this task will *prefer* to run on a preemptible node.
 It will fall back to a regular node group if necessary.
 
+## Creating a Streaming Workflow
+
+To add a new streaming workflow, you'll need to:
+
+1. Create a new workflow file called `datasets/{dataset}/streaming.yaml`. You
+   can base it off one of the existing streaming workflow files. Make sure to
+   update the
+
+   - `image`
+   - `code.src`
+   - `args.streaming_options.queue_url`
+   - `args.streaming_options.resources`
+   - `create_items_function`
+   - `collection_id`
+   - `id`
+   - `dataset`
+
+2. Build a new task image if necessary. Make sure its tag matches the tag in the
+   workflow file.
+3. Update the deployment configuration:
+
+    a. Create the Storage Queue by updating `storage_account.tf`
+    b. Add the dispatch rule to `function.tf`
+    c. Add a test case to `pctasks_funcs/tests/test_storage_events.py::test_dispatch`
+    d. redeploy the terraform
+    e. restart the function app?
+
+4. Set up the Event Grid System Topic and Subscription to write to the
+   `storage-events` queue
+5. Deploy the workflow with
+
+   ```
+   pctasks workflow upsert-and-submit datasets/{dataset}/streaming.yaml
+   ```
+
+   including whatever arguments are necessary.
+
 ## Registering a streaming workflow
 
 A streaming workflow is registered with `pctasks` like any other workflow,
