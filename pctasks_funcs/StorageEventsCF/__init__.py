@@ -58,7 +58,6 @@ def load_dispatch_config() -> list[tuple[str, str | None, str | None]]:
             if key == "QUEUE_NAME":
                 prefix = os.environ.get(f"PCTASKS_DISPATCH__{queue_name}__PREFIX", None)
                 suffix = os.environ.get(f"PCTASKS_DISPATCH__{queue_name}__SUFFIX", None)
-                print("Load", queue_name, v, prefix, suffix)
                 config.append((v, prefix, suffix))
 
     return config
@@ -105,9 +104,12 @@ async def main(documents: func.DocumentList) -> None:
             storage_event = StorageEvent(**document)
             queues = dispatch(storage_event.data.url, config)
 
-            if queues is None:
+            if not queues:
                 logging.warning(
-                    "No matching queue for document id=%s", storage_event.id
+                    "No matching queue for document id=%s url=%s config=%s",
+                    storage_event.id,
+                    storage_event.data.url,
+                    config,
                 )
                 continue
 

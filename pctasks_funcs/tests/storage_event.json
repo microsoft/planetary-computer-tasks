@@ -13,7 +13,7 @@
         "contentType": "application/octet-stream",
         "contentLength": 343897,
         "blobType": "BlockBlob",
-        "url": "https://goeseuwest.blob.core.windows.net/noaa-goes16/ABI-L2-CMIPM/2023/096/11/OR_ABI-L2-CMIPM1-M6C10_G16_s20230961135249_e20230961135321_c20230961135389.nc",
+        "url": "http://azurite:10000/devstoreaccount1/ABI-L2-CMIPM/2023/096/11/OR_ABI-L2-CMIPM1-M6C10_G16_s20230961135249_e20230961135321_c20230961135389.nc",
         "sequencer": "0000000000000000000000000000ECA5000000000000c808",
         "storageDiagnostics": {
             "batchId": "b57dab2b-4006-001d-007b-68e98f000000"

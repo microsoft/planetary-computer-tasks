@@ -58,7 +58,7 @@ def events_queue():
 @pytest.fixture
 def goes_cmi_queue():
     with TempQueue(
-        name="goes-cmi",
+        name="test-collection",
     ) as queue_client:
         yield queue_client
 
@@ -106,6 +106,14 @@ def msg():
             "https://ai4edataeuwest.blob.core.windows.net/ecmwf/20230731/00z/0p4-beta/enfo/20230731000000-0h-enfo-ef.index",  # noqa: E501
             ["ecmwf-forecast"],
         ),
+        (
+            "http://azurite:10000/devstoreaccount1/test-data/test-be972b3430ac11eebe9b00155d300a6b/data/item.json",  # noqa: E501
+            ["test-collection"],
+        ),
+        (
+            "http://azurite:10000/devstoreaccount1/ABI-L2-CMIPM/2023/096/11/OR_ABI-L2-CMIPM1-M6C10_G16_s20230961135249_e20230961135321_c20230961135389.nc",  # noqa: E501,
+            ["test-collection"],
+        ),
     ],
 )
 @pytest.mark.usefixtures("dispatch_rules")
@@ -138,8 +146,8 @@ def test_storage_event_handler_integration(
 
             assert result.id == "0179968e-401e-000d-1f7b-68d814060798"
             assert result.data.url == (
-                "https://goeseuwest.blob.core.windows.net/noaa-goes16/ABI-L2-CMIPM/2023/"
-                "096/11/OR_ABI-L2-CMIPM1-M6C10_G16_s20230961135249_e20230961135321_c20230961135389.nc"
+                "http://azurite:10000/devstoreaccount1/ABI-L2-CMIPM/2023/"
+                "096/11/OR_ABI-L2-CMIPM1-M6C10_G16_s20230961135249_e20230961135321_c20230961135389.nc"  # noqa: E501
             )
 
             while (
