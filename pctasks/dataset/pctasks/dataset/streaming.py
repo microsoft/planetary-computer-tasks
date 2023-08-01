@@ -26,7 +26,7 @@ from pctasks.core.models.item import ItemUpdatedRecord, StacItemRecord
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
 from pctasks.core.storage.blob import maybe_rewrite_blob_storage_url
-from pctasks.dataset.items.task import validate_create_items_result
+from pctasks.dataset.items.task import traced_create_item, validate_create_items_result
 from pctasks.task.context import TaskContext
 from pctasks.task.streaming import (
     NoOutput,
@@ -174,7 +174,9 @@ class StreamingCreateItemsTask(
         url = maybe_rewrite_blob_storage_url(url)
         logger.info("Processing url %s", url)
 
-        items = create_items_function(url, storage_factory)
+        with traced_create_item(url, collection_id):
+            items = create_items_function(url, storage_factory)
+
         items = validate_create_items_result(
             items, collection_id=collection_id, skip_validation=skip_validation
         )
