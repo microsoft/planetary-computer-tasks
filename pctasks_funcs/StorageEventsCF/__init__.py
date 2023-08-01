@@ -59,7 +59,6 @@ RULES = [
         # technically could do pre-made items queue
         "ecmwf-forecast",
     ),
- 
     # For integration tests. It doesn't feel great putting this in here.
     (re.compile(r"http://azurite:10000/devstoreaccount1/"), "test-collection"),
 ]
