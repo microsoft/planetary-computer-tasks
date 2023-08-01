@@ -30,11 +30,11 @@ maps to the nested object:
         "PCTASKS_DISPATCH": {
             "GOES_GLM": {
                 "QUEUE_NAME": "goes-glm",
-                "PREFIX": "https://goeseuwest.blob.core.windows.net/noaa-goes16/GLM-L2-LCFA/"
+                "PREFIX": "https://goeseuwest.blob.core.windows.net/noaa-goes16/GLM-L2-LCFA/"  # noqa: E501
             }
         }
     }
-    
+
 
 And would ensure that a cloud event with the URL given above would be dispatched
 to the `goes-glm` queue.

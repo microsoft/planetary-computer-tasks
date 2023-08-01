@@ -8,7 +8,6 @@ import azure.functions as func
 import azure.storage.queue
 import pytest
 import StorageEventsCF
-import StorageEventsQueue
 
 from pctasks.core.cosmos.containers.items import ItemsContainer
 from pctasks.core.cosmos.containers.storage_events import StorageEventsContainer
@@ -101,7 +100,7 @@ def msg():
         ),
         (
             "https://goeseuwest.blob.core.windows.net/noaa-goes16/GLM-L2-LCFA/2023/213/18/OR_GLM-L2-LCFA_G16_s20232131810400_e20232131811000_c20232131811020.nc",  # noqa: E501
-            ["goes-glm"]
+            ["goes-glm"],
         ),
         (
             "https://ai4edataeuwest.blob.core.windows.net/ecmwf/20230731/00z/0p4-beta/enfo/20230731000000-0h-enfo-ef.index",  # noqa: E501
