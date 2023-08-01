@@ -42,9 +42,6 @@ to the `goes-glm` queue.
 import logging
 import os
 
-# import re
-from typing import Optional
-
 import azure.functions as func
 import azure.identity.aio
 import azure.storage.queue.aio

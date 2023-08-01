@@ -1,5 +1,4 @@
 # TODO: figure out running. Just using python -m pytest for now
-import base64
 import json
 import pathlib
 import time
