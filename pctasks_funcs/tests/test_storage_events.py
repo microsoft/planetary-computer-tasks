@@ -1,5 +1,4 @@
 # TODO: figure out running. Just using python -m pytest for now
-import base64
 import json
 import pathlib
 import time
@@ -9,7 +8,6 @@ import azure.functions as func
 import azure.storage.queue
 import pytest
 import StorageEventsCF
-import StorageEventsQueue
 
 from pctasks.core.cosmos.containers.items import ItemsContainer
 from pctasks.core.cosmos.containers.storage_events import StorageEventsContainer
@@ -18,6 +16,29 @@ from pctasks.core.models.item import StacItemRecord
 from pctasks.dev.queues import TempQueue
 
 HERE = pathlib.Path(__file__).parent
+
+
+@pytest.fixture
+def dispatch_rules(monkeypatch):
+    """
+    Update the environment with the dispatch rules.
+
+    This reads the dispatch rules from the ``function.tf`` module in the
+    deployment. It sets any app setting starting with ``PCTASKS_DISPATCH__``
+    into the local environment.
+    """
+    p = HERE / "../../deployment/terraform/resources/function.tf"
+    rule_lines = [
+        x
+        for x in p.read_text().split("\n")
+        if x.strip().startswith('"PCTASKS_DISPATCH')
+    ]
+    rules = [tuple((x.strip(" '\",") for x in line.split("="))) for line in rule_lines]
+
+    for k, v in rules:
+        monkeypatch.setenv(k, v)
+
+    yield
 
 
 @pytest.fixture
@@ -37,7 +58,7 @@ def events_queue():
 @pytest.fixture
 def goes_cmi_queue():
     with TempQueue(
-        name="goes-cmi",
+        name="test-collection",
     ) as queue_client:
         yield queue_client
 
@@ -75,17 +96,37 @@ def msg():
     [
         (
             "https://goeseuwest.blob.core.windows.net/noaa-goes16/ABI-L2-CMIPM/2023/096/11/OR_ABI-L2-CMIPM1-M6C10_G16_s20230961135249_e20230961135321_c20230961135389.nc",  # noqa: E501
-            "goes-cmi",
+            ["goes-cmi"],
+        ),
+        (
+            "https://goeseuwest.blob.core.windows.net/noaa-goes16/GLM-L2-LCFA/2023/213/18/OR_GLM-L2-LCFA_G16_s20232131810400_e20232131811000_c20232131811020.nc",  # noqa: E501
+            ["goes-glm"],
+        ),
+        (
+            "https://ai4edataeuwest.blob.core.windows.net/ecmwf/20230731/00z/0p4-beta/enfo/20230731000000-0h-enfo-ef.index",  # noqa: E501
+            ["ecmwf-forecast"],
+        ),
+        (
+            "http://azurite:10000/devstoreaccount1/test-data/test-be972b3430ac11eebe9b00155d300a6b/data/item.json",  # noqa: E501
+            ["test-collection"],
+        ),
+        (
+            "http://azurite:10000/devstoreaccount1/ABI-L2-CMIPM/2023/096/11/OR_ABI-L2-CMIPM1-M6C10_G16_s20230961135249_e20230961135321_c20230961135389.nc",  # noqa: E501,
+            ["test-collection"],
         ),
     ],
 )
+@pytest.mark.usefixtures("dispatch_rules")
 def test_dispatch(url, queue_url):
-    result = StorageEventsCF.dispatch(url)
+    config = StorageEventsCF.load_dispatch_config()
+    result = StorageEventsCF.dispatch(url, config)
     assert result == queue_url
 
 
+@pytest.mark.usefixtures("dispatch_rules")
+@pytest.mark.usefixtures("events_queue")
 def test_storage_event_handler_integration(
-    events_queue, goes_cmi_queue: azure.storage.queue.QueueClient
+    goes_cmi_queue: azure.storage.queue.QueueClient,
 ):
     # How is this supposed to work? Queue names are important here.
     # Storage Event -> Cosmos
@@ -105,8 +146,8 @@ def test_storage_event_handler_integration(
 
             assert result.id == "0179968e-401e-000d-1f7b-68d814060798"
             assert result.data.url == (
-                "https://goeseuwest.blob.core.windows.net/noaa-goes16/ABI-L2-CMIPM/2023/"
-                "096/11/OR_ABI-L2-CMIPM1-M6C10_G16_s20230961135249_e20230961135321_c20230961135389.nc"
+                "http://azurite:10000/devstoreaccount1/ABI-L2-CMIPM/2023/"
+                "096/11/OR_ABI-L2-CMIPM1-M6C10_G16_s20230961135249_e20230961135321_c20230961135389.nc"  # noqa: E501
             )
 
             while (
@@ -148,3 +189,37 @@ def test_publish_items_cf(ingest_queue):
     expected["properties"].pop("updated")
     assert result == expected
     ingest_queue.delete_message(message)
+
+
+@pytest.mark.usefixtures("dispatch_rules")
+def test_load_dispatch():
+    # set up the environ
+
+    config = StorageEventsCF.load_dispatch_config()
+    assert config == [
+        (
+            "goes-cmi",
+            "https://goeseuwest.blob.core.windows.net/noaa-goes16/ABI-L2-CMIPM/",
+            None,
+        ),
+        (
+            "goes-cmi",
+            "https://goeseuwest.blob.core.windows.net/noaa-goes17/ABI-L2-CMIPM/",
+            None,
+        ),
+        (
+            "goes-cmi",
+            "https://goeseuwest.blob.core.windows.net/noaa-goes18/ABI-L2-CMIPM/",
+            None,
+        ),
+        (
+            "goes-glm",
+            "https://goeseuwest.blob.core.windows.net/noaa-goes16/GLM-L2-LCFA/",
+            None,
+        ),
+        (
+            "sentinel-1-grd",
+            "https://sentinel1euwest.blob.core.windows.net/s1-grd/",
+            "manifest.safe",
+        ),
+    ]

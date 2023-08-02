@@ -4,11 +4,43 @@ Cosmos DB Change Feed Dispatcher
 This Azure Function dispatches updates to the `storage-events` container in
 CosmosDB to the appropriate Blob Storage Queue. It's expected that PCTasks
 workflows will scale in response to messages being sent to that queue.
+
+## Dispatch Configuration
+
+Storage events are dispatched based on the `document.data.url` of the
+Cloud Event, which is a URL like
+
+    https://goeseuwest.blob.core.windows.net/noaa-goes16/GLM-L2-LCFA/...
+
+We rely on a naming convention for environment variables to determine which
+storage queues to dispatch to. The pattern is
+
+    PCTASKS_DISPATCH__<QUEUE_NAME>__QUEUE_NAME
+    PCTASKS_DISPATCH__<QUEUE_NAME>__PREFIX
+    PCTASKS_DISPATCH__<QUEUE_NAME>__<SUFFIX>
+
+For example, the rule
+
+    PCTASKS_DISPATCH__GOES_GLM__QUEUE_NAME=goes-glm
+    PCTASKS_DISPATCH__GOES_GLM__PREFIX=https://goeseuwest.blob.core.windows.net/noaa-goes16/GLM-L2-LCFA/
+
+maps to the nested object:
+
+    {
+        "PCTASKS_DISPATCH": {
+            "GOES_GLM": {
+                "QUEUE_NAME": "goes-glm",
+                "PREFIX": "https://goeseuwest.blob.core.windows.net/noaa-goes16/GLM-L2-LCFA/"  # noqa: E501
+            }
+        }
+    }
+
+
+And would ensure that a cloud event with the URL given above would be dispatched
+to the `goes-glm` queue.
 """
 import logging
 import os
-import re
-from typing import Optional
 
 import azure.functions as func
 import azure.identity.aio
@@ -17,64 +49,43 @@ import pctasks_funcs_base
 
 from pctasks.core.models.event import StorageEvent
 
-# TODO: pre-commit-style validator for ensuring these queues exist.
-# TODO: Move to prefix / suffix rules?
 
-RULES = [
-    # GOES-GLM
-    (
-        re.compile(
-            r"https://goeseuwest\.blob\.core\.windows\.net\/noaa-goes(16|17|18)/GLM-L2-LCFA/"  # noqa: E501
-        ),
-        "goes-glm",
-    ),
-    # GOES-CMI (or at least other)
-    (
-        re.compile(
-            r"https://goeseuwest\.blob\.core\.windows\.net\/noaa-goes(16|17|18)/"
-        ),
-        "goes-cmi",
-    ),
-    # sentinel-1-grd
-    (
-        re.compile(
-            r"https://sentinel1euwest\.blob\.core\.windows\.net/s1-grd-stac/GRD/"
-        ),
-        # technically could do pre-made items queue
-        "sentinel-1-grd",
-    ),
-    # sentinel-1-rtc
-    (
-        re.compile(
-            r"https://sentinel1euwestrtc\.blob\.core\.windows\.net/sentinel1-grd-rtc-stac/GRD/"  # noqa: E501
-        ),
-        # technically could do pre-made items queue
-        "sentinel-1-rtc",
-    ),
-    # ecmwf-forecast
-    (
-        re.compile(
-            r"https://ai4edataeuwest\.blob\.core\.windows\.net/ecmwf/.*\.index"  # noqa: E501
-        ),
-        # technically could do pre-made items queue
-        "ecmwf-forecast",
-    ),
-    # For integration tests. It doesn't feel great putting this in here.
-    (re.compile(r"http://azurite:10000/devstoreaccount1/"), "test-collection"),
-]
+def load_dispatch_config() -> list[tuple[str, str | None, str | None]]:
+    config = []
+    for k, v in os.environ.items():
+        if k.startswith("PCTASKS_DISPATCH__"):
+            _, queue_name, key = k.split("__")
+            if key == "QUEUE_NAME":
+                prefix = os.environ.get(f"PCTASKS_DISPATCH__{queue_name}__PREFIX", None)
+                suffix = os.environ.get(f"PCTASKS_DISPATCH__{queue_name}__SUFFIX", None)
+                config.append((v, prefix, suffix))
+
+    return config
 
 
-def dispatch(url: str) -> Optional[str]:
+def dispatch(url: str, rules: list[tuple[str, str | None, str | None]]) -> list[str]:
     """
     Parameters
     ----------
     """
-    # TODO: Decide whether we want 1:1 or 1:many
-    for rule, queue_name in RULES:
-        if rule.match(url):
-            logging.info("message=matched, rule=%s, queue-name=%s", rule, queue_name)
-            return queue_name
-    return None
+    queues = []
+    for queue_name, prefix, suffix in rules:
+        matches_prefix = (prefix is None) or url.startswith(prefix)
+        matches_suffix = (suffix is None) or url.endswith(suffix)
+
+        if matches_prefix and matches_suffix:
+            logging.info(
+                "message=matched, queue-name=%s, prefix=%s, suffix=%s",
+                queue_name,
+                prefix,
+                suffix,
+            )
+            queues.append(queue_name)
+
+    # We deduplicate here. Ideally, we wouldn't have duplicates in the first place.
+    queues = list(set(queues))
+
+    return queues
 
 
 async def main(documents: func.DocumentList) -> None:
@@ -86,24 +97,30 @@ async def main(documents: func.DocumentList) -> None:
     credential = os.environ.get("FUNC_STORAGE_ACCOUNT_KEY", None)
     credential, credential_ctx = pctasks_funcs_base.credential_context(credential)
 
+    config = load_dispatch_config()
+
     async with credential_ctx:  # type: ignore
         for document in documents:
             storage_event = StorageEvent(**document)
-            queue_name = dispatch(document["data"]["url"])
+            queues = dispatch(storage_event.data.url, config)
 
-            if queue_name is None:
+            if not queues:
                 logging.warning(
-                    "No matching queue for document id=%s", storage_event.id
+                    "No matching queue for document id=%s url=%s config=%s",
+                    storage_event.id,
+                    storage_event.data.url,
+                    config,
                 )
                 continue
 
-            queue_client = azure.storage.queue.aio.QueueClient(
-                account_url, queue_name=queue_name, credential=credential
-            )
-            logging.info(
-                "message=dispatching document, id=%s, queue_url=%s",
-                storage_event.id,
-                f"{queue_client.primary_hostname}/{queue_client.queue_name}",
-            )
-            async with queue_client:
-                await queue_client.send_message(storage_event.json())
+            for queue_name in queues:
+                queue_client = azure.storage.queue.aio.QueueClient(
+                    account_url, queue_name=queue_name, credential=credential
+                )
+                logging.info(
+                    "message=dispatching document, id=%s, queue_url=%s",
+                    storage_event.id,
+                    f"{queue_client.primary_hostname}/{queue_client.queue_name}",
+                )
+                async with queue_client:
+                    await queue_client.send_message(storage_event.json())
