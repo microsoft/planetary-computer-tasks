@@ -370,6 +370,7 @@ class BlobStorage(Storage):
             sas_token = self._generate_container_sas(
                 read=read, list=list, write=write, delete=delete
             )
+        assert sas_token  # for mypy
         base_url = self.get_url(file_path)
         return f"{base_url}?{sas_token.lstrip('?')}"
 
