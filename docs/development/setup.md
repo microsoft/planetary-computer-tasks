@@ -1,3 +1,4 @@
+(setup)=
 # Setting up the development environment
 
 ## Requirements
