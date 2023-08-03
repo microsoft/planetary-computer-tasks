@@ -122,7 +122,7 @@ async def main(documents: func.DocumentList) -> None:
                     "url": storage_event.data.url,
                     "id": storage_event.id,
                     "queue_url": (
-                        f"{queue_client.primary_hostname}/{queue_client.queue_name}",
+                        f"{queue_client.primary_hostname}/{queue_client.queue_name}"
                     ),
                 }
 
