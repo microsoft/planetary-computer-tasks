@@ -10,14 +10,14 @@ jobs:
     id: create-items
     tasks:
       - id: create-items
-        image: "${{ args.registry }}/pctasks-goes-cmi:2023.8.1.0"
+        image: "${{ args.registry }}/pctasks-landsat:2023.8.2.0"
         task: pctasks.dataset.streaming:StreamingCreateItemsTask
         code:
-          src: ${{ local.path(./goes_cmi) }}
+          src: ${{ local.path(./landsat.py) }}
         args:
           streaming_options:
-            queue_url: "${{args.queue_account_url}}/goes-cmi"
-            visibility_timeout: 300
+            queue_url: "${{args.queue_account_url}}/landsat-c2-l2"
+            visibility_timeout: 30
             min_replica_count: 0
             max_replica_count: 10
             polling_interval: 30
@@ -33,8 +33,8 @@ jobs:
 
           options:
             skip_validation: false
-          create_items_function: goes_cmi.goes_cmi:GoesCmiCollection.create_item
-          collection_id: "goes-cmi"
+          create_items_function: landsat:LandsatC2Collection.create_item
+          collection_id: "landsat-c2-l2"
 
         environment:
           AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
@@ -45,5 +45,5 @@ jobs:
         schema_version: 1.0.0
 is_streaming: True
 schema_version: 1.0.0
-id: goes-cmi-streaming-test
-dataset: goes_cmi
+id: landsat-streaming-test
+dataset: landsat-c2-l2

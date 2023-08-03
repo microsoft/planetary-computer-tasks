@@ -60,6 +60,10 @@ resource "azurerm_linux_function_app" "pctasks" {
     # Test
     "PCTASKS_DISPATCH__TEST_COLLECTION__QUEUE_NAME" = "test-collection",
     "PCTASKS_DISPATCH__TEST_COLLECTION__PREFIX"     = "http://azurite:10000/devstoreaccount1/",
+    # Landsat-C2-L2
+    "PCTASKS_DISPATCH__LANDSAT_C2_L2_FORECAST__QUEUE_NAME" = "landsat-c2-l2",
+    "PCTASKS_DISPATCH__LANDSAT_C2_L2_FORECAST__PREFIX"     = "https://landsateuwest.blob.core.windows.net/landsat-c2/",
+    "PCTASKS_DISPATCH__LANDSAT_C2_L2_FORECAST__SUFFIX"     = "_MTL.xml",
   }
 
   functions_extension_version = "~4"

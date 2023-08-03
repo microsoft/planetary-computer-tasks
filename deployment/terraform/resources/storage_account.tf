@@ -55,6 +55,7 @@ resource "azurerm_storage_queue" "queues" {
     "sentinel-1-grd",
     "sentinel-1-rtc",
     "ecmwf-forecast",
+    "landsat-c2-l2",
   ])
   name                 = each.key
   storage_account_name = azurerm_storage_account.pctasks.name

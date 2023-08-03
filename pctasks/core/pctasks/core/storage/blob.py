@@ -323,11 +323,56 @@ class BlobStorage(Storage):
         else:
             return os.path.join(self.root_uri, file_path)
 
-    def get_authenticated_url(self, file_path: str) -> str:
+    def _generate_container_sas(
+        self,
+        read: bool = True,
+        list: bool = True,
+        write: bool = False,
+        delete: bool = False,
+    ) -> str:
+        """
+        Generate a container-level SAS token.
+
+        This uses the storage instance's BlobServiceClient (and its
+        attached credentials) to generate a container-level SAS token.
+        """
+        start = Datetime.utcnow() - timedelta(hours=10)
+        expiry = Datetime.utcnow() + timedelta(hours=24 * 7)
+        permission = ContainerSasPermissions(
+            read=read,
+            write=write,
+            delete=delete,
+            list=list,
+        )
+        key = self._get_client()._account_client.get_user_delegation_key(
+            key_start_time=start, key_expiry_time=expiry
+        )
+        sas_token = generate_container_sas(
+            self.storage_account_name,
+            self.container_name,
+            user_delegation_key=key,
+            permission=permission,
+            start=start,
+            expiry=expiry,
+        )
+        return sas_token
+
+    def get_authenticated_url(
+        self,
+        file_path: str,
+        read: bool = True,
+        list: bool = True,
+        write: bool = False,
+        delete: bool = False,
+    ) -> str:
+        sas_token = self.sas_token
         if self.sas_token is None:
-            raise SasTokenError(f"SAS Token required but not defined on {self}")
+            sas_token = self._generate_container_sas(
+                read=read, list=list, write=write, delete=delete
+            )
+        assert sas_token  # for mypy
         base_url = self.get_url(file_path)
-        return f"{base_url}?{self.sas_token.lstrip('?')}"
+        return f"{base_url}?{sas_token.lstrip('?')}"
 
     def get_path(self, uri: str) -> str:
         blob_uri = BlobUri(uri)
