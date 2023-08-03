@@ -35,7 +35,8 @@ async def main(documents: func.DocumentList) -> None:
                         log_message = {
                             "message": "Published item",
                             "type": "publish-item",
-                            "id": document["id"],
+                            "collection_id": document["item"]["collection"],
+                            "item_id": document["item"]["id"],
                         }
 
                         logging.info(json.dumps(log_message))
