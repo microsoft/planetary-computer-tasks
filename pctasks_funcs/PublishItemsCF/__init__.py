@@ -11,14 +11,11 @@ import pctasks_funcs_base
 
 
 async def main(documents: func.DocumentList) -> None:
-
     account_url = os.environ["FUNC_STORAGE_QUEUE_ACCOUNT_URL"]
     credential = os.environ.get("FUNC_STORAGE_ACCOUNT_KEY", None)
     credential, credential_ctx = pctasks_funcs_base.credential_context(credential)
 
     queue_name = "ingest"
-    logging.info("Sending messages to %s/%s", account_url, queue_name)
-
     filtered_documents = [
         document for document in documents if document["type"] == "StacItem"
     ]
@@ -33,10 +30,15 @@ async def main(documents: func.DocumentList) -> None:
             async with qc:
                 for document in filtered_documents:
                     if document["type"] == "StacItem":
-                        logging.info("Processing document %s", document["id"])
                         message = transform_document(document)
                         await qc.send_message(message)
-                        logging.info("Processed document %s", document["id"])
+                        log_message = {
+                            "message": "Published item",
+                            "type": "publish-item",
+                            "id": document["id"],
+                        }
+
+                        logging.info(log_message)
 
 
 def transform_document(document: func.Document) -> str:

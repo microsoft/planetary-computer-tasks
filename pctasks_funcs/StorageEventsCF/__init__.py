@@ -74,12 +74,6 @@ def dispatch(url: str, rules: list[tuple[str, str | None, str | None]]) -> list[
         matches_suffix = (suffix is None) or url.endswith(suffix)
 
         if matches_prefix and matches_suffix:
-            logging.info(
-                "message=matched, queue-name=%s, prefix=%s, suffix=%s",
-                queue_name,
-                prefix,
-                suffix,
-            )
             queues.append(queue_name)
 
     # We deduplicate here. Ideally, we wouldn't have duplicates in the first place.
@@ -105,22 +99,32 @@ async def main(documents: func.DocumentList) -> None:
             queues = dispatch(storage_event.data.url, config)
 
             if not queues:
-                logging.warning(
-                    "No matching queue for document id=%s url=%s config=%s",
-                    storage_event.id,
-                    storage_event.data.url,
-                    config,
-                )
+                log_message = {
+                    "message": "Dropped message",
+                    "type": "storage-event-dispatch",
+                    "matched": False,
+                    "url": storage_event.data.url,
+                    "id": storage_event.id,
+                }
+
+                logging.warning(log_message)
                 continue
 
             for queue_name in queues:
                 queue_client = azure.storage.queue.aio.QueueClient(
                     account_url, queue_name=queue_name, credential=credential
                 )
-                logging.info(
-                    "message=dispatching document, id=%s, queue_url=%s",
-                    storage_event.id,
-                    f"{queue_client.primary_hostname}/{queue_client.queue_name}",
-                )
+                log_message = {
+                    "message": "Dispatched message",
+                    "type": "storage-event-dispatch",
+                    "matched": True,
+                    "url": storage_event.data.url,
+                    "id": storage_event.id,
+                    "queue_url": (
+                        f"{queue_client.primary_hostname}/{queue_client.queue_name}",
+                    ),
+                }
+
+                logging.info(log_message)
                 async with queue_client:
                     await queue_client.send_message(storage_event.json())
