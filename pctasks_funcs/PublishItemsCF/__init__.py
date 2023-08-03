@@ -38,7 +38,7 @@ async def main(documents: func.DocumentList) -> None:
                             "id": document["id"],
                         }
 
-                        logging.info(log_message)
+                        logging.info(json.dumps(log_message))
 
 
 def transform_document(document: func.Document) -> str:

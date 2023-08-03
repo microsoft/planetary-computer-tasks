@@ -39,6 +39,7 @@ maps to the nested object:
 And would ensure that a cloud event with the URL given above would be dispatched
 to the `goes-glm` queue.
 """
+import json
 import logging
 import os
 
@@ -107,7 +108,7 @@ async def main(documents: func.DocumentList) -> None:
                     "id": storage_event.id,
                 }
 
-                logging.warning(log_message)
+                logging.warning(json.dumps(log_message))
                 continue
 
             for queue_name in queues:
@@ -125,6 +126,6 @@ async def main(documents: func.DocumentList) -> None:
                     ),
                 }
 
-                logging.info(log_message)
+                logging.info(json.dumps(log_message))
                 async with queue_client:
                     await queue_client.send_message(storage_event.json())
