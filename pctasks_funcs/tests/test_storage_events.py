@@ -95,7 +95,15 @@ def msg():
     "url, queue_url",
     [
         (
-            "https://goeseuwest.blob.core.windows.net/noaa-goes16/ABI-L2-CMIPM/2023/096/11/OR_ABI-L2-CMIPM1-M6C10_G16_s20230961135249_e20230961135321_c20230961135389.nc",  # noqa: E501
+            "https://goeseuwest.blob.core.windows.net/noaa-goes18/ABI-L2-MCMIPC/2023/216/12/OR_ABI-L2-MCMIPC-M6_G18_s20232161201191_e20232161203570_c20232161204083.nc",  # noqa: E501
+            ["goes-cmi"],
+        ),
+        (
+            "https://goeseuwest.blob.core.windows.net/noaa-goes18/ABI-L2-MCMIPM/2023/216/11/OR_ABI-L2-MCMIPM2-M6_G18_s20232161147570_e20232161148039_c20232161148111.nc",  # noqa: E501
+            ["goes-cmi"],
+        ),
+        (
+            "https://goeseuwest.blob.core.windows.net/noaa-goes18/ABI-L2-MCMIPF/2023/216/13/OR_ABI-L2-MCMIPF-M6_G18_s20232161310226_e20232161319545_c20232161320015.nc",  # noqa: E501
             ["goes-cmi"],
         ),
         (

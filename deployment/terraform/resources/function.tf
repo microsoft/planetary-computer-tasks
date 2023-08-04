@@ -46,13 +46,28 @@ resource "azurerm_linux_function_app" "pctasks" {
     "PCTASKS_DISPATCH__GOES17_GLM__PREFIX"     = "https://goeseuwest.blob.core.windows.net/noaa-goes17/GLM-L2-LCFA/",
     "PCTASKS_DISPATCH__GOES18_GLM__QUEUE_NAME" = "goes-glm",
     "PCTASKS_DISPATCH__GOES18_GLM__PREFIX"     = "https://goeseuwest.blob.core.windows.net/noaa-goes18/GLM-L2-LCFA/",
-    # GOES-CMI
-    "PCTASKS_DISPATCH__GOES16_CMI__QUEUE_NAME" = "goes-cmi",
-    "PCTASKS_DISPATCH__GOES16_CMI__PREFIX"     = "https://goeseuwest.blob.core.windows.net/noaa-goes16/ABI-L2-CMIPM/",
-    "PCTASKS_DISPATCH__GOES17_CMI__QUEUE_NAME" = "goes-cmi",
-    "PCTASKS_DISPATCH__GOES17_CMI__PREFIX"     = "https://goeseuwest.blob.core.windows.net/noaa-goes17/ABI-L2-CMIPM/",
-    "PCTASKS_DISPATCH__GOES18_CMI__QUEUE_NAME" = "goes-cmi",
-    "PCTASKS_DISPATCH__GOES18_CMI__PREFIX"     = "https://goeseuwest.blob.core.windows.net/noaa-goes18/ABI-L2-CMIPM/",
+    # GOES-CMI - MCMIPC
+    "PCTASKS_DISPATCH__GOES16_MCMIPC__QUEUE_NAME" = "goes-cmi",
+    "PCTASKS_DISPATCH__GOES16_MCMIPC__PREFIX"     = "https://goeseuwest.blob.core.windows.net/noaa-goes16/ABI-L2-MCMIPC/",
+    "PCTASKS_DISPATCH__GOES17_MCMIPC__QUEUE_NAME" = "goes-cmi",
+    "PCTASKS_DISPATCH__GOES17_MCMIPC__PREFIX"     = "https://goeseuwest.blob.core.windows.net/noaa-goes17/ABI-L2-MCMIPC/",
+    "PCTASKS_DISPATCH__GOES18_MCMIPC__QUEUE_NAME" = "goes-cmi",
+    "PCTASKS_DISPATCH__GOES18_MCMIPC__PREFIX"     = "https://goeseuwest.blob.core.windows.net/noaa-goes18/ABI-L2-MCMIPC/",
+    # GOES-CMI - MCMIPM
+    "PCTASKS_DISPATCH__GOES16_MCMIPM__QUEUE_NAME" = "goes-cmi",
+    "PCTASKS_DISPATCH__GOES16_MCMIPM__PREFIX"     = "https://goeseuwest.blob.core.windows.net/noaa-goes16/ABI-L2-MCMIPM/",
+    "PCTASKS_DISPATCH__GOES17_MCMIPM__QUEUE_NAME" = "goes-cmi",
+    "PCTASKS_DISPATCH__GOES17_MCMIPM__PREFIX"     = "https://goeseuwest.blob.core.windows.net/noaa-goes17/ABI-L2-MCMIPM/",
+    "PCTASKS_DISPATCH__GOES18_MCMIPM__QUEUE_NAME" = "goes-cmi",
+    "PCTASKS_DISPATCH__GOES18_MCMIPM__PREFIX"     = "https://goeseuwest.blob.core.windows.net/noaa-goes18/ABI-L2-MCMIPM/",
+    # GOES-CMI - MCMIPF
+    "PCTASKS_DISPATCH__GOES16_MCMIPF__QUEUE_NAME" = "goes-cmi",
+    "PCTASKS_DISPATCH__GOES16_MCMIPF__PREFIX"     = "https://goeseuwest.blob.core.windows.net/noaa-goes16/ABI-L2-MCMIPF/",
+    "PCTASKS_DISPATCH__GOES17_MCMIPF__QUEUE_NAME" = "goes-cmi",
+    "PCTASKS_DISPATCH__GOES17_MCMIPF__PREFIX"     = "https://goeseuwest.blob.core.windows.net/noaa-goes17/ABI-L2-MCMIPF/",
+    "PCTASKS_DISPATCH__GOES18_MCMIPF__QUEUE_NAME" = "goes-cmi",
+    "PCTASKS_DISPATCH__GOES18_MCMIPF__PREFIX"     = "https://goeseuwest.blob.core.windows.net/noaa-goes18/ABI-L2-MCMIPF/",
+
     # ECMWF-forecast
     "PCTASKS_DISPATCH__ECMWF_FORECAST__QUEUE_NAME" = "ecmwf-forecast",
     "PCTASKS_DISPATCH__ECMWF_FORECAST__PREFIX"     = "https://ai4edataeuwest.blob.core.windows.net/ecmwf/",

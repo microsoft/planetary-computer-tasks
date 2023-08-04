@@ -83,7 +83,7 @@ To add a new streaming workflow, you'll need to:
     b. Add the dispatch rule to `function.tf`
     c. Add a test case to `pctasks_funcs/tests/test_storage_events.py::test_dispatch`
     d. redeploy the terraform
-    e. restart the function app?
+    e. restart the function app. Either in the portal or with `az functionapp restart --name '<name>' --resource-group '<resource-group>'`
 
 4. Set up the Event Grid System Topic and Subscription to write to the
    `storage-events` queue
