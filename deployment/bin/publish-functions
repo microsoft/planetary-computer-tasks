@@ -1,0 +1,40 @@
+#!/bin/bash
+set -e
+ 
+source bin/lib
+
+while [[ "$#" -gt 0 ]]; do case $1 in
+    -t)
+        TERRAFORM_DIR=${2}
+        shift
+        shift
+        ;;
+    --help)
+        usage
+        exit 0
+        shift
+        ;;
+    *)
+        usage "Unknown parameter passed: $1"
+        shift
+        shift
+        ;;
+    esac done
+
+
+
+echo "Deploying Azure Functions..."
+setup_env
+
+pushd "${TERRAFORM_DIR}"
+FUNCTION_APP_NAME=$(tf_output function_app_name)
+popd
+
+
+
+prepare_funcs
+
+pushd "${SRC_DIR}/functions_deploy"
+func azure functionapp publish ${FUNCTION_APP_NAME} --python
+popd
+

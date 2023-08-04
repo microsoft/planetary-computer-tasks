@@ -82,64 +82,64 @@ resource "azurerm_linux_function_app" "pctasks" {
 
     # Modis
     "PCTASKS_DISPATCH__MODIS_09A1__QUEUE_NAME" = "modis-09a1-061",
-    "PCTASKS_DISPATCH__MODIS_09A1__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D09A1/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_09A1__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D09A1/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_15A2H__QUEUE_NAME" = "modis-15a2h-061",
-    "PCTASKS_DISPATCH__MODIS_15A2H__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[COY]D15A2H/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_15A2H__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[COY]D15A2H/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_15A3H__QUEUE_NAME" = "modis-15a3h-061",
-    "PCTASKS_DISPATCH__MODIS_15A3H__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[COY]D15A3H/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_15A3H__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[COY]D15A3H/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_43A4__QUEUE_NAME" = "modis-43a4-061",
-    "PCTASKS_DISPATCH__MODIS_43A4__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/MCD43A4/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_43A4__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/MCD43A4/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_64A1__QUEUE_NAME" = "modis-64a1-061",
-    "PCTASKS_DISPATCH__MODIS_64A1__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/MCD64A1/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_64A1__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/MCD64A1/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_09Q1__QUEUE_NAME" = "modis-09q1-061",
-    "PCTASKS_DISPATCH__MODIS_09Q1__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D09Q1/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_09Q1__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D09Q1/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_10A1__QUEUE_NAME" = "modis-10a1-061",
-    "PCTASKS_DISPATCH__MODIS_10A1__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D10A1/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_10A1__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D10A1/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_10A2__QUEUE_NAME" = "modis-10a2-061",
-    "PCTASKS_DISPATCH__MODIS_10A2__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D10A2/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_10A2__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D10A2/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_11A1__QUEUE_NAME" = "modis-11a1-061",
-    "PCTASKS_DISPATCH__MODIS_11A1__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D11A1/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_11A1__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D11A1/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_11A2__QUEUE_NAME" = "modis-11a2-061",
-    "PCTASKS_DISPATCH__MODIS_11A2__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D11A2/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_11A2__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D11A2/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_13A1__QUEUE_NAME" = "modis-13a1-061",
-    "PCTASKS_DISPATCH__MODIS_13A1__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D13A1/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_13A1__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D13A1/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_13Q1__QUEUE_NAME" = "modis-13q1-061",
-    "PCTASKS_DISPATCH__MODIS_13Q1__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D13Q1/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_13Q1__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D13Q1/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_14A1__QUEUE_NAME" = "modis-14a1-061",
-    "PCTASKS_DISPATCH__MODIS_14A1__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D14A1/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_14A1__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D14A1/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_14A2__QUEUE_NAME" = "modis-14a2-061",
-    "PCTASKS_DISPATCH__MODIS_14A2__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D14A2/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_14A2__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D14A2/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_163GF__QUEUE_NAME" = "modis-16a3gf-061",
-    "PCTASKS_DISPATCH__MODIS_163GF__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D16A3GF/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_163GF__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D16A3GF/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_17A2H__QUEUE_NAME" = "modis-17a2h-061",
-    "PCTASKS_DISPATCH__MODIS_17A2H__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D17A2H/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_17A2H__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D17A2H/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_17A2HGF__QUEUE_NAME" = "modis-17a2hgf-061",
-    "PCTASKS_DISPATCH__MODIS_17A2HGF__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D17A2HGF/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_17A2HGF__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D17A2HGF/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_17A3HGF__QUEUE_NAME" = "modis-17a3hgf-061",
-    "PCTASKS_DISPATCH__MODIS_17A3HGF__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D17A3HGF/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_17A3HGF__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D17A3HGF/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_21A1D__QUEUE_NAME" = "modis-21a1d-061",
-    "PCTASKS_DISPATCH__MODIS_21A1D__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D21A1D/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_21A1D__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D21A1D/.*.hdf",
 
     "PCTASKS_DISPATCH__MODIS_21A2__QUEUE_NAME" = "modis-21a2-061",
-    "PCTASKS_DISPATCH__MODIS_21A2__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D21A2/.*.xml",
+    "PCTASKS_DISPATCH__MODIS_21A2__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D21A2/.*.hdf",
 
   }
 

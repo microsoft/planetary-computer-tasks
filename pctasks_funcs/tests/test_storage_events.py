@@ -127,155 +127,155 @@ def msg():
             ["landsat-c2-l2"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD09A1/00/08/2000049/MOD09A1.A2000049.h00v08.061.2020041195232.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MOD09A1/00/08/2000049/MOD09A1.A2000049.h00v08.061.2020041195232.hdf",
             ["modis-09a1-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD09A1/00/08/2002185/MYD09A1.A2002185.h00v08.061.2020072151743.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MYD09A1/00/08/2002185/MYD09A1.A2002185.h00v08.061.2020072151743.hdf",
             ["modis-09a1-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MCD15A2H/00/08/2002185/MCD15A2H.A2002185.h00v08.061.2020079150825.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MCD15A2H/00/08/2002185/MCD15A2H.A2002185.h00v08.061.2020079150825.hdf",
             ["modis-15a2h-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD15A2H/00/08/2000049/MOD15A2H.A2000049.h00v08.061.2020041201434.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MOD15A2H/00/08/2000049/MOD15A2H.A2000049.h00v08.061.2020041201434.hdf",
             ["modis-15a2h-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD15A2H/00/08/2002185/MYD15A2H.A2002185.h00v08.061.2020072153807.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MYD15A2H/00/08/2002185/MYD15A2H.A2002185.h00v08.061.2020072153807.hdf",
             ["modis-15a2h-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MCD15A3H/00/08/2002185/MCD15A3H.A2002185.h00v08.061.2020076202807.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MCD15A3H/00/08/2002185/MCD15A3H.A2002185.h00v08.061.2020076202807.hdf",
             ["modis-15a3h-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MCD43A4/00/08/2000055/MCD43A4.A2000055.h00v08.061.2020038135030.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MCD43A4/00/08/2000055/MCD43A4.A2000055.h00v08.061.2020038135030.hdf",
             ["modis-43a4-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MCD64A1/00/08/2000032/MCD64A1.A2000032.h00v08.061.2021307215218.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MCD64A1/00/08/2000032/MCD64A1.A2000032.h00v08.061.2021307215218.hdf",
             ["modis-64a1-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD09Q1/00/08/2000049/MOD09Q1.A2000049.h00v08.061.2020041195232.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MOD09Q1/00/08/2000049/MOD09Q1.A2000049.h00v08.061.2020041195232.hdf",
             ["modis-09q1-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD09Q1/00/08/2002185/MYD09Q1.A2002185.h00v08.061.2020072151743.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MYD09Q1/00/08/2002185/MYD09Q1.A2002185.h00v08.061.2020072151743.hdf",
             ["modis-09q1-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD10A1/00/08/2000055/MOD10A1.A2000055.h00v08.061.2020037170654.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MOD10A1/00/08/2000055/MOD10A1.A2000055.h00v08.061.2020037170654.hdf",
             ["modis-10a1-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD10A1/00/08/2002185/MYD10A1.A2002185.h00v08.061.2020071172435.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MYD10A1/00/08/2002185/MYD10A1.A2002185.h00v08.061.2020071172435.hdf",
             ["modis-10a1-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD10A2/00/08/2000049/MOD10A2.A2000049.h00v08.061.2020041202454.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MOD10A2/00/08/2000049/MOD10A2.A2000049.h00v08.061.2020041202454.hdf",
             ["modis-10a2-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD10A2/00/08/2002185/MYD10A2.A2002185.h00v08.061.2020072154626.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MYD10A2/00/08/2002185/MYD10A2.A2002185.h00v08.061.2020072154626.hdf",
             ["modis-10a2-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD11A1/00/08/2000055/MOD11A1.A2000055.h00v08.061.2020043121122.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MOD11A1/00/08/2000055/MOD11A1.A2000055.h00v08.061.2020043121122.hdf",
             ["modis-11a1-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD11A1/00/08/2002186/MYD11A1.A2002186.h00v08.061.2020128174537.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MYD11A1/00/08/2002186/MYD11A1.A2002186.h00v08.061.2020128174537.hdf",
             ["modis-11a1-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD11A2/00/08/2000049/MOD11A2.A2000049.h00v08.061.2020048120244.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MOD11A2/00/08/2000049/MOD11A2.A2000049.h00v08.061.2020048120244.hdf",
             ["modis-11a2-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD11A2/00/08/2002185/MYD11A2.A2002185.h00v08.061.2020140130634.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MYD11A2/00/08/2002185/MYD11A2.A2002185.h00v08.061.2020140130634.hdf",
             ["modis-11a2-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD13A1/00/08/2000049/MOD13A1.A2000049.h00v08.061.2020041151322.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MOD13A1/00/08/2000049/MOD13A1.A2000049.h00v08.061.2020041151322.hdf",
             ["modis-13a1-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD13A1/00/08/2002185/MYD13A1.A2002185.h00v08.061.2020072153221.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MYD13A1/00/08/2002185/MYD13A1.A2002185.h00v08.061.2020072153221.hdf",
             ["modis-13a1-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD13Q1/00/08/2000049/MOD13Q1.A2000049.h00v08.061.2020041152316.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MOD13Q1/00/08/2000049/MOD13Q1.A2000049.h00v08.061.2020041152316.hdf",
             ["modis-13q1-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD13Q1/00/08/2002185/MYD13Q1.A2002185.h00v08.061.2020072153805.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MYD13Q1/00/08/2002185/MYD13Q1.A2002185.h00v08.061.2020072153805.hdf",
             ["modis-13q1-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD14A1/00/08/2000049/MOD14A1.A2000049.h00v08.061.2020041150332.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MOD14A1/00/08/2000049/MOD14A1.A2000049.h00v08.061.2020041150332.hdf",
             ["modis-14a1-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD14A1/00/08/2002185/MYD14A1.A2002185.h00v08.061.2020072112803.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MYD14A1/00/08/2002185/MYD14A1.A2002185.h00v08.061.2020072112803.hdf",
             ["modis-14a1-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD14A2/00/08/2000049/MOD14A2.A2000049.h00v08.061.2020041150332.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MOD14A2/00/08/2000049/MOD14A2.A2000049.h00v08.061.2020041150332.hdf",
             ["modis-14a2-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD14A2/00/08/2002185/MYD14A2.A2002185.h00v08.061.2020072112803.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MYD14A2/00/08/2002185/MYD14A2.A2002185.h00v08.061.2020072112803.hdf",
             ["modis-14a2-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD16A3GF/00/08/2000049/MOD16A3GF.A2000001.h00v08.061.2020264071747.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MOD16A3GF/00/08/2000049/MOD16A3GF.A2000001.h00v08.061.2020264071747.hdf",
             ["modis-16a3gf-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD16A3GF/00/08/2002185/MYD16A3GF.A2002001.h00v08.061.2020301203818.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MYD16A3GF/00/08/2002185/MYD16A3GF.A2002001.h00v08.061.2020301203818.hdf",
             ["modis-16a3gf-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD17A2H/00/08/2021001/MOD17A2H.A2021001.h00v08.061.2021069214628.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MOD17A2H/00/08/2021001/MOD17A2H.A2021001.h00v08.061.2021069214628.hdf",
             ["modis-17a2h-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD17A2H/00/08/2021001/MYD17A2H.A2021001.h00v08.061.2021069223256.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MYD17A2H/00/08/2021001/MYD17A2H.A2021001.h00v08.061.2021069223256.hdf",
             ["modis-17a2h-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD17A2HGF/00/08/2000009/MOD17A2HGF.A2000009.h00v08.061.2020125224802.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MOD17A2HGF/00/08/2000009/MOD17A2HGF.A2000009.h00v08.061.2020125224802.hdf",
             ["modis-17a2hgf-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD17A2HGF/00/08/2002001/MYD17A2HGF.A2002001.h00v08.061.2020167185801.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MYD17A2HGF/00/08/2002001/MYD17A2HGF.A2002001.h00v08.061.2020167185801.hdf",
             ["modis-17a2hgf-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD17A3HGF/00/08/2001001/MOD17A3HGF.A2001001.h00v08.061.2020136134928.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MOD17A3HGF/00/08/2001001/MOD17A3HGF.A2001001.h00v08.061.2020136134928.hdf",
             ["modis-17a3hgf-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD17A3HGF/00/08/2002185/MYD17A3HGF.A2002001.h00v08.061.2020170193809.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MYD17A3HGF/00/08/2002185/MYD17A3HGF.A2002001.h00v08.061.2020170193809.hdf",
             ["modis-17a3hgf-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD21A1D/00/08/2002015/MOD21A1D.A2002015.h00v08.061.2020068021449.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MOD21A1D/00/08/2002015/MOD21A1D.A2002015.h00v08.061.2020068021449.hdf",
             ["modis-21a1d-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD21A1D/00/08/2022182/MYD21A1D.A2022182.h00v08.061.2022184043723.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MYD21A1D/00/08/2022182/MYD21A1D.A2022182.h00v08.061.2022184043723.hdf",
             ["modis-21a1d-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD21A2/00/08/2000049/MOD21A2.A2000049.h00v08.061.2020041203631.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MOD21A2/00/08/2000049/MOD21A2.A2000049.h00v08.061.2020041203631.hdf",
             ["modis-21a2-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD21A2/00/08/2002185/MYD21A2.A2002185.h00v08.061.2020072155503.hdf.xml",
+            "https://modiseuwest.blob.core.windows.net/modis-061/MYD21A2/00/08/2002185/MYD21A2.A2002185.h00v08.061.2020072155503.hdf",
             ["modis-21a2-061"],
         ),
     ],

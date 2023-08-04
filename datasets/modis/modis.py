@@ -50,6 +50,7 @@ class MODISCollection(Collection):
             logger.debug(f"Downloading {asset_uri}")
             asset_storage.download_file(asset_path, file.hdf_href)
             logger.debug(f"Downloading {asset_uri}.xml")
+
             try:
                 asset_storage.download_file(f"{asset_path}.xml", file.xml_href)
             except ResourceNotFoundError as e:
