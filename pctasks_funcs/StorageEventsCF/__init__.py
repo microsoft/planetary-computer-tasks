@@ -42,6 +42,7 @@ to the `goes-glm` queue.
 import json
 import logging
 import os
+import re
 
 import azure.functions as func
 import azure.identity.aio
@@ -59,7 +60,8 @@ def load_dispatch_config() -> list[tuple[str, str | None, str | None]]:
             if key == "QUEUE_NAME":
                 prefix = os.environ.get(f"PCTASKS_DISPATCH__{queue_name}__PREFIX", None)
                 suffix = os.environ.get(f"PCTASKS_DISPATCH__{queue_name}__SUFFIX", None)
-                config.append((v, prefix, suffix))
+                regex = os.environ.get(f"PCTASKS_DISPATCH__{queue_name}__REGEX", None)
+                config.append((v, prefix, suffix, regex))
 
     return config
 
@@ -70,11 +72,25 @@ def dispatch(url: str, rules: list[tuple[str, str | None, str | None]]) -> list[
     ----------
     """
     queues = []
-    for queue_name, prefix, suffix in rules:
+
+    for queue_name, prefix, suffix, regex in rules:
         matches_prefix = (prefix is None) or url.startswith(prefix)
         matches_suffix = (suffix is None) or url.endswith(suffix)
+        matches_regex = (regex is None) or re.match(regex, url)
 
-        if matches_prefix and matches_suffix:
+        if prefix is None and suffix is None and regex is None:
+            # protect against all None
+            logging.warning()
+            log_message = {
+                "message": "Misconfigured queue",
+                "type": "storage-event-config",
+                "queue_name": queue_name,
+                "url": url,
+            }
+
+            logging.warning(json.dumps(log_message))
+
+        elif matches_prefix and matches_suffix and matches_regex:
             queues.append(queue_name)
 
     # We deduplicate here. Ideally, we wouldn't have duplicates in the first place.
