@@ -135,9 +135,6 @@ resource "azurerm_linux_function_app" "pctasks" {
     "PCTASKS_DISPATCH__MODIS_17A3HGF__QUEUE_NAME" = "modis-17a3hgf-061",
     "PCTASKS_DISPATCH__MODIS_17A3HGF__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D17A3HGF/.*.hdf",
 
-    "PCTASKS_DISPATCH__MODIS_21A1D__QUEUE_NAME" = "modis-21a1d-061",
-    "PCTASKS_DISPATCH__MODIS_21A1D__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D21A1D/.*.hdf",
-
     "PCTASKS_DISPATCH__MODIS_21A2__QUEUE_NAME" = "modis-21a2-061",
     "PCTASKS_DISPATCH__MODIS_21A2__REGEX"      = "https://modiseuwest.blob.core.windows.net/modis-061/M[OY]D21A2/.*.hdf",
 

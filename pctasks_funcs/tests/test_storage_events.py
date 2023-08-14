@@ -263,14 +263,6 @@ def msg():
             ["modis-17a3hgf-061"],
         ),
         (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MOD21A1D/00/08/2002015/MOD21A1D.A2002015.h00v08.061.2020068021449.hdf",
-            ["modis-21a1d-061"],
-        ),
-        (
-            "https://modiseuwest.blob.core.windows.net/modis-061/MYD21A1D/00/08/2022182/MYD21A1D.A2022182.h00v08.061.2022184043723.hdf",
-            ["modis-21a1d-061"],
-        ),
-        (
             "https://modiseuwest.blob.core.windows.net/modis-061/MOD21A2/00/08/2000049/MOD21A2.A2000049.h00v08.061.2020041203631.hdf",
             ["modis-21a2-061"],
         ),
