@@ -8,6 +8,9 @@ import pystac
 from stactools.core.utils.antimeridian import Strategy
 from stactools.sentinel2 import stac
 from stactools.sentinel2.safe_manifest import SafeManifest
+from pystac.extensions.eo import EOExtension
+from pystac.extensions.projection import ProjectionExtension
+from pystac.extensions.sat import SatExtension
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
@@ -46,13 +49,11 @@ class Sentinel2Collection(Collection):
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
         # The asset_uri is the path to the manifest.safe file
-        breakpoint()
         granule_path = os.path.dirname(asset_uri)
 
         asset_storage = storage_factory.get_storage(granule_path)
         granule_href = asset_storage.get_url("")
 
-        # breakpoint()
         # if not asset_storage.file_exists(os.path.join(granule_path, "manifest.safe")):
         #     logger.error(f"Missing manifest file for granule: {granule_path}")
         #     return []
@@ -124,5 +125,16 @@ class Sentinel2Collection(Collection):
         for asset_key in item.assets:
             if asset_key in titles_to_add:
                 item.assets[asset_key].title = titles_to_add[asset_key]
+
+        for ext in [EOExtension, ProjectionExtension, SatExtension]:
+            ext.remove_from(item)
+
+        item.stac_extensions.extend(
+            [
+                "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
+                "https://stac-extensions.github.io/sat/v1.0.0/schema.json",
+                "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+            ]
+        )
 
         return [item]
