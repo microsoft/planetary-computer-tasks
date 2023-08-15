@@ -1,5 +1,5 @@
 id: sentinel-2
-image: ${{ args.registry }}/pctasks-sentinel-2:20230613.1
+image: ${{ args.registry }}/pctasks-sentinel-2:2023.8.15.0
 
 args:
 - registry
