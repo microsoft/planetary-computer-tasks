@@ -9,7 +9,7 @@ install_requires = [
     "pctasks.core>=0.1.0",
     "pctasks.cli>=0.1.0",
     "pydantic[dotenv]>=1.8,<2.0.0",
-    "rich==11.2.0",
+    "rich>=11.2.0",
 ]
 
 extra_reqs = {

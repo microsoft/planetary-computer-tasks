@@ -51,19 +51,14 @@ class LandsatC2Collection(Collection):
 
         logger.info(f"Creating Item from MTL href: {mtl_path}")
 
-        try:
-            item = stac.create_stac_item(
-                mtl_xml_href=storage.get_authenticated_url(mtl_path),
-                legacy_l8=False,
-                use_usgs_geometry=True,
-                antimeridian_strategy=Strategy.NORMALIZE,
-            )
-            # We provide our own preview thumbnail
-            item.assets.pop("thumbnail", None)
-            item.assets.pop("reduced_resolution_browse", None)
-        except Exception as e:
-            logger.exception(e)
-            logger.info(f"Error creating Item from {asset_uri}", exc_info=True)
-            return []
+        item = stac.create_stac_item(
+            mtl_xml_href=storage.get_authenticated_url(mtl_path),
+            legacy_l8=False,
+            use_usgs_geometry=True,
+            antimeridian_strategy=Strategy.NORMALIZE,
+        )
+        # We provide our own preview thumbnail
+        item.assets.pop("thumbnail", None)
+        item.assets.pop("reduced_resolution_browse", None)
 
         return [item]

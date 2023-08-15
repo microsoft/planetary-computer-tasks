@@ -1,0 +1,263 @@
+{
+    "id": "modis-15A2H-061",
+    "type": "Collection",
+    "links": [
+        {
+            "rel": "help",
+            "href": "https://lpdaac.usgs.gov/documents/926/MOD15_User_Guide_V61.pdf",
+            "title": "MOD15 User Guide"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://ladsweb.modaps.eosdis.nasa.gov/filespec/MODIS/61/MCD15A2H",
+            "title": "MCD15A2H file specification"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://ladsweb.modaps.eosdis.nasa.gov/filespec/MODIS/61/MOD15A2H",
+            "title": "MOD15A2H file specification"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://ladsweb.modaps.eosdis.nasa.gov/filespec/MODIS/61/MYD15A2H",
+            "title": "MYD15A2H file specification"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.5067/MODIS/MCD15A2H.061",
+            "title": "LP DAAC - MCD15A2H"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.5067/MODIS/MOD15A2H.061",
+            "title": "LP DAAC - MOD15A2H"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.5067/MODIS/MYD15A2H.061",
+            "title": "LP DAAC - MYD15A2H"
+        },
+        {
+            "rel": "license",
+            "href": "https://lpdaac.usgs.gov/data/data-citation-and-policies/",
+            "title": "LP DAAC - Data Citation and Policies"
+        }
+    ],
+    "title": "MODIS Leaf Area Index/FPAR 8-Day",
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/modis-15A2H-061.png",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "MODIS Leaf Area Index/FPAR 8-Day thumbnail"
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/modis-15A2H-061.parquet",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "MS"
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            }
+        }
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2002-07-04T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "NASA",
+        "MODIS",
+        "Satellite",
+        "Global",
+        "Vegetation",
+        "MCD15A2H",
+        "MOD15A2H",
+        "MYD15A2H"
+    ],
+    "providers": [
+        {
+            "url": "https://lpdaac.usgs.gov/",
+            "name": "NASA LP DAAC at the USGS EROS Center",
+            "roles": [
+                "producer",
+                "licensor",
+                "processor"
+            ]
+        },
+        {
+            "url": "https://planetarycomputer.microsoft.com",
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ]
+        }
+    ],
+    "summaries": {
+        "platform": [
+            "aqua",
+            "terra"
+        ],
+        "instruments": [
+            "modis"
+        ]
+    },
+    "description": "The Version 6.1 Moderate Resolution Imaging Spectroradiometer (MODIS) Level 4, Combined Fraction of Photosynthetically Active Radiation (FPAR), and Leaf Area Index (LAI) product is an 8-day composite dataset with 500 meter pixel size. The algorithm chooses the best pixel available from within the 8-day period. LAI is defined as the one-sided green leaf area per unit ground area in broadleaf canopies and as one-half the total needle surface area per unit ground area in coniferous canopies. FPAR is defined as the fraction of incident photosynthetically active radiation (400-700 nm) absorbed by the green elements of a vegetation canopy.",
+    "item_assets": {
+        "hdf": {
+            "type": "application/x-hdf",
+            "roles": [
+                "data"
+            ],
+            "title": "Source data containing all bands"
+        },
+        "Lai_500m": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Leaf Area Index",
+            "description": "The one-sided green leaf area per unit ground area in broadleaf canopies and as one-half the total needle surface area per unit ground area in coniferous canopies",
+            "raster:bands": [
+                {
+                    "unit": "m^2/m^2",
+                    "scale": 0.1,
+                    "data_type": "uint8",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "metadata": {
+            "type": "application/xml",
+            "roles": [
+                "metadata"
+            ],
+            "title": "Federal Geographic Data Committee (FGDC) Metadata"
+        },
+        "Fpar_500m": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Fraction of Photosynthetically Active Radiation",
+            "description": "The fraction of incident photosynthetically active radiation (400-700 nm) absorbed by the green elements of a vegetation canopy.",
+            "raster:bands": [
+                {
+                    "unit": "Percent",
+                    "scale": 0.01,
+                    "data_type": "uint8",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "FparLai_QC": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Quality for FPAR and LAI",
+            "raster:bands": [
+                {
+                    "data_type": "uint8",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "FparExtra_QC": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Extra detail Quality for FPAR and LAI",
+            "raster:bands": [
+                {
+                    "data_type": "uint8",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "LaiStdDev_500m": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Standard deviation of LAI",
+            "raster:bands": [
+                {
+                    "unit": "m^2/m^2",
+                    "scale": 0.1,
+                    "data_type": "uint8",
+                    "spatial_resolution": 500
+                }
+            ]
+        },
+        "FparStdDev_500m": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Standard deviation of FPAR",
+            "raster:bands": [
+                {
+                    "unit": "Percent",
+                    "scale": 0.01,
+                    "data_type": "uint8",
+                    "spatial_resolution": 500
+                }
+            ]
+        }
+    },
+    "stac_version": "1.0.0",
+    "msft:group_id": "modis",
+    "msft:container": "modis-061",
+    "stac_extensions": [
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "sci:publications": [
+        {
+            "doi": "10.5067/MODIS/MCD15A2H.061",
+            "citation": "Myneni, R., Knyazikhin, Y., &amp; Park, T. (2021). <i>MODIS/Terra+Aqua Leaf Area Index/FPAR 8-Day L4 Global 500m SIN Grid V061</i> [Data set]. NASA EOSDIS Land Processes DAAC. https://doi.org/10.5067/MODIS/MCD15A2H.061"
+        },
+        {
+            "doi": "10.5067/MODIS/MOD15A2H.061",
+            "citation": "Myneni, R., Knyazikhin, Y., &amp; Park, T. (2021). <i>MODIS/Terra Leaf Area Index/FPAR 8-Day L4 Global 500m SIN Grid V061</i> [Data set]. NASA EOSDIS Land Processes DAAC. https://doi.org/10.5067/MODIS/MOD15A2H.061"
+        },
+        {
+            "doi": "10.5067/MODIS/MYD15A2H.061",
+            "citation": "Myneni, R., Knyazikhin, Y., &amp; Park, T. (2021). <i>MODIS/Aqua Leaf Area Index/FPAR 8-Day L4 Global 500m SIN Grid V061</i> [Data set]. NASA EOSDIS Land Processes DAAC. https://doi.org/10.5067/MODIS/MYD15A2H.061"
+        }
+    ],
+    "msft:storage_account": "modiseuwest",
+    "msft:short_description": "MODIS Leaf Area Index/FPAR 8-Day",
+    "msft:region": "westeurope"
+}

@@ -8,7 +8,7 @@ from pctasks.client.workflow.options import opt_args
 logger = logging.getLogger(__name__)
 
 
-@click.group("workflow")
+@click.group("workflow")  # type: ignore[arg-type]
 @click.option(
     "-p",
     "--pretty-print",
@@ -29,7 +29,7 @@ def workflow_cmd(ctx: click.Context, pretty_print: bool) -> None:
     )
 
 
-@workflow_cmd.command("submit")
+@workflow_cmd.command("submit")  # type: ignore[arg-type]
 @click.argument("workflow_id")
 @opt_args
 @click.pass_context
@@ -47,7 +47,7 @@ def submit_cmd(
     ctx.exit(commands.submit_workflow(ctx, workflow_id, args={a[0]: a[1] for a in arg}))
 
 
-@workflow_cmd.command("upsert-and-submit")
+@workflow_cmd.command("upsert-and-submit")  # type: ignore[arg-type]
 @click.argument("workflow", type=click.File("r"))
 @click.option("-w", "--workflow-id", help="Workflow ID, if not specified in workflow")
 @opt_args
@@ -71,7 +71,7 @@ def upsert_and_submit_cmd(
     )
 
 
-@workflow_cmd.command("create")
+@workflow_cmd.command("create")  # type: ignore[arg-type]
 @click.argument("workflow", type=click.File("r"))
 @click.option("-w", "--workflow-id", help="Workflow ID, if not specified in workflow")
 @opt_args
@@ -95,7 +95,7 @@ def create_cmd(
     )
 
 
-@workflow_cmd.command("update")
+@workflow_cmd.command("update")  # type: ignore[arg-type]
 @click.argument("workflow", type=click.File("r"))
 @click.option("-w", "--workflow-id", help="Workflow ID, if not specified in workflow")
 @opt_args
@@ -119,7 +119,7 @@ def update_cmd(
     )
 
 
-@workflow_cmd.command("get")
+@workflow_cmd.command("get")  # type: ignore[arg-type]
 @click.argument("workflow_id")
 @click.pass_context
 def get_cmd(
@@ -132,7 +132,7 @@ def get_cmd(
     ctx.exit(commands.get_workflow(ctx, workflow_id=workflow_id))
 
 
-@workflow_cmd.command("list")
+@workflow_cmd.command("list")  # type: ignore[arg-type]
 @click.option("-s", "--sort-by", help="Property to sort by")
 @click.option("-d", "--desc", help="Sort descending", is_flag=True)
 @click.pass_context

@@ -1,0 +1,351 @@
+{
+    "id": "modis-13Q1-061",
+    "type": "Collection",
+    "links": [
+        {
+            "rel": "help",
+            "href": "https://lpdaac.usgs.gov/documents/621/MOD13_User_Guide_V61.pdf",
+            "title": "MOD13 User Guide"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://ladsweb.modaps.eosdis.nasa.gov/filespec/MODIS/61/MOD13Q1",
+            "title": "MOD13Q1 file specification"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://ladsweb.modaps.eosdis.nasa.gov/filespec/MODIS/61/MYD13Q1",
+            "title": "MYD13Q1 file specification"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.5067/MODIS/MOD13Q1.061",
+            "title": "LP DAAC - MOD13Q1"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.5067/MODIS/MYD13Q1.061",
+            "title": "LP DAAC - MYD13Q1"
+        },
+        {
+            "rel": "license",
+            "href": "https://lpdaac.usgs.gov/data/data-citation-and-policies/",
+            "title": "LP DAAC - Data Citation and Policies"
+        }
+    ],
+    "title": "MODIS Vegetation Indices 16-Day (250m)",
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/modis-13Q1-061.png",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "MODIS Vegetation Indices 16-Day (250m) thumbnail"
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/modis-13Q1-061.parquet",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "MS"
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            }
+        }
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2000-02-18T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "NASA",
+        "MODIS",
+        "Satellite",
+        "Global",
+        "Vegetation",
+        "MOD13Q1",
+        "MYD13Q1"
+    ],
+    "providers": [
+        {
+            "url": "https://lpdaac.usgs.gov/",
+            "name": "NASA LP DAAC at the USGS EROS Center",
+            "roles": [
+                "producer",
+                "licensor",
+                "processor"
+            ]
+        },
+        {
+            "url": "https://planetarycomputer.microsoft.com",
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ]
+        }
+    ],
+    "summaries": {
+        "platform": [
+            "aqua",
+            "terra"
+        ],
+        "instruments": [
+            "modis"
+        ]
+    },
+    "description": "The Moderate Resolution Imaging Spectroradiometer (MODIS) Vegetation Indices Version 6.1 data are generated every 16 days at 250 meter (m) spatial resolution as a Level 3 product. The MOD13Q1 product provides two primary vegetation layers. The first is the Normalized Difference Vegetation Index (NDVI) which is referred to as the continuity index to the existing National Oceanic and Atmospheric Administration-Advanced Very High Resolution Radiometer (NOAA-AVHRR) derived NDVI. The second vegetation layer is the Enhanced Vegetation Index (EVI), which has improved sensitivity over high biomass regions. The algorithm chooses the best available pixel value from all the acquisitions from the 16 day period. The criteria used is low clouds, low view angle, and the highest NDVI/EVI value. Along with the vegetation layers and the two quality layers, the HDF file will have MODIS reflectance bands 1 (red), 2 (near-infrared), 3 (blue), and 7 (mid-infrared), as well as four observation layers.",
+    "item_assets": {
+        "hdf": {
+            "type": "application/x-hdf",
+            "roles": [
+                "data"
+            ],
+            "title": "Source data containing all bands"
+        },
+        "metadata": {
+            "type": "application/xml",
+            "roles": [
+                "metadata"
+            ],
+            "title": "Federal Geographic Data Committee (FGDC) Metadata"
+        },
+        "250m_16_days_EVI": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "16 day EVI",
+            "raster:bands": [
+                {
+                    "unit": "EVI",
+                    "scale": 0.0001,
+                    "data_type": "int16",
+                    "spatial_resolution": 250
+                }
+            ]
+        },
+        "250m_16_days_NDVI": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "16 day NDVI",
+            "raster:bands": [
+                {
+                    "unit": "NDVI",
+                    "scale": 0.0001,
+                    "data_type": "int16",
+                    "spatial_resolution": 250
+                }
+            ]
+        },
+        "250m_16_days_VI_Quality": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "VI quality indicators",
+            "raster:bands": [
+                {
+                    "data_type": "uint16",
+                    "spatial_resolution": 250
+                }
+            ]
+        },
+        "250m_16_days_MIR_reflectance": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Surface Reflectance Band 7",
+            "raster:bands": [
+                {
+                    "scale": 0.0001,
+                    "data_type": "int16",
+                    "spatial_resolution": 250
+                }
+            ]
+        },
+        "250m_16_days_NIR_reflectance": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Surface Reflectance Band 2",
+            "raster:bands": [
+                {
+                    "scale": 0.0001,
+                    "data_type": "int16",
+                    "spatial_resolution": 250
+                }
+            ]
+        },
+        "250m_16_days_red_reflectance": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Surface Reflectance Band 1",
+            "raster:bands": [
+                {
+                    "scale": 0.0001,
+                    "data_type": "int16",
+                    "spatial_resolution": 250
+                }
+            ]
+        },
+        "250m_16_days_blue_reflectance": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Surface Reflectance Band 3",
+            "raster:bands": [
+                {
+                    "scale": 0.0001,
+                    "data_type": "int16",
+                    "spatial_resolution": 250
+                }
+            ]
+        },
+        "250m_16_days_sun_zenith_angle": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Sun zenith angle of VI pixel",
+            "raster:bands": [
+                {
+                    "unit": "Degree",
+                    "scale": 0.01,
+                    "data_type": "int16",
+                    "spatial_resolution": 250
+                }
+            ]
+        },
+        "250m_16_days_pixel_reliability": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Quality reliability of VI pixel",
+            "raster:bands": [
+                {
+                    "unit": "Rank",
+                    "data_type": "int8",
+                    "spatial_resolution": 250
+                }
+            ],
+            "classification:classes": [
+                {
+                    "value": 0,
+                    "description": "Good data, use with confidence"
+                },
+                {
+                    "value": 1,
+                    "description": "Marginal data, useful, but look at other QA information"
+                },
+                {
+                    "value": 2,
+                    "description": "Snow/Ice Target covered with snow/ice"
+                },
+                {
+                    "value": 3,
+                    "description": "Cloudy data"
+                }
+            ]
+        },
+        "250m_16_days_view_zenith_angle": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "View zenith angle of VI Pixel",
+            "raster:bands": [
+                {
+                    "unit": "Degree",
+                    "scale": 0.01,
+                    "data_type": "int16",
+                    "spatial_resolution": 250
+                }
+            ]
+        },
+        "250m_16_days_relative_azimuth_angle": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Relative azimuth angle of VI pixel",
+            "raster:bands": [
+                {
+                    "unit": "Degree",
+                    "scale": 0.01,
+                    "data_type": "int16",
+                    "spatial_resolution": 250
+                }
+            ]
+        },
+        "250m_16_days_composite_day_of_the_year": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Day of year VI pixel",
+            "raster:bands": [
+                {
+                    "unit": "Julian Day",
+                    "data_type": "int16",
+                    "spatial_resolution": 250
+                }
+            ]
+        }
+    },
+    "stac_version": "1.0.0",
+    "msft:group_id": "modis",
+    "msft:container": "modis-061",
+    "stac_extensions": [
+        "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "sci:publications": [
+        {
+            "doi": "10.5067/MODIS/MOD13Q1.061",
+            "citation": "Didan, K. (2021). <i>MODIS/Terra Vegetation Indices 16-Day L3 Global 250m SIN Grid V061</i> [Data set]. NASA EOSDIS Land Processes DAAC. https://doi.org/10.5067/MODIS/MOD13Q1.061"
+        },
+        {
+            "doi": "10.5067/MODIS/MYD13Q1.061",
+            "citation": "Didan, K. (2021). <i>MODIS/Aqua Vegetation Indices 16-Day L3 Global 250m SIN Grid V061</i> [Data set]. NASA EOSDIS Land Processes DAAC. https://doi.org/10.5067/MODIS/MYD13Q1.061"
+        }
+    ],
+    "msft:storage_account": "modiseuwest",
+    "msft:short_description": "MODIS Vegetation Indices 16-Day (250m)",
+    "msft:region": "westeurope"
+}

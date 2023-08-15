@@ -6,6 +6,7 @@ from pctasks.core.models.base import ForeachConfig
 from pctasks.core.models.task import TaskDefinition
 from pctasks.core.models.workflow import JobDefinition, WorkflowDefinition
 from pctasks.core.utils import map_opt
+from pctasks.dataset.chunks.constants import ASSET_CHUNKS_PREFIX, ITEM_CHUNKS_PREFIX
 from pctasks.dataset.chunks.models import (
     ChunkInfo,
     CreateChunksTaskConfig,
@@ -56,6 +57,40 @@ def task_tags(
     return merged_tags or None
 
 
+def create_splits_workflow(
+    dataset: DatasetDefinition,
+    collection: CollectionDefinition,
+    create_splits_options: Optional[CreateSplitsOptions] = None,
+    chunk_options: Optional[ChunkOptions] = None,
+    target: Optional[str] = None,
+    tags: Optional[Dict[str, str]] = None,
+) -> WorkflowDefinition:
+    create_splits_task = CreateSplitsTaskConfig.from_collection(
+        dataset,
+        collection,
+        options=create_splits_options or CreateSplitsOptions(),
+        chunk_options=chunk_options,
+        environment=dataset.environment,
+        tags=task_tags(collection.id, "create-splits", tags, dataset.task_config),
+    )
+
+    create_splits_job = JobDefinition(id="create-splits", tasks=[create_splits_task])
+    id = f"{collection.id}-create-splits"
+    if collection.id != dataset.id:
+        id = f"{dataset.id}-{id}"
+    return WorkflowDefinition(
+        id=id,
+        name=f"Create splits for {collection.id}",
+        dataset=dataset.id,
+        tokens=collection.get_tokens(),
+        args=dataset.args,
+        jobs={
+            create_splits_job.get_id(): create_splits_job,
+        },
+        target=target,
+    )
+
+
 def create_chunks_workflow(
     dataset: DatasetDefinition,
     collection: CollectionDefinition,
@@ -65,7 +100,6 @@ def create_chunks_workflow(
     target: Optional[str] = None,
     tags: Optional[Dict[str, str]] = None,
 ) -> WorkflowDefinition:
-
     create_splits_task = CreateSplitsTaskConfig.from_collection(
         dataset,
         collection,
@@ -132,7 +166,6 @@ def create_process_items_workflow(
     tags: Optional[Dict[str, str]] = None,
     is_update_workflow: bool = False,
 ) -> WorkflowDefinition:
-
     chunks_job_id: str
     chunks_jobs: Dict[str, JobDefinition] = {}
     if use_existing_chunks:
@@ -247,13 +280,70 @@ def create_process_items_workflow(
     )
 
     if is_update_workflow:
-        if workflow_definition.args is None:
-            workflow_definition = workflow_definition.copy(update={"args": ["since"]})
-        else:
-            workflow_definition.args.append("since")
-        workflow_definition.jobs["create-splits"].tasks[0].args["inputs"][0][
-            "chunk_options"
-        ]["since"] = "${{ args.since }}"
+        if use_existing_chunks:
+            raise TypeError(
+                "Cannot set both 'is_update_workflow' and 'use_existing_chunks'."
+            )
+        workflow_definition = modify_for_update(workflow_definition)
+
+    return workflow_definition
+
+
+def modify_for_update(workflow_definition: WorkflowDefinition) -> WorkflowDefinition:
+    """
+    Modify a WorkflowDefinition for an update pipeline.
+
+    Parameters
+    ----------
+    workflow_definition: WorkflowDefinition
+
+    Returns
+    -------
+    WorkflowDefinition
+
+    Notes
+    -----
+    This function will return a new WorkflowDefinition with the following changes:
+
+    1. A ``since`` argument will be added to the workflow's ``args``.
+    2. The `create-splits` task will be modified to set the ``chunk_options.since`` to
+       the literal ``${{ args.since }}``, which will be templated to the actual value
+       at submission time.
+    3. The `create-chunks` task will be modified to include include the ``since``
+       value in the chunk file prefix at ``dst_uri``.
+    4. The ``process-chunk`` task will be modified to include the ``since`` value in
+       the in the chunk file prefix at ``item_chunkset_uri``.
+    """
+    workflow_definition = workflow_definition.copy(deep=True)
+    if workflow_definition.args is None:
+        workflow_definition.args = ["since"]
+    else:
+        workflow_definition.args.append("since")
+
+    # Add a 'since' argument to each create-splits
+    for input_ in workflow_definition.jobs["create-splits"].tasks[0].args["inputs"]:
+        input_["chunk_options"]["since"] = "${{ args.since }}"
+
+    # Modify the chunk file prefix to include a unique ID
+    create_chunks_tasks = workflow_definition.jobs["create-chunks"].tasks
+    for task in create_chunks_tasks:
+        dst_uri = task.args["dst_uri"]
+        assert dst_uri.endswith(f"/{ASSET_CHUNKS_PREFIX}")
+        prefix, suffix = dst_uri.rsplit("/", 1)
+
+        task.args["dst_uri"] = f"{prefix}/${{{{ args.since }}}}/{suffix}"
+
+    process_chunk_tasks = workflow_definition.jobs["process-chunk"].tasks
+    create_items_task = [
+        task for task in process_chunk_tasks if task.id == "create-items"
+    ][0]
+
+    item_chunkset_uri = create_items_task.args["item_chunkset_uri"]
+    assert item_chunkset_uri.endswith(f"/{ITEM_CHUNKS_PREFIX}")
+    prefix, suffix = item_chunkset_uri.rsplit("/", 1)
+    create_items_task.args[
+        "item_chunkset_uri"
+    ] = f"{prefix}/${{{{ args.since }}}}/{suffix}"
 
     return workflow_definition
 

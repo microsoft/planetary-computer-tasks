@@ -34,7 +34,36 @@ resource "azurerm_storage_container" "code" {
   container_access_type = "private"
 }
 
+# Queue
+
+resource "azurerm_storage_queue" "storage-events" {
+  name                 = "storage-events"
+  storage_account_name = azurerm_storage_account.pctasks.name
+}
+
+resource "azurerm_storage_queue" "ingest" {
+  name                 = "ingest"
+  storage_account_name = azurerm_storage_account.pctasks.name
+}
+
+# Dataset Queues
+resource "azurerm_storage_queue" "queues" {
+  for_each = toset([
+   # dataset work queues
+    "goes-glm",
+    "goes-cmi",
+    "sentinel-1-grd",
+    "sentinel-1-rtc",
+    "ecmwf-forecast",
+    "landsat-c2-l2",
+  ])
+  name                 = each.key
+  storage_account_name = azurerm_storage_account.pctasks.name
+}
+
 # Access Policies
+# These require Owner or User Access Administrator permissions on the
+# the storage account.
 
 resource "azurerm_role_assignment" "pctasks-server-blob-access" {
   scope                = azurerm_storage_account.pctasks.id
@@ -52,4 +81,25 @@ resource "azurerm_role_assignment" "pctasks-server-table-access" {
   scope                = azurerm_storage_account.pctasks.id
   role_definition_name = "Storage Table Data Contributor"
   principal_id         = var.pctasks_server_sp_object_id
+}
+
+# Let the Azure Functions in pctasks process queue messages.
+resource "azurerm_role_assignment" "pctasks-functions-queue-access" {
+  scope                = azurerm_storage_account.pctasks.id
+  role_definition_name = "Storage Queue Data Contributor"
+  principal_id         = azurerm_linux_function_app.pctasks.identity[0].principal_id
+}
+
+# The Task Service Principal should be able to process queue messages
+# for the dataset work queues
+resource "azurerm_role_assignment" "pctasks-task-queue-access" {
+  scope                = azurerm_storage_account.pctasks.id
+  role_definition_name = "Storage Queue Data Contributor"
+  principal_id         = var.task_sp_object_id
+}
+
+resource "azurerm_role_assignment" "pctasks-taskio-blob-access" {
+  scope                = azurerm_storage_account.pctasks.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = var.streaming_taskio_sp_object_id
 }

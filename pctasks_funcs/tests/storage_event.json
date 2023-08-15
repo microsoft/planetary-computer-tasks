@@ -1,0 +1,22 @@
+{
+    "id": "0179968e-401e-000d-1f7b-68d814060798",
+    "source": "/subscriptions/1b045d0d-e560-456a-952d-7514f87f1b1f/resourceGroups/goes-rg/providers/Microsoft.Storage/storageAccounts/goeseuwest",
+    "specversion": "1.0",
+    "type": "Microsoft.Storage.BlobCreated",
+    "subject": "/blobServices/default/containers/noaa-goes16/blobs/ABI-L2-CMIPM/2023/096/11/OR_ABI-L2-CMIPM1-M6C10_G16_s20230961135249_e20230961135321_c20230961135389.nc",
+    "time": "2023-04-06T11:35:54.6001153Z",
+    "data": {
+        "api": "PutBlob",
+        "clientRequestId": "30755694-d46f-11ed-856d-02420a0007ba",
+        "requestId": "0179968e-401e-000d-1f7b-68d814000000",
+        "eTag": "0x8DB369315269B01",
+        "contentType": "application/octet-stream",
+        "contentLength": 343897,
+        "blobType": "BlockBlob",
+        "url": "http://azurite:10000/devstoreaccount1/ABI-L2-CMIPM/2023/096/11/OR_ABI-L2-CMIPM1-M6C10_G16_s20230961135249_e20230961135321_c20230961135389.nc",
+        "sequencer": "0000000000000000000000000000ECA5000000000000c808",
+        "storageDiagnostics": {
+            "batchId": "b57dab2b-4006-001d-007b-68e98f000000"
+        }
+    }
+}

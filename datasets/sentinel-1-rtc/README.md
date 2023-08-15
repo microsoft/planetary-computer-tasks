@@ -14,3 +14,16 @@ To build and push a custom docker image to our container registry:
 ```shell
 az acr build -r {the registry} --subscription {the subscription} -t pctasks-sentinel-1-rtc:latest -t pctasks-sentinel-1-rtc:{date}.{count} -f datasets/sentinel-1-rtc/Dockerfile .
 ```
+
+## Dynamic updates
+
+This collection is updated regularly.
+
+```console
+$ pctasks dataset process-items '${{ args.since }}' \
+    -d datasets/sentinel-1-rtc/dataset.yaml \
+    -c sentinel-1-rtc \
+    --workflow-id=sentinel-1-rtc-update \
+    --is-update-workflow \
+    --upsert
+```

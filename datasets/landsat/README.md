@@ -29,3 +29,11 @@ To build and push a custom docker image to our container registry:
 az acr build -r {the registry} --subscription {the subscription} -t
 pctasks-landsat:latest -t pctasks-landsat:{date}.{count} -f datasets/landsat/Dockerfile .
 ```
+
+## Update workflow
+
+The update workflow was registered with
+
+```shell
+pctasks dataset process-items landsat-update --is-update-workflow --dataset datasets/landsat/dataset.yaml -c landsat-c2-l2 -u
+```

@@ -12,7 +12,7 @@ from pctasks.dev.test_utils import assert_workflow_is_successful
 HERE = pathlib.Path(__file__).parent
 
 
-@pytest.mark.usefixtures("cosmosdb_containers")
+@pytest.mark.usefixtures("temp_cosmosdb_containers")
 def test_client_submit():
     code = HERE.joinpath("data-files", "mycode.py").absolute()
     workflow = WorkflowDefinition(

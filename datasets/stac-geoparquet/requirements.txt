@@ -1,0 +1,4 @@
+stac-geoparquet[pgstac,pc]==0.2.1
+psycopg[binary,pool]==3.1.8
+azure-data-tables==12.4.2
+pypgstac==0.7.4

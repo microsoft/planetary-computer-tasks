@@ -41,6 +41,22 @@ variable "pctasks_server_replica_count" {
   default = 1
 }
 
+variable "aks_task_group_label" {
+  type = string
+  default = "tasks"
+}
+
+variable "aks_task_pool_min_count" {
+  type = number
+  default = 0
+  description = "The minimum number of nodes for running (low-latency) tasks."
+}
+
+variable "aks_task_pool_max_count" {
+  type = number
+  default = 100
+}
+
 ## Batch
 
 variable "batch_default_pool_id" {
@@ -103,6 +119,10 @@ variable "task_sp_tenant_id" {
   type = string
 }
 
+variable "task_sp_object_id" {
+  type    = string
+}
+
 variable "task_sp_client_id" {
   type = string
 }
@@ -112,6 +132,10 @@ variable "task_sp_client_secret" {
 }
 
 variable "kv_sp_tenant_id" {
+  type    = string
+}
+
+variable "kv_sp_object_id" {
   type    = string
 }
 
@@ -168,6 +192,31 @@ variable "pctasks_server_sp_object_id" {
 variable "argo_wf_node_group_name"{
   type = string
   default ="argo-workflows"
+}
+
+variable "streaming_taskio_sp_client_id" {
+  type    = string
+}
+
+variable "streaming_taskio_sp_client_secret" {
+  type    = string
+}
+
+variable "streaming_taskio_sp_tenant_id" {
+  type    = string
+}
+
+variable "streaming_taskio_sp_object_id" {
+  type    = string
+}
+
+
+## AKS
+
+variable "aks_streaming_task_node_group_name" {
+  type        = string
+  default     = "pc-lowlatency"
+  description = "The name of the node group that will run streaming tasks"
 }
 
 # ---------------

@@ -1,12 +1,13 @@
 import logging
 import os
 from importlib.metadata import EntryPoint
+from typing import Optional
 
 from pctasks.core.importer import ensure_code, ensure_requirements
 from pctasks.core.logging import StorageLogger
 from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.models.task import TaskResult, TaskRunMessage
-from pctasks.core.storage.blob import BlobStorage, BlobUri
+from pctasks.core.storage.blob import BlobStorage, BlobUri, ClientSecretCredentials
 from pctasks.core.utils import environment
 from pctasks.task.context import TaskContext
 from pctasks.task.settings import TaskSettings
@@ -23,12 +24,23 @@ class MissingEnvironmentError(Exception):
     pass
 
 
-def run_task(msg: TaskRunMessage) -> TaskResult:
+def run_task(
+    msg: TaskRunMessage, taskio_credentials: Optional[ClientSecretCredentials] = None
+) -> TaskResult:
     task_data, task_config = msg.args, msg.config
+
+    if taskio_credentials is None and os.environ.get("TASKIO_CLIENT_ID"):
+        taskio_credentials = ClientSecretCredentials(
+            client_id=os.environ["TASKIO_CLIENT_ID"],
+            client_secret=os.environ["TASKIO_CLIENT_SECRET"],
+            tenant_id=os.environ["TASKIO_TENANT_ID"],
+        )
 
     task_settings = TaskSettings.get()
 
-    with StorageLogger.from_task_run_config(task_config):
+    with StorageLogger.from_task_run_config(
+        task_config, client_secret_credentials=taskio_credentials
+    ):
 
         logger.info(" === PCTasks ===")
         logger.info(f"  == {task_config.get_run_record_id()} ")
@@ -49,6 +61,7 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
                 blob_uri=output_blob_uri.base_uri,
                 sas_token=output_blob_config.sas_token,
                 account_url=output_blob_config.account_url,
+                client_secret_credentials=taskio_credentials,
             )
 
             status_blob_uri = BlobUri(task_config.status_blob_config.uri)
@@ -56,6 +69,7 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
                 blob_uri=status_blob_uri.base_uri,
                 sas_token=task_config.status_blob_config.sas_token,
                 account_url=task_config.status_blob_config.account_url,
+                client_secret_credentials=taskio_credentials,
             )
             status_path = status_storage.get_path(str(status_blob_uri))
 
@@ -69,6 +83,7 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
                     blob_uri=req_blob_uri.base_uri,
                     sas_token=code_requirements_blob_config.sas_token,
                     account_url=code_requirements_blob_config.account_url,
+                    client_secret_credentials=taskio_credentials,
                 )
                 ensure_requirements(
                     req_path,
@@ -89,6 +104,7 @@ def run_task(msg: TaskRunMessage) -> TaskResult:
                     blob_uri=code_blob_uri.base_uri,
                     sas_token=code_src_blob_config.sas_token,
                     account_url=code_src_blob_config.account_url,
+                    client_secret_credentials=taskio_credentials,
                 )
                 ensure_code(code_path, code_storage, target_dir=task_settings.code_dir)
 

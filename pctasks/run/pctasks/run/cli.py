@@ -3,7 +3,7 @@ from typing import List, Optional
 import click
 
 
-@click.command("local")
+@click.command("local")  # type: ignore[arg-type]
 @click.argument("workflow")
 @click.option(
     "args",
@@ -24,7 +24,7 @@ def local_cmd(workflow: str, args: List[str], output: Optional[str] = None) -> N
     return _cli.local_cmd(workflow, args, output=output)
 
 
-@click.command("remote")
+@click.command("remote")  # type: ignore[arg-type]
 @click.argument("workflow")
 @click.option(
     "args",

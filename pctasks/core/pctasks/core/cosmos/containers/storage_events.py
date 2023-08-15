@@ -2,6 +2,7 @@ from typing import Dict, Optional, Type
 
 from pydantic import BaseModel
 
+from pctasks.core._compat import TypeAlias
 from pctasks.core.cosmos.container import (
     ContainerOperation,
     CosmosDBContainer,
@@ -11,7 +12,7 @@ from pctasks.core.cosmos.container import (
 from pctasks.core.cosmos.settings import CosmosDBSettings
 from pctasks.core.models.event import StorageEventRecord
 
-T = StorageEventRecord
+T: TypeAlias = StorageEventRecord
 
 PARTITION_KEY = "/id"
 

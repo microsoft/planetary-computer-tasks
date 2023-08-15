@@ -144,6 +144,7 @@ upload() {
 }
 
 # Package the scripts and upload to gh-pages
+setup_env
 configure
 package
 update

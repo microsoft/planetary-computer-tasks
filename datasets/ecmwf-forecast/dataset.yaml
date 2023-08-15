@@ -21,6 +21,7 @@ collections:
       - uri: blob://ai4edataeuwest/ecmwf/
         chunks:
           options:
+            matches: (enfo|oper|waef|wave)(?!-opendata)
             extensions: [.grib2]
     chunk_storage:
       uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/

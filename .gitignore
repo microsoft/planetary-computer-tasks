@@ -119,9 +119,16 @@ sas-tokens.json
 docs/generated
 
 kubeconfig
+cluster/kind-internal-config
 
 # gh-pages
 Gemfile
 Gemfile.lock
 _site/
+
 docs/reference/generated/
+
+# deployment
+deployment/deploy-values.yaml
+deployment/terraform/*/tf_output.json
+deployment/tf_output.json

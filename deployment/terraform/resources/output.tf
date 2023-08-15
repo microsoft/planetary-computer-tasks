@@ -174,3 +174,22 @@ output "cosmosdb_url" {
 output "cosmosdb_key" {
   value = data.azurerm_cosmosdb_account.pctasks.primary_key
 }
+
+## AKS
+
+output "aks_streaming_task_node_group_name" {
+  value = var.aks_streaming_task_node_group_name
+}
+
+output "streaming_taskio_sp_tenant_id" {
+  value = var.streaming_taskio_sp_tenant_id
+}
+
+output "streaming_taskio_sp_client_id" {
+  value = var.streaming_taskio_sp_client_id
+}
+
+output "streaming_taskio_sp_client_secret" {
+  value = var.streaming_taskio_sp_client_secret
+  sensitive = true
+}

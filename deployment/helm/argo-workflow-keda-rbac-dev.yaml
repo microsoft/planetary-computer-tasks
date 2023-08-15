@@ -1,0 +1,31 @@
+# This is identical to argo-workflow-keda-rbac-prod,
+# with a different namespace.
+# Roles and Role Bindings for letting pods managed by Argo Workflows
+# create Deployments.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: streaming-manager-role
+  namespace: argo # must match where argo spawns stuff
+rules:
+  - apiGroups:
+      - "apps"
+      - "keda.sh"
+    resources:
+      - deployments
+      - scaledobjects
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: streaming-manager-rolebinding
+  namespace: argo # must match where argo spawns stuff
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: streaming-manager-role
+subjects:
+  - namespace: argo
+    kind: ServiceAccount
+    name: default

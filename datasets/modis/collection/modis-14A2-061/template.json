@@ -1,0 +1,229 @@
+{
+    "id": "modis-14A2-061",
+    "type": "Collection",
+    "links": [
+        {
+            "rel": "help",
+            "href": "https://lpdaac.usgs.gov/documents/1005/MOD14_User_Guide_V61.pdf",
+            "title": "MOD14 User Guide"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://ladsweb.modaps.eosdis.nasa.gov/filespec/MODIS/61/MOD14A2",
+            "title": "MOD14A2 file specification"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://ladsweb.modaps.eosdis.nasa.gov/filespec/MODIS/61/MYD14A2",
+            "title": "MYD14A2 file specification"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.5067/MODIS/MOD14A2.061",
+            "title": "LP DAAC - MOD14A2"
+        },
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.5067/MODIS/MYD14A2.061",
+            "title": "LP DAAC - MYD14A2"
+        },
+        {
+            "rel": "license",
+            "href": "https://lpdaac.usgs.gov/data/data-citation-and-policies/",
+            "title": "LP DAAC - Data Citation and Policies"
+        }
+    ],
+    "title": "MODIS Thermal Anomalies/Fire 8-Day",
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/modis-14A2-061.png",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "MODIS Thermal Anomalies/Fire 8-Day thumbnail"
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/modis-14A2-061.parquet",
+            "type": "application/x-parquet",
+            "roles": [
+                "stac-items"
+            ],
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "MS"
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            }
+        }
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2000-02-18T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "NASA",
+        "MODIS",
+        "Satellite",
+        "Global",
+        "Fire",
+        "MOD14A2",
+        "MYD14A2"
+    ],
+    "providers": [
+        {
+            "url": "https://lpdaac.usgs.gov/",
+            "name": "NASA LP DAAC at the USGS EROS Center",
+            "roles": [
+                "producer",
+                "licensor",
+                "processor"
+            ]
+        },
+        {
+            "url": "https://planetarycomputer.microsoft.com",
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ]
+        }
+    ],
+    "summaries": {
+        "platform": [
+            "aqua",
+            "terra"
+        ],
+        "instruments": [
+            "modis"
+        ]
+    },
+    "description": "The Moderate Resolution Imaging Spectroradiometer (MODIS) Thermal Anomalies and Fire 8-Day Version 6.1 data are generated at 1 kilometer (km) spatial resolution as a Level 3 product. The MOD14A2 gridded composite contains the maximum value of the individual fire pixel classes detected during the eight days of acquisition. The Science Dataset (SDS) layers include the fire mask and pixel quality indicators.",
+    "item_assets": {
+        "QA": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Pixel quality indicators",
+            "raster:bands": [
+                {
+                    "data_type": "uint8",
+                    "spatial_resolution": 1000
+                }
+            ]
+        },
+        "hdf": {
+            "type": "application/x-hdf",
+            "roles": [
+                "data"
+            ],
+            "title": "Source data containing all bands"
+        },
+        "FireMask": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Confidence of fire",
+            "raster:bands": [
+                {
+                    "data_type": "uint8",
+                    "spatial_resolution": 1000
+                }
+            ],
+            "classification:classes": [
+                {
+                    "value": 0,
+                    "description": "Not processed (missing input data)"
+                },
+                {
+                    "value": 1,
+                    "description": "Not processed (obsolete; not used since Collection 1)"
+                },
+                {
+                    "value": 2,
+                    "description": "Not processed (other reason)"
+                },
+                {
+                    "value": 3,
+                    "description": "Non-fire water pixel"
+                },
+                {
+                    "value": 4,
+                    "description": "Cloud (land or water)"
+                },
+                {
+                    "value": 5,
+                    "description": "Non-fire land pixel"
+                },
+                {
+                    "value": 6,
+                    "description": "Unknown (land or water)"
+                },
+                {
+                    "value": 7,
+                    "description": "Fire (low confidence, land or water)"
+                },
+                {
+                    "value": 8,
+                    "description": "Fire (nominal confidence, land or water)"
+                },
+                {
+                    "value": 9,
+                    "description": "Fire (high confidence, land or water)"
+                }
+            ]
+        },
+        "metadata": {
+            "type": "application/xml",
+            "roles": [
+                "metadata"
+            ],
+            "title": "Federal Geographic Data Committee (FGDC) Metadata"
+        }
+    },
+    "stac_version": "1.0.0",
+    "msft:group_id": "modis",
+    "msft:container": "modis-061",
+    "stac_extensions": [
+        "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "sci:publications": [
+        {
+            "doi": "10.5067/MODIS/MOD14A2.061",
+            "citation": "Giglio, L., &amp; Justice, C. (2021). <i>MODIS/Terra Thermal Anomalies/Fire 8-Day L3 Global 1km SIN Grid V061</i> [Data set]. NASA EOSDIS Land Processes DAAC. https://doi.org/10.5067/MODIS/MOD14A2.061"
+        },
+        {
+            "doi": "10.5067/MODIS/MYD14A2.061",
+            "citation": "Giglio, L., &amp; Justice, C. (2021). <i>MODIS/Aqua Thermal Anomalies/Fire 8-Day L3 Global 1km SIN Grid V061</i> [Data set]. NASA EOSDIS Land Processes DAAC. https://doi.org/10.5067/MODIS/MYD14A2.061"
+        }
+    ],
+    "msft:storage_account": "modiseuwest",
+    "msft:short_description": "MODIS Thermal Anomalies/Fire 8-Day",
+    "msft:region": "westeurope"
+}

@@ -254,7 +254,7 @@ def cli_handle_workflow(
     upsert or submit_and_upsert is supplied, the workflow ID if upsert is supplied,
     or the run ID if upsert_and_submit is supplied.
     """
-    if not workflow_id:
+    if workflow_id is None:
         if not workflow_def.workflow_id:
             raise NoWorkflowIDError(
                 "If no workflow ID is specified, "
@@ -263,11 +263,11 @@ def cli_handle_workflow(
             )
         workflow_id = workflow_def.workflow_id
 
+    else:
+        workflow_def = workflow_def.copy(update={"workflow_id": workflow_id})
+
     if not client:
         client = PCTasksClient(settings=ClientSettings.from_context(ctx.obj))
-
-    if workflow_id:
-        workflow_def = workflow_def.copy(update={"workflow_id": workflow_id})
 
     if upsert or upsert_and_submit:
         cli_print(f"[green]  Saving {workflow_id}...[/green]")

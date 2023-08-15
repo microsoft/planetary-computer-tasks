@@ -54,7 +54,7 @@ to inspect ingest results, and the frontend.
 | STAC API          | <http://localhost:8513>      |
 | STAC Browser      | <http://localhost:8514>      |
 
-You can avoid building or bringing up the STAC API and STAC Browser
+You can avoid building or bringing up the frontend, STAC API, and STAC Browser
 servers by using the flag `--no-aux-servers` in `scripts/setup`,
 `scripts/update`, and `scripts/server`. This can save on build time
 and memory footprint if you are not using those services.
