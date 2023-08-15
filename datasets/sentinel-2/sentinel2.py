@@ -46,13 +46,16 @@ class Sentinel2Collection(Collection):
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
         # The asset_uri is the path to the manifest.safe file
+        breakpoint()
         granule_path = os.path.dirname(asset_uri)
-        asset_storage = storage_factory.get_storage(granule_path)
-        granule_href = asset_storage.get_url(granule_path)
 
-        if not asset_storage.file_exists(os.path.join(granule_path, "manifest.safe")):
-            logger.error(f"Missing manifest file for granule: {granule_path}")
-            return []
+        asset_storage = storage_factory.get_storage(granule_path)
+        granule_href = asset_storage.get_url("")
+
+        # breakpoint()
+        # if not asset_storage.file_exists(os.path.join(granule_path, "manifest.safe")):
+        #     logger.error(f"Missing manifest file for granule: {granule_path}")
+        #     return []
 
         manifest = with_backoff(
             lambda: SafeManifest(granule_href, asset_storage.sign),  # type: ignore
@@ -67,7 +70,7 @@ class Sentinel2Collection(Collection):
                 logger.error(f"Missing {name} file for granule: {granule_path}")
                 return []
             file_path = os.path.relpath(href_opt, granule_href)
-            if not asset_storage.file_exists(os.path.join(granule_path, file_path)):
+            if not asset_storage.file_exists(file_path):
                 logger.error(f"Missing {name} file for granule: {granule_path}")
                 return []
 
