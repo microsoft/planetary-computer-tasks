@@ -5,7 +5,7 @@ from pctasks.client.runs.list import list_cmd
 from pctasks.client.runs.status import status_cmd
 
 
-@click.group("runs")
+@click.group("runs")  # type: ignore[arg-type]
 @click.option(
     "-p",
     "--pretty-print",

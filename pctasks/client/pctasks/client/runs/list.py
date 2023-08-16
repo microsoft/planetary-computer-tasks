@@ -9,7 +9,7 @@ def list_cmd() -> None:
     pass
 
 
-@list_cmd.command("workflows")
+@list_cmd.command("workflows")  # type: ignore[arg-type]
 @click.argument("workflow_id")
 @click.option("-s", "--sort-by", help="Property to sort by")
 @click.option("-d", "--desc", help="Sort descending", is_flag=True)
@@ -23,7 +23,7 @@ def list_workflow_runs_cmd(
     ctx.exit(_list.list_workflow_runs_cmd(ctx, workflow_id, sort_by=sort_by, desc=desc))
 
 
-@list_cmd.command("partitions")
+@list_cmd.command("partitions")  # type: ignore[arg-type]
 @click.argument("run_id")
 @click.argument("job_id")
 @click.pass_context

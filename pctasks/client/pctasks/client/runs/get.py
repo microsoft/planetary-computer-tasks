@@ -7,7 +7,7 @@ def get_cmd() -> None:
     pass
 
 
-@get_cmd.command("workflow")
+@get_cmd.command("workflow")  # type: ignore[arg-type]
 @click.argument("run_id")
 @click.option("-s", "--status", is_flag=True, help="Only report status.")
 @click.pass_context
@@ -21,7 +21,7 @@ def get_workflow_run_cmd(ctx: click.Context, run_id: str, status: bool) -> int:
     return _get.get_workflow_run(ctx, run_id, status)
 
 
-@get_cmd.command("partition")
+@get_cmd.command("partition")  # type: ignore[arg-type]
 @click.argument("run_id")
 @click.argument("job_id")
 @click.option("-p", "--partition", "partition_id", default="0", help="Partition ID.")
@@ -38,7 +38,7 @@ def get_job_partition_cmd(
     return _get.get_job_partition(ctx, run_id, job_id, partition_id)
 
 
-@get_cmd.command("run-log")
+@get_cmd.command("run-log")  # type: ignore[arg-type]
 @click.argument("run_id")
 @click.pass_context
 def get_workflow_log_cmd(ctx: click.Context, run_id: str) -> int:
@@ -51,7 +51,7 @@ def get_workflow_log_cmd(ctx: click.Context, run_id: str) -> int:
     return _get.get_workflow_log(ctx, run_id=run_id)
 
 
-@get_cmd.command("task-log")
+@get_cmd.command("task-log")  # type: ignore[arg-type]
 @click.argument("run_id")
 @click.argument("job_id")
 @click.argument("task_id")

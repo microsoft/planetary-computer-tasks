@@ -1,183 +1,195 @@
 id: sentinel-3
-image: ${{ args.registry }}/pctasks-sentinel-3:2023.5.1.0
+image: ${{ args.registry }}/pctasks-sentinel-3:20230630.1
 
 args:
   - registry
+  - year-prefix
 
 code:
-  src: ${{ local.path(./sentinel_3) }}
+  src: ${{ local.path(./sentinel_3.py) }}
 
 environment:
   AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
   AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
   AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+  APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
 
 collections:
   - id: sentinel-3-olci-lfr-l2-netcdf
     template: ${{ local.path(./collection/sentinel-3-olci-lfr-l2-netcdf/) }}
-    class: sentinel_3.sentinel_3_olci_lfr_l2_netcdf:Collection
+    class: sentinel_3:Sentinel3Collections
     asset_storage:
-      - uri: blob://sentinel3euwest/sentinel-3-stac/
-        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
-        # create-chunks took ~8 minutes. Consider splitting by year.
+      # The blob storage pattern is
+      # | sentinel-3
+      # |   OLCI
+      # |     OL_2_LFR___
+      # |       2023
+      # |         06
+      # |           21
+      # |             S3A_OL_2_LFR____20230621T003934_20230621T004051_20230621T030311_0077_100_145_1080_PS1_O_NR_002.SEN3
+      # |               xfdumanifest.xml
+      # |             ...
+      # |               ...
+      - uri: blob://sentinel3euwest/sentinel-3/OLCI/OL_2_LFR___/${{ args.year-prefix }}/
         chunks:
+          splits:
+            - depth: 1  # split by month, about 15 minutes for all xfdumanifest.xml files
           options:
-            name_starts_with: OLCI/OL_2_LFR___/
-            extensions: [.json]
-            chunk_length: 5000
+            ends_with: xfdumanifest.xml
+            chunk_length: 200  # takes about 15 minutes to create items for ~2 days of data
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-olci-lfr-l2-netcdf
 
   - id: sentinel-3-olci-wfr-l2-netcdf
     template: ${{ local.path(./collection/sentinel-3-olci-wfr-l2-netcdf/) }}
-    class: sentinel_3.sentinel_3_olci_wfr_l2_netcdf:Collection
+    class: sentinel_3:Sentinel3Collections
     asset_storage:
-      - uri: blob://sentinel3euwest/sentinel-3-stac/
-        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+      - uri: blob://sentinel3euwest/sentinel-3/OLCI/OL_2_WFR___/${{ args.year-prefix }}/
         chunks:
+          splits:
+            - depth: 1
           options:
-            name_starts_with: OLCI/OL_2_WFR___/
-            extensions: [.json]
-            chunk_length: 5000
+            ends_with: xfdumanifest.xml
+            chunk_length: 200
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-olci-wfr-l2-netcdf
 
   - id: sentinel-3-synergy-aod-l2-netcdf
     template: ${{ local.path(./collection/sentinel-3-synergy-aod-l2-netcdf) }}
-    class: sentinel_3.sentinel_3_synergy_aod_l2_netcdf:Collection
+    class: sentinel_3:Sentinel3Collections
     asset_storage:
-      - uri: blob://sentinel3euwest/sentinel-3-stac/
-        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+      - uri: blob://sentinel3euwest/sentinel-3/SYNERGY/SY_2_AOD___/${{ args.year-prefix }}/
         chunks:
+          splits:
+            - depth: 1
           options:
-            name_starts_with: SYNERGY/SY_2_AOD___/
-            extensions: [.json]
-            chunk_length: 5000
+            ends_with: xfdumanifest.xml
+            chunk_length: 200
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-aod-l2-netcdf
 
   - id: sentinel-3-synergy-syn-l2-netcdf
     template: ${{ local.path(./collection/sentinel-3-synergy-syn-l2-netcdf) }}
-    class: sentinel_3.sentinel_3_synergy_syn_l2_netcdf:Collection
+    class: sentinel_3:Sentinel3Collections
     asset_storage:
-      - uri: blob://sentinel3euwest/sentinel-3-stac/
-        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+      - uri: blob://sentinel3euwest/sentinel-3/SYNERGY/SY_2_SYN___/${{ args.year-prefix }}/
         chunks:
+          splits:
+            - depth: 1
           options:
-            name_starts_with: SYNERGY/SY_2_SYN___/
-            extensions: [.json]
-            chunk_length: 5000
+            ends_with: xfdumanifest.xml
+            chunk_length: 200
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-syn-l2-netcdf
 
   - id: sentinel-3-synergy-v10-l2-netcdf
     template: ${{ local.path(./collection/sentinel-3-synergy-v10-l2-netcdf) }}
-    class: sentinel_3.sentinel_3_synergy_v10_l2_netcdf:Collection
+    class: sentinel_3:Sentinel3Collections
     asset_storage:
-      - uri: blob://sentinel3euwest/sentinel-3-stac/
-        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+      - uri: blob://sentinel3euwest/sentinel-3/SYNERGY/SY_2_V10___/${{ args.year-prefix }}/
         chunks:
+          splits:
+            - depth: 1
           options:
-            name_starts_with: SYNERGY/SY_2_V10___/
-            extensions: [.json]
-            chunk_length: 5000
+            ends_with: xfdumanifest.xml
+            chunk_length: 200
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-v10-l2-netcdf
 
   - id: sentinel-3-synergy-vg1-l2-netcdf
     template: ${{ local.path(./collection/sentinel-3-synergy-vg1-l2-netcdf) }}
-    class: sentinel_3.sentinel_3_synergy_vg1_l2_netcdf:Collection
+    class: sentinel_3:Sentinel3Collections
     asset_storage:
-      - uri: blob://sentinel3euwest/sentinel-3-stac/
-        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+      - uri: blob://sentinel3euwest/sentinel-3/SYNERGY/SY_2_VG1___/${{ args.year-prefix }}/
         chunks:
+          splits:
+            - depth: 1
           options:
-            name_starts_with: SYNERGY/SY_2_VG1___/
-            extensions: [.json]
-            chunk_length: 5000
+            ends_with: xfdumanifest.xml
+            chunk_length: 200
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-vg1-l2-netcdf
 
   - id: sentinel-3-synergy-vgp-l2-netcdf
     template: ${{ local.path(./collection/sentinel-3-synergy-vgp-l2-netcdf) }}
-    class: sentinel_3.sentinel_3_synergy_vgp_l2_netcdf:Collection
+    class: sentinel_3:Sentinel3Collections
     asset_storage:
-      - uri: blob://sentinel3euwest/sentinel-3-stac/
-        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+      - uri: blob://sentinel3euwest/sentinel-3/SYNERGY/SY_2_VGP___/${{ args.year-prefix }}/
         chunks:
+          splits:
+            - depth: 1
           options:
-            name_starts_with: SYNERGY/SY_2_VGP___/
-            extensions: [.json]
-            chunk_length: 5000
+            ends_with: xfdumanifest.xml
+            chunk_length: 200
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-synergy-vgp-l2-netcdf
 
   - id: sentinel-3-sral-lan-l2-netcdf
     template: ${{ local.path(./collection/sentinel-3-sral-lan-l2-netcdf) }}
-    class: sentinel_3.sentinel_3_sral_lan_l2_netcdf:Collection
+    class: sentinel_3:Sentinel3Collections
     asset_storage:
-      - uri: blob://sentinel3euwest/sentinel-3-stac/
-        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+      - uri: blob://sentinel3euwest/sentinel-3/SRAL/SR_2_LAN___/${{ args.year-prefix }}/
         chunks:
+          splits:
+            - depth: 1
           options:
-            name_starts_with: SRAL/SR_2_LAN___/
-            extensions: [.json]
-            chunk_length: 5000
+            ends_with: xfdumanifest.xml
+            chunk_length: 200
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-sral-lan-l2-netcdf
 
   - id: sentinel-3-sral-wat-l2-netcdf
     template: ${{ local.path(./collection/sentinel-3-sral-wat-l2-netcdf) }}
-    class: sentinel_3.sentinel_3_sral_wat_l2_netcdf:Collection
+    class: sentinel_3:Sentinel3Collections
     asset_storage:
-      - uri: blob://sentinel3euwest/sentinel-3-stac/
-        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+      - uri: blob://sentinel3euwest/sentinel-3/SRAL/SR_2_WAT___/${{ args.year-prefix }}/
         chunks:
+          splits:
+            - depth: 1
           options:
-            name_starts_with: SRAL/SR_2_WAT___/
-            extensions: [.json]
-            chunk_length: 5000
+            ends_with: xfdumanifest.xml
+            chunk_length: 200
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-sral-wat-l2-netcdf
 
   - id: sentinel-3-slstr-frp-l2-netcdf
     template: ${{ local.path(./collection/sentinel-3-slstr-frp-l2-netcdf) }}
-    class: sentinel_3.sentinel_3_slstr_frp_l2_netcdf:Collection
+    class: sentinel_3:Sentinel3Collections
     asset_storage:
-      - uri: blob://sentinel3euwest/sentinel-3-stac/
-        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+      - uri: blob://sentinel3euwest/sentinel-3/SLSTR/SL_2_FRP___/${{ args.year-prefix }}/
         chunks:
+          splits:
+            - depth: 1
           options:
-            name_starts_with: SLSTR/SL_2_FRP___/
-            extensions: [.json]
-            chunk_length: 5000
+            ends_with: xfdumanifest.xml
+            chunk_length: 200
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-slstr-frp-l2-netcdf
 
   - id: sentinel-3-slstr-lst-l2-netcdf
     template: ${{ local.path(./collection/sentinel-3-slstr-lst-l2-netcdf) }}
-    class: sentinel_3.sentinel_3_slstr_lst_l2_netcdf:Collection
+    class: sentinel_3:Sentinel3Collections
     asset_storage:
-      - uri: blob://sentinel3euwest/sentinel-3-stac/
-        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+      - uri: blob://sentinel3euwest/sentinel-3/SLSTR/SL_2_LST___/${{ args.year-prefix }}/
         chunks:
+          splits:
+            - depth: 1
           options:
-            name_starts_with: SLSTR/SL_2_LST___/
-            extensions: [.json]
-            chunk_length: 5000
+            ends_with: xfdumanifest.xml
+            chunk_length: 200
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-slstr-lst-l2-netcdf
 
   - id: sentinel-3-slstr-wst-l2-netcdf
     template: ${{ local.path(./collection/sentinel-3-slstr-wst-l2-netcdf) }}
-    class: sentinel_3.sentinel_3_slstr_wst_l2_netcdf:Collection
+    class: sentinel_3:Sentinel3Collections
     asset_storage:
-      - uri: blob://sentinel3euwest/sentinel-3-stac/
-        token: ${{ pc.get_token(sentinel3euwest, sentinel-3-stac) }}
+      - uri: blob://sentinel3euwest/sentinel-3/SLSTR/SL_2_WST___/${{ args.year-prefix }}/
         chunks:
+          splits:
+            - depth: 1
           options:
-            name_starts_with: SLSTR/SL_2_WST___/
-            extensions: [.json]
-            chunk_length: 5000
+            ends_with: xfdumanifest.xml
+            chunk_length: 200
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-slstr-wst-l2-netcdf

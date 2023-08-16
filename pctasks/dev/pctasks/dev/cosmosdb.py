@@ -2,10 +2,9 @@
 """
 Sets up the Cosmos DB emulator.
 """
-import os
 import time
 from contextlib import contextmanager
-from typing import Callable, Dict, Iterator, List, Optional, Tuple
+from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple
 from urllib.parse import urljoin
 from uuid import uuid1
 
@@ -24,6 +23,9 @@ CONTAINERS: List[Tuple[Callable[[CosmosDBSettings], str], str]] = [
     (lambda settings: settings.get_workflow_runs_container_name(), "/run_id"),
     (lambda settings: settings.get_workflows_container_name(), "/workflow_id"),
     (lambda settings: settings.get_records_container_name(), "/type"),
+    (lambda settings: settings.get_items_container_name(), "/stac_id"),
+    (lambda settings: settings.get_storage_events_container_name(), "/id"),
+    (lambda settings: settings.get_process_item_errors_container_name(), "/id"),
 ]
 
 
@@ -203,11 +205,7 @@ def rm_test_containers(settings: CosmosDBSettings, all: bool = False) -> None:
                     print(f"Deleting container {container_name}")
                     db.delete_container(container_name)
         else:
-            if "PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX" not in os.environ:
-                raise RuntimeError(
-                    "PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX must be set to "
-                    "remove test containers"
-                )
+            assert settings.test_container_suffix is not None
             for container_name, _ in CONTAINERS:
                 name = container_name(settings)
                 if name in existing_containers:
@@ -259,7 +257,7 @@ def reset_cmd() -> None:
     setup_cosmosdb()
 
 
-@cosmosdb_cmd.command("rm-test-containers")
+@cosmosdb_cmd.command("rm-test-containers")  # type: ignore[arg-type]
 @click.option("-a", "--all", is_flag=True, help="Remove all containers with tmp prefix")
 def rm_test_containers_cmd(all: bool) -> None:
     settings = CosmosDBSettings.get()
@@ -275,6 +273,27 @@ def clear_tmp_dbs_cmd() -> None:
             if db["id"].startswith("tmp-"):
                 print(f"Deleting database: {db['id']}")
                 cosmos_client.delete_database(db["id"])
+
+
+@contextmanager
+def temporary_settings(
+    settings: CosmosDBSettings, update: Dict[str, Any]
+) -> Iterator[None]:
+    """
+    Temporarily change the PCTasks settings object.
+    """
+    original = {}
+
+    for k, v in update.items():
+        original[k] = getattr(settings, k)
+        setattr(settings, k, v)
+
+    try:
+        yield
+    finally:
+        print("Restoring original settings")
+        for k, v in original.items():
+            setattr(settings, k, v)
 
 
 @contextmanager
@@ -295,7 +314,6 @@ def temp_cosmosdb_if_emulator(
     settings = CosmosDBSettings.get()
 
     if settings.is_cosmosdb_emulator():
-
         suffix = uuid1().hex[:5]
         db_name = f"tmp-{suffix}"
 
@@ -318,28 +336,32 @@ def temp_cosmosdb_if_emulator(
                 cosmos_client.delete_database(db_name)
 
     else:
-        settings = settings.copy()
-        if not settings.test_container_suffix:
-            settings.test_container_suffix = uuid1().hex[:5]
-        cosmos_client = settings.get_client()
-        db = cosmos_client.get_database_client(settings.database)
-        setup_db(db, settings)
-        if containers:
-            print("Creating additional containers...")
-            for container_name, partition_key in containers.items():
-                print(f" - {container_name}")
-                _ = db.create_container_if_not_exists(
-                    container_name, partition_key=PartitionKey(path=partition_key)
-                )
-        try:
-            yield CosmosDBDatabase(settings)
-        finally:
+        # We directly mutate settings so that the changes are visible
+        # across the process. However, we undo this change so that
+        # it doesn't extend across the test.
+        test_container_suffix = uuid1().hex[:5]
+        with temporary_settings(
+            settings, dict(test_container_suffix=test_container_suffix)
+        ):
+            cosmos_client = settings.get_client()
+            db = cosmos_client.get_database_client(settings.database)
+            setup_db(db, settings)
             if containers:
-                print("Deleting additional containers...")
+                print("Creating additional containers...")
                 for container_name, partition_key in containers.items():
                     print(f" - {container_name}")
-                    _ = db.delete_container(container_name)
-            rm_test_containers(settings)
+                    _ = db.create_container_if_not_exists(
+                        container_name, partition_key=PartitionKey(path=partition_key)
+                    )
+            try:
+                yield CosmosDBDatabase(settings)
+            finally:
+                if containers:
+                    print("Deleting additional containers...")
+                    for container_name, partition_key in containers.items():
+                        print(f" - {container_name}")
+                        _ = db.delete_container(container_name)
+                rm_test_containers(settings)
 
 
 if __name__ == "__main__":

@@ -3,7 +3,8 @@ from typing import Optional
 import click
 
 
-@click.command("status")
+# https://github.com/pallets/click/issues/2558
+@click.command("status")  # type: ignore[arg-type]
 @click.argument("run_id", required=False)
 @click.option(
     "-w",

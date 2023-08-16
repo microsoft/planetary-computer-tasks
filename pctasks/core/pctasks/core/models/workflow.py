@@ -83,6 +83,14 @@ class JobDefinition(PCBaseModel):
 
 
 class WorkflowDefinition(PCBaseModel):
+    """
+
+    is_streaming: bool, default False
+        Indicates whether this workflow is a batch (the default) or streaming
+        workflow. Streaming workflows have special requirements, and behave a
+        bit differently on the backend.
+    """
+
     workflow_id: Optional[str] = Field(default=None, alias="id")
     name: str
     dataset_id: str = Field(alias="dataset")
@@ -91,6 +99,7 @@ class WorkflowDefinition(PCBaseModel):
     args: Optional[List[str]] = None
     jobs: Dict[str, JobDefinition]
     on: Optional[TriggerDefinition] = None
+    is_streaming: bool = False
 
     schema_version: str = Field(default=WORKFLOW_SCHEMA_VERSION, const=True)
 
@@ -107,6 +116,72 @@ class WorkflowDefinition(PCBaseModel):
             # Otherwise job validator will catch the error
             if not v[job_id].id:
                 JobDefinition.validate_job_id(job_id)
+        return v
+
+    @validator("is_streaming")
+    def _validate_is_streaming(
+        cls, v: bool, values: Dict[str, Any], **kwargs: Dict[str, Any]
+    ) -> bool:
+        """
+        A streaming workflow is similar to other pctasks workflows, but requires a few
+        additional properties on the streaming tasks within the workflow:
+
+        1. The task must define the streaming-related properties using `args`:
+
+        - `queue_url`
+        - `visibility_timeout`
+        - `min_replica_count`
+        - `max_replica_count`
+        - `polling_interval`
+        - `trigger_queue_length`
+
+        2. The workflow should set the top-level `is_streaming` property to `true`.
+
+        In addition to these schema-level requirements, there are some expectations in
+        how the workflow behaves at runtime. In general, streaming tasks should expect
+        to run indefinitely. They should continuously process messages from a queue,
+        and leave starting, stopping, and scaling to the pctasks framework.
+        """
+        if v:
+            jobs = values["jobs"]
+            n_jobs = len(jobs)
+            if n_jobs != 1:
+                raise ValueError(
+                    f"Streaming workflows must have exactly one job. Got "
+                    f"{n_jobs} instead."
+                )
+            job = list(jobs.values())[0]
+
+            n_tasks = len(job.tasks)
+            if n_tasks != 1:
+                raise ValueError(
+                    f"Streaming workflows must have exactly one task. Got "
+                    f"{n_tasks} instead."
+                )
+
+            task = job.tasks[0]
+
+            try:
+                streaming_options = task.args["streaming_options"]
+            except KeyError as e:
+                raise ValueError(
+                    "Streaming workflow must define 'streaming_options'"
+                ) from e
+
+            for key in [
+                "queue_url",
+                "visibility_timeout",
+                "min_replica_count",
+                "max_replica_count",
+                "polling_interval",
+                "trigger_queue_length",
+            ]:
+                if key not in streaming_options:
+                    raise ValueError(
+                        f"Streaming workflows must define the '{key}' property "
+                        f"on the task."
+                    )
+
         return v
 
     def template_args(self, args: Optional[Dict[str, Any]]) -> "WorkflowDefinition":

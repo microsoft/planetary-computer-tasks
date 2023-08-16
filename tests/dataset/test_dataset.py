@@ -21,7 +21,7 @@ WORKFLOWS = HERE / ".." / "workflows"
 TIMEOUT_SECONDS = DEFAULT_TIMEOUT
 
 
-@pytest.mark.usefixtures("cosmosdb_containers")
+@pytest.mark.usefixtures("temp_cosmosdb_containers")
 def test_dataset():
     with temp_pgstac_db() as conn_str_info:
         test_tag = uuid1().hex[:5]

@@ -90,8 +90,18 @@ def test_process_items() -> None:
 
 
 @pytest.mark.parametrize("has_args", [True, False])
-def test_process_items_is_update_workflow(has_args) -> None:
-    ds_config = template_dataset_file(DATASET_PATH)
+@pytest.mark.parametrize("extra_uri", [True, False])
+def test_process_items_is_update_workflow(tmp_path, has_args, extra_uri) -> None:
+
+    workflow_path = tmp_path.joinpath("workflow.yaml")
+    workflow_path.write_text(Path(DATASET_PATH).read_text())
+
+    ds_config = template_dataset_file(workflow_path)
+
+    if extra_uri:
+        asset_storage = ds_config.collections[0].asset_storage
+        asset_storage.append(asset_storage[0].copy())
+
     if not has_args:
         ds_config = ds_config.copy(update={"args": None})
         assert ds_config.args is None
@@ -101,7 +111,7 @@ def test_process_items_is_update_workflow(has_args) -> None:
     workflow = create_process_items_workflow(
         ds_config,
         collection_config,
-        chunkset_id="${{ args.since }}",
+        chunkset_id="my-prefix",
         ingest=False,
         target="test",
         is_update_workflow=True,
@@ -113,6 +123,27 @@ def test_process_items_is_update_workflow(has_args) -> None:
         .args["inputs"][0]["chunk_options"]["since"]
         == "${{ args.since }}"
     )
+
+    if extra_uri:
+        assert (
+            workflow.jobs["create-splits"]
+            .tasks[0]
+            .args["inputs"][1]["chunk_options"]["since"]
+            == "${{ args.since }}"
+        )
+
+    result = workflow.jobs["create-chunks"].tasks[0].args["dst_uri"]
+    expected = (
+        "blob://devstoreaccount1/test-data/${{ args.test_prefix }}"
+        "/chunks/my-prefix/${{ args.since }}/assets"
+    )
+    assert result == expected
+    result = workflow.jobs["process-chunk"].tasks[0].args["item_chunkset_uri"]
+    expected = (
+        "blob://devstoreaccount1/test-data/${{ args.test_prefix }}"
+        "/chunks/my-prefix/${{ args.since }}/items"
+    )
+    assert result == expected
 
 
 def test_task_config_tags() -> None:
@@ -142,3 +173,19 @@ def test_task_config_tags() -> None:
         workflow.jobs["process-chunk"].tasks[0].tags["batch_pool_id"]
         == "high_memory_pool"
     )
+
+
+def test_process_items_is_update_use_existing_chunks_raises():
+    ds_config = template_dataset_file(DATASET_PATH)
+    collection_config = ds_config.collections[0]
+
+    with pytest.raises(TypeError, match="Cannot set"):
+        create_process_items_workflow(
+            ds_config,
+            collection_config,
+            chunkset_id="my-prefix",
+            ingest=False,
+            target="test",
+            is_update_workflow=True,
+            use_existing_chunks=True,
+        )

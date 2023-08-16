@@ -28,7 +28,7 @@ TIMEOUT_SECONDS = DEFAULT_TIMEOUT
 logger = logging.getLogger(__name__)
 
 
-@pytest.mark.usefixtures("cosmosdb_containers")
+@pytest.mark.usefixtures("temp_cosmosdb_containers")
 def test_foreach_simple_workflow():
     workflow = textwrap.dedent(
         """\
@@ -112,7 +112,7 @@ def test_foreach_simple_workflow():
             assert expected[path] == output_storage.read_text(path)
 
 
-@pytest.mark.usefixtures("cosmosdb_containers")
+@pytest.mark.usefixtures("temp_cosmosdb_containers")
 def test_foreach_full_workflow():
 
     with temp_azurite_blob_storage() as root_storage:

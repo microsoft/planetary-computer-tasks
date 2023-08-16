@@ -69,6 +69,10 @@ variable "task_sp_tenant_id" {
   type    = string
 }
 
+variable "task_sp_object_id" {
+  type    = string
+}
+
 variable "task_sp_client_id" {
   type    = string
 }
@@ -78,6 +82,10 @@ variable "task_sp_client_secret" {
 }
 
 variable "kv_sp_tenant_id" {
+  type    = string
+}
+
+variable "kv_sp_object_id" {
   type    = string
 }
 
@@ -135,6 +143,30 @@ variable "pctasks_server_sp_client_secret" {
 
 variable "pctasks_server_sp_object_id" {
   type    = string
+}
+
+variable "streaming_taskio_sp_client_id" {
+  type    = string
+}
+
+variable "streaming_taskio_sp_client_secret" {
+  type    = string
+}
+
+variable "streaming_taskio_sp_object_id" {
+  type    = string
+}
+
+variable "streaming_taskio_sp_tenant_id" {
+  type    = string
+}
+
+## AKS
+
+variable "aks_streaming_task_node_group_name" {
+  type        = string
+  default     = "pc-lowlatency"
+  description = "The name of the node group that will run streaming tasks"
 }
 
 # APIM

@@ -16,6 +16,7 @@ module "resources" {
   component_acr_name = var.component_acr_name
 
   task_sp_tenant_id = var.task_sp_tenant_id
+  task_sp_object_id = var.task_sp_object_id
   task_sp_client_id = var.task_sp_client_id
   task_sp_client_secret = var.task_sp_client_secret
 
@@ -23,6 +24,7 @@ module "resources" {
   pctasks_task_kv_resource_group_name = var.pctasks_task_kv_resource_group_name
 
   kv_sp_tenant_id = var.kv_sp_tenant_id
+  kv_sp_object_id = var.kv_sp_object_id
   kv_sp_client_id = var.kv_sp_client_id
   kv_sp_client_secret = var.kv_sp_client_secret
 
@@ -35,6 +37,11 @@ module "resources" {
   pctasks_server_sp_client_id = var.pctasks_server_sp_client_id
   pctasks_server_sp_client_secret = var.pctasks_server_sp_client_secret
   pctasks_server_sp_object_id = var.pctasks_server_sp_object_id
+
+  streaming_taskio_sp_tenant_id = var.streaming_taskio_sp_tenant_id
+  streaming_taskio_sp_client_id = var.streaming_taskio_sp_client_id
+  streaming_taskio_sp_client_secret = var.streaming_taskio_sp_client_secret
+  streaming_taskio_sp_object_id = var.streaming_taskio_sp_object_id
 
   k8s_version = "1.26.3"
   k8s_orchestrator_version = "1.26.3"

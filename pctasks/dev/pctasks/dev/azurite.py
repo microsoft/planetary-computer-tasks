@@ -12,9 +12,11 @@ from pctasks.core.constants import (
     DEFAULT_CODE_CONTAINER,
     DEFAULT_IMAGE_KEY_TABLE_NAME,
     DEFAULT_INBOX_QUEUE_NAME,
+    DEFAULT_INGEST_QUEUE_NAME,
     DEFAULT_LOG_CONTAINER,
     DEFAULT_NOTIFICATIONS_QUEUE_NAME,
     DEFAULT_SIGNAL_QUEUE_NAME,
+    DEFAULT_STORAGE_EVENTS_QUEUE_NAME,
     DEFAULT_TASK_IO_CONTAINER,
     DEFAULT_WORKFLOW_QUEUE_NAME,
 )
@@ -39,6 +41,8 @@ def setup_azurite() -> None:
         DEFAULT_INBOX_QUEUE_NAME,
         DEFAULT_NOTIFICATIONS_QUEUE_NAME,
         DEFAULT_SIGNAL_QUEUE_NAME,
+        DEFAULT_STORAGE_EVENTS_QUEUE_NAME,
+        DEFAULT_INGEST_QUEUE_NAME,
     ]:
         if queue_name not in existing_queues:
             print(f"~ ~ Creating {queue_name} queue...")

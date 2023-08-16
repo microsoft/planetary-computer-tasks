@@ -5,13 +5,15 @@ resource "azurerm_kubernetes_cluster" "pctasks" {
   dns_prefix          = "${local.prefix}-cluster"
   kubernetes_version  = var.k8s_version
 
-
+  oms_agent {
+    log_analytics_workspace_id = azurerm_log_analytics_workspace.pctasks.id
+  }
 
   default_node_pool {
-    name                 = "agentpool"
-    vm_size              = "Standard_DS2_v2"
-    node_count           = var.aks_node_count
-    vnet_subnet_id       = azurerm_subnet.k8snode_subnet.id
+    name           = "agentpool"
+    vm_size        = "Standard_DS2_v2"
+    node_count     = var.aks_node_count
+    vnet_subnet_id = azurerm_subnet.k8snode_subnet.id
 
     node_labels = {
       node_group = "default"
@@ -43,7 +45,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "argowf" {
     node_group = var.argo_wf_node_group_name
   }
 
-   lifecycle {
+  lifecycle {
     ignore_changes = [
       # Ignore changes that are auto-populated by AKS
       vnet_subnet_id,
@@ -57,6 +59,75 @@ resource "azurerm_kubernetes_cluster_node_pool" "argowf" {
     ManagedBy   = "AI4E"
   }
 }
+
+# Node pool for running tasks
+resource "azurerm_kubernetes_cluster_node_pool" "tasks" {
+  name                  = "tasks"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.pctasks.id
+  vm_size               = "Standard_D3_v2"
+  enable_auto_scaling   = true
+  min_count             = var.aks_task_pool_min_count
+  max_count             = var.aks_task_pool_max_count
+
+  node_labels = {
+    node_group = var.aks_streaming_task_node_group_name
+  }
+
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes that are auto-populated by AKS
+      vnet_subnet_id,
+      node_taints,
+      zones,
+      node_count,
+    ]
+  }
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "AI4E"
+  }
+}
+
+# Node pool *with spot instances* for running tasks.
+resource "azurerm_kubernetes_cluster_node_pool" "tasks-spot" {
+  name                  = "tasksspot"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.pctasks.id
+  vm_size               = "Standard_D3_v2"
+  enable_auto_scaling   = true
+  min_count             = var.aks_task_pool_min_count
+  max_count             = var.aks_task_pool_max_count
+
+  # Spot configuration
+  priority        = "Spot"
+  eviction_policy = "Delete"
+  spot_max_price  = -1
+
+  node_labels = {
+    node_group                              = var.aks_streaming_task_node_group_name
+    "kubernetes.azure.com/scalesetpriority" = "spot"
+  }
+  node_taints = [
+    "kubernetes.azure.com/scalesetpriority=spot:NoSchedule",
+  ]
+
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes that are auto-populated by AKS
+      vnet_subnet_id,
+      node_taints,
+      zones,
+      node_count,
+    ]
+  }
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "AI4E"
+  }
+}
+
+
 
 # add the role to the identity the kubernetes cluster was assigned
 resource "azurerm_role_assignment" "network" {

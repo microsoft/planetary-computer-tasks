@@ -1,0 +1,51 @@
+name: "Streaming create items example"
+args:
+- db_connection_string
+- cosmosdb_url
+- cosmosdb_account_key
+- queue_url
+- account_name
+- account_key
+- test_container_suffix
+jobs:
+  create-items:
+    id: create-items
+    tasks:
+    - id: create-items
+      image: localhost:5001/pctasks-task-base:latest
+      task: pctasks.dataset.streaming:StreamingCreateItemsTask
+      args:
+        streaming_options:
+          queue_url: ${{ args.queue_url }}
+          queue_credential:
+            account_name: ${{ args.account_name }}
+            account_key: ${{ args.account_key }}
+          visibility_timeout: 30
+          min_replica_count: 0
+          max_replica_count: 10
+          polling_interval: 30
+          trigger_queue_length: 100
+          resources:
+            limits:
+              cpu: "0.25"
+              memory: "2Gi"
+            requests:
+              cpu: "0.25"
+              memory: "2Gi"
+        create_items_function: pctasks.dataset.streaming:create_item_from_item_uri
+        collection_id: "test-collection"
+        extra_env:
+          AZURITE_HOST: "azurite"
+          AZURITE_PORT: 10000
+          AZURITE_STORAGE_ACCOUNT: "devstoreaccount1"
+      environment:
+        DB_CONNECTION_STRING: ${{ args.db_connection_string }}
+        PCTASKS_COSMOSDB__URL: ${{ args.cosmosdb_url}}
+        PCTASKS_COSMOSDB__KEY: ${{ args.cosmosdb_account_key}}
+        PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX: ${{ args.test_container_suffix }}
+
+      schema_version: 1.0.0
+is_streaming: True
+schema_version: 1.0.0
+id: test-streaming-create-items
+dataset: all

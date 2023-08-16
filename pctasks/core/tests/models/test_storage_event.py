@@ -1,6 +1,11 @@
 import pytest
 
-from pctasks.core.models.event import StorageEvent, StorageEventRecord, StorageEventType
+from pctasks.core.models.event import (
+    CreateItemErrorRecord,
+    StorageEvent,
+    StorageEventRecord,
+    StorageEventType,
+)
 
 
 @pytest.fixture
@@ -45,3 +50,19 @@ def test_storage_events_record(event_body):
 
     assert record.get_id() == "831e1650-001e-001b-66ab-eeb76e069631"
     assert StorageEventRecord.migrate(event_body)
+
+
+def test_create_item_error(event_body):
+    event_body["run_id"] = "test"
+    event_body["traceback"] = "ZeroDivisionError"
+    event_body["dequeue_count"] = 1
+    event = StorageEventRecord.parse_obj(event_body)
+    record = CreateItemErrorRecord(
+        input=event,
+        attempt=0,
+        traceback="AssertionError",
+        run_id="test",
+        type="CreateItemError",
+    )
+
+    assert record.get_id()
