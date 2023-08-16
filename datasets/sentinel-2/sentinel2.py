@@ -24,6 +24,13 @@ logger = logging.getLogger(__name__)
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
+
+# Seeing occasional "hangs" in stactools via fsspec.
+# Do this after the `stactools.sentinel2` import
+# https://github.com/stac-utils/stactools/issues/457
+pystac.StacIO.set_default(pystac.stac_io.DefaultStacIO)
+
+
 DOWNSAMPLED_BAND_KEY_RX = re.compile(r"B.*_[\d]+m")
 
 # We removed downsampled versions of these assets, so only take the lowest
