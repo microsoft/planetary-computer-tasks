@@ -3,9 +3,9 @@ entries:
   pctasks-server:
   - apiVersion: v2
     appVersion: 0.1.0
-    created: "2023-08-04T16:02:28.716772165Z"
+    created: "2023-08-18T18:15:07.820025948Z"
     description: A Helm chart for the Planetary Computer Tasks server
-    digest: 51b27688c2f3175d36e5d7731ae639f38611002b3890613cd42274157c61761e
+    digest: 1f093a5f87851e828a6418ed1aa91287f1d1134e162df7ba8a1fa58ef8de8738
     name: pctasks-server
     type: application
     urls:
@@ -101,4 +101,4 @@ entries:
     urls:
     - https://microsoft.github.io/planetary-computer-tasks/pctasks-server-2022.3.0-dev.tgz
     version: 2022.3.0-dev
-generated: "2023-08-04T16:02:28.715590453Z"
+generated: "2023-08-18T18:15:07.819080354Z"
