@@ -1,0 +1,526 @@
+{
+  "stac_version": "1.0.0",
+  "type": "Collection",
+  "id": "sentinel-2-l2a",
+  "title": "Sentinel-2 Level-2A",
+  "description": "{{ collection.description }}",
+  "license": "proprietary",
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://scihub.copernicus.eu/twiki/pub/SciHubWebPortal/TermsConditions/Sentinel_Data_Terms_and_Conditions.pdf",
+      "title": "Copernicus Sentinel data terms"
+    }
+  ],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+  ],
+  "keywords": [
+    "Sentinel",
+    "Copernicus",
+    "ESA",
+    "Satellite",
+    "Global",
+    "Imagery",
+    "Reflectance"
+  ],
+  "msft:short_description": "The Sentinel-2 program provides global imagery in thirteen spectral bands at 10m-60m resolution and a revisit time of approximately five days.  This dataset contains the global Sentinel-2 archive, from 2016 to the present, processed to L2A (bottom-of-atmosphere).",
+  "msft:storage_account": "sentinel2l2a01",
+  "msft:container": "sentinel2-l2",
+  "msft:region": "westeurope",
+  "providers": [
+    {
+      "name": "ESA",
+      "roles": [
+        "producer",
+        "licensor"
+      ],
+      "url": "https://sentinel.esa.int/web/sentinel/missions/sentinel-2"
+    },
+    {
+      "name": "Esri",
+      "roles": [
+        "processor"
+      ],
+      "url": "https://www.esri.com/"
+    },
+    {
+      "name": "Microsoft",
+      "roles": [
+        "host",
+        "processor"
+      ],
+      "url": "https://planetarycomputer.microsoft.com"
+    }
+  ],
+  "assets": {
+    "thumbnail": {
+      "title": "Sentinel 2 L2A",
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-2.png",
+      "type": "image/png",
+      "roles": [
+        "thumbnail"
+      ]
+    },
+    "geoparquet-items": {
+      "href": "abfs://items/sentinel-2-l2a.parquet",
+      "title": "GeoParquet STAC items",
+      "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+      "type": "application/x-parquet",
+      "roles": [
+        "stac-items"
+      ],
+      "table:storage_options": {
+        "account_name": "pcstacitems"
+      },
+      "msft:partition_info": {
+        "is_partitioned": true,
+        "partition_frequency": "W-MON"
+      }
+    }
+  },
+  "summaries": {
+    "platform": [
+      "Sentinel-2A",
+      "Sentinel-2B"
+    ],
+    "constellation": [
+      "sentinel-2"
+    ],
+    "instruments": [
+      "msi"
+    ],
+    "gsd": [
+      10,
+      20,
+      60
+    ],
+    "view:off_nadir": [
+      0
+    ],
+    "eo:bands": [
+      {
+        "name": "AOT",
+        "description": "aerosol optical thickness"
+      },
+      {
+        "name": "B01",
+        "common_name": "coastal",
+        "description": "coastal aerosol",
+        "center_wavelength": 0.443,
+        "full_width_half_max": 0.027,
+        "gsd": 60
+      },
+      {
+        "name": "B02",
+        "common_name": "blue",
+        "description": "visible blue",
+        "center_wavelength": 0.49,
+        "full_width_half_max": 0.098,
+        "gsd": 10
+      },
+      {
+        "name": "B03",
+        "common_name": "green",
+        "description": "visible green",
+        "center_wavelength": 0.56,
+        "full_width_half_max": 0.045,
+        "gsd": 10
+      },
+      {
+        "name": "B04",
+        "common_name": "red",
+        "description": "visible red",
+        "center_wavelength": 0.665,
+        "full_width_half_max": 0.038,
+        "gsd": 10
+      },
+      {
+        "name": "B05",
+        "common_name": "rededge",
+        "description": "vegetation classification red edge",
+        "center_wavelength": 0.704,
+        "full_width_half_max": 0.019,
+        "gsd": 20
+      },
+      {
+        "name": "B06",
+        "common_name": "rededge",
+        "description": "vegetation classification red edge",
+        "center_wavelength": 0.74,
+        "full_width_half_max": 0.018,
+        "gsd": 20
+      },
+      {
+        "name": "B07",
+        "common_name": "rededge",
+        "description": "vegetation classification red edge",
+        "center_wavelength": 0.783,
+        "full_width_half_max": 0.028,
+        "gsd": 20
+      },
+      {
+        "name": "B08",
+        "common_name": "nir",
+        "description": "near infrared",
+        "center_wavelength": 0.842,
+        "full_width_half_max": 0.145,
+        "gsd": 10
+      },
+      {
+        "name": "B8A",
+        "common_name": "rededge",
+        "description": "vegetation classification red edge",
+        "center_wavelength": 0.865,
+        "full_width_half_max": 0.033,
+        "gsd": 20
+      },
+      {
+        "name": "B09",
+        "description": "water vapor",
+        "center_wavelength": 0.945,
+        "full_width_half_max": 0.026,
+        "gsd": 60
+      },
+      {
+        "name": "B11",
+        "common_name": "swir16",
+        "description": "short-wave infrared, snow/ice/cloud classification",
+        "center_wavelength": 1.61,
+        "full_width_half_max": 0.143,
+        "gsd": 20
+      },
+      {
+        "name": "B12",
+        "common_name": "swir22",
+        "description": "short-wave infrared, snow/ice/cloud classification",
+        "center_wavelength": 2.19,
+        "full_width_half_max": 0.242,
+        "gsd": 20
+      }
+    ]
+  },
+  "item_assets": {
+    "preview": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Thumbnail",
+      "roles": [
+        "thumbnail"
+      ]
+    },
+    "safe-manifest": {
+      "type": "application/xml",
+      "title": "SAFE manifest",
+      "roles": [
+        "metadata"
+      ]
+    },
+    "product-metadata": {
+      "type": "application/xml",
+      "title": "Product metadata",
+      "roles": [
+        "metadata"
+      ]
+    },
+    "granule-metadata": {
+      "type": "application/xml",
+      "title": "Granule metadata",
+      "roles": [
+        "metadata"
+      ]
+    },
+    "inspire-metadata": {
+      "type": "application/xml",
+      "title": "INSPIRE metadata",
+      "roles": [
+        "metadata"
+      ]
+    },
+    "datastrip-metadata": {
+      "type": "application/xml",
+      "title": "Datastrip metadata",
+      "roles": [
+        "metadata"
+      ]
+    },
+    "visual": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "True color image",
+      "eo:bands": [
+        {
+          "name": "B04",
+          "common_name": "red",
+          "description": "Band 4 - Red",
+          "center_wavelength": 0.665,
+          "full_width_half_max": 0.038
+        },
+        {
+          "name": "B03",
+          "common_name": "green",
+          "description": "Band 3 - Green",
+          "center_wavelength": 0.56,
+          "full_width_half_max": 0.045
+        },
+        {
+          "name": "B02",
+          "common_name": "blue",
+          "description": "Band 2 - Blue",
+          "center_wavelength": 0.49,
+          "full_width_half_max": 0.098
+        }
+      ],
+      "gsd": 10.0,
+      "roles": [
+        "data"
+      ]
+    },
+    "B01": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Band 1 - Coastal aerosol - 60m",
+      "eo:bands": [
+        {
+          "name": "B01",
+          "common_name": "coastal",
+          "description": "Band 1 - Coastal aerosol",
+          "center_wavelength": 0.443,
+          "full_width_half_max": 0.027
+        }
+      ],
+      "gsd": 60.0,
+      "roles": [
+        "data"
+      ]
+    },
+    "B02": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Band 2 - Blue - 10m",
+      "eo:bands": [
+        {
+          "name": "B02",
+          "common_name": "blue",
+          "description": "Band 2 - Blue",
+          "center_wavelength": 0.49,
+          "full_width_half_max": 0.098
+        }
+      ],
+      "gsd": 10.0,
+      "roles": [
+        "data"
+      ]
+    },
+    "B03": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Band 3 - Green - 10m",
+      "eo:bands": [
+        {
+          "name": "B03",
+          "common_name": "green",
+          "description": "Band 3 - Green",
+          "center_wavelength": 0.56,
+          "full_width_half_max": 0.045
+        }
+      ],
+      "gsd": 10.0,
+      "roles": [
+        "data"
+      ]
+    },
+    "B04": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Band 4 - Red - 10m",
+      "eo:bands": [
+        {
+          "name": "B04",
+          "common_name": "red",
+          "description": "Band 4 - Red",
+          "center_wavelength": 0.665,
+          "full_width_half_max": 0.038
+        }
+      ],
+      "gsd": 10.0,
+      "roles": [
+        "data"
+      ]
+    },
+    "B05": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Band 5 - Vegetation red edge 1 - 20m",
+      "eo:bands": [
+        {
+          "name": "B05",
+          "common_name": "rededge",
+          "description": "Band 5 - Vegetation red edge 1",
+          "center_wavelength": 0.704,
+          "full_width_half_max": 0.019
+        }
+      ],
+      "gsd": 20.0,
+      "roles": [
+        "data"
+      ]
+    },
+    "B06": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Band 6 - Vegetation red edge 2 - 20m",
+      "eo:bands": [
+        {
+          "name": "B06",
+          "common_name": "rededge",
+          "description": "Band 6 - Vegetation red edge 2",
+          "center_wavelength": 0.74,
+          "full_width_half_max": 0.018
+        }
+      ],
+      "gsd": 20.0,
+      "roles": [
+        "data"
+      ]
+    },
+    "B07": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Band 7 - Vegetation red edge 3 - 20m",
+      "eo:bands": [
+        {
+          "name": "B07",
+          "common_name": "rededge",
+          "description": "Band 7 - Vegetation red edge 3",
+          "center_wavelength": 0.783,
+          "full_width_half_max": 0.028
+        }
+      ],
+      "gsd": 20.0,
+      "roles": [
+        "data"
+      ]
+    },
+    "B08": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Band 8 - NIR - 10m",
+      "eo:bands": [
+        {
+          "name": "B08",
+          "common_name": "nir",
+          "description": "Band 8 - NIR",
+          "center_wavelength": 0.842,
+          "full_width_half_max": 0.145
+        }
+      ],
+      "gsd": 10.0,
+      "roles": [
+        "data"
+      ]
+    },
+    "B8A": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Band 8A - Vegetation red edge 4 - 20m",
+      "eo:bands": [
+        {
+          "name": "B8A",
+          "common_name": "rededge",
+          "description": "Band 8A - Vegetation red edge 4",
+          "center_wavelength": 0.865,
+          "full_width_half_max": 0.033
+        }
+      ],
+      "gsd": 20.0,
+      "roles": [
+        "data"
+      ]
+    },
+    "B09": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Band 9 - Water vapor - 60m",
+      "eo:bands": [
+        {
+          "name": "B09",
+          "description": "Band 9 - Water vapor",
+          "center_wavelength": 0.945,
+          "full_width_half_max": 0.026
+        }
+      ],
+      "gsd": 60.0,
+      "roles": [
+        "data"
+      ]
+    },
+    "B11": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Band 11 - SWIR (1.6) - 20m",
+      "eo:bands": [
+        {
+          "name": "B11",
+          "common_name": "swir16",
+          "description": "Band 11 - SWIR (1.6)",
+          "center_wavelength": 1.61,
+          "full_width_half_max": 0.143
+        }
+      ],
+      "gsd": 20.0,
+      "roles": [
+        "data"
+      ]
+    },
+    "B12": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Band 12 - SWIR (2.2) - 20m",
+      "eo:bands": [
+        {
+          "name": "B12",
+          "common_name": "swir22",
+          "description": "Band 12 - SWIR (2.2)",
+          "center_wavelength": 2.19,
+          "full_width_half_max": 0.242
+        }
+      ],
+      "gsd": 20.0,
+      "roles": [
+        "data"
+      ]
+    },
+    "AOT": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Aerosol optical thickness (AOT)",
+      "gsd": 10.0,
+      "roles": [
+        "data"
+      ]
+    },
+    "SCL": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Scene classfication map (SCL)",
+      "gsd": 20.0,
+      "roles": [
+        "data"
+      ]
+    },
+    "WVP": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "Water vapour (WVP)",
+      "gsd": 10.0,
+      "roles": [
+        "data"
+      ]
+    }
+  },
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -180,
+          -90,
+          180,
+          90
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2015-06-27T10:25:31Z",
+          null
+        ]
+      ]
+    }
+  }
+}

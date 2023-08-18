@@ -1,0 +1,44 @@
+id: sentinel-2
+image: ${{ args.registry }}/pctasks-sentinel-2:2023.8.15.0
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./sentinel2.py) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+
+collections:
+  - id: sentinel-2-l2a
+    template: ${{ local.path(./collection) }}
+    class: sentinel2:Sentinel2Collection
+    asset_storage:
+      # The blob storage pattern is
+      #
+      # | sentinel2-l2/
+      # |   01/      # 60 directories
+      # |     C/     # ~15-20 directories
+      # |       CV/  # ~20-60 directories
+      # |         2022/
+      # |           01/
+      # |             06/
+      # |               S2B_MSIL2A_20220106T210519_N0300_R071_T01CCV_20220108T025453.SAFE/
+      # |                 manifest.safe
+      # |               ...
+      # |                 ...
+      - uri: blob://sentinel2l2a01/sentinel2-l2/
+        chunks:
+          splits:
+            - depth: 2  # depth: 1 --> 60 tasks; depth: 2 --> ~1000 tasks
+          options:
+            # extensions: [.safe]
+            ends_with: manifest.safe
+            min_depth: 7
+            max_depth: 8
+            chunk_length: 5000
+    chunk_storage:
+      uri: blob://sentinel2l2a01/sentinel2-l2-info/pctasks-chunks/
