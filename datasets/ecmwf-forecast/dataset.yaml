@@ -15,7 +15,7 @@ environment:
 
 collections:
   - id: ecmwf-forecast
-    template: ${{ local.path(./collection/ecmwf-forecast) }}
+    template: ${{ local.path(./collection/) }}
     class: ecmwf_forecast:EcmwfCollection
     asset_storage:
       - uri: blob://ai4edataeuwest/ecmwf/
