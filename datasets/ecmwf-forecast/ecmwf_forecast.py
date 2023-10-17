@@ -17,6 +17,10 @@ class EcmwfCollection(Collection):
 
         grib2_href = asset_storage.get_url(asset_path)
         index_href = grib2_href.rsplit(".", 1)[0] + ".index"
-        item = stac.create_item([grib2_href, index_href], split_by_step=True)
 
-        return [item]
+        bad_files = []
+        if grib2_href in bad_files:
+            return []
+        else:
+            item = stac.create_item([grib2_href, index_href], split_by_step=True)
+            return [item]

@@ -1,5 +1,5 @@
 id: ecmwf_forecast
-image: ${{ args.registry }}/pctasks-ecmwf-forecast:20230614.1
+image: ${{ args.registry }}/pctasks-ecmwf-forecast:20231017.1
 
 args:
 - registry
@@ -12,16 +12,16 @@ environment:
   AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
   AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
   APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
-
 collections:
-  - id: ecmwf-forecast
-    template: ${{ local.path(./collection/) }}
+  - id: ecmwf-forecast-wave-fc
+    template: ${{ local.path(./collection/ecmwf-forecast-wave-fc/) }}
     class: ecmwf_forecast:EcmwfCollection
     asset_storage:
       - uri: blob://ai4edataeuwest/ecmwf/
         chunks:
           options:
-            matches: (enfo|oper|waef|wave)(?!-opendata)
+            chunk_length: 1000
+            matches: (wave-fc)(?!-opendata)
             extensions: [.grib2]
     chunk_storage:
-      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/
+      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/wave-fc/
