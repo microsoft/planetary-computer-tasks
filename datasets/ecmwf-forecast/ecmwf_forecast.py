@@ -18,7 +18,7 @@ class EcmwfCollection(Collection):
         grib2_href = asset_storage.get_url(asset_path)
         index_href = grib2_href.rsplit(".", 1)[0] + ".index"
 
-        bad_files = []
+        bad_files = ['blob://ai4edataeuwest/ecmwf/20220129/12z/0p4-beta/wave/20220129120000-162h-wave-fc.grib2']
         if grib2_href in bad_files:
             return []
         else:
