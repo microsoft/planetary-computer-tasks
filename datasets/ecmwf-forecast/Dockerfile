@@ -68,6 +68,8 @@ RUN cd /opt/src/pctasks/dataset && \
 COPY ./datasets/ecmwf-forecast/requirements.txt /opt/src/datasets/ecmwf-forecast/requirements.txt
 RUN python3 -m pip install -r /opt/src/datasets/ecmwf-forecast/requirements.txt
 
+COPY ./datasets/ecmwf-forecast/modified_utils.py /opt/conda/lib/python3.8/site-packages/kerchunk/utils.py
+COPY ./datasets/ecmwf-forecast/modified_grib2.py /opt/conda/lib/python3.8/site-packages/kerchunk/grib2.py
 # Setup Python Path to allow import of test modules
 ENV PYTHONPATH=/opt/src:$PYTHONPATH
 
