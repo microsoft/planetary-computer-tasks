@@ -17,7 +17,7 @@ resource "azurerm_network_security_group" "pctasks" {
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "*"
+    destination_port_ranges    = [80,29877,443,29876]
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
