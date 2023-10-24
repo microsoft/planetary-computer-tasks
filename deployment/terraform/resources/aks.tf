@@ -12,12 +12,15 @@ resource "azurerm_kubernetes_cluster" "pctasks" {
   default_node_pool {
     name           = "agentpool"
     vm_size        = "Standard_DS2_v2"
+    os_sku = "AzureLinux"
     node_count     = var.aks_node_count
     vnet_subnet_id = azurerm_subnet.k8snode_subnet.id
 
     node_labels = {
       node_group = "default"
     }
+
+    temporary_name_for_rotation = "tmpdefault"
   }
 
   identity {
@@ -39,6 +42,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "argowf" {
   name                  = "argowf"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.pctasks.id
   vm_size               = "Standard_DS2_v2"
+  os_sku = "AzureLinux"
   node_count            = 1
 
   node_labels = {
@@ -65,6 +69,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "tasks" {
   name                  = "tasks"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.pctasks.id
   vm_size               = "Standard_D3_v2"
+  os_sku = "AzureLinux"
   enable_auto_scaling   = true
   min_count             = var.aks_task_pool_min_count
   max_count             = var.aks_task_pool_max_count
@@ -94,6 +99,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "tasks-spot" {
   name                  = "tasksspot"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.pctasks.id
   vm_size               = "Standard_D3_v2"
+  os_sku = "AzureLinux"
   enable_auto_scaling   = true
   min_count             = var.aks_task_pool_min_count
   max_count             = var.aks_task_pool_max_count
