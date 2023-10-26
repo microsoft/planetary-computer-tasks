@@ -343,7 +343,8 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         prepare_funcs
 
         pushd "${SRC_DIR}/functions_deploy"
-        func azure functionapp publish ${FUNCTION_APP_NAME} --python
+        # pipe output to /dev/null to avoid leaking secrets
+        func azure functionapp publish ${FUNCTION_APP_NAME} --python > /dev/null
         popd
 
     fi
