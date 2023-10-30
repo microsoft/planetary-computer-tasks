@@ -1,5 +1,5 @@
 id: ecmwf_forecast
-image: ${{ args.registry }}/pctasks-ecmwf-forecast:20231017.1
+image: ${{ args.registry }}/pctasks-ecmwf-forecast:20231030.0
 
 args:
 - registry
@@ -89,7 +89,7 @@ collections:
     template: ${{ local.path(./collection/ecmwf-forecast-wave-fc/) }}
     class: ecmwf_forecast:EcmwfCollection
     asset_storage:
-      - uri: blob://ai4edataeuwest/ecmwf/
+      - uri: blob://ai4edataeuwest/ecmwf/20231019/
         chunks:
           options:
             chunk_length: 10000
