@@ -29,7 +29,7 @@ RUN curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/downloa
 ENV PATH /opt/conda/bin:$PATH
 ENV LD_LIBRARY_PATH /opt/conda/lib/:$LD_LIBRARY_PATH
 
-RUN mamba install -y -c conda-forge python=3.8 gdal=3.3.3 pip setuptools cython numpy==1.21.5
+RUN mamba install -y -c conda-forge python=3.10 gdal=3.3.3 pip setuptools cython numpy==1.21.5
 
 RUN python -m pip install --upgrade pip
 
@@ -68,8 +68,6 @@ RUN cd /opt/src/pctasks/dataset && \
 COPY ./datasets/ecmwf-forecast/requirements.txt /opt/src/datasets/ecmwf-forecast/requirements.txt
 RUN python3 -m pip install -r /opt/src/datasets/ecmwf-forecast/requirements.txt
 
-COPY ./datasets/ecmwf-forecast/modified_utils.py /opt/conda/lib/python3.8/site-packages/kerchunk/utils.py
-COPY ./datasets/ecmwf-forecast/modified_grib2.py /opt/conda/lib/python3.8/site-packages/kerchunk/grib2.py
 # Setup Python Path to allow import of test modules
 ENV PYTHONPATH=/opt/src:$PYTHONPATH
 
