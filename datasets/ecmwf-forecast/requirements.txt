@@ -1,3 +1,3 @@
-git+https://github.com/stactools-packages/ecmwf-forecast
+git+https://github.com/lawi119/ecmwf-forecast@a85596dccef79d52b9c0fdfe81db832133e82add
 kerchunk
 ecmwflibs
