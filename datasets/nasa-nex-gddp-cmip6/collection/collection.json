@@ -1,30 +1,44 @@
 {
   "type": "Collection",
   "id": "nasa-nex-gddp-cmip6",
-  "stac_version": "1.0.0",
-  "description": "{{ collection.description }}",
   "links": [
-    {
-      "rel": "root",
-      "href": "/collection.json",
-      "type": "application/json",
-      "title": "Earth Exchange Global Daily Downscaled Projections (NEX-GDDP-CMIP6)"
-    },
-    {
-      "rel": "license",
-      "href": "https://pcmdi.llnl.gov/CMIP6/TermsOfUse/TermsOfUse6-1.html",
-      "type": "text/html"
-    },
-    {
-      "rel": "documentation",
-      "href": "https://www.nccs.nasa.gov/sites/default/files/NEX-GDDP-CMIP6-Tech_Note.pdf",
-      "type": "application/pdf"
-    },
-    {
-      "rel": "self",
-      "href": "/collection.json",
-      "type": "application/json"
-    }
+        {
+            "rel": "items",
+            "type": "application/geo+json",
+            "href": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/nasa-nex-gddp-cmip6/items"
+        },
+        {
+            "rel": "parent",
+            "type": "application/json",
+            "href": "https://planetarycomputer.microsoft.com/api/stac/v1/"
+        },
+        {
+            "rel": "root",
+            "type": "application/json",
+            "href": "https://planetarycomputer.microsoft.com/api/stac/v1/"
+        },
+        {
+            "rel": "self",
+            "type": "application/json",
+            "href": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/nasa-nex-gddp-cmip6"
+        },
+        {
+            "rel": "license",
+            "href": "https://pcmdi.llnl.gov/CMIP6/TermsOfUse/TermsOfUse6-1.html",
+            "type": "text/html",
+            "title": "CMIP6 Terms of Use"
+        },
+        {
+            "rel": "documentation",
+            "href": "https://www.nccs.nasa.gov/sites/default/files/NEX-GDDP-CMIP6-Tech_Note.pdf",
+            "type": "application/pdf"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/nasa-nex-gddp-cmip6",
+            "title": "Human readable dataset overview and reference",
+            "type": "text/html"
+        }
   ],
   "stac_extensions": [
     "https://stac-extensions.github.io/datacube/v2.0.0/schema.json",
