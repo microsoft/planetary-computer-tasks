@@ -1,5 +1,5 @@
 id: ecmwf_forecast
-image: ${{ args.registry }}/pctasks-ecmwf-forecast:20230614.1
+image: ${{ args.registry }}/pctasks-ecmwf-forecast:20231102.5
 
 args:
 - registry
@@ -12,16 +12,88 @@ environment:
   AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
   AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
   APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
-
 collections:
-  - id: ecmwf-forecast
-    template: ${{ local.path(./collection/) }}
+  - id: ecmwf-forecast-enfo-ep
+    template: ${{ local.path(./collection/ecmwf-forecast-enfo-ep/) }}
     class: ecmwf_forecast:EcmwfCollection
     asset_storage:
       - uri: blob://ai4edataeuwest/ecmwf/
         chunks:
           options:
-            matches: (enfo|oper|waef|wave)(?!-opendata)
+            chunk_length: 10000
+            matches: (enfo-ep)(?!-opendata)
             extensions: [.grib2]
     chunk_storage:
-      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/
+      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/enfo-ep/
+  - id: ecmwf-forecast-oper-fc
+    template: ${{ local.path(./collection/ecmwf-forecast-oper-fc/) }}
+    class: ecmwf_forecast:EcmwfCollection
+    asset_storage:
+      - uri: blob://ai4edataeuwest/ecmwf/
+        chunks:
+          options:
+            chunk_length: 10000
+            matches: (oper-fc)(?!-opendata)
+            extensions: [.grib2]
+    chunk_storage:
+      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/oper-fc/
+  - id: ecmwf-forecast-scda-fc
+    template: ${{ local.path(./collection/ecmwf-forecast-scda-fc/) }}
+    class: ecmwf_forecast:EcmwfCollection
+    asset_storage:
+      - uri: blob://ai4edataeuwest/ecmwf/
+        chunks:
+          options:
+            chunk_length: 10000
+            matches: (scda-fc)(?!-opendata)
+            extensions: [.grib2]
+    chunk_storage:
+      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/scda-fc/
+  - id: ecmwf-forecast-scwv-fc
+    template: ${{ local.path(./collection/ecmwf-forecast-scwv-fc/) }}
+    class: ecmwf_forecast:EcmwfCollection
+    asset_storage:
+      - uri: blob://ai4edataeuwest/ecmwf/
+        chunks:
+          options:
+            chunk_length: 10000
+            matches: (scwv-fc)(?!-opendata)
+            extensions: [.grib2]
+    chunk_storage:
+      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/scwv-fc/
+  - id: ecmwf-forecast-waef-ef
+    template: ${{ local.path(./collection/ecmwf-forecast-waef-ef/) }}
+    class: ecmwf_forecast:EcmwfCollection
+    asset_storage:
+      - uri: blob://ai4edataeuwest/ecmwf/
+        chunks:
+          options:
+            chunk_length: 10000
+            matches: (waef-ef)(?!-opendata)
+            extensions: [.grib2]
+    chunk_storage:
+      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/waef-ef/
+  - id: ecmwf-forecast-waef-ep
+    template: ${{ local.path(./collection/ecmwf-forecast-waef-ep/) }}
+    class: ecmwf_forecast:EcmwfCollection
+    asset_storage:
+      - uri: blob://ai4edataeuwest/ecmwf/
+        chunks:
+          options:
+            chunk_length: 10000
+            matches: (waef-ep)(?!-opendata)
+            extensions: [.grib2]
+    chunk_storage:
+      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/waef-ep/
+  - id: ecmwf-forecast-wave-fc
+    template: ${{ local.path(./collection/ecmwf-forecast-wave-fc/) }}
+    class: ecmwf_forecast:EcmwfCollection
+    asset_storage:
+      - uri: blob://ai4edataeuwest/ecmwf/
+        chunks:
+          options:
+            chunk_length: 10000
+            matches: (wave-fc)(?!-opendata)
+            extensions: [.grib2]
+    chunk_storage:
+      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/wave-fc/

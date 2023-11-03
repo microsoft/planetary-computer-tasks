@@ -17,6 +17,20 @@ class EcmwfCollection(Collection):
 
         grib2_href = asset_storage.get_url(asset_path)
         index_href = grib2_href.rsplit(".", 1)[0] + ".index"
-        item = stac.create_item([grib2_href, index_href], split_by_step=True)
 
-        return [item]
+        bad_files = ["blob://ai4edataeuwest/ecmwf/20220129/12z/0p4-beta/wave/20220129120000-162h-wave-fc.grib2"]
+        if grib2_href in bad_files:
+            return []
+        else:
+            item = stac.create_item([grib2_href, index_href], split_by_step=True)
+            return [item]
+
+
+if __name__ == "__main__":
+    [item] = EcmwfCollection.create_item(
+    "blob://ai4edataeuwest/ecmwf/20231019/00z/0p4-beta/wave/20231019000000-0h-wave-fc.grib2",
+        StorageFactory(),
+    )
+
+    assert item.assets["data"].extra_fields == {}
+    assert item.properties["ecmwf:forecast_datetime"] == "2023-10-19T00:00:00Z"
