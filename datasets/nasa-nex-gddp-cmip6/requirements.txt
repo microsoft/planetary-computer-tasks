@@ -1,0 +1,8 @@
+adlfs
+h5netcdf
+h5py
+kerchunk
+netcdf4
+scipy
+xarray
+xstac

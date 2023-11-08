@@ -1,0 +1,30 @@
+id: nasa_nex_cddp_cmip6
+image: ${{ args.registry }}/pctasks-nasa-nex
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./nasa_nex_gddp_cmip6.py) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+  APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+
+collections:
+  - id: nasa-nex-gddp-cmip6
+    template: ${{ local.path(./collection/) }}
+    class: nasa_nex_cddp_cmip6:Cmip6Collection
+    asset_storage:
+      - uri: blob://nasagddp/nex-gddp-cmip6/NEX/GDDP-CMIP6/
+        chunks:
+          options:
+            extensions: [.nc]
+            matches: (rsds)
+            chunk_length: 1
+            
+    chunk_storage:
+      uri: blob://nasagddp/nex-gddp-cmip6-etl-data/pctasks/
+
