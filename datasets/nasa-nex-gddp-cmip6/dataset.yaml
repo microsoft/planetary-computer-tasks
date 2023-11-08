@@ -26,5 +26,5 @@ collections:
             chunk_length: 1
             
     chunk_storage:
-      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/
+      uri: blob://nasagddp/nex-gddp-cmip6-etl-data/pctasks/
 

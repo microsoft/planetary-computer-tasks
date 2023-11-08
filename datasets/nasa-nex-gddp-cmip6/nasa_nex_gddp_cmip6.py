@@ -67,7 +67,7 @@ class Cmip6Collection(Collection):
             r.properties[f"cmip6:{k}"] = v
         return r
 
-    def iter_all_strings(cls):
+    def iter_all_strings(self):
         for size in itertools.count(1):
             for s in itertools.product(ascii_lowercase, repeat=size):
                 yield "".join(s)
