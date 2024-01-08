@@ -131,15 +131,14 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
             COSMOSDB_EMULATOR=""
         fi
 
-        # Flaky, may want to revive this in the future.
-        # echo " -- SETTING UP COSMOSDB"
-        # if [ "${COSMOSDB_EMULATOR}" ]; then
-        #     if [ -z $(docker-compose ${COSMOSDB_EMULATOR} ps -q cosmosdb) ]; then
+        echo " -- SETTING UP COSMOSDB"
+        if [ "${COSMOSDB_EMULATOR}" ]; then
+            if [ -z $(docker-compose ${COSMOSDB_EMULATOR} ps -q cosmosdb) ]; then
 
-        #         echo "CosmosDB is not running. Starting it..."
-        #         docker-compose ${COSMOSDB_EMULATOR} up -d cosmosdb
-        #     fi
-        # fi
+                echo "CosmosDB is not running. Starting it..."
+                docker-compose ${COSMOSDB_EMULATOR} up -d cosmosdb
+            fi
+        fi
 
         docker-compose ${COSMOSDB_EMULATOR} -f docker-compose.console.yml run --rm \
             dev \
