@@ -1,4 +1,4 @@
-# Planetary Computer Tasks (pctasks)
+# Planetary Computer Tasks (pctasks) 🌎
 [![Build Status](https://github.com/microsoft/planetary-computer-tasks/actions/workflows/cicd.yml/badge.svg?branch=main)](https://github.com/microsoft/planetary-computer-tasks/actions/workflows/cicd.yml)
 [![PyPI version](https://badge.fury.io/py/pctasks.client.svg)](https://badge.fury.io/py/pctasks.client)
 [![Documentation Status](https://readthedocs.org/projects/planetary-computer-tasks/badge/?version=latest)](https://planetary-computer-tasks.readthedocs.io/en/latest/?badge=latest)
@@ -9,7 +9,7 @@ the Planetary Computer STAC.
 
 See [the documentation](https://planetary-computer-tasks.readthedocs.io) for more.
 
-## Contributing
+## Contributing 🏗️
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
@@ -23,7 +23,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-## Trademarks
+## Trademarks ⚖️
 
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft
 trademarks or logos is subject to and must follow
