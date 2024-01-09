@@ -161,25 +161,30 @@ class StreamingTaskMixin:
                         # dataset.streaming:process_message
                         # TODO: Implement a dead letter queue
                         logger.exception("Failed to process message")
-                        if message.dequeue_count >= 3:
+                        if (
+                            message.dequeue_count is not None
+                            and message.dequeue_count >= 3
+                        ):
                             logger.info(
                                 "Deleting message after 3 failures. id=%s", message.id
                             )
                             qc.delete_message(message)  # type: ignore
                     else:
                         logger.info("Processed message id=%s", message.id)
-                        time_to_visible = (
-                            message.next_visible_on
-                            - datetime.datetime.now(tz=datetime.timezone.utc)
-                        )
-
-                        if time_to_visible < datetime.timedelta(0):
-                            logger.warning(
-                                "Deleting message that is already visible. Consider "
-                                "setting a higher visibility timeout. message_id=%s",
-                                message.id,
+                        if message.next_visible_on is not None:
+                            time_to_visible = (
+                                message.next_visible_on
+                                - datetime.datetime.now(tz=datetime.timezone.utc)
                             )
-                        qc.delete_message(message)  # type: ignore
+
+                            if time_to_visible < datetime.timedelta(0):
+                                logger.warning(
+                                    "Deleting message that is already visible. "
+                                    "Consider setting a higher visibility timeout. "
+                                    "message_id=%s",
+                                    message.id,
+                                )
+                            qc.delete_message(message)  # type: ignore
 
                     message_count += 1
                     if (
