@@ -13,7 +13,7 @@ install_requires = [
 ]
 
 extra_reqs = {
-    "dev": ["pytest", "pytest-cov", "pre-commit"],
+    "dev": ["pytest", "pytest-cov", "pre-commit", "httpx"],
     "server": [
         "uvicorn[standard]>=0.12.0,<0.16.0",
     ],
