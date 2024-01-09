@@ -79,7 +79,7 @@ RUN cd /opt/src/pctasks/notify && \
 
 COPY pctasks/dev /opt/src/pctasks/dev
 RUN cd /opt/src/pctasks/dev && \
-     pip install -e .[server]
+     pip install -e .[server,dev]
 
 # Setup Python Path to allow import of test modules
 ENV PYTHONPATH=/opt/src:$PYTHONPATH
