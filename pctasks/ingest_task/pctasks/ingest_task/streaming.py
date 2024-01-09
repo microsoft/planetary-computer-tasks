@@ -95,7 +95,7 @@ class StreamingIngestItemsTask(
                 type=IngestErrorType.INVALID_DATA,
                 input=message.content,
                 run_id=context.run_id,
-                attempt=message.dequeue_count,
+                attempt=message.dequeue_count or 1,
                 traceback=traceback.format_exc(),
             )
         else:
@@ -112,7 +112,7 @@ class StreamingIngestItemsTask(
                     type=IngestErrorType.ITEM_INGEST,
                     input=message.content,
                     run_id=context.run_id,
-                    attempt=message.dequeue_count,
+                    attempt=message.dequeue_count or 1,
                     traceback=traceback.format_exc(),
                 )
 
