@@ -9,6 +9,7 @@ install_requires = [
     "pctasks.core>=0.1.0",
     "pctasks.run>=0.1.0",
     "fastapi>=0.108.0",
+    "python-multipart==0.0.5",
 ]
 
 extra_reqs = {
