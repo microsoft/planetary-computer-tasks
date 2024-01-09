@@ -8,12 +8,12 @@ with open("README.md") as f:
 install_requires = [
     "pctasks.core>=0.1.0",
     "pctasks.run>=0.1.0",
-    "fastapi==0.78.0,<0.79",
-    "python-multipart==0.0.5"
+    "fastapi>=0.108.0",
+    "python-multipart==0.0.5",
 ]
 
 extra_reqs = {
-    "dev": ["pytest", "pytest-cov", "pre-commit"],
+    "dev": ["pytest", "pytest-cov", "pre-commit", "httpx"],
     "server": [
         "uvicorn[standard]>=0.12.0,<0.16.0",
     ],

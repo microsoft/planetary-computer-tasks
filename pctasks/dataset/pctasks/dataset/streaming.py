@@ -209,7 +209,7 @@ class StreamingCreateItemsTask(
                 id=f"{parsed_message.id}:{context.run_id}:{message.dequeue_count}",
                 input=parsed_message,
                 traceback=traceback.format_exc(),
-                attempt=message.dequeue_count,
+                attempt=message.dequeue_count or 1,
                 run_id=context.run_id,
             )
             return (None, error)

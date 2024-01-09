@@ -13,7 +13,7 @@ install_requires = [
     "pctasks.cli>=0.1.0",
 ]
 
-extra_reqs = {"server": ["fastapi==0.78.0,<0.79", "uvicorn[standard]>=0.12.0,<0.16.0"]}
+extra_reqs = {"server": ["fastapi>=0.108.0", "uvicorn[standard]>=0.12.0,<0.16.0"]}
 
 
 setup(

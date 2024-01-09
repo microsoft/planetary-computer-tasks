@@ -67,7 +67,7 @@ RUN cd /opt/src/pctasks/run && \
 
 COPY pctasks/server /opt/src/pctasks/server
 RUN cd /opt/src/pctasks/server && \
-     pip install -e .
+     pip install -e .[dev]
 
 COPY pctasks/dataset /opt/src/pctasks/dataset
 RUN cd /opt/src/pctasks/dataset && \
