@@ -44,8 +44,8 @@ module "resources" {
   streaming_taskio_sp_client_secret = var.streaming_taskio_sp_client_secret
   streaming_taskio_sp_object_id = var.streaming_taskio_sp_object_id
 
-  k8s_version = "1.25.6"
-  k8s_orchestrator_version = "1.25.6"
+  k8s_version = "1.26.6"
+  k8s_orchestrator_version = "1.26.6"
 
   stac_db_connection_string =  var.stac_db_connection_string
 
