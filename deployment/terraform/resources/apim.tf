@@ -10,6 +10,12 @@ resource "azurerm_api_management" "pctasks" {
   identity {
     type = "SystemAssigned"
   }
+
+  virtual_network_type = "External"
+  public_ip_address_id = azurerm_public_ip.pctasks_apim.id
+  virtual_network_configuration {
+    subnet_id = azurerm_subnet.apim_subnet.id
+  }
 }
 
 resource "azurerm_key_vault_access_policy" "apim" {

@@ -1,4 +1,4 @@
 output "resources" {
-  value = module.resources
+  value     = module.resources
   sensitive = true
 }
