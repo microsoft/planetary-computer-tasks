@@ -58,3 +58,17 @@ resource "azurerm_subnet_network_security_group_association" "k8snode_subnet" {
   subnet_id                 = azurerm_subnet.k8snode_subnet.id
   network_security_group_id = azurerm_network_security_group.pctasks.id
 }
+
+# APIM node subnet
+
+resource "azurerm_subnet" "apim_subnet" {
+  name                 = "snet-${local.prefix}-apim"
+  virtual_network_name = azurerm_virtual_network.pctasks.name
+  resource_group_name  = azurerm_resource_group.pctasks.name
+  address_prefixes     = ["10.4.0.0/16"]
+}
+
+resource "azurerm_subnet_network_security_group_association" "apim_subnet" {
+  subnet_id                 = azurerm_subnet.apim_subnet.id
+  network_security_group_id = azurerm_network_security_group.pctasks.id
+}
