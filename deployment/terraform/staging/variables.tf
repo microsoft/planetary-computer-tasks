@@ -13,9 +13,9 @@ variable "batch_default_pool_id" {
 }
 
 variable "min_low_priority" {
-    type = number
-    default = 0
-    description = "Minimum number of low priority Batch nodes to keep running"
+  type        = number
+  default     = 0
+  description = "Minimum number of low priority Batch nodes to keep running"
 }
 
 # ACR
@@ -66,51 +66,51 @@ variable "pctasks_run_image_tag" {
 ## Keyvault
 
 variable "task_sp_tenant_id" {
-  type    = string
+  type = string
 }
 
 variable "task_sp_object_id" {
-  type    = string
+  type = string
 }
 
 variable "task_sp_client_id" {
-  type    = string
+  type = string
 }
 
 variable "task_sp_client_secret" {
-  type    = string
+  type = string
 }
 
 variable "kv_sp_tenant_id" {
-  type    = string
+  type = string
 }
 
 variable "kv_sp_object_id" {
-  type    = string
+  type = string
 }
 
 variable "kv_sp_client_id" {
-  type    = string
+  type = string
 }
 
 variable "kv_sp_client_secret" {
-  type    = string
+  type = string
 }
 
 variable "deploy_secrets_kv_name" {
-  type    = string
+  type = string
 }
 
-variable deploy_secrets_kv_rg {
-  type    = string
+variable "deploy_secrets_kv_rg" {
+  type = string
 }
 
-variable access_key_secret_name {
-  type    = string
+variable "access_key_secret_name" {
+  type = string
 }
 
-variable backend_api_app_id_secret_name {
-  type    = string
+variable "backend_api_app_id_secret_name" {
+  type = string
 }
 
 ## Database
@@ -130,35 +130,35 @@ variable "cosmosdb_resource_group" {
 ## PCTasks Server
 
 variable "pctasks_server_sp_tenant_id" {
-  type    = string
+  type = string
 }
 
 variable "pctasks_server_sp_client_id" {
-  type    = string
+  type = string
 }
 
 variable "pctasks_server_sp_client_secret" {
-  type    = string
+  type = string
 }
 
 variable "pctasks_server_sp_object_id" {
-  type    = string
+  type = string
 }
 
 variable "streaming_taskio_sp_client_id" {
-  type    = string
+  type = string
 }
 
 variable "streaming_taskio_sp_client_secret" {
-  type    = string
+  type = string
 }
 
 variable "streaming_taskio_sp_object_id" {
-  type    = string
+  type = string
 }
 
 variable "streaming_taskio_sp_tenant_id" {
-  type    = string
+  type = string
 }
 
 ## AKS
