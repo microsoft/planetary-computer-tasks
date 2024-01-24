@@ -89,7 +89,7 @@ resource "azurerm_api_management_backend" "pctasks" {
   resource_group_name = azurerm_resource_group.pctasks.name
   api_management_name = azurerm_api_management.pctasks.name
   protocol            = "http"
-  url                 = "https://${azurerm_public_ip.pctasks.domain_name_label}.${local.location}.cloudapp.azure.com/"
+  url                 = "https://${var.k8s_vnet_ingress_address}/"
   tls {
     validate_certificate_chain = false
     validate_certificate_name  = false

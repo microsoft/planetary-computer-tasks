@@ -47,6 +47,7 @@ function gather_tf_output() {
     export ENVIRONMENT=$(tf_output environment)
     export INGRESS_IP=$(tf_output ingress_ip)
     export DNS_LABEL=$(tf_output dns_label)
+    export INTERNAL_INGRESS_IP=$(tf_output internal_ingress_ip)
 
     if [ "${1}" ]; then
         popd
