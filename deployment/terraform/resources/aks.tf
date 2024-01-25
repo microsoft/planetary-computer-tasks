@@ -9,6 +9,9 @@ resource "azurerm_kubernetes_cluster" "pctasks" {
     log_analytics_workspace_id = azurerm_log_analytics_workspace.pctasks.id
   }
 
+  # https://learn.microsoft.com/en-us/azure/aks/auto-upgrade-cluster#use-cluster-auto-upgrade
+  automatic_channel_upgrade = "rapid"
+
   # https://learn.microsoft.com/en-us/azure/aks/auto-upgrade-node-os-image
   node_os_channel_upgrade = "NodeImage"
 
