@@ -9,10 +9,13 @@ resource "azurerm_kubernetes_cluster" "pctasks" {
     log_analytics_workspace_id = azurerm_log_analytics_workspace.pctasks.id
   }
 
+  # https://learn.microsoft.com/en-us/azure/aks/auto-upgrade-node-os-image
+  node_os_channel_upgrade = "NodeImage"
+
   default_node_pool {
     name           = "agentpool"
     vm_size        = "Standard_DS2_v2"
-    os_sku = "AzureLinux"
+    os_sku         = "AzureLinux"
     node_count     = var.aks_node_count
     vnet_subnet_id = azurerm_subnet.k8snode_subnet.id
 
