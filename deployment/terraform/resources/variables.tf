@@ -27,6 +27,12 @@ variable "k8s_version" {
   type = string
 }
 
+variable "k8s_vnet_ingress_address" {
+  type = string
+  description = "Virtual network address associated with an Azure load balancer associated with a kubernetes ingress controller."
+  default = "10.2.0.15"
+}
+
 variable "k8s_orchestrator_version" {
   type = string
 }

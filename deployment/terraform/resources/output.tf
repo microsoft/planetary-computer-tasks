@@ -32,6 +32,10 @@ output "dns_label" {
   value = azurerm_public_ip.pctasks.domain_name_label
 }
 
+output "internal_ingress_ip" {
+  value = var.k8s_vnet_ingress_address
+}
+
 output "cloudapp_hostname" {
   value = "${azurerm_public_ip.pctasks.domain_name_label}.${local.location}.cloudapp.azure.com"
 }
