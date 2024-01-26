@@ -6,6 +6,7 @@ ENV TZ=UTC
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 ENV PIP_NO_CACHE_DIR=1
+RUN pip install "setuptools>=65.5.1"
 
 RUN python -m pip install --upgrade pip
 
