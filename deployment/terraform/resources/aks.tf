@@ -15,6 +15,8 @@ resource "azurerm_kubernetes_cluster" "pctasks" {
   # https://learn.microsoft.com/en-us/azure/aks/auto-upgrade-node-os-image
   node_os_channel_upgrade = "NodeImage"
 
+  image_cleaner_enabled = true
+
   default_node_pool {
     name           = "agentpool"
     vm_size        = "Standard_DS2_v2"
