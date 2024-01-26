@@ -2,6 +2,7 @@ FROM python:3.9-slim
 
 ENV CURL_CA_BUNDLE /etc/ssl/certs/ca-certificates.crt
 ENV PIP_NO_CACHE_DIR=1
+RUN pip install "setuptools>=65.5.1"
 
 WORKDIR /opt/src
 
