@@ -18,10 +18,10 @@ install_requires = [
     "opencensus-ext-azure==1.1.0",
     "opencensus-ext-logging==0.1.1",
     "pyyaml>=5.3",
-    "aiohttp>=3.8.0,<3.9",
+    "aiohttp>=3.9",
     "planetary-computer>=0.4.0",
     "jsonschema>=4.0.1,<4.18",  # Matches the pin in https://github.com/stac-utils/pystac/pull/1189/
-    "typing-extensions; python_version< '3.10.0'"
+    "typing-extensions; python_version< '3.10.0'",
 ]
 
 extra_reqs = {
