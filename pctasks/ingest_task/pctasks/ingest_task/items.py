@@ -24,7 +24,7 @@ class IngestFailedException(Exception):
 
 
 def ingest_item(pgstac: PgSTAC, item: Dict[str, Any]) -> None:
-    pgstac.ingest_items([orjson.dumps(item, orjson.OPT_SERIALIZE_NUMPY)])
+    pgstac.ingest_items([orjson.dumps(item, option=orjson.OPT_SERIALIZE_NUMPY)])
 
 
 @dataclass

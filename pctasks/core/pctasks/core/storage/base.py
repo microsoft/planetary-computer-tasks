@@ -290,7 +290,6 @@ class Storage(ABC):
             file_path,
             orjson.dumps(d, option=orjson.OPT_SERIALIZE_NUMPY),
             overwrite=overwrite,
-            option=orjson.OPT_SERIALIZE_NUMPY,
         )
 
     @abstractmethod
