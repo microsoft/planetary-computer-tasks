@@ -62,7 +62,13 @@ class PgSTAC:
     ) -> None:
         self._with_connection_retry(
             lambda: self.loader.load_collections(
-                iter([orjson.dumps(c) for c in collections]), insert_mode=mode
+                iter(
+                    [
+                        orjson.dumps(c, option=orjson.OPT_SERIALIZE_NUMPY)
+                        for c in collections
+                    ]
+                ),
+                insert_mode=mode,
             )
         )
 

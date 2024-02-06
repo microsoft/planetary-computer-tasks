@@ -265,7 +265,10 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
             )
             chunkset.write_chunk(
                 items_chunk_id,
-                [orjson.dumps(item.to_dict()) for item in results],
+                [
+                    orjson.dumps(item.to_dict(), option=orjson.OPT_SERIALIZE_NUMPY)
+                    for item in results
+                ],
             )
 
             output = CreateItemsOutput(

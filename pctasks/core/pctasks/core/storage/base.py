@@ -286,7 +286,11 @@ class Storage(ABC):
             text: The text to write.
             overwrite: Overwrite if file is already present.
         """
-        self.write_bytes(file_path, orjson.dumps(d), overwrite=overwrite)
+        self.write_bytes(
+            file_path,
+            orjson.dumps(d, option=orjson.OPT_SERIALIZE_NUMPY),
+            overwrite=overwrite,
+        )
 
     @abstractmethod
     def delete_folder(self, folder_path: str) -> None:

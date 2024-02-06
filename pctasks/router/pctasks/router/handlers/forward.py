@@ -17,4 +17,4 @@ class ForwardingMessageHandler(MessageHandler):
             connection_string=settings.queues_connection_string,
             queue_name=self.get_queue_name(settings),
         ) as queue:
-            queue.send_message(orjson.dumps(message))
+            queue.send_message(orjson.dumps(message, option=orjson.OPT_SERIALIZE_NUMPY))

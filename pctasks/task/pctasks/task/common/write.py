@@ -30,7 +30,9 @@ class WriteTask(Task[WriteInput, WriteOutput]):
         if isinstance(input.content, str):
             storage.write_text(path, input.content)
         else:
-            storage.write_bytes(path, orjson.dumps(input.content))
+            storage.write_bytes(
+                path, orjson.dumps(input.content, option=orjson.OPT_SERIALIZE_NUMPY)
+            )
 
         return WriteOutput(uri=input.uri)
 
