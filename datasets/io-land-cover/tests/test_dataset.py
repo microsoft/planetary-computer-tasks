@@ -8,7 +8,7 @@ HERE = Path(__file__).parent
 DATASET_PATH = HERE / ".." / "dataset.yaml"
 
 
-def test_10_class():
+def test_10_class() -> None:
     run_process_items_workflow(
         DATASET_PATH,
         "io-lulc",
@@ -18,10 +18,20 @@ def test_10_class():
     )
 
 
-def test_9_class():
+def test_9_class() -> None:
     run_process_items_workflow(
         DATASET_PATH,
         "io-lulc-9-class",
+        args={
+            "registry": "localhost:5001",
+        },
+    )
+
+
+def test_annual_v02() -> None:
+    run_process_items_workflow(
+        DATASET_PATH,
+        "io-lulc-annual-v02",
         args={
             "registry": "localhost:5001",
         },

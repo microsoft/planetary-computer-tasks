@@ -39,3 +39,16 @@ collections:
             chunk_length: 100
     chunk_storage:
       uri: blob://ai4edataeuwest/io-lulc-etl-data/pctasks-chunks/io-lulc-9-class/
+  - id: io-lulc-annual-v02
+    template: ${{ local.path(./collection/io-lulc-annual-v02) }}
+    class: io_lulc:NineClassV2IOCollection
+    asset_storage:
+      - uri: blob://ai4edataeuwest/io-lulc
+        token: ${{ pc.get_token(ai4edataeuwest, io-lulc) }}
+        chunks:
+          options:
+            name_starts_with: io-annual-lulc-v02/
+            ends_with: ".tif"
+            chunk_length: 100
+    chunk_storage:
+      uri: blob://ai4edataeuwest/io-lulc-etl-data/pctasks-chunks/io-lulc-annual-v02/

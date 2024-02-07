@@ -17,6 +17,7 @@ from pctasks.dataset.collection import Collection
 
 IO_LULC = "io-lulc"
 IO_LULC_9_CLASS = "io-lulc-9-class"
+IO_LULC_ANNUAL_V02 = "io-lulc-annual-v02"
 
 IO_LULC_10_CLASS_ITEMS = (
     "blob://ai4edataeuwest/io-lulc/io-lulc-model-001-"
@@ -33,6 +34,8 @@ IO_LULC_9_CLASS_2022_ITEMS = (
     "v02-composite-v01-supercell-v02-clip-v01_2022_addition.geojson"
 )
 
+IO_LULC_ANNUAL_V02_ITEMS = "blob://ai4edataeuwest/io-lulc/io-lulc-annual-v02.ndjson"
+
 ASSET_KEY = "data"
 
 NINE_CLASS_2017_2021_VSIAZ_PREFIX = (
@@ -41,6 +44,8 @@ NINE_CLASS_2017_2021_VSIAZ_PREFIX = (
 )
 
 NINE_CLASS_2022_VSIAZ_PREFIX = "/vsiaz/io-msft-lulc"
+
+IO_LULC_ANNUAL_V02_VSIAZ_PREFIX = "/vsiaz/io-annual-lulc-v02"
 
 
 class IOItems:
@@ -51,9 +56,12 @@ class IOItems:
     ) -> Dict[str, pystac.Item]:
         def _read_item_collection(uri: str) -> pystac.ItemCollection:
             storage, path = storage_factory.get_storage_for_file(uri)
-            return pystac.ItemCollection.from_dict(
-                orjson.loads(storage.read_bytes(path))
-            )
+            if uri.lower().endswith(".ndjson"):
+                return pystac.ItemCollection(storage.read_ndjson(path))
+            else:
+                return pystac.ItemCollection.from_dict(
+                    orjson.loads(storage.read_bytes(path))
+                )
 
         result = {}
 
@@ -85,13 +93,21 @@ class IOItems:
             for item in item_collection_2022.items:
                 asset = item.assets["supercell"]
 
-                path = asset.href.replace(
-                    NINE_CLASS_2022_VSIAZ_PREFIX, "nine-class"
-                )
+                path = asset.href.replace(NINE_CLASS_2022_VSIAZ_PREFIX, "nine-class")
 
                 # Only take 2022 items
                 if path.endswith("20230101.tif"):
                     result[path] = item
+        elif collection == IO_LULC_ANNUAL_V02:
+            item_collection = _read_item_collection(IO_LULC_ANNUAL_V02_ITEMS)
+            for item in item_collection.items:
+                asset = item.assets["supercell"]
+
+                path = asset.href.replace(
+                    IO_LULC_ANNUAL_V02_VSIAZ_PREFIX, "io-annual-lulc-v02"
+                )
+
+                result[path] = item
         else:
             raise ValueError(f"Unknown collection: {collection}")
 
@@ -116,10 +132,16 @@ class BaseIOCollection(Collection):
         tif_href = asset_storage.get_authenticated_url(tif_path)
 
         io_item = io_items[tif_path]
-
         id_parts = io_item.id.split("_")
-        tile_id = id_parts[1]
-        year = id_parts[2][:4]
+
+        if io_item.id.count("_") == 1:
+            # Example: 60W_20220101-20230101
+            tile_id = id_parts[0]
+            year = id_parts[1][:4]
+        else:
+            # Example: io-lulc-model-001-v02-composite-v01-supercell-v02-clip-v01_60W_20190101-20200101
+            tile_id = id_parts[1]
+            year = id_parts[2][:4]
 
         item_id = f"{tile_id}-{year}"
 
@@ -244,3 +266,7 @@ class NineClassIOCollection(BaseIOCollection):
             MappingObject.create(values=[10], summary="Clouds"),
             MappingObject.create(values=[11], summary="Rangeland"),
         ]
+
+
+class NineClassV2IOCollection(NineClassIOCollection):
+    collection = IO_LULC_ANNUAL_V02
