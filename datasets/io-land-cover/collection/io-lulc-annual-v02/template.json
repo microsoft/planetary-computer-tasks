@@ -30,7 +30,7 @@
     "Land Use",
     "Sentinel"
   ],
-  "msft:short_description": "Global land cover information with 9 classes for for 2017-2022 at 10m resolution",
+  "msft:short_description": "Global land cover information with 9 classes for for 2017-2023 at 10m resolution",
   "msft:storage_account": "ai4edataeuwest",
   "msft:container": "io-lulc",
   "msft:region": "westeurope",
@@ -67,7 +67,7 @@
       "media_type": "image/png"
     },
     "geoparquet-items": {
-      "href": "TODO", 
+      "href": "abfs://items/io-lulc-annual-v02.parquet",
       "title": "GeoParquet STAC items",
       "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
       "type": "application/x-parquet",
