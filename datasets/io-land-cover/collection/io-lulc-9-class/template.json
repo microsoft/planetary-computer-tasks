@@ -2,7 +2,7 @@
   "stac_version": "1.0.0",
   "type": "Collection",
   "id": "io-lulc-9-class",
-  "title": "10m Annual Land Use Land Cover (9-class)",
+  "title": "10m Annual Land Use Land Cover (9-class) V1",
   "description": "{{ collection.description }}",
   "license": "CC-BY-4.0",
   "links": [
@@ -30,7 +30,7 @@
     "Land Use",
     "Sentinel"
   ],
-  "msft:short_description": "Global land cover information with 9 classes for for 2017-2022 at 10m resolution",
+  "msft:short_description": "Global land cover information with 9 classes for 2017-2022 at 10m resolution",
   "msft:storage_account": "ai4edataeuwest",
   "msft:container": "io-lulc",
   "msft:region": "westeurope",
