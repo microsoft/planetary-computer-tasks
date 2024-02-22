@@ -1,0 +1,42 @@
+name: "Audit USGS LIDAR HAG Spatial Extents"
+dataset: "usgs-lidar"
+id: "usgs-lidar-spatial-extents-audit"
+args:
+  - parquet_prefix
+  - registry
+
+jobs:
+  enumerate-parquet:
+    tasks:
+      - id: enumerate-partitions
+        image: ${{ args.registry }}/pctasks-task-base:latest
+        code:
+          src: ${{ local.path(lidar_audit.py) }}
+          requirements: ${{ local.path(requirements.txt) }}
+        environment:
+          APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+          STAC_GEOPARQUET_CONNECTION_INFO: ${{secrets.pgstac-connection-string}}
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+        task: lidar_audit:ParquetEnumerationTask
+        args:
+          parquet_prefix: ${{ args.parquet_prefix }}
+  analyze-similarity:
+    foreach:
+      items: ${{ jobs.enumerate-parquet.tasks.enumerate-partitions.output.parquet_partition_urls }}
+    tasks:
+      - id: compute-similarity
+        image: ${{ args.registry }}/pctasks-task-base:latest
+        code:
+          src: ${{ local.path(lidar_audit.py) }}
+          requirements: ${{ local.path(requirements.txt) }}
+        environment:
+          APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+          STAC_GEOPARQUET_CONNECTION_INFO: ${{secrets.pgstac-connection-string}}
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+        task: lidar_audit:LidarAudit
+        args:
+          parquet_url: ${{ item }}

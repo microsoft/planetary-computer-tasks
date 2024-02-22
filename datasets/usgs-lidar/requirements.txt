@@ -1,0 +1,9 @@
+geopandas
+pyarrow
+adlfs
+azure.identity
+rasterio
+planetary-computer
+pyproj
+shapely
+opencensus.ext.azure
