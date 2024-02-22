@@ -34,6 +34,7 @@ class StacGeoparquetTaskInput(PCBaseModel):
     table_credential: str | None = None
     storage_options_credential: str | None = None
     extra_skip: Set[str] | None = None
+    collections: str | Set[str] | None = None
 
 
 class StacGeoparquetTaskOutput(PCBaseModel):
@@ -59,6 +60,7 @@ class StacGeoparquetTask(Task[StacGeoparquetTaskInput, StacGeoparquetTaskOutput]
             storage_options_account_name=input.storage_options_account_name,
             storage_options_credential=input.storage_options_credential,
             extra_skip=input.extra_skip,
+            collections=input.collections,
         )
         return StacGeoparquetTaskOutput(n_failures=result)
 
@@ -95,17 +97,20 @@ SKIP = {
 def run(
     output_protocol: str = "abfs",
     connection_info: str | None = None,
-    table_credential: str
-    | None
-    | azure.core.credentials.TokenCredential
-    | azure.core.credentials.AzureSasCredential = None,
+    table_credential: (
+        str
+        | None
+        | azure.core.credentials.TokenCredential
+        | azure.core.credentials.AzureSasCredential
+    ) = None,
     table_name: str | None = None,
     table_account_url: str | None = None,
     storage_options_account_name: str | None = None,
-    storage_options_credential: str
-    | None
-    | azure.core.credentials.TokenCredential = None,
+    storage_options_credential: (
+        str | None | azure.core.credentials.TokenCredential
+    ) = None,
     extra_skip: Set[str] | None = None,
+    collections: str | Set[str] | None = None,
 ) -> int:
     # handle the arguments
     try:
@@ -146,7 +151,13 @@ def run(
     )
     configs = pc_runner.get_configs(table_client)
 
-    configs = {k: v for k, v in configs.items() if k not in skip}
+    if collections is None:
+        configs = {k: v for k, v in configs.items() if k not in skip}
+    elif isinstance(collections, str):
+        configs = {k: v for k, v in configs.items() if k == collections}
+    elif isinstance(collections, set):
+        configs = {k: v for k, v in configs.items() if k in collections}
+
     storage_options = {
         "account_name": storage_options_account_name,
         "credential": storage_options_credential,

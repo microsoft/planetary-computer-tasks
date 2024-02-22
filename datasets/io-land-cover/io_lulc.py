@@ -17,6 +17,7 @@ from pctasks.dataset.collection import Collection
 
 IO_LULC = "io-lulc"
 IO_LULC_9_CLASS = "io-lulc-9-class"
+IO_LULC_ANNUAL_V02 = "io-lulc-annual-v02"
 
 IO_LULC_10_CLASS_ITEMS = (
     "blob://ai4edataeuwest/io-lulc/io-lulc-model-001-"
@@ -33,6 +34,10 @@ IO_LULC_9_CLASS_2022_ITEMS = (
     "v02-composite-v01-supercell-v02-clip-v01_2022_addition.geojson"
 )
 
+IO_LULC_ANNUAL_V02_ITEMS = (
+    "blob://ai4edataeuwest/io-lulc/io-lulc-annual-v02-2017-2023.ndjson"
+)
+
 ASSET_KEY = "data"
 
 NINE_CLASS_2017_2021_VSIAZ_PREFIX = (
@@ -41,6 +46,11 @@ NINE_CLASS_2017_2021_VSIAZ_PREFIX = (
 )
 
 NINE_CLASS_2022_VSIAZ_PREFIX = "/vsiaz/io-msft-lulc"
+
+IO_LULC_ANNUAL_V02_VSIAZ_PREFIXES = [
+    "/vsiaz/io-annual-lulc-v02",
+    "/vsiaz/maps-for-good-esri",
+]
 
 
 class IOItems:
@@ -51,9 +61,12 @@ class IOItems:
     ) -> Dict[str, pystac.Item]:
         def _read_item_collection(uri: str) -> pystac.ItemCollection:
             storage, path = storage_factory.get_storage_for_file(uri)
-            return pystac.ItemCollection.from_dict(
-                orjson.loads(storage.read_bytes(path))
-            )
+            if uri.lower().endswith(".ndjson"):
+                return pystac.ItemCollection(storage.read_ndjson(path))
+            else:
+                return pystac.ItemCollection.from_dict(
+                    orjson.loads(storage.read_bytes(path))
+                )
 
         result = {}
 
@@ -85,13 +98,27 @@ class IOItems:
             for item in item_collection_2022.items:
                 asset = item.assets["supercell"]
 
-                path = asset.href.replace(
-                    NINE_CLASS_2022_VSIAZ_PREFIX, "nine-class"
-                )
+                path = asset.href.replace(NINE_CLASS_2022_VSIAZ_PREFIX, "nine-class")
 
                 # Only take 2022 items
                 if path.endswith("20230101.tif"):
                     result[path] = item
+        elif collection == IO_LULC_ANNUAL_V02:
+            item_collection = _read_item_collection(IO_LULC_ANNUAL_V02_ITEMS)
+            for item in item_collection.items:
+                if "supercell" in item.assets:
+                    asset = item.assets["supercell"]
+                elif "data" in item.assets:
+                    asset = item.assets["data"]
+                else:
+                    raise ValueError("Unknown asset property")
+
+                path = asset.href
+                for prefix in IO_LULC_ANNUAL_V02_VSIAZ_PREFIXES:
+                    path = path.replace(prefix, "io-annual-lulc-v02")
+
+                print(f"Adding {path} to result.")
+                result[path] = item
         else:
             raise ValueError(f"Unknown collection: {collection}")
 
@@ -114,12 +141,18 @@ class BaseIOCollection(Collection):
 
         asset_storage, tif_path = storage_factory.get_storage_for_file(asset_uri)
         tif_href = asset_storage.get_authenticated_url(tif_path)
-
+        print(f"io_items has {len(io_items)} items.")
         io_item = io_items[tif_path]
-
         id_parts = io_item.id.split("_")
-        tile_id = id_parts[1]
-        year = id_parts[2][:4]
+
+        if io_item.id.count("_") == 1:
+            # Example: 60W_20220101-20230101
+            tile_id = id_parts[0]
+            year = id_parts[1][:4]
+        else:
+            # Example: io-lulc-model-001-v02-composite-v01-supercell-v02-clip-v01_60W_20190101-20200101
+            tile_id = id_parts[1]
+            year = id_parts[2][:4]
 
         item_id = f"{tile_id}-{year}"
 
@@ -146,8 +179,11 @@ class BaseIOCollection(Collection):
             roles=["data"],
         )
         item.add_asset(ASSET_KEY, asset)
+        if "io:supercell_id" in io_item.properties:
+            item.properties["io:supercell_id"] = io_item.properties["io:supercell_id"]
+        elif "supercell" in io_item.properties:
+            item.properties["supercell"] = io_item.properties["supercell"]
 
-        item.properties["io:supercell_id"] = io_item.properties["io:supercell_id"]
         item.properties["io:tile_id"] = tile_id
 
         # Projection Extension
@@ -244,3 +280,7 @@ class NineClassIOCollection(BaseIOCollection):
             MappingObject.create(values=[10], summary="Clouds"),
             MappingObject.create(values=[11], summary="Rangeland"),
         ]
+
+
+class NineClassV2IOCollection(NineClassIOCollection):
+    collection = IO_LULC_ANNUAL_V02

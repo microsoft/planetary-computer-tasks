@@ -1,8 +1,8 @@
 {
   "stac_version": "1.0.0",
   "type": "Collection",
-  "id": "io-lulc-9-class",
-  "title": "10m Annual Land Use Land Cover (9-class) V1",
+  "id": "io-lulc-annual-v02",
+  "title": "10m Annual Land Use Land Cover (9-class) V2",
   "description": "{{ collection.description }}",
   "license": "CC-BY-4.0",
   "links": [
@@ -30,7 +30,7 @@
     "Land Use",
     "Sentinel"
   ],
-  "msft:short_description": "Global land cover information with 9 classes for 2017-2022 at 10m resolution",
+  "msft:short_description": "Global land cover information with 9 classes for 2017-2023 at 10m resolution",
   "msft:storage_account": "ai4edataeuwest",
   "msft:container": "io-lulc",
   "msft:region": "westeurope",
@@ -63,11 +63,11 @@
   "assets": {
     "thumbnail": {
       "title": "10m Annual Land Use Land Cover (9-class)",
-      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/io-lulc-9-class.png",
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/io-lulc-annual-v02.png",
       "media_type": "image/png"
     },
     "geoparquet-items": {
-      "href": "abfs://items/io-lulc-9-class.parquet",
+      "href": "abfs://items/io-lulc-annual-v02.parquet",
       "title": "GeoParquet STAC items",
       "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
       "type": "application/x-parquet",
@@ -176,7 +176,7 @@
       "interval": [
         [
           "2017-01-01T00:00:00Z",
-          "2023-01-01T00:00:00Z"
+          "2024-01-01T00:00:00Z"
         ]
       ]
     }
