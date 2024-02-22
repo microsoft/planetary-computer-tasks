@@ -1,18 +1,19 @@
 import time
 import itertools
+import os
 from noaa_cdr import SeaSurfaceTemperatureOptimumInterpolationCollection, StorageFactory
 from pctasks.core.tokens import Tokens, StorageAccountTokens
 from pctasks.core.models.tokens import ContainerTokens
 
 
-def main():
+def main() -> None:
     storage = StorageFactory(
         tokens=Tokens(
             tokens={
                 "noaacdr": StorageAccountTokens(
                     containers={
                         "sea-surface-temp-optimum-interpolation": ContainerTokens(
-                            token="?sv=2021-10-04&st=2023-04-27T15%3A45%3A02Z&se=2023-05-28T15%3A45%3A00Z&sr=c&sp=rl&sig=UVlzJVwrgeXv9ocO57gXGnbclQhx3Mimkgcqez9tkAQ%3D"
+                            token=os.environ["NOAA_CDR_STORAGE_TOKEN"]
                         )
                     }
                 )
