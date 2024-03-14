@@ -15,9 +15,11 @@ class EcmwfCollection(Collection):
     ) -> Union[List[pystac.Item], WaitTaskResult]:
         asset_storage, asset_path = storage_factory.get_storage_for_file(asset_uri)
         # Starting March 2024, the ECMWF forecasts data will be available at 0.25 resolution
-        resolution = "0.40"
+        resolution = None
         if "0p25" in asset_path.split("/"):
             resolution = "0.25"
+        if "0p4-beta" in asset_path.split("/"):
+            resolution = "0.40"
         grib2_href = asset_storage.get_url(asset_path)
         index_href = grib2_href.rsplit(".", 1)[0] + ".index"
         item = stac.create_item(
