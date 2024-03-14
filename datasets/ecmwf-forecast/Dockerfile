@@ -29,7 +29,7 @@ RUN curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/downloa
 ENV PATH /opt/conda/bin:$PATH
 ENV LD_LIBRARY_PATH /opt/conda/lib/:$LD_LIBRARY_PATH
 
-RUN mamba install -y -c conda-forge python=3.10 gdal=3.3.3 pip setuptools cython numpy==1.21.5
+RUN mamba install -y -c conda-forge python=3.8 gdal=3.3.3 pip setuptools cython numpy==1.21.5
 
 RUN python -m pip install --upgrade pip
 

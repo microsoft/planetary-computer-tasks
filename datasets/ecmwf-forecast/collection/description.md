@@ -8,10 +8,19 @@ The following diagram shows the publishing schedule of the various products.
 
 The vertical axis shows the various products, defined below, which are grouped by combinations of `stream`, `forecast type`, and `reference time`. The horizontal axis shows *forecast times* in 3-hour intervals out from the reference time. A black square over a particular forecast time, or step, indicates that a forecast is made for that forecast time, for that particular `stream`, `forecast type`, `reference time` combination.
 
-* **stream** is the forecasting system that produced the data. The values in this STAC collection are:
+* **stream** is the forecasting system that produced the data. The values are available in the `ecmwf:stream` summary of the STAC collection. They are:
+  * `enfo`: [ensemble forecast](https://confluence.ecmwf.int/display/FUG/ENS+-+Ensemble+Forecasts), atmospheric fields
+  * `mmsf`: [multi-model seasonal forecasts](https://confluence.ecmwf.int/display/FUG/Long-Range+%28Seasonal%29+Forecast) fields from the ECMWF model only.
+  * `oper`: [high-resolution forecast](https://confluence.ecmwf.int/display/FUG/HRES+-+High-Resolution+Forecast), atmospheric fields 
+  * `scda`: short cut-off high-resolution forecast, atmospheric fields (also known as "high-frequency products")
+  * `scwv`: short cut-off high-resolution forecast, ocean wave fields (also known as "high-frequency products") and
+  * `waef`: [ensemble forecast](https://confluence.ecmwf.int/display/FUG/ENS+-+Ensemble+Forecasts), ocean wave fields,
   * `wave`: wave model
-* **type** is the forecast type. The values in this STAC collection are:
+* **type** is the forecast type. The values are available in the `ecmwf:type` summary of the STAC collection. They are:
   * `fc`: forecast
+  * `ef`: ensemble forecast
+  * `pf`: ensemble probabilities
+  * `tf`: trajectory forecast for tropical cyclone tracks
 * **reference time** is the hours after midnight when the model was run. Each stream / type will produce assets for different forecast times (steps from the reference datetime) depending on the reference time.
 
 Visit the [ECMWF's User Guide](https://confluence.ecmwf.int/display/UDOC/ECMWF+Open+Data+-+Real+Time) for more details on each of the various products.
@@ -36,6 +45,8 @@ The Planetary Computer provides a single STAC item per GRIB2 file. Each GRIB2 fi
 
 A few custom properties are available on each STAC item, which can be used in searches to narrow down the data to items of interest:
 
+* `ecmwf:stream`: The forecasting system (see above for definitions). The full set of values is available in the Collection's summaries.
+* `ecmwf:type`: The forecast type (see above for definitions). The full set of values is available in the Collection's summaries.
 * `ecmwf:step`: The offset from the reference datetime, expressed as `<value><unit>`, for example `"3h"` means "3 hours from the reference datetime". 
 * `ecmwf:reference_datetime`: The datetime when the model was run. This indicates when the forecast *was made*, rather than when it's valid for.
 * `ecmwf:forecast_datetime`: The datetime for which the forecast is valid. This is also set as the item's `datetime`.

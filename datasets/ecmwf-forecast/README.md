@@ -12,20 +12,12 @@
 az acr build -r {the registry} --subscription {the subscription} -t pctasks-ecmwf-forecast:latest -t pctasks-ecmwf-forecast:{date}.{count} -f datasets/ecmwf-forecast/Dockerfile .
 ```
 
-## Ingest collection
-
-To ingest one of the 7 collections for the first time
-
-```shell
-pctasks dataset ingest-collection --dataset datasets/ecmwf-forecast/dataset.yaml --collection ecmwf-forecast-wave-fc
-```
-
 ## Update workflow
 
 The update workflow was registered with
 
 ```shell
-pctasks dataset process-items ecmwf-forecast-update --is-update-workflow --dataset datasets/ecmwf-forecast/dataset.yaml --collection ecmwf-forecast-wave-fc -u
+pctasks dataset process-items ecmwf-forecast-update --is-update-workflow --dataset datasets/ecmwf-forecast/dataset.yaml -u
 ```
 
 ## Streaming workflow
