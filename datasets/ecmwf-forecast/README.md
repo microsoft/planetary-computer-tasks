@@ -7,6 +7,17 @@
 - Item creation is fast (the data is not touched), so a single chunk file for daily data is fine — no need to limit `chunk_length`.
 
 ## Dockerfile
+Build and publish a new container image with:
+```shell
+tag="20240314.1"
+registry="pccomponents"
+image="$registry.azurecr.io/pctasks-ecmwf-forecast:$tag"
+az acr login -n $registry
+docker build -t $image -f datasets/ecmwf-forecast/Dockerfile .
+docker push $image
+```
+
+Or:
 
 ```shell
 az acr build -r {the registry} --subscription {the subscription} -t pctasks-ecmwf-forecast:latest -t pctasks-ecmwf-forecast:{date}.{count} -f datasets/ecmwf-forecast/Dockerfile .
