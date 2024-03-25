@@ -21,6 +21,15 @@ resource "azurerm_network_security_group" "pctasks" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+
+  lifecycle {
+    ignore_changes = [
+      # Ignore security rules, which are added by Azure Core Security
+      # with the description:
+      # Created by Azure Core Security managed policy, placeholder you can delete, please see aka.ms/cainsgpolicy
+      security_rule,
+    ]
+  }
 }
 
 # Batch pool subnet
