@@ -8,14 +8,11 @@ services:
     environment:
       # For Terraform
       - ARM_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}
-      - ARM_TENANT_ID=${AZURE_TENANT_ID}
-      - ARM_CLIENT_ID=${AZURE_CLIENT_ID}
-      - ARM_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
 
-      # For Azure CLI
-      - AZURE_TENANT_ID=${AZURE_TENANT_ID}
-      - AZURE_CLIENT_ID=${AZURE_CLIENT_ID}
-      - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
+      # For Azure CLI - only set these if not using az login from host
+      - AZURE_TENANT_ID
+      - AZURE_CLIENT_ID
+      - AZURE_CLIENT_SECRET
 
       # Used in function deployment injected by GH Actions
       - GITHUB_TOKEN
@@ -26,3 +23,4 @@ services:
       - ../deployment:/opt/src/deployment
       - ../pctasks:/opt/src/pctasks:ro
       - ../pctasks_funcs:/opt/src/pctasks_funcs:ro
+      - ~/.azure:/root/.azure

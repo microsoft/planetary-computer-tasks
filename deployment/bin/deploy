@@ -31,13 +31,18 @@ Options:
 }
 
 require_env "ARM_SUBSCRIPTION_ID"
-require_env "ARM_TENANT_ID"
-require_env "ARM_CLIENT_ID"
-require_env "ARM_CLIENT_SECRET"
 
-require_env "AZURE_TENANT_ID"
-require_env "AZURE_CLIENT_ID"
-require_env "AZURE_CLIENT_SECRET"
+if [[ "${AZURE_TENANT_ID}" ]]; then
+    export ARM_TENANT_ID=${AZURE_TENANT_ID}
+fi
+
+if [[ "${AZURE_CLIENT_ID}" ]]; then
+    export ARM_CLIENT_ID=${AZURE_CLIENT_ID}
+fi
+
+if [[ "${AZURE_CLIENT_SECRET}" ]]; then
+    export ARM_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
+fi
 
 ###################
 # Parse arguments #
