@@ -24,9 +24,11 @@ while [[ "$#" -gt 0 ]]; do case $1 in
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
-    az login --service-principal \
+    if ! az account show > /dev/null 2>&1; then
+        az login --service-principal \
         --username ${AZURE_CLIENT_ID} \
         --password ${AZURE_CLIENT_SECRET} \
         --tenant ${AZURE_TENANT_ID}
+    fi
 
 fi
