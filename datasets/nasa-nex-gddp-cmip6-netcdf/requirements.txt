@@ -1,0 +1,9 @@
+git+https://github.com/TomAugspurger/nasa-nex-gddp-cmip6.git@v0.1.0
+adlfs
+xarray
+cftime
+kerchunk
+planetary-computer
+fsspec
+h5netcdf
+h5py
