@@ -58,3 +58,21 @@ docker-compose \
     run --rm \
     dev \
     scripts/bin/pctasks-pip-compile ./pctasks/dataset/pyproject.toml -o pctasks/dataset/requirements.txt $pip_compile_options
+
+docker-compose \
+    -f docker-compose.console.yml \
+    run --rm \
+    dev \
+    scripts/bin/pctasks-pip-compile ./pctasks/notify/pyproject.toml -o pctasks/notify/requirements.txt $pip_compile_options
+
+docker-compose \
+    -f docker-compose.console.yml \
+    run --rm \
+    dev \
+    scripts/bin/pctasks-pip-compile ./pctasks/router/pyproject.toml -o pctasks/router/requirements.txt $pip_compile_options
+
+docker-compose \
+    -f docker-compose.console.yml \
+    run --rm \
+    dev \
+    scripts/bin/pctasks-pip-compile ./pctasks/dev/pyproject.toml -o pctasks/dev/requirements.txt $pip_compile_options

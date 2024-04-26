@@ -84,9 +84,7 @@ isodate==0.6.1
     #   azure-storage-queue
     # from https://pypi.org/simple
 jsonschema==4.17.3
-    # via
-    #   pystac
-    #   stac-validator
+    # via stac-validator
     # from https://pypi.org/simple
 msal==1.28.0
     # via
@@ -157,15 +155,15 @@ pyjwt==2.8.0
 pyrsistent==0.20.0
     # via jsonschema
     # from https://pypi.org/simple
-pystac==1.8.3
+pystac==1.10.0
     # via
     #   planetary-computer
     #   pystac-client
     # from https://pypi.org/simple
-pystac-client==0.7.6
+pystac-client==0.6.1
     # via planetary-computer
     # from https://pypi.org/simple
-python-dateutil==2.9.0.post0
+python-dateutil==2.8.2
     # via
     #   pystac
     #   pystac-client

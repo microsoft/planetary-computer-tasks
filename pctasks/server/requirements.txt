@@ -311,11 +311,12 @@ pytest==8.1.1
     # from https://pypi.org/simple
 pytest-cov==5.0.0
     # from https://pypi.org/simple
-python-dateutil==2.9.0.post0
+python-dateutil==2.8.2
     # via
     #   adal
     #   argo-workflows
     #   kubernetes
+    #   pctasks-core
     #   pystac
     #   pystac-client
     #   strictyaml

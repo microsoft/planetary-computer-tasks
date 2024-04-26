@@ -236,6 +236,7 @@ pystac-client==0.6.1
     # from https://pypi.org/simple
 python-dateutil==2.8.2
     # via
+    #   pctasks-core
     #   pypgstac
     #   pystac
     #   pystac-client
