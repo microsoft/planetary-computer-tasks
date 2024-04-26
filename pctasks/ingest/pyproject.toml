@@ -26,7 +26,7 @@ classifiers = [
 dependencies = [
     "jinja2==3.0.3",
     "marko==1.0.1",
-    "pctasks.client @ {root:uri}/../client",
+    "pctasks.client @ {root:parent:uri}/client",
 ]
 
 [project.optional-dependencies]

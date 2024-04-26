@@ -29,9 +29,9 @@ dependencies = [
     "azure-keyvault-secrets>=4.0.0,<5",
     "kubernetes",
     "networkx>=2.0.0,<3",
-    "pctasks.core @ {root:uri}/../core",
-    "pctasks.client @ {root:uri}/../client",
-    "pctasks.task @ {root:uri}/../task",
+    "pctasks.core @ {root:parent:uri}/core",
+    "pctasks.client @ {root:parent:uri}/client",
+    "pctasks.task @ {root:parent:uri}/task",
 ]
 
 [project.optional-dependencies]

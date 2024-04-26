@@ -24,8 +24,8 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
 ]
 dependencies = [
-    "pctasks.core @ {root:uri}/../core",
-    "pctasks.cli @ {root:uri}/../cli",
+    "pctasks.core @ {root:parent:uri}/core",
+    "pctasks.cli @ {root:parent:uri}/cli",
     "pydantic[dotenv]>=1.8,<2.0.0",
     "rich>=11.2.0",
 ]

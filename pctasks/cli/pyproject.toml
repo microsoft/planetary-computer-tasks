@@ -25,8 +25,7 @@ classifiers = [
 ]
 dependencies = [
     "click>=7.0",
-    # "pctasks.core>=0.1.0",
-    "pctasks.core @ {root:uri}/../core",
+    "pctasks.core @ {root:parent:uri}/core",
 ]
 
 [project.optional-dependencies]

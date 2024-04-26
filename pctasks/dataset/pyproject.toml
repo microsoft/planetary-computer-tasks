@@ -25,9 +25,9 @@ classifiers = [
 ]
 
 dependencies = [
-    "pctasks.client @ {root:uri}/../client",
-    "pctasks.ingest @ {root:uri}/../ingest",
-    "pctasks.task @ {root:uri}/../task",
+    "pctasks.client @ {root:parent:uri}/client",
+    "pctasks.ingest @ {root:parent:uri}/ingest",
+    "pctasks.task @ {root:parent:uri}/task",
 ]
 
 [project.optional-dependencies]

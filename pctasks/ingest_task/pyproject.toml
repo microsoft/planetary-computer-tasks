@@ -26,8 +26,8 @@ classifiers = [
 dependencies = [
     "fire==0.4.0",
     "orjson>=3.5.2",
-    "pctasks.ingest @ {root:uri}/../ingest",
-    "pctasks.task @ {root:uri}/../task",
+    "pctasks.ingest @ {root:parent:uri}/ingest",
+    "pctasks.task @ {root:parent:uri}/task",
     "plpygis==0.2.0",
     "pypgstac[psycopg]==0.7.10",
     "pystac>=1.0.0,<2",
