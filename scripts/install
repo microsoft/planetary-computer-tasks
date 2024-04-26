@@ -29,12 +29,13 @@ while [[ $# -gt 0 ]]; do case $1 in
 source scripts/env
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    pip install uv
     for DIR in "${PACKAGE_DIRS[@]}"; do
         echo "Installing ${DIR}"
-        pip install -e ${DIR}
+        uv pip install --python=$(which python3) -e ${DIR}
     done
 
     echo "Installing dev dependencies"
-    pip install -r requirements-dev.txt
+    uv pip install --python=$(which python3) -r requirements-dev.txt
 
 fi

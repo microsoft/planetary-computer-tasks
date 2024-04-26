@@ -1,0 +1,54 @@
+#!/bin/bash
+
+set -e
+
+echo "== Generating requirements.txt ..."
+pip_compile_options="--emit-index-url --verbose"
+
+docker-compose \
+    -f docker-compose.console.yml \
+    run --rm \
+    dev \
+    scripts/bin/pctasks-pip-compile ./pctasks/core/pyproject.toml -o pctasks/core/requirements.txt $pip_compile_options
+
+docker-compose \
+    -f docker-compose.console.yml \
+    run --rm \
+    dev \
+    scripts/bin/pctasks-pip-compile ./pctasks/cli/setup.py -o pctasks/cli/requirements.txt $pip_compile_options
+
+# docker-compose \
+#     -f docker-compose.console.yml \
+#     run --rm \
+#     dev \
+#     scripts/bin/pctasks-pip-compile ./pctasks/task/setup.py -o pctasks/task/requirements.txt $pip_compile_options
+
+# docker-compose \
+#     -f docker-compose.console.yml \
+#     run --rm \
+#     dev \
+#     scripts/bin/pctasks-pip-compile ./pctasks/client/setup.py -o pctasks/client/requirements.txt $pip_compile_options
+
+# docker-compose \
+#     -f docker-compose.console.yml \
+#     run --rm \
+#     dev \
+#     scripts/bin/pctasks-pip-compile ./pctasks/ingest/setup.py -o pctasks/ingest/requirements.txt $pip_compile_options
+
+# docker-compose \
+#     -f docker-compose.console.yml \
+#     run --rm \
+#     dev \
+#     scripts/bin/pctasks-pip-compile ./pctasks/ingest_task/setup.py -o pctasks/ingest_task/requirements.txt $pip_compile_options
+
+# docker-compose \
+#     -f docker-compose.console.yml \
+#     run --rm \
+#     dev \
+#     scripts/bin/pctasks-pip-compile ./pctasks/run/setup.py -o pctasks/run/requirements.txt $pip_compile_options
+
+# docker-compose \
+#     -f docker-compose.console.yml \
+#     run --rm \
+#     dev \
+#     pip-compile ./pctasks/server/setup.py --extra dev -o pctasks/server/requirements.txt $pip_compile_options

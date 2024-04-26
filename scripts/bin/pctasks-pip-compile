@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+
+if [[ "${CI}"  ]]; then
+    set -x
+fi
+
+uv pip compile \
+    --emit-index-annotation \
+    "$@"
+
+#                                                     3
+#                                                  2
+#                                            1
+#                                0
+# We expect this to be called as pip-compile input -o output
+# so $2 should be the output file
+sed -i -e 's/.* @ file:\/\/\/.*//' $3
