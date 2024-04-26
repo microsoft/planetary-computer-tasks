@@ -53,12 +53,13 @@ RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
 # Install python dependencies
 COPY deployment/requirements.txt /opt/src/deployment/requirements.txt
-RUN pip3 install -r /opt/src/deployment/requirements.txt
+RUN pip install uv
+RUN uv pip install --system -r /opt/src/deployment/requirements.txt
 
 # Instal pctasks.core
 COPY pctasks/core /opt/src/pctasks/core
 RUN cd /opt/src/pctasks/core && \
-     pip install .
-
+    uv pip install --system -r requirements.txt && \
+    uv pip install --system --no-deps .
 
 WORKDIR /opt/deploy
