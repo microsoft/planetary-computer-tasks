@@ -23,7 +23,7 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 # See https://github.com/mapbox/rasterio/issues/1289
 ENV CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
-RUN python -m pip install --upgrade pip
+RUN python -m pip install --upgrade pip uv
 
 # Install azure-cli
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
@@ -31,55 +31,75 @@ RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 # Install dev dependencies
 
 COPY requirements-dev.txt /opt/src/requirements-dev.txt
-RUN cd /opt/src && pip install -r requirements-dev.txt
+RUN --mount=type=cache,target=/root/.cache \
+     cd /opt/src && uv pip install --system -r requirements-dev.txt
 
 #
 # Copy and install packages
 #
 
 COPY pctasks/core /opt/src/pctasks/core
-RUN cd /opt/src/pctasks/core && \
-     pip install -e .
+RUN --mount=type=cache,target=/root/.cache \
+     cd /opt/src/pctasks/core && \
+     uv pip install --system -r requirements.txt && \
+     uv pip install --system --no-deps -e .
 
 COPY pctasks/cli /opt/src/pctasks/cli
-RUN cd /opt/src/pctasks/cli && \
-     pip install -e .
+RUN --mount=type=cache,target=/root/.cache \
+     cd /opt/src/pctasks/cli && \
+     uv pip install --system -r requirements.txt && \
+     uv pip install --system --no-deps -e .
 
 COPY pctasks/task /opt/src/pctasks/task
-RUN cd /opt/src/pctasks/task && \
-     pip install -e .
+RUN --mount=type=cache,target=/root/.cache \
+      cd /opt/src/pctasks/task && \
+     uv pip install --system -r requirements.txt && \
+     uv pip install --system --no-deps -e .
 
-COPY pctasks/client /opt/src/pctasks/client
-RUN cd /opt/src/pctasks/client && \
-     pip install -e .
+# COPY pctasks/client /opt/src/pctasks/client
+# RUN --mount=type=cache,target=/root/.cache \
+#      cd /opt/src/pctasks/client && \
+#      uv pip install --system -r requirements.txt && \
+#      uv pip install --system --no-deps -e .
 
-COPY pctasks/ingest /opt/src/pctasks/ingest
-RUN cd /opt/src/pctasks/ingest && \
-     pip install -e .
+# COPY pctasks/ingest /opt/src/pctasks/ingest
+# RUN --mount=type=cache,target=/root/.cache \
+#      cd /opt/src/pctasks/ingest && \
+#      uv pip install --system -r requirements.txt && \
+#      uv pip install --system --no-deps -e .
 
-COPY pctasks/ingest_task /opt/src/pctasks/ingest_task
-RUN cd /opt/src/pctasks/ingest_task && \
-     pip install -e .
+# COPY pctasks/ingest_task /opt/src/pctasks/ingest_task
+# RUN --mount=type=cache,target=/root/.cache \
+#      cd /opt/src/pctasks/ingest_task && \
+#      uv pip install --system -r requirements.txt && \
+#      uv pip install --system --no-deps -e .
 
-COPY pctasks/run /opt/src/pctasks/run
-RUN cd /opt/src/pctasks/run && \
-     pip install -e .
+# COPY pctasks/run /opt/src/pctasks/run
+# RUN --mount=type=cache,target=/root/.cache \
+#      cd /opt/src/pctasks/run && \
+#      uv pip install --system -r requirements.txt && \
+#      uv pip install --system --no-deps -e .
 
-COPY pctasks/server /opt/src/pctasks/server
-RUN cd /opt/src/pctasks/server && \
-     pip install -e .[dev]
+# We are here
+# COPY pctasks/server /opt/src/pctasks/server
+# RUN --mount=type=cache,target=/root/.cache \
+#      cd /opt/src/pctasks/server && \
+#      pip install -e .[dev]
 
-COPY pctasks/dataset /opt/src/pctasks/dataset
-RUN cd /opt/src/pctasks/dataset && \
-     pip install -e .
+# COPY pctasks/dataset /opt/src/pctasks/dataset
+# RUN --mount=type=cache,target=/root/.cache \
+#      cd /opt/src/pctasks/dataset && \
+#      pip install -e .
 
-COPY pctasks/notify /opt/src/pctasks/notify
-RUN cd /opt/src/pctasks/notify && \
-     pip install -e .
+# COPY pctasks/notify /opt/src/pctasks/notify
+# RUN --mount=type=cache,target=/root/.cache \
+#      cd /opt/src/pctasks/notify && \
+#      pip install -e .
 
-COPY pctasks/dev /opt/src/pctasks/dev
-RUN cd /opt/src/pctasks/dev && \
-     pip install -e .[server]
+# COPY pctasks/dev /opt/src/pctasks/dev
+# RUN --mount=type=cache,target=/root/.cache \
+#      cd /opt/src/pctasks/dev && \
+#      pip install -e .[server]
 
 # Setup Python Path to allow import of test modules
 ENV PYTHONPATH=/opt/src:$PYTHONPATH

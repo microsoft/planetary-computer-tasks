@@ -3,7 +3,7 @@
 set -e
 
 echo "== Generating requirements.txt ..."
-pip_compile_options="--emit-index-url --verbose"
+pip_compile_options="--verbose"
 
 docker-compose \
     -f docker-compose.console.yml \
@@ -17,11 +17,11 @@ docker-compose \
     dev \
     scripts/bin/pctasks-pip-compile ./pctasks/cli/setup.py -o pctasks/cli/requirements.txt $pip_compile_options
 
-# docker-compose \
-#     -f docker-compose.console.yml \
-#     run --rm \
-#     dev \
-#     scripts/bin/pctasks-pip-compile ./pctasks/task/setup.py -o pctasks/task/requirements.txt $pip_compile_options
+docker-compose \
+    -f docker-compose.console.yml \
+    run --rm \
+    dev \
+    scripts/bin/pctasks-pip-compile ./pctasks/task/setup.py -o pctasks/task/requirements.txt $pip_compile_options
 
 # docker-compose \
 #     -f docker-compose.console.yml \
