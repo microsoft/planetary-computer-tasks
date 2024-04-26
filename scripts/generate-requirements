@@ -39,7 +39,7 @@ docker-compose \
     -f docker-compose.console.yml \
     run --rm \
     dev \
-    scripts/bin/pctasks-pip-compile ./pctasks/ingest_task/setup.py -o pctasks/ingest_task/requirements.txt $pip_compile_options
+    scripts/bin/pctasks-pip-compile ./pctasks/ingest_task/pyproject.toml -o pctasks/ingest_task/requirements.txt $pip_compile_options
 
 docker-compose \
     -f docker-compose.console.yml \
@@ -47,8 +47,8 @@ docker-compose \
     dev \
     scripts/bin/pctasks-pip-compile ./pctasks/run/pyproject.toml -o pctasks/run/requirements.txt $pip_compile_options
 
-# docker-compose \
-#     -f docker-compose.console.yml \
-#     run --rm \
-#     dev \
-#     pip-compile ./pctasks/server/pyproject.toml --extra dev -o pctasks/server/requirements.txt $pip_compile_options
+docker-compose \
+    -f docker-compose.console.yml \
+    run --rm \
+    dev \
+    scripts/bin/pctasks-pip-compile ./pctasks/server/pyproject.toml -o pctasks/server/requirements.txt $pip_compile_options --extra dev

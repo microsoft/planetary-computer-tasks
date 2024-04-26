@@ -1,0 +1,61 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pctasks.dataset"
+dynamic = ["version"]
+description = "Planetary Computer Tasks framework."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.8"
+authors = [
+    { name = "Microsoft", email = "planetarycomputer@microsoft.com" },
+]
+keywords = [
+    "Planetary",
+    "STAC",
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.8",
+]
+
+dependencies = [
+    "pctasks.client @ {root:uri}/../client",
+    "pctasks.ingest @ {root:uri}/../ingest",
+    "pctasks.task @ {root:uri}/../task",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "pytest",
+    "pytest-cov",
+    "responses",
+]
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+    "pdocs",
+]
+
+[project.entry-points."pctasks.commands"]
+dataset = "pctasks.dataset.cli:dataset_cmd"
+
+[project.urls]
+Homepage = "https://github.com/Microsoft/planetary-computer-tasks"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.version]
+path = "pctasks/dataset/version.py"
+
+[tool.hatch.build.targets.wheel]
+include = [
+    "/pctasks/dataset",
+]
