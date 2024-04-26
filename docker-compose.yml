@@ -1,4 +1,3 @@
-version: "2.1"
 services:
   azurite:
     container_name: pctasks-azurite
@@ -206,8 +205,8 @@ services:
 networks:
   default:
     # Network created during scripts/setup
-    external:
-      name: pctasks-network
+    external: true
+    name: pctasks-network
 
 volumes:
   pctasks-azurite-data: null
