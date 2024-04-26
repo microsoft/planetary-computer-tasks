@@ -68,17 +68,17 @@ RUN --mount=type=cache,target=/root/.cache \
      uv pip install --system -r requirements.txt && \
      uv pip install --system --no-deps -e .
 
-# COPY pctasks/ingest_task /opt/src/pctasks/ingest_task
-# RUN --mount=type=cache,target=/root/.cache \
-#      cd /opt/src/pctasks/ingest_task && \
-#      uv pip install --system -r requirements.txt && \
-#      uv pip install --system --no-deps -e .
+COPY pctasks/ingest_task /opt/src/pctasks/ingest_task
+RUN --mount=type=cache,target=/root/.cache \
+     cd /opt/src/pctasks/ingest_task && \
+     uv pip install --system -r requirements.txt && \
+     uv pip install --system --no-deps -e .
 
-# COPY pctasks/run /opt/src/pctasks/run
-# RUN --mount=type=cache,target=/root/.cache \
-#      cd /opt/src/pctasks/run && \
-#      uv pip install --system -r requirements.txt && \
-#      uv pip install --system --no-deps -e .
+COPY pctasks/run /opt/src/pctasks/run
+RUN --mount=type=cache,target=/root/.cache \
+     cd /opt/src/pctasks/run && \
+     uv pip install --system -r requirements.txt && \
+     uv pip install --system --no-deps -e .
 
 # We are here
 # COPY pctasks/server /opt/src/pctasks/server
