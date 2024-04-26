@@ -172,8 +172,9 @@ pyjwt==2.8.0
 pyrsistent==0.20.0
     # via jsonschema
     # from https://pypi.org/simple
-pystac==1.10.0
+pystac==1.8.3
     # via
+    #   pctasks-core
     #   planetary-computer
     #   pystac-client
     # from https://pypi.org/simple

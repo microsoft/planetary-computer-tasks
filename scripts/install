@@ -31,7 +31,7 @@ source scripts/env
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     pip install uv
     # Dependencies must be mutually compatible across all projects
-    uv pip install --python=$(which python3) \
+    uv pip install --prerelease allow --python=$(which python3) \
         -r "pctasks/core/requirements.txt" \
         -r "pctasks/cli/requirements.txt" \
         -r "pctasks/task/requirements.txt" \
@@ -43,9 +43,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         -r "pctasks/notify/requirements.txt" \
         -r "pctasks/router/requirements.txt" \
         -r "pctasks/server/requirements.txt" \
-        -r "pctasks/dev/requirements.txt"
-
-    echo "Installing dev dependencies"
-    uv pip install --python=$(which python3) -r requirements-dev.txt
+        -r "pctasks/dev/requirements.txt" \
+        -r "requirements-dev.txt"
 
 fi
