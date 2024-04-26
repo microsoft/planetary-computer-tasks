@@ -132,8 +132,8 @@ packaging==24.0
     #   msal-extensions
     #   planetary-computer
     # from https://pypi.org/simple
-pctasks-cli @ file:///opt/src/pctasks/task/../cli
-pctasks-core @ file:///opt/src/pctasks/task/../core
+
+
     # via pctasks-cli
 planetary-computer==1.0.0
     # via pctasks-core
