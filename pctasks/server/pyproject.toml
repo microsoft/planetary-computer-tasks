@@ -52,5 +52,5 @@ path = "pctasks/server/version.py"
 
 [tool.hatch.build.targets.wheel]
 include = [
-    "/pctasks/run",
+    "/pctasks/server",
 ]
