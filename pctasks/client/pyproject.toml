@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "pctasks.core"
+name = "pctasks.client"
 dynamic = ["version"]
-description = "Planetary Computer Tasks framework."
+description = "Planetary Computer Tasks framework - Client."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.8"
@@ -24,23 +24,10 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
 ]
 dependencies = [
-    "aiohttp>=3.9",
-    "azure-cosmos>=4.3.0,<4.4.0",
-    "azure-data-tables>=12.0.0,<13",
-    "azure-identity>=1.0.0,<2",
-    "azure-storage-blob",
-    "azure-storage-queue>=12.6.0",
-    "idna>=3.7.0",
-    "jsonschema>=4.0.1,<4.18",
-    "opencensus-ext-azure==1.1.0",
-    "opencensus-ext-logging==0.1.1",
-    "orjson>=3.0.0,<4",
-    "planetary-computer>=0.4.0",
-    "pydantic>=1.9,<2.0.0",
-    "pyyaml>=5.3",
-    "stac-validator>=3.1.0",
-    "strictyaml>=1.6",
-    "typing-extensions; python_version< '3.10.0'",
+    "pctasks.core @ {root:uri}/../core",
+    "pctasks.cli @ {root:uri}/../cli",
+    "pydantic[dotenv]>=1.8,<2.0.0",
+    "rich>=11.2.0",
 ]
 
 [project.optional-dependencies]
@@ -55,13 +42,22 @@ docs = [
     "pdocs",
 ]
 
+[project.entry-points."pctasks.commands"]
+profile = "pctasks.client.profile.cli:profile_cmd"
+runs = "pctasks.client.runs.cli:runs_cmd"
+storage = "pctasks.client.storage.cli:storage_cmd"
+workflow = "pctasks.client.workflow.cli:workflow_cmd"
+
 [project.urls]
 Homepage = "https://github.com/Microsoft/planetary-computer-tasks"
 
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [tool.hatch.version]
-path = "pctasks/core/version.py"
+path = "pctasks/client/version.py"
 
 [tool.hatch.build.targets.wheel]
 include = [
-    "/pctasks/core",
+    "/pctasks/client",
 ]

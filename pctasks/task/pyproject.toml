@@ -25,7 +25,7 @@ classifiers = [
 ]
 dependencies = [
     "pctasks.core @ {root:uri}/../core",
-    "pctasks.cli @ {root:uri}/../core",
+    "pctasks.cli @ {root:uri}/../cli",
 ]
 
 [project.optional-dependencies]
@@ -52,7 +52,7 @@ allow-direct-references = true
 [tool.hatch.version]
 path = "pctasks/task/version.py"
 
-[tool.hatch.build.targets.sdist]
+[tool.hatch.build.targets.wheel]
 include = [
-    "/pctasks",
+    "/pctasks/task",
 ]
