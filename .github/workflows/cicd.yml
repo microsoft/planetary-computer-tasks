@@ -28,11 +28,11 @@ jobs:
         with:
           python-version: "3.8"
 
-      - name: Install local dependencies
-        run: ./scripts/install
+      # - name: Install local dependencies
+      #   run: ./scripts/install
 
-      - name: Setup
-        run: ./scripts/setup --no-aux-servers
+      # - name: Setup
+      #   run: ./scripts/setup --no-aux-servers
 
       # - name: Test
       #   run: ./scripts/test
@@ -81,7 +81,7 @@ jobs:
 
 
       - name: Publish images (test)
-        run: ./scripts/publish --acr pccomponentstest --tag ${{steps.get_image_tag.outputs.tag}} --no-login
+        run: ./scripts/publish --acr pccomponentstest --tag ${{steps.get_image_tag.outputs.tag}} 
 
       # - name: Publish images
       #   run: ./scripts/publish --acr pccomponents --tag ${{steps.get_image_tag.outputs.tag}} --no-login
