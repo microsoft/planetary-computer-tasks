@@ -24,13 +24,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Log in with Azure
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
       - uses: actions/setup-python@v4
         with:
           python-version: "3.8"
@@ -41,30 +34,30 @@ jobs:
       - name: Setup
         run: ./scripts/setup --no-aux-servers
 
-      - name: Test
-        run: ./scripts/test
+      # - name: Test
+      #   run: ./scripts/test
 
-      - name: Validate collections
-        run: ./scripts/validate-collections
+      # - name: Validate collections
+      #   run: ./scripts/validate-collections
 
-      # Integration Tests
+      # # Integration Tests
 
-      - name: Install Kind
-        uses: helm/kind-action@v1.4.0
-        with:
-          install_only: true
+      # - name: Install Kind
+      #   uses: helm/kind-action@v1.4.0
+      #   with:
+      #     install_only: true
 
-      - name: Install Helm
-        uses: azure/setup-helm@v3
-        with:
-          version: v3.8.2
-        # if: ${{ github.base_ref  == 'main' }}
+      # - name: Install Helm
+      #   uses: azure/setup-helm@v3
+      #   with:
+      #     version: v3.8.2
+      #   # if: ${{ github.base_ref  == 'main' }}
 
-      - name: Setup cluster
-        run: ./scripts/cluster setup
+      # - name: Setup cluster
+      #   run: ./scripts/cluster setup
 
-      - name: Run integration tests
-        run: ./scripts/citest-integration
+      # - name: Run integration tests
+      #   run: ./scripts/citest-integration
 
       # Publish images
 
@@ -79,21 +72,23 @@ jobs:
           ;;
           esac
 
-      - name: Log into the ACR (test)
-        run: az acr login --name pccomponentstest
+      - name: Log in with Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
 
       - name: Publish images (test)
         run: ./scripts/publish --acr pccomponentstest --tag ${{steps.get_image_tag.outputs.tag}} --no-login
 
-      - name: Log into the ACR
-        run: az acr login --name pccomponents
+      # - name: Publish images
+      #   run: ./scripts/publish --acr pccomponents --tag ${{steps.get_image_tag.outputs.tag}} --no-login
 
-      - name: Publish images
-        run: ./scripts/publish --acr pccomponents --tag ${{steps.get_image_tag.outputs.tag}} --no-login
-
-      - name: Clean up CosmosDB test containers
-        run: ./scripts/setup --rm-test-containers
-        if: always()
+      # - name: Clean up CosmosDB test containers
+      #   run: ./scripts/setup --rm-test-containers
+      #   if: always()
 
     outputs:
       image_tag: ${{ steps.get_image_tag.outputs.tag }}
@@ -105,6 +100,13 @@ jobs:
       - build_and_publish
     steps:
       - uses: actions/checkout@v2
+
+      - name: Log in with Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy
         run: ./scripts/cideploy

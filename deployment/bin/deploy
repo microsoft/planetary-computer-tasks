@@ -112,8 +112,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     # Gather environment variables from the terraform directory
     source "${TERRAFORM_DIR}"/env.sh
 
-    bin/azlogin
-
     require_env "DEPLOY_SECRETS_KV"
     require_env "DEPLOY_SECRETS_KV_SECRET"
     require_env "DEPLOY_SECRETS_KV_RG_NAME"
