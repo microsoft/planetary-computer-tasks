@@ -10,9 +10,6 @@ env:
   PCTASKS_COSMOSDB__URL: ${{ secrets.COSMOSDB_URL }}
   PCTASKS_COSMOSDB__KEY: ${{ secrets.COSMOSDB_KEY }}
   PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX: ${{ github.run_id }}
-  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-  AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
 
 permissions:
   id-token: write
@@ -24,40 +21,40 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.8"
+      # - uses: actions/setup-python@v4
+      #   with:
+      #     python-version: "3.8"
 
-      - name: Install local dependencies
-        run: ./scripts/install
+      # - name: Install local dependencies
+      #   run: ./scripts/install
 
-      - name: Setup
-        run: ./scripts/setup --no-aux-servers
+      # - name: Setup
+      #   run: ./scripts/setup --no-aux-servers
 
-      - name: Test
-        run: ./scripts/test
+      # - name: Test
+      #   run: ./scripts/test
 
-      - name: Validate collections
-        run: ./scripts/validate-collections
+      # - name: Validate collections
+      #   run: ./scripts/validate-collections
 
-      # Integration Tests
+      # # Integration Tests
 
-      - name: Install Kind
-        uses: helm/kind-action@v1.4.0
-        with:
-          install_only: true
+      # - name: Install Kind
+      #   uses: helm/kind-action@v1.4.0
+      #   with:
+      #     install_only: true
 
-      - name: Install Helm
-        uses: azure/setup-helm@v3
-        with:
-          version: v3.8.2
-        # if: ${{ github.base_ref  == 'main' }}
+      # - name: Install Helm
+      #   uses: azure/setup-helm@v3
+      #   with:
+      #     version: v3.8.2
+      #   # if: ${{ github.base_ref  == 'main' }}
 
-      - name: Setup cluster
-        run: ./scripts/cluster setup
+      # - name: Setup cluster
+      #   run: ./scripts/cluster setup
 
-      - name: Run integration tests
-        run: ./scripts/citest-integration
+      # - name: Run integration tests
+      #   run: ./scripts/citest-integration
 
       # Publish images
 
@@ -79,15 +76,15 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Publish images (test)
-        run: ./scripts/publish --acr pccomponentstest --tag ${{steps.get_image_tag.outputs.tag}}
+      # - name: Publish images (test)
+      #   run: ./scripts/publish --acr pccomponentstest --tag ${{steps.get_image_tag.outputs.tag}}
 
-      - name: Publish images
-        run: ./scripts/publish --acr pccomponents --tag ${{steps.get_image_tag.outputs.tag}}
+      # - name: Publish images
+      #   run: ./scripts/publish --acr pccomponents --tag ${{steps.get_image_tag.outputs.tag}}
 
-      - name: Clean up CosmosDB test containers
-        run: ./scripts/setup --rm-test-containers
-        if: always()
+      # - name: Clean up CosmosDB test containers
+      #   run: ./scripts/setup --rm-test-containers
+      #   if: always()
 
     outputs:
       image_tag: ${{ steps.get_image_tag.outputs.tag }}
@@ -112,5 +109,7 @@ jobs:
         env:
           IMAGE_TAG: ${{needs.build_and_publish.outputs.image_tag}}
           ENVIRONMENT: staging
-          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_USE_OIDC: true

@@ -33,11 +33,8 @@ Options:
 require_env "ARM_SUBSCRIPTION_ID"
 require_env "ARM_TENANT_ID"
 require_env "ARM_CLIENT_ID"
-require_env "ARM_CLIENT_SECRET"
+require_env "ARM_USE_OIDC"
 
-require_env "AZURE_TENANT_ID"
-require_env "AZURE_CLIENT_ID"
-require_env "AZURE_CLIENT_SECRET"
 
 ###################
 # Parse arguments #
