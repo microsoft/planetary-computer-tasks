@@ -9,7 +9,7 @@ resource "azurerm_key_vault_access_policy" "function_app" {
   object_id    = azurerm_linux_function_app.pctasks.identity.0.principal_id
 
   secret_permissions = [
-    "Get", "List", "Set"
+    "Get", "List"
   ]
 }
 
