@@ -2,8 +2,7 @@ name: CI/CD
 
 on:
   push:
-    # branches: [main]
-    branches: [user/elay/remove-client-secret]
+    branches: [main]
     tags: ["*"]
 
 env:
@@ -48,7 +47,7 @@ jobs:
         uses: azure/setup-helm@v3
         with:
           version: v3.8.2
-        # if: ${{ github.base_ref  == 'main' }}
+        if: ${{ github.base_ref  == 'main' }}
 
       - name: Setup cluster
         run: ./scripts/cluster setup
@@ -91,7 +90,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    # if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/main' }}
     needs:
       - build_and_publish
     steps:
