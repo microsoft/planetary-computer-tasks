@@ -4,5 +4,6 @@ terraform {
     storage_account_name = "pctesttfstate"
     container_name       = "pctasks"
     key                  = "staging.terraform.tfstate"
+    use_oidc             = true
   }
 }

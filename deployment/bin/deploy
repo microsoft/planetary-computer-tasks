@@ -43,6 +43,10 @@ fi
 if [[ "${AZURE_CLIENT_SECRET}" ]]; then
     export ARM_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
 fi
+require_env "ARM_TENANT_ID"
+require_env "ARM_CLIENT_ID"
+require_env "ARM_USE_OIDC"
+
 
 ###################
 # Parse arguments #
@@ -116,8 +120,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
     # Gather environment variables from the terraform directory
     source "${TERRAFORM_DIR}"/env.sh
-
-    bin/azlogin
 
     require_env "DEPLOY_SECRETS_KV"
     require_env "DEPLOY_SECRETS_KV_SECRET"
