@@ -3,7 +3,7 @@ import math
 import random
 import time
 from concurrent import futures
-from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, List, Optional, Union
 
 from azure.storage.queue import BinaryBase64DecodePolicy, BinaryBase64EncodePolicy
 
@@ -31,7 +31,6 @@ from pctasks.run.models import (
     JobPartition,
     JobPartitionSubmitMessage,
     PreparedTaskData,
-    PreparedTaskSubmitMessage,
     SuccessfulTaskSubmitResult,
 )
 from pctasks.run.settings import WorkflowExecutorConfig
