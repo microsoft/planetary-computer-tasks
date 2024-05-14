@@ -127,10 +127,6 @@ class TaskState:
         return self.prepared_task.task_submit_message.run_id
 
     @property
-    def has_next_task(self) -> bool:
-        return bool(self.task_queue)
-
-    @property
     def job_id(self) -> str:
         return self.prepared_task.task_submit_message.job_id
 
@@ -375,6 +371,10 @@ class JobPartitionState:
     @property
     def run_id(self) -> str:
         return self.job_part_submit_msg.run_id
+
+    @property
+    def has_next_task(self) -> bool:
+        return bool(self.task_queue)
 
     def prepare_next_task(self, settings: RunSettings) -> None:
         next_task_config = next(iter(self.task_queue), None)
