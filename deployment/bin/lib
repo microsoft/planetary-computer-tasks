@@ -60,6 +60,7 @@ function render_values() {
     bin/jinja ${TF_OUTPUT_FILE} ${TEMPLATE_PATH} ${DEPLOY_VALUES_FILE}
 }
 
+# shellcheck disable=SC2120
 function cluster_login() {
     echo "Logging into the cluster..."
 
@@ -70,6 +71,8 @@ function cluster_login() {
     if [ -z "${CLUSTER_NAME}" ]; then
         CLUSTER_NAME=$2
     fi
+
+    bin/azlogin
 
     az aks get-credentials \
         --resource-group ${RESOURCE_GROUP} \
@@ -82,9 +85,17 @@ function cluster_login() {
     # https://github.com/Azure/kubelogin/issues/87.
     # So we export to a kubeconfig file
     echo "Converting kubeconfig..."
-    kubelogin convert-kubeconfig \
-        -l azurecli \
-        --kubeconfig=kubeconfig
+    if [[ "${ARM_CLIENT_ID}" ]]; then
+        kubelogin convert-kubeconfig \
+            --login spn \
+            --client-id ${ARM_CLIENT_ID} \
+            --client-secret ${ARM_CLIENT_SECRET} \
+            --kubeconfig=kubeconfig
+    else
+        kubelogin convert-kubeconfig \
+            --login azurecli \
+            --kubeconfig=kubeconfig
+    fi
     export KUBECONFIG=kubeconfig
 }
 

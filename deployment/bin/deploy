@@ -31,6 +31,18 @@ Options:
 }
 
 require_env "ARM_SUBSCRIPTION_ID"
+
+if [[ "${AZURE_TENANT_ID}" ]]; then
+    export ARM_TENANT_ID=${AZURE_TENANT_ID}
+fi
+
+if [[ "${AZURE_CLIENT_ID}" ]]; then
+    export ARM_CLIENT_ID=${AZURE_CLIENT_ID}
+fi
+
+if [[ "${AZURE_CLIENT_SECRET}" ]]; then
+    export ARM_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
+fi
 require_env "ARM_TENANT_ID"
 require_env "ARM_CLIENT_ID"
 require_env "ARM_USE_OIDC"

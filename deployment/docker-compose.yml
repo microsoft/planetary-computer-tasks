@@ -7,6 +7,12 @@ services:
       dockerfile: deployment/Dockerfile
     environment:
       # For Terraform
+      - ARM_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}
+
+      # For Azure CLI - only set these if not using az login from host
+      - AZURE_TENANT_ID
+      - AZURE_CLIENT_ID
+      - AZURE_CLIENT_SECRET
       - ARM_SUBSCRIPTION_ID
       - ARM_TENANT_ID
       - ARM_CLIENT_ID
