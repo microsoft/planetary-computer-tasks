@@ -127,6 +127,10 @@ class TaskState:
         return self.prepared_task.task_submit_message.run_id
 
     @property
+    def has_next_task(self) -> bool:
+        return bool(self.task_queue)
+
+    @property
     def job_id(self) -> str:
         return self.prepared_task.task_submit_message.job_id
 

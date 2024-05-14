@@ -324,6 +324,8 @@ class RemoteWorkflowExecutor:
         group_id: str,
         job_part_states: List[JobPartitionState],
         container: CosmosDBContainer[JobPartitionRunRecord],
+        max_concurrent_partition_tasks: int,
+        is_last_job: bool,
     ) -> List[Dict[str, Any]]:
         """Complete job partitions and return the results.
 
@@ -333,6 +335,7 @@ class RemoteWorkflowExecutor:
         task_log_storage = self.config.run_settings.get_log_storage()
 
         completed_job_count = 0
+        running_task_count = 0
         failed_job_count = 0
         total_job_count = len(job_part_states)
         _jobs_left = lambda: total_job_count - completed_job_count - failed_job_count
@@ -340,7 +343,8 @@ class RemoteWorkflowExecutor:
             f"{job_id} {group_id} status: "
             f"{completed_job_count} completed, "
             f"{failed_job_count} failed, "
-            f"{_jobs_left()} remaining"
+            f"{_jobs_left()} remaining, "
+            f"{running_task_count} tasks running"
         )
 
         _last_runner_poll_time: float = time.monotonic()
@@ -411,6 +415,11 @@ class RemoteWorkflowExecutor:
 
                         if task_state.status == TaskStateStatus.NEW:
                             # New task, submit it
+                            # wait if max concurrent tasks are already running
+                            if running_task_count >= max_concurrent_partition_tasks:
+                                continue
+                            else:
+                                running_task_count += 1
 
                             update_task_run_status(
                                 container,
@@ -454,6 +463,7 @@ class RemoteWorkflowExecutor:
                         elif task_state.status == TaskStateStatus.WAITING:
                             # If we just moved the job state to waiting,
                             # update the record.
+                            running_task_count -= 1
 
                             if not task_state.status_updated:
                                 update_task_run_status(
@@ -466,6 +476,8 @@ class RemoteWorkflowExecutor:
                                 task_state.status_updated = True
 
                         elif task_state.status == TaskStateStatus.FAILED:
+                            running_task_count -= 1
+
                             logger.warning(
                                 f"Task failed: {job_part_state.job_id} "
                                 f"- {task_state.task_id}"
@@ -503,6 +515,8 @@ class RemoteWorkflowExecutor:
                             _report_status()
 
                         elif task_state.status == TaskStateStatus.COMPLETED:
+                            running_task_count -= 1
+
                             logger.info(
                                 f"Task completed: {job_part_state.job_id}:{part_id}"
                                 f":{task_state.task_id}"
@@ -519,9 +533,13 @@ class RemoteWorkflowExecutor:
                                 )
                                 continue
 
-                            job_part_state.task_outputs[task_state.task_id] = {
-                                "output": task_state.task_result.output
-                            }
+                            if (not is_last_job) or (job_part_state.has_next_task):
+                                job_part_state.task_outputs[task_state.task_id] = {
+                                    "output": task_state.task_result.output
+                                }
+                            else:
+                                # Clear task output to save memory
+                                task_state.task_result.output = {}
 
                             update_task_run_status(
                                 container,
@@ -564,6 +582,12 @@ class RemoteWorkflowExecutor:
                                         status=JobPartitionRunStatus.COMPLETED,
                                     )
                                     self.handle_job_part_notifications(job_part_state)
+
+                                    # If this is the last job, clear the task output
+                                    # to save memory
+                                    if is_last_job:
+                                        job_part_state.task_outputs = {}
+
                                 except Exception:
                                     job_part_state.status = (
                                         JobPartitionStateStatus.FAILED
