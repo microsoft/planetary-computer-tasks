@@ -33,5 +33,14 @@ pcingress:
     hosts: []
     annotations: {}
 
+secretProvider:
+  create: true
+  providerName: "keyvault"
+  userAssignedIdentityID: ""
+  tenantId: ""
+  keyvaultName: ""
+  keyvaultCertificateName: ""
+  kubernetesCertificateSecretName: ""
+
 nameOverride: ""
 fullnameOverride: ""
