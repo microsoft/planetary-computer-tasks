@@ -5,6 +5,12 @@ resource "azurerm_kubernetes_cluster" "pctasks" {
   dns_prefix          = "${local.prefix}-cluster"
   kubernetes_version  = var.k8s_version
 
+  key_vault_secrets_provider {
+    secret_rotation_enabled = true
+  }
+  oidc_issuer_enabled = true
+  workload_identity_enabled = true
+
   oms_agent {
     log_analytics_workspace_id = azurerm_log_analytics_workspace.pctasks.id
   }
@@ -149,3 +155,29 @@ resource "azurerm_role_assignment" "network" {
   role_definition_name = "Network Contributor"
   principal_id         = azurerm_kubernetes_cluster.pctasks.identity[0].principal_id
 }
+
+# When you enable the key vault secrets provider block in an AKS cluster,
+# this identity is created in the node resource group. Altough it technically
+# is a property of the cluster resource under addProfiles.azureKeyvaultSecretsProvider.identity.resourceId
+# the terraform provider doesn't know about it so we need to manually tell terraform this thing exists
+data "azurerm_user_assigned_identity" "key_vault_secrets_provider_identity" {
+  resource_group_name = azurerm_kubernetes_cluster.pctasks.node_resource_group
+  name = "azurekeyvaultsecretsprovider-${azurerm_kubernetes_cluster.pctasks.name}"
+}
+
+resource "azurerm_federated_identity_credential" "cluster" {
+  name                = "federated-id-${local.prefix}-${var.environment}"
+  resource_group_name = azurerm_kubernetes_cluster.pctasks.node_resource_group
+  audience            = ["api://AzureADTokenExchange"]
+  issuer              = azurerm_kubernetes_cluster.pctasks.oidc_issuer_url
+  subject             = "system:serviceaccount:pc:nginx-ingress-ingress-nginx"
+  parent_id           = data.azurerm_user_assigned_identity.key_vault_secrets_provider_identity.id
+  timeouts {}
+}
+
+# Left here as an exercise for the reader in PIM elevation
+# resource "azurerm_role_assignment" "certificateAccess" {
+#   scope                = "/subscriptions/9da7523a-cb61-4c3e-b1d4-afa5fc6d2da9/resourceGroups/pc-manual-resources/providers/Microsoft.KeyVault/vaults/pc-deploy-secrets"
+#   role_definition_name = "Key Vault Secrets User"
+#   principal_id         = azurerm_kubernetes_cluster.pctasks.key_vault_secrets_provider[0].secret_identity[0].object_id
+# }
