@@ -21,17 +21,21 @@ pcingress:
   cert:
     secretName: ""
 
-  certIssuer:
-    enabled: false
-    privateKeySecretRef: "letsencrypt-staging"
-    server: "https://acme-staging-v02.api.letsencrypt.org/directory"
-    issuerEmail: ""
-
   ingress:
     enabled: false
     tlsHost: ""
     hosts: []
     annotations: {}
+
+secretProvider:
+  create: true
+  providerName: "keyvault"
+  namespace: ""
+  userAssignedIdentityID: ""
+  tenantId: ""
+  keyvaultName: ""
+  keyvaultCertificateName: ""
+  kubernetesCertificateSecretName: ""
 
 nameOverride: ""
 fullnameOverride: ""
