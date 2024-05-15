@@ -9,10 +9,6 @@ env:
   PCTASKS_COSMOSDB__URL: ${{ secrets.COSMOSDB_URL }}
   PCTASKS_COSMOSDB__KEY: ${{ secrets.COSMOSDB_KEY }}
   PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX: ${{ github.run_id }}
-  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-  AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-  AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
 
 permissions:
   id-token: write
@@ -79,24 +75,29 @@ jobs:
         run: ./scripts/citest-integration
 
       # Publish images
+      - name: Get image tag
+        id: get_image_tag
+        run: case "${GITHUB_REF}" in
+          *tags*)
+          echo "::set-output name=tag::${GITHUB_REF/refs\/tags\//}"
+          ;;
+          *)
+          echo "::set-output name=tag::latest"
+          ;;
+          esac
 
-      - name: Log into the ACR (test)
-        env:
-          CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-        run: docker login pccomponentstest.azurecr.io --username ${CLIENT_ID} --password ${CLIENT_SECRET}
+      - name: Log in with Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Publish images (test)
-        run: ./scripts/publish --acr pccomponentstest --tag ${{steps.get_image_tag.outputs.tag}} --no-login
-
-      - name: Log into the ACR
-        env:
-          CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-        run: docker login pccomponents.azurecr.io --username ${CLIENT_ID} --password ${CLIENT_SECRET}
+        run: ./scripts/publish --acr pccomponentstest --tag ${{steps.get_image_tag.outputs.tag}}
 
       - name: Publish images
-        run: ./scripts/publish --acr pccomponents --tag ${{steps.get_image_tag.outputs.tag}} --no-login
+        run: ./scripts/publish --acr pccomponents --tag ${{steps.get_image_tag.outputs.tag}}
 
       - name: Clean up CosmosDB test containers
         run: ./scripts/setup --rm-test-containers
@@ -113,10 +114,19 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Log in with Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Deploy
         run: ./scripts/cideploy
         env:
           IMAGE_TAG: ${{needs.build_and_publish.outputs.image_tag}}
           ENVIRONMENT: staging
-          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_USE_OIDC: true

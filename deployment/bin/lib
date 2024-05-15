@@ -71,11 +71,6 @@ function cluster_login() {
         CLUSTER_NAME=$2
     fi
 
-    az login --service-principal \
-        --username ${ARM_CLIENT_ID} \
-        --password ${ARM_CLIENT_SECRET} \
-        --tenant ${ARM_TENANT_ID}
-
     az aks get-credentials \
         --resource-group ${RESOURCE_GROUP} \
         --name ${CLUSTER_NAME} \
@@ -88,9 +83,7 @@ function cluster_login() {
     # So we export to a kubeconfig file
     echo "Converting kubeconfig..."
     kubelogin convert-kubeconfig \
-        --login spn \
-        --client-id ${ARM_CLIENT_ID} \
-        --client-secret ${ARM_CLIENT_SECRET} \
+        -l azurecli \
         --kubeconfig=kubeconfig
     export KUBECONFIG=kubeconfig
 }
