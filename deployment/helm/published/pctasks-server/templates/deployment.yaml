@@ -138,6 +138,15 @@ spec:
             {{- end }}
             {{- end }}
 
+            {{- if .Values.pctasks.run.workload_identity.enabled }}
+            - name: PCTASKS_RUN__TASK_SERVICE_ACCOUNT_NAME
+              value: "{{ .Values.pctasks.run.workload_identity.service_account }}"
+            - name: PCTASKS_RUN__TASK_WORKLOAD_IDENTITY_CLIENT_ID
+              value: "{{ .Values.pctasks.run.workload_identity.client_id }}"
+            - name: PCTASKS_RUN__TASK_WORKLOAD_IDENTITY_TENANT_ID
+              value: "{{ .Values.pctasks.run.workload_identity.tentant_id }}"
+            {{- end }}
+
             ### CosmosDB
 
             - name: PCTASKS_COSMOSDB__URL

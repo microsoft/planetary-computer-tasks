@@ -44,6 +44,14 @@ output "pctasks_server_replica_count" {
   value = var.pctasks_server_replica_count
 }
 
+output "pctasks_workflow_identity_client_id" {
+  value = azurerm_user_assigned_identity.workflows.client_id
+}
+
+output "pctasks_workflow_identity_tenant_id" {
+  value = azurerm_user_assigned_identity.workflows.tenant_id
+}
+
 ## Functions
 
 output "function_app_name" {
@@ -151,17 +159,17 @@ output "instrumentation_key" {
 ## PCTasks Server
 
 output "pctasks_server_sp_tenant_id" {
-  value  = var.pctasks_server_sp_tenant_id
+  value     = var.pctasks_server_sp_tenant_id
   sensitive = true
 }
 
 output "pctasks_server_sp_client_id" {
-  value = var.pctasks_server_sp_client_id
+  value     = var.pctasks_server_sp_client_id
   sensitive = true
 }
 
 output "pctasks_server_sp_client_secret" {
-  value = var.pctasks_server_sp_client_secret
+  value     = var.pctasks_server_sp_client_secret
   sensitive = true
 }
 
@@ -194,6 +202,6 @@ output "streaming_taskio_sp_client_id" {
 }
 
 output "streaming_taskio_sp_client_secret" {
-  value = var.streaming_taskio_sp_client_secret
+  value     = var.streaming_taskio_sp_client_secret
   sensitive = true
 }

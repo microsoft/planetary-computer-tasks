@@ -9,18 +9,21 @@ resource "azurerm_network_security_group" "pctasks" {
   name                = "nsg-${local.prefix}"
   location            = azurerm_resource_group.pctasks.location
   resource_group_name = azurerm_resource_group.pctasks.name
+}
 
-  security_rule {
-    name                       = "nsg-rule"
-    priority                   = 100
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_ranges    = [80,29877,443,3443,29876]
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
+resource "azurerm_network_security_rule" "ingress" {
+  name                       = "nsg-rule"
+  priority                   = 100
+  direction                  = "Inbound"
+  access                     = "Allow"
+  protocol                   = "Tcp"
+  source_port_range          = "*"
+  destination_port_ranges    = [80, 29877, 443, 3443, 29876]
+  source_address_prefix      = "*"
+  destination_address_prefix = "*"
+
+  network_security_group_name = azurerm_network_security_group.pctasks.name
+  resource_group_name         = azurerm_resource_group.pctasks.name
 }
 
 # Batch pool subnet

@@ -159,6 +159,12 @@ pctasks:
         enabled: false
         node_group: ""
 
+    managed_identity:
+      enabled: true
+      service_account: pctasks-sa
+      client_id: ""
+      tenant_id: ""
+
     keyvault:
       enabled: true
       url: ""

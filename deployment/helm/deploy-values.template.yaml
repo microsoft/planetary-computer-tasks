@@ -31,6 +31,11 @@ pctasks:
       client_id: "{{ tf.pctasks_server_sp_client_id }}"
       client_secret: "{{ tf.pctasks_server_sp_client_secret }}"
 
+    serviceAccount:
+      annotations:
+        azure.workload.identity/client-id: "{{ tf.pctasks_workflow_identity_client_id }}"
+        azure.workload.identity/tenant-id: "{{ tf.pctasks_workflow_identity_tenant_id }}"
+
     deploy:
       replicaCount: 1
       podAnnotations:
@@ -74,6 +79,12 @@ pctasks:
         enabled: true
         node_group: "{{ tf.argo_wf_node_group_name }}"
       # argo token set during helm install
+
+    managed_identity:
+      enabled: true
+      service_account: pctasks-sa
+      client_id: "{{ tf.pctasks_workflow_identity_client_id }}"
+      tenant_id: "{{ tf.pctasks_workflow_identity_tenant_id }}"
 
     batch:
       enabled: true

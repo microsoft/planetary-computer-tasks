@@ -28,9 +28,9 @@ variable "k8s_version" {
 }
 
 variable "k8s_vnet_ingress_address" {
-  type = string
+  type        = string
   description = "Virtual network address associated with an Azure load balancer associated with a kubernetes ingress controller."
-  default = "10.2.0.15"
+  default     = "10.2.0.15"
 }
 
 variable "k8s_orchestrator_version" {
@@ -38,8 +38,13 @@ variable "k8s_orchestrator_version" {
 }
 
 variable "aks_node_count" {
-  type = number
+  type    = number
   default = 1
+}
+
+variable "aks_pctasks_service_account" {
+  type    = string
+  default = "pctasks-sa"
 }
 
 variable "pctasks_server_replica_count" {
@@ -48,18 +53,18 @@ variable "pctasks_server_replica_count" {
 }
 
 variable "aks_task_group_label" {
-  type = string
+  type    = string
   default = "tasks"
 }
 
 variable "aks_task_pool_min_count" {
-  type = number
-  default = 0
+  type        = number
+  default     = 0
   description = "The minimum number of nodes for running (low-latency) tasks."
 }
 
 variable "aks_task_pool_max_count" {
-  type = number
+  type    = number
   default = 100
 }
 
@@ -126,7 +131,7 @@ variable "task_sp_tenant_id" {
 }
 
 variable "task_sp_object_id" {
-  type    = string
+  type = string
 }
 
 variable "task_sp_client_id" {
@@ -138,19 +143,19 @@ variable "task_sp_client_secret" {
 }
 
 variable "kv_sp_tenant_id" {
-  type    = string
+  type = string
 }
 
 variable "kv_sp_object_id" {
-  type    = string
+  type = string
 }
 
 variable "kv_sp_client_id" {
-  type    = string
+  type = string
 }
 
 variable "kv_sp_client_secret" {
-  type    = string
+  type = string
 }
 
 variable "pctasks_task_kv" {
@@ -162,58 +167,58 @@ variable "pctasks_task_kv_resource_group_name" {
 }
 
 variable "deploy_secrets_kv_name" {
-  type    = string
+  type = string
 }
 
-variable deploy_secrets_kv_rg {
-  type    = string
+variable "deploy_secrets_kv_rg" {
+  type = string
 }
 
-variable access_key_secret_name {
-  type    = string
+variable "access_key_secret_name" {
+  type = string
 }
 
-variable backend_api_app_id_secret_name {
-  type    = string
+variable "backend_api_app_id_secret_name" {
+  type = string
 }
 
 ## PCTasks Server
 
 variable "pctasks_server_sp_tenant_id" {
-  type    = string
+  type = string
 }
 
 variable "pctasks_server_sp_client_id" {
-  type    = string
+  type = string
 }
 
 variable "pctasks_server_sp_client_secret" {
-  type    = string
+  type = string
 }
 
 variable "pctasks_server_sp_object_id" {
-  type    = string
+  type = string
 }
 
-variable "argo_wf_node_group_name"{
-  type = string
-  default ="argo-workflows"
+variable "argo_wf_node_group_name" {
+  type    = string
+  default = "argo-workflows"
 }
 
 variable "streaming_taskio_sp_client_id" {
-  type    = string
+  type = string
 }
 
 variable "streaming_taskio_sp_client_secret" {
-  type    = string
+  type = string
 }
 
 variable "streaming_taskio_sp_tenant_id" {
-  type    = string
+  type = string
 }
 
 variable "streaming_taskio_sp_object_id" {
-  type    = string
+  type = string
 }
 
 
