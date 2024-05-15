@@ -9,6 +9,9 @@ defaults:
   run:
     shell: bash
 
+permissions:
+  pages: write
+
 jobs:
   build:
     runs-on: ubuntu-20.04
