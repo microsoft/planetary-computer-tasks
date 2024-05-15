@@ -10,6 +10,24 @@ output "location" {
   value = local.location
 }
 
+output "tenant_id" {
+  value = data.azurerm_client_config.current.tenant_id
+}
+
+## Ingress
+
+output "secret_provider_keyvault_name" {
+  value = var.secret_provider_keyvault_name
+}
+
+output "secret_provider_managed_identity_id" {
+  value = azurerm_kubernetes_cluster.pctasks.key_vault_secrets_provider[0].secret_identity[0].client_id
+}
+
+output "secret_provider_keyvault_secret" {
+  value = var.secret_provider_keyvault_secret
+}
+
 ## AKS
 
 output "cluster_name" {

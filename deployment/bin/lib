@@ -48,6 +48,10 @@ function gather_tf_output() {
     export INGRESS_IP=$(tf_output ingress_ip)
     export DNS_LABEL=$(tf_output dns_label)
     export INTERNAL_INGRESS_IP=$(tf_output internal_ingress_ip)
+    export AZURE_TENANT=$(tf_output tenant_id)
+    export KEYVAULT_NAME=$(tf_output secret_provider_keyvault_name)
+    export SECRET_PROVIDER_MANAGED_IDENTITY_ID=$(tf_output secret_provider_managed_identity_id)
+    export SECRET_PROVIDER_KEYVAULT_SECRET=$(tf_output secret_provider_keyvault_secret)
 
     if [ "${1}" ]; then
         popd
@@ -85,6 +89,8 @@ function cluster_login() {
     kubelogin convert-kubeconfig \
         -l azurecli \
         --kubeconfig=kubeconfig
+        # --client-id ${ARM_CLIENT_ID} \
+        # --client-secret ${ARM_CLIENT_SECRET} \
     export KUBECONFIG=kubeconfig
 }
 

@@ -6,6 +6,19 @@ variable "region" {
   type = string
 }
 
+# Ingress
+variable "secret_provider_keyvault_name" {
+  type = string
+  description = "The name of the KeyVault that holds the secrets"
+  default = "pc-deploy-secrets"
+}
+
+variable "secret_provider_keyvault_secret" {
+  type = string
+  description = "The name of the certificate in the KeyVault for TLS ingress"
+  default = "planetarycomputer-test-certificate"
+}
+
 # APIM
 
 variable "apim_sku_name" {
