@@ -103,13 +103,6 @@ pcingress:
   cert:
     secretName: "pctasks-tls-secret"
 
-  certIssuer:
-    enabled: false
-    privateKeySecretRef: "{{ tf.cluster_cert_issuer }}"
-    server: "{{ tf.cluster_cert_server }}"
-    issuerEmail: "planetarycomputer@microsoft.com"
-    secretName: "pctasks-tls-secret"
-
   ingress:
     enabled: true
     tlsHost: "planetarycomputer-test.microsoft.com"

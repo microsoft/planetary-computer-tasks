@@ -21,12 +21,6 @@ pcingress:
   cert:
     secretName: ""
 
-  certIssuer:
-    enabled: false
-    privateKeySecretRef: "letsencrypt-staging"
-    server: "https://acme-staging-v02.api.letsencrypt.org/directory"
-    issuerEmail: ""
-
   ingress:
     enabled: false
     tlsHost: ""
