@@ -38,5 +38,6 @@ services:
 
 networks:
   default:
+    external: true
     name: pctasks-network
 

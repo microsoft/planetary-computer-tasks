@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+
+if [[ "${CI}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+        "Usage: $(basename "$0")
+CI authentication for this project.
+"
+}
+
+acr=$1
+
+az acr login --name $acr
+docker login $acr.azurecr.io --username ${CLIENT_ID} --password ${CLIENT_SECRET}

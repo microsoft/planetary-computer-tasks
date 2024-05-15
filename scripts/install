@@ -29,12 +29,24 @@ while [[ $# -gt 0 ]]; do case $1 in
 source scripts/env
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    pip install uv
+    # Dependencies must be mutually compatible across all projects
+    uv pip install --prerelease allow --python=$(which python3) \
+        -r "pctasks/core/requirements.txt" \
+        -r "pctasks/cli/requirements.txt" \
+        -r "pctasks/task/requirements.txt" \
+        -r "pctasks/client/requirements.txt" \
+        -r "pctasks/ingest/requirements.txt" \
+        -r "pctasks/ingest_task/requirements.txt" \
+        -r "pctasks/dataset/requirements.txt" \
+        -r "pctasks/run/requirements.txt" \
+        -r "pctasks/notify/requirements.txt" \
+        -r "pctasks/router/requirements.txt" \
+        -r "pctasks/server/requirements.txt" \
+        -r "pctasks/dev/requirements.txt" \
+        -r "requirements-dev.txt"
     for DIR in "${PACKAGE_DIRS[@]}"; do
         echo "Installing ${DIR}"
-        pip install -e ${DIR}
+        uv pip install --system --no-deps -e ${DIR}
     done
-
-    echo "Installing dev dependencies"
-    pip install -r requirements-dev.txt
-
 fi

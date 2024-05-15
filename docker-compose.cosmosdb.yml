@@ -1,4 +1,3 @@
-version: "2.1"
 services:
   cosmosdb:
     container_name: pctasks-cosmosdb
@@ -34,8 +33,8 @@ services:
 networks:
   default:
     # Network created during scripts/setup
-    external:
-      name: pctasks-network
+    external: true
+    name: pctasks-network
 
 volumes:
   pctasks-cosmosdb-data: null
