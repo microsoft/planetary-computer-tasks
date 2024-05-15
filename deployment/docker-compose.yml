@@ -26,3 +26,4 @@ services:
       - ../deployment:/opt/src/deployment
       - ../pctasks:/opt/src/pctasks:ro
       - ../pctasks_funcs:/opt/src/pctasks_funcs:ro
+      - ~/.azure:/root/.azure

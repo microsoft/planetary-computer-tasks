@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-
+set +x
 source bin/lib
 
 if [[ "${CI}" ]]; then
@@ -25,19 +25,12 @@ Options:
     --skip-tf-init: Skip running terrform init.
     --skip-functions: Don't run function publish.
     --skip-fetch-tf-vars: Skip fetching terraform variables.
+    --user-auth: Use mounted Azure user credentials
     -y: Skip confirmation.
 
 "
 }
 
-require_env "ARM_SUBSCRIPTION_ID"
-require_env "ARM_TENANT_ID"
-require_env "ARM_CLIENT_ID"
-require_env "ARM_CLIENT_SECRET"
-
-require_env "AZURE_TENANT_ID"
-require_env "AZURE_CLIENT_ID"
-require_env "AZURE_CLIENT_SECRET"
 
 ###################
 # Parse arguments #
@@ -82,6 +75,10 @@ while [[ "$#" -gt 0 ]]; do case $1 in
         SKIP_FETCH_TF_VARS=1
         shift
         ;;
+    --user-auth)
+        export USER_AUTH=1
+        shift
+        ;;
     --help)
         usage
         exit 0
@@ -103,6 +100,17 @@ if [[ -z ${TERRAFORM_DIR} ]]; then
     exit 1
 fi
 
+if [[ -z $USER_AUTH ]]; then
+    require_env "ARM_SUBSCRIPTION_ID"
+    require_env "ARM_TENANT_ID"
+    require_env "ARM_CLIENT_ID"
+    require_env "ARM_CLIENT_SECRET"
+
+    require_env "AZURE_TENANT_ID"
+    require_env "AZURE_CLIENT_ID"
+    require_env "AZURE_CLIENT_SECRET"
+fi
+
 setup_env
 
 # ---------------------------------------------------
@@ -112,7 +120,9 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     # Gather environment variables from the terraform directory
     source "${TERRAFORM_DIR}"/env.sh
 
-    bin/azlogin
+    if [[ -z $USER_AUTH ]]; then
+        bin/azlogin
+    fi
 
     require_env "DEPLOY_SECRETS_KV"
     require_env "DEPLOY_SECRETS_KV_SECRET"
@@ -209,19 +219,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
     setup_helm
 
-    # Install cert-manager
-
-    echo "==================="
-    echo "== cert-manager ==="
-    echo "==================="
-
-    helm upgrade --install \
-        cert-manager \
-        --namespace pc \
-        --create-namespace \
-        --version v1.6.0 \
-        --set installCRDs=true jetstack/cert-manager
-
     echo "=================="
     echo "===== Argo ======="
     echo "=================="
@@ -302,7 +299,8 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         --set controller.service.loadBalancerIP="${INTERNAL_INGRESS_IP}" \
         --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-internal"=true \
         --wait \
-        --timeout 2m0s
+        --timeout 2m0s \
+        -f bin/nginx-values.yaml
 
 
     ######################
