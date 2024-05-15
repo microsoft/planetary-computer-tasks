@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-set +x
 source bin/lib
 
 if [[ "${CI}" ]]; then
@@ -104,11 +103,10 @@ if [[ -z $USER_AUTH ]]; then
     require_env "ARM_SUBSCRIPTION_ID"
     require_env "ARM_TENANT_ID"
     require_env "ARM_CLIENT_ID"
-    require_env "ARM_CLIENT_SECRET"
+    require_env "ARM_USE_OIDC"
 
     require_env "AZURE_TENANT_ID"
     require_env "AZURE_CLIENT_ID"
-    require_env "AZURE_CLIENT_SECRET"
 fi
 
 setup_env
@@ -119,10 +117,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
     # Gather environment variables from the terraform directory
     source "${TERRAFORM_DIR}"/env.sh
-
-    if [[ -z $USER_AUTH ]]; then
-        bin/azlogin
-    fi
 
     require_env "DEPLOY_SECRETS_KV"
     require_env "DEPLOY_SECRETS_KV_SECRET"
