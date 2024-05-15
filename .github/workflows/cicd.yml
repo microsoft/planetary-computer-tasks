@@ -24,25 +24,6 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Get image tag
-        id: get_image_tag
-        run: case "${GITHUB_REF}" in
-          *tags*)
-          echo "::set-output name=tag::${GITHUB_REF/refs\/tags\//}" ;
-          echo "acr=pccomponents" >> $GITHUB_OUTPUT
-          ;;
-          *)
-          echo "::set-output name=tag::latest" ;
-          echo "acr=pccomponentstest" >> $GITHUB_OUTPUT
-          ;;
-          esac
-
-      - name: Authenticate
-        env:
-          CLIENT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
-          CLIENT_SECRET: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
-        run: ./scripts/ciauthenticate ${{steps.get_image_tag.outputs.acr}}
-
       - name: Install local dependencies
         run: ./scripts/install
 
@@ -75,6 +56,7 @@ jobs:
         run: ./scripts/citest-integration
 
       # Publish images
+
       - name: Get image tag
         id: get_image_tag
         run: case "${GITHUB_REF}" in
