@@ -124,6 +124,7 @@ pcingress:
 
 secretProvider:
   create: true
+  namespace: "pc"
   providerName: "keyvault"
   userAssignedIdentityID: "{{ env.SECRET_PROVIDER_MANAGED_IDENTITY_ID }}"
   tenantId: "{{ env.AZURE_TENANT }}"
