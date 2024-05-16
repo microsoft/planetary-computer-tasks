@@ -9,11 +9,11 @@ defaults:
   run:
     shell: bash
 
-permissions:
-  pages: write
 
 jobs:
   build:
+    permissions:
+      contents: write
     runs-on: ubuntu-20.04
 
     steps:
