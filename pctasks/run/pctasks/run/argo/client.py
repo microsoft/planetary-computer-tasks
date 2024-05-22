@@ -192,7 +192,6 @@ class ArgoClient:
         else:
             kwargs = {}
 
-
         # Enable local secrets for development environment
         if run_settings.local_secrets:
             for env_var in [
@@ -244,7 +243,7 @@ class ArgoClient:
                 entrypoint="run-workflow",
                 templates=templates,
                 **kwargs,
-            )
+            ),
         )
 
         api_client = argo_workflows.ApiClient(self.configuration)
@@ -329,9 +328,7 @@ class ArgoClient:
         manifest = IoArgoprojWorkflowV1alpha1Workflow(
             metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
             spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
-                entrypoint="run-workflow",
-                templates=templates,
-                **kwargs
+                entrypoint="run-workflow", templates=templates, **kwargs
             ),
         )
 

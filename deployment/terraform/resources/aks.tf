@@ -157,7 +157,7 @@ resource "azurerm_role_assignment" "network" {
 }
 
 # Identity to be use in Argo Workflow pods. Ensure the service account used below
-# is the same associated with pod pod deployment.
+# is the same associated with task pod deployment.
 resource "azurerm_user_assigned_identity" "workflows" {
   name                = "id-${local.prefix}-workflows"
   location            = var.region
@@ -173,6 +173,17 @@ resource "azurerm_federated_identity_credential" "workflows" {
   parent_id           = azurerm_user_assigned_identity.workflows.id
   timeouts {}
 }
+
+resource "azurerm_key_vault_access_policy" "example" {
+  key_vault_id = data.azurerm_key_vault.pctasks.id
+  tenant_id    = azurerm_user_assigned_identity.workflows.tenant_id
+  object_id    = azurerm_user_assigned_identity.workflows.principal_id
+
+  secret_permissions = [
+    "Get"
+  ]
+}
+
 # When you enable the key vault secrets provider block in an AKS cluster,
 # this identity is created in the node resource group. Altough it technically
 # is a property of the cluster resource under addProfiles.azureKeyvaultSecretsProvider.identity.resourceId

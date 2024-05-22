@@ -82,19 +82,24 @@ variable "task_sp_client_secret" {
 }
 
 variable "kv_sp_tenant_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "kv_sp_object_id" {
-  type = string
+  type    = string
+  default = ""
+
 }
 
 variable "kv_sp_client_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "kv_sp_client_secret" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "deploy_secrets_kv_name" {
@@ -130,35 +135,43 @@ variable "cosmosdb_resource_group" {
 ## PCTasks Server
 
 variable "pctasks_server_sp_tenant_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "pctasks_server_sp_client_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "pctasks_server_sp_client_secret" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "pctasks_server_sp_object_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "streaming_taskio_sp_client_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "streaming_taskio_sp_client_secret" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "streaming_taskio_sp_object_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "streaming_taskio_sp_tenant_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 ## AKS

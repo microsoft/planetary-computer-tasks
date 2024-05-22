@@ -51,6 +51,7 @@ pctasks:
     deploy:
       replicaCount: 1
       podAnnotations: {}
+      podLabels: {}
       imagePullSecrets: []
       securityContext: {}
       podSecurityContext: {}
@@ -122,8 +123,8 @@ pctasks:
       secrets:
         enabled: false
         values:
-        - name: LOCAL_SECRET
-          value: ""
+          - name: LOCAL_SECRET
+            value: ""
 
     notifications:
       queue_name: "notifications"
@@ -159,7 +160,7 @@ pctasks:
         enabled: false
         node_group: ""
 
-    managed_identity:
+    workload_identity:
       enabled: true
       service_account: pctasks-sa
       client_id: ""

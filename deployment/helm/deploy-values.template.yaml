@@ -38,8 +38,12 @@ pctasks:
 
     deploy:
       replicaCount: 1
+      podLabels:
+        azure.workload.identity/use: "true"
       podAnnotations:
         "deployed": "{{ env.DATE }}"
+        azure.workload.identity/client-id: "{{ tf.pctasks_workflow_identity_client_id }}"
+        azure.workload.identity/tenant-id: "{{ tf.pctasks_workflow_identity_tenant_id }}"
       nodeSelector:
         "node_group": "default"
 
@@ -61,7 +65,7 @@ pctasks:
       account_url: {{ tf.sa_tables_account_url }}
       account_name: {{ tf.sa_account_name }}
       account_key: {{ tf.sa_account_key }}
-      connection_string: {{ tf.sa_connection_string}}
+      connection_string: {{ tf.sa_connection_string }}
       image_key_table_name: "imagekeys"
 
     blob:
@@ -80,9 +84,9 @@ pctasks:
         node_group: "{{ tf.argo_wf_node_group_name }}"
       # argo token set during helm install
 
-    managed_identity:
+    workload_identity:
       enabled: true
-      service_account: pctasks-sa
+      service_account: pctasks-server
       client_id: "{{ tf.pctasks_workflow_identity_client_id }}"
       tenant_id: "{{ tf.pctasks_workflow_identity_tenant_id }}"
 

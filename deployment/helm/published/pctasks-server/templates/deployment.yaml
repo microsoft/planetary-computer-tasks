@@ -19,6 +19,9 @@ spec:
       {{- end }}
       labels:
         {{- include "pctasks.selectorLabels" . | nindent 8 }}
+        {{- with .Values.pctasks.server.deploy.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       {{- with .Values.pctasks.server.deploy.imagePullSecrets }}
       imagePullSecrets:
@@ -144,7 +147,7 @@ spec:
             - name: PCTASKS_RUN__TASK_WORKLOAD_IDENTITY_CLIENT_ID
               value: "{{ .Values.pctasks.run.workload_identity.client_id }}"
             - name: PCTASKS_RUN__TASK_WORKLOAD_IDENTITY_TENANT_ID
-              value: "{{ .Values.pctasks.run.workload_identity.tentant_id }}"
+              value: "{{ .Values.pctasks.run.workload_identity.tenant_id }}"
             {{- end }}
 
             ### CosmosDB

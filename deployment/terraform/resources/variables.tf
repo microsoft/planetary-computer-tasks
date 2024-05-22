@@ -8,15 +8,15 @@ variable "region" {
 
 # Ingress
 variable "secret_provider_keyvault_name" {
-  type = string
+  type        = string
   description = "The name of the KeyVault that holds the secrets"
-  default = "pc-deploy-secrets"
+  default     = "pc-deploy-secrets"
 }
 
 variable "secret_provider_keyvault_secret" {
-  type = string
+  type        = string
   description = "The name of the certificate in the KeyVault for TLS ingress"
-  default = "planetarycomputer-test-certificate"
+  default     = "planetarycomputer-test-certificate"
 }
 
 # APIM
@@ -57,7 +57,7 @@ variable "aks_node_count" {
 
 variable "aks_pctasks_service_account" {
   type    = string
-  default = "pctasks-sa"
+  default = "pctasks-server"
 }
 
 variable "pctasks_server_replica_count" {
@@ -140,35 +140,43 @@ variable "cosmosdb_resource_group" {
 ## Keyvault
 
 variable "task_sp_tenant_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "task_sp_object_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "task_sp_client_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "task_sp_client_secret" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "kv_sp_tenant_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "kv_sp_object_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "kv_sp_client_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "kv_sp_client_secret" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "pctasks_task_kv" {
@@ -198,19 +206,23 @@ variable "backend_api_app_id_secret_name" {
 ## PCTasks Server
 
 variable "pctasks_server_sp_tenant_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "pctasks_server_sp_client_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "pctasks_server_sp_client_secret" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "pctasks_server_sp_object_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "argo_wf_node_group_name" {
@@ -219,19 +231,23 @@ variable "argo_wf_node_group_name" {
 }
 
 variable "streaming_taskio_sp_client_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "streaming_taskio_sp_client_secret" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "streaming_taskio_sp_tenant_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "streaming_taskio_sp_object_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 
