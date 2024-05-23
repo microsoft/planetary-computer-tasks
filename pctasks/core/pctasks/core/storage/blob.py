@@ -274,7 +274,9 @@ class BlobStorage(Storage):
             )
 
             container_client = account_client.get_container_client(self.container_name)
-            self._container_client_wrapper = ContainerClientWrapper(account_client, container_client)
+            self._container_client_wrapper = ContainerClientWrapper(
+                account_client, container_client
+            )
         return self._container_client_wrapper
 
     def _get_name_starts_with(
@@ -395,7 +397,9 @@ class BlobStorage(Storage):
             return blob_uri.blob_name or ""
 
     def get_file_info(self, file_path: str) -> StorageFileInfo:
-        with self._get_client().client.container.get_blob_client(self._add_prefix(file_path)) as blob:
+        with self._get_client().container.get_blob_client(
+            self._add_prefix(file_path)
+        ) as blob:
             try:
                 props = with_backoff(lambda: blob.get_blob_properties())
             except azure.core.exceptions.ResourceNotFoundError:
@@ -403,7 +407,9 @@ class BlobStorage(Storage):
             return StorageFileInfo(size=cast(int, props.size))
 
     def file_exists(self, file_path: str) -> bool:
-        with self._get_client().container.get_blob_client(self._add_prefix(file_path)) as blob:
+        with self._get_client().container.get_blob_client(
+            self._add_prefix(file_path)
+        ) as blob:
             return with_backoff(lambda: blob.exists())
 
     def list_files(
@@ -661,7 +667,9 @@ class BlobStorage(Storage):
             self.delete_file(file_path)
 
     def delete_file(self, file_path: str) -> None:
-        with self._get_client().container.get_blob_client(self._add_prefix(file_path)) as blob:
+        with self._get_client().container.get_blob_client(
+            self._add_prefix(file_path)
+        ) as blob:
             try:
                 with_backoff(lambda: blob.delete_blob())
             except azure.core.exceptions.ResourceNotFoundError:
