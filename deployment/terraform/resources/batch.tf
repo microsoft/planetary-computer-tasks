@@ -6,12 +6,6 @@ resource "azurerm_storage_account" "pctasks-batch" {
   account_replication_type        = "LRS"
   allow_nested_items_to_be_public = false
 
-  identity {
-    type = "UserAssigned"
-    identity_ids = [
-      azurerm_user_assigned_identity.pctasks.id
-    ]
-  }
 }
 
 resource "azurerm_batch_account" "pctasks" {
