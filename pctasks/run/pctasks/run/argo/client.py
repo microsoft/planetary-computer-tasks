@@ -8,9 +8,8 @@ from typing import Any, Dict, List, Optional, Tuple
 import argo_workflows
 from argo_workflows.api import workflow_service_api
 from argo_workflows.exceptions import NotFoundException
-from argo_workflows.model.container import Container
-from argo_workflows.model.security_context import SecurityContext
 from argo_workflows.model.capabilities import Capabilities
+from argo_workflows.model.container import Container
 from argo_workflows.model.env_var import EnvVar
 from argo_workflows.model.io_argoproj_workflow_v1alpha1_template import (
     IoArgoprojWorkflowV1alpha1Template,
@@ -28,6 +27,7 @@ from argo_workflows.model.io_argoproj_workflow_v1alpha1_workflow_terminate_reque
     IoArgoprojWorkflowV1alpha1WorkflowTerminateRequest,
 )
 from argo_workflows.model.object_meta import ObjectMeta
+from argo_workflows.model.security_context import SecurityContext
 from argo_workflows.models import (
     Affinity,
     NodeAffinity,
