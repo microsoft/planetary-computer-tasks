@@ -139,7 +139,12 @@ class BlobUri:
 
 
 class ContainerClientWrapper:
-    """Wrapper class that ensures closing of clients"""
+    """
+    Wrapper class that ensures closing of clients.
+
+    Creating and closing clients is expensive, so don't use this as a context
+    manager inside a hot loop.
+    """
 
     def __init__(
         self, account_client: BlobServiceClient, container_client: ContainerClient
@@ -252,6 +257,7 @@ class BlobStorage(Storage):
         self.storage_account_name = storage_account_name
         self.container_name = container_name
         self.prefix = prefix.strip("/") if prefix is not None else prefix
+        self._container_client_wrapper: Optional[ContainerClientWrapper] = None
 
     def __repr__(self) -> str:
         prefix_part = "" if self.prefix is None else f"/{self.prefix}"
@@ -261,14 +267,15 @@ class BlobStorage(Storage):
         )
 
     def _get_client(self) -> ContainerClientWrapper:
-        account_client = BlobServiceClient(
-            account_url=self.account_url,
-            credential=self._blob_creds,
-        )
+        if self._container_client_wrapper is None:
+            account_client = BlobServiceClient(
+                account_url=self.account_url,
+                credential=self._blob_creds,
+            )
 
-        container_client = account_client.get_container_client(self.container_name)
-
-        return ContainerClientWrapper(account_client, container_client)
+            container_client = account_client.get_container_client(self.container_name)
+            self._container_client_wrapper = ContainerClientWrapper(account_client, container_client)
+        return self._container_client_wrapper
 
     def _get_name_starts_with(
         self, additional_prefix: Optional[str] = None
@@ -388,18 +395,16 @@ class BlobStorage(Storage):
             return blob_uri.blob_name or ""
 
     def get_file_info(self, file_path: str) -> StorageFileInfo:
-        with self._get_client() as client:
-            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
-                try:
-                    props = with_backoff(lambda: blob.get_blob_properties())
-                except azure.core.exceptions.ResourceNotFoundError:
-                    raise FileNotFoundError(f"File {file_path} not found in {self}")
-                return StorageFileInfo(size=cast(int, props.size))
+        with self._get_client().client.container.get_blob_client(self._add_prefix(file_path)) as blob:
+            try:
+                props = with_backoff(lambda: blob.get_blob_properties())
+            except azure.core.exceptions.ResourceNotFoundError:
+                raise FileNotFoundError(f"File {file_path} not found in {self}")
+            return StorageFileInfo(size=cast(int, props.size))
 
     def file_exists(self, file_path: str) -> bool:
-        with self._get_client() as client:
-            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
-                return with_backoff(lambda: blob.exists())
+        with self._get_client().container.get_blob_client(self._add_prefix(file_path)) as blob:
+            return with_backoff(lambda: blob.exists())
 
     def list_files(
         self,
@@ -414,6 +419,7 @@ class BlobStorage(Storage):
         path_filter = PathFilter(
             extensions=extensions, ends_with=ends_with, matches=matches
         )
+        client = self._get_client()
 
         def log_page(page: Iterator[BlobProperties]) -> Iterator[BlobProperties]:
             print(".", end="", flush=True, file=sys.stderr)
@@ -450,8 +456,7 @@ class BlobStorage(Storage):
                 for blob_name in page:
                     yield blob_name
 
-        with self._get_client() as client:
-            return with_backoff(fetch_blobs)
+        return with_backoff(fetch_blobs)
 
     def walk(
         self,
@@ -467,6 +472,7 @@ class BlobStorage(Storage):
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
         # Ensure UTC set
         since_date = map_opt(lambda d: d.replace(tzinfo=timezone.utc), since_date)
+        client = self._get_client()
 
         if name_starts_with and not name_starts_with.endswith("/"):
             name_starts_with = name_starts_with + "/"
@@ -514,50 +520,49 @@ class BlobStorage(Storage):
         limit_break = False
 
         full_prefixes: List[str] = [self._get_name_starts_with(name_starts_with) or ""]
-        with self._get_client() as client:
-            while full_prefixes:
-                if walk_limit and walk_count >= walk_limit:
-                    break
+        while full_prefixes:
+            if walk_limit and walk_count >= walk_limit:
+                break
 
+            if limit_break:
+                break
+
+            next_level_prefixes: List[str] = []
+            for full_prefix in full_prefixes:
+                if walk_limit and walk_count >= walk_limit:
+                    limit_break = True
+                    break
                 if limit_break:
                     break
 
-                next_level_prefixes: List[str] = []
-                for full_prefix in full_prefixes:
-                    if walk_limit and walk_count >= walk_limit:
-                        limit_break = True
+                prefix_depth = _get_depth(full_prefix)
+                if max_depth and prefix_depth > max_depth:
+                    break
+
+                folders, files = _get_prefix_content(full_prefix)
+
+                files = [file for file in files if path_filter(file)]
+
+                if file_limit and file_count + len(files) > file_limit:
+                    files = files[: file_limit - file_count]
+                    limit_break = True
+                    if not files:
                         break
-                    if limit_break:
-                        break
 
-                    prefix_depth = _get_depth(full_prefix)
-                    if max_depth and prefix_depth > max_depth:
-                        break
+                root = self._strip_prefix(full_prefix or "") or "."
+                walk_count += 1
 
-                    folders, files = _get_prefix_content(full_prefix)
-
-                    files = [file for file in files if path_filter(file)]
-
-                    if file_limit and file_count + len(files) > file_limit:
-                        files = files[: file_limit - file_count]
-                        limit_break = True
-                        if not files:
-                            break
-
-                    root = self._strip_prefix(full_prefix or "") or "."
-                    walk_count += 1
-
-                    next_level_prefixes.extend(
-                        map(
-                            lambda f: f"{os.path.join(full_prefix, f)}/",
-                            folders,
-                        )
+                next_level_prefixes.extend(
+                    map(
+                        lambda f: f"{os.path.join(full_prefix, f)}/",
+                        folders,
                     )
-                    file_count += len(files)
-                    if not min_depth or prefix_depth >= min_depth:
-                        yield root, folders, files
+                )
+                file_count += len(files)
+                if not min_depth or prefix_depth >= min_depth:
+                    yield root, folders, files
 
-                full_prefixes = next_level_prefixes
+            full_prefixes = next_level_prefixes
 
     def download_file(
         self,
@@ -570,14 +575,14 @@ class BlobStorage(Storage):
         if timeout_seconds is not None:
             kwargs["timeout"] = timeout_seconds
 
-        with self._get_client() as client:
-            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
-                with open(output_path, "wb" if is_binary else "w") as f:
-                    try:
-                        # timeout raises an azure.core.exceptions.HttpResponseError: ("Connection broken: ConnectionResetError(104, 'Connection reset by peer')"  # noqa
-                        with_backoff(lambda: blob.download_blob(**kwargs).readinto(f))
-                    except azure.core.exceptions.ResourceNotFoundError:
-                        raise FileNotFoundError(f"File {file_path} not found in {self}")
+        client = self._get_client()
+        with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
+            with open(output_path, "wb" if is_binary else "w") as f:
+                try:
+                    # timeout raises an azure.core.exceptions.HttpResponseError: ("Connection broken: ConnectionResetError(104, 'Connection reset by peer')"  # noqa
+                    with_backoff(lambda: blob.download_blob(**kwargs).readinto(f))
+                except azure.core.exceptions.ResourceNotFoundError:
+                    raise FileNotFoundError(f"File {file_path} not found in {self}")
 
     def upload_bytes(
         self,
@@ -585,15 +590,14 @@ class BlobStorage(Storage):
         target_path: str,
         overwrite: bool = True,
     ) -> None:
-        with self._get_client() as client:
-            with client.container.get_blob_client(
-                self._add_prefix(target_path)
-            ) as blob:
+        with self._get_client().container.get_blob_client(
+            self._add_prefix(target_path)
+        ) as blob:
 
-                def _upload() -> None:
-                    blob.upload_blob(data, overwrite=overwrite)  # type: ignore
+            def _upload() -> None:
+                blob.upload_blob(data, overwrite=overwrite)  # type: ignore
 
-                with_backoff(_upload)
+            with_backoff(_upload)
 
     def upload_file(
         self,
@@ -615,31 +619,29 @@ class BlobStorage(Storage):
         kwargs = {}
         if content_type:
             kwargs["content_settings"] = ContentSettings(content_type=content_type)
-        with self._get_client() as client:
-            with client.container.get_blob_client(
-                self._add_prefix(target_path)
-            ) as blob:
+        with self._get_client().container.get_blob_client(
+            self._add_prefix(target_path)
+        ) as blob:
 
-                def _upload() -> None:
-                    with open(input_path, "rb") as f:
-                        blob.upload_blob(f, overwrite=overwrite, **kwargs)
+            def _upload() -> None:
+                with open(input_path, "rb") as f:
+                    blob.upload_blob(f, overwrite=overwrite, **kwargs)
 
                 with_backoff(_upload)
 
     def read_bytes(self, file_path: str) -> bytes:
         try:
             blob_path = self._add_prefix(file_path)
-            with self._get_client() as client:
-                with client.container.get_blob_client(blob_path) as blob:
-                    blob_data = with_backoff(
-                        lambda: blob.download_blob(
-                            max_concurrency=multiprocessing.cpu_count() or 1
-                        )
+            with self._get_client().container.get_blob_client(blob_path) as blob:
+                blob_data = with_backoff(
+                    lambda: blob.download_blob(
+                        max_concurrency=multiprocessing.cpu_count() or 1
                     )
-                    return cast(
-                        bytes,
-                        blob_data.readall(),
-                    )
+                )
+                return cast(
+                    bytes,
+                    blob_data.readall(),
+                )
         except azure.core.exceptions.ResourceNotFoundError as e:
             raise FileNotFoundError(f"File {file_path} not found in {self}") from e
         except Exception as e:
@@ -649,23 +651,21 @@ class BlobStorage(Storage):
 
     def write_bytes(self, file_path: str, data: bytes, overwrite: bool = True) -> None:
         full_path = self._add_prefix(file_path)
-        with self._get_client() as client:
-            with client.container.get_blob_client(full_path) as blob:
-                with_backoff(
-                    lambda: blob.upload_blob(data, overwrite=overwrite)  # type: ignore
-                )
+        with self._get_client().container.get_blob_client(full_path) as blob:
+            with_backoff(
+                lambda: blob.upload_blob(data, overwrite=overwrite)  # type: ignore
+            )
 
     def delete_folder(self, folder_path: Optional[str] = None) -> None:
         for file_path in self.list_files(name_starts_with=folder_path):
             self.delete_file(file_path)
 
     def delete_file(self, file_path: str) -> None:
-        with self._get_client() as client:
-            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
-                try:
-                    with_backoff(lambda: blob.delete_blob())
-                except azure.core.exceptions.ResourceNotFoundError:
-                    raise FileNotFoundError(f"File {file_path} not found in {self}")
+        with self._get_client().container.get_blob_client(self._add_prefix(file_path)) as blob:
+            try:
+                with_backoff(lambda: blob.delete_blob())
+            except azure.core.exceptions.ResourceNotFoundError:
+                raise FileNotFoundError(f"File {file_path} not found in {self}")
 
     @classmethod
     def from_uri(
