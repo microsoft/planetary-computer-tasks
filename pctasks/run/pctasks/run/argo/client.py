@@ -9,6 +9,8 @@ import argo_workflows
 from argo_workflows.api import workflow_service_api
 from argo_workflows.exceptions import NotFoundException
 from argo_workflows.model.container import Container
+from argo_workflows.model.security_context import SecurityContext
+from argo_workflows.model.capabilities import Capabilities
 from argo_workflows.model.env_var import EnvVar
 from argo_workflows.model.io_argoproj_workflow_v1alpha1_template import (
     IoArgoprojWorkflowV1alpha1Template,
@@ -174,6 +176,10 @@ class ArgoClient:
                     image_pull_policy=get_pull_policy(runner_image),
                     command=["pctasks"],
                     env=env,
+                    security_context=SecurityContext(
+                        # Enables tools like py-spy for debugging
+                        capabilities=Capabilities(add=["SYS_PTRACE"])
+                    ),
                     args=[
                         "-v",
                         "run",
