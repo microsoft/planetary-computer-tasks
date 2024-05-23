@@ -90,10 +90,20 @@ class PCTasksClient:
         )
 
         def do_request() -> requests.Response:
+            if self.settings.access_key:
+                headers = {
+                    "X-Access-Key": self.settings.access_key,
+                    "X-Has-Authorization": "true",
+                    "X-Has-Subscription": "true",
+                    "X-User-Email": "pctasks@microsoft.com",
+                }
+            else:
+                headers = {"X-API-KEY": self.settings.api_key}
+
             resp = requests.request(
                 method,
                 url,
-                headers={"X-API-KEY": self.settings.api_key},
+                headers=headers,
                 params=params,
                 **kwargs,
             )
