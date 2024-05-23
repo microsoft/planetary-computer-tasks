@@ -98,6 +98,9 @@ output "batch_nodepool_subnet" {
   value = azurerm_subnet.nodepool_subnet.id
 }
 
+output "batch_user_assigned_identity_id" {
+  value = azurerm_user_assigned_identity.pctasks.id
+}
 
 ## ACR
 
