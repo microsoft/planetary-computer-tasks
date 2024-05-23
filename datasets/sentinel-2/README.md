@@ -13,3 +13,11 @@
 ```shell
 az acr build -r {the registry} --subscription {the subscription} -t pctasks-sentinel-2:latest -t pctasks-sentinel-2:{date}.{count} -f datasets/sentinel-2/Dockerfile .
 ```
+
+## Update Workflow
+
+Created with
+
+```
+pctasks dataset process-items --is-update-workflow sentinel-2-l2a-update -d datasets/sentinel-2/dataset.yaml
+```

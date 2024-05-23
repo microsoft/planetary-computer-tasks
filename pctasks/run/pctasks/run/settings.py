@@ -52,6 +52,7 @@ class RunSettings(PCTasksSettings):
     def section_name(cls) -> str:
         return "run"
 
+    max_concurrent_workflow_tasks: int = 120
     remote_runner_threads: int = 50
     default_task_wait_seconds: int = 60
     max_wait_retries: int = 10

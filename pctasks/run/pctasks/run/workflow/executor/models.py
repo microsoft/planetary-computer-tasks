@@ -372,6 +372,10 @@ class JobPartitionState:
     def run_id(self) -> str:
         return self.job_part_submit_msg.run_id
 
+    @property
+    def has_next_task(self) -> bool:
+        return bool(self.task_queue)
+
     def prepare_next_task(self, settings: RunSettings) -> None:
         next_task_config = next(iter(self.task_queue), None)
         if next_task_config:
