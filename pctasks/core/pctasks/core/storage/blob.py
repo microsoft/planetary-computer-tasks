@@ -1,3 +1,4 @@
+import contextlib
 import logging
 import multiprocessing
 import os
@@ -252,6 +253,7 @@ class BlobStorage(Storage):
         self.storage_account_name = storage_account_name
         self.container_name = container_name
         self.prefix = prefix.strip("/") if prefix is not None else prefix
+        self._container_client_wrapper: Optional[ContainerClientWrapper] = None
 
     def __repr__(self) -> str:
         prefix_part = "" if self.prefix is None else f"/{self.prefix}"
@@ -261,14 +263,17 @@ class BlobStorage(Storage):
         )
 
     def _get_client(self) -> ContainerClientWrapper:
-        account_client = BlobServiceClient(
-            account_url=self.account_url,
-            credential=self._blob_creds,
-        )
+        if self._container_client_wrapper is None:
+            account_client = BlobServiceClient(
+                account_url=self.account_url,
+                credential=self._blob_creds,
+            )
 
-        container_client = account_client.get_container_client(self.container_name)
-
-        return ContainerClientWrapper(account_client, container_client)
+            container_client = account_client.get_container_client(self.container_name)
+            self._container_client_wrapper = ContainerClientWrapper(
+                account_client, container_client
+            )
+        return self._container_client_wrapper
 
     def _get_name_starts_with(
         self, additional_prefix: Optional[str] = None
@@ -388,7 +393,8 @@ class BlobStorage(Storage):
             return blob_uri.blob_name or ""
 
     def get_file_info(self, file_path: str) -> StorageFileInfo:
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 try:
                     props = with_backoff(lambda: blob.get_blob_properties())
@@ -397,7 +403,8 @@ class BlobStorage(Storage):
                 return StorageFileInfo(size=cast(int, props.size))
 
     def file_exists(self, file_path: str) -> bool:
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 return with_backoff(lambda: blob.exists())
 
@@ -450,7 +457,8 @@ class BlobStorage(Storage):
                 for blob_name in page:
                     yield blob_name
 
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             return with_backoff(fetch_blobs)
 
     def walk(
@@ -514,7 +522,8 @@ class BlobStorage(Storage):
         limit_break = False
 
         full_prefixes: List[str] = [self._get_name_starts_with(name_starts_with) or ""]
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             while full_prefixes:
                 if walk_limit and walk_count >= walk_limit:
                     break
@@ -570,7 +579,8 @@ class BlobStorage(Storage):
         if timeout_seconds is not None:
             kwargs["timeout"] = timeout_seconds
 
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 with open(output_path, "wb" if is_binary else "w") as f:
                     try:
@@ -585,7 +595,8 @@ class BlobStorage(Storage):
         target_path: str,
         overwrite: bool = True,
     ) -> None:
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(
                 self._add_prefix(target_path)
             ) as blob:
@@ -615,7 +626,8 @@ class BlobStorage(Storage):
         kwargs = {}
         if content_type:
             kwargs["content_settings"] = ContentSettings(content_type=content_type)
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(
                 self._add_prefix(target_path)
             ) as blob:
@@ -629,7 +641,8 @@ class BlobStorage(Storage):
     def read_bytes(self, file_path: str) -> bytes:
         try:
             blob_path = self._add_prefix(file_path)
-            with self._get_client() as client:
+            client = self._get_client()
+            with contextlib.nullcontext():
                 with client.container.get_blob_client(blob_path) as blob:
                     blob_data = with_backoff(
                         lambda: blob.download_blob(
@@ -649,7 +662,8 @@ class BlobStorage(Storage):
 
     def write_bytes(self, file_path: str, data: bytes, overwrite: bool = True) -> None:
         full_path = self._add_prefix(file_path)
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(full_path) as blob:
                 with_backoff(
                     lambda: blob.upload_blob(data, overwrite=overwrite)  # type: ignore
@@ -660,7 +674,8 @@ class BlobStorage(Storage):
             self.delete_file(file_path)
 
     def delete_file(self, file_path: str) -> None:
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 try:
                     with_backoff(lambda: blob.delete_blob())
