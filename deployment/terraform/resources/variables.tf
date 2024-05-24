@@ -139,31 +139,6 @@ variable "cosmosdb_resource_group" {
 
 ## Keyvault
 
-variable "task_sp_tenant_id" {
-  type    = string
-  default = ""
-}
-
-variable "task_sp_object_id" {
-  type    = string
-  default = ""
-}
-
-variable "task_sp_client_id" {
-  type    = string
-  default = ""
-}
-
-variable "task_sp_client_secret" {
-  type    = string
-  default = ""
-}
-
-variable "kv_sp_tenant_id" {
-  type    = string
-  default = ""
-}
-
 variable "kv_sp_object_id" {
   type    = string
   default = ""
@@ -205,49 +180,9 @@ variable "backend_api_app_id_secret_name" {
 
 ## PCTasks Server
 
-variable "pctasks_server_sp_tenant_id" {
-  type    = string
-  default = ""
-}
-
-variable "pctasks_server_sp_client_id" {
-  type    = string
-  default = ""
-}
-
-variable "pctasks_server_sp_client_secret" {
-  type    = string
-  default = ""
-}
-
-variable "pctasks_server_sp_object_id" {
-  type    = string
-  default = ""
-}
-
 variable "argo_wf_node_group_name" {
   type    = string
   default = "argo-workflows"
-}
-
-variable "streaming_taskio_sp_client_id" {
-  type    = string
-  default = ""
-}
-
-variable "streaming_taskio_sp_client_secret" {
-  type    = string
-  default = ""
-}
-
-variable "streaming_taskio_sp_tenant_id" {
-  type    = string
-  default = ""
-}
-
-variable "streaming_taskio_sp_object_id" {
-  type    = string
-  default = ""
 }
 
 

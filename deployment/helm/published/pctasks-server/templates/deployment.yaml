@@ -68,14 +68,6 @@ spec:
             - name: PCTASKS_SERVER__APP_INSIGHTS_INSTRUMENTATION_KEY
               value: "{{ .Values.pctasks.server.instrumentationKey }}"
 
-            ## Azure service principal
-            - name: AZURE_TENANT_ID
-              value: "{{ .Values.pctasks.server.azure.tenant_id }}"
-            - name: AZURE_CLIENT_ID
-              value: "{{ .Values.pctasks.server.azure.client_id }}"
-            - name: AZURE_CLIENT_SECRET
-              value: "{{ .Values.pctasks.server.azure.client_secret }}"
-
             ## Run settings ##
 
             - name: PCTASKS_RUN__TASK_RUNNER_TYPE
@@ -93,18 +85,6 @@ spec:
               value: "{{ .Values.pctasks.run.dev.enabled }}"
             - name: PCTASKS_RUN__LOCAL_DEV_ENDPOINTS_URL
               value: "{{ .Values.pctasks.run.dev.local_dev_endpoints_url }}"
-
-            # Streaming settings
-            - name: PCTASKS_RUN__STREAMING_TASKIO_SP_TENANT_ID
-              value: "{{ .Values.pctasks.run.streaming_taskio_sp_tenant_id }}"
-            - name: PCTASKS_RUN__STREAMING_TASKIO_SP_CLIENT_ID
-              value: "{{ .Values.pctasks.run.streaming_taskio_sp_client_id }}"
-            - name: PCTASKS_RUN__STREAMING_TASKIO_SP_CLIENT_SECRET
-              value: "{{ .Values.pctasks.run.streaming_taskio_sp_client_secret }}"
-            - name: PCTASKS_RUN__STREAMING_TASK_NAMESPACE
-              value: "{{ .Values.pctasks.run.streaming_task_namespace }}"
-            - name: PCTASKS_RUN__STREAMING_TASK_NODE_GROUP
-              value: "{{ .Values.pctasks.run.streaming_task_node_group }}"
 
             # Argo
             - name: PCTASKS_RUN__ARGO_HOST
@@ -213,12 +193,6 @@ spec:
             {{- if .Values.pctasks.run.keyvault.enabled }}
             - name: PCTASKS_RUN__KEYVAULT_URL
               value: "{{ .Values.pctasks.run.keyvault.url }}"
-            - name: PCTASKS_RUN__KEYVAULT_SP_TENANT_ID
-              value: "{{ .Values.pctasks.run.keyvault.sp_tenant_id }}"
-            - name: PCTASKS_RUN__KEYVAULT_SP_CLIENT_ID
-              value: "{{ .Values.pctasks.run.keyvault.sp_client_id }}"
-            - name: PCTASKS_RUN__KEYVAULT_SP_CLIENT_SECRET
-              value: "{{ .Values.pctasks.run.keyvault.sp_client_secret }}"
             {{- end }}
 
           livenessProbe:

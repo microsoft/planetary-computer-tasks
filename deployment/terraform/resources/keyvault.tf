@@ -21,26 +21,6 @@ resource "azurerm_key_vault_secret" "pgstac-connection-string" {
   key_vault_id = data.azurerm_key_vault.pctasks.id
 }
 
-# Store task credentials as a secret
-
-resource "azurerm_key_vault_secret" "task-tenant-id" {
-  name         = "task-tenant-id"
-  value        = var.task_sp_tenant_id
-  key_vault_id = data.azurerm_key_vault.pctasks.id
-}
-
-resource "azurerm_key_vault_secret" "task-client-id" {
-  name         = "task-client-id"
-  value        = var.task_sp_client_id
-  key_vault_id = data.azurerm_key_vault.pctasks.id
-}
-
-resource "azurerm_key_vault_secret" "task-client-secret" {
-  name         = "task-client-secret"
-  value        = var.task_sp_client_secret
-  key_vault_id = data.azurerm_key_vault.pctasks.id
-}
-
 resource "azurerm_key_vault_secret" "task-application-insights-connection-string" {
   name = "task-application-insights-connection-string"
   value = azurerm_application_insights.pctasks.connection_string
@@ -63,17 +43,3 @@ data "azurerm_key_vault_secret" "backend_app_id" {
   name         = var.backend_api_app_id_secret_name
   key_vault_id = data.azurerm_key_vault.deploy_secrets.id
 }
-
-## Access Policies
-
-# It's unclear who should own this vault access policy.
-# For now, we just need to create it manually.
-# The Key Vault service principal should be able to get secrets.
-# resource "azurerm_key_vault_access_policy" "task-sp-get-secrets" {
-#   key_vault_id = data.azurerm_key_vault.pctasks.id
-#   tenant_id    = var.kv_sp_tenant_id
-#   object_id    = var.kv_sp_object_id
-#   secret_permissions = [
-#     "Get"
-#   ]
-# }

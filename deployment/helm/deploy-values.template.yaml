@@ -26,11 +26,6 @@ pctasks:
       port: 80
       annotations: {}
 
-    azure:
-      tenant_id: "{{ tf.pctasks_server_sp_tenant_id }}"
-      client_id: "{{ tf.pctasks_server_sp_client_id }}"
-      client_secret: "{{ tf.pctasks_server_sp_client_secret }}"
-
     serviceAccount:
       annotations:
         azure.workload.identity/client-id: "{{ tf.pctasks_workflow_identity_client_id }}"
@@ -100,9 +95,6 @@ pctasks:
     keyvault:
       enabled: true
       url: "{{ tf.keyvault_url }}"
-      sp_tenant_id: "{{ tf.kv_sp_tenant_id }}"
-      sp_client_id: "{{ tf.kv_sp_client_id }}"
-      sp_client_secret: "{{ tf.kv_sp_client_secret }}"
 
 pcingress:
   services:

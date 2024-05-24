@@ -65,43 +65,6 @@ variable "pctasks_run_image_tag" {
 
 ## Keyvault
 
-variable "task_sp_tenant_id" {
-  type = string
-}
-
-variable "task_sp_object_id" {
-  type = string
-}
-
-variable "task_sp_client_id" {
-  type = string
-}
-
-variable "task_sp_client_secret" {
-  type = string
-}
-
-variable "kv_sp_tenant_id" {
-  type    = string
-  default = ""
-}
-
-variable "kv_sp_object_id" {
-  type    = string
-  default = ""
-
-}
-
-variable "kv_sp_client_id" {
-  type    = string
-  default = ""
-}
-
-variable "kv_sp_client_secret" {
-  type    = string
-  default = ""
-}
-
 variable "deploy_secrets_kv_name" {
   type = string
 }
@@ -130,48 +93,6 @@ variable "cosmosdb_account_name" {
 
 variable "cosmosdb_resource_group" {
   type = string
-}
-
-## PCTasks Server
-
-variable "pctasks_server_sp_tenant_id" {
-  type    = string
-  default = ""
-}
-
-variable "pctasks_server_sp_client_id" {
-  type    = string
-  default = ""
-}
-
-variable "pctasks_server_sp_client_secret" {
-  type    = string
-  default = ""
-}
-
-variable "pctasks_server_sp_object_id" {
-  type    = string
-  default = ""
-}
-
-variable "streaming_taskio_sp_client_id" {
-  type    = string
-  default = ""
-}
-
-variable "streaming_taskio_sp_client_secret" {
-  type    = string
-  default = ""
-}
-
-variable "streaming_taskio_sp_object_id" {
-  type    = string
-  default = ""
-}
-
-variable "streaming_taskio_sp_tenant_id" {
-  type    = string
-  default = ""
 }
 
 ## AKS

@@ -149,18 +149,6 @@ output "keyvault_url" {
   value = data.azurerm_key_vault.pctasks.vault_uri
 }
 
-output "kv_sp_tenant_id" {
-  value = var.kv_sp_tenant_id
-}
-
-output "kv_sp_client_id" {
-  value = var.kv_sp_client_id
-}
-
-output "kv_sp_client_secret" {
-  value = var.kv_sp_client_secret
-}
-
 output "kv_access_key" {
   value = data.azurerm_key_vault_secret.access_key.value
 }
@@ -178,21 +166,6 @@ output "instrumentation_key" {
 }
 
 ## PCTasks Server
-
-output "pctasks_server_sp_tenant_id" {
-  value     = var.pctasks_server_sp_tenant_id
-  sensitive = true
-}
-
-output "pctasks_server_sp_client_id" {
-  value     = var.pctasks_server_sp_client_id
-  sensitive = true
-}
-
-output "pctasks_server_sp_client_secret" {
-  value     = var.pctasks_server_sp_client_secret
-  sensitive = true
-}
 
 output "argo_wf_node_group_name" {
   value = var.argo_wf_node_group_name
@@ -212,17 +185,4 @@ output "cosmosdb_key" {
 
 output "aks_streaming_task_node_group_name" {
   value = var.aks_streaming_task_node_group_name
-}
-
-output "streaming_taskio_sp_tenant_id" {
-  value = var.streaming_taskio_sp_tenant_id
-}
-
-output "streaming_taskio_sp_client_id" {
-  value = var.streaming_taskio_sp_client_id
-}
-
-output "streaming_taskio_sp_client_secret" {
-  value     = var.streaming_taskio_sp_client_secret
-  sensitive = true
 }
