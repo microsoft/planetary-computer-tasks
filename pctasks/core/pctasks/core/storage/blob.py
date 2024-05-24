@@ -473,7 +473,7 @@ class BlobStorage(Storage):
         matches: Optional[str] = None,
         walk_limit: Optional[int] = None,
         file_limit: Optional[int] = None,
-        max_concurrency: int = 32
+        max_concurrency: int = 32,
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
         # Ensure UTC set
         since_date = map_opt(lambda d: d.replace(tzinfo=timezone.utc), since_date)
