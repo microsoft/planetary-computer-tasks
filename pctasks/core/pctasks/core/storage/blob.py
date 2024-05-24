@@ -1,3 +1,5 @@
+import concurrent.futures
+import contextlib
 import logging
 import multiprocessing
 import os
@@ -397,20 +399,20 @@ class BlobStorage(Storage):
             return blob_uri.blob_name or ""
 
     def get_file_info(self, file_path: str) -> StorageFileInfo:
-        with self._get_client().container.get_blob_client(
-            self._add_prefix(file_path)
-        ) as blob:
-            try:
-                props = with_backoff(lambda: blob.get_blob_properties())
-            except azure.core.exceptions.ResourceNotFoundError:
-                raise FileNotFoundError(f"File {file_path} not found in {self}")
-            return StorageFileInfo(size=cast(int, props.size))
+        client = self._get_client()
+        with contextlib.nullcontext():
+            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
+                try:
+                    props = with_backoff(lambda: blob.get_blob_properties())
+                except azure.core.exceptions.ResourceNotFoundError:
+                    raise FileNotFoundError(f"File {file_path} not found in {self}")
+                return StorageFileInfo(size=cast(int, props.size))
 
     def file_exists(self, file_path: str) -> bool:
-        with self._get_client().container.get_blob_client(
-            self._add_prefix(file_path)
-        ) as blob:
-            return with_backoff(lambda: blob.exists())
+        client = self._get_client()
+        with contextlib.nullcontext():
+            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
+                return with_backoff(lambda: blob.exists())
 
     def list_files(
         self,
@@ -462,7 +464,9 @@ class BlobStorage(Storage):
                 for blob_name in page:
                     yield blob_name
 
-        return with_backoff(fetch_blobs)
+        client = self._get_client()
+        with contextlib.nullcontext():
+            return with_backoff(fetch_blobs)
 
     def walk(
         self,
@@ -475,6 +479,7 @@ class BlobStorage(Storage):
         matches: Optional[str] = None,
         walk_limit: Optional[int] = None,
         file_limit: Optional[int] = None,
+        max_concurrency: int = 32
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
         # Ensure UTC set
         since_date = map_opt(lambda d: d.replace(tzinfo=timezone.utc), since_date)
@@ -500,6 +505,7 @@ class BlobStorage(Storage):
         def _get_prefix_content(
             full_prefix: Optional[str],
         ) -> Tuple[List[str], List[str]]:
+            logger.info("Listing prefix=%s", full_prefix)
             folders = []
             files = []
             for item in client.container.walk_blobs(name_starts_with=full_prefix):
@@ -526,26 +532,36 @@ class BlobStorage(Storage):
         limit_break = False
 
         full_prefixes: List[str] = [self._get_name_starts_with(name_starts_with) or ""]
-        while full_prefixes:
-            if walk_limit and walk_count >= walk_limit:
-                break
-
-            if limit_break:
-                break
-
-            next_level_prefixes: List[str] = []
-            for full_prefix in full_prefixes:
+        client = self._get_client()
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=max_concurrency)
+        with contextlib.nullcontext():
+            while full_prefixes:
                 if walk_limit and walk_count >= walk_limit:
                     limit_break = True
                     break
                 if limit_break:
                     break
 
-                prefix_depth = _get_depth(full_prefix)
-                if max_depth and prefix_depth > max_depth:
-                    break
+                next_level_prefixes: List[str] = []
+                futures = {}
+                for full_prefix in full_prefixes:
+                    if walk_limit and walk_count >= walk_limit:
+                        limit_break = True
+                        break
+                    if limit_break:
+                        break
 
-                folders, files = _get_prefix_content(full_prefix)
+                    prefix_depth = _get_depth(full_prefix)
+                    if max_depth and prefix_depth > max_depth:
+                        break
+
+                    # this is what we want to parallelize
+                    future = pool.submit(_get_prefix_content, full_prefix)
+                    futures[future] = full_prefix
+
+                for future in concurrent.futures.as_completed(futures):
+                    full_prefix = futures[future]
+                    folders, files = future.result()
 
                 files = [file for file in files if path_filter(file)]
 
@@ -582,13 +598,14 @@ class BlobStorage(Storage):
             kwargs["timeout"] = timeout_seconds
 
         client = self._get_client()
-        with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
-            with open(output_path, "wb" if is_binary else "w") as f:
-                try:
-                    # timeout raises an azure.core.exceptions.HttpResponseError: ("Connection broken: ConnectionResetError(104, 'Connection reset by peer')"  # noqa
-                    with_backoff(lambda: blob.download_blob(**kwargs).readinto(f))
-                except azure.core.exceptions.ResourceNotFoundError:
-                    raise FileNotFoundError(f"File {file_path} not found in {self}")
+        with contextlib.nullcontext():
+            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
+                with open(output_path, "wb" if is_binary else "w") as f:
+                    try:
+                        # timeout raises an azure.core.exceptions.HttpResponseError: ("Connection broken: ConnectionResetError(104, 'Connection reset by peer')"  # noqa
+                        with_backoff(lambda: blob.download_blob(**kwargs).readinto(f))
+                    except azure.core.exceptions.ResourceNotFoundError:
+                        raise FileNotFoundError(f"File {file_path} not found in {self}")
 
     def upload_bytes(
         self,
@@ -596,9 +613,11 @@ class BlobStorage(Storage):
         target_path: str,
         overwrite: bool = True,
     ) -> None:
-        with self._get_client().container.get_blob_client(
-            self._add_prefix(target_path)
-        ) as blob:
+        client = self._get_client()
+        with contextlib.nullcontext():
+            with client.container.get_blob_client(
+                self._add_prefix(target_path)
+            ) as blob:
 
             def _upload() -> None:
                 blob.upload_blob(data, overwrite=overwrite)  # type: ignore
@@ -625,9 +644,11 @@ class BlobStorage(Storage):
         kwargs = {}
         if content_type:
             kwargs["content_settings"] = ContentSettings(content_type=content_type)
-        with self._get_client().container.get_blob_client(
-            self._add_prefix(target_path)
-        ) as blob:
+        client = self._get_client()
+        with contextlib.nullcontext():
+            with client.container.get_blob_client(
+                self._add_prefix(target_path)
+            ) as blob:
 
             def _upload() -> None:
                 with open(input_path, "rb") as f:
@@ -638,10 +659,17 @@ class BlobStorage(Storage):
     def read_bytes(self, file_path: str) -> bytes:
         try:
             blob_path = self._add_prefix(file_path)
-            with self._get_client().container.get_blob_client(blob_path) as blob:
-                blob_data = with_backoff(
-                    lambda: blob.download_blob(
-                        max_concurrency=multiprocessing.cpu_count() or 1
+            client = self._get_client()
+            with contextlib.nullcontext():
+                with client.container.get_blob_client(blob_path) as blob:
+                    blob_data = with_backoff(
+                        lambda: blob.download_blob(
+                            max_concurrency=multiprocessing.cpu_count() or 1
+                        )
+                    )
+                    return cast(
+                        bytes,
+                        blob_data.readall(),
                     )
                 )
                 return cast(
@@ -657,23 +685,25 @@ class BlobStorage(Storage):
 
     def write_bytes(self, file_path: str, data: bytes, overwrite: bool = True) -> None:
         full_path = self._add_prefix(file_path)
-        with self._get_client().container.get_blob_client(full_path) as blob:
-            with_backoff(
-                lambda: blob.upload_blob(data, overwrite=overwrite)  # type: ignore
-            )
+        client = self._get_client()
+        with contextlib.nullcontext():
+            with client.container.get_blob_client(full_path) as blob:
+                with_backoff(
+                    lambda: blob.upload_blob(data, overwrite=overwrite)  # type: ignore
+                )
 
     def delete_folder(self, folder_path: Optional[str] = None) -> None:
         for file_path in self.list_files(name_starts_with=folder_path):
             self.delete_file(file_path)
 
     def delete_file(self, file_path: str) -> None:
-        with self._get_client().container.get_blob_client(
-            self._add_prefix(file_path)
-        ) as blob:
-            try:
-                with_backoff(lambda: blob.delete_blob())
-            except azure.core.exceptions.ResourceNotFoundError:
-                raise FileNotFoundError(f"File {file_path} not found in {self}")
+        client = self._get_client()
+        with contextlib.nullcontext():
+            with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
+                try:
+                    with_backoff(lambda: blob.delete_blob())
+                except azure.core.exceptions.ResourceNotFoundError:
+                    raise FileNotFoundError(f"File {file_path} not found in {self}")
 
     @classmethod
     def from_uri(
