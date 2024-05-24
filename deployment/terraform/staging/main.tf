@@ -4,8 +4,8 @@ module "resources" {
   environment = "staging"
   region      = "West Europe"
 
-  pctasks_server_image_tag = "latest-mjm"
-  pctasks_run_image_tag    = "latest-mjm"
+  pctasks_server_image_tag = "latest"
+  pctasks_run_image_tag    = "latest"
 
   batch_default_pool_id = var.batch_default_pool_id
 
