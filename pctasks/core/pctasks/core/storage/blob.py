@@ -1,3 +1,4 @@
+import concurrent.futures
 import contextlib
 import logging
 import multiprocessing
@@ -472,6 +473,7 @@ class BlobStorage(Storage):
         matches: Optional[str] = None,
         walk_limit: Optional[int] = None,
         file_limit: Optional[int] = None,
+        max_concurrency: int = 32
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
         # Ensure UTC set
         since_date = map_opt(lambda d: d.replace(tzinfo=timezone.utc), since_date)
@@ -496,6 +498,7 @@ class BlobStorage(Storage):
         def _get_prefix_content(
             full_prefix: Optional[str],
         ) -> Tuple[List[str], List[str]]:
+            logger.info("Listing prefix=%s", full_prefix)
             folders = []
             files = []
             for item in client.container.walk_blobs(name_starts_with=full_prefix):
@@ -523,6 +526,7 @@ class BlobStorage(Storage):
 
         full_prefixes: List[str] = [self._get_name_starts_with(name_starts_with) or ""]
         client = self._get_client()
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=max_concurrency)
         with contextlib.nullcontext():
             while full_prefixes:
                 if walk_limit and walk_count >= walk_limit:
@@ -532,6 +536,7 @@ class BlobStorage(Storage):
                     break
 
                 next_level_prefixes: List[str] = []
+                futures = {}
                 for full_prefix in full_prefixes:
                     if walk_limit and walk_count >= walk_limit:
                         limit_break = True
@@ -543,7 +548,13 @@ class BlobStorage(Storage):
                     if max_depth and prefix_depth > max_depth:
                         break
 
-                    folders, files = _get_prefix_content(full_prefix)
+                    # this is what we want to parallelize
+                    future = pool.submit(_get_prefix_content, full_prefix)
+                    futures[future] = full_prefix
+
+                for future in concurrent.futures.as_completed(futures):
+                    full_prefix = futures[future]
+                    folders, files = future.result()
 
                     files = [file for file in files if path_filter(file)]
 
