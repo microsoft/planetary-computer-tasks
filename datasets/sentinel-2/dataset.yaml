@@ -1,16 +1,11 @@
 id: sentinel-2
-image: ${{ args.registry }}/pctasks-sentinel-2:2024.5.24.0
+image: ${{ args.registry }}/pctasks-sentinel-2:2024.5.24.2
 
 args:
 - registry
 
 code:
   src: ${{ local.path(./sentinel2.py) }}
-
-environment:
-  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
-  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
-  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
 
 collections:
   - id: sentinel-2-l2a
@@ -37,8 +32,10 @@ collections:
           options:
             # extensions: [.safe]
             ends_with: manifest.safe
-            min_depth: 7
-            max_depth: 8
+            # From the root, we want a depth of 7
+            # But we start at depth=2 thanks to the split, so we use a depth of 5 here.
+            min_depth: 5
+            max_depth: 5
             chunk_length: 5000
     chunk_storage:
       uri: blob://sentinel2l2a01/sentinel2-l2-info/pctasks-chunks/

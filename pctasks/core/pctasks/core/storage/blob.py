@@ -548,7 +548,6 @@ class BlobStorage(Storage):
                     if max_depth and prefix_depth > max_depth:
                         break
 
-                    # this is what we want to parallelize
                     future = pool.submit(_get_prefix_content, full_prefix)
                     futures[future] = full_prefix
 
