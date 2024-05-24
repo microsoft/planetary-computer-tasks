@@ -141,12 +141,7 @@ class BlobUri:
 
 
 class ContainerClientWrapper:
-    """
-    Wrapper class that ensures closing of clients.
-
-    Creating and closing clients is expensive, so don't use this as a context
-    manager inside a hot loop.
-    """
+    """Wrapper class that ensures closing of clients"""
 
     def __init__(
         self, account_client: BlobServiceClient, container_client: ContainerClient
@@ -427,7 +422,6 @@ class BlobStorage(Storage):
         path_filter = PathFilter(
             extensions=extensions, ends_with=ends_with, matches=matches
         )
-        client = self._get_client()
 
         def log_page(page: Iterator[BlobProperties]) -> Iterator[BlobProperties]:
             print(".", end="", flush=True, file=sys.stderr)
@@ -483,7 +477,6 @@ class BlobStorage(Storage):
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
         # Ensure UTC set
         since_date = map_opt(lambda d: d.replace(tzinfo=timezone.utc), since_date)
-        client = self._get_client()
 
         if name_starts_with and not name_starts_with.endswith("/"):
             name_starts_with = name_starts_with + "/"
@@ -537,8 +530,8 @@ class BlobStorage(Storage):
         with contextlib.nullcontext():
             while full_prefixes:
                 if walk_limit and walk_count >= walk_limit:
-                    limit_break = True
                     break
+
                 if limit_break:
                     break
 
@@ -563,28 +556,28 @@ class BlobStorage(Storage):
                     full_prefix = futures[future]
                     folders, files = future.result()
 
-                files = [file for file in files if path_filter(file)]
+                    files = [file for file in files if path_filter(file)]
 
-                if file_limit and file_count + len(files) > file_limit:
-                    files = files[: file_limit - file_count]
-                    limit_break = True
-                    if not files:
-                        break
+                    if file_limit and file_count + len(files) > file_limit:
+                        files = files[: file_limit - file_count]
+                        limit_break = True
+                        if not files:
+                            break
 
-                root = self._strip_prefix(full_prefix or "") or "."
-                walk_count += 1
+                    root = self._strip_prefix(full_prefix or "") or "."
+                    walk_count += 1
 
-                next_level_prefixes.extend(
-                    map(
-                        lambda f: f"{os.path.join(full_prefix, f)}/",
-                        folders,
+                    next_level_prefixes.extend(
+                        map(
+                            lambda f: f"{os.path.join(full_prefix, f)}/",
+                            folders,
+                        )
                     )
-                )
-                file_count += len(files)
-                if not min_depth or prefix_depth >= min_depth:
-                    yield root, folders, files
+                    file_count += len(files)
+                    if not min_depth or prefix_depth >= min_depth:
+                        yield root, folders, files
 
-            full_prefixes = next_level_prefixes
+                full_prefixes = next_level_prefixes
 
     def download_file(
         self,
@@ -619,10 +612,10 @@ class BlobStorage(Storage):
                 self._add_prefix(target_path)
             ) as blob:
 
-            def _upload() -> None:
-                blob.upload_blob(data, overwrite=overwrite)  # type: ignore
+                def _upload() -> None:
+                    blob.upload_blob(data, overwrite=overwrite)  # type: ignore
 
-            with_backoff(_upload)
+                with_backoff(_upload)
 
     def upload_file(
         self,
@@ -650,9 +643,9 @@ class BlobStorage(Storage):
                 self._add_prefix(target_path)
             ) as blob:
 
-            def _upload() -> None:
-                with open(input_path, "rb") as f:
-                    blob.upload_blob(f, overwrite=overwrite, **kwargs)
+                def _upload() -> None:
+                    with open(input_path, "rb") as f:
+                        blob.upload_blob(f, overwrite=overwrite, **kwargs)
 
                 with_backoff(_upload)
 
@@ -671,11 +664,6 @@ class BlobStorage(Storage):
                         bytes,
                         blob_data.readall(),
                     )
-                )
-                return cast(
-                    bytes,
-                    blob_data.readall(),
-                )
         except azure.core.exceptions.ResourceNotFoundError as e:
             raise FileNotFoundError(f"File {file_path} not found in {self}") from e
         except Exception as e:
