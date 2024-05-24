@@ -46,10 +46,6 @@ pctasks:
     task_runner_type: "batch"
     streaming_task_namespace: "pc"
     streaming_task_node_group: {{ tf.aks_streaming_task_node_group_name }}
-    streaming_taskio_sp_tenant_id: {{ tf.streaming_taskio_sp_tenant_id }}
-    streaming_taskio_sp_client_id: {{ tf.streaming_taskio_sp_client_id }}
-    streaming_taskio_sp_client_secret: {{ tf.streaming_taskio_sp_client_secret }}
-
     task_poll_seconds: 30
 
     notifications:
