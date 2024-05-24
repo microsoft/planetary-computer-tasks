@@ -42,3 +42,14 @@ resource "azurerm_role_assignment" "batch-acr-pull-task" {
 #   role_definition_name = "AcrPull"
 #   principal_id         = azurerm_user_assigned_identity.pctasks.principal_id
 # }
+
+resource "azurerm_role_assignment" "batch-tasks-blob-storage-contributor" {
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azurerm_user_assigned_identity.pctasks.principal_id
+  scope                = each.key
+
+  for_each = toset([
+    "/subscriptions/4a8dce3e-591c-4c74-a946-a41ff728a462", # AI for Earth Data Sets
+    "/subscriptions/1b045d0d-e560-456a-952d-7514f87f1b1f", # NOAA Data Project
+  ])
+}
