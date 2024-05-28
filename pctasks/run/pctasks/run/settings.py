@@ -94,6 +94,10 @@ class RunSettings(PCTasksSettings):
     argo_node_group: Optional[str] = None
     workflow_runner_image: Optional[str] = None
 
+    task_service_account_name: Optional[str] = None
+    task_workload_identity_client_id: Optional[str] = None
+    task_workload_identity_tenant_id: Optional[str] = None
+
     # KeyVault
     keyvault_url: Optional[str] = None
     keyvault_sp_tenant_id: Optional[str] = None

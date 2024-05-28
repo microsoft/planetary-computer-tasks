@@ -105,8 +105,6 @@ if [[ -z $USER_AUTH ]]; then
     require_env "ARM_CLIENT_ID"
     require_env "ARM_USE_OIDC"
 
-    require_env "AZURE_TENANT_ID"
-    require_env "AZURE_CLIENT_ID"
 fi
 
 setup_env

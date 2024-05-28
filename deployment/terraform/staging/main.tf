@@ -15,34 +15,14 @@ module "resources" {
   component_acr_resource_group = var.component_acr_resource_group
   component_acr_name           = var.component_acr_name
 
-  task_sp_tenant_id     = var.task_sp_tenant_id
-  task_sp_object_id     = var.task_sp_object_id
-  task_sp_client_id     = var.task_sp_client_id
-  task_sp_client_secret = var.task_sp_client_secret
-
   pctasks_task_kv = "kv-pctaskstest-staging"
   # Note: this resource group is managed by terraform but contains the manually managed keyvault
   pctasks_task_kv_resource_group_name = "rg-pctaskstest-staging-westeurope"
-
-  kv_sp_tenant_id     = var.kv_sp_tenant_id
-  kv_sp_object_id     = var.kv_sp_object_id
-  kv_sp_client_id     = var.kv_sp_client_id
-  kv_sp_client_secret = var.kv_sp_client_secret
 
   deploy_secrets_kv_name         = var.deploy_secrets_kv_name
   deploy_secrets_kv_rg           = var.deploy_secrets_kv_rg
   access_key_secret_name         = var.access_key_secret_name
   backend_api_app_id_secret_name = var.backend_api_app_id_secret_name
-
-  pctasks_server_sp_tenant_id     = var.pctasks_server_sp_tenant_id
-  pctasks_server_sp_client_id     = var.pctasks_server_sp_client_id
-  pctasks_server_sp_client_secret = var.pctasks_server_sp_client_secret
-  pctasks_server_sp_object_id     = var.pctasks_server_sp_object_id
-
-  streaming_taskio_sp_tenant_id     = var.streaming_taskio_sp_tenant_id
-  streaming_taskio_sp_client_id     = var.streaming_taskio_sp_client_id
-  streaming_taskio_sp_client_secret = var.streaming_taskio_sp_client_secret
-  streaming_taskio_sp_object_id     = var.streaming_taskio_sp_object_id
 
   k8s_version              = "1.26.6"
   k8s_orchestrator_version = "1.26.6"

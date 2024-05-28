@@ -13,10 +13,6 @@ jobs:
           src_uri: blob://landcoverdata/usda-cdl-onboarding
           extensions:
             - .zip
-        environment:
-          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
-          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
-          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
   tile:
     foreach:
       items: ${{ jobs.list-files.tasks.list-files.output.uris }}
@@ -30,7 +26,3 @@ jobs:
         args:
           src_uri: ${{ item }}
           dst_uri: blob://landcoverdata/usda-cdl/tiles
-        environment:
-          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
-          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
-          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}

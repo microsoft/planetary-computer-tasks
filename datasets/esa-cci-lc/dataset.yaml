@@ -9,11 +9,6 @@ code:
   # included in the container image
   # requirements: ${{ local.path(./requirements.txt) }}
 
-environment:
-  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
-  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
-  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
-
 collections:
   - id: esa-cci-lc-netcdf
     template: ${{ local.path(./collection/esa-cci-lc-netcdf) }}

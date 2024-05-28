@@ -37,9 +37,6 @@ jobs:
           collection_id: "goes-cmi"
 
         environment:
-          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
-          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
-          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
           APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
           PCTASKS_COSMOSDB__URL: ${{ args.cosmosdb_url }}
         schema_version: 1.0.0

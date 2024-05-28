@@ -30,6 +30,7 @@ from argo_workflows.model.object_meta import ObjectMeta
 from argo_workflows.model.security_context import SecurityContext
 from argo_workflows.models import (
     Affinity,
+    IoArgoprojWorkflowV1alpha1Metadata,
     NodeAffinity,
     NodeSelector,
     NodeSelectorRequirement,
@@ -100,6 +101,28 @@ class ArgoClient:
             )
         return None
 
+    def _get_annotations_and_labels(
+        self, run_settings: RunSettings
+    ) -> Tuple[Dict, Dict]:
+        annotations = {}
+        labels = {}
+
+        if run_settings.task_workload_identity_client_id:
+            labels.update({"azure.workload.identity/use": "true"})
+
+            annotations.update(
+                {
+                    "azure.workload.identity/client-id": (
+                        run_settings.task_workload_identity_client_id
+                    ),
+                    "azure.workload.identity/tenant-id": (
+                        run_settings.task_workload_identity_tenant_id
+                    ),
+                }
+            )
+
+        return annotations, labels
+
     def submit_workflow(
         self,
         submit_msg: WorkflowSubmitMessage,
@@ -154,6 +177,23 @@ class ArgoClient:
             if env_var in os.environ:
                 env.append(EnvVar(name=env_var, value=os.environ[env_var]))
 
+        if run_settings.task_workload_identity_client_id:
+            env.append(
+                EnvVar(
+                    name="AZURE_CLIENT_ID",
+                    value=run_settings.task_workload_identity_client_id,
+                )
+            )
+            env.append(
+                EnvVar(
+                    name="AZURE_TENANT_ID",
+                    value=run_settings.task_workload_identity_tenant_id,
+                )
+            )
+            kwargs = {"service_account_name": run_settings.task_service_account_name}
+        else:
+            kwargs = {}
+
         # Enable local secrets for development environment
         if run_settings.local_secrets:
             for env_var in [
@@ -168,9 +208,14 @@ class ArgoClient:
             + run_id
         )
 
+        annotations, labels = self._get_annotations_and_labels(run_settings)
+
         templates = [
             IoArgoprojWorkflowV1alpha1Template(
                 name="run-workflow",
+                metadata=IoArgoprojWorkflowV1alpha1Metadata(
+                    annotations=annotations, labels=labels
+                ),
                 container=Container(
                     image=runner_image,
                     image_pull_policy=get_pull_policy(runner_image),
@@ -195,24 +240,17 @@ class ArgoClient:
         ]
 
         affinity = self._get_affinity(run_settings)
-
         if affinity:
-            manifest = IoArgoprojWorkflowV1alpha1Workflow(
-                metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
-                spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
-                    entrypoint="run-workflow",
-                    templates=templates,
-                    affinity=affinity,
-                ),
-            )
-        else:
-            manifest = IoArgoprojWorkflowV1alpha1Workflow(
-                metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
-                spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
-                    entrypoint="run-workflow",
-                    templates=templates,
-                ),
-            )
+            kwargs["affinity"] = affinity
+
+        manifest = IoArgoprojWorkflowV1alpha1Workflow(
+            metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
+            spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
+                entrypoint="run-workflow",
+                templates=templates,
+                **kwargs,
+            ),
+        )
 
         api_client = argo_workflows.ApiClient(self.configuration)
         api_instance = workflow_service_api.WorkflowServiceApi(api_client=api_client)
@@ -259,6 +297,23 @@ class ArgoClient:
             if env_var in os.environ:
                 env.append(EnvVar(name=env_var, value=os.environ[env_var]))
 
+        if run_settings.task_workload_identity_client_id:
+            env.append(
+                EnvVar(
+                    name="AZURE_CLIENT_ID",
+                    value=run_settings.task_workload_identity_client_id,
+                )
+            )
+            env.append(
+                EnvVar(
+                    name="AZURE_TENANT_ID",
+                    value=run_settings.task_workload_identity_tenant_id,
+                )
+            )
+            kwargs = {"service_account_name": run_settings.task_service_account_name}
+        else:
+            kwargs = {}
+
         templates = [
             IoArgoprojWorkflowV1alpha1Template(
                 name="run-workflow",
@@ -273,22 +328,15 @@ class ArgoClient:
         ]
 
         affinity = self._get_affinity(run_settings)
-
         if affinity:
-            manifest = IoArgoprojWorkflowV1alpha1Workflow(
-                metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
-                spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
-                    entrypoint="run-workflow", templates=templates, affinity=affinity
-                ),
-            )
-        else:
-            manifest = IoArgoprojWorkflowV1alpha1Workflow(
-                metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
-                spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
-                    entrypoint="run-workflow",
-                    templates=templates,
-                ),
-            )
+            kwargs["affinity"] = affinity
+
+        manifest = IoArgoprojWorkflowV1alpha1Workflow(
+            metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
+            spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
+                entrypoint="run-workflow", templates=templates, **kwargs
+            ),
+        )
 
         api_response = self.api_instance.create_workflow(
             namespace=self.namespace,

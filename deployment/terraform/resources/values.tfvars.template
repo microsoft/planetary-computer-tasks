@@ -10,9 +10,6 @@ region = "West Europe"
 # ACRPull will be assigned to the service principal during deployment.
 
 task_acr_name = ""
-acr_sp_object_id = ""
-acr_sp_client_id = ""
-acr_sp_client_secret = ""
 
 # Component ACR
 # -------------
@@ -22,54 +19,6 @@ acr_sp_client_secret = ""
 # The managed identity of the AKS will be assigned ACRPull to this ACR.
 
 component_acr_name = ""
-
-# Task Service Principal
-# ---------------------
-# The task service principal credentials provided here
-# will be store in the task KeyVault and exposed to workflows
-# through ${{ secrets.task-tenant-id }}, etc.
-
-task_sp_tenant_id = ""
-task_sp_object_id = ""
-task_sp_client_id = ""
-task_sp_client_secret = ""
-
-# Streaming TaskIO Service Principal
-# ---------------------
-# The Streaming TaskIO service principal credentials provided here
-# will are used to read task run messages from and write
-# outputs to pctasks' storage container. This service principal
-# should have Blob Storage Reader permissions on the storage account.
-# They're forwarded through to the run settings with helm, and
-# from thence on to the task container
-
-task_sp_tenant_id = ""
-task_sp_client_id = ""
-task_sp_client_secret = ""
-
-# Task secrets KeyVault Service Principal
-# ---------------------
-# This service principal is used inside the workflow runner process
-# to access task secrets from the task secret keyvault that is created
-# during terraform deployment. This enables workflows to access secrets
-# using the ${{ secrets.secret_name }} templating syntax to inject
-# secret values into workflows.
-
-kv_sp_tenant_id = ""
-kv_sp_client_id = ""
-kv_sp_client_secret = ""
-# this is the object ID of the enterprise application
-kv_sp_object_id = ""
-
-# pctasks-server Service Principal
-# --------------------------------
-# This is the service principal that will be used to interact with Azure
-# resources in the pctasks-server container running on AKS.
-
-pctasks_server_sp_tenant_id = ""
-pctasks_server_sp_client_id = ""
-pctasks_server_sp_client_secret = ""
-pctasks_server_sp_object_id = ""
 
 
 # STAC DB connection string

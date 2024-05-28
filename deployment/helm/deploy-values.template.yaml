@@ -26,15 +26,19 @@ pctasks:
       port: 80
       annotations: {}
 
-    azure:
-      tenant_id: "{{ tf.pctasks_server_sp_tenant_id }}"
-      client_id: "{{ tf.pctasks_server_sp_client_id }}"
-      client_secret: "{{ tf.pctasks_server_sp_client_secret }}"
+    serviceAccount:
+      annotations:
+        azure.workload.identity/client-id: "{{ tf.pctasks_workflow_identity_client_id }}"
+        azure.workload.identity/tenant-id: "{{ tf.pctasks_workflow_identity_tenant_id }}"
 
     deploy:
       replicaCount: 1
+      podLabels:
+        azure.workload.identity/use: "true"
       podAnnotations:
         "deployed": "{{ env.DATE }}"
+        azure.workload.identity/client-id: "{{ tf.pctasks_workflow_identity_client_id }}"
+        azure.workload.identity/tenant-id: "{{ tf.pctasks_workflow_identity_tenant_id }}"
       nodeSelector:
         "node_group": "default"
 
@@ -42,10 +46,6 @@ pctasks:
     task_runner_type: "batch"
     streaming_task_namespace: "pc"
     streaming_task_node_group: {{ tf.aks_streaming_task_node_group_name }}
-    streaming_taskio_sp_tenant_id: {{ tf.streaming_taskio_sp_tenant_id }}
-    streaming_taskio_sp_client_id: {{ tf.streaming_taskio_sp_client_id }}
-    streaming_taskio_sp_client_secret: {{ tf.streaming_taskio_sp_client_secret }}
-
     task_poll_seconds: 30
 
     notifications:
@@ -56,7 +56,7 @@ pctasks:
       account_url: {{ tf.sa_tables_account_url }}
       account_name: {{ tf.sa_account_name }}
       account_key: {{ tf.sa_account_key }}
-      connection_string: {{ tf.sa_connection_string}}
+      connection_string: {{ tf.sa_connection_string }}
       image_key_table_name: "imagekeys"
 
     blob:
@@ -75,6 +75,12 @@ pctasks:
         node_group: "{{ tf.argo_wf_node_group_name }}"
       # argo token set during helm install
 
+    workload_identity:
+      enabled: true
+      service_account: pctasks-server
+      client_id: "{{ tf.pctasks_workflow_identity_client_id }}"
+      tenant_id: "{{ tf.pctasks_workflow_identity_tenant_id }}"
+
     batch:
       enabled: true
       url: "{{ tf.batch_url }}"
@@ -85,9 +91,6 @@ pctasks:
     keyvault:
       enabled: true
       url: "{{ tf.keyvault_url }}"
-      sp_tenant_id: "{{ tf.kv_sp_tenant_id }}"
-      sp_client_id: "{{ tf.kv_sp_client_id }}"
-      sp_client_secret: "{{ tf.kv_sp_client_secret }}"
 
 pcingress:
   services:
