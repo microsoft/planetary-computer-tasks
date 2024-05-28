@@ -3,12 +3,12 @@ resource "azurerm_kubernetes_cluster" "pctasks" {
   location            = azurerm_resource_group.pctasks.location
   resource_group_name = azurerm_resource_group.pctasks.name
   dns_prefix          = "${local.prefix}-cluster"
-  kubernetes_version  = var.k8s_version
+  # kubernetes_version  = var.k8s_version
 
   key_vault_secrets_provider {
     secret_rotation_enabled = true
   }
-  oidc_issuer_enabled = true
+  oidc_issuer_enabled       = true
   workload_identity_enabled = true
 
   oms_agent {
@@ -56,7 +56,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "argowf" {
   name                  = "argowf"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.pctasks.id
   vm_size               = "Standard_DS2_v2"
-  os_sku = "AzureLinux"
+  os_sku                = "AzureLinux"
   node_count            = 1
 
   node_labels = {
@@ -83,7 +83,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "tasks" {
   name                  = "tasks"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.pctasks.id
   vm_size               = "Standard_D3_v2"
-  os_sku = "AzureLinux"
+  os_sku                = "AzureLinux"
   enable_auto_scaling   = true
   min_count             = var.aks_task_pool_min_count
   max_count             = var.aks_task_pool_max_count
@@ -113,7 +113,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "tasks-spot" {
   name                  = "tasksspot"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.pctasks.id
   vm_size               = "Standard_D3_v2"
-  os_sku = "AzureLinux"
+  os_sku                = "AzureLinux"
   enable_auto_scaling   = true
   min_count             = var.aks_task_pool_min_count
   max_count             = var.aks_task_pool_max_count
@@ -156,13 +156,41 @@ resource "azurerm_role_assignment" "network" {
   principal_id         = azurerm_kubernetes_cluster.pctasks.identity[0].principal_id
 }
 
+# Identity to be use in Argo Workflow pods. Ensure the service account used below
+# is the same associated with task pod deployment.
+resource "azurerm_user_assigned_identity" "workflows" {
+  name                = "id-${local.prefix}-workflows"
+  location            = var.region
+  resource_group_name = azurerm_resource_group.pctasks.name
+}
+
+resource "azurerm_federated_identity_credential" "workflows" {
+  name                = "federated-id-${local.prefix}-workflows"
+  resource_group_name = azurerm_resource_group.pctasks.name
+  audience            = ["api://AzureADTokenExchange"]
+  issuer              = azurerm_kubernetes_cluster.pctasks.oidc_issuer_url
+  subject             = "system:serviceaccount:pc:${var.aks_pctasks_service_account}"
+  parent_id           = azurerm_user_assigned_identity.workflows.id
+  timeouts {}
+}
+
+resource "azurerm_key_vault_access_policy" "example" {
+  key_vault_id = data.azurerm_key_vault.pctasks.id
+  tenant_id    = azurerm_user_assigned_identity.workflows.tenant_id
+  object_id    = azurerm_user_assigned_identity.workflows.principal_id
+
+  secret_permissions = [
+    "Get"
+  ]
+}
+
 # When you enable the key vault secrets provider block in an AKS cluster,
 # this identity is created in the node resource group. Altough it technically
 # is a property of the cluster resource under addProfiles.azureKeyvaultSecretsProvider.identity.resourceId
 # the terraform provider doesn't know about it so we need to manually tell terraform this thing exists
 data "azurerm_user_assigned_identity" "key_vault_secrets_provider_identity" {
   resource_group_name = azurerm_kubernetes_cluster.pctasks.node_resource_group
-  name = "azurekeyvaultsecretsprovider-${azurerm_kubernetes_cluster.pctasks.name}"
+  name                = "azurekeyvaultsecretsprovider-${azurerm_kubernetes_cluster.pctasks.name}"
 }
 
 resource "azurerm_federated_identity_credential" "cluster" {

@@ -16,6 +16,9 @@ resource "azurerm_linux_function_app" "pctasks" {
   storage_account_access_key = azurerm_storage_account.pctasks.primary_access_key
   https_only                 = true
 
+  ftp_publish_basic_authentication_enabled       = false
+  webdeploy_publish_basic_authentication_enabled = false
+
   identity {
     type = "SystemAssigned"
   }

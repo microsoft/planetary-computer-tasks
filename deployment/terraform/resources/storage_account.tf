@@ -49,7 +49,7 @@ resource "azurerm_storage_queue" "ingest" {
 # Dataset Queues
 resource "azurerm_storage_queue" "queues" {
   for_each = toset([
-   # dataset work queues
+    # dataset work queues
     "goes-glm",
     "goes-cmi",
     "sentinel-1-grd",
@@ -68,19 +68,19 @@ resource "azurerm_storage_queue" "queues" {
 resource "azurerm_role_assignment" "pctasks-server-blob-access" {
   scope                = azurerm_storage_account.pctasks.id
   role_definition_name = "Storage Blob Data Contributor"
-  principal_id         = var.pctasks_server_sp_object_id
+  principal_id         = azurerm_user_assigned_identity.workflows.principal_id
 }
 
 resource "azurerm_role_assignment" "pctasks-server-queue-access" {
   scope                = azurerm_storage_account.pctasks.id
   role_definition_name = "Storage Queue Data Contributor"
-  principal_id         = var.pctasks_server_sp_object_id
+  principal_id         = azurerm_user_assigned_identity.workflows.principal_id
 }
 
 resource "azurerm_role_assignment" "pctasks-server-table-access" {
   scope                = azurerm_storage_account.pctasks.id
   role_definition_name = "Storage Table Data Contributor"
-  principal_id         = var.pctasks_server_sp_object_id
+  principal_id         = azurerm_user_assigned_identity.workflows.principal_id
 }
 
 # Let the Azure Functions in pctasks process queue messages.
@@ -95,11 +95,5 @@ resource "azurerm_role_assignment" "pctasks-functions-queue-access" {
 resource "azurerm_role_assignment" "pctasks-task-queue-access" {
   scope                = azurerm_storage_account.pctasks.id
   role_definition_name = "Storage Queue Data Contributor"
-  principal_id         = var.task_sp_object_id
-}
-
-resource "azurerm_role_assignment" "pctasks-taskio-blob-access" {
-  scope                = azurerm_storage_account.pctasks.id
-  role_definition_name = "Storage Blob Data Contributor"
-  principal_id         = var.streaming_taskio_sp_object_id
+  principal_id         = azurerm_user_assigned_identity.workflows.principal_id
 }

@@ -16,6 +16,7 @@ class ClientSettings(PCTasksSettings):
 
     endpoint: str
     api_key: str
+    access_key: Optional[str] = None
     confirmation_required: bool = True
     default_args: Optional[Dict[str, str]] = None
     default_page_size: int = DEFAULT_PAGE_SIZE

@@ -53,10 +53,6 @@ variable "acr_name" {
   type = string
 }
 
-variable "acr_client_id" {
-  type = string
-}
-
-variable "acr_client_secret" {
+variable "user_assigned_identity_id" {
   type = string
 }
