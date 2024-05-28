@@ -22,6 +22,7 @@ from pctasks.core.models.run import (
 from pctasks.core.models.task import CompletedTaskResult, FailedTaskResult
 from pctasks.core.models.workflow import JobDefinition, WorkflowSubmitMessage
 from pctasks.core.queues import QueueService
+from pctasks.core.storage.blob import BlobStorage
 from pctasks.core.utils import grouped, map_opt
 from pctasks.run.constants import TASKS_TEMPLATE_PATH
 from pctasks.run.dag import sort_jobs
@@ -325,14 +326,13 @@ class RemoteWorkflowExecutor:
         container: CosmosDBContainer[JobPartitionRunRecord],
         max_concurrent_partition_tasks: int,
         is_last_job: bool,
+        task_io_storage: BlobStorage,
+        task_log_storage: BlobStorage,
     ) -> List[Dict[str, Any]]:
         """Complete job partitions and return the results.
 
         This is a blocking loop that is meant to be called on it's own thread.
         """
-        task_io_storage = self.config.run_settings.get_task_io_storage()
-        task_log_storage = self.config.run_settings.get_log_storage()
-
         completed_job_count = 0
         running_task_count = 0
         failed_job_count = 0
@@ -632,6 +632,8 @@ class RemoteWorkflowExecutor:
         wf_run_container: CosmosDBContainer[WorkflowRunRecord],
         jp_container: CosmosDBContainer[JobPartitionRunRecord],
         pool: futures.ThreadPoolExecutor,
+        task_io_storage: BlobStorage,
+        task_log_storage: BlobStorage,
     ) -> Optional[Union[Dict[str, Any], List[Dict[str, Any]]]]:
         """Execute job partitions and return the results.
 
@@ -677,6 +679,8 @@ class RemoteWorkflowExecutor:
                         )
                     ),
                     is_last_job,
+                    task_io_storage=task_io_storage,
+                    task_log_storage=task_log_storage,
                 ): job_state_group
                 for (
                     job_state_group,
@@ -817,6 +821,8 @@ class RemoteWorkflowExecutor:
             f"{run_settings.log_blob_container}/{log_path}"
         )
         log_storage = run_settings.get_log_storage()
+        task_io_storage = run_settings.get_task_io_storage()
+        task_log_storage = run_settings.get_log_storage()
 
         with StorageLogger.from_uri(log_uri, log_storage=log_storage):
             logger.info(f"Logging to: {log_uri}")
@@ -1081,6 +1087,8 @@ class RemoteWorkflowExecutor:
                             wf_run_container,
                             jp_container,
                             pool,
+                            task_io_storage,
+                            task_log_storage,
                         )
 
                         if current_job_outputs is None:
