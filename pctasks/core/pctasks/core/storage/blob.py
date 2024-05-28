@@ -343,7 +343,10 @@ class BlobStorage(Storage):
         attached credentials) to generate a container-level SAS token.
         """
         start = Datetime.utcnow() - timedelta(hours=10)
-        expiry = Datetime.utcnow() + timedelta(hours=24 * 7)
+        # Chop off a couple hours at the end to avoid any issues with the
+        # SAS token having too long of a duration.
+        # https://github.com/microsoft/planetary-computer-tasks/pull/291#issuecomment-2135599782
+        expiry = start + timedelta(hours=(24 * 7) - 2)
         permission = ContainerSasPermissions(
             read=read,
             write=write,
