@@ -3,7 +3,7 @@ import math
 import random
 import time
 from concurrent import futures
-from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, List, Optional, Union
 
 from azure.storage.queue import BinaryBase64DecodePolicy, BinaryBase64EncodePolicy
 
@@ -20,8 +20,9 @@ from pctasks.core.models.run import (
     WorkflowRunStatus,
 )
 from pctasks.core.models.task import CompletedTaskResult, FailedTaskResult
-from pctasks.core.models.workflow import WorkflowSubmitMessage
+from pctasks.core.models.workflow import JobDefinition, WorkflowSubmitMessage
 from pctasks.core.queues import QueueService
+from pctasks.core.storage.blob import BlobStorage
 from pctasks.core.utils import grouped, map_opt
 from pctasks.run.constants import TASKS_TEMPLATE_PATH
 from pctasks.run.dag import sort_jobs
@@ -31,7 +32,6 @@ from pctasks.run.models import (
     JobPartition,
     JobPartitionSubmitMessage,
     PreparedTaskData,
-    PreparedTaskSubmitMessage,
     SuccessfulTaskSubmitResult,
 )
 from pctasks.run.settings import WorkflowExecutorConfig
@@ -317,30 +317,35 @@ class RemoteWorkflowExecutor:
             )
             return TaskRunStatus.SUBMITTED
 
-    def complete_job_partitions(
+    def complete_job_partition_group(
         self,
         run_id: str,
         job_id: str,
         group_id: str,
         job_part_states: List[JobPartitionState],
         container: CosmosDBContainer[JobPartitionRunRecord],
+        max_concurrent_partition_tasks: int,
+        is_last_job: bool,
+        task_io_storage: BlobStorage,
+        task_log_storage: BlobStorage,
     ) -> List[Dict[str, Any]]:
         """Complete job partitions and return the results.
 
         This is a blocking loop that is meant to be called on it's own thread.
         """
-        task_io_storage = self.config.run_settings.get_task_io_storage()
-        task_log_storage = self.config.run_settings.get_log_storage()
-
         completed_job_count = 0
+        running_task_count = 0
         failed_job_count = 0
         total_job_count = len(job_part_states)
-        _jobs_left = lambda: total_job_count - completed_job_count - failed_job_count
-        _report_status = lambda: logger.info(
+        _jobs_left = (
+            lambda: total_job_count - completed_job_count - failed_job_count
+        )  # noqa: E731
+        _report_status = lambda: logger.info(  # noqa: E731
             f"{job_id} {group_id} status: "
             f"{completed_job_count} completed, "
             f"{failed_job_count} failed, "
-            f"{_jobs_left()} remaining"
+            f"{_jobs_left()} remaining, "
+            f"{running_task_count} tasks running"
         )
 
         _last_runner_poll_time: float = time.monotonic()
@@ -348,6 +353,7 @@ class RemoteWorkflowExecutor:
 
         try:
             while _jobs_left() > 0:
+
                 # Check the task runner for any failed tasks.
                 if (
                     time.monotonic() - _last_runner_poll_time
@@ -411,6 +417,11 @@ class RemoteWorkflowExecutor:
 
                         if task_state.status == TaskStateStatus.NEW:
                             # New task, submit it
+                            # wait if max concurrent tasks are already running
+                            if running_task_count >= max_concurrent_partition_tasks:
+                                continue
+                            else:
+                                running_task_count += 1
 
                             update_task_run_status(
                                 container,
@@ -441,6 +452,7 @@ class RemoteWorkflowExecutor:
 
                         elif task_state.status == TaskStateStatus.RUNNING:
                             # Job is still running...
+                            pass
                             if not task_state.status_updated:
                                 update_task_run_status(
                                     container,
@@ -454,6 +466,7 @@ class RemoteWorkflowExecutor:
                         elif task_state.status == TaskStateStatus.WAITING:
                             # If we just moved the job state to waiting,
                             # update the record.
+                            running_task_count -= 1
 
                             if not task_state.status_updated:
                                 update_task_run_status(
@@ -466,6 +479,8 @@ class RemoteWorkflowExecutor:
                                 task_state.status_updated = True
 
                         elif task_state.status == TaskStateStatus.FAILED:
+                            running_task_count -= 1
+
                             logger.warning(
                                 f"Task failed: {job_part_state.job_id} "
                                 f"- {task_state.task_id}"
@@ -503,6 +518,8 @@ class RemoteWorkflowExecutor:
                             _report_status()
 
                         elif task_state.status == TaskStateStatus.COMPLETED:
+                            running_task_count -= 1
+
                             logger.info(
                                 f"Task completed: {job_part_state.job_id}:{part_id}"
                                 f":{task_state.task_id}"
@@ -519,9 +536,13 @@ class RemoteWorkflowExecutor:
                                 )
                                 continue
 
-                            job_part_state.task_outputs[task_state.task_id] = {
-                                "output": task_state.task_result.output
-                            }
+                            if (not is_last_job) or (job_part_state.has_next_task):
+                                job_part_state.task_outputs[task_state.task_id] = {
+                                    "output": task_state.task_result.output
+                                }
+                            else:
+                                # Clear task output to save memory
+                                task_state.task_result.output = {}
 
                             update_task_run_status(
                                 container,
@@ -564,6 +585,12 @@ class RemoteWorkflowExecutor:
                                         status=JobPartitionRunStatus.COMPLETED,
                                     )
                                     self.handle_job_part_notifications(job_part_state)
+
+                                    # If this is the last job, clear the task output
+                                    # to save memory
+                                    if is_last_job:
+                                        job_part_state.task_outputs = {}
+
                                 except Exception:
                                     job_part_state.status = (
                                         JobPartitionStateStatus.FAILED
@@ -592,7 +619,188 @@ class RemoteWorkflowExecutor:
 
         return [job_state.task_outputs for job_state in job_part_states]
 
+    def execute_job_partitions(
+        self,
+        run_id: str,
+        job_id: str,
+        workflow_run: WorkflowRunRecord,
+        job_def: JobDefinition,
+        total_job_part_count: int,
+        task_data: List[PreparedTaskData],
+        is_last_job: bool,
+        job_part_states: List[JobPartitionState],
+        wf_run_container: CosmosDBContainer[WorkflowRunRecord],
+        jp_container: CosmosDBContainer[JobPartitionRunRecord],
+        pool: futures.ThreadPoolExecutor,
+        task_io_storage: BlobStorage,
+        task_log_storage: BlobStorage,
+    ) -> Optional[Union[Dict[str, Any], List[Dict[str, Any]]]]:
+        """Execute job partitions and return the results.
+
+        If return value is None, then the workflow is failed.
+        The output will be an empty dict if the job is the last job in the workflow.
+        Otherwise it will be the output of the job partitions.
+        """
+
+        try:
+            # Split the job partitions into groups
+            # based on the number of threads.
+            # Each thread will execute and monitor
+            # a group of job partitions.
+            grouped_job_partition_states = [
+                (list(g), group_num)
+                for group_num, g in enumerate(
+                    grouped(
+                        job_part_states,
+                        int(
+                            math.ceil(
+                                len(job_part_states)
+                                / self.config.run_settings.remote_runner_threads
+                            )
+                        ),
+                    )
+                )
+            ]
+
+            logger.info("Executing job partitions...")
+
+            job_part_futures = {
+                pool.submit(
+                    self.complete_job_partition_group,
+                    run_id,
+                    job_id,
+                    f"job-part-group-{group_num}",
+                    job_state_group,
+                    jp_container,
+                    int(
+                        math.ceil(
+                            self.config.run_settings.max_concurrent_workflow_tasks
+                            / self.config.run_settings.remote_runner_threads
+                        )
+                    ),
+                    is_last_job,
+                    task_io_storage=task_io_storage,
+                    task_log_storage=task_log_storage,
+                ): job_state_group
+                for (
+                    job_state_group,
+                    group_num,
+                ) in grouped_job_partition_states
+            }
+
+            job_results: List[Dict[str, Any]] = []
+
+            job_done_count = 0
+            failed_job_part_errors: List[str] = []
+            job_failed = False
+            for job_future in futures.as_completed(job_part_futures.keys()):
+                job_part_states = job_part_futures[job_future]
+
+                if job_future.cancelled():
+                    job_failed = True
+                    failed_job_part_errors.append(
+                        "Job partitions failed due to thread cancellation."
+                    )
+
+                future_error = job_future.exception()
+                if future_error:
+                    job_failed = True
+                    failed_job_part_errors.append(
+                        f"Job partitions thread failed with {future_error}"
+                    )
+
+                job_done_count += len(job_part_states)
+                for job_part_state in job_part_states:
+                    if job_part_state.status == JobPartitionStateStatus.FAILED:
+                        job_failed = True
+                        logger.warning(
+                            f"JOB PART FAILED: {job_id} "
+                            f"{job_part_state.partition_id}"
+                        )
+                    else:
+                        if not is_last_job:
+                            # If this is not the last job in the
+                            # workflow, record job outputs so they
+                            # can be used to template downstream jobs.
+                            # If this is the last job in the workflow,
+                            # don't collect any job results.
+                            job_results.append(job_part_state.task_outputs)
+
+                logger.info(
+                    f"Job {job_id} partition progress: "
+                    f"({job_done_count}/{total_job_part_count})"
+                )
+
+            # ## PROCESS JOB PARTITION RESULTS
+
+            if job_failed:
+                update_job_run_status(
+                    wf_run_container,
+                    workflow_run,
+                    job_def.get_id(),
+                    JobRunStatus.FAILED,
+                    errors=failed_job_part_errors,
+                )
+                return None
+            else:
+                result: Union[Dict[str, Any], List[Dict[str, Any]]]
+
+                if is_last_job:
+                    result = {}
+                elif len(job_results) == 1:
+                    result = {TASKS_TEMPLATE_PATH: job_results[0]}
+                else:
+                    job_output_entry: List[Dict[str, Any]] = []
+                    for job_result in job_results:
+                        job_output_entry.append({TASKS_TEMPLATE_PATH: job_result})
+                    result = job_output_entry
+
+                update_job_run_status(
+                    wf_run_container,
+                    workflow_run,
+                    job_def.get_id(),
+                    JobRunStatus.COMPLETED,
+                )
+
+                return result
+        finally:
+            logger.info(f"...cleaning up based on task data for job: {job_id}")
+            self.task_runner.cleanup([d.runner_info for d in task_data])
+
     def execute_workflow(
+        self,
+        submit_message: WorkflowSubmitMessage,
+    ) -> Dict[str, Any]:
+        workflow_id: str = submit_message.workflow.id
+        run_id = submit_message.run_id
+
+        logger.info(f"*** Workflow started *** {workflow_id=}, {run_id=}")
+
+        # trace_parent: Union[str, None] = None
+        # trace_state: Union[str, None] = None
+        # if submit_message.args is not None:
+        #     trace_parent = submit_message.args.get("traceparent")
+        #     trace_state = submit_message.args.get("tracestate")
+
+        # otel_detach_token = otel.attach_to_parent(
+        #     trace_parent, trace_state, operation_id=run_id
+        # )
+
+        # with tracer.start_as_current_span(__name__) as span:
+        #     span.set_attribute("operation_id", workflow_id)
+        #     span.set_attribute("run_id", run_id)
+        try:
+            result: Dict[str, Any] = self.execute_workflow_internal(
+                submit_message=submit_message
+            )
+        finally:
+            pass
+            # if otel_detach_token:
+            #     otel.detach(otel_detach_token)
+
+        return result
+
+    def execute_workflow_internal(
         self,
         submit_message: WorkflowSubmitMessage,
     ) -> Dict[str, Any]:
@@ -613,18 +821,14 @@ class RemoteWorkflowExecutor:
             f"{run_settings.log_blob_container}/{log_path}"
         )
         log_storage = run_settings.get_log_storage()
+        task_io_storage = run_settings.get_task_io_storage()
+        task_log_storage = run_settings.get_log_storage()
 
         with StorageLogger.from_uri(log_uri, log_storage=log_storage):
-            logger.info("***********************************")
-            logger.info(f"Workflow: {submit_message.workflow.id}")
-            logger.info(f"Run Id: {run_id}")
-            logger.info("***********************************")
-
             logger.info(f"Logging to: {log_uri}")
 
-            logger.info("Creating CosmosDB connections...")
-
             # Create containers
+            logger.info("Creating CosmosDB connections...")
             with WorkflowRunsContainer(
                 WorkflowRunRecord, db=self.config.get_cosmosdb()
             ) as wf_run_container, WorkflowRunsContainer(
@@ -649,14 +853,21 @@ class RemoteWorkflowExecutor:
                 try:
                     workflow_jobs = list(workflow.definition.jobs.values())
                     sorted_jobs = sort_jobs(workflow_jobs)
+                    len_jobs = len(sorted_jobs)
                     logger.info(f"Running jobs: {[j.id for j in sorted_jobs]}")
-                    for job_def in sorted_jobs:
+                    for job_idx, job_def in enumerate(sorted_jobs):
                         # For each job, create the job partitions
                         # through the task pool, submit all initial
                         # tasks, and then wait for all tasks to complete
 
                         job_id = job_def.get_id()
                         job_run = workflow_run.get_job_run(job_id)
+
+                        # Track if this is the last job.
+                        # If so, there's no reason to hold onto
+                        # job outputs. Avoiding this will save
+                        # memory.
+                        is_last_job = job_idx == len_jobs - 1
 
                         if not job_run:
                             raise WorkflowRunRecordError(
@@ -864,248 +1075,51 @@ class RemoteWorkflowExecutor:
                             workflow_failed = True
                             continue
 
-                        # ## SUBMIT INITIAL TASKS
+                        current_job_outputs = self.execute_job_partitions(
+                            run_id,
+                            job_id,
+                            workflow_run,
+                            job_def,
+                            total_job_part_count,
+                            task_data,
+                            is_last_job,
+                            job_part_states,
+                            wf_run_container,
+                            jp_container,
+                            pool,
+                            task_io_storage,
+                            task_log_storage,
+                        )
 
-                        initial_tasks: List[PreparedTaskSubmitMessage] = []
-                        for job_part_state in job_part_states:
-                            # Case with no tasks has already been handled.
-                            assert job_part_state.current_task
-                            initial_tasks.append(
-                                job_part_state.current_task.prepared_task
-                            )
-
-                        # First tasks in a job are submitted in bulk to minimize
-                        # the number of concurrent API calls.
-                        logger.info(" - Submitting initial tasks...")
-                        try:
-                            submit_results: List[
-                                Union[
-                                    SuccessfulTaskSubmitResult, FailedTaskSubmitResult
-                                ]
-                            ] = self.task_runner.submit_tasks(initial_tasks)
-                        except Exception as e:
-                            submit_results = [
-                                FailedTaskSubmitResult(errors=[str(e)])
-                                for _ in initial_tasks
-                            ]
-
-                        logger.info(" -  Initial tasks submitted, checking status...")
-
-                        try:
-
-                            def _update_submit_results(
-                                tup: Tuple[
-                                    JobPartitionState,
-                                    Union[
-                                        SuccessfulTaskSubmitResult,
-                                        FailedTaskSubmitResult,
-                                    ],
-                                ],
-                                _jp_container: CosmosDBContainer[JobPartitionRunRecord],
-                            ) -> TaskRunStatus:
-                                jps, submit_result = tup
-                                assert jps.current_task
-
-                                return self.update_submit_result(
-                                    jps.current_task,
-                                    submit_result,
-                                    container=_jp_container,
-                                    run_id=jps.run_id,
-                                    job_partition_run_id=jps.job_part_run_record_id,
-                                )
-
-                            any_submitted = False
-                            all_submitted = True
-                            for submitted in pool.map(
-                                lambda x: _update_submit_results(x, jp_container),
-                                zip(job_part_states, submit_results),
-                            ):
-                                _this_task_submitted = (
-                                    submitted == TaskRunStatus.SUBMITTED
-                                )
-                                any_submitted = any_submitted or _this_task_submitted
-                                all_submitted = all_submitted and _this_task_submitted
-
-                            if all_submitted:
-                                logger.info(
-                                    " -  All initial tasks submitted successfully."
-                                )
-                            elif any_submitted:
-                                logger.info(
-                                    " -  Some (not all) initial tasks "
-                                    "submitted successfully."
-                                )
-
-                        except Exception as e:
-                            logger.error(f"Failed to update task status: {e}")
-                            logger.exception(e)
-                            logger.info(
-                                f"...cleaning up based on task data for job: {job_id}"
-                            )
-                            self.task_runner.cleanup([d.runner_info for d in task_data])
-                            update_job_run_status(
-                                wf_run_container,
-                                workflow_run,
-                                job_def.get_id(),
-                                JobRunStatus.FAILED,
-                            )
+                        if current_job_outputs is None:
                             workflow_failed = True
-                            continue
-
-                        if not any_submitted:
-                            logger.error(" -  All initial tasks failed to submit.")
-                            logger.info(
-                                f"...cleaning up based on task data for job: {job_id}"
-                            )
-                            self.task_runner.cleanup([d.runner_info for d in task_data])
-                            update_job_run_status(
-                                wf_run_container,
-                                workflow_run,
-                                job_def.get_id(),
-                                JobRunStatus.FAILED,
-                                errors=[
-                                    f"Failed to submit tasks for job {job_def.get_id()}"
-                                ],
-                            )
-                            workflow_failed = True
-                            continue
-
-                        # ## MONITOR GROUPED JOB PARTITIONS
-                        try:
-                            # Split the job partitions into groups
-                            # based on number of threads
-                            grouped_job_partition_states = [
-                                (list(g), group_num)
-                                for group_num, g in enumerate(
-                                    grouped(
-                                        job_part_states,
-                                        int(
-                                            math.ceil(
-                                                len(job_part_states)
-                                                / run_settings.remote_runner_threads
-                                            )
-                                        ),
-                                    )
-                                )
-                            ]
-
-                            # Wait for the first task of the job partition to complete,
-                            # and then complete all remaining tasks
-
-                            logger.info("Waiting for tasks to complete...")
-
-                            job_part_futures = {
-                                pool.submit(
-                                    self.complete_job_partitions,
-                                    run_id,
-                                    job_id,
-                                    f"job-part-group-{group_num}",
-                                    job_state_group,
-                                    jp_container,
-                                ): job_state_group
-                                for (
-                                    job_state_group,
-                                    group_num,
-                                ) in grouped_job_partition_states
-                            }
-
-                            job_results: List[Dict[str, Any]] = []
-
-                            job_done_count = 0
-                            failed_job_part_errors: List[str] = []
-                            job_failed = False
-                            for job_future in futures.as_completed(
-                                job_part_futures.keys()
-                            ):
-                                job_part_states = job_part_futures[job_future]
-
-                                if job_future.cancelled():
-                                    job_failed = True
-                                    failed_job_part_errors.append(
-                                        "Job partitions failed "
-                                        "due to thread cancellation."
-                                    )
-
-                                future_error = job_future.exception()
-                                if future_error:
-                                    job_failed = True
-                                    failed_job_part_errors.append(
-                                        str(
-                                            "Job partitions thread failed "
-                                            f"with {future_error}"
-                                        )
-                                    )
-
-                                job_done_count += len(job_part_states)
-                                for job_part_state in job_part_states:
-                                    if (
-                                        job_part_state.status
-                                        == JobPartitionStateStatus.FAILED
-                                    ):
-                                        job_failed = True
-                                        logger.warning(
-                                            f"JOB PART FAILED: {job_id} "
-                                            f"{job_part_state.partition_id}"
-                                        )
-                                    else:
-                                        job_results.append(job_part_state.task_outputs)
-
-                                logger.info(
-                                    f"Job {job_id} partition progress: "
-                                    f"({job_done_count}/{total_job_part_count})"
-                                )
-
-                            # ## PROCESS JOB PARTITION RESULTS
-
-                            if job_failed:
-                                update_job_run_status(
-                                    wf_run_container,
-                                    workflow_run,
-                                    job_def.get_id(),
-                                    JobRunStatus.FAILED,
-                                    errors=failed_job_part_errors,
-                                )
-                                workflow_failed = True
-                            else:
-                                if len(job_results) == 1:
-                                    job_outputs[job_id] = {
-                                        TASKS_TEMPLATE_PATH: job_results[0]
-                                    }
-                                else:
-                                    job_output_entry: List[Dict[str, Any]] = []
-                                    for job_result in job_results:
-                                        job_output_entry.append(
-                                            {TASKS_TEMPLATE_PATH: job_result}
-                                        )
-                                    job_outputs[job_id] = job_output_entry
-
-                                update_job_run_status(
-                                    wf_run_container,
-                                    workflow_run,
-                                    job_def.get_id(),
-                                    JobRunStatus.COMPLETED,
-                                )
-                        finally:
-                            logger.info(
-                                f"...cleaning up based on task data for job: {job_id}"
-                            )
-                            self.task_runner.cleanup([d.runner_info for d in task_data])
+                        else:
+                            job_outputs[job_id] = current_job_outputs
 
                     if workflow_failed:
                         logger.error("Workflow failed!")
-                        update_workflow_run_status(
-                            wf_run_container, workflow_run, WorkflowRunStatus.FAILED
-                        )
+                        # The workflow will be marked as failed in the except block
+                        # update_workflow_run_status(
+                        #     wf_run_container,
+                        #     op_container,
+                        #     tracking_container,
+                        #     workflow_run,
+                        #     WorkflowRunStatus.FAILED,
+                        # )
                         raise WorkflowFailedError(f"Workflow '{workflow.id}' failed.")
                     else:
                         logger.info("Workflow completed!")
                         update_workflow_run_status(
-                            wf_run_container, workflow_run, WorkflowRunStatus.COMPLETED
+                            wf_run_container,
+                            workflow_run,
+                            WorkflowRunStatus.COMPLETED,
                         )
                 except Exception as e:
                     logger.exception(e)
                     update_workflow_run_status(
-                        wf_run_container, workflow_run, WorkflowRunStatus.FAILED
+                        wf_run_container,
+                        workflow_run,
+                        WorkflowRunStatus.FAILED,
                     )
 
                 return job_outputs

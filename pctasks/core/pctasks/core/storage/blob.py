@@ -1,3 +1,5 @@
+import concurrent.futures
+import contextlib
 import logging
 import multiprocessing
 import os
@@ -252,6 +254,7 @@ class BlobStorage(Storage):
         self.storage_account_name = storage_account_name
         self.container_name = container_name
         self.prefix = prefix.strip("/") if prefix is not None else prefix
+        self._container_client_wrapper: Optional[ContainerClientWrapper] = None
 
     def __repr__(self) -> str:
         prefix_part = "" if self.prefix is None else f"/{self.prefix}"
@@ -261,14 +264,17 @@ class BlobStorage(Storage):
         )
 
     def _get_client(self) -> ContainerClientWrapper:
-        account_client = BlobServiceClient(
-            account_url=self.account_url,
-            credential=self._blob_creds,
-        )
+        if self._container_client_wrapper is None:
+            account_client = BlobServiceClient(
+                account_url=self.account_url,
+                credential=self._blob_creds,
+            )
 
-        container_client = account_client.get_container_client(self.container_name)
-
-        return ContainerClientWrapper(account_client, container_client)
+            container_client = account_client.get_container_client(self.container_name)
+            self._container_client_wrapper = ContainerClientWrapper(
+                account_client, container_client
+            )
+        return self._container_client_wrapper
 
     def _get_name_starts_with(
         self, additional_prefix: Optional[str] = None
@@ -337,7 +343,10 @@ class BlobStorage(Storage):
         attached credentials) to generate a container-level SAS token.
         """
         start = Datetime.utcnow() - timedelta(hours=10)
-        expiry = Datetime.utcnow() + timedelta(hours=24 * 7)
+        # Chop off a couple hours at the end to avoid any issues with the
+        # SAS token having too long of a duration.
+        # https://github.com/microsoft/planetary-computer-tasks/pull/291#issuecomment-2135599782
+        expiry = start + timedelta(hours=(24 * 7) - 2)
         permission = ContainerSasPermissions(
             read=read,
             write=write,
@@ -388,7 +397,8 @@ class BlobStorage(Storage):
             return blob_uri.blob_name or ""
 
     def get_file_info(self, file_path: str) -> StorageFileInfo:
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 try:
                     props = with_backoff(lambda: blob.get_blob_properties())
@@ -397,7 +407,8 @@ class BlobStorage(Storage):
                 return StorageFileInfo(size=cast(int, props.size))
 
     def file_exists(self, file_path: str) -> bool:
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 return with_backoff(lambda: blob.exists())
 
@@ -450,7 +461,8 @@ class BlobStorage(Storage):
                 for blob_name in page:
                     yield blob_name
 
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             return with_backoff(fetch_blobs)
 
     def walk(
@@ -464,6 +476,7 @@ class BlobStorage(Storage):
         matches: Optional[str] = None,
         walk_limit: Optional[int] = None,
         file_limit: Optional[int] = None,
+        max_concurrency: int = 32,
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
         # Ensure UTC set
         since_date = map_opt(lambda d: d.replace(tzinfo=timezone.utc), since_date)
@@ -488,6 +501,7 @@ class BlobStorage(Storage):
         def _get_prefix_content(
             full_prefix: Optional[str],
         ) -> Tuple[List[str], List[str]]:
+            logger.info("Listing prefix=%s", full_prefix)
             folders = []
             files = []
             for item in client.container.walk_blobs(name_starts_with=full_prefix):
@@ -514,7 +528,9 @@ class BlobStorage(Storage):
         limit_break = False
 
         full_prefixes: List[str] = [self._get_name_starts_with(name_starts_with) or ""]
-        with self._get_client() as client:
+        client = self._get_client()
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=max_concurrency)
+        with contextlib.nullcontext():
             while full_prefixes:
                 if walk_limit and walk_count >= walk_limit:
                     break
@@ -523,6 +539,7 @@ class BlobStorage(Storage):
                     break
 
                 next_level_prefixes: List[str] = []
+                futures = {}
                 for full_prefix in full_prefixes:
                     if walk_limit and walk_count >= walk_limit:
                         limit_break = True
@@ -534,7 +551,12 @@ class BlobStorage(Storage):
                     if max_depth and prefix_depth > max_depth:
                         break
 
-                    folders, files = _get_prefix_content(full_prefix)
+                    future = pool.submit(_get_prefix_content, full_prefix)
+                    futures[future] = full_prefix
+
+                for future in concurrent.futures.as_completed(futures):
+                    full_prefix = futures[future]
+                    folders, files = future.result()
 
                     files = [file for file in files if path_filter(file)]
 
@@ -570,7 +592,8 @@ class BlobStorage(Storage):
         if timeout_seconds is not None:
             kwargs["timeout"] = timeout_seconds
 
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 with open(output_path, "wb" if is_binary else "w") as f:
                     try:
@@ -585,7 +608,8 @@ class BlobStorage(Storage):
         target_path: str,
         overwrite: bool = True,
     ) -> None:
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(
                 self._add_prefix(target_path)
             ) as blob:
@@ -615,7 +639,8 @@ class BlobStorage(Storage):
         kwargs = {}
         if content_type:
             kwargs["content_settings"] = ContentSettings(content_type=content_type)
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(
                 self._add_prefix(target_path)
             ) as blob:
@@ -629,7 +654,8 @@ class BlobStorage(Storage):
     def read_bytes(self, file_path: str) -> bytes:
         try:
             blob_path = self._add_prefix(file_path)
-            with self._get_client() as client:
+            client = self._get_client()
+            with contextlib.nullcontext():
                 with client.container.get_blob_client(blob_path) as blob:
                     blob_data = with_backoff(
                         lambda: blob.download_blob(
@@ -649,7 +675,8 @@ class BlobStorage(Storage):
 
     def write_bytes(self, file_path: str, data: bytes, overwrite: bool = True) -> None:
         full_path = self._add_prefix(file_path)
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(full_path) as blob:
                 with_backoff(
                     lambda: blob.upload_blob(data, overwrite=overwrite)  # type: ignore
@@ -660,7 +687,8 @@ class BlobStorage(Storage):
             self.delete_file(file_path)
 
     def delete_file(self, file_path: str) -> None:
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 try:
                     with_backoff(lambda: blob.delete_blob())
