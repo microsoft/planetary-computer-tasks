@@ -55,10 +55,6 @@ Also, you can use the `--skip-fetch-tf-vars` option to `bin/deploy` to skip fetc
 
 __Note:__ If you are using the `terraform/dev` stack, which stores its terraform state locally, a `values.tfvars` will not be pulled from the keyvault. You need to create the `values.tfvars` based on the template and copy it into the `terraform/dev` folder manually.
 
-### Roles
-
-The service principal specified by the `task_acr_sp_object_id` variable must have `AcrPull` permissions on the ACR specified by the `task_acr_name` variable.
-
 ### Azure AD App Registrations
 
 This PC Tasks API and frontend use Azure AD App Registrations to authenticate

@@ -19,10 +19,11 @@ module "batch_pool_d3_v3" {
   max_increase_per_scale = 50
 
   acr_name = var.task_acr_name
-  acr_client_id = var.task_acr_sp_client_id
-  acr_client_secret = var.task_acr_sp_client_secret
+
+  user_assigned_identity_id = module.resources.batch_user_assigned_identity_id
 
   subnet_id = module.resources.batch_nodepool_subnet
+
 }
 
 module "batch_pool_d3_v3_ingest" {
@@ -44,8 +45,8 @@ module "batch_pool_d3_v3_ingest" {
   max_increase_per_scale = 1
 
   acr_name = var.task_acr_name
-  acr_client_id = var.task_acr_sp_client_id
-  acr_client_secret = var.task_acr_sp_client_secret
+
+  user_assigned_identity_id = module.resources.batch_user_assigned_identity_id
 
   subnet_id = module.resources.batch_nodepool_subnet
 }
@@ -69,8 +70,8 @@ module "batch_pool_d3_v3_high_memory" {
   max_increase_per_scale = 1
 
   acr_name = var.task_acr_name
-  acr_client_id = var.task_acr_sp_client_id
-  acr_client_secret = var.task_acr_sp_client_secret
+
+  user_assigned_identity_id = module.resources.batch_user_assigned_identity_id
 
   subnet_id = module.resources.batch_nodepool_subnet
 }
@@ -94,8 +95,8 @@ module "batch_pool_d3_v2_landsat" {
   max_increase_per_scale = 50
 
   acr_name = var.task_acr_name
-  acr_client_id = var.task_acr_sp_client_id
-  acr_client_secret = var.task_acr_sp_client_secret
+
+  user_assigned_identity_id = module.resources.batch_user_assigned_identity_id
 
   subnet_id = module.resources.batch_nodepool_subnet
 }
@@ -119,8 +120,8 @@ module "batch_pool_d3_v3_s2" {
   max_increase_per_scale = 50
 
   acr_name = var.task_acr_name
-  acr_client_id = var.task_acr_sp_client_id
-  acr_client_secret = var.task_acr_sp_client_secret
+
+  user_assigned_identity_id = module.resources.batch_user_assigned_identity_id
 
   subnet_id = module.resources.batch_nodepool_subnet
 }

@@ -11,7 +11,6 @@ module "resources" {
 
   task_acr_resource_group = var.task_acr_resource_group
   task_acr_name = var.task_acr_name
-  task_acr_sp_object_id = var.task_acr_sp_object_id
   component_acr_resource_group = var.component_acr_resource_group
   component_acr_name = var.component_acr_name
 
