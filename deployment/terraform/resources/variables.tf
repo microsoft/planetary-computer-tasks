@@ -99,10 +99,6 @@ variable "task_acr_name" {
   default = "pccomponentstest"
 }
 
-variable "task_acr_sp_object_id" {
-  type = string
-}
-
 variable "component_acr_resource_group" {
   type    = string
   default = "pc-test-manual-resources"
