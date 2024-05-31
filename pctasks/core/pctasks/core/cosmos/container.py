@@ -279,7 +279,7 @@ class CosmosDBContainer(BaseCosmosDBContainer[T], ABC):
                     lambda: self._container_client.scripts.execute_stored_procedure(
                         sp_name,
                         partition_key=partition_key,
-                        params=[list(item_group)],
+                        params=list(item_group),
                     ),
                     strategy=self.backoff_strategy,
                 )

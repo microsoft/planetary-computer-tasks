@@ -3,6 +3,7 @@ import re
 from typing import Any, Dict, Optional
 from urllib.parse import urlparse
 
+import azure.identity.aio
 from azure.cosmos import CosmosClient
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.identity import DefaultAzureCredential
@@ -165,7 +166,7 @@ class CosmosDBSettings(PCTasksSettings):
         else:
             self.ensure_valid_connection_info()
             assert self.url
-            credential = self.key or DefaultAzureCredential()
+            credential = self.key or azure.identity.aio.DefaultAzureCredential()
             return AsyncCosmosClient(
                 self.url, credential=credential, connection_verify=connection_verify
             )
