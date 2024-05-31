@@ -10,7 +10,7 @@ install_requires = [
     "azure-storage-blob",
     "azure-storage-queue>=12.6.0",
     "azure-data-tables>=12.0.0,<13",
-    "azure-cosmos>=4.3.0,<4.4.0",
+    "azure-cosmos>=4.4.0,<5",
     "pydantic>=1.9,<2.0.0",
     "orjson>=3.0.0,<4",
     "strictyaml>=1.6",
