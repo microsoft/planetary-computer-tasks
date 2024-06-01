@@ -18,7 +18,10 @@ collections:
       - uri: blob://ai4edataeuwest/ecmwf/
         chunks:
           options:
-            matches: (enfo|oper|waef|wave)(?!-opendata)
+            # currently excluding "aifs", in favor of "ifs"
+            # Could put that in a different collection, or modify
+            # the stactools package.
+            matches: /ifs/(0p25|0p4-beta)/(enfo|oper|waef|wave)(?!-opendata)
             extensions: [.grib2]
     chunk_storage:
       uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/
