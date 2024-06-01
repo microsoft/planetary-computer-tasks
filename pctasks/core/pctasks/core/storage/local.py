@@ -82,6 +82,7 @@ class LocalStorage(Storage):
         matches: Optional[str] = None,
         walk_limit: Optional[int] = None,
         file_limit: Optional[int] = None,
+        match_full_path: bool = False,
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
         def _get_depth(path: str) -> int:
             relpath = os.path.relpath(path, self.base_dir)
@@ -102,7 +103,10 @@ class LocalStorage(Storage):
             if since_date:
                 if since_date > Datetime.fromtimestamp(os.path.getmtime(full_path)):
                     return False
-            return path_filter(p)
+            if match_full_path:
+                return path_filter(full_path)
+            else:
+                return path_filter(p)
 
         for root, folders, files in os.walk(self.base_dir):
 
