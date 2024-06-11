@@ -476,6 +476,7 @@ class BlobStorage(Storage):
         matches: Optional[str] = None,
         walk_limit: Optional[int] = None,
         file_limit: Optional[int] = None,
+        match_full_path: bool = False,
         max_concurrency: int = 32,
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
         # Ensure UTC set
@@ -556,9 +557,17 @@ class BlobStorage(Storage):
 
                 for future in concurrent.futures.as_completed(futures):
                     full_prefix = futures[future]
-                    folders, files = future.result()
+                    folders, unfiltered_files = future.result()
 
-                    files = [file for file in files if path_filter(file)]
+                    files = []
+
+                    for file in unfiltered_files:
+                        if match_full_path:
+                            match_on = "/".join([full_prefix.rstrip("/"), file])
+                        else:
+                            match_on = file
+                        if path_filter(match_on):
+                            files.append(file)
 
                     if file_limit and file_count + len(files) > file_limit:
                         files = files[: file_limit - file_count]

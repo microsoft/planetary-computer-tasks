@@ -63,6 +63,9 @@ class ChunkOptions(PCBaseModel):
     matches: Optional[str] = None
     """Only include asset URIs that match this regex."""
 
+    match_full_path: bool = False
+    """Whether to match on just the file name (the default) or the full path."""
+
     limit: Optional[int] = None
     """Limit the number of URIs to process. """
 

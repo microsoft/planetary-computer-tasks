@@ -72,6 +72,7 @@ class Storage(ABC):
         matches: Optional[str] = None,
         walk_limit: Optional[int] = None,
         file_limit: Optional[int] = None,
+        match_full_path: bool = False,
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
         """
         Recursively walk storage.
@@ -87,6 +88,9 @@ class Storage(ABC):
             matches: Optional regex that path must match
             walk_limit: Limit the number of times to yield
             file_limit: Limit the number of files returned
+            match_full_path: bool, default False
+                Whether to match on just the file name segment of the path (the default) or
+                the entire path, including the base path.
 
         Returns:
             Generator of (path, files, folders) tuples. Similar to os.walk. Lists

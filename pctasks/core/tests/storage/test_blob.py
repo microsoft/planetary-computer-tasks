@@ -124,3 +124,19 @@ def test_blob_download_timeout():
 def test_maybe_rewrite_blob_storage_url(url, expected):
     result = maybe_rewrite_blob_storage_url(url)
     assert result == expected
+
+
+def test_walk_match_full_path():
+    with temp_azurite_blob_storage(
+        HERE / ".." / "data-files" / "simple-assets"
+    ) as storage:
+        result: Dict[str, Tuple[List[str], List[str]]] = {}
+        for root, folders, files in storage.walk(
+            matches="a/asset-.*.json", match_full_path=True
+        ):
+            result[root] = (folders, files)
+
+        assert set(result.keys()) == {".", "a", "b"}
+        assert set(result["."][0]) == {"a", "b"}
+        assert set(result["a"][1]) == {"asset-a-1.json", "asset-a-2.json"}
+        assert set(result["b"][1]) == set()
