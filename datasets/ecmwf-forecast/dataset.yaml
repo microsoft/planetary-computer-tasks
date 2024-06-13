@@ -1,5 +1,5 @@
 id: ecmwf_forecast
-image: ${{ args.registry }}/pctasks-ecmwf-forecast:20240314.1
+image: ${{ args.registry }}/pctasks-ecmwf-forecast:2024.6.13.0
 
 args:
 - registry
