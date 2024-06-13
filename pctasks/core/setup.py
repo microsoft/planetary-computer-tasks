@@ -15,7 +15,7 @@ install_requires = [
     "orjson>=3.0.0,<4",
     "strictyaml>=1.6",
     "stac-validator>=3.1.0",
-    "opencensus-ext-azure==1.1.0",
+    "opencensus-ext-azure==1.1.13",
     "opencensus-ext-logging==0.1.1",
     "pyyaml>=5.3",
     "aiohttp>=3.9",
