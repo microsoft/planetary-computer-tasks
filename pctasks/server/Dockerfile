@@ -1,12 +1,10 @@
-FROM python:3.9-slim
+FROM mcr.microsoft.com/cbl-mariner/base/python:3.9
+
+RUN tdnf install -y ca-certificates build-essential git \
+    && tdnf clean all
 
 ARG DEVELOPMENT=FALSE
 
-RUN apt-get update && \
-    apt-get install -y build-essential git && \
-    rm -rf /var/lib/apt/lists/*
-
-ENV CURL_CA_BUNDLE /etc/ssl/certs/ca-certificates.crt
 ENV PIP_NO_CACHE_DIR=1
 RUN pip install "setuptools>=65.5.1"
 
