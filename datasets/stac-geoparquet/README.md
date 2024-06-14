@@ -20,3 +20,11 @@ By default, this workflow will generate geoparquet assets for all collections.
 If you want to select a subset of collections, you can use either:
 1. `extra_skip`: This will skip certain collections
 1. `collections`: This will only generate geoparquet for the specified collection(s).
+
+## Updates
+
+The workflow used for updates was registered with
+
+```
+pctasks workflow update datasets/workflows/stac-geoparquet.yaml
+```
