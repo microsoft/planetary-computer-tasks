@@ -3,6 +3,8 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict, List, cast
 
+import pytest
+
 from pctasks.core.utils.summary import (
     DistinctKeySets,
     DistinctValueSummary,
@@ -16,10 +18,12 @@ from pctasks.core.utils.summary import (
     StringValueCount,
     SummarySettings,
     ValueTypes,
+    make_collection,
 )
 
 HERE = Path(__file__).parent
 ITEMS_DIR = Path(__file__).parent.parent / "data-files" / "items"
+SUMMARIES_DIR = HERE.parent / "data-files" / "summaries"
 
 
 def test_asset_counts():
@@ -333,3 +337,221 @@ def test_several_asset_descriptions():
             values=[StringValueCount(value=f"Image {i}", count=5) for i in range(20)],
         ).dict()
     )
+
+
+@pytest.fixture
+def s3_frp_summary():
+    p = SUMMARIES_DIR.joinpath("sentinel-3-olci-lfr-l2-netcdf.json")
+    return ObjectSummary.parse_file(p)
+
+
+def test_make_collection(s3_frp_summary):
+    percentages = {
+        "s3:coastalPixels_percentage",
+        "s3:salineWaterPixels_percentage",
+        "s3:cosmeticPixels_percentage",
+        "s3:dubiousSamples_percentage",
+        "s3:freshInlandWaterPixels_percentage",
+        "s3:invalidPixels_percentage",
+        "s3:landPixels_percentage",
+        "s3:duplicatedPixels_percentage",
+        "s3:tidalRegionPixels_percentage",
+        "s3:saturatedPixels_percentage",
+        "sat:absolute_orbit",
+        "sat:relative_orbit",
+        "eo:cloud_cover",
+    }
+    result = make_collection(
+        s3_frp_summary,
+        "id",
+        title="Sentinel 3",
+        extra_fields={
+            "msft:region": "westeurope",
+        },
+        extra_summary_exclude={
+            "s3:shape",
+            "s3:gsd",
+            "s3:productType",
+            "sat:orbit_state",
+            "s3:mode",
+            "providers",
+        }
+        | percentages,
+        item_assets_exclude="resolution",
+    )
+
+    expected = {
+        "stac_version": "1.0.0",
+        "id": "id",
+        "type": "Collection",
+        "description": "{{ collection.description }}",
+        "title": "Sentinel 3",
+        "keywords": [],
+        "stac_extensions": [],
+        "links": [],
+        "msft:region": "westeurope",
+        "summaries": {
+            "platform": ["Sentinel-3A", "Sentinel-3B"],
+            "constellation": ["Sentinel-3"],
+            "instruments": [["OLCI"]],
+            "sat:platform_international_designator": ["2016-011A", "2018-039A"],
+        },
+        "item_assets": {
+            "safe-manifest": {"type": "application/xml", "roles": ["metadata"]},
+            "ogvi": {
+                "description": "OLCI global Vegetal Index",
+                "type": "application/x-netcdf",
+                "roles": ["data"],
+                "eo:bands": [
+                    {
+                        "name": "Oa03",
+                        "description": "Band 3 - Chlorophyll absorption maximum, biogeochemistry, vegetation",
+                        "center_wavelength": 442.5,
+                        "band_width": 10,
+                    },
+                    {
+                        "name": "Oa10",
+                        "description": "Band 10 - Chlorophyll fluorescence peak, red edge",
+                        "center_wavelength": 681.25,
+                        "band_width": 7.5,
+                    },
+                    {
+                        "name": "Oa17",
+                        "description": "Band 17 - Atmospheric / aerosol correction, clouds, pixel co-registration",
+                        "center_wavelength": 865,
+                        "band_width": 20,
+                    },
+                ],
+            },
+            "otci": {
+                "description": "OLCI Terrestrial Chlorophyll Index",
+                "type": "application/x-netcdf",
+                "roles": ["data"],
+                "eo:bands": [
+                    {
+                        "name": "Oa10",
+                        "description": "Band 10 - Chlorophyll fluorescence peak, red edge",
+                        "center_wavelength": 681.25,
+                        "band_width": 7.5,
+                    },
+                    {
+                        "name": "Oa11",
+                        "description": "Band 11 - Chlorophyll fluorescence baseline, red edge transition",
+                        "center_wavelength": 708.75,
+                        "band_width": 10,
+                    },
+                    {
+                        "name": "Oa12",
+                        "description": "Band 12 - O2 absorption / clouds, vegetation",
+                        "center_wavelength": 753.75,
+                        "band_width": 7.5,
+                    },
+                ],
+            },
+            "iwv": {
+                "description": "Integrated water vapour column",
+                "type": "application/x-netcdf",
+                "roles": ["data"],
+                "eo:bands": [
+                    {
+                        "name": "Oa18",
+                        "description": "Band 18 - Water vapour absorption reference. Common reference band with SLSTR. Vegetation monitoring",
+                        "center_wavelength": 885,
+                        "band_width": 10,
+                    },
+                    {
+                        "name": "Oa19",
+                        "description": "Band 19 - Water vapour absorption, vegetation monitoring (maximum REFLECTANCE)",
+                        "center_wavelength": 900,
+                        "band_width": 10,
+                    },
+                ],
+            },
+            "rcOgvi": {
+                "description": "Rectified Reflectance",
+                "type": "application/x-netcdf",
+                "roles": ["data"],
+                "eo:bands": [
+                    {
+                        "name": "Oa10",
+                        "description": "Band 10 - Chlorophyll fluorescence peak, red edge",
+                        "center_wavelength": 681.25,
+                        "band_width": 7.5,
+                    },
+                    {
+                        "name": "Oa17",
+                        "description": "Band 17 - Atmospheric / aerosol correction, clouds, pixel co-registration",
+                        "center_wavelength": 865,
+                        "band_width": 20,
+                    },
+                ],
+            },
+            "lqsf": {
+                "description": "Land Quality and Science Flags",
+                "type": "application/x-netcdf",
+                "roles": ["data"],
+            },
+            "timeCoordinates": {
+                "description": "Time Coordinates Annotations",
+                "type": "application/x-netcdf",
+                "roles": ["data"],
+            },
+            "geoCoordinates": {
+                "description": "Geo Coordinates Annotations",
+                "type": "application/x-netcdf",
+                "roles": ["data"],
+            },
+            "tieGeoCoordinates": {
+                "description": "Tie-Point Geo Coordinate Annotations",
+                "type": "application/x-netcdf",
+                "roles": ["data"],
+            },
+            "tieGeometries": {
+                "description": "Tie-Point Geometries Annotations",
+                "type": "application/x-netcdf",
+                "roles": ["data"],
+            },
+            "tieMeteo": {
+                "description": "Tie-Point Meteo Annotations",
+                "type": "application/x-netcdf",
+                "roles": ["data"],
+            },
+            "instrumentData": {
+                "description": "Instrument Annotation",
+                "type": "application/x-netcdf",
+                "roles": ["data"],
+            },
+            "gifapar": {
+                "description": "Green Instantaneous FAPAR",
+                "type": "application/x-netcdf",
+                "roles": ["data"],
+                "eo:bands": [
+                    {
+                        "name": "Oa03",
+                        "description": "Band 3 - Chlorophyll absorption maximum, biogeochemistry, vegetation",
+                        "center_wavelength": 442.5,
+                        "band_width": 10,
+                    },
+                    {
+                        "name": "Oa10",
+                        "description": "Band 10 - Chlorophyll fluorescence peak, red edge",
+                        "center_wavelength": 681.25,
+                        "band_width": 7.5,
+                    },
+                    {
+                        "name": "Oa17",
+                        "description": "Band 17 - Atmospheric / aerosol correction, clouds, pixel co-registration",
+                        "center_wavelength": 865,
+                        "band_width": 20,
+                    },
+                ],
+            },
+            "rcGifapar": {
+                "description": "Rectified Reflectance",
+                "type": "application/x-netcdf",
+                "roles": ["data"],
+            },
+        },
+    }
+    assert result == expected
+    assert 0
