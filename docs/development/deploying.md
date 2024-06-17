@@ -10,6 +10,63 @@ by `deploy/docker-compose.yaml`.
 There are resources that PCTasks depends on that are not deployed itself, and need to be managed out-of-band. This can be done by creating
 the resources manually through the Azure Portal or through separate terraform processes.
 
+### 3rd party charts and images
+
+For compliance reasons, Microsoft services must use charts and images that are under the control of the service team, typically within ACR or MCR. In PCTasks, these 3rd party charts are vendored into the `deployment/helm` directory, and the images are imported into our internally managed ACR (where they don't already exist in MCR).
+
+#### Nginx-Ingress
+
+The chart can be brought into the `deployment/helm/vendored` directory by running the following command:
+
+```console
+cd deployment/helm/vendored
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm pull ingress-nginx/ingress-nginx --version <a.b.c>
+```
+
+The image is in MCR, so can be used directly from there and specified in the CLI options to helm in the `deploy` script.
+
+#### Argo Workflows
+
+The chart can be brought into the `deployment/helm/vendored` directory by running the following command:
+
+```console
+cd deployment/helm/vendored
+helm repo add argo https://argoproj.github.io/argo-helm
+helm pull argo/argo-workflows --version 3.5.7
+```
+
+The images can be imported into your ACR by running the following command:
+
+```console
+az acr login --name <your-acr-name>
+az acr import -n pccomponentstest --source quay.io/argoproj/argocli:v3.5.7 -t argoproj/argocli:v3.5.7 --subscription "Planetary Computer Test"
+az acr import -n pccomponentstest --source quay.io/argoproj/workflow-controller:v3.5.7 -t argoproj/workflow-controller:v3.5.7 --subscription "Planetary Computer Test"
+az acr import -n pccomponentstest --source quay.io/argoproj/argoexec:v3.5.7 -t argoproj/argoexec:v3.5.7 --subscription "Planetary Computer Test"
+```
+
+The image and tag values are specified in the `argo-values.yaml` file and used during installs.
+
+#### KEDA
+
+The chart can be brought into the `deployment/helm/vendored` directory by running the following command:
+
+```console
+cd deployment/helm/vendored
+helm repo add kedacore <https://kedacore.github.io/charts>
+helm pull kedacore/keda --version 2.14.2
+```
+
+The images can be imported into your ACR by running the following command:
+
+```console
+az acr import -n pccomponentstest --source ghcr.io/kedacore/keda-admission-webhooks:2.14.0 -t kedacore/keda-admission-webhooks:2.14.0  --subscription "Planetary Computer Test"
+az acr import -n pccomponentstest --source ghcr.io/kedacore/keda-metrics-apiserver:2.14.0 -t kedacore/keda-metrics-apiserver:2.14.0 --subscription "Planetary Computer Test"
+az acr import -n pccomponentstest --source ghcr.io/kedacore/keda:2.14.0 -t kedacore/keda:2.14.0 --subscription "Planetary Computer Test"
+```
+
+The image and tag values are specified in the `keda-values.yaml` file and used during installs.
+
 ### Deployment Service principal
 
 You'll need a service principal that has sufficient permissions to deploy Azure resources, including creating resource groups and assigning IAM roles.

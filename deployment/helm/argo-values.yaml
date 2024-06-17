@@ -1,7 +1,19 @@
 server:
   baseHref: /argo/
   secure: false
-  # extraArgs:
-  # - --auth-mode=server
   serviceAccount:
     name: pctasks-sa
+  image:
+    registry: pccomponentstest.azurecr.io
+    repository: argoproj/argocli
+    tag: v3.5.7
+controller:
+  image:
+    registry: pccomponentstest.azurecr.io
+    repository: argoproj/workflow-controller
+    tag: v3.5.7
+executor:
+  image:
+    registry: pccomponentstest.azurecr.io
+    repository: argoproj/argoexec
+    tag: v3.5.7
