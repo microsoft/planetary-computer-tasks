@@ -16,7 +16,7 @@ For compliance reasons, Microsoft services must use charts and images that are u
 
 #### Nginx-Ingress
 
-The chart can be brough into the `deployment/helm/vendored` directory by running the following command:
+The chart can be brought into the `deployment/helm/vendored` directory by running the following command:
 
 ```console
 cd deployment/helm/vendored
