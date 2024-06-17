@@ -36,6 +36,6 @@ collections:
             # But we start at depth=2 thanks to the split, so we use a depth of 5 here.
             min_depth: 5
             max_depth: 5
-            chunk_length: 5000
+            chunk_length: 20000
     chunk_storage:
       uri: blob://sentinel2l2a01/sentinel2-l2-info/pctasks-chunks/

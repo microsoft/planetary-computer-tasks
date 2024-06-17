@@ -19,5 +19,5 @@ az acr build -r {the registry} --subscription {the subscription} -t pctasks-sent
 Created with
 
 ```
-pctasks dataset process-items --is-update-workflow sentinel-2-l2a-update -d datasets/sentinel-2/dataset.yaml
+pctasks dataset process-items --is-update-workflow sentinel-2-l2a-update -d datasets/sentinel-2/dataset.yaml -u
 ```
