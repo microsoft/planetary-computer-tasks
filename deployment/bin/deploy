@@ -215,22 +215,25 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     echo "===== Argo ======="
     echo "=================="
 
-    helm upgrade --install argo-workflows argo/argo-workflows \
+    helm upgrade --install argo-workflows helm/vendored/argo-workflows-0.41.8.tgz \
         -n pc \
         --create-namespace \
         -f "helm/argo-values.yaml" \
         --wait \
-        --timeout 2m0s
+        --timeout 2m0s \
+        --debug
 
     echo "=================="
     echo "===== KEDA ======="
     echo "=================="
 
-    helm upgrade --install keda kedacore/keda \
+    helm upgrade --install keda helm/vendored/keda-2.14.2.tgz \
         -n keda \
         --create-namespace \
+        -f helm/keda-values.yaml \
         --wait \
-        --timeout 2m0s
+        --timeout 2m0s \
+        --debug
 
     # TODO: Figure out how to apply to set this with helm
     echo "Adding KEDA secret"
@@ -283,7 +286,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     echo "== nginx-ingress =="
     echo "==================="
 
-    helm upgrade --install nginx-ingress helm/ingress-nginx-4.8.3.tgz \
+    helm upgrade --install nginx-ingress helm/vendored/ingress-nginx-4.8.3.tgz \
         -n pc \
         --create-namespace \
         --set controller.replicaCount=1 \

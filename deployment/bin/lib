@@ -97,13 +97,6 @@ function cluster_login() {
 function setup_helm() {
     # Set the helm context to the same as the kubectl context
     export KUBE_CONTEXT=$(kubectl config current-context)
-
-    # Add repos
-    helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-    helm repo add jetstack https://charts.jetstack.io
-    helm repo add argo https://argoproj.github.io/argo-helm
-    helm repo add kedacore https://kedacore.github.io/charts
-    helm repo update
 }
 
 function full_setup() {

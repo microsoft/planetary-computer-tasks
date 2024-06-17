@@ -1,0 +1,15 @@
+global:
+  registry: pccomponentstest.azurecr.io
+image:
+  keda:
+    registry: pccomponentstest.azurecr.io
+    repository: kedacore/keda
+    tag: 2.14.0
+  metricsApiServer:
+    registry: pccomponentstest.azurecr.io
+    repository: kedacore/keda-metrics-apiserver
+    tag: 2.14.0
+  webhooks:
+    registry: pccomponentstest.azurecr.io
+    repository: kedacore/keda-admission-webhooks
+    tag: 2.14.0
