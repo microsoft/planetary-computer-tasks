@@ -55,8 +55,8 @@ The chart can be brought into the `deployment/helm/vendored` directory by runnin
 cd deployment/helm/vendored
 helm repo add kedacore <https://kedacore.github.io/charts>
 helm pull kedacore/keda --version 2.14.2
+```
 
-```console
 The images can be imported into your ACR by running the following command:
 
 ```console
