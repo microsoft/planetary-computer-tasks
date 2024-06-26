@@ -223,6 +223,10 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         --timeout 2m0s \
         --debug
 
+    echo "===================="
+    echo "== PCTasksIngress =="
+    echo "===================="
+
     echo "Deploying ingress component..."
     helm upgrade --install pc-tasks-ingress helm/pc-tasks-ingress \
         -n pc \
