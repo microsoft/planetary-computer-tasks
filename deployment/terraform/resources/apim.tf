@@ -18,18 +18,10 @@ resource "azurerm_api_management" "pctasks" {
   }
 }
 
-resource "azurerm_key_vault_access_policy" "apim" {
-  key_vault_id = data.azurerm_key_vault.deploy_secrets.id
-  tenant_id    = azurerm_api_management.pctasks.identity[0].tenant_id
-  object_id    = azurerm_api_management.pctasks.identity[0].principal_id
-
-  depends_on = [
-    azurerm_api_management.pctasks,
-  ]
-
-  secret_permissions = [
-    "Get", "List"
-  ]
+resource "azurerm_role_assignment" "apim-secrets-user" {
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = azurerm_api_management.pctasks.identity[0].principal_id
+  scope                = data.azurerm_key_vault.deploy_secrets.id
 }
 
 resource "azurerm_api_management_named_value" "pctasks_access_key" {

@@ -3,6 +3,13 @@ data "azurerm_key_vault" "pctasks" {
   resource_group_name = var.pctasks_task_kv_resource_group_name
 }
 
+resource "azurerm_role_assignment" "workflows-secrets-user" {
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = azurerm_linux_function_app.pctasks.identity.0.principal_id
+  scope                = data.azurerm_key_vault.pctasks.id
+}
+
+
 # Store database information as a secret
 
 resource "azurerm_key_vault_secret" "pgstac-connection-string" {
@@ -32,16 +39,4 @@ data "azurerm_key_vault_secret" "access_key" {
 data "azurerm_key_vault_secret" "backend_app_id" {
   name         = var.backend_api_app_id_secret_name
   key_vault_id = data.azurerm_key_vault.deploy_secrets.id
-}
-
-# Ensure the application can access the key vault
-resource "azurerm_role_assignment" "pctasks-keyvault-access" {
-  scope                = data.azurerm_key_vault.deploy_secrets.id
-  role_definition_name = "Key Vault Secrets User"
-  principal_id         = each.key
-
-  for_each = toset([
-    azurerm_linux_function_app.pctasks.identity.0.principal_id,
-    azurerm_user_assigned_identity.workflows.principal_id,
-  ])
 }
