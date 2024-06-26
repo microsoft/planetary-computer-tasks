@@ -47,26 +47,6 @@ az acr import -n pccomponentstest --source quay.io/argoproj/argoexec:v3.5.7 -t a
 
 The image and tag values are specified in the `argo-values.yaml` file and used during installs.
 
-#### KEDA
-
-The chart can be brought into the `deployment/helm/vendored` directory by running the following command:
-
-```console
-cd deployment/helm/vendored
-helm repo add kedacore <https://kedacore.github.io/charts>
-helm pull kedacore/keda --version 2.14.2
-```
-
-The images can be imported into your ACR by running the following command:
-
-```console
-az acr import -n pccomponentstest --source ghcr.io/kedacore/keda-admission-webhooks:2.14.0 -t kedacore/keda-admission-webhooks:2.14.0  --subscription "Planetary Computer Test"
-az acr import -n pccomponentstest --source ghcr.io/kedacore/keda-metrics-apiserver:2.14.0 -t kedacore/keda-metrics-apiserver:2.14.0 --subscription "Planetary Computer Test"
-az acr import -n pccomponentstest --source ghcr.io/kedacore/keda:2.14.0 -t kedacore/keda:2.14.0 --subscription "Planetary Computer Test"
-```
-
-The image and tag values are specified in the `keda-values.yaml` file and used during installs.
-
 ### Deployment Service principal
 
 You'll need a service principal that has sufficient permissions to deploy Azure resources, including creating resource groups and assigning IAM roles.
