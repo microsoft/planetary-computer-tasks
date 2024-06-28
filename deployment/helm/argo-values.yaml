@@ -12,6 +12,12 @@ controller:
     registry: pccomponentstest.azurecr.io
     repository: argoproj/workflow-controller
     tag: v3.5.7
+  workflowDefaults:
+    spec:
+      ttlStrategy:
+        secondsAfterCompletion: 84600  # 23.5 hours
+      podGC:
+        strategy: OnPodCompletion
 executor:
   image:
     registry: pccomponentstest.azurecr.io
