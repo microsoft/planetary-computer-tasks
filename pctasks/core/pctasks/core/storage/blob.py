@@ -32,8 +32,8 @@ from azure.storage.blob import (
     ContainerClient,
     ContainerSasPermissions,
     ContentSettings,
-    generate_container_sas,
     UserDelegationKey,
+    generate_container_sas,
 )
 
 from pctasks.core.constants import (
@@ -734,18 +734,23 @@ class BlobStorage(Storage):
         cls: Type[T],
         blob_uri: Union[BlobUri, str],
         account_key: Optional[str],
-        account_url: str,
+        account_url: Optional[str],
     ) -> T:
         print(f"Creating BlobStorage from account key for {blob_uri}", flush=True)
 
         if isinstance(blob_uri, str):
             blob_uri = BlobUri(blob_uri)
 
+        if not account_url:
+            account_url = (
+                f"https://{blob_uri.storage_account_name}.blob.core.windows.net"
+            )
+
         user_delegation_key = get_user_delegation_key(account_url)
         sas_token = generate_container_sas(
             account_name=blob_uri.storage_account_name,
             container_name=blob_uri.container_name,
-            # account_key=account_key,
+            account_key=account_key,
             user_delegation_key=user_delegation_key,
             start=Datetime.utcnow() - timedelta(hours=10),
             expiry=Datetime.utcnow() + timedelta(hours=24 * 7),
@@ -770,20 +775,6 @@ class BlobStorage(Storage):
         Return the fsspec-style path.
         """
         return f"abfs://{self.container_name}/{path}"
-
-    # @classmethod
-    # def from_connection_string(
-    #     cls: Type[T],
-    #     connection_string: str,
-    #     container_name: str,
-    # ) -> T:
-    #     container_client = ContainerClient.from_connection_string(
-    #         connection_string, container_name
-    #     )
-    #     credential = container_client.credential
-    #     return cls.from_account_key(
-    #         f"blob://{credential.account_name}/{container_name}", credential.account_key
-    #     )
 
 
 def maybe_rewrite_blob_storage_url(url: str) -> str:
