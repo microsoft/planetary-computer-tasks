@@ -94,6 +94,16 @@ while [[ "$#" -gt 0 ]]; do case $1 in
 # Check and configure environment #
 ###################################
 
+# Always disable shared access keys on script exit
+trap disable_shared_access_keys EXIT
+
+# Enable shared access keys on storage accounts that must have properties read
+# [storage_account]=resource_group
+declare -A SAK_STORAGE_ACCOUNTS
+SAK_STORAGE_ACCOUNTS=(
+  ["pctasksteststaging"]="rg-pctaskstest-staging-westeurope"
+)
+
 if [[ -z ${TERRAFORM_DIR} ]]; then
     echo "Must pass in TERRAFORM_DIR with -t"
     exit 1
@@ -108,6 +118,11 @@ if [[ -z $USER_AUTH ]]; then
 fi
 
 setup_env
+
+if [ -z "$ARM_CLIENT_ID" ]; then
+  export ARM_CLIENT_ID=$(az account show --query user.name -o tsv)
+  echo "Using Azure CLI auth with username: ${ARM_CLIENT_ID}"
+fi
 
 # ---------------------------------------------------
 
@@ -136,6 +151,8 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
 
     if [ -z "${SKIP_FETCH_TF_VARS}${SKIP_TF}" ]; then
+
+        enable_shared_access_keys
 
         if [ -f "${TERRAFORM_DIR}/values.tfvars" ]; then
             mv ${TERRAFORM_DIR}/values.tfvars ${TERRAFORM_DIR}/values.bak.tfvars
@@ -279,7 +296,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     pushd ${TERRAFORM_DIR}
     export ACR_NAME=$(tf_output task_acr_name)
     export SA_ACCOUNT_NAME=$(tf_output sa_account_name)
-    export SA_ACCOUNT_KEY=$(tf_output sa_account_key)
     export SA_ACCOUNT_URL=$(tf_output sa_tables_account_url)
     export FUNCTION_APP_NAME=$(tf_output function_app_name)
     export IMAGE_TAG=$(tf_output pctasks_server_image_tag)
@@ -294,7 +310,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         bin/setup_storage.py \
             "${ACR_NAME}" \
             "${SA_ACCOUNT_NAME}" \
-            "${SA_ACCOUNT_KEY}" \
             --url "${SA_ACCOUNT_URL}" \
             --tag "${IMAGE_TAG}"
     fi
