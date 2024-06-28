@@ -33,6 +33,7 @@ from azure.storage.blob import (
     ContainerSasPermissions,
     ContentSettings,
     generate_container_sas,
+    UserDelegationKey,
 )
 
 from pctasks.core.constants import (
@@ -342,6 +343,8 @@ class BlobStorage(Storage):
         This uses the storage instance's BlobServiceClient (and its
         attached credentials) to generate a container-level SAS token.
         """
+        logger.info(f"_generate_container_sas for {self}")
+
         start = Datetime.utcnow() - timedelta(hours=10)
         # Chop off a couple hours at the end to avoid any issues with the
         # SAS token having too long of a duration.
@@ -374,6 +377,8 @@ class BlobStorage(Storage):
         write: bool = False,
         delete: bool = False,
     ) -> str:
+        logger.info(f"Generating authenticated URL for {file_path}")
+
         sas_token = self.sas_token
         if self.sas_token is None:
             sas_token = self._generate_container_sas(
@@ -728,16 +733,20 @@ class BlobStorage(Storage):
     def from_account_key(
         cls: Type[T],
         blob_uri: Union[BlobUri, str],
-        account_key: str,
-        account_url: Optional[str] = None,
+        account_key: Optional[str],
+        account_url: str,
     ) -> T:
+        print(f"Creating BlobStorage from account key for {blob_uri}", flush=True)
+
         if isinstance(blob_uri, str):
             blob_uri = BlobUri(blob_uri)
 
+        user_delegation_key = get_user_delegation_key(account_url)
         sas_token = generate_container_sas(
             account_name=blob_uri.storage_account_name,
             container_name=blob_uri.container_name,
-            account_key=account_key,
+            # account_key=account_key,
+            user_delegation_key=user_delegation_key,
             start=Datetime.utcnow() - timedelta(hours=10),
             expiry=Datetime.utcnow() + timedelta(hours=24 * 7),
             permission=ContainerSasPermissions(
@@ -762,19 +771,19 @@ class BlobStorage(Storage):
         """
         return f"abfs://{self.container_name}/{path}"
 
-    @classmethod
-    def from_connection_string(
-        cls: Type[T],
-        connection_string: str,
-        container_name: str,
-    ) -> T:
-        container_client = ContainerClient.from_connection_string(
-            connection_string, container_name
-        )
-        credential = container_client.credential
-        return cls.from_account_key(
-            f"blob://{credential.account_name}/{container_name}", credential.account_key
-        )
+    # @classmethod
+    # def from_connection_string(
+    #     cls: Type[T],
+    #     connection_string: str,
+    #     container_name: str,
+    # ) -> T:
+    #     container_client = ContainerClient.from_connection_string(
+    #         connection_string, container_name
+    #     )
+    #     credential = container_client.credential
+    #     return cls.from_account_key(
+    #         f"blob://{credential.account_name}/{container_name}", credential.account_key
+    #     )
 
 
 def maybe_rewrite_blob_storage_url(url: str) -> str:
@@ -835,3 +844,17 @@ def maybe_rewrite_blob_storage_url(url: str) -> str:
         url = f"blob://{parsed.path.strip('/')}"
 
     return url
+
+
+def get_user_delegation_key(account_url: str) -> UserDelegationKey:
+    credential = DefaultAzureCredential()
+    blob_service_client = BlobServiceClient(
+        account_url=account_url,
+        credential=credential,
+    )
+
+    start = Datetime.utcnow() - timedelta(hours=10)
+    expiry = start + timedelta(hours=(24 * 7) - 2)
+    return blob_service_client.get_user_delegation_key(
+        key_start_time=start, key_expiry_time=expiry
+    )

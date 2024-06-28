@@ -78,10 +78,10 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         if [ "${ONLY_IMAGE}" ]; then
             publish ${ONLY_IMAGE}
         else
-            publish pctasks-ingest
             publish pctasks-server
             publish pctasks-run
-            publish pctasks-task-base
+            # publish pctasks-ingest
+            # publish pctasks-task-base
         fi
 
     fi

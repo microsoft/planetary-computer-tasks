@@ -195,7 +195,7 @@ async def submit_workflow(
 
     logger.info(f"Submitting workflow: {workflow_id}")
     run_id = str(uuid4())
-
+    logger.info(f"Submitting run_id: {run_id}")
     submit_msg = WorkflowSubmitMessage(
         run_id=run_id,
         workflow=workflow_record.workflow,
@@ -203,6 +203,7 @@ async def submit_workflow(
         trigger_event=submit_request.trigger_event,
     )
 
+    logger.info(f"Submit message: {submit_msg}")
     workflow_runner = get_workflow_runner()
 
     async with AsyncWorkflowRunsContainer(WorkflowRunRecord) as workflow_runs:
@@ -210,6 +211,7 @@ async def submit_workflow(
 
         try:
             submit_result = workflow_runner.submit_workflow(submit_msg)
+            logger.info(f"Submit result: {submit_result}")
             return submit_result
         except Exception as e:
             logger.exception(e)

@@ -9,7 +9,7 @@ from pctasks.core.constants import ENV_VAR_TASK_APPINSIGHTS_KEY
 from pctasks.core.models.config import BlobConfig
 from pctasks.core.models.task import TaskDefinition, TaskRunConfig, TaskRunMessage
 from pctasks.core.models.tokens import StorageAccountTokens
-from pctasks.core.storage.blob import BlobStorage, BlobUri
+from pctasks.core.storage.blob import BlobStorage, BlobUri, get_user_delegation_key
 from pctasks.core.utils.backoff import with_backoff
 from pctasks.core.utils.template import PCTemplater
 from pctasks.run.errors import TaskPreparationError
@@ -174,9 +174,11 @@ def write_task_run_msg(run_msg: TaskRunMessage, settings: RunSettings) -> BlobCo
         run_msg.encoded(),
     )
 
+    user_delegation_key = get_user_delegation_key(settings.blob_account_url)
     input_blob_sas_token = generate_blob_sas(
         account_name=settings.blob_account_name,
-        account_key=settings.blob_account_key,
+        user_delegation_key=user_delegation_key,
+        # account_key=settings.blob_account_key,
         container_name=settings.task_io_blob_container,
         blob_name=task_input_path,
         start=datetime.utcnow(),
@@ -232,10 +234,12 @@ def prepare_task(
         f"blob://{settings.blob_account_name}/"
         f"{settings.task_io_blob_container}/{task_status_path}"
     )
+    user_delegation_key = get_user_delegation_key(settings.blob_account_url)
     if generate_sas_tokens:
         log_blob_sas_token = generate_blob_sas(
             account_name=settings.blob_account_name,
-            account_key=settings.blob_account_key,
+            user_delegation_key=user_delegation_key,
+            # account_key=settings.blob_account_key,
             container_name=settings.task_io_blob_container,
             blob_name=task_status_path,
             start=datetime.utcnow(),
@@ -259,7 +263,8 @@ def prepare_task(
     if generate_sas_tokens:
         log_blob_sas_token = generate_blob_sas(
             account_name=settings.blob_account_name,
-            account_key=settings.blob_account_key,
+            user_delegation_key=user_delegation_key,
+            # account_key=settings.blob_account_key,
             container_name=settings.log_blob_container,
             blob_name=log_path,
             start=datetime.utcnow(),
@@ -282,7 +287,8 @@ def prepare_task(
     if generate_sas_tokens:
         output_blob_sas_token = generate_blob_sas(
             account_name=settings.blob_account_name,
-            account_key=settings.blob_account_key,
+            user_delegation_key=get_user_delegation_key(settings.blob_account_url),
+            # account_key=settings.blob_account_key,
             container_name=settings.task_io_blob_container,
             blob_name=output_path,
             start=datetime.utcnow(),
@@ -310,7 +316,8 @@ def prepare_task(
         if generate_sas_tokens:
             code_blob_sas_token = generate_blob_sas(
                 account_name=settings.blob_account_name,
-                account_key=settings.blob_account_key,
+                user_delegation_key=get_user_delegation_key(settings.blob_account_url),
+                # account_key=settings.blob_account_key,
                 container_name=settings.code_blob_container,
                 blob_name=code_path,
                 start=datetime.utcnow(),
@@ -336,7 +343,10 @@ def prepare_task(
             if generate_sas_tokens:
                 requirements_blob_sas_token = generate_blob_sas(
                     account_name=settings.blob_account_name,
-                    account_key=settings.blob_account_key,
+                    user_delegation_key=get_user_delegation_key(
+                        settings.blob_account_url
+                    ),
+                    # account_key=settings.blob_account_key,
                     container_name=settings.code_blob_container,
                     blob_name=requirements_path,
                     start=datetime.utcnow(),

@@ -6,6 +6,7 @@ from typing import Any, Callable, Dict, Generic, List, Optional, Tuple, Type, Ty
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.data.tables import TableClient, TableEntity, TableServiceClient
+from azure.identity import DefaultAzureCredential
 from pydantic.main import BaseModel
 
 from pctasks.core.models.config import TableSasConfig
@@ -127,7 +128,8 @@ class TableService:
             _url: str = account_url or f"https://{account_name}.table.core.windows.net",
             _table: str = table_name,
         ) -> Tuple[Optional[TableServiceClient], TableClient]:
-            credential = AzureNamedKeyCredential(name=_name, key=_key)
+            # credential = AzureNamedKeyCredential(name=_name, key=_key)
+            credential = DefaultAzureCredential()
             table_service_client = TableServiceClient(
                 endpoint=_url, credential=credential
             )
