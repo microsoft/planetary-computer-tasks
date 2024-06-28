@@ -175,14 +175,10 @@ resource "azurerm_federated_identity_credential" "workflows" {
   timeouts {}
 }
 
-resource "azurerm_key_vault_access_policy" "example" {
-  key_vault_id = data.azurerm_key_vault.pctasks.id
-  tenant_id    = azurerm_user_assigned_identity.workflows.tenant_id
-  object_id    = azurerm_user_assigned_identity.workflows.principal_id
-
-  secret_permissions = [
-    "Get"
-  ]
+resource "azurerm_role_assignment" "workflows-secrets-user" {
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = azurerm_user_assigned_identity.workflows.principal_id
+  scope                = data.azurerm_key_vault.pctasks.id
 }
 
 # When you enable the key vault secrets provider block in an AKS cluster,

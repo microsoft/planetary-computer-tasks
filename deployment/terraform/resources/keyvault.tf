@@ -3,14 +3,10 @@ data "azurerm_key_vault" "pctasks" {
   resource_group_name = var.pctasks_task_kv_resource_group_name
 }
 
-resource "azurerm_key_vault_access_policy" "function_app" {
-  key_vault_id = data.azurerm_key_vault.pctasks.id
-  tenant_id    = azurerm_linux_function_app.pctasks.identity.0.tenant_id
-  object_id    = azurerm_linux_function_app.pctasks.identity.0.principal_id
-
-  secret_permissions = [
-    "Get", "List"
-  ]
+resource "azurerm_role_assignment" "functions-secrets-user" {
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = azurerm_linux_function_app.pctasks.identity.0.principal_id
+  scope                = data.azurerm_key_vault.pctasks.id
 }
 
 # Store database information as a secret

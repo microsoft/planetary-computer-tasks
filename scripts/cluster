@@ -113,16 +113,6 @@ EOF
     # E0303 15:59:48.181644   27243 memcache.go:255] couldn't get resource list for external.metrics.k8s.io/v1beta1: Got empty response for: external.metrics.k8s.io/v1beta1
     # https://github.com/kubernetes-sigs/custom-metrics-apiserver/issues/146
 
-    echo "===== KEDA ======="
-    helm repo add kedacore https://kedacore.github.io/charts
-
-    helm upgrade --install keda kedacore/keda \
-        -n keda \
-        --create-namespace \
-        --wait \
-        --timeout 2m0s
-    kubectl -n argo apply -f deployment/helm/argo-workflow-keda-rbac-dev.yaml
-    kubectl -n argo apply -f deployment/helm/keda-trigger-authentication.yaml
     kubectl -n argo create secret generic queue-connection-string-auth \
         --from-literal=ConnectionString='AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;'
 
