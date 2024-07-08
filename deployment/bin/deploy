@@ -94,14 +94,29 @@ while [[ "$#" -gt 0 ]]; do case $1 in
 # Check and configure environment #
 ###################################
 
-# Always disable shared access keys on script exit
-trap disable_shared_access_keys EXIT
+function on_exit() {
+    # Always disable shared access keys on script exit
+    disable_shared_access_keys
+    # Always remove IP from storage firewalls on script exit
+    remove_ip_from_storage_firewalls
+}
+
+trap on_exit EXIT
 
 # Enable shared access keys on storage accounts that must have properties read
 # [storage_account]=resource_group
 declare -A SAK_STORAGE_ACCOUNTS
 SAK_STORAGE_ACCOUNTS=(
   ["pctasksteststaging"]="rg-pctaskstest-staging-westeurope"
+  ["stbpctasksteststaging"]="rg-pctaskstest-staging-westeurope"
+)
+
+# Add client IP to firewall for storage accounts that must have properties read
+# [storage_account]=resource_group
+declare -A FW_STORAGE_ACCOUNTS
+FW_STORAGE_ACCOUNTS=(
+    ["pctesttfstate"]="pc-test-manual-resources"
+    ["pctasksteststaging"]="rg-pctaskstest-staging-westeurope"
 )
 
 if [[ -z ${TERRAFORM_DIR} ]]; then
@@ -137,11 +152,12 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     require_env "PCTASKS_TASK_KV"
     require_env "PCTASKS_TASK_KV_RESOURCE_GROUP_NAME"
 
-    #########################
-    # Add IP to KV firewall #
-    #########################
+    #######################
+    # Add IP to firewalls #
+    #######################
 
     bin/kv_add_ip
+    add_ip_to_storage_firewalls
 
     #####################
     # Deploy Terraform  #
