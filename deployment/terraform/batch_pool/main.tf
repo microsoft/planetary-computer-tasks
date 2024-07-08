@@ -17,18 +17,8 @@ resource "azurerm_batch_pool" "batch_pool" {
 
   network_configuration {
     subnet_id = var.subnet_id
-    endpoint_configuration {
-      name = "RemoteAccessRule-VM-Deny"
-      # frontend_port_range = "*"
-      frontend_port_range = "1-49999"
-      backend_port        = 22
-      protocol            = "TCP"
-      network_security_group_rules {
-        access                = "Deny"
-        priority              = 150 // Lower than 148
-        source_address_prefix = "*"
-      }
-    }
+    public_ips = []
+
   }
 
   task_scheduling_policy {
