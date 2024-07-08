@@ -4,20 +4,24 @@ resource "azurerm_service_plan" "pctasks" {
   location            = azurerm_resource_group.pctasks.location
   resource_group_name = azurerm_resource_group.pctasks.name
   os_type             = "Linux"
-  sku_name            = "Y1"
+  sku_name            = "EP1"
 }
 
 resource "azurerm_linux_function_app" "pctasks" {
   name                       = "func-${local.prefix}"
   location                   = azurerm_resource_group.pctasks.location
+
   resource_group_name        = azurerm_resource_group.pctasks.name
   service_plan_id            = azurerm_service_plan.pctasks.id
   storage_account_name       = azurerm_storage_account.pctasks.name
-  storage_account_access_key = azurerm_storage_account.pctasks.primary_access_key
-  https_only                 = true
+  
+  virtual_network_subnet_id = azurerm_subnet.function_subnet.id
 
   ftp_publish_basic_authentication_enabled       = false
   webdeploy_publish_basic_authentication_enabled = false
+
+  storage_uses_managed_identity = true
+  https_only = true
 
   identity {
     type = "SystemAssigned"
@@ -86,6 +90,7 @@ resource "azurerm_linux_function_app" "pctasks" {
 
   functions_extension_version = "~4"
   site_config {
+    vnet_route_all_enabled = true
     use_32_bit_worker        = false
     ftps_state               = "Disabled"
     application_insights_key = azurerm_application_insights.pctasks.instrumentation_key

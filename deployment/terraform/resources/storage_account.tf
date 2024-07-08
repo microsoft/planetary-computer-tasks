@@ -5,6 +5,18 @@ resource "azurerm_storage_account" "pctasks" {
   account_tier                    = "Standard"
   account_replication_type        = "LRS"
   allow_nested_items_to_be_public = false
+  # Shared access key gets disabled via deploy script
+  # shared_access_key_enabled       = false
+
+  network_rules {
+    default_action = "Deny"
+    virtual_network_subnet_ids = [
+      azurerm_subnet.nodepool_subnet.id,
+      azurerm_subnet.function_subnet.id,
+      azurerm_subnet.k8snode_subnet.id,
+    ]
+  
+  }
 }
 
 # Tables
