@@ -194,6 +194,14 @@ class ArgoClient:
         else:
             kwargs = {}
 
+        if run_settings.applicationinsights_connection_string:
+            env.append(
+                EnvVar(
+                    name="APPLICATIONINSIGHTS_CONNECTION_STRING",
+                    value=run_settings.applicationinsights_connection_string,
+                )
+            )
+
         # Enable local secrets for development environment
         if run_settings.local_secrets:
             for env_var in [
@@ -313,6 +321,14 @@ class ArgoClient:
             kwargs = {"service_account_name": run_settings.task_service_account_name}
         else:
             kwargs = {}
+
+        if run_settings.applicationinsights_connection_string:
+            env.append(
+                EnvVar(
+                    name="APPLICATIONINSIGHTS_CONNECTION_STRING",
+                    value=run_settings.applicationinsights_connection_string,
+                )
+            )
 
         templates = [
             IoArgoprojWorkflowV1alpha1Template(

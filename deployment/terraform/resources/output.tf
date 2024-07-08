@@ -165,6 +165,10 @@ output "instrumentation_key" {
   value = azurerm_application_insights.pctasks.instrumentation_key
 }
 
+output "applicationinsights_connection_string" {
+  value = azurerm_application_insights.pctasks.connection_string
+}
+
 ## PCTasks Server
 
 output "argo_wf_node_group_name" {

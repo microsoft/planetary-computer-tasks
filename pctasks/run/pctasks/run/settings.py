@@ -121,6 +121,8 @@ class RunSettings(PCTasksSettings):
     # Type of workflow runner to use.
     workflow_runner_type: WorkflowRunnerType = WorkflowRunnerType.ARGO
 
+    applicationinsights_connection_string: Optional[str] = None
+
     @property
     def batch_settings(self) -> BatchSettings:
         if not (self.batch_url and self.batch_key and self.batch_default_pool_id):
