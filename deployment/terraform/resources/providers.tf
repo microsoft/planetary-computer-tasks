@@ -5,7 +5,7 @@ provider "azurerm" {
 
   # This could be used instead of temporarily enabling shared key access once
   # this issue is resolved.
-  # https://github.com/hashicorp/terraform-provider-azurerm/issues/23142
+  # https://github.com/hashicorp/terraform-provider-azurerm/issues/15083
   # storage_use_azuread = true
 }
 
@@ -15,7 +15,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.103.1"
+      version = "3.110.0"
     }
   }
 }
