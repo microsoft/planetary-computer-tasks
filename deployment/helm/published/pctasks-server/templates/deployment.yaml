@@ -195,10 +195,10 @@ spec:
               value: "{{ .Values.pctasks.run.keyvault.url }}"
             {{- end }}
 
-            {{ - .Values.pctasks.run.applicationinsights.enabled }}
+            {{- .Values.pctasks.run.applicationinsights.enabled }}
             - name: PCTASKS_RUN__APPLICATIONINSIGHTS_CONNECTION_STRING
               value: "{{ .Values.pctasks.run.applicationinsights.connection_string }}"
-            {{ - end }}
+            {{- end }}
 
           livenessProbe:
             httpGet:

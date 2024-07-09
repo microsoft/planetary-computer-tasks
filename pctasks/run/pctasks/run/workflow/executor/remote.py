@@ -186,6 +186,18 @@ def update_job_run_status(
 
         container.put(record)
 
+    if status in (
+        JobRunStatus.FAILED,
+        JobRunStatus.COMPLETED,
+        JobRunStatus.CANCELLED,
+        JobRunStatus.SKIPPED,
+    ):
+        event_type = EventTypes.job_finished
+        message = "Job finished"
+    else:
+        event_type = EventTypes.job_created
+        message = "Job created"
+
     custom_dimensions = {
         "workflowId": workflow_run.workflow_id,
         "datasetId": workflow_run.dataset_id,
@@ -193,13 +205,13 @@ def update_job_run_status(
         "jobId": job_id,
         "status": status.value,
         "recordLevel": RecordLevels.job,
-        "type": EventTypes.job_finished,
+        "type": event_type,
     }
 
     level = logging.WARNING if status == JobRunStatus.FAILED else logging.INFO
     azlogger.log(
         level,
-        "Job finished",
+        message,
         extra={"custom_dimensions": custom_dimensions},
     )
 
@@ -223,6 +235,17 @@ def update_job_partition_run_status(
         record.set_status(status)
         container.put(record)
 
+    if status in (
+        JobPartitionRunStatus.FAILED,
+        JobPartitionRunStatus.COMPLETED,
+        JobPartitionRunStatus.COMPLETED,
+    ):
+        event_type = EventTypes.workflow_run_finished
+        message = "Job partition finished"
+    else:
+        event_type = EventTypes.workflow_run_created
+        message = "Job partition created"
+
     custom_dimensions = {
         "workflowId": workflow_id,
         "datasetId": dataset_id,
@@ -231,13 +254,13 @@ def update_job_partition_run_status(
         "partitionId": partition_id,
         "status": status.value,
         "recordLevel": RecordLevels.job_partition,
-        "type": EventTypes.job_partition_finished,
+        "type": event_type,
     }
 
     level = logging.WARNING if status == JobPartitionRunStatus.FAILED else logging.INFO
     azlogger.log(
         level,
-        "Job partition finished",
+        message,
         extra={"custom_dimensions": custom_dimensions},
     )
 
@@ -285,11 +308,19 @@ def update_task_run_status(
 
         container.put(record)
 
-    if status == TaskRunStatus.SUBMITTED:
-        type_ = EventTypes.task_created
-
+    if status in (TaskRunStatus.RECEIVED, TaskRunStatus.SUBMITTING):
+        # We only want to log task creation once
+        return None
+    elif status in (
+        TaskRunStatus.FAILED,
+        TaskRunStatus.COMPLETED,
+        TaskRunStatus.CANCELLED,
+    ):
+        event_type = EventTypes.workflow_run_finished
+        message = "Job partition finished"
     else:
-        type_ = EventTypes.task_finished
+        event_type = EventTypes.workflow_run_created
+        message = "Job partition created"
 
     custom_dimensions = {
         "workflowId": workflow_id,
@@ -300,13 +331,13 @@ def update_task_run_status(
         "taskId": task_id,
         "status": status.value,
         "recordLevel": RecordLevels.task,
-        "type": type_,
+        "type": event_type,
     }
 
     level = logging.WARNING if status == TaskRunStatus.FAILED else logging.INFO
     azlogger.log(
         level,
-        "Task finished",
+        message,
         extra={"custom_dimensions": custom_dimensions},
     )
 
