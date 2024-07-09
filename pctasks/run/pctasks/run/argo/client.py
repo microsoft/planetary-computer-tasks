@@ -159,7 +159,6 @@ class ArgoClient:
         )
         input_blob_sas_token = generate_blob_sas(
             account_name=run_settings.blob_account_name,
-            account_key=run_settings.blob_account_key,
             container_name=run_settings.task_io_blob_container,
             blob_name=workflow_path,
             start=datetime.utcnow(),

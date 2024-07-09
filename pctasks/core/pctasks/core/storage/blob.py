@@ -852,7 +852,7 @@ def get_user_delegation_key(account_url: str) -> UserDelegationKey:
     )
 
 
-def is_azurite_url(url: str):
+def is_azurite_url(url: str) -> bool:
     host = os.getenv(AZURITE_HOST_ENV_VAR)
     port = os.getenv(AZURITE_PORT_ENV_VAR)
     account_name = os.getenv(AZURITE_STORAGE_ACCOUNT_ENV_VAR)
@@ -863,7 +863,7 @@ def is_azurite_url(url: str):
 
 class BlobSasCredential(TypedDict):
     account_key: Optional[str]
-    user_delegation_key: Optional[str]
+    user_delegation_key: Optional[UserDelegationKey]
 
 
 def generate_key_for_sas(
@@ -872,7 +872,8 @@ def generate_key_for_sas(
     if is_azurite_url(account_url):
         if account_key is None:
             raise ValueError(
-                f"Azurite account URL requires an account key. 'account_url={account_url}'"
+                f"Azurite account URL requires an account key. "
+                f"'account_url={account_url}'"
             )
         return {"account_key": account_key, "user_delegation_key": None}
     return {

@@ -241,7 +241,6 @@ def prepare_task(
     if generate_sas_tokens:
         log_blob_sas_token = generate_blob_sas(
             account_name=settings.blob_account_name,
-            user_delegation_key=user_delegation_key,
             container_name=settings.task_io_blob_container,
             blob_name=task_status_path,
             start=datetime.utcnow(),
@@ -263,14 +262,17 @@ def prepare_task(
         f"blob://{settings.blob_account_name}/{settings.log_blob_container}/{log_path}"
     )
     if generate_sas_tokens:
+        credential_options = generate_key_for_sas(
+            settings.blob_account_url, settings.blob_account_key
+        )
         log_blob_sas_token = generate_blob_sas(
             account_name=settings.blob_account_name,
-            user_delegation_key=user_delegation_key,
             container_name=settings.log_blob_container,
             blob_name=log_path,
             start=datetime.utcnow(),
             expiry=datetime.utcnow() + timedelta(hours=24 * 7),
             permission=BlobSasPermissions(write=True),
+            **credential_options,
         )
     else:
         log_blob_sas_token = None

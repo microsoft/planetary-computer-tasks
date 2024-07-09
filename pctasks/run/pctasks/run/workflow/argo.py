@@ -24,7 +24,7 @@ class ArgoWorkflowRunner(WorkflowRunner):
         )
 
         try:
-            submit_results = argo_client.submit_workflow(
+            _ = argo_client.submit_workflow(
                 submit_msg,
                 run_id=submit_msg.run_id,
                 executor_config=self.get_executor_config(),
