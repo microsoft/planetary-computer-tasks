@@ -51,5 +51,5 @@ def test_walk_match_full_path():
             min_depth=1, max_depth=1, matches="a/asset-.*.json", match_full_path=True
         )
     }
-    assert subdirs["a"] == ["asset-a-1.json", "asset-a-2.json"]
+    assert set(subdirs["a"]) == {"asset-a-1.json", "asset-a-2.json"}
     assert subdirs["b"] == []
