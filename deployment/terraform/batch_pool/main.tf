@@ -25,6 +25,10 @@ resource "azurerm_batch_pool" "batch_pool" {
     node_fill_type = "Spread"
   }
 
+  # Simplified communication mode is compatible with the NSG policies
+  # on our vnet.
+  target_node_communication_mode = "Simplified"
+
   container_configuration {
     type = "DockerCompatible"
     container_registries {
