@@ -246,6 +246,7 @@ def prepare_task(
             start=datetime.utcnow(),
             expiry=datetime.utcnow() + timedelta(hours=24 * 7),
             permission=BlobSasPermissions(write=True),
+            **credential_options,
         )
     else:
         log_blob_sas_token = None
