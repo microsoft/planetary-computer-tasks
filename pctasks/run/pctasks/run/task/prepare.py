@@ -178,7 +178,6 @@ def write_task_run_msg(run_msg: TaskRunMessage, settings: RunSettings) -> BlobCo
     input_blob_sas_token = generate_blob_sas(
         account_name=settings.blob_account_name,
         user_delegation_key=user_delegation_key,
-        # account_key=settings.blob_account_key,
         container_name=settings.task_io_blob_container,
         blob_name=task_input_path,
         start=datetime.utcnow(),
@@ -239,7 +238,6 @@ def prepare_task(
         log_blob_sas_token = generate_blob_sas(
             account_name=settings.blob_account_name,
             user_delegation_key=user_delegation_key,
-            # account_key=settings.blob_account_key,
             container_name=settings.task_io_blob_container,
             blob_name=task_status_path,
             start=datetime.utcnow(),
@@ -264,7 +262,6 @@ def prepare_task(
         log_blob_sas_token = generate_blob_sas(
             account_name=settings.blob_account_name,
             user_delegation_key=user_delegation_key,
-            # account_key=settings.blob_account_key,
             container_name=settings.log_blob_container,
             blob_name=log_path,
             start=datetime.utcnow(),
@@ -288,7 +285,6 @@ def prepare_task(
         output_blob_sas_token = generate_blob_sas(
             account_name=settings.blob_account_name,
             user_delegation_key=get_user_delegation_key(settings.blob_account_url),
-            # account_key=settings.blob_account_key,
             container_name=settings.task_io_blob_container,
             blob_name=output_path,
             start=datetime.utcnow(),
@@ -317,7 +313,6 @@ def prepare_task(
             code_blob_sas_token = generate_blob_sas(
                 account_name=settings.blob_account_name,
                 user_delegation_key=get_user_delegation_key(settings.blob_account_url),
-                # account_key=settings.blob_account_key,
                 container_name=settings.code_blob_container,
                 blob_name=code_path,
                 start=datetime.utcnow(),
@@ -346,7 +341,6 @@ def prepare_task(
                     user_delegation_key=get_user_delegation_key(
                         settings.blob_account_url
                     ),
-                    # account_key=settings.blob_account_key,
                     container_name=settings.code_blob_container,
                     blob_name=requirements_path,
                     start=datetime.utcnow(),

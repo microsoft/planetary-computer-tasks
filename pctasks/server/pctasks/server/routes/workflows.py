@@ -203,7 +203,6 @@ async def submit_workflow(
         trigger_event=submit_request.trigger_event,
     )
 
-    logger.info(f"Submit message: {submit_msg}")
     workflow_runner = get_workflow_runner()
 
     async with AsyncWorkflowRunsContainer(WorkflowRunRecord) as workflow_runs:

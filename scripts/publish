@@ -80,8 +80,8 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         else
             publish pctasks-server
             publish pctasks-run
-            # publish pctasks-ingest
-            # publish pctasks-task-base
+            publish pctasks-ingest
+            publish pctasks-task-base
         fi
 
     fi

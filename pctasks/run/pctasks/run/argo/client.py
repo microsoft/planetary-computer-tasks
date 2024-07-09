@@ -130,7 +130,6 @@ class ArgoClient:
         executor_config: WorkflowExecutorConfig,
         runner_image: str,
     ) -> Dict[str, Any]:
-        print("=== SUBMITTING WORKFLOW ===")
         b64encoded_config = b64encode(executor_config.to_yaml().encode("utf-8")).decode(
             "utf-8"
         )
@@ -138,27 +137,23 @@ class ArgoClient:
         run_settings = executor_config.run_settings
 
         workflow_path = get_workflow_path(run_id)
-        print(f"Writing workflow to {workflow_path}")
         workflow_uri = BlobUri(
             f"blob://{run_settings.blob_account_name}/"
             f"{run_settings.task_io_blob_container}/"
             f"{workflow_path}"
         )
 
-        print(f"TaskIO Storage from BlobStorage: {workflow_uri}")
         task_io_storage = BlobStorage.from_account_key(
             f"blob://{workflow_uri.storage_account_name}/{workflow_uri.container_name}",
             account_key=run_settings.blob_account_key,
             account_url=run_settings.blob_account_url,
         )
 
-        print(f"Writing task text to {workflow_path}")
         task_io_storage.write_text(
             workflow_path,
             submit_msg.to_yaml(),
         )
 
-        print(f"Generating blob SAS token for {workflow_path}")
         user_delegation_key = get_user_delegation_key(run_settings.blob_account_url)
         input_blob_sas_token = generate_blob_sas(
             account_name=run_settings.blob_account_name,
