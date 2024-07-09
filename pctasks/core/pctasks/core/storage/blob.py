@@ -746,7 +746,13 @@ class BlobStorage(Storage):
                 f"https://{blob_uri.storage_account_name}.blob.core.windows.net"
             )
 
-        user_delegation_key = get_user_delegation_key(account_url)
+        if account_key is None:
+            # Production
+            user_delegation_key = get_user_delegation_key(account_url)
+        else:
+            # Test / Azurite
+            user_delegation_key = None
+
         sas_token = generate_container_sas(
             account_name=blob_uri.storage_account_name,
             container_name=blob_uri.container_name,
