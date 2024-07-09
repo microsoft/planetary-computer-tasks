@@ -14,6 +14,7 @@ from pctasks.run.settings import RunSettings
 def get_table_config(name: str, permissions: str = "rwuadl") -> TableSasConfig:
     run_settings = RunSettings.get()
 
+    assert run_settings.tables_account_key is not None  # for mypy
     tables_cred = AzureNamedKeyCredential(
         name=run_settings.tables_account_name,
         key=run_settings.tables_account_key,
