@@ -23,6 +23,23 @@ AZURITE_CONNECTION_STRING = (
 )
 
 
+def get_azurite_url() -> str:
+    """
+    Return the URL for the Azurite storage emulator.
+
+    This depends on the values of the AZURITE_HOST and AZURITE_PORT environment
+    variables.
+
+    Examples
+    --------
+    >>> get_azurite_url()
+    'http://azurite:10000/devstoreaccount1'
+    """
+    host = os.environ.get(AZURITE_HOST_ENV_VAR) or "localhost"
+    blob_port = int(os.environ.get(AZURITE_PORT_ENV_VAR) or "10000")
+    return f"http://{host}:{blob_port}/{AZURITE_ACCOUNT_NAME}"
+
+
 def get_azurite_connection_string() -> str:
     host = os.environ.get(AZURITE_HOST_ENV_VAR) or "localhost"
     blob_port = int(os.environ.get(AZURITE_PORT_ENV_VAR) or "10000")

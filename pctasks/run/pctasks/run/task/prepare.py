@@ -9,7 +9,7 @@ from pctasks.core.constants import ENV_VAR_TASK_APPINSIGHTS_KEY
 from pctasks.core.models.config import BlobConfig
 from pctasks.core.models.task import TaskDefinition, TaskRunConfig, TaskRunMessage
 from pctasks.core.models.tokens import StorageAccountTokens
-from pctasks.core.storage.blob import BlobStorage, BlobUri, get_user_delegation_key
+from pctasks.core.storage.blob import BlobStorage, BlobUri, generate_key_for_sas
 from pctasks.core.utils.backoff import with_backoff
 from pctasks.core.utils.template import PCTemplater
 from pctasks.run.errors import TaskPreparationError
@@ -174,15 +174,17 @@ def write_task_run_msg(run_msg: TaskRunMessage, settings: RunSettings) -> BlobCo
         run_msg.encoded(),
     )
 
-    user_delegation_key = get_user_delegation_key(settings.blob_account_url)
+    credential_options = generate_key_for_sas(
+        settings.blob_account_url, settings.blob_account_key
+    )
     input_blob_sas_token = generate_blob_sas(
         account_name=settings.blob_account_name,
-        user_delegation_key=user_delegation_key,
         container_name=settings.task_io_blob_container,
         blob_name=task_input_path,
         start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=24 * 7),
         permission=BlobSasPermissions(read=True),
+        **credential_options,
     )
 
     return BlobConfig(
@@ -233,7 +235,9 @@ def prepare_task(
         f"blob://{settings.blob_account_name}/"
         f"{settings.task_io_blob_container}/{task_status_path}"
     )
-    user_delegation_key = get_user_delegation_key(settings.blob_account_url)
+    credential_options = generate_key_for_sas(
+        settings.blob_account_url, settings.blob_account_key
+    )
     if generate_sas_tokens:
         log_blob_sas_token = generate_blob_sas(
             account_name=settings.blob_account_name,
@@ -282,14 +286,17 @@ def prepare_task(
         f"{settings.task_io_blob_container}/{output_path}"
     )
     if generate_sas_tokens:
+        credential_options = generate_key_for_sas(
+            settings.blob_account_url, settings.blob_account_key
+        )
         output_blob_sas_token = generate_blob_sas(
             account_name=settings.blob_account_name,
-            user_delegation_key=get_user_delegation_key(settings.blob_account_url),
             container_name=settings.task_io_blob_container,
             blob_name=output_path,
             start=datetime.utcnow(),
             expiry=datetime.utcnow() + timedelta(hours=24 * 7),
             permission=BlobSasPermissions(write=True),
+            **credential_options,
         )
     else:
         output_blob_sas_token = None
@@ -310,14 +317,17 @@ def prepare_task(
         code_uri = code_config.src
         code_path = code_config.get_src_path()
         if generate_sas_tokens:
+            credential_options = generate_key_for_sas(
+                settings.blob_account_url, settings.blob_account_key
+            )
             code_blob_sas_token = generate_blob_sas(
                 account_name=settings.blob_account_name,
-                user_delegation_key=get_user_delegation_key(settings.blob_account_url),
                 container_name=settings.code_blob_container,
                 blob_name=code_path,
                 start=datetime.utcnow(),
                 expiry=datetime.utcnow() + timedelta(hours=24 * 7),
                 permission=BlobSasPermissions(read=True),
+                **credential_options,
             )
         else:
             code_blob_sas_token = None
@@ -336,16 +346,17 @@ def prepare_task(
                 raise ValueError(f"Invalid requirements URI: {code_uri}")
 
             if generate_sas_tokens:
+                credential_options = generate_key_for_sas(
+                    settings.blob_account_url, settings.blob_account_key
+                )
                 requirements_blob_sas_token = generate_blob_sas(
                     account_name=settings.blob_account_name,
-                    user_delegation_key=get_user_delegation_key(
-                        settings.blob_account_url
-                    ),
                     container_name=settings.code_blob_container,
                     blob_name=requirements_path,
                     start=datetime.utcnow(),
                     expiry=datetime.utcnow() + timedelta(hours=24 * 7),
                     permission=BlobSasPermissions(read=True),
+                    **credential_options,
                 )
             else:
                 requirements_blob_sas_token = None

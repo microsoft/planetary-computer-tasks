@@ -16,6 +16,7 @@ from typing import (
     Optional,
     Tuple,
     Type,
+    TypedDict,
     TypeVar,
     Union,
     cast,
@@ -746,18 +747,11 @@ class BlobStorage(Storage):
                 f"https://{blob_uri.storage_account_name}.blob.core.windows.net"
             )
 
-        if account_key is None:
-            # Production
-            user_delegation_key = get_user_delegation_key(account_url)
-        else:
-            # Test / Azurite
-            user_delegation_key = None
+        credential_options = generate_key_for_sas(account_url, account_key)
 
         sas_token = generate_container_sas(
             account_name=blob_uri.storage_account_name,
             container_name=blob_uri.container_name,
-            account_key=account_key,
-            user_delegation_key=user_delegation_key,
             start=Datetime.utcnow() - timedelta(hours=10),
             expiry=Datetime.utcnow() + timedelta(hours=24 * 7),
             permission=ContainerSasPermissions(
@@ -766,6 +760,7 @@ class BlobStorage(Storage):
                 delete=True,
                 list=True,
             ),
+            **credential_options,
         )
 
         return cls.from_uri(
@@ -855,3 +850,32 @@ def get_user_delegation_key(account_url: str) -> UserDelegationKey:
     return blob_service_client.get_user_delegation_key(
         key_start_time=start, key_expiry_time=expiry
     )
+
+
+def is_azurite_url(url: str):
+    host = os.getenv(AZURITE_HOST_ENV_VAR)
+    port = os.getenv(AZURITE_PORT_ENV_VAR)
+    account_name = os.getenv(AZURITE_STORAGE_ACCOUNT_ENV_VAR)
+    azurite_url = f"http://{host}:{port}/{account_name}"
+
+    return url.startswith(azurite_url)
+
+
+class BlobSasCredential(TypedDict):
+    account_key: Optional[str]
+    user_delegation_key: Optional[str]
+
+
+def generate_key_for_sas(
+    account_url: str, account_key: Optional[str] = None
+) -> BlobSasCredential:
+    if is_azurite_url(account_url):
+        if account_key is None:
+            raise ValueError(
+                f"Azurite account URL requires an account key. 'account_url={account_url}'"
+            )
+        return {"account_key": account_key, "user_delegation_key": None}
+    return {
+        "account_key": None,
+        "user_delegation_key": get_user_delegation_key(account_url),
+    }

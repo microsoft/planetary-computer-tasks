@@ -46,7 +46,7 @@ from pctasks.core.constants import (
 )
 from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.models.workflow import WorkflowSubmitMessage
-from pctasks.core.storage.blob import BlobStorage, BlobUri, get_user_delegation_key
+from pctasks.core.storage.blob import BlobStorage, BlobUri, generate_key_for_sas
 from pctasks.core.utils import map_opt
 from pctasks.run.models import PreparedTaskSubmitMessage
 from pctasks.run.secrets.local import LOCAL_ENV_SECRETS_PREFIX
@@ -154,16 +154,18 @@ class ArgoClient:
             submit_msg.to_yaml(),
         )
 
-        user_delegation_key = get_user_delegation_key(run_settings.blob_account_url)
+        credential_options = generate_key_for_sas(
+            run_settings.blob_account_url, run_settings.blob_account_key
+        )
         input_blob_sas_token = generate_blob_sas(
             account_name=run_settings.blob_account_name,
-            user_delegation_key=user_delegation_key,
-            # account_key=run_settings.blob_account_key,
+            account_key=run_settings.blob_account_key,
             container_name=run_settings.task_io_blob_container,
             blob_name=workflow_path,
             start=datetime.utcnow(),
             expiry=datetime.utcnow() + timedelta(hours=24 * 7),
             permission=BlobSasPermissions(read=True),
+            **credential_options,
         )
 
         env: List[EnvVar] = []

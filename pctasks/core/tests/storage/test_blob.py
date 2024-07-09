@@ -4,9 +4,13 @@ from typing import Dict, List, Tuple
 
 import pytest
 
-from pctasks.core.storage.blob import maybe_rewrite_blob_storage_url
+from pctasks.core.storage.blob import is_azurite_url, maybe_rewrite_blob_storage_url
 from pctasks.dev.blob import temp_azurite_blob_storage
-from pctasks.dev.constants import AZURITE_ACCOUNT_NAME, TEST_DATA_CONTAINER
+from pctasks.dev.constants import (
+    AZURITE_ACCOUNT_NAME,
+    TEST_DATA_CONTAINER,
+    get_azurite_url,
+)
 
 HERE = Path(__file__).parent
 
@@ -140,3 +144,18 @@ def test_walk_match_full_path():
         assert set(result["."][0]) == {"a", "b"}
         assert set(result["a"][1]) == {"asset-a-1.json", "asset-a-2.json"}
         assert set(result["b"][1]) == set()
+
+
+@pytest.mark.parametrize(
+    ["url", "expected"],
+    [
+        ("https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2a01", False),
+        ("https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2a01/path", False),
+        (get_azurite_url(), True),
+        (f"{get_azurite_url()}/container", True),
+        (f"{get_azurite_url()}/container/blob", True),
+    ],
+)
+def test_is_azurite_url(url: str, expected: bool) -> None:
+    result = is_azurite_url(url)
+    assert result is expected
