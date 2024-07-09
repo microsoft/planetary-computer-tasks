@@ -1,7 +1,18 @@
 import json
 import unicodedata
 from base64 import b64decode, b64encode
-from typing import Any, Callable, Dict, Generic, List, Optional, Tuple, Type, TypeVar
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import ResourceNotFoundError
@@ -128,6 +139,7 @@ class TableService:
             _url: str = account_url or f"https://{account_name}.table.core.windows.net",
             _table: str = table_name,
         ) -> Tuple[Optional[TableServiceClient], TableClient]:
+            credential: Union[DefaultAzureCredential, AzureNamedKeyCredential]
             if _key is None:
                 credential = DefaultAzureCredential()
             else:
