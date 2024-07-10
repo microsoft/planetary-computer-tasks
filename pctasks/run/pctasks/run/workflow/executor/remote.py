@@ -332,6 +332,7 @@ def update_task_run_status(
         "status": status.value,
         "recordLevel": RecordLevels.task,
         "type": event_type,
+        "errors": errors,
     }
 
     level = logging.WARNING if status == TaskRunStatus.FAILED else logging.INFO
