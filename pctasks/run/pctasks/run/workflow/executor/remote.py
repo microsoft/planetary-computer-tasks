@@ -380,27 +380,6 @@ class RemoteWorkflowExecutor:
                 settings=self.config.run_settings,
             )
 
-            custom_dimensions = {
-                "workflowId": workflow_id,
-                "datasetId": submit_msg.dataset_id,
-                "runId": job_partition_run.run_id,
-                "jobId": job_partition_run.job_id,
-                "partitionId": job_partition_run.partition_id,
-            }
-
-            azlogger.info(
-                "Job Partition Created",
-                extra={
-                    "custom_dimensions": {
-                        **custom_dimensions,
-                        **{
-                            "type": EventTypes.job_partition_created,
-                            "level": RecordLevels.job_partition,
-                        },
-                    }
-                },
-            )
-
             if job_partition_state.current_task:
                 task_state = job_partition_state.current_task
                 task_run = job_partition_run.get_task(task_state.task_id)
@@ -1039,24 +1018,6 @@ class RemoteWorkflowExecutor:
         run_id = submit_message.run_id
         dataset_id = submit_message.workflow.definition.dataset_id
         target_env = workflow.definition.target_environment
-
-        custom_dimensions = {
-            "workflowId": workflow.id,
-            "runId": run_id,
-            "datasetId": dataset_id,
-        }
-        azlogger.info(
-            "Workflow Run Created",
-            extra={
-                "custom_dimensions": {
-                    **custom_dimensions,
-                    **{
-                        "type": EventTypes.workflow_run_created,
-                        "recordLevel": RecordLevels.workflow_run,
-                    },
-                },
-            },
-        )
 
         run_settings = self.config.run_settings
         pool = futures.ThreadPoolExecutor(
