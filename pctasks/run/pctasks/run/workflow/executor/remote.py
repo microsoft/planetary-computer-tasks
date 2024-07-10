@@ -206,6 +206,7 @@ def update_job_run_status(
         "status": status.value,
         "recordLevel": RecordLevels.job,
         "type": event_type,
+        "errors": errors,
     }
 
     level = logging.WARNING if status == JobRunStatus.FAILED else logging.INFO

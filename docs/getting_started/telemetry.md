@@ -28,4 +28,8 @@ Depending on the level (Workflow, Job, JobPartition, Task) the logs will contain
 | partitionId | JobPartition, Task      | The ID of the partition, from the workflow definition and pctasks     |
 | taskId      | Task                    | The ID of the task, from the workflow definition and pctasks          |
 
-Additionally, the "Finished" events include a `status` field indicating success or failure.
+Depending on the record, additional fields will be included:
+
+* `status`: Present for "Finished" events, indicating success or failure of that operation.
+* `errors`: Present for `JobFinished` and `TaskFinished` events when
+  `status="failed"`, containing a list of errors.
