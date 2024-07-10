@@ -239,12 +239,11 @@ def update_job_partition_run_status(
     if status in (
         JobPartitionRunStatus.FAILED,
         JobPartitionRunStatus.COMPLETED,
-        JobPartitionRunStatus.COMPLETED,
     ):
-        event_type = EventTypes.workflow_run_finished
+        event_type = EventTypes.job_partition_finished
         message = "Job partition finished"
     else:
-        event_type = EventTypes.workflow_run_created
+        event_type = EventTypes.job_partition_created
         message = "Job partition created"
 
     custom_dimensions = {
