@@ -55,14 +55,12 @@ pctasks:
     tables:
       account_url: {{ tf.sa_tables_account_url }}
       account_name: {{ tf.sa_account_name }}
-      account_key: {{ tf.sa_account_key }}
       connection_string: {{ tf.sa_connection_string }}
       image_key_table_name: "imagekeys"
 
     blob:
       account_url: {{ tf.sa_blob_account_url }}
       account_name: {{ tf.sa_account_name }}
-      account_key: {{ tf.sa_account_key }}
       log_blob_container: tasklogs
       task_io_blob_container: taskio
 

@@ -28,16 +28,20 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
     cidr=$(get_cidr_range)
 
+    echo "Adding IP $cidr to ${DEPLOY_SECRETS_KV} keyvault firewall allow list..."
     az keyvault network-rule add \
         -g ${DEPLOY_SECRETS_KV_RG_NAME}  \
         -n ${DEPLOY_SECRETS_KV} \
         --ip-address $cidr \
-        --subscription ${ARM_SUBSCRIPTION_ID}
+        --subscription ${ARM_SUBSCRIPTION_ID} \
+        --output none
 
+    echo "Adding IP $cidr to ${PCTASKS_TASK_KV} keyvault firewall allow list..."
     az keyvault network-rule add \
         -g ${PCTASKS_TASK_KV_RESOURCE_GROUP_NAME} \
         -n ${PCTASKS_TASK_KV} \
         --ip-address $cidr \
-        --subscription ${ARM_SUBSCRIPTION_ID}
+        --subscription ${ARM_SUBSCRIPTION_ID} \
+        --output none
 
 fi

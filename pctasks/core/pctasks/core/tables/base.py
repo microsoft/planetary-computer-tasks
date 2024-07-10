@@ -1,11 +1,23 @@
 import json
 import unicodedata
 from base64 import b64decode, b64encode
-from typing import Any, Callable, Dict, Generic, List, Optional, Tuple, Type, TypeVar
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.data.tables import TableClient, TableEntity, TableServiceClient
+from azure.identity import DefaultAzureCredential
 from pydantic.main import BaseModel
 
 from pctasks.core.models.config import TableSasConfig
@@ -117,17 +129,22 @@ class TableService:
     def from_account_key(
         cls: Type[T],
         account_name: str,
-        account_key: str,
+        account_key: Optional[str],
         table_name: str,
         account_url: Optional[str] = None,
     ) -> T:
         def _get_clients(
             _name: str = account_name,
-            _key: str = account_key,
+            _key: Optional[str] = account_key,
             _url: str = account_url or f"https://{account_name}.table.core.windows.net",
             _table: str = table_name,
         ) -> Tuple[Optional[TableServiceClient], TableClient]:
-            credential = AzureNamedKeyCredential(name=_name, key=_key)
+            credential: Union[DefaultAzureCredential, AzureNamedKeyCredential]
+            if _key is None:
+                credential = DefaultAzureCredential()
+            else:
+                # azurite
+                credential = AzureNamedKeyCredential(_name, _key)
             table_service_client = TableServiceClient(
                 endpoint=_url, credential=credential
             )

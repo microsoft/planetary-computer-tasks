@@ -1,7 +1,12 @@
-provider azurerm {
+provider "azurerm" {
   features {}
   skip_provider_registration = true
-  use_oidc = true
+  use_oidc                   = true
+
+  # This could be used instead of temporarily enabling shared key access once
+  # this issue is resolved.
+  # https://github.com/hashicorp/terraform-provider-azurerm/issues/15083
+  # storage_use_azuread = true
 }
 
 terraform {
@@ -10,7 +15,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.103.1"
+      version = "3.110.0"
     }
   }
 }

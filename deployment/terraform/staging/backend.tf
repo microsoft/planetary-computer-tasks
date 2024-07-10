@@ -5,5 +5,6 @@ terraform {
     container_name       = "pctasks"
     key                  = "staging.terraform.tfstate"
     use_oidc             = true
+    use_azuread_auth     = true
   }
 }

@@ -16,6 +16,7 @@ from typing import (
     Optional,
     Tuple,
     Type,
+    TypedDict,
     TypeVar,
     Union,
     cast,
@@ -32,6 +33,7 @@ from azure.storage.blob import (
     ContainerClient,
     ContainerSasPermissions,
     ContentSettings,
+    UserDelegationKey,
     generate_container_sas,
 )
 
@@ -342,6 +344,8 @@ class BlobStorage(Storage):
         This uses the storage instance's BlobServiceClient (and its
         attached credentials) to generate a container-level SAS token.
         """
+        logger.info(f"_generate_container_sas for {self}")
+
         start = Datetime.utcnow() - timedelta(hours=10)
         # Chop off a couple hours at the end to avoid any issues with the
         # SAS token having too long of a duration.
@@ -374,6 +378,8 @@ class BlobStorage(Storage):
         write: bool = False,
         delete: bool = False,
     ) -> str:
+        logger.info(f"Generating authenticated URL for {file_path}")
+
         sas_token = self.sas_token
         if self.sas_token is None:
             sas_token = self._generate_container_sas(
@@ -728,16 +734,24 @@ class BlobStorage(Storage):
     def from_account_key(
         cls: Type[T],
         blob_uri: Union[BlobUri, str],
-        account_key: str,
-        account_url: Optional[str] = None,
+        account_key: Optional[str],
+        account_url: Optional[str],
     ) -> T:
+        print(f"Creating BlobStorage from account key for {blob_uri}", flush=True)
+
         if isinstance(blob_uri, str):
             blob_uri = BlobUri(blob_uri)
+
+        if not account_url:
+            account_url = (
+                f"https://{blob_uri.storage_account_name}.blob.core.windows.net"
+            )
+
+        credential_options = generate_key_for_sas(account_url, account_key)
 
         sas_token = generate_container_sas(
             account_name=blob_uri.storage_account_name,
             container_name=blob_uri.container_name,
-            account_key=account_key,
             start=Datetime.utcnow() - timedelta(hours=10),
             expiry=Datetime.utcnow() + timedelta(hours=24 * 7),
             permission=ContainerSasPermissions(
@@ -746,6 +760,7 @@ class BlobStorage(Storage):
                 delete=True,
                 list=True,
             ),
+            **credential_options,
         )
 
         return cls.from_uri(
@@ -761,20 +776,6 @@ class BlobStorage(Storage):
         Return the fsspec-style path.
         """
         return f"abfs://{self.container_name}/{path}"
-
-    @classmethod
-    def from_connection_string(
-        cls: Type[T],
-        connection_string: str,
-        container_name: str,
-    ) -> T:
-        container_client = ContainerClient.from_connection_string(
-            connection_string, container_name
-        )
-        credential = container_client.credential
-        return cls.from_account_key(
-            f"blob://{credential.account_name}/{container_name}", credential.account_key
-        )
 
 
 def maybe_rewrite_blob_storage_url(url: str) -> str:
@@ -835,3 +836,47 @@ def maybe_rewrite_blob_storage_url(url: str) -> str:
         url = f"blob://{parsed.path.strip('/')}"
 
     return url
+
+
+def get_user_delegation_key(account_url: str) -> UserDelegationKey:
+    credential = DefaultAzureCredential()
+    blob_service_client = BlobServiceClient(
+        account_url=account_url,
+        credential=credential,
+    )
+
+    start = Datetime.utcnow() - timedelta(hours=10)
+    expiry = start + timedelta(hours=(24 * 7) - 2)
+    return blob_service_client.get_user_delegation_key(
+        key_start_time=start, key_expiry_time=expiry
+    )
+
+
+def is_azurite_url(url: str) -> bool:
+    host = os.getenv(AZURITE_HOST_ENV_VAR)
+    port = os.getenv(AZURITE_PORT_ENV_VAR)
+    account_name = os.getenv(AZURITE_STORAGE_ACCOUNT_ENV_VAR)
+    azurite_url = f"http://{host}:{port}/{account_name}"
+
+    return url.startswith(azurite_url)
+
+
+class BlobSasCredential(TypedDict):
+    account_key: Optional[str]
+    user_delegation_key: Optional[UserDelegationKey]
+
+
+def generate_key_for_sas(
+    account_url: str, account_key: Optional[str] = None
+) -> BlobSasCredential:
+    if is_azurite_url(account_url):
+        if account_key is None:
+            raise ValueError(
+                f"Azurite account URL requires an account key. "
+                f"'account_url={account_url}'"
+            )
+        return {"account_key": account_key, "user_delegation_key": None}
+    return {
+        "account_key": None,
+        "user_delegation_key": get_user_delegation_key(account_url),
+    }

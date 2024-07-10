@@ -31,6 +31,10 @@ resource "azurerm_kubernetes_cluster" "pctasks" {
     node_count     = var.aks_node_count
     vnet_subnet_id = azurerm_subnet.k8snode_subnet.id
 
+    upgrade_settings {
+      max_surge = "100"
+    }
+
     node_labels = {
       node_group = "default"
     }
@@ -70,6 +74,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "argowf" {
       vnet_subnet_id,
       node_taints,
       zones,
+      upgrade_settings
     ]
   }
 
@@ -100,6 +105,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "tasks" {
       node_taints,
       zones,
       node_count,
+      upgrade_settings,
     ]
   }
 
@@ -139,6 +145,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "tasks-spot" {
       node_taints,
       zones,
       node_count,
+      upgrade_settings,
     ]
   }
 
