@@ -698,6 +698,10 @@ class RemoteWorkflowExecutor:
                                 status=TaskRunStatus.FAILED,
                                 errors=errors,
                                 log_uri=task_state.get_log_uri(task_log_storage),
+                                workflow_id=workflow_id,
+                                dataset_id=dataset_id,
+                                job_id=job_id,
+                                partition_id=part_id,
                             )
 
                             logger.warning(
@@ -741,6 +745,10 @@ class RemoteWorkflowExecutor:
                                 task_id=task_state.task_id,
                                 status=TaskRunStatus.COMPLETED,
                                 log_uri=task_state.get_log_uri(task_log_storage),
+                                workflow_id=workflow_id,
+                                dataset_id=dataset_id,
+                                job_id=job_id,
+                                partition_id=part_id,
                             )
 
                             try:
