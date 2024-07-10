@@ -133,12 +133,16 @@ pctasks:
     tables:
       account_url: ""
       account_name: ""
+      # account_key is only used when pctasks.run.dev.azurite.enabled is true
+      account_key: ""
       connection_string: ""
       image_key_table_name: "imagekeys"
 
     blob:
       account_url: ""
       account_name: ""
+      # account_key is only used when pctasks.run.dev.azurite.enabled is true
+      account_key: ""
       log_blob_container: tasklogs
       task_io_blob_container: taskio
 

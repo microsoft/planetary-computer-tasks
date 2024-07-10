@@ -155,6 +155,10 @@ spec:
               value: "{{ .Values.pctasks.run.tables.account_url }}"
             - name: PCTASKS_RUN__TABLES_ACCOUNT_NAME
               value: "{{ .Values.pctasks.run.tables.account_name }}"
+            {{- if .Values.pctasks.run.dev.azurite.enabled }}
+            - name: PCTASKS_RUN__TABLES_ACCOUNT_KEY
+              value: "{{ .Values.pctasks.run.tables.account_key }}"
+            {{- end }}
             - name: PCTASKS_RUN__IMAGE_KEY_TABLE_NAME
               value: "{{ .Values.pctasks.run.tables.image_key_table_name }}"
 
@@ -163,6 +167,10 @@ spec:
               value: "{{ .Values.pctasks.run.blob.account_url }}"
             - name: PCTASKS_RUN__BLOB_ACCOUNT_NAME
               value: "{{ .Values.pctasks.run.blob.account_name }}"
+            {{- if .Values.pctasks.run.dev.azurite.enabled }}
+             - name: PCTASKS_RUN__BLOB_ACCOUNT_KEY
+              value: "{{ .Values.pctasks.run.blob.account_key }}"
+            {{- end }}
 
             - name: PCTASKS_RUN__ARGO__HOST
               value: "{{ .Values.pctasks.run.argo.host }}"
