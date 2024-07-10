@@ -1179,20 +1179,6 @@ class RemoteWorkflowExecutor:
                             )
                             workflow_failed = True
                             continue
-                        else:
-                            azlogger.info(
-                                "Job Created",
-                                extra={
-                                    "custom_dimensions": {
-                                        **custom_dimensions,
-                                        **{
-                                            "type": EventTypes.job_created,
-                                            "recordLevel": RecordLevels.job,
-                                            "jobId": job_id,
-                                        },
-                                    }
-                                },
-                            )
 
                         try:
                             if job_def.foreach:
