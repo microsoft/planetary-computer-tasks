@@ -86,6 +86,9 @@ pctasks:
     keyvault:
       enabled: false
 
+    applicationinsights:
+      enabled: false
+
 pcdev:
   services:
     pctasks:
