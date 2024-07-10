@@ -737,8 +737,6 @@ class BlobStorage(Storage):
         account_key: Optional[str],
         account_url: Optional[str],
     ) -> T:
-        print(f"Creating BlobStorage from account key for {blob_uri}", flush=True)
-
         if isinstance(blob_uri, str):
             blob_uri = BlobUri(blob_uri)
 
@@ -871,11 +869,15 @@ def generate_key_for_sas(
 ) -> BlobSasCredential:
     if is_azurite_url(account_url):
         if account_key is None:
+            print("Azurite account URL requires an account key.")
             raise ValueError(
                 f"Azurite account URL requires an account key. "
                 f"'account_url={account_url}'"
             )
+
+        print(f"Using account key for {account_url}")
         return {"account_key": account_key, "user_delegation_key": None}
+    print(f"Using delegation key for {account_url}")
     return {
         "account_key": None,
         "user_delegation_key": get_user_delegation_key(account_url),
