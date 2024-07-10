@@ -124,11 +124,7 @@ def update_workflow_run_status(
     if update:
         container.put(record)
 
-    if status == WorkflowRunStatus.RUNNING:
-        # We only want one log record for creation, return early
-        return
-
-    elif status in (WorkflowRunStatus.FAILED, WorkflowRunStatus.COMPLETED):
+    if status in (WorkflowRunStatus.FAILED, WorkflowRunStatus.COMPLETED):
         event_type = EventTypes.workflow_run_finished
         message = "Workflow Run finished"
     else:
@@ -316,11 +312,11 @@ def update_task_run_status(
         TaskRunStatus.COMPLETED,
         TaskRunStatus.CANCELLED,
     ):
-        event_type = EventTypes.workflow_run_finished
-        message = "Job partition finished"
+        event_type = EventTypes.task_finished
+        message = "Task finished"
     else:
-        event_type = EventTypes.workflow_run_created
-        message = "Job partition created"
+        event_type = EventTypes.task_created
+        message = "Task created"
 
     custom_dimensions = {
         "workflowId": workflow_id,
