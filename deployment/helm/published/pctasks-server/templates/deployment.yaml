@@ -168,8 +168,8 @@ spec:
             - name: PCTASKS_RUN__BLOB_ACCOUNT_NAME
               value: "{{ .Values.pctasks.run.blob.account_name }}"
             {{- if .Values.pctasks.run.dev.azurite.enabled }}
-             - name: PCTASKS_RUN__BLOB_ACCOUNT_KEY
-               value: "{{ .Values.pctasks.run.blob.account_key }}"
+            - name: PCTASKS_RUN__BLOB_ACCOUNT_KEY
+              value: "{{ .Values.pctasks.run.blob.account_key }}"
             {{- end }}
 
             - name: PCTASKS_RUN__ARGO__HOST
