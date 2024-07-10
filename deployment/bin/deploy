@@ -94,6 +94,31 @@ while [[ "$#" -gt 0 ]]; do case $1 in
 # Check and configure environment #
 ###################################
 
+function on_exit() {
+    # Always disable shared access keys on script exit
+    disable_shared_access_keys
+    # Always remove IP from storage firewalls on script exit
+    remove_ip_from_storage_firewalls
+}
+
+trap on_exit EXIT
+
+# Enable shared access keys on storage accounts that must have properties read
+# [storage_account]=resource_group
+declare -A SAK_STORAGE_ACCOUNTS
+SAK_STORAGE_ACCOUNTS=(
+  ["pctasksteststaging"]="rg-pctaskstest-staging-westeurope"
+  ["stbpctasksteststaging"]="rg-pctaskstest-staging-westeurope"
+)
+
+# Add client IP to firewall for storage accounts that must have properties read
+# [storage_account]=resource_group
+declare -A FW_STORAGE_ACCOUNTS
+FW_STORAGE_ACCOUNTS=(
+    ["pctesttfstate"]="pc-test-manual-resources"
+    ["pctasksteststaging"]="rg-pctaskstest-staging-westeurope"
+)
+
 if [[ -z ${TERRAFORM_DIR} ]]; then
     echo "Must pass in TERRAFORM_DIR with -t"
     exit 1
@@ -109,6 +134,11 @@ fi
 
 setup_env
 
+if [ -z "$ARM_CLIENT_ID" ]; then
+  export ARM_CLIENT_ID=$(az account show --query user.name -o tsv)
+  echo "Using Azure CLI auth with username: ${ARM_CLIENT_ID}"
+fi
+
 # ---------------------------------------------------
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
@@ -122,11 +152,12 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     require_env "PCTASKS_TASK_KV"
     require_env "PCTASKS_TASK_KV_RESOURCE_GROUP_NAME"
 
-    #########################
-    # Add IP to KV firewall #
-    #########################
+    #######################
+    # Add IP to firewalls #
+    #######################
 
     bin/kv_add_ip
+    add_ip_to_storage_firewalls
 
     #####################
     # Deploy Terraform  #
@@ -136,6 +167,8 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
 
     if [ -z "${SKIP_FETCH_TF_VARS}${SKIP_TF}" ]; then
+
+        enable_shared_access_keys
 
         if [ -f "${TERRAFORM_DIR}/values.tfvars" ]; then
             mv ${TERRAFORM_DIR}/values.tfvars ${TERRAFORM_DIR}/values.bak.tfvars
@@ -279,7 +312,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     pushd ${TERRAFORM_DIR}
     export ACR_NAME=$(tf_output task_acr_name)
     export SA_ACCOUNT_NAME=$(tf_output sa_account_name)
-    export SA_ACCOUNT_KEY=$(tf_output sa_account_key)
     export SA_ACCOUNT_URL=$(tf_output sa_tables_account_url)
     export FUNCTION_APP_NAME=$(tf_output function_app_name)
     export IMAGE_TAG=$(tf_output pctasks_server_image_tag)
@@ -294,7 +326,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         bin/setup_storage.py \
             "${ACR_NAME}" \
             "${SA_ACCOUNT_NAME}" \
-            "${SA_ACCOUNT_KEY}" \
             --url "${SA_ACCOUNT_URL}" \
             --tag "${IMAGE_TAG}"
     fi

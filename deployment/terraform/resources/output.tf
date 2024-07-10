@@ -134,11 +134,6 @@ output "sa_account_name" {
   value = azurerm_storage_account.pctasks.name
 }
 
-output "sa_account_key" {
-  value     = azurerm_storage_account.pctasks.primary_access_key
-  sensitive = true
-}
-
 output "sa_connection_string" {
   value = azurerm_storage_account.pctasks.primary_connection_string
 }
