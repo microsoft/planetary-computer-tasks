@@ -90,6 +90,10 @@ pctasks:
       enabled: true
       url: "{{ tf.keyvault_url }}"
 
+    applicationinsights:
+      enabled: true
+      connection_string: "{{ tf.applicationinsights_connection_string }}"
+
 pcingress:
   services:
     pctasks:

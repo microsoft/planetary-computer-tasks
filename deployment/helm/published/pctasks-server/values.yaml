@@ -174,3 +174,7 @@ pctasks:
       sp_tenant_id: ""
       sp_client_id: ""
       sp_client_secret: ""
+
+    applicationinsights:
+      enabled: false
+      connection_string: ""

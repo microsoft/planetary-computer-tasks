@@ -6,6 +6,7 @@ from concurrent import futures
 from typing import Any, Dict, Iterable, List, Optional, Union
 
 from azure.storage.queue import BinaryBase64DecodePolicy, BinaryBase64EncodePolicy
+from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 from pctasks.core.cosmos.container import CosmosDBContainer
 from pctasks.core.cosmos.containers.workflow_runs import WorkflowRunsContainer
@@ -23,7 +24,7 @@ from pctasks.core.models.task import CompletedTaskResult, FailedTaskResult
 from pctasks.core.models.workflow import JobDefinition, WorkflowSubmitMessage
 from pctasks.core.queues import QueueService
 from pctasks.core.storage.blob import BlobStorage
-from pctasks.core.utils import grouped, map_opt
+from pctasks.core.utils import StrEnum, grouped, map_opt
 from pctasks.run.constants import TASKS_TEMPLATE_PATH
 from pctasks.run.dag import sort_jobs
 from pctasks.run.errors import WorkflowRunRecordError
@@ -51,6 +52,45 @@ from pctasks.run.workflow.executor.models import (
 )
 
 logger = logging.getLogger(__name__)
+azlogger = logging.getLogger("monitor.pctasks.run.workflow.executor.remote")
+azhandler = None  # initialized later in `_init_azlogger`
+
+
+class EventTypes(StrEnum):
+    workflow_run_created = "WorkflowRunCreated"
+    workflow_run_finished = "WorkflowRunFinished"
+    job_created = "JobCreated"
+    job_finished = "JobFinished"
+    job_partition_created = "JobPartitionCreated"
+    job_partition_finished = "JobPartitionFinished"
+    task_created = "TaskCreated"
+    task_finished = "TaskFinished"
+
+
+class RecordLevels(StrEnum):
+    workflow_run = "WorkflowRun"
+    job = "Job"
+    job_partition = "JobPartition"
+    task = "Task"
+
+
+def _init_azlogger() -> None:
+    # AzureLogHandler is slow to initialize
+    # do it once here
+    global azhandler
+
+    if azhandler is None:
+        logger.debug("Initializing AzureLogHandler")
+        azlogger.setLevel(logging.INFO)
+        try:
+            azhandler = AzureLogHandler()
+        except ValueError:
+            # missing instrumentation key
+            azhandler = False
+            logger.warning("Unable to initialize AzureLogHandler")
+        else:
+            azhandler.setLevel(logging.INFO)
+            azlogger.addHandler(azhandler)
 
 
 class RemoteWorkflowRunnerError(Exception):
@@ -83,6 +123,29 @@ def update_workflow_run_status(
 
     if update:
         container.put(record)
+
+    if status in (WorkflowRunStatus.FAILED, WorkflowRunStatus.COMPLETED):
+        event_type = EventTypes.workflow_run_finished
+        message = "Workflow Run finished"
+    else:
+        event_type = EventTypes.workflow_run_created
+        message = "Workflow Run created"
+
+    custom_dimensions = {
+        "workflowId": workflow_run.workflow_id,
+        "datasetId": workflow_run.dataset_id,
+        "runId": workflow_run.run_id,
+        "status": status.value,
+        "recordLevel": RecordLevels.workflow_run,
+        "type": event_type,
+    }
+
+    level = logging.WARNING if status == WorkflowRunStatus.FAILED else logging.INFO
+    azlogger.log(
+        level,
+        message,
+        extra={"custom_dimensions": custom_dimensions},
+    )
 
 
 def update_job_run_status(
@@ -119,12 +182,46 @@ def update_job_run_status(
 
         container.put(record)
 
+    if status in (
+        JobRunStatus.FAILED,
+        JobRunStatus.COMPLETED,
+        JobRunStatus.CANCELLED,
+        JobRunStatus.SKIPPED,
+    ):
+        event_type = EventTypes.job_finished
+        message = "Job finished"
+    else:
+        event_type = EventTypes.job_created
+        message = "Job created"
+
+    custom_dimensions = {
+        "workflowId": workflow_run.workflow_id,
+        "datasetId": workflow_run.dataset_id,
+        "runId": workflow_run.run_id,
+        "jobId": job_id,
+        "status": status.value,
+        "recordLevel": RecordLevels.job,
+        "type": event_type,
+        "errors": errors,
+    }
+
+    level = logging.WARNING if status == JobRunStatus.FAILED else logging.INFO
+    azlogger.log(
+        level,
+        message,
+        extra={"custom_dimensions": custom_dimensions},
+    )
+
 
 def update_job_partition_run_status(
     container: CosmosDBContainer[JobPartitionRunRecord],
     run_id: str,
     job_partition_run_id: str,
     status: JobPartitionRunStatus,
+    workflow_id: str,
+    dataset_id: str,
+    job_id: str,
+    partition_id: str,
 ) -> None:
     record = container.get(job_partition_run_id, partition_key=run_id)
     if not record:
@@ -135,6 +232,34 @@ def update_job_partition_run_status(
         record.set_status(status)
         container.put(record)
 
+    if status in (
+        JobPartitionRunStatus.FAILED,
+        JobPartitionRunStatus.COMPLETED,
+    ):
+        event_type = EventTypes.job_partition_finished
+        message = "Job partition finished"
+    else:
+        event_type = EventTypes.job_partition_created
+        message = "Job partition created"
+
+    custom_dimensions = {
+        "workflowId": workflow_id,
+        "datasetId": dataset_id,
+        "runId": run_id,
+        "jobId": job_id,
+        "partitionId": partition_id,
+        "status": status.value,
+        "recordLevel": RecordLevels.job_partition,
+        "type": event_type,
+    }
+
+    level = logging.WARNING if status == JobPartitionRunStatus.FAILED else logging.INFO
+    azlogger.log(
+        level,
+        message,
+        extra={"custom_dimensions": custom_dimensions},
+    )
+
 
 def update_task_run_status(
     container: CosmosDBContainer[JobPartitionRunRecord],
@@ -144,6 +269,10 @@ def update_task_run_status(
     status: TaskRunStatus,
     errors: Optional[List[str]] = None,
     log_uri: Optional[str] = None,
+    workflow_id: Optional[str] = None,
+    dataset_id: Optional[str] = None,
+    job_id: Optional[str] = None,
+    partition_id: Optional[str] = None,
 ) -> None:
     record = container.get(job_partition_run_id, partition_key=run_id)
     if not record:
@@ -175,6 +304,40 @@ def update_task_run_status(
 
         container.put(record)
 
+    if status in (TaskRunStatus.RECEIVED, TaskRunStatus.SUBMITTING):
+        # We only want to log task creation once
+        return None
+    elif status in (
+        TaskRunStatus.FAILED,
+        TaskRunStatus.COMPLETED,
+        TaskRunStatus.CANCELLED,
+    ):
+        event_type = EventTypes.task_finished
+        message = "Task finished"
+    else:
+        event_type = EventTypes.task_created
+        message = "Task created"
+
+    custom_dimensions = {
+        "workflowId": workflow_id,
+        "datasetId": dataset_id,
+        "runId": run_id,
+        "jobId": job_id,
+        "partitionId": partition_id,
+        "taskId": task_id,
+        "status": status.value,
+        "recordLevel": RecordLevels.task,
+        "type": event_type,
+        "errors": errors,
+    }
+
+    level = logging.WARNING if status == TaskRunStatus.FAILED else logging.INFO
+    azlogger.log(
+        level,
+        message,
+        extra={"custom_dimensions": custom_dimensions},
+    )
+
 
 class RemoteWorkflowExecutor:
     """Executes a workflow through submitting tasks remotely via a task runner."""
@@ -185,6 +348,7 @@ class RemoteWorkflowExecutor:
 
     def __enter__(self) -> "RemoteWorkflowExecutor":
         self.task_runner.__enter__()
+        _init_azlogger()
         return self
 
     def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None:
@@ -194,9 +358,11 @@ class RemoteWorkflowExecutor:
         self,
         submit_msgs: Iterable[JobPartitionSubmitMessage],
         container: CosmosDBContainer[JobPartitionRunRecord],
+        workflow_id: str,
     ) -> List[JobPartitionState]:
         records: List[JobPartitionRunRecord] = []
         states: List[JobPartitionState] = []
+
         for submit_msg in submit_msgs:
             job_partition_run = JobPartitionRunRecord.from_definition(
                 submit_msg.job_partition.partition_id,
@@ -209,6 +375,7 @@ class RemoteWorkflowExecutor:
                 job_part_run_record_id=job_partition_run.get_id(),
                 settings=self.config.run_settings,
             )
+
             if job_partition_state.current_task:
                 task_state = job_partition_state.current_task
                 task_run = job_partition_run.get_task(task_state.task_id)
@@ -218,6 +385,7 @@ class RemoteWorkflowExecutor:
                         f"Task {task_state.task_id} not found in "
                         f"job partition {job_partition_run.get_id()}"
                     )
+
                 task_run.status = TaskRunStatus.SUBMITTING
             else:
                 job_partition_run.set_status(JobPartitionRunStatus.FAILED)
@@ -290,6 +458,10 @@ class RemoteWorkflowExecutor:
         container: CosmosDBContainer[JobPartitionRunRecord],
         run_id: str,
         job_partition_run_id: str,
+        workflow_id: str,
+        dataset_id: str,
+        job_id: str,
+        partition_id: str,
     ) -> TaskRunStatus:
         """Updates a task state and task run status based on the submit result.
 
@@ -305,6 +477,10 @@ class RemoteWorkflowExecutor:
                 task_id=task_state.task_id,
                 status=TaskRunStatus.FAILED,
                 errors=["Task failed to submit."] + submit_result.errors,
+                workflow_id=workflow_id,
+                dataset_id=dataset_id,
+                job_id=job_id,
+                partition_id=partition_id,
             )
             return TaskRunStatus.FAILED
         else:
@@ -314,6 +490,10 @@ class RemoteWorkflowExecutor:
                 job_partition_run_id=job_partition_run_id,
                 task_id=task_state.task_id,
                 status=TaskRunStatus.SUBMITTED,
+                workflow_id=workflow_id,
+                dataset_id=dataset_id,
+                job_id=job_id,
+                partition_id=partition_id,
             )
             return TaskRunStatus.SUBMITTED
 
@@ -328,6 +508,8 @@ class RemoteWorkflowExecutor:
         is_last_job: bool,
         task_io_storage: BlobStorage,
         task_log_storage: BlobStorage,
+        workflow_id: str,
+        dataset_id: str,
     ) -> List[Dict[str, Any]]:
         """Complete job partitions and return the results.
 
@@ -429,6 +611,10 @@ class RemoteWorkflowExecutor:
                                 job_partition_run_id=part_run_record_id,
                                 task_id=task_state.task_id,
                                 status=TaskRunStatus.SUBMITTING,
+                                workflow_id=workflow_id,
+                                dataset_id=dataset_id,
+                                job_id=job_id,
+                                partition_id=job_part_state.partition_id,
                             )
 
                             job_part_state.current_task.submit(self.task_runner)
@@ -444,6 +630,10 @@ class RemoteWorkflowExecutor:
                                 container,
                                 run_id=run_id,
                                 job_partition_run_id=part_run_record_id,
+                                workflow_id=workflow_id,
+                                dataset_id=dataset_id,
+                                job_id=job_id,
+                                partition_id=job_part_state.partition_id,
                             )
 
                         elif task_state.status == TaskStateStatus.SUBMITTED:
@@ -508,6 +698,10 @@ class RemoteWorkflowExecutor:
                                 status=TaskRunStatus.FAILED,
                                 errors=errors,
                                 log_uri=task_state.get_log_uri(task_log_storage),
+                                workflow_id=workflow_id,
+                                dataset_id=dataset_id,
+                                job_id=job_id,
+                                partition_id=part_id,
                             )
 
                             logger.warning(
@@ -551,6 +745,10 @@ class RemoteWorkflowExecutor:
                                 task_id=task_state.task_id,
                                 status=TaskRunStatus.COMPLETED,
                                 log_uri=task_state.get_log_uri(task_log_storage),
+                                workflow_id=workflow_id,
+                                dataset_id=dataset_id,
+                                job_id=job_id,
+                                partition_id=part_id,
                             )
 
                             try:
@@ -566,6 +764,10 @@ class RemoteWorkflowExecutor:
                                     run_id=run_id,
                                     job_partition_run_id=part_run_record_id,
                                     status=JobPartitionRunStatus.FAILED,
+                                    workflow_id=workflow_id,
+                                    dataset_id=dataset_id,
+                                    job_id=job_id,
+                                    partition_id=part_id,
                                 )
 
                             # Handle job completion
@@ -583,6 +785,10 @@ class RemoteWorkflowExecutor:
                                         run_id=run_id,
                                         job_partition_run_id=part_run_record_id,
                                         status=JobPartitionRunStatus.COMPLETED,
+                                        workflow_id=workflow_id,
+                                        dataset_id=dataset_id,
+                                        job_id=job_id,
+                                        partition_id=part_id,
                                     )
                                     self.handle_job_part_notifications(job_part_state)
 
@@ -601,6 +807,10 @@ class RemoteWorkflowExecutor:
                                         run_id=run_id,
                                         job_partition_run_id=part_run_record_id,
                                         status=JobPartitionRunStatus.FAILED,
+                                        workflow_id=workflow_id,
+                                        dataset_id=dataset_id,
+                                        job_id=job_id,
+                                        partition_id=part_id,
                                     )
                                 completed_job_count += 1
                                 logger.info(
@@ -681,6 +891,8 @@ class RemoteWorkflowExecutor:
                     is_last_job,
                     task_io_storage=task_io_storage,
                     task_log_storage=task_log_storage,
+                    workflow_id=workflow_run.workflow_id,
+                    dataset_id=workflow_run.dataset_id,
                 ): job_state_group
                 for (
                     job_state_group,
@@ -710,6 +922,7 @@ class RemoteWorkflowExecutor:
                     )
 
                 job_done_count += len(job_part_states)
+
                 for job_part_state in job_part_states:
                     if job_part_state.status == JobPartitionStateStatus.FAILED:
                         job_failed = True
@@ -1019,7 +1232,7 @@ class RemoteWorkflowExecutor:
 
                         try:
                             job_part_states = self.create_job_partition_states(
-                                job_part_submit_msgs, jp_container
+                                job_part_submit_msgs, jp_container, workflow.id
                             )
                         except Exception as e:
                             logger.error(f"Failed to prepare job partitions: {e}")
