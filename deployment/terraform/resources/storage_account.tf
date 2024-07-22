@@ -15,7 +15,11 @@ resource "azurerm_storage_account" "pctasks" {
       azurerm_subnet.function_subnet.id,
       azurerm_subnet.k8snode_subnet.id,
     ]
-  
+
+    private_link_access {
+      endpoint_resource_id = "/subscriptions/a84a690d-585b-4c7c-80d9-851a48af5a50/providers/Microsoft.Security/datascanners/storageDataScanner"
+      endpoint_tenant_id   = "72f988bf-86f1-41af-91ab-2d7cd011db47"
+    }
   }
 }
 
