@@ -18,7 +18,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [[ "${1}" == "--help" ]]; then
         usage
     else
-        docker-compose \
+        docker compose \
             -f docker-compose.console.yml \
             run --rm \
             dev \

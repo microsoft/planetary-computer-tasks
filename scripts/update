@@ -118,19 +118,19 @@ while [[ $# -gt 0 ]]; do case $1 in
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     # Build deployment image
     if [ "${BUILD_DEPLOY}" ]; then
-        docker-compose \
+        docker compose \
             -f deployment/docker-compose.yml \
             build
     fi
 
     # Build project images
     if [ -z "${DEPLOY_ONLY}" ]; then
-        docker-compose ${BUILD_SERVERS} ${BUILD_TASK} ${BUILD_DEV} ${BUILD_AUX_SERVERS} \
+        docker compose ${BUILD_SERVERS} ${BUILD_TASK} ${BUILD_DEV} ${BUILD_AUX_SERVERS} \
             build ${BUILD_ONLY};
     fi
 
     if [ "${BUILD_FRONTEND}" ]; then
-        docker-compose run --rm --no-deps \
+        docker compose run --rm --no-deps \
             frontend \
             npm install --legacy-peer-deps
     fi

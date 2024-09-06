@@ -55,14 +55,14 @@ esac; done
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${DEPLOY}" ]; then
         # Run deployment container
-        docker-compose \
+        docker compose \
             -f deployment/docker-compose.yml \
             run --rm \
             deploy /bin/bash;
 
     else
 
-        docker-compose \
+        docker compose \
             -f docker-compose.console.yml \
             run --rm \
             -e AZURE_TENANT_ID="${AZURE_TENANT_ID}" \

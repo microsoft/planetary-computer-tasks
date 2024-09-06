@@ -59,7 +59,7 @@ fi
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
-    docker-compose \
+    docker compose \
         -f docker-compose.console.yml \
         run --rm \
         integration-tests \
