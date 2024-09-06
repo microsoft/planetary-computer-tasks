@@ -1,0 +1,14 @@
+id: conus404
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+- registry
+
+collections:
+  - id: conus404
+    template: ${{ local.path(./collection) }}
+    class: pctasks.dataset.collection:PremadeItemCollection
+    asset_storage: []
+    chunk_storage:
+      uri: "blob://cpdataeuwest/cpdata-etl-data/chunks"
+
