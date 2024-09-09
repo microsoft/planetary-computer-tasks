@@ -18,9 +18,9 @@
     },
     {
       "rel": "license",
-      "href": "https://www.noaa.gov/information-technology/open-data-dissemination",
+      "href": "https://spdx.org/licenses/CC-BY-4.0.html",
       "type": "text/html",
-      "title": "NOAA Open Data Dissemination"
+      "title": "Creative Commons Attribution 4.0 International"
     }
   ],
   "stac_extensions": [
@@ -5521,7 +5521,7 @@
       ]
     }
   },
-  "license": "proprietary",
+  "license": "CC-BY-4.0",
   "keywords": [
     "CONUS404",
     "Hydroclimate",
