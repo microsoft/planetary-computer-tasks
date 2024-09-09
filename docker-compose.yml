@@ -206,8 +206,8 @@ services:
 networks:
   default:
     # Network created during scripts/setup
-    external:
-      name: pctasks-network
+    name: pctasks-network
+    external: true
 
 volumes:
   pctasks-azurite-data: null
