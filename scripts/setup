@@ -77,7 +77,7 @@ source scripts/env
 
 echo "===================== " 
 echo "AZURE_CLIENT_ID"
-echo AZURE_CLIENT_ID
+echo $AZURE_CLIENT_ID
 echo "===================== " 
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
