@@ -7,7 +7,9 @@ env:
   PCTASKS_COSMOSDB__URL: ${{ secrets.COSMOSDB_URL }}
   PCTASKS_COSMOSDB__KEY: ${{ secrets.COSMOSDB_KEY }}
   PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX: ${{ github.run_id }}
-#  AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+
+permissions:
+  id-token: write
 
 jobs:
   pr-build-and-test:
