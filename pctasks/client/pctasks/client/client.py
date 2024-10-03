@@ -287,6 +287,10 @@ class PCTasksClient:
             )
             return WorkflowRecordResponse.parse_obj(result).record
         except HTTPError as e:
+            logger.debug("$$$"+ e.request.url)
+            logger.debug("$$$"+ e.request.body)
+            logger.debug("$$$"+ e.response.text)
+            logger.debug("$$$"+ e.response.status_code)
             if e.response.status_code == 404:
                 return None
             raise
