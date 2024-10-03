@@ -5,7 +5,7 @@
             "name": "documents",
             "type": "cosmosDBTrigger",
             "direction": "in",
-            "connection": "PCTASKS_COSMOSDB",
+            "connectionStringSetting": "FUNC_COSMOSDB_CONN_STR",
             "databaseName": "pctasks",
             "collectionName": "%FUNC_ITEMS_COLLECTION_NAME%"
         }

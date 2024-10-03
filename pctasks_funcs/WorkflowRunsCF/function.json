@@ -5,9 +5,9 @@
             "name": "container",
             "type": "cosmosDBTrigger",
             "direction": "in",
-            "connection": "PCTASKS_COSMOSDB",
+            "connectionStringSetting": "FUNC_COSMOSDB_CONN_STR",
             "databaseName": "pctasks",
-            "containerName": "%FUNC_WORKFLOW_RUNS_COLLECTION_NAME%"
+            "collectionName": "%FUNC_WORKFLOW_RUNS_COLLECTION_NAME%"
         }
     ]
 }

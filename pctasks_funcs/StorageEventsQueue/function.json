@@ -6,7 +6,7 @@
             "name": "msg",
             "direction": "in",
             "queueName": "storage-events",
-            "connection": "PCTASKS_COSMOSDB"
+            "connectionStringSetting": "FUNC_COSMOSDB_CONN_STR"
         }
     ]
 }
