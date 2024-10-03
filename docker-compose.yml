@@ -174,7 +174,7 @@ services:
     volumes:
       - ./pctasks:/home/site/pctasks
       - ./pctasks_funcs:/home/site/wwwroot
-      - ~/.azure:/home/.azure:ro
+      - ~/.azure:/home/.azure
     ports:
       - "7071:7071" # Functions
     environment:
