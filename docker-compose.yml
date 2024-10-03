@@ -162,6 +162,8 @@ services:
     image: registry:2
     ports:
       - 5001:5000
+    volumes:
+      - ~/.azure:/root/.azure
 
   functions:
     container_name: pctasks-functions
