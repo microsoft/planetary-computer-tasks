@@ -124,6 +124,7 @@ class CosmosDBSettings(PCTasksSettings):
         else:
             # If the connection string is not set, the credetials are
             # automatically picked up from the environment/managed identity
+            assert self.url
             credential = DefaultAzureCredential()
             return CosmosClient(
                 self.url, credential=credential, connection_verify=connection_verify
@@ -145,6 +146,7 @@ class CosmosDBSettings(PCTasksSettings):
         else:
             # If the connection string is not set, the credetials are
             # automatically picked up from the environment/managed identity
+            assert self.url
             credential = azure.identity.aio.DefaultAzureCredential()
             return AsyncCosmosClient(
                 self.url, credential=credential, connection_verify=connection_verify
