@@ -107,9 +107,6 @@ class PCTasksClient:
                 params=params,
                 **kwargs,
             )
-            logger.debug(f"API request: {method} {url}")
-            logger.debug(f"API response: {resp.status_code}")
-            logger.debug(f"API response: {resp.text}")
             resp.raise_for_status()
             return resp
 
