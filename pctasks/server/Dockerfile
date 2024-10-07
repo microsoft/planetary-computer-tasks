@@ -36,6 +36,7 @@ RUN cd /opt/src/server && \
 
 RUN if [ "${DEVELOPMENT}" = "TRUE" ]; then \
      echo "INSTALLING DEVELOPMENT DEPENDENCIES"; \
+     yum install -y azure-cli; \
      pip install \
      -e /opt/src/core \
      -e /opt/src/cli \

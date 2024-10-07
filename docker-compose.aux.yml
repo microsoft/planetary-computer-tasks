@@ -1,6 +1,5 @@
 # Non-essential development enviroment servers
 
-version: "2.1"
 services:
   stac-api:
     container_name: pctasks-stac-api

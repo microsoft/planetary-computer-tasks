@@ -1,4 +1,3 @@
-version: "2.1"
 services:
   cosmosdb:
     container_name: pctasks-cosmosdb
