@@ -75,11 +75,6 @@ while [[ $# -gt 0 ]]; do case $1 in
 
 source scripts/env
 
-echo "===================== " 
-echo "AZURE_CLIENT_ID"
-echo $AZURE_CLIENT_ID
-echo "===================== " 
-
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${CLEAR_RECORDS}" ]; then
         echo "Clearing records from Azurite Tables..."
