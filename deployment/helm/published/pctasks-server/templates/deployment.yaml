@@ -134,8 +134,6 @@ spec:
 
             - name: PCTASKS_COSMOSDB__URL
               value: "{{ .Values.pctasks.cosmosdb.url }}"
-            - name: PCTASKS_COSMOSDB__KEY
-              value: "{{ .Values.pctasks.cosmosdb.key }}"
 
             {{- if .Values.pctasks.cosmosdb.dev.enabled }}
             - name: COSMOSDB_EMULATOR_HOST
