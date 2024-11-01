@@ -9,6 +9,7 @@ import stactools.modis.stac
 from azure.core.exceptions import ResourceNotFoundError
 from stactools.core.utils.antimeridian import Strategy
 from stactools.modis.file import File
+from misc import add_platform_field
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
@@ -86,18 +87,6 @@ class MODISCollection(Collection):
         item.assets["metadata"].href = file.xml_href
         item.assets["metadata"].href = file.xml_href
 
-        # Add back in the platform property which NASA removed from their XML on March 13 2024
-        # On the MODIS side terra is distributed as MOD and aqua as MYD,
-        # but Within MPC both are distributed as MODxxx
-        if ("platform" not in item.properties) or (item.properties["platform"] == ""):
-            logger.debug("platform field missing, filling it in based on original xml href")
-            if file.xml_href.split('/')[4][0:3] == "MOD":
-                item.properties["platform"] = "terra"
-            elif file.xml_href.split('/')[4][0:3] == "MYD":
-                item.properties["platform"] = "aqua"
-            elif file.xml_href.split('/')[4][0:3] == "MCD":
-                item.properties["platform"] = "terra,aqua"
-            else:
-                logger.warning("xml_href did not contain MOD/MYD/MCD in the usual spot")
+        item = add_platform_field(item, file.xml_href, logger)
 
         return [item]
