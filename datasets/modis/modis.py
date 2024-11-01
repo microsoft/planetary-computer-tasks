@@ -95,7 +95,9 @@ class MODISCollection(Collection):
                 item.properties["platform"] = "terra"
             elif file.xml_href.split('/')[4][0:3] == "MYD":
                 item.properties["platform"] = "aqua"
+            elif file.xml_href.split('/')[4][0:3] == "MCD":
+                item.properties["platform"] = "terra,aqua"
             else:
-                logger.warning("xml_href did not contain MOD or MYD in the usual spot")
+                logger.warning("xml_href did not contain MOD/MYD/MCD in the usual spot")
 
         return [item]
