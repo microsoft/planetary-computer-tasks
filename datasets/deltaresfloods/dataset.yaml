@@ -1,5 +1,5 @@
 id: deltaresfloods
-image: pccomponentstest.azurecr.io/pctasks-basic:2022.6.16.2
+image: pccomponents.azurecr.io/pctasks-task-base:latest
 target_environment: staging
 
 collections:
