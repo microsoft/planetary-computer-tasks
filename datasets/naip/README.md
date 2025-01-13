@@ -1,5 +1,13 @@
 # NAIP
 
+## Collection Metadata Update
+
+Run this if you need to update the collection STAC item without ingesting asset items.
+
+```shell
+pctasks dataset ingest-collection -d datasets/naip/dataset.yaml --submit -a registry pccomponents -arg year '2023'
+```
+
 ## Running
 
 Provide the year (or a regex of years) you want to process.
