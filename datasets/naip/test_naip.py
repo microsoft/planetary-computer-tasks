@@ -10,6 +10,7 @@ from pctasks.core.storage import StorageFactory
         "blob://naipeuwest/naip/v002/co/2021/co_060cm_2021/37102/63/m_3710263_sw_13_060_20210729.tif",  # noqa: E501
         "blob://naipeuwest/naip/v002/ca/2022/ca_060cm_2022/41120/m_4112001_sw_10_060_20220716.tif",  # noqa: E501
         "blob://naipeuwest/naip/v002/ca/2022/ca_030cm_2022/41120/m_4112001_ne_10_030_20220723.tif",  # noqa: E501
+        "blob://naipeuwest/naip/v002/az/2023/az_030cm_2023/31109/m_3110901_ne_12_030_20231015_20240119.tif",  # noqa: E501
     ],
 )
 def test_naip(href: str) -> None:
@@ -22,13 +23,15 @@ def test_naip(href: str) -> None:
         "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
         "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
     ]
-    if "/63/" in href:
+    if "/2023/" in href:
+        assert item.id == "az_m_3110901_ne_12_030_20231015_20240119"
+    elif "/63/" in href:
         # verify that the new item ID includes both area & subarea
         assert item.id == "co_m_3710263_sw_13_060_20210729"
-    if "/ca/2022/ca_060cm" in href:
+    elif "/ca/2022/ca_060cm" in href:
         # verify that the new item ID includes both area & subarea
         assert item.id == "ca_m_4112001_sw_10_060_20220716"
-    if "030cm" in href:
+    elif "030cm" in href:
         # verify that the new item ID includes both area & subarea
         assert item.id == "ca_m_4112001_ne_10_030_20220723"
         assert item.common_metadata.gsd == 0.3
