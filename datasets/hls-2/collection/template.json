@@ -1,0 +1,47 @@
+{
+  "stac_version": "1.0.0",
+  "type": "Collection",
+  "id": "hls-2",
+  "title": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0",
+  "description": "{{ collection.description }}",
+  "license": "not-provided",
+  "links": [],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+    "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/view/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/scientific/v1.0.0/schema.json"
+  ],
+  "keywords": ["Sentinel", "Landsat", "HLS", "Satellite", "Global", "Imagery"],
+  "msft:short_description": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0",
+  "msft:storage_account": "hls2sa",
+  "msft:container": "hls2",
+  "msft:region": "westeurope",
+  "providers": [
+    {
+      "name": "USGS",
+      "roles": ["producer", "licensor"],
+      "url": "https://lpdaac.usgs.gov/news/release-of-harmonized-landsat-and-sentinel-2-hls-version-20/"
+    },
+    {
+      "name": "Microsoft",
+      "roles": ["host"],
+      "url": "https://planetarycomputer.microsoft.com"
+    }
+  ],
+  "assets": {},
+  "summaries": {
+    "platform": ["Sentinel-2A", "Sentinel-2B", "Landsat 8"]
+  },
+  "item_assets": {},
+  "extent": {
+    "spatial": {
+      "bbox": [[-180, -90, 180, 90]]
+    },
+    "temporal": {
+      "interval": [["2020-01-01T00:00:00Z", null]]
+    }
+  }
+}

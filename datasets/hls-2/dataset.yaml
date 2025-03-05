@@ -1,0 +1,42 @@
+id: hls-2
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+  - registry
+
+code:
+  src: ${{ local.path(./hls2.py) }}
+
+collections:
+  - id: hls-2
+    template: ${{ local.path(./collection) }}
+    class: hls2:HLS2Collection
+    asset_storage:
+      # The blob storage pattern is:
+      # |
+      # |   S30/          # 2 directories (S30 or L30)
+      # |     56/         # numer part of tile, ~60 directories
+      # |       P/        # first letter of tile, ~15-20 directories
+      # |         PQ/     # next two letters of tile, ~20-60 directories
+      # |           2024/    # year
+      # |             01/    # month
+      # |               05/  # day
+      # |                 HLS.S30.T56PPQ.2024005T001421.v2.0/   # item ID which is upstream scene title
+      # |                   HLS.S30.T56PPQ.2024005T001421.v2.0.jpg
+      # |                   HLS.S30.T56PPQ.2024005T001421.v2.0.B01.tif
+      # |                   HLS.S30.T56PPQ.2024005T001421.v2.0.B02.tif
+      # |                   ...
+      # | eg S30/56/P/PQ/2024/01/05/HLS.S30.T56PPQ.2024005T001421.v2.0/HLS.S30.T56PPQ.2024005T001421.v2.0.B01.tif
+      - uri: blob://hls2sa/hls2/
+        chunks:
+          splits:
+            - depth: 2 # depth: 1 --> 60 tasks; depth: 2 --> ~1000 tasks
+          options:
+            ends_with: .jpg
+            # From the root, we want a depth of 7
+            # But we start at depth=2 thanks to the split, so we use a depth of 5 here.
+            min_depth: 5
+            max_depth: 5
+            chunk_length: 20000
+    chunk_storage:
+      uri: blob://hls2sa/hls2-info/pctasks-chunks/
