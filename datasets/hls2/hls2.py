@@ -29,7 +29,6 @@ class HLS2Collection(Collection):
         # The asset_uri is the full blob uri path to the .jpg file
         storage, thumbnail_path = storage_factory.get_storage_for_file(asset_uri)
 
-        print(storage)
         if not storage.file_exists(thumbnail_path):
             raise Exception(f"{thumbnail_path} does not exist in {storage}")
 
@@ -38,7 +37,8 @@ class HLS2Collection(Collection):
             raise Exception(f"{thumbnail_path} did not match regex")
 
         logger.debug("Reading existing STAC Item JSON from NASA")
-
+        
+        # Download STAC Item JSON provided by NASA
         stac_json_path = thumbnail_path.replace('.jpg', '_stac.json')
         with TemporaryDirectory() as tmp_dir:
             nc_name = os.path.basename(stac_json_path)
@@ -50,26 +50,19 @@ class HLS2Collection(Collection):
                 logger.error(f"Failed to read in STAC Item from {tmp_nc_path}: {e}")
                 return []
 
-        # TEMPORARY
-        #print("=====BEFORE======")
-        #print(item.to_dict())
-
         # Clear out links for now
         item.links = []
 
         # Update the hrefs and remove the stac JSON from the asset list
+        thumbnail_uri_https = f"{storage.account_url}/{storage.container_name}/{thumbnail_path}"
         for asset in item.assets:
             if '.tif' in item.assets[asset].href:
-                item.assets[asset].href = asset_uri.replace('.jpg', f'.{asset}.tif')
+                item.assets[asset].href = thumbnail_uri_https.replace('.jpg', f'.{asset}.tif')
                 # TODO - make sure this exists in blob
             elif asset == 'thumbnail':
-                item.assets[asset].href = asset_uri # we've already checked this exists
+                item.assets[asset].href = thumbnail_uri_https # we've already checked this exists
             elif '_stac.json' in item.assets[asset].href:
                 item.assets.pop(asset)
                 # TODO - we should also make sure the json file isnt in blob
-
-        # TEMPORARY
-        #print("=====AFTER======")
-        #print(item.to_dict())
 
         return [item]
