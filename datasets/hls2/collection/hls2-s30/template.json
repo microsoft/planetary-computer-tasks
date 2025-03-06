@@ -18,6 +18,7 @@
   "msft:short_description": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0, Sentinel-2 Portion",
   "msft:storage_account": "hls2euwest",
   "msft:container": "hls2",
+  "msft:group_id": "hls2",
   "msft:region": "westeurope",
   "providers": [
     {
