@@ -21,11 +21,11 @@ collections:
             - depth: 1
           options:
             ends_with: .jpg
-            min_depth: 5
-            max_depth: 5
+            min_depth: 6
+            max_depth: 6
             chunk_length: 20000
     chunk_storage:
-      uri: blob://hls2euwest/hls2-l30-info/pctasks-chunks/
+      uri: blob://hls2euwest/hls2-s30-info/pctasks-chunks/
 
   - id: hls2-l30
     template: ${{ local.path(./collection/hls2-l30) }}
@@ -37,8 +37,8 @@ collections:
             - depth: 1
           options:
             ends_with: .jpg
-            min_depth: 5
-            max_depth: 5
+            min_depth: 6
+            max_depth: 6
             chunk_length: 20000
     chunk_storage:
       uri: blob://hls2euwest/hls2-l30-info/pctasks-chunks/
