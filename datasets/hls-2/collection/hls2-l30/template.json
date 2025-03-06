@@ -1,8 +1,8 @@
 {
   "stac_version": "1.0.0",
   "type": "Collection",
-  "id": "hls-2",
-  "title": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0",
+  "id": "hls2-l30",
+  "title": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0, Landsat Portion",
   "description": "{{ collection.description }}",
   "license": "not-provided",
   "links": [],
@@ -15,7 +15,7 @@
     "https://stac-extensions.github.io/scientific/v1.0.0/schema.json"
   ],
   "keywords": ["Sentinel", "Landsat", "HLS", "Satellite", "Global", "Imagery"],
-  "msft:short_description": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0",
+  "msft:short_description": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0, Landsat Portion",
   "msft:storage_account": "hls2euwest",
   "msft:container": "hls2",
   "msft:region": "westeurope",
@@ -33,7 +33,7 @@
   ],
   "assets": {},
   "summaries": {
-    "platform": ["Sentinel-2A", "Sentinel-2B", "Landsat 8"]
+    "platform": ["Landsat 8"]
   },
   "item_assets": {},
   "extent": {
