@@ -16,7 +16,7 @@
   ],
   "keywords": ["Sentinel", "Landsat", "HLS", "Satellite", "Global", "Imagery"],
   "msft:short_description": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0",
-  "msft:storage_account": "hls2sa",
+  "msft:storage_account": "hls2euwest",
   "msft:container": "hls2",
   "msft:region": "westeurope",
   "providers": [
