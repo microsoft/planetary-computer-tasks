@@ -8,8 +8,9 @@ pctasks dataset ingest-collection -d dataset.yaml -c hls2-l30 -a registry pccomp
 pctasks runs status <workflow id from output>
 <wait for it to succeede>
 curl https://planetarycomputer.microsoft.com/api/stac/v1/collections/hls2-l30
-<any future updates, do the same command but with the -u flag>
 ```
+
+any future updates, do the command with the -u flag
 
 -c is needed in this case because we have 2 different collections
 
@@ -18,7 +19,7 @@ curl https://planetarycomputer.microsoft.com/api/stac/v1/collections/hls2-l30
 Process (create) Items with:
 
 ```bash
-pctasks dataset process-items -d dataset.yaml -c hls2-l30 test-ingest -a registry pccomponents.azurecr.io --limit 1 --submit
+pctasks dataset process-items -d dataset.yaml -c hls2-l30 test-ingest -a registry pccomponents.azurecr.io --limit 100 --submit
 pctasks runs status <workflow id from output>
 pctasks runs get run-log <workflow id from output>
 pctasks runs get task-log <workflow id from output> create-splits create-splits -p 0

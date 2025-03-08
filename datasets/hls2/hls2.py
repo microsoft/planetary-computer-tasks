@@ -65,4 +65,13 @@ class HLS2Collection(Collection):
                 item.assets.pop(asset)
                 # TODO - we should also make sure the json file isnt in blob
 
+        # TODO - add in extensions
+        '''
+          "stac_extensions": [
+            "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
+            "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+            "https://stac-extensions.github.io/view/v1.0.0/schema.json",
+            "https://stac-extensions.github.io/scientific/v1.0.0/schema.json"
+        ]
+        '''
         return [item]
