@@ -40,5 +40,4 @@ networks:
   default:
     external: true
     name: pctasks-network
-    external: true
 
