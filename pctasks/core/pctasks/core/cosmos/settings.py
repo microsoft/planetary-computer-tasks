@@ -113,7 +113,9 @@ class CosmosDBSettings(PCTasksSettings):
         connection_verify = True
         emulator_host = os.environ.get(COSMOSDB_EMULATOR_HOST_ENV_VAR)
         if self.is_cosmosdb_emulator():
-            print(f"Using CosmosDB emulator at host {emulator_host}, it should be reachable at {self.url}")
+            print(
+                f"Using CosmosDB emulator at host {emulator_host}, it should be reachable at {self.url}"
+            )
             if self.url:
                 connection_verify = urlparse(self.url).hostname != emulator_host
             elif self.connection_string:
@@ -127,13 +129,13 @@ class CosmosDBSettings(PCTasksSettings):
             # automatically picked up from the environment/managed identity
             assert self.url
             if self.is_cosmosdb_emulator():
-                credential : str | DefaultAzureCredential | None = self.key
+                credential: str | DefaultAzureCredential | None = self.key
             else:
                 credential = DefaultAzureCredential()
             return CosmosClient(
                 self.url,
                 credential=credential,  # type: ignore
-                connection_verify=connection_verify
+                connection_verify=connection_verify,
             )
 
     def get_async_client(self) -> AsyncCosmosClient:
@@ -163,5 +165,5 @@ class CosmosDBSettings(PCTasksSettings):
             return AsyncCosmosClient(
                 self.url,
                 credential=credential,  # type: ignore
-                connection_verify=connection_verify
+                connection_verify=connection_verify,
             )
