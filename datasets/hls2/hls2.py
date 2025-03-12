@@ -21,6 +21,10 @@ logger.setLevel(logging.INFO)
 # regex for the jpg blob path
 hls2_regex = re.compile(r"([SL]30)/(\d{2})/([A-Z])/([A-Z]{2})/(\d{4})/(\d{2})/(\d{2})/HLS.[SL]30.T(\d{2})([A-Z]{3}).(\d{7})T(\d{6}).v2.0/.*\.jpg")
 
+# Band assets (does not include thumbnail)
+S30_assets = ['B01', 'B02', 'B03', 'B04', 'B05', 'B06', 'B07', 'B08', 'B8A', 'B09', 'B10', 'B11', 'B12', 'Fmask', 'SZA', 'SAA', 'VZA', 'VAA']
+L30_assets = ['B01', 'B02', 'B03', 'B04', 'B05', 'B06', 'B07', 'B09', 'B10', 'B11', 'Fmask', 'SZA', 'SAA', 'VZA', 'VAA']
+
 class HLS2Collection(Collection):
     @classmethod
     def create_item(
@@ -50,7 +54,22 @@ class HLS2Collection(Collection):
                 logger.error(f"Failed to read in STAC Item from {tmp_nc_path}: {e}")
                 return []
 
-        # Clear out links for now
+        # Verify all assets exist in blob (we already know the thumbnail exists)
+        if 'sentinel' in item.properties["platform"]:
+            for S30_asset in S30_assets:
+                if not storage.file_exists(thumbnail_path.replace('.jpg', f'.{S30_asset}.tif')):
+                    logger.error(f"{S30_asset} does not exist in {storage}")
+                    return []
+        elif 'landsat' in item.properties["platform"]:
+            for L30_asset in L30_assets:
+                if not storage.file_exists(thumbnail_path.replace('.jpg', f'.{L30_asset}.tif')):
+                    logger.error(f"{L30_asset} does not exist in {storage}")
+                    return []
+        else:
+            logger.error(f"Unknown platform {item.properties['platform']}")
+            return []
+
+        # Clear out links TODO: DO WE NEED ANY LINKS ADDED HERE?
         item.links = []
 
         # Update the hrefs and remove the stac JSON from the asset list
@@ -63,15 +82,14 @@ class HLS2Collection(Collection):
                 item.assets[asset].href = thumbnail_uri_https # we've already checked this exists
             elif '_stac.json' in item.assets[asset].href:
                 item.assets.pop(asset)
-                # TODO - we should also make sure the json file isnt in blob
 
-        # TODO - add in extensions
-        '''
-          "stac_extensions": [
-            "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
-            "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
-            "https://stac-extensions.github.io/view/v1.0.0/schema.json",
-            "https://stac-extensions.github.io/scientific/v1.0.0/schema.json"
-        ]
-        '''
+        # Some of the json we already copied had its extensions cleared, so add them back in
+        if len(item.stac_extensions) == 0:
+            item.stac_extensions = [
+                "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
+                "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+                "https://stac-extensions.github.io/view/v1.0.0/schema.json",
+                "https://stac-extensions.github.io/scientific/v1.0.0/schema.json"
+            ]
+
         return [item]
