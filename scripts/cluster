@@ -154,9 +154,7 @@ function update_cluster() {
 
     COSMOSDB_VARS=""
     if [ "${PCTASKS_COSMOSDB__URL}" ]; then
-        require_env "PCTASKS_COSMOSDB__KEY";
-        COSMOSDB_VARS="--set pctasks.cosmosdb.url=${PCTASKS_COSMOSDB__URL} \
-            --set pctasks.cosmosdb.key=${PCTASKS_COSMOSDB__KEY}"
+        COSMOSDB_VARS="--set pctasks.cosmosdb.url=${PCTASKS_COSMOSDB__URL}"
     fi
 
     if [ "${PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX}" ]; then
