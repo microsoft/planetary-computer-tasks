@@ -5,7 +5,6 @@ Sets up the Cosmos DB emulator.
 import time
 from contextlib import contextmanager
 from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple
-from urllib.parse import urljoin
 from uuid import uuid1
 
 import click
