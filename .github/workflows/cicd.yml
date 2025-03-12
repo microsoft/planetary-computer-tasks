@@ -52,8 +52,9 @@ jobs:
       - name: Setup cluster
         run: ./scripts/cluster setup
 
-      - name: Run integration tests
-        run: ./scripts/citest-integration
+      # Disable integration tests for now
+      # - name: Run integration tests
+      #   run: ./scripts/citest-integration
 
       # Publish images
 

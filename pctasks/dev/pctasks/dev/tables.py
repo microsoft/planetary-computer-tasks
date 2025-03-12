@@ -27,6 +27,7 @@ class TempTable:
             name=f"testtable{uuid1().hex}", permissions=permissions
         )
 
+        assert account_key is not None  # for mypy
         self._tables_cred = AzureNamedKeyCredential(name=account_name, key=account_key)
 
         self._account_sas = AzureSasCredential(

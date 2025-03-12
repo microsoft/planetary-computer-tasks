@@ -279,7 +279,11 @@ class CosmosDBContainer(BaseCosmosDBContainer[T], ABC):
                     lambda: self._container_client.scripts.execute_stored_procedure(
                         sp_name,
                         partition_key=partition_key,
-                        params=[list(item_group)],
+                        # azure-cosmos==4.7.0 seems to have an incorrect type hint
+                        # for params. Ignoring this error:
+                        # List item 0 has incompatible type "List[Dict[str, Any]]";
+                        # expected "Dict[str, Any]"  [list-item]
+                        params=[list(item_group)],  # type: ignore[list-item]
                     ),
                     strategy=self.backoff_strategy,
                 )

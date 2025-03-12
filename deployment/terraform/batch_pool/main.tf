@@ -1,6 +1,7 @@
 resource "azurerm_batch_pool" "batch_pool" {
 
   name                = var.name
+  metadata            = {}
   resource_group_name = var.resource_group_name
   account_name        = var.account_name
   display_name        = var.display_name
@@ -9,32 +10,34 @@ resource "azurerm_batch_pool" "batch_pool" {
 
   inter_node_communication = "Disabled"
 
+  identity {
+    type         = "UserAssigned"
+    identity_ids = [var.user_assigned_identity_id]
+  }
+
   network_configuration {
     subnet_id = var.subnet_id
-    endpoint_configuration {
-      name = "RemoteAccessRule-VM-Deny"
-      # frontend_port_range = "*"
-      frontend_port_range = "1-49999"
-      backend_port = 22
-      protocol = "TCP"
-      network_security_group_rules {
-        access = "Deny"
-        priority = 150  // Lower than 148
-        source_address_prefix = "*"
-      }
-    }
+    public_ips = []
+
   }
+
+  task_scheduling_policy {
+    node_fill_type = "Spread"
+  }
+
+  # Simplified communication mode is compatible with the NSG policies
+  # on our vnet.
+  target_node_communication_mode = "Simplified"
 
   container_configuration {
     type = "DockerCompatible"
     container_registries {
-      registry_server = "${var.acr_name}.azurecr.io"
-      user_name       = var.acr_client_id
-      password        = var.acr_client_secret
+      registry_server           = "${var.acr_name}.azurecr.io"
+      user_assigned_identity_id = var.user_assigned_identity_id
     }
   }
 
-  node_agent_sku_id   = "batch.node.ubuntu 20.04"
+  node_agent_sku_id = "batch.node.ubuntu 20.04"
 
   storage_image_reference {
     publisher = "microsoft-azure-batch"

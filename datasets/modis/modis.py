@@ -9,6 +9,7 @@ import stactools.modis.stac
 from azure.core.exceptions import ResourceNotFoundError
 from stactools.core.utils.antimeridian import Strategy
 from stactools.modis.file import File
+from misc import add_platform_field
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
@@ -85,5 +86,7 @@ class MODISCollection(Collection):
         logger.debug(f"Setting metadata asset href to {file.xml_href}")
         item.assets["metadata"].href = file.xml_href
         item.assets["metadata"].href = file.xml_href
+
+        item = add_platform_field(item, file.xml_href, logger)
 
         return [item]

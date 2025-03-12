@@ -15,10 +15,6 @@ jobs:
         args:
           url: https://planetarycomputer.microsoft.com/api/stac/v1/collections/aster-l1t
           asset_key: geoparquet-items
-        environment:
-          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
-          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
-          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
   create-chunks:
     foreach:
       items: ${{ jobs.get-partitions.tasks.get-partitions.output.assets }}
@@ -34,10 +30,6 @@ jobs:
           asset: ${{ item }}
           dst_uri: blob://astersa/aster-etl-data/chunks/update-geometries-2023-01-23-00
           chunk_size: 5000
-        environment:
-          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
-          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
-          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
         tags:
           batch_pool_id: high_memory_pool
   update-items:
@@ -58,10 +50,6 @@ jobs:
           chunk_id: ${{ item.id }}
           item_chunkset_uri: blob://astersa/aster-etl-data/items/update-geometries-2023-01-23-00
           simplify_tolerance: 0.001
-        environment:
-          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
-          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
-          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
       - id: ingest-items
         image_key: ingest
         task: pctasks.ingest_task.task:ingest_task
@@ -73,7 +61,3 @@ jobs:
           options:
             insert_group_size: 5000
             insert_only: false
-        environment:
-          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
-          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
-          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}

@@ -3,6 +3,7 @@ import re
 from typing import Any, Dict, Optional
 from urllib.parse import urlparse
 
+import azure.identity.aio
 from azure.cosmos import CosmosClient
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.identity import DefaultAzureCredential
@@ -89,28 +90,7 @@ class CosmosDBSettings(PCTasksSettings):
 
         return v
 
-    def ensure_valid_connection_info(self) -> None:
-        if self.connection_string:
-            return
-        if not self.url:
-            raise CosmosDBSettingsError("Must set either connection_string or url")
-        if not self.key:
-            if not (
-                os.environ.get("AZURE_CLIENT_ID")
-                and os.environ.get("AZURE_CLIENT_SECRET")
-                and os.environ.get("AZURE_TENANT_ID")
-            ):
-                # Validate that the Azure credentials are set
-                # Validation is here instead of pydantic validator
-                # because we may want to get container name settings
-                # without setting credentials.
-                raise CosmosDBSettingsError(
-                    "Must set key or connection_string, account key or "
-                    "provide Azure credentials to the environment"
-                )
-
     def get_cosmosdb_url(self) -> str:
-        self.ensure_valid_connection_info()
         if self.connection_string:
             m = re.search(r"AccountEndpoint=(.*?);", self.connection_string)
             assert m  # Should be validated by pydantic
@@ -142,7 +122,8 @@ class CosmosDBSettings(PCTasksSettings):
                 self.connection_string, connection_verify=connection_verify
             )
         else:
-            self.ensure_valid_connection_info()
+            # If the connection string is not set, the credetials are
+            # automatically picked up from the environment/managed identity
             assert self.url
             credential = self.key or DefaultAzureCredential()
             return CosmosClient(
@@ -163,9 +144,10 @@ class CosmosDBSettings(PCTasksSettings):
                 self.connection_string, connection_verify=connection_verify
             )
         else:
-            self.ensure_valid_connection_info()
+            # If the connection string is not set, the credetials are
+            # automatically picked up from the environment/managed identity
             assert self.url
-            credential = self.key or DefaultAzureCredential()
+            credential = self.key or azure.identity.aio.DefaultAzureCredential()
             return AsyncCosmosClient(
                 self.url, credential=credential, connection_verify=connection_verify
             )

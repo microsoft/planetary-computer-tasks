@@ -1,5 +1,5 @@
 id: ecmwf_forecast
-image: ${{ args.registry }}/pctasks-ecmwf-forecast:20240314.1
+image: ${{ args.registry }}/pctasks-ecmwf-forecast:2024.6.13.0
 
 args:
 - registry
@@ -8,9 +8,6 @@ code:
   src: ${{ local.path(./ecmwf_forecast.py) }}
 
 environment:
-  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
-  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
-  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
   APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
 
 collections:
@@ -21,7 +18,11 @@ collections:
       - uri: blob://ai4edataeuwest/ecmwf/
         chunks:
           options:
-            matches: (enfo|oper|waef|wave)(?!-opendata)
+            # currently excluding "aifs", in favor of "ifs"
+            # Could put that in a different collection, or modify
+            # the stactools package.
+            matches: /ifs/(0p25|0p4-beta)/(enfo|oper|waef|wave)(?!-opendata)
+            match_full_path: true
             extensions: [.grib2]
     chunk_storage:
       uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/

@@ -1,10 +1,6 @@
 id: deltaresfloods
-image: pccomponentstest.azurecr.io/pctasks-basic:2022.6.16.2
+image: pccomponents.azurecr.io/pctasks-task-base:latest
 target_environment: staging
-environment:
-  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
-  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
-  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
 
 collections:
   - id: deltares-floods

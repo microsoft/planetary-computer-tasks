@@ -39,6 +39,8 @@ def run_workflow(
         run_settings = RunSettings.get()
         run_settings = run_settings.copy(deep=True)
         run_settings.task_poll_seconds = 5
+        run_settings.max_concurrent_workflow_tasks = 5
+        run_settings.remote_runner_threads = 2
         cosmosdb_settings = CosmosDBSettings.get()
 
         with RemoteWorkflowExecutor(
@@ -139,7 +141,7 @@ jobs:
       args:
         output_dir: "${{ args.base_output_dir }}/job-1-task-1"
         options:
-          num_outputs: 2
+          num_outputs: 10
       schema_version: 1.0.0
   job-2:
     tasks:
@@ -190,7 +192,7 @@ schema_version: 1.0.0
             storage.list_files(name_starts_with="job-3-task-2/")
         )
 
-        assert len(last_task_output_paths) == 4
+        assert len(last_task_output_paths) == 20
 
 
 @pytest.mark.usefixtures("cosmosdb_containers")

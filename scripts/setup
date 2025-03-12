@@ -78,7 +78,7 @@ source scripts/env
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${CLEAR_RECORDS}" ]; then
         echo "Clearing records from Azurite Tables..."
-        docker-compose -f docker-compose.console.yml run --rm \
+        docker compose -f docker-compose.console.yml run --rm \
             dev \
             pctasks-dev azurite clear-records
 
@@ -87,10 +87,10 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     fi
     if [ "${RESET_COSMOS_DB}" ]; then
         echo "Reset cosmos db..."
-        docker-compose -f docker-compose.cosmosdb.yml stop cosmosdb
-        docker-compose -f docker-compose.cosmosdb.yml rm -f cosmosdb
+        docker compose -f docker-compose.cosmosdb.yml stop cosmosdb
+        docker compose -f docker-compose.cosmosdb.yml rm -f cosmosdb
         docker volume rm pctasks_pctasks-cosmosdb-data
-        docker-compose -f docker-compose.cosmosdb.yml up -d cosmosdb
+        docker compose -f docker-compose.cosmosdb.yml up -d cosmosdb
     fi
     if [ "${RM_TEST_CONTAINERS}" ]; then
         if [ -z "${PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX}" ]; then
@@ -98,7 +98,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
             exit 1
         fi
         echo "Removing test containers..."
-        docker-compose ${COSMOSDB_EMULATOR} -f docker-compose.console.yml run --rm \
+        docker compose ${COSMOSDB_EMULATOR} -f docker-compose.console.yml run --rm \
             dev \
             pctasks-dev cosmosdb rm-test-containers;
 
@@ -133,14 +133,14 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
         echo " -- SETTING UP COSMOSDB"
         if [ "${COSMOSDB_EMULATOR}" ]; then
-            if [ -z $(docker-compose ${COSMOSDB_EMULATOR} ps -q cosmosdb) ]; then
+            if [ -z $(docker compose ${COSMOSDB_EMULATOR} ps -q cosmosdb) ]; then
 
                 echo "CosmosDB is not running. Starting it..."
-                docker-compose ${COSMOSDB_EMULATOR} up -d cosmosdb
+                docker compose ${COSMOSDB_EMULATOR} up -d cosmosdb
             fi
         fi
 
-        docker-compose ${COSMOSDB_EMULATOR} -f docker-compose.console.yml run --rm \
+        docker compose ${COSMOSDB_EMULATOR} -f docker-compose.console.yml run --rm \
             dev \
             pctasks-dev cosmosdb setup
     fi
@@ -153,7 +153,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
     if [ -z "${COSMOS_ONLY}" ]; then
         echo " -- SETTING UP AZURITE"
-        docker-compose -f docker-compose.console.yml run --rm \
+        docker compose -f docker-compose.console.yml run --rm \
             dev \
             pctasks-dev azurite setup
     fi

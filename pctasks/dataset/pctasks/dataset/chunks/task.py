@@ -57,6 +57,7 @@ class CreateChunksTask(Task[CreateChunksInput, ChunksOutput]):
             file_limit=input.options.limit,
             max_depth=input.options.max_depth,
             min_depth=input.options.min_depth,
+            match_full_path=input.options.match_full_path,
         ):
             if input.options.list_folders:
                 gen = folders

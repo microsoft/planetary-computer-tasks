@@ -1,3 +1,5 @@
+import concurrent.futures
+import contextlib
 import logging
 import multiprocessing
 import os
@@ -14,6 +16,7 @@ from typing import (
     Optional,
     Tuple,
     Type,
+    TypedDict,
     TypeVar,
     Union,
     cast,
@@ -30,6 +33,7 @@ from azure.storage.blob import (
     ContainerClient,
     ContainerSasPermissions,
     ContentSettings,
+    UserDelegationKey,
     generate_container_sas,
 )
 
@@ -252,6 +256,7 @@ class BlobStorage(Storage):
         self.storage_account_name = storage_account_name
         self.container_name = container_name
         self.prefix = prefix.strip("/") if prefix is not None else prefix
+        self._container_client_wrapper: Optional[ContainerClientWrapper] = None
 
     def __repr__(self) -> str:
         prefix_part = "" if self.prefix is None else f"/{self.prefix}"
@@ -261,14 +266,17 @@ class BlobStorage(Storage):
         )
 
     def _get_client(self) -> ContainerClientWrapper:
-        account_client = BlobServiceClient(
-            account_url=self.account_url,
-            credential=self._blob_creds,
-        )
+        if self._container_client_wrapper is None:
+            account_client = BlobServiceClient(
+                account_url=self.account_url,
+                credential=self._blob_creds,
+            )
 
-        container_client = account_client.get_container_client(self.container_name)
-
-        return ContainerClientWrapper(account_client, container_client)
+            container_client = account_client.get_container_client(self.container_name)
+            self._container_client_wrapper = ContainerClientWrapper(
+                account_client, container_client
+            )
+        return self._container_client_wrapper
 
     def _get_name_starts_with(
         self, additional_prefix: Optional[str] = None
@@ -336,8 +344,13 @@ class BlobStorage(Storage):
         This uses the storage instance's BlobServiceClient (and its
         attached credentials) to generate a container-level SAS token.
         """
+        logger.info(f"_generate_container_sas for {self}")
+
         start = Datetime.utcnow() - timedelta(hours=10)
-        expiry = Datetime.utcnow() + timedelta(hours=24 * 7)
+        # Chop off a couple hours at the end to avoid any issues with the
+        # SAS token having too long of a duration.
+        # https://github.com/microsoft/planetary-computer-tasks/pull/291#issuecomment-2135599782
+        expiry = start + timedelta(hours=(24 * 7) - 2)
         permission = ContainerSasPermissions(
             read=read,
             write=write,
@@ -365,6 +378,8 @@ class BlobStorage(Storage):
         write: bool = False,
         delete: bool = False,
     ) -> str:
+        logger.info(f"Generating authenticated URL for {file_path}")
+
         sas_token = self.sas_token
         if self.sas_token is None:
             sas_token = self._generate_container_sas(
@@ -388,7 +403,8 @@ class BlobStorage(Storage):
             return blob_uri.blob_name or ""
 
     def get_file_info(self, file_path: str) -> StorageFileInfo:
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 try:
                     props = with_backoff(lambda: blob.get_blob_properties())
@@ -397,7 +413,8 @@ class BlobStorage(Storage):
                 return StorageFileInfo(size=cast(int, props.size))
 
     def file_exists(self, file_path: str) -> bool:
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 return with_backoff(lambda: blob.exists())
 
@@ -450,7 +467,8 @@ class BlobStorage(Storage):
                 for blob_name in page:
                     yield blob_name
 
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             return with_backoff(fetch_blobs)
 
     def walk(
@@ -464,6 +482,8 @@ class BlobStorage(Storage):
         matches: Optional[str] = None,
         walk_limit: Optional[int] = None,
         file_limit: Optional[int] = None,
+        match_full_path: bool = False,
+        max_concurrency: int = 32,
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
         # Ensure UTC set
         since_date = map_opt(lambda d: d.replace(tzinfo=timezone.utc), since_date)
@@ -488,6 +508,7 @@ class BlobStorage(Storage):
         def _get_prefix_content(
             full_prefix: Optional[str],
         ) -> Tuple[List[str], List[str]]:
+            logger.info("Listing prefix=%s", full_prefix)
             folders = []
             files = []
             for item in client.container.walk_blobs(name_starts_with=full_prefix):
@@ -514,7 +535,9 @@ class BlobStorage(Storage):
         limit_break = False
 
         full_prefixes: List[str] = [self._get_name_starts_with(name_starts_with) or ""]
-        with self._get_client() as client:
+        client = self._get_client()
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=max_concurrency)
+        with contextlib.nullcontext():
             while full_prefixes:
                 if walk_limit and walk_count >= walk_limit:
                     break
@@ -523,6 +546,7 @@ class BlobStorage(Storage):
                     break
 
                 next_level_prefixes: List[str] = []
+                futures = {}
                 for full_prefix in full_prefixes:
                     if walk_limit and walk_count >= walk_limit:
                         limit_break = True
@@ -534,9 +558,22 @@ class BlobStorage(Storage):
                     if max_depth and prefix_depth > max_depth:
                         break
 
-                    folders, files = _get_prefix_content(full_prefix)
+                    future = pool.submit(_get_prefix_content, full_prefix)
+                    futures[future] = full_prefix
 
-                    files = [file for file in files if path_filter(file)]
+                for future in concurrent.futures.as_completed(futures):
+                    full_prefix = futures[future]
+                    folders, unfiltered_files = future.result()
+
+                    files = []
+
+                    for file in unfiltered_files:
+                        if match_full_path:
+                            match_on = "/".join([full_prefix.rstrip("/"), file])
+                        else:
+                            match_on = file
+                        if path_filter(match_on):
+                            files.append(file)
 
                     if file_limit and file_count + len(files) > file_limit:
                         files = files[: file_limit - file_count]
@@ -570,7 +607,8 @@ class BlobStorage(Storage):
         if timeout_seconds is not None:
             kwargs["timeout"] = timeout_seconds
 
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 with open(output_path, "wb" if is_binary else "w") as f:
                     try:
@@ -585,7 +623,8 @@ class BlobStorage(Storage):
         target_path: str,
         overwrite: bool = True,
     ) -> None:
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(
                 self._add_prefix(target_path)
             ) as blob:
@@ -615,7 +654,8 @@ class BlobStorage(Storage):
         kwargs = {}
         if content_type:
             kwargs["content_settings"] = ContentSettings(content_type=content_type)
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(
                 self._add_prefix(target_path)
             ) as blob:
@@ -629,7 +669,8 @@ class BlobStorage(Storage):
     def read_bytes(self, file_path: str) -> bytes:
         try:
             blob_path = self._add_prefix(file_path)
-            with self._get_client() as client:
+            client = self._get_client()
+            with contextlib.nullcontext():
                 with client.container.get_blob_client(blob_path) as blob:
                     blob_data = with_backoff(
                         lambda: blob.download_blob(
@@ -649,7 +690,8 @@ class BlobStorage(Storage):
 
     def write_bytes(self, file_path: str, data: bytes, overwrite: bool = True) -> None:
         full_path = self._add_prefix(file_path)
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(full_path) as blob:
                 with_backoff(
                     lambda: blob.upload_blob(data, overwrite=overwrite)  # type: ignore
@@ -660,7 +702,8 @@ class BlobStorage(Storage):
             self.delete_file(file_path)
 
     def delete_file(self, file_path: str) -> None:
-        with self._get_client() as client:
+        client = self._get_client()
+        with contextlib.nullcontext():
             with client.container.get_blob_client(self._add_prefix(file_path)) as blob:
                 try:
                     with_backoff(lambda: blob.delete_blob())
@@ -691,16 +734,24 @@ class BlobStorage(Storage):
     def from_account_key(
         cls: Type[T],
         blob_uri: Union[BlobUri, str],
-        account_key: str,
-        account_url: Optional[str] = None,
+        account_key: Optional[str],
+        account_url: Optional[str],
     ) -> T:
+        print(f"Creating BlobStorage from account key for {blob_uri}", flush=True)
+
         if isinstance(blob_uri, str):
             blob_uri = BlobUri(blob_uri)
+
+        if not account_url:
+            account_url = (
+                f"https://{blob_uri.storage_account_name}.blob.core.windows.net"
+            )
+
+        credential_options = generate_key_for_sas(account_url, account_key)
 
         sas_token = generate_container_sas(
             account_name=blob_uri.storage_account_name,
             container_name=blob_uri.container_name,
-            account_key=account_key,
             start=Datetime.utcnow() - timedelta(hours=10),
             expiry=Datetime.utcnow() + timedelta(hours=24 * 7),
             permission=ContainerSasPermissions(
@@ -709,6 +760,7 @@ class BlobStorage(Storage):
                 delete=True,
                 list=True,
             ),
+            **credential_options,
         )
 
         return cls.from_uri(
@@ -724,20 +776,6 @@ class BlobStorage(Storage):
         Return the fsspec-style path.
         """
         return f"abfs://{self.container_name}/{path}"
-
-    @classmethod
-    def from_connection_string(
-        cls: Type[T],
-        connection_string: str,
-        container_name: str,
-    ) -> T:
-        container_client = ContainerClient.from_connection_string(
-            connection_string, container_name
-        )
-        credential = container_client.credential
-        return cls.from_account_key(
-            f"blob://{credential.account_name}/{container_name}", credential.account_key
-        )
 
 
 def maybe_rewrite_blob_storage_url(url: str) -> str:
@@ -798,3 +836,47 @@ def maybe_rewrite_blob_storage_url(url: str) -> str:
         url = f"blob://{parsed.path.strip('/')}"
 
     return url
+
+
+def get_user_delegation_key(account_url: str) -> UserDelegationKey:
+    credential = DefaultAzureCredential()
+    blob_service_client = BlobServiceClient(
+        account_url=account_url,
+        credential=credential,
+    )
+
+    start = Datetime.utcnow() - timedelta(hours=10)
+    expiry = start + timedelta(hours=(24 * 7) - 2)
+    return blob_service_client.get_user_delegation_key(
+        key_start_time=start, key_expiry_time=expiry
+    )
+
+
+def is_azurite_url(url: str) -> bool:
+    host = os.getenv(AZURITE_HOST_ENV_VAR)
+    port = os.getenv(AZURITE_PORT_ENV_VAR)
+    account_name = os.getenv(AZURITE_STORAGE_ACCOUNT_ENV_VAR)
+    azurite_url = f"http://{host}:{port}/{account_name}"
+
+    return url.startswith(azurite_url)
+
+
+class BlobSasCredential(TypedDict):
+    account_key: Optional[str]
+    user_delegation_key: Optional[UserDelegationKey]
+
+
+def generate_key_for_sas(
+    account_url: str, account_key: Optional[str] = None
+) -> BlobSasCredential:
+    if is_azurite_url(account_url):
+        if account_key is None:
+            raise ValueError(
+                f"Azurite account URL requires an account key. "
+                f"'account_url={account_url}'"
+            )
+        return {"account_key": account_key, "user_delegation_key": None}
+    return {
+        "account_key": None,
+        "user_delegation_key": get_user_delegation_key(account_url),
+    }

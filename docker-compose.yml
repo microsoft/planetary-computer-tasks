@@ -1,7 +1,7 @@
 services:
   azurite:
     container_name: pctasks-azurite
-    image: mcr.microsoft.com/azure-storage/azurite:3.27.0
+    image: mcr.microsoft.com/azure-storage/azurite:3.32.0
     hostname: azurite
     command: "azurite --silent --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost
       0.0.0.0 -l /workspace"
@@ -53,10 +53,6 @@ services:
       - APP_ROOT_PATH=/tasks
       - APP_PORT=8511
       - WEB_CONCURRENCY=1
-
-      - AZURE_TENANT_ID
-      - AZURE_CLIENT_ID
-      - AZURE_CLIENT_SECRET
 
       - PCTASKS_SERVER__DEV=true
       - PCTASKS_SERVER__DEV_API_KEY=hunter2
@@ -110,8 +106,8 @@ services:
       ### Cosmos DB
       - COSMOSDB_EMULATOR_HOST=cosmosdb
       - PCTASKS_COSMOSDB__URL=${PCTASKS_COSMOSDB__URL:-https://cosmosdb:8081/}
-      - PCTASKS_COSMOSDB__KEY=${PCTASKS_COSMOSDB__KEY:-C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==}
       - PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX
+      - PCTASKS_COSMOSDB__KEY=${PCTASKS_COSMOSDB__KEY:-C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==}
 
       ### Blobs
       - PCTASKS_RUN__BLOB_ACCOUNT_URL=http://azurite:10000/devstoreaccount1
@@ -120,6 +116,7 @@ services:
 
     volumes:
       - ./pctasks:/opt/src
+      - ~/.azure:/root/.azure
     ports:
       - "8511:8511"
     command: >
@@ -166,6 +163,8 @@ services:
     image: registry:2
     ports:
       - 5001:5000
+    volumes:
+      - ~/.azure:/root/.azure
 
   functions:
     container_name: pctasks-functions
@@ -176,6 +175,7 @@ services:
     volumes:
       - ./pctasks:/home/site/pctasks
       - ./pctasks_funcs:/home/site/wwwroot
+      - ~/.azure:/home/.azure
     ports:
       - "7071:7071" # Functions
     environment:
@@ -184,7 +184,7 @@ services:
 
       # Must use IP address to avoid SSL errors
       - PCTASKS_COSMOSDB__URL=${PCTASKS_COSMOSDB__URL:-https://172.16.238.246:8081/}
-      - PCTASKS_COSMOSDB__KEY=${PCTASKS_COSMOSDB__KEY:-C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==}
+      - PCTASKS_COSMOSDB__accountEndpoint=${PCTASKS_COSMOSDB__URL}
       # Set trigger app setting separately to avoid issues with __ in env var names
       - FUNC_COSMOSDB_CONN_STR=AccountEndpoint=${PCTASKS_COSMOSDB__URL:-https://172.16.238.246:8081/};AccountKey=${PCTASKS_COSMOSDB__KEY:-C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==};
       - FUNC_STORAGE_ACCOUNT_CONN_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
@@ -205,8 +205,8 @@ services:
 networks:
   default:
     # Network created during scripts/setup
-    external: true
     name: pctasks-network
+    external: true
 
 volumes:
   pctasks-azurite-data: null

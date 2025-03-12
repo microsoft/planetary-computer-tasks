@@ -10,6 +10,43 @@ by `deploy/docker-compose.yaml`.
 There are resources that PCTasks depends on that are not deployed itself, and need to be managed out-of-band. This can be done by creating
 the resources manually through the Azure Portal or through separate terraform processes.
 
+### 3rd party charts and images
+
+For compliance reasons, Microsoft services must use charts and images that are under the control of the service team, typically within ACR or MCR. In PCTasks, these 3rd party charts are vendored into the `deployment/helm` directory, and the images are imported into our internally managed ACR (where they don't already exist in MCR).
+
+#### Nginx-Ingress
+
+The chart can be brought into the `deployment/helm/vendored` directory by running the following command:
+
+```console
+cd deployment/helm/vendored
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm pull ingress-nginx/ingress-nginx --version <a.b.c>
+```
+
+The image is in MCR, so can be used directly from there and specified in the CLI options to helm in the `deploy` script.
+
+#### Argo Workflows
+
+The chart can be brought into the `deployment/helm/vendored` directory by running the following command:
+
+```console
+cd deployment/helm/vendored
+helm repo add argo https://argoproj.github.io/argo-helm
+helm pull argo/argo-workflows --version 3.5.8
+```
+
+The images can be imported into your ACR by running the following command:
+
+```console
+az acr login --name pccomponentstest
+az acr import -n pccomponentstest --source quay.io/argoproj/argocli:v3.5.8 -t argoproj/argocli:v3.5.8 --subscription "Planetary Computer Test"
+az acr import -n pccomponentstest --source quay.io/argoproj/workflow-controller:v3.5.8 -t argoproj/workflow-controller:v3.5.8 --subscription "Planetary Computer Test"
+az acr import -n pccomponentstest --source quay.io/argoproj/argoexec:v3.5.8 -t argoproj/argoexec:v3.5.8 --subscription "Planetary Computer Test"
+```
+
+The image and tag values are specified in the `argo-values.yaml` file and used during installs.
+
 ### Deployment Service principal
 
 You'll need a service principal that has sufficient permissions to deploy Azure resources, including creating resource groups and assigning IAM roles.
@@ -54,10 +91,6 @@ The tfvars template file has documentation on each of the variables that need to
 Also, you can use the `--skip-fetch-tf-vars` option to `bin/deploy` to skip fetching the terraform values from keyvault, which requires that the `values.tfvars` file be at the proper location in the stack terraform directory.
 
 __Note:__ If you are using the `terraform/dev` stack, which stores its terraform state locally, a `values.tfvars` will not be pulled from the keyvault. You need to create the `values.tfvars` based on the template and copy it into the `terraform/dev` folder manually.
-
-### Roles
-
-The service principal specified by the `task_acr_sp_object_id` variable must have `AcrPull` permissions on the ACR specified by the `task_acr_name` variable.
 
 ### Azure AD App Registrations
 

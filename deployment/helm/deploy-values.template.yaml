@@ -26,15 +26,19 @@ pctasks:
       port: 80
       annotations: {}
 
-    azure:
-      tenant_id: "{{ tf.pctasks_server_sp_tenant_id }}"
-      client_id: "{{ tf.pctasks_server_sp_client_id }}"
-      client_secret: "{{ tf.pctasks_server_sp_client_secret }}"
+    serviceAccount:
+      annotations:
+        azure.workload.identity/client-id: "{{ tf.pctasks_workflow_identity_client_id }}"
+        azure.workload.identity/tenant-id: "{{ tf.pctasks_workflow_identity_tenant_id }}"
 
     deploy:
       replicaCount: 1
+      podLabels:
+        azure.workload.identity/use: "true"
       podAnnotations:
         "deployed": "{{ env.DATE }}"
+        azure.workload.identity/client-id: "{{ tf.pctasks_workflow_identity_client_id }}"
+        azure.workload.identity/tenant-id: "{{ tf.pctasks_workflow_identity_tenant_id }}"
       nodeSelector:
         "node_group": "default"
 
@@ -42,10 +46,6 @@ pctasks:
     task_runner_type: "batch"
     streaming_task_namespace: "pc"
     streaming_task_node_group: {{ tf.aks_streaming_task_node_group_name }}
-    streaming_taskio_sp_tenant_id: {{ tf.streaming_taskio_sp_tenant_id }}
-    streaming_taskio_sp_client_id: {{ tf.streaming_taskio_sp_client_id }}
-    streaming_taskio_sp_client_secret: {{ tf.streaming_taskio_sp_client_secret }}
-
     task_poll_seconds: 30
 
     notifications:
@@ -55,14 +55,12 @@ pctasks:
     tables:
       account_url: {{ tf.sa_tables_account_url }}
       account_name: {{ tf.sa_account_name }}
-      account_key: {{ tf.sa_account_key }}
-      connection_string: {{ tf.sa_connection_string}}
+      connection_string: {{ tf.sa_connection_string }}
       image_key_table_name: "imagekeys"
 
     blob:
       account_url: {{ tf.sa_blob_account_url }}
       account_name: {{ tf.sa_account_name }}
-      account_key: {{ tf.sa_account_key }}
       log_blob_container: tasklogs
       task_io_blob_container: taskio
 
@@ -75,6 +73,12 @@ pctasks:
         node_group: "{{ tf.argo_wf_node_group_name }}"
       # argo token set during helm install
 
+    workload_identity:
+      enabled: true
+      service_account: pctasks-server
+      client_id: "{{ tf.pctasks_workflow_identity_client_id }}"
+      tenant_id: "{{ tf.pctasks_workflow_identity_tenant_id }}"
+
     batch:
       enabled: true
       url: "{{ tf.batch_url }}"
@@ -85,9 +89,10 @@ pctasks:
     keyvault:
       enabled: true
       url: "{{ tf.keyvault_url }}"
-      sp_tenant_id: "{{ tf.kv_sp_tenant_id }}"
-      sp_client_id: "{{ tf.kv_sp_client_id }}"
-      sp_client_secret: "{{ tf.kv_sp_client_secret }}"
+
+    applicationinsights:
+      enabled: true
+      connection_string: "{{ tf.applicationinsights_connection_string }}"
 
 pcingress:
   services:
@@ -103,24 +108,24 @@ pcingress:
   cert:
     secretName: "pctasks-tls-secret"
 
-  certIssuer:
-    enabled: true
-    privateKeySecretRef: "{{ tf.cluster_cert_issuer }}"
-    server: "{{ tf.cluster_cert_server }}"
-    issuerEmail: "planetarycomputer@microsoft.com"
-    secretName: "pctasks-tls-secret"
-
   ingress:
     enabled: true
-    tlsHost: "{{ tf.cloudapp_hostname }}"
+    tlsHost: "planetarycomputer-test.microsoft.com"
     hosts:
-      - "{{ tf.cloudapp_hostname }}"
       - "planetarycomputer-test.microsoft.com"
-      - "{{ tf.api_management_name }}.azure-api.net"
     annotations:
       kubernetes.io/ingress.class: nginx
-      cert-manager.io/cluster-issuer: "{{ tf.cluster_cert_issuer }}-pcingress"
       nginx.ingress.kubernetes.io/rewrite-target: /$2
       nginx.ingress.kubernetes.io/use-regex: "true"
       nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
       nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
+
+secretProvider:
+  create: true
+  namespace: "pc"
+  providerName: "keyvault"
+  userAssignedIdentityID: "{{ env.SECRET_PROVIDER_MANAGED_IDENTITY_ID }}"
+  tenantId: "{{ env.AZURE_TENANT }}"
+  keyvaultName: "{{ env.KEYVAULT_NAME }}"
+  keyvaultCertificateName: "{{ env.SECRET_PROVIDER_KEYVAULT_SECRET }}"
+  kubernetesCertificateSecretName: "{{ env.SECRET_PROVIDER_KEYVAULT_SECRET }}"

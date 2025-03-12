@@ -53,10 +53,10 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     fi
     if [ "${STOP_SERVERS}" ]; then
         echo "Stopping servers"
-        docker-compose -f docker-compose.yml -f docker-compose.aux.yml -f docker-compose.cosmosdb.yml down
+        docker compose -f docker-compose.yml -f docker-compose.aux.yml -f docker-compose.cosmosdb.yml down
     else
         echo "Starting servers"
-        docker-compose -f docker-compose.yml ${AUX_SERVERS} ${COSMOSDB_EMULATOR} \
+        docker compose -f docker-compose.yml ${AUX_SERVERS} ${COSMOSDB_EMULATOR} \
         up ${DETACHED_ARG} "$@"
     fi
 fi

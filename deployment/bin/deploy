@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-
 source bin/lib
 
 if [[ "${CI}" ]]; then
@@ -25,15 +24,11 @@ Options:
     --skip-tf-init: Skip running terrform init.
     --skip-functions: Don't run function publish.
     --skip-fetch-tf-vars: Skip fetching terraform variables.
+    --user-auth: Use mounted Azure user credentials
     -y: Skip confirmation.
 
 "
 }
-
-require_env "ARM_SUBSCRIPTION_ID"
-require_env "ARM_TENANT_ID"
-require_env "ARM_CLIENT_ID"
-require_env "ARM_USE_OIDC"
 
 
 ###################
@@ -79,6 +74,10 @@ while [[ "$#" -gt 0 ]]; do case $1 in
         SKIP_FETCH_TF_VARS=1
         shift
         ;;
+    --user-auth)
+        export USER_AUTH=1
+        shift
+        ;;
     --help)
         usage
         exit 0
@@ -95,12 +94,50 @@ while [[ "$#" -gt 0 ]]; do case $1 in
 # Check and configure environment #
 ###################################
 
+function on_exit() {
+    # Always disable shared access keys on script exit
+    disable_shared_access_keys
+    # Always remove IP from storage firewalls on script exit
+    remove_ip_from_storage_firewalls
+}
+
+trap on_exit EXIT
+
+# Enable shared access keys on storage accounts that must have properties read
+# [storage_account]=resource_group
+declare -A SAK_STORAGE_ACCOUNTS
+SAK_STORAGE_ACCOUNTS=(
+  ["pctasksteststaging"]="rg-pctaskstest-staging-westeurope"
+  ["stbpctasksteststaging"]="rg-pctaskstest-staging-westeurope"
+)
+
+# Add client IP to firewall for storage accounts that must have properties read
+# [storage_account]=resource_group
+declare -A FW_STORAGE_ACCOUNTS
+FW_STORAGE_ACCOUNTS=(
+    ["pctesttfstate"]="pc-test-manual-resources"
+    ["pctasksteststaging"]="rg-pctaskstest-staging-westeurope"
+)
+
 if [[ -z ${TERRAFORM_DIR} ]]; then
     echo "Must pass in TERRAFORM_DIR with -t"
     exit 1
 fi
 
+if [[ -z $USER_AUTH ]]; then
+    require_env "ARM_SUBSCRIPTION_ID"
+    require_env "ARM_TENANT_ID"
+    require_env "ARM_CLIENT_ID"
+    require_env "ARM_USE_OIDC"
+
+fi
+
 setup_env
+
+if [ -z "$ARM_CLIENT_ID" ]; then
+  export ARM_CLIENT_ID=$(az account show --query user.name -o tsv)
+  echo "Using Azure CLI auth with username: ${ARM_CLIENT_ID}"
+fi
 
 # ---------------------------------------------------
 
@@ -115,11 +152,12 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     require_env "PCTASKS_TASK_KV"
     require_env "PCTASKS_TASK_KV_RESOURCE_GROUP_NAME"
 
-    #########################
-    # Add IP to KV firewall #
-    #########################
+    #######################
+    # Add IP to firewalls #
+    #######################
 
     bin/kv_add_ip
+    add_ip_to_storage_firewalls
 
     #####################
     # Deploy Terraform  #
@@ -129,6 +167,8 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
 
     if [ -z "${SKIP_FETCH_TF_VARS}${SKIP_TF}" ]; then
+
+        enable_shared_access_keys
 
         if [ -f "${TERRAFORM_DIR}/values.tfvars" ]; then
             mv ${TERRAFORM_DIR}/values.tfvars ${TERRAFORM_DIR}/values.bak.tfvars
@@ -204,57 +244,17 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
     setup_helm
 
-    # Install cert-manager
-
-    echo "==================="
-    echo "== cert-manager ==="
-    echo "==================="
-
-    helm upgrade --install \
-        cert-manager \
-        --namespace pc \
-        --create-namespace \
-        --version v1.6.0 \
-        --set installCRDs=true jetstack/cert-manager
-
     echo "=================="
     echo "===== Argo ======="
     echo "=================="
 
-    helm upgrade --install argo-workflows argo/argo-workflows \
+    helm upgrade --install argo-workflows helm/vendored/argo-workflows-0.41.8.tgz \
         -n pc \
         --create-namespace \
         -f "helm/argo-values.yaml" \
         --wait \
-        --timeout 2m0s
-
-    echo "=================="
-    echo "===== KEDA ======="
-    echo "=================="
-
-    helm upgrade --install keda kedacore/keda \
-        -n keda \
-        --create-namespace \
-        --wait \
-        --timeout 2m0s
-
-    # TODO: Figure out how to apply to set this with helm
-    echo "Adding KEDA secret"
-    pushd ${TERRAFORM_DIR}
-      SA_CONNECTION_STRING=$(tf_output sa_connection_string)
-    popd
-    # pipe into kubectl apply to ensure create or update works.
-    kubectl -n pc create secret generic secrets-storage-queue-connection-string \
-        --from-literal="ConnectionString=$SA_CONNECTION_STRING" \
-        --dry-run=client -o yaml \
-        | kubectl apply -f -
-    echo "Creating KEDA trigger auth"
-    # This namespace must match where argo runs its workflows
-    kubectl -n pc apply -f helm/keda-trigger-authentication.yaml
-
-    echo "Adding KEDA roles and rolebindings"
-    # This namespace must match where argo runs its workflows
-    kubectl -n pc apply -f helm/argo-workflow-keda-rbac-prod.yaml
+        --timeout 2m0s \
+        --debug
 
     echo "===================="
     echo "== PCTasksIngress =="
@@ -289,16 +289,21 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     echo "== nginx-ingress =="
     echo "==================="
 
-    helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx \
+    helm upgrade --install nginx-ingress helm/vendored/ingress-nginx-4.8.3.tgz \
         -n pc \
         --create-namespace \
         --set controller.replicaCount=1 \
         --set controller.service.externalTrafficPolicy="Local" \
         --set controller.service.loadBalancerIP="${INTERNAL_INGRESS_IP}" \
         --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-internal"=true \
+        --set controller.image.registry="mcr.microsoft.com" \
+        --set controller.image.image="oss/kubernetes/ingress/nginx-ingress-controller" \
+        --set controller.image.tag="v1.9.6-patched" \
+        --set controller.image.digest="sha256:2383717ea3edd1652b97e5b82adf15a3e7f091d0d5d0eceb8dce4410e3a6a292" \
+        --version "4.8.3"\
         --wait \
-        --timeout 2m0s
-
+        --timeout 2m0s \
+        -f bin/nginx-values.yaml
 
     ######################
     # Gather environment #
@@ -307,7 +312,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     pushd ${TERRAFORM_DIR}
     export ACR_NAME=$(tf_output task_acr_name)
     export SA_ACCOUNT_NAME=$(tf_output sa_account_name)
-    export SA_ACCOUNT_KEY=$(tf_output sa_account_key)
     export SA_ACCOUNT_URL=$(tf_output sa_tables_account_url)
     export FUNCTION_APP_NAME=$(tf_output function_app_name)
     export IMAGE_TAG=$(tf_output pctasks_server_image_tag)
@@ -322,7 +326,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         bin/setup_storage.py \
             "${ACR_NAME}" \
             "${SA_ACCOUNT_NAME}" \
-            "${SA_ACCOUNT_KEY}" \
             --url "${SA_ACCOUNT_URL}" \
             --tag "${IMAGE_TAG}"
     fi

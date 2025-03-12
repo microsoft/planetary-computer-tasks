@@ -30,18 +30,6 @@ variable "task_acr_name" {
   default = "pccomponentstest"
 }
 
-variable "task_acr_sp_object_id" {
-  type = string
-}
-
-variable "task_acr_sp_client_id" {
-  type = string
-}
-
-variable "task_acr_sp_client_secret" {
-  type = string
-}
-
 variable "component_acr_resource_group" {
   type    = string
   default = "pc-test-manual-resources"
@@ -64,38 +52,6 @@ variable "pctasks_run_image_tag" {
 
 
 ## Keyvault
-
-variable "task_sp_tenant_id" {
-  type    = string
-}
-
-variable "task_sp_object_id" {
-  type    = string
-}
-
-variable "task_sp_client_id" {
-  type    = string
-}
-
-variable "task_sp_client_secret" {
-  type    = string
-}
-
-variable "kv_sp_tenant_id" {
-  type    = string
-}
-
-variable "kv_sp_object_id" {
-  type    = string
-}
-
-variable "kv_sp_client_id" {
-  type    = string
-}
-
-variable "kv_sp_client_secret" {
-  type    = string
-}
 
 variable "pctasks_task_kv" {
   type = string
@@ -129,46 +85,12 @@ variable "stac_db_connection_string" {
 
 ## PCTasks Server
 
-variable "pctasks_server_sp_tenant_id" {
-  type    = string
-}
-
 variable "cosmosdb_account_name" {
   type = string
 }
 
 variable "cosmosdb_resource_group" {
   type = string
-}
-
-## PCTasks Server
-
-variable "pctasks_server_sp_client_id" {
-  type    = string
-}
-
-variable "pctasks_server_sp_client_secret" {
-  type    = string
-}
-
-variable "pctasks_server_sp_object_id" {
-  type    = string
-}
-
-variable "streaming_taskio_sp_client_id" {
-  type    = string
-}
-
-variable "streaming_taskio_sp_object_id" {
-  type    = string
-}
-
-variable "streaming_taskio_sp_client_secret" {
-  type    = string
-}
-
-variable "streaming_taskio_sp_tenant_id" {
-  type    = string
 }
 
 ## AKS

@@ -4,9 +4,13 @@ from typing import Dict, List, Tuple
 
 import pytest
 
-from pctasks.core.storage.blob import maybe_rewrite_blob_storage_url
+from pctasks.core.storage.blob import is_azurite_url, maybe_rewrite_blob_storage_url
 from pctasks.dev.blob import temp_azurite_blob_storage
-from pctasks.dev.constants import AZURITE_ACCOUNT_NAME, TEST_DATA_CONTAINER
+from pctasks.dev.constants import (
+    AZURITE_ACCOUNT_NAME,
+    TEST_DATA_CONTAINER,
+    get_azurite_url,
+)
 
 HERE = Path(__file__).parent
 
@@ -88,21 +92,19 @@ def test_blob_download_timeout():
     with temp_azurite_blob_storage(
         HERE / ".." / "data-files" / "simple-assets"
     ) as storage:
-        with storage._get_client() as client:
-            with client.container.get_blob_client(
-                storage._add_prefix("a/asset-a-1.json")
-            ) as blob:
-                storage_stream_downloader = blob.download_blob(timeout=TIMEOUT_SECONDS)
-                assert (
-                    storage_stream_downloader._request_options["timeout"]
-                    == TIMEOUT_SECONDS
-                )
+        client = storage._get_client()
+        with client.container.get_blob_client(
+            storage._add_prefix("a/asset-a-1.json")
+        ) as blob:
+            storage_stream_downloader = blob.download_blob(timeout=TIMEOUT_SECONDS)
+            assert (
+                storage_stream_downloader._request_options["timeout"] == TIMEOUT_SECONDS
+            )
 
-                storage_stream_downloader = blob.download_blob()
-                assert (
-                    storage_stream_downloader._request_options.pop("timeout", None)
-                    is None
-                )
+            storage_stream_downloader = blob.download_blob()
+            assert (
+                storage_stream_downloader._request_options.pop("timeout", None) is None
+            )
 
 
 @pytest.mark.parametrize(
@@ -126,3 +128,34 @@ def test_blob_download_timeout():
 def test_maybe_rewrite_blob_storage_url(url, expected):
     result = maybe_rewrite_blob_storage_url(url)
     assert result == expected
+
+
+def test_walk_match_full_path():
+    with temp_azurite_blob_storage(
+        HERE / ".." / "data-files" / "simple-assets"
+    ) as storage:
+        result: Dict[str, Tuple[List[str], List[str]]] = {}
+        for root, folders, files in storage.walk(
+            matches="a/asset-.*.json", match_full_path=True
+        ):
+            result[root] = (folders, files)
+
+        assert set(result.keys()) == {".", "a", "b"}
+        assert set(result["."][0]) == {"a", "b"}
+        assert set(result["a"][1]) == {"asset-a-1.json", "asset-a-2.json"}
+        assert set(result["b"][1]) == set()
+
+
+@pytest.mark.parametrize(
+    ["url", "expected"],
+    [
+        ("https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2a01", False),
+        ("https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2a01/path", False),
+        (get_azurite_url(), True),
+        (f"{get_azurite_url()}/container", True),
+        (f"{get_azurite_url()}/container/blob", True),
+    ],
+)
+def test_is_azurite_url(url: str, expected: bool) -> None:
+    result = is_azurite_url(url)
+    assert result is expected

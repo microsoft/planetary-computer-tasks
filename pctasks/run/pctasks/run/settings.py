@@ -52,6 +52,7 @@ class RunSettings(PCTasksSettings):
     def section_name(cls) -> str:
         return "run"
 
+    max_concurrent_workflow_tasks: int = 120
     remote_runner_threads: int = 50
     default_task_wait_seconds: int = 60
     max_wait_retries: int = 10
@@ -68,13 +69,13 @@ class RunSettings(PCTasksSettings):
     # Tables
     tables_account_url: str
     tables_account_name: str
-    tables_account_key: str
+    tables_account_key: Optional[str]
     image_key_table_name: str = DEFAULT_IMAGE_KEY_TABLE_NAME
 
     # Blob
     blob_account_url: str
     blob_account_name: str
-    blob_account_key: str
+    blob_account_key: Optional[str]
     log_blob_container: str = DEFAULT_LOG_CONTAINER
     task_io_blob_container: str = DEFAULT_TASK_IO_CONTAINER
     code_blob_container: str = DEFAULT_CODE_CONTAINER
@@ -92,6 +93,10 @@ class RunSettings(PCTasksSettings):
     argo_namespace: str = "argo"
     argo_node_group: Optional[str] = None
     workflow_runner_image: Optional[str] = None
+
+    task_service_account_name: Optional[str] = None
+    task_workload_identity_client_id: Optional[str] = None
+    task_workload_identity_tenant_id: Optional[str] = None
 
     # KeyVault
     keyvault_url: Optional[str] = None
@@ -115,6 +120,8 @@ class RunSettings(PCTasksSettings):
 
     # Type of workflow runner to use.
     workflow_runner_type: WorkflowRunnerType = WorkflowRunnerType.ARGO
+
+    applicationinsights_connection_string: Optional[str] = None
 
     @property
     def batch_settings(self) -> BatchSettings:

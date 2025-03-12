@@ -119,7 +119,7 @@
     "stac_extensions": [
         "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
     ],
-    "msft:storage_account": "ai4edatauewest",
+    "msft:storage_account": "ai4edataeuwest",
     "msft:short_description": "ECMWF Open Data (Real Time) forecasts",
     "msft:region": "westeurope"
 }

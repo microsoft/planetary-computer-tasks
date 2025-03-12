@@ -33,10 +33,6 @@ jobs:
             chunk_extension: .csv
             since: ${{ args.since }}
         options: {}
-      environment:
-        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
-        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
-        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
       schema_version: 1.0.0
   create-chunks:
     id: create-chunks
@@ -51,10 +47,6 @@ jobs:
         src_uri: ${{ item.uri }}
         dst_uri: blob://mrms/mrms-etl-data/qpe-1h-pass2/${{ args.since }}/assets
         options: ${{ item.chunk_options }}
-      environment:
-        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
-        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
-        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
       schema_version: 1.0.0
     foreach:
       items: ${{ jobs.create-splits.tasks.create-splits.output.splits }}
@@ -77,10 +69,6 @@ jobs:
         collection_id: noaa-mrms-qpe-1h-pass2
         options:
           skip_validation: false
-      environment:
-        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
-        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
-        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
       schema_version: 1.0.0
     - id: ingest-items
       image_key: ingest
@@ -93,10 +81,6 @@ jobs:
         options:
           insert_group_size: 5000
           insert_only: false
-      environment:
-        AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
-        AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
-        AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
       schema_version: 1.0.0
     foreach:
       items: ${{ jobs.create-chunks.tasks.create-chunks.output.chunks }}

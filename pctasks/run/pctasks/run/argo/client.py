@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import argo_workflows
 from argo_workflows.api import workflow_service_api
 from argo_workflows.exceptions import NotFoundException
+from argo_workflows.model.capabilities import Capabilities
 from argo_workflows.model.container import Container
 from argo_workflows.model.env_var import EnvVar
 from argo_workflows.model.io_argoproj_workflow_v1alpha1_template import (
@@ -26,8 +27,10 @@ from argo_workflows.model.io_argoproj_workflow_v1alpha1_workflow_terminate_reque
     IoArgoprojWorkflowV1alpha1WorkflowTerminateRequest,
 )
 from argo_workflows.model.object_meta import ObjectMeta
+from argo_workflows.model.security_context import SecurityContext
 from argo_workflows.models import (
     Affinity,
+    IoArgoprojWorkflowV1alpha1Metadata,
     NodeAffinity,
     NodeSelector,
     NodeSelectorRequirement,
@@ -43,7 +46,7 @@ from pctasks.core.constants import (
 )
 from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.models.workflow import WorkflowSubmitMessage
-from pctasks.core.storage.blob import BlobStorage, BlobUri
+from pctasks.core.storage.blob import BlobStorage, BlobUri, generate_key_for_sas
 from pctasks.core.utils import map_opt
 from pctasks.run.models import PreparedTaskSubmitMessage
 from pctasks.run.secrets.local import LOCAL_ENV_SECRETS_PREFIX
@@ -98,6 +101,28 @@ class ArgoClient:
             )
         return None
 
+    def _get_annotations_and_labels(
+        self, run_settings: RunSettings
+    ) -> Tuple[Dict, Dict]:
+        annotations = {}
+        labels = {}
+
+        if run_settings.task_workload_identity_client_id:
+            labels.update({"azure.workload.identity/use": "true"})
+
+            annotations.update(
+                {
+                    "azure.workload.identity/client-id": (
+                        run_settings.task_workload_identity_client_id
+                    ),
+                    "azure.workload.identity/tenant-id": (
+                        run_settings.task_workload_identity_tenant_id
+                    ),
+                }
+            )
+
+        return annotations, labels
+
     def submit_workflow(
         self,
         submit_msg: WorkflowSubmitMessage,
@@ -129,14 +154,17 @@ class ArgoClient:
             submit_msg.to_yaml(),
         )
 
+        credential_options = generate_key_for_sas(
+            run_settings.blob_account_url, run_settings.blob_account_key
+        )
         input_blob_sas_token = generate_blob_sas(
             account_name=run_settings.blob_account_name,
-            account_key=run_settings.blob_account_key,
             container_name=run_settings.task_io_blob_container,
             blob_name=workflow_path,
             start=datetime.utcnow(),
             expiry=datetime.utcnow() + timedelta(hours=24 * 7),
             permission=BlobSasPermissions(read=True),
+            **credential_options,
         )
 
         env: List[EnvVar] = []
@@ -152,6 +180,31 @@ class ArgoClient:
             if env_var in os.environ:
                 env.append(EnvVar(name=env_var, value=os.environ[env_var]))
 
+        if run_settings.task_workload_identity_client_id:
+            env.append(
+                EnvVar(
+                    name="AZURE_CLIENT_ID",
+                    value=run_settings.task_workload_identity_client_id,
+                )
+            )
+            env.append(
+                EnvVar(
+                    name="AZURE_TENANT_ID",
+                    value=run_settings.task_workload_identity_tenant_id,
+                )
+            )
+            kwargs = {"service_account_name": run_settings.task_service_account_name}
+        else:
+            kwargs = {}
+
+        if run_settings.applicationinsights_connection_string:
+            env.append(
+                EnvVar(
+                    name="APPLICATIONINSIGHTS_CONNECTION_STRING",
+                    value=run_settings.applicationinsights_connection_string,
+                )
+            )
+
         # Enable local secrets for development environment
         if run_settings.local_secrets:
             for env_var in [
@@ -166,14 +219,23 @@ class ArgoClient:
             + run_id
         )
 
+        annotations, labels = self._get_annotations_and_labels(run_settings)
+
         templates = [
             IoArgoprojWorkflowV1alpha1Template(
                 name="run-workflow",
+                metadata=IoArgoprojWorkflowV1alpha1Metadata(
+                    annotations=annotations, labels=labels
+                ),
                 container=Container(
                     image=runner_image,
                     image_pull_policy=get_pull_policy(runner_image),
                     command=["pctasks"],
                     env=env,
+                    security_context=SecurityContext(
+                        # Enables tools like py-spy for debugging
+                        capabilities=Capabilities(add=["SYS_PTRACE"])
+                    ),
                     args=[
                         "-v",
                         "run",
@@ -189,24 +251,17 @@ class ArgoClient:
         ]
 
         affinity = self._get_affinity(run_settings)
-
         if affinity:
-            manifest = IoArgoprojWorkflowV1alpha1Workflow(
-                metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
-                spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
-                    entrypoint="run-workflow",
-                    templates=templates,
-                    affinity=affinity,
-                ),
-            )
-        else:
-            manifest = IoArgoprojWorkflowV1alpha1Workflow(
-                metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
-                spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
-                    entrypoint="run-workflow",
-                    templates=templates,
-                ),
-            )
+            kwargs["affinity"] = affinity
+
+        manifest = IoArgoprojWorkflowV1alpha1Workflow(
+            metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
+            spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
+                entrypoint="run-workflow",
+                templates=templates,
+                **kwargs,
+            ),
+        )
 
         api_client = argo_workflows.ApiClient(self.configuration)
         api_instance = workflow_service_api.WorkflowServiceApi(api_client=api_client)
@@ -253,6 +308,31 @@ class ArgoClient:
             if env_var in os.environ:
                 env.append(EnvVar(name=env_var, value=os.environ[env_var]))
 
+        if run_settings.task_workload_identity_client_id:
+            env.append(
+                EnvVar(
+                    name="AZURE_CLIENT_ID",
+                    value=run_settings.task_workload_identity_client_id,
+                )
+            )
+            env.append(
+                EnvVar(
+                    name="AZURE_TENANT_ID",
+                    value=run_settings.task_workload_identity_tenant_id,
+                )
+            )
+            kwargs = {"service_account_name": run_settings.task_service_account_name}
+        else:
+            kwargs = {}
+
+        if run_settings.applicationinsights_connection_string:
+            env.append(
+                EnvVar(
+                    name="APPLICATIONINSIGHTS_CONNECTION_STRING",
+                    value=run_settings.applicationinsights_connection_string,
+                )
+            )
+
         templates = [
             IoArgoprojWorkflowV1alpha1Template(
                 name="run-workflow",
@@ -267,22 +347,15 @@ class ArgoClient:
         ]
 
         affinity = self._get_affinity(run_settings)
-
         if affinity:
-            manifest = IoArgoprojWorkflowV1alpha1Workflow(
-                metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
-                spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
-                    entrypoint="run-workflow", templates=templates, affinity=affinity
-                ),
-            )
-        else:
-            manifest = IoArgoprojWorkflowV1alpha1Workflow(
-                metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
-                spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
-                    entrypoint="run-workflow",
-                    templates=templates,
-                ),
-            )
+            kwargs["affinity"] = affinity
+
+        manifest = IoArgoprojWorkflowV1alpha1Workflow(
+            metadata=ObjectMeta(generate_name=f"{argo_wf_name}-"),
+            spec=IoArgoprojWorkflowV1alpha1WorkflowSpec(
+                entrypoint="run-workflow", templates=templates, **kwargs
+            ),
+        )
 
         api_response = self.api_instance.create_workflow(
             namespace=self.namespace,

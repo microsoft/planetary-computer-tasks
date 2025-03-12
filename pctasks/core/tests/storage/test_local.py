@@ -41,3 +41,15 @@ def test_fsspec_components():
     storage = LocalStorage(HERE / ".." / "data-files" / "simple-assets")
     assert storage.fsspec_storage_options == {}
     assert storage.fsspec_path("foo/bar.csv") == "file://foo/bar.csv"
+
+
+def test_walk_match_full_path():
+    storage = LocalStorage(HERE / ".." / "data-files" / "simple-assets")
+    subdirs = {
+        root: files
+        for root, _, files in storage.walk(
+            min_depth=1, max_depth=1, matches="a/asset-.*.json", match_full_path=True
+        )
+    }
+    assert set(subdirs["a"]) == {"asset-a-1.json", "asset-a-2.json"}
+    assert subdirs["b"] == []
