@@ -113,9 +113,6 @@ class CosmosDBSettings(PCTasksSettings):
         connection_verify = True
         emulator_host = os.environ.get(COSMOSDB_EMULATOR_HOST_ENV_VAR)
         if self.is_cosmosdb_emulator():
-            print(
-                f"Using CosmosDB emulator at host {emulator_host}, it should be reachable at {self.url}"
-            )
             if self.url:
                 connection_verify = urlparse(self.url).hostname != emulator_host
             elif self.connection_string:
