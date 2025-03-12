@@ -108,7 +108,7 @@ exceptiongroup==1.2.1
     #   anyio
     #   pytest
     # from https://pypi.org/simple
-fastapi==0.110.2
+fastapi==0.115.11
     # via pctasks-server (./pctasks/server/pyproject.toml)
     # from https://pypi.org/simple
 filelock==3.13.4
@@ -392,7 +392,7 @@ sniffio==1.3.1
 stac-validator==3.3.2
     # via pctasks-core
     # from https://pypi.org/simple
-starlette==0.37.2
+starlette==0.46.1
     # via fastapi
     # from https://pypi.org/simple
 strictyaml==1.7.3

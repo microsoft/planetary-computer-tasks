@@ -24,7 +24,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
 ]
 dependencies = [
-    "fastapi>=0.108.0",
+    "fastapi>=0.111.0",
     "pctasks.core @ {root:parent:uri}/core",
     "pctasks.run @ {root:parent:uri}/run",
     "python-multipart==0.0.7",
@@ -38,7 +38,7 @@ dev = [
     "pytest-cov",
 ]
 server = [
-    "uvicorn[standard]>=0.12.0,<0.16.0",
+    "uvicorn[standard]>=0.30.0",
 ]
 
 [project.urls]
