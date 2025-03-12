@@ -23,7 +23,7 @@ azure-core==1.30.1
     #   azure-storage-queue
     #   opencensus-ext-azure
     # from https://pypi.org/simple
-azure-cosmos==4.3.1
+azure-cosmos==4.9.0
     # via pctasks-core
     # from https://pypi.org/simple
 azure-data-tables==12.5.0
@@ -93,6 +93,7 @@ isodate==0.6.1
     #   azure-storage-queue
     # from https://pypi.org/simple
 jinja2==3.0.3
+    # via pctasks-ingest (./pctasks/ingest/pyproject.toml)
     # from https://pypi.org/simple
 jsonschema==4.17.3
     # via
@@ -103,6 +104,7 @@ markdown-it-py==3.0.0
     # via rich
     # from https://pypi.org/simple
 marko==1.0.1
+    # via pctasks-ingest (./pctasks/ingest/pyproject.toml)
     # from https://pypi.org/simple
 markupsafe==2.1.5
     # via jinja2
@@ -148,6 +150,7 @@ packaging==24.0
 
     # via pctasks-client
 
+    # via pctasks-ingest (./pctasks/ingest/pyproject.toml)
 
     # via
     #   pctasks-cli
@@ -255,6 +258,7 @@ strictyaml==1.7.3
 typing-extensions==4.11.0
     # via
     #   azure-core
+    #   azure-cosmos
     #   azure-data-tables
     #   azure-storage-blob
     #   azure-storage-queue

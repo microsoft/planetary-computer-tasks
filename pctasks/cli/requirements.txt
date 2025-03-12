@@ -23,7 +23,7 @@ azure-core==1.30.1
     #   azure-storage-queue
     #   opencensus-ext-azure
     # from https://pypi.org/simple
-azure-cosmos==4.3.1
+azure-cosmos==4.9.0
     # via pctasks-core
     # from https://pypi.org/simple
 azure-data-tables==12.5.0
@@ -54,6 +54,7 @@ charset-normalizer==3.3.2
     # from https://pypi.org/simple
 click==8.1.7
     # via
+    #   pctasks-cli (./pctasks/cli/pyproject.toml)
     #   planetary-computer
     #   stac-validator
     # from https://pypi.org/simple
@@ -132,6 +133,7 @@ packaging==24.0
     #   planetary-computer
     # from https://pypi.org/simple
 
+    # via pctasks-cli (./pctasks/cli/pyproject.toml)
 planetary-computer==1.0.0
     # via pctasks-core
     # from https://pypi.org/simple
@@ -226,6 +228,7 @@ strictyaml==1.7.3
 typing-extensions==4.11.0
     # via
     #   azure-core
+    #   azure-cosmos
     #   azure-data-tables
     #   azure-storage-blob
     #   azure-storage-queue

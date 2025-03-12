@@ -10,6 +10,7 @@ aiosignal==1.3.1
     # via aiohttp
     # from https://pypi.org/simple
 argo-workflows==6.3.10
+    # via pctasks-run (./pctasks/run/pyproject.toml)
     # from https://pypi.org/simple
 async-timeout==4.0.3
     # via aiohttp
@@ -20,6 +21,7 @@ attrs==23.2.0
     #   jsonschema
     # from https://pypi.org/simple
 azure-batch==11.0.0
+    # via pctasks-run (./pctasks/run/pyproject.toml)
     # from https://pypi.org/simple
 azure-common==1.1.28
     # via azure-batch
@@ -35,7 +37,7 @@ azure-core==1.30.1
     #   msrest
     #   opencensus-ext-azure
     # from https://pypi.org/simple
-azure-cosmos==4.3.1
+azure-cosmos==4.9.0
     # via pctasks-core
     # from https://pypi.org/simple
 azure-data-tables==12.5.0
@@ -47,6 +49,7 @@ azure-identity==1.16.0
     #   pctasks-core
     # from https://pypi.org/simple
 azure-keyvault-secrets==4.8.0
+    # via pctasks-run (./pctasks/run/pyproject.toml)
     # from https://pypi.org/simple
 azure-storage-blob==12.19.1
     # via pctasks-core
@@ -120,6 +123,7 @@ jsonschema==4.17.3
     #   stac-validator
     # from https://pypi.org/simple
 kubernetes==29.0.0
+    # via pctasks-run (./pctasks/run/pyproject.toml)
     # from https://pypi.org/simple
 markdown-it-py==3.0.0
     # via rich
@@ -149,6 +153,7 @@ multidict==6.0.5
     #   yarl
     # from https://pypi.org/simple
 networkx==2.8.8
+    # via pctasks-run (./pctasks/run/pyproject.toml)
     # from https://pypi.org/simple
 oauthlib==3.2.2
     # via
@@ -182,12 +187,15 @@ packaging==24.0
     #   pctasks-client
     #   pctasks-task
 
+    # via pctasks-run (./pctasks/run/pyproject.toml)
 
     # via
+    #   pctasks-run (./pctasks/run/pyproject.toml)
     #   pctasks-cli
     #   pctasks-client
     #   pctasks-task
 
+    # via pctasks-run (./pctasks/run/pyproject.toml)
 planetary-computer==1.0.0
     # via pctasks-core
     # from https://pypi.org/simple
@@ -309,6 +317,7 @@ strictyaml==1.7.3
 typing-extensions==4.11.0
     # via
     #   azure-core
+    #   azure-cosmos
     #   azure-data-tables
     #   azure-keyvault-secrets
     #   azure-storage-blob

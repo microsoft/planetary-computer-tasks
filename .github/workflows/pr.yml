@@ -5,7 +5,6 @@ on:
 
 env:
   PCTASKS_COSMOSDB__URL: ${{ secrets.COSMOSDB_URL }}
-  PCTASKS_COSMOSDB__KEY: ${{ secrets.COSMOSDB_KEY }}
   PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX: ${{ github.run_id }}
 
 permissions:

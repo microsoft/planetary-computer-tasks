@@ -42,7 +42,7 @@ azure-core==1.30.1
     #   msrest
     #   opencensus-ext-azure
     # from https://pypi.org/simple
-azure-cosmos==4.3.1
+azure-cosmos==4.9.0
     # via pctasks-core
     # from https://pypi.org/simple
 azure-data-tables==12.5.0
@@ -109,6 +109,7 @@ exceptiongroup==1.2.1
     #   pytest
     # from https://pypi.org/simple
 fastapi==0.110.2
+    # via pctasks-server (./pctasks/server/pyproject.toml)
     # from https://pypi.org/simple
 filelock==3.13.4
     # via virtualenv
@@ -136,6 +137,7 @@ httpcore==1.0.5
     # via httpx
     # from https://pypi.org/simple
 httpx==0.27.0
+    # via pctasks-server (./pctasks/server/pyproject.toml)
     # from https://pypi.org/simple
 identify==2.5.36
     # via pre-commit
@@ -236,11 +238,13 @@ packaging==24.0
     # via pctasks-run
 
     # via
+    #   pctasks-server (./pctasks/server/pyproject.toml)
     #   pctasks-cli
     #   pctasks-client
     #   pctasks-run
     #   pctasks-task
 
+    # via pctasks-server (./pctasks/server/pyproject.toml)
 
     # via pctasks-run
 planetary-computer==1.0.0
@@ -256,6 +260,7 @@ portalocker==2.8.2
     # via msal-extensions
     # from https://pypi.org/simple
 pre-commit==3.7.0
+    # via pctasks-server (./pctasks/server/pyproject.toml)
     # from https://pypi.org/simple
 proto-plus==1.23.0
     # via google-api-core
@@ -308,9 +313,12 @@ pystac-client==0.6.1
     # via planetary-computer
     # from https://pypi.org/simple
 pytest==8.1.1
-    # via pytest-cov
+    # via
+    #   pctasks-server (./pctasks/server/pyproject.toml)
+    #   pytest-cov
     # from https://pypi.org/simple
 pytest-cov==5.0.0
+    # via pctasks-server (./pctasks/server/pyproject.toml)
     # from https://pypi.org/simple
 python-dateutil==2.8.2
     # via
@@ -328,6 +336,7 @@ python-dotenv==1.0.1
     #   pydantic
     # from https://pypi.org/simple
 python-multipart==0.0.7
+    # via pctasks-server (./pctasks/server/pyproject.toml)
     # from https://pypi.org/simple
 pytz==2024.1
     # via planetary-computer
@@ -398,6 +407,7 @@ typing-extensions==4.11.0
     # via
     #   anyio
     #   azure-core
+    #   azure-cosmos
     #   azure-data-tables
     #   azure-keyvault-secrets
     #   azure-storage-blob
