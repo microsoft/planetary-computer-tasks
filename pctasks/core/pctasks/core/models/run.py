@@ -105,7 +105,7 @@ class RunRecord(Record):
 
 
 class TaskRunRecord(RunRecord):
-    type: str = Field(default=RunRecordType.TASK_RUN, const=True)
+    type: str = Field(default=RunRecordType.TASK_RUN, frozen=True)
 
     run_id: str
     job_id: str
@@ -140,7 +140,7 @@ class TaskRunRecord(RunRecord):
 
 
 class JobPartitionRunRecord(RunRecord):
-    type: str = Field(default=RunRecordType.JOB_PARTITION_RUN, const=True)
+    type: str = Field(default=RunRecordType.JOB_PARTITION_RUN, frozen=True)
 
     run_id: str
     job_id: str
@@ -188,7 +188,7 @@ class JobPartitionRunRecord(RunRecord):
 
 
 class JobRunRecord(RunRecord):
-    type: str = Field(default=RunRecordType.JOB_RUN, const=True)
+    type: str = Field(default=RunRecordType.JOB_RUN, frozen=True)
 
     run_id: str
     job_id: str
@@ -223,7 +223,7 @@ class JobRunRecord(RunRecord):
 
 
 class WorkflowRunRecord(RunRecord):
-    type: str = Field(default=RunRecordType.WORKFLOW_RUN, const=True)
+    type: str = Field(default=RunRecordType.WORKFLOW_RUN, frozen=True)
 
     dataset_id: str
     run_id: str

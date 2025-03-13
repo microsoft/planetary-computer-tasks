@@ -58,9 +58,9 @@ class PCBaseModel(BaseModel):
     def from_yaml(cls: Type[T], yaml_str: str, section: Optional[str] = None) -> T:
         return model_from_yaml(cls, yaml_str, section=section)
 
-    class Config:
-        exclude_none = True
-        allow_population_by_field_name = True
+    model_config = {
+        "populate_by_name": True,
+    }
 
 
 class RunRecordId(PCBaseModel):

@@ -33,7 +33,7 @@ class TaskSubmitMessage(PCBaseModel):
     related_tasks: Optional[List[Tuple[str, str]]] = None
     tokens: Optional[Dict[str, StorageAccountTokens]] = None
     wait_retries: int = 0
-    type: str = Field(default=TASK_SUBMIT_MESSAGE_TYPE, const=True)
+    type: str = Field(default=TASK_SUBMIT_MESSAGE_TYPE, frozen=True)
 
     def get_run_record_id(self) -> RunRecordId:
         return RunRecordId(

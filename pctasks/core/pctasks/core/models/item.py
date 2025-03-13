@@ -52,7 +52,7 @@ class StacItemRecord(ItemRecord):
         by a single ``/``
     """
 
-    type: ItemRecordType = Field(default=ItemRecordType.STAC_ITEM, const=True)
+    type: ItemRecordType = Field(default=ItemRecordType.STAC_ITEM, frozen=True)
     item: Dict[str, Any]
     deleted: bool = False
 
@@ -74,7 +74,7 @@ class ItemUpdatedRecord(ItemRecord):
     Does not specify if the item was created or updated.
     """
 
-    type: ItemRecordType = Field(default=ItemRecordType.ITEM_UPDATED, const=True)
+    type: ItemRecordType = Field(default=ItemRecordType.ITEM_UPDATED, frozen=True)
 
     run_id: str
     """The run ID of the workflow that updated this Item version"""

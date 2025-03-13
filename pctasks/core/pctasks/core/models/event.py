@@ -11,7 +11,7 @@ from pctasks.core.utils import StrEnum
 
 
 class CloudEvent(PCBaseModel):
-    spec_version: str = Field(default="1.0", const=True, alias="specversion")
+    spec_version: str = Field(default="1.0", frozen=True, alias="specversion")
     type: str
     source: str
     subject: Optional[str] = None
@@ -178,7 +178,7 @@ class NotificationMessage(PCBaseModel):
 class NotificationSubmitMessage(PCBaseModel):
     notification: NotificationMessage
     target_environment: Optional[str]
-    type: str = Field(default="Notification", const=True)
+    type: str = Field(default="Notification", frozen=True)
     processing_id: RunRecordId
 
 
@@ -188,7 +188,7 @@ class NotificationConfig(PCBaseModel):
 
 
 class ItemNotificationConfig(NotificationConfig):
-    type: str = Field(default="Item", const=True)
+    type: str = Field(default="Item", frozen=True)
     owner: str = MICROSOFT_OWNER
     collection_id: str
     item_id: str

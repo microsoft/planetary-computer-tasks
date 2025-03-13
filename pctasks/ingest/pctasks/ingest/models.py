@@ -31,7 +31,7 @@ class NdjsonFolder(PCBaseModel):
 
 
 class IngestNdjsonInput(PCBaseModel):
-    type: str = Field(default=NDJSON_MESSAGE_TYPE, const=True)
+    type: str = Field(default=NDJSON_MESSAGE_TYPE, frozen=True)
     uris: Optional[Union[str, List[str]]] = None
     ndjson_folder: Optional[NdjsonFolder] = None
 
@@ -46,7 +46,7 @@ class IngestNdjsonInput(PCBaseModel):
 
 
 class IngestCollectionsInput(PCBaseModel):
-    type: str = Field(default=COLLECTIONS_MESSAGE_TYPE, const=True)
+    type: str = Field(default=COLLECTIONS_MESSAGE_TYPE, frozen=True)
     collections: List[Dict[str, Any]]
 
 

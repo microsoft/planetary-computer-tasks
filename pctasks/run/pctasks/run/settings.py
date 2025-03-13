@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Union
 from urllib.parse import urlparse
 
-from pydantic import validator
+from pydantic import Field, validator
 
 from pctasks.core.constants import (
     DEFAULT_CODE_CONTAINER,
@@ -44,7 +44,7 @@ class BatchSettings(PCBaseModel):
 
 
 class NotificationQueueConnStrConfig(QueueConnStrConfig):
-    queue_name: str = DEFAULT_NOTIFICATIONS_QUEUE_NAME
+    queue_name: str = Field(DEFAULT_NOTIFICATIONS_QUEUE_NAME)
 
 
 class RunSettings(PCTasksSettings):
@@ -64,7 +64,7 @@ class RunSettings(PCTasksSettings):
     local_dev_endpoints_url: Optional[str] = None
     local_secrets: bool = False
 
-    notification_queue: NotificationQueueConnStrConfig
+    notification_queue: NotificationQueueConnStrConfig = Field()
 
     # Tables
     tables_account_url: str

@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional, Type, TypeVar, cast
 import strictyaml
 import yaml
 from pydantic import BaseModel, ValidationError
-from pydantic.error_wrappers import ErrorList
+from pydantic_core import ErrorDetails
 from yaml import Loader
 
 T = TypeVar("T", bound=BaseModel)
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class YamlValidationErrorInfo:
-    pydantic_error: ErrorList
+    pydantic_error: ErrorDetails
     start_line: Optional[int] = None
     end_line: Optional[int] = None
     path: Optional[str] = None
@@ -126,7 +126,7 @@ def model_from_yaml(
                     start_line=start_line,
                     end_line=end_line,
                     path=path,
-                    pydantic_error=cast(ErrorList, error),
+                    pydantic_error=error,
                 ),
             )
 

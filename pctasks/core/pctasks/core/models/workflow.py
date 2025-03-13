@@ -101,7 +101,7 @@ class WorkflowDefinition(PCBaseModel):
     on: Optional[TriggerDefinition] = None
     is_streaming: bool = False
 
-    schema_version: str = Field(default=WORKFLOW_SCHEMA_VERSION, const=True)
+    schema_version: str = Field(default=WORKFLOW_SCHEMA_VERSION, frozen=True)
 
     def __init__(self, **data: Any) -> None:
         super().__init__(**data)
@@ -234,7 +234,7 @@ class Workflow(PCBaseModel):
 
 
 class WorkflowRecord(Record):
-    type: str = Field(default=WorkflowRecordType.WORKFLOW, const=True)
+    type: str = Field(default=WorkflowRecordType.WORKFLOW, frozen=True)
     workflow_id: str
     workflow: Workflow
 

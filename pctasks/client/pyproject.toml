@@ -26,7 +26,7 @@ classifiers = [
 dependencies = [
     "pctasks.core @ {root:parent:uri}/core",
     "pctasks.cli @ {root:parent:uri}/cli",
-    "pydantic[dotenv]>=1.8,<2.0.0",
+    "pydantic[dotenv]>=2.0.0",
     "rich>=11.2.0",
 ]
 

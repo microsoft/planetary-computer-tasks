@@ -68,7 +68,7 @@ class TaskRunConfig(PCBaseModel):
     output_blob_config: BlobConfig
     log_blob_config: BlobConfig
     event_logger_app_insights_key: Optional[str] = None
-    schema_version: str = Field(default=TASK_RUN_CONFIG_SCHEMA_VERSION, const=True)
+    schema_version: str = Field(default=TASK_RUN_CONFIG_SCHEMA_VERSION, frozen=True)
 
     def get_run_record_id(self) -> str:
         return f"{self.run_id}/{self.job_id}/{self.partition_id}/{self.task_id}"
@@ -100,7 +100,7 @@ class TaskResultType(StrEnum):
 
 
 class TaskResult(PCBaseModel):
-    schema_version: str = Field(default=TASK_RESULT_SCHEMA_VERSION, const=True)
+    schema_version: str = Field(default=TASK_RESULT_SCHEMA_VERSION, frozen=True)
     status: TaskResultType
 
     @staticmethod
@@ -144,7 +144,7 @@ class TaskResult(PCBaseModel):
 
 
 class CompletedTaskResult(TaskResult):
-    status: TaskResultType = Field(default=TaskResultType.COMPLETED, const=True)
+    status: TaskResultType = Field(default=TaskResultType.COMPLETED, frozen=True)
     output: Dict[str, Any] = {}
     notifications: Optional[List[NotificationMessage]] = None
     task_uri: Optional[str] = None
@@ -154,13 +154,13 @@ class CompletedTaskResult(TaskResult):
 class WaitTaskResult(TaskResult):
     """Result returned by a task when it is not yet ready to run."""
 
-    status: TaskResultType = Field(default=TaskResultType.WAIT, const=True)
+    status: TaskResultType = Field(default=TaskResultType.WAIT, frozen=True)
     wait_seconds: Optional[int] = None
     message: Optional[str] = None
 
 
 class FailedTaskResult(TaskResult):
-    status: TaskResultType = Field(default=TaskResultType.FAILED, const=True)
+    status: TaskResultType = Field(default=TaskResultType.FAILED, frozen=True)
     errors: Optional[List[str]] = None
 
 
@@ -176,4 +176,4 @@ class TaskRunSignal(PCBaseModel):
 class TaskRunSignalMessage(PCBaseModel):
     signal_target_id: str
     data: TaskRunSignal
-    schema_version: str = Field(default=TASK_RUN_SIGNAL_SCHEMA_VERSION, const=True)
+    schema_version: str = Field(default=TASK_RUN_SIGNAL_SCHEMA_VERSION, frozen=True)
