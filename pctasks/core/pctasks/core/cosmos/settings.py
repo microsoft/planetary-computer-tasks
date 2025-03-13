@@ -112,7 +112,7 @@ class CosmosDBSettings(PCTasksSettings):
         # If this is the emulator, don't verify the connection SSL cert
         connection_verify = True
         emulator_host = os.environ.get(COSMOSDB_EMULATOR_HOST_ENV_VAR)
-        if emulator_host:
+        if self.is_cosmosdb_emulator():
             if self.url:
                 connection_verify = urlparse(self.url).hostname != emulator_host
             elif self.connection_string:
@@ -125,9 +125,14 @@ class CosmosDBSettings(PCTasksSettings):
             # If the connection string is not set, the credetials are
             # automatically picked up from the environment/managed identity
             assert self.url
-            credential = self.key or DefaultAzureCredential()
+            if self.is_cosmosdb_emulator():
+                credential: str | DefaultAzureCredential | None = self.key
+            else:
+                credential = DefaultAzureCredential()
             return CosmosClient(
-                self.url, credential=credential, connection_verify=connection_verify
+                self.url,
+                credential=credential,  # type: ignore
+                connection_verify=connection_verify,
             )
 
     def get_async_client(self) -> AsyncCosmosClient:
@@ -146,8 +151,16 @@ class CosmosDBSettings(PCTasksSettings):
         else:
             # If the connection string is not set, the credetials are
             # automatically picked up from the environment/managed identity
+
             assert self.url
-            credential = self.key or azure.identity.aio.DefaultAzureCredential()
+            if self.is_cosmosdb_emulator():
+                credential: str | azure.identity.aio.DefaultAzureCredential | None = (
+                    self.key
+                )
+            else:
+                credential = azure.identity.aio.DefaultAzureCredential()
             return AsyncCosmosClient(
-                self.url, credential=credential, connection_verify=connection_verify
+                self.url,
+                credential=credential,  # type: ignore
+                connection_verify=connection_verify,
             )
