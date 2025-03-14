@@ -235,12 +235,12 @@ def test_single_naip_summary():
 
     # print(summary.json(indent=2))
 
-    assert summary.dict()["keys"]["properties"]["summary"]["keys"]["gsd"] == (
+    assert summary.model_dump()["keys"]["properties"]["summary"]["keys"]["gsd"] == (
         DistinctValueSummary(
             count_with=1,
             count_without=0,
             values=[FloatValueCount(value=0.6, count=1)],
-        ).dict()
+        ).model_dump()
     )
 
 
@@ -254,22 +254,22 @@ def test_two_naip_summary():
 
     # print(summary.json(indent=2))
 
-    assert summary.dict()["keys"]["properties"]["summary"]["keys"]["gsd"] == (
+    assert summary.model_dump()["keys"]["properties"]["summary"]["keys"]["gsd"] == (
         DistinctValueSummary(
             count_with=2,
             count_without=0,
             values=[FloatValueCount(value=0.6, count=2)],
-        ).dict()
+        ).model_dump()
     )
 
-    image_summary = summary.dict()["keys"]["assets"]["summary"]["keys"]["image"]
+    image_summary = summary.model_dump()["keys"]["assets"]["summary"]["keys"]["image"]
 
     assert image_summary["summary"]["keys"]["roles"] == (
         DistinctValueSummary(
             count_with=2,
             count_without=0,
             values=[ListValueCount(value=["data"], count=2)],  # type: ignore
-        ).dict()
+        ).model_dump()
     )
 
     assert image_summary["summary"]["keys"]["eo:bands"]["values"][0]["keys"][
@@ -279,7 +279,7 @@ def test_two_naip_summary():
             count_with=2,
             count_without=0,
             values=[StringValueCount(value="red", count=2)],
-        ).dict()
+        ).model_dump()
     )
 
 
@@ -288,22 +288,22 @@ def test_include_key_three_deep():
 
     summary = ObjectSummary.summarize_dict(item, include_keys=["assets.image.title"])
 
-    print(summary.json(indent=2))
+    print(summary.model_dump_json(indent=2))
 
-    s = summary.dict()
+    s = summary.model_dump()
 
     assert len(s["keys"]) == 1
     assert len(s["keys"]["assets"]["summary"]["keys"]) == 1
     assert len(s["keys"]["assets"]["summary"]["keys"]["image"]["summary"]["keys"]) == 1
 
-    assert summary.dict()["keys"]["assets"]["summary"]["keys"]["image"]["summary"][
-        "keys"
-    ]["title"] == (
+    assert summary.model_dump()["keys"]["assets"]["summary"]["keys"]["image"][
+        "summary"
+    ]["keys"]["title"] == (
         DistinctValueSummary(
             count_with=1,
             count_without=0,
             values=[StringValueCount(value="RGBIR COG tile", count=1)],
-        ).dict()
+        ).model_dump()
     )
 
 
@@ -322,14 +322,14 @@ def test_several_asset_descriptions():
         settings=SummarySettings(max_distinct_values=20),
     )
 
-    print(summary.json(indent=2))
+    print(summary.model_dump_json(indent=2))
 
-    assert summary.dict()["keys"]["assets"]["summary"]["keys"]["image"]["summary"][
-        "keys"
-    ]["description"] == (
+    assert summary.model_dump()["keys"]["assets"]["summary"]["keys"]["image"][
+        "summary"
+    ]["keys"]["description"] == (
         DistinctValueSummary(
             count_with=100,
             count_without=0,
             values=[StringValueCount(value=f"Image {i}", count=5) for i in range(20)],
-        ).dict()
+        ).model_dump()
     )

@@ -9,7 +9,7 @@ def test_write_text() -> None:
         input = WriteInput(content="hello world", uri=storage.get_uri("test1.txt"))
         task_result = run_test_task(input.dict(), TASK_PATH)
         assert isinstance(task_result, CompletedTaskResult)
-        output = WriteOutput.parse_obj(task_result.output)
+        output = WriteOutput.model_validate(task_result.output)
         content = storage.read_text(storage.get_path(output.uri))
         assert content == input.content
 
@@ -22,7 +22,7 @@ def test_write_json() -> None:
         )
         task_result = run_test_task(input.dict(), TASK_PATH)
         assert isinstance(task_result, CompletedTaskResult)
-        output = WriteOutput.parse_obj(task_result.output)
+        output = WriteOutput.model_validate(task_result.output)
         content = storage.read_json(storage.get_path(output.uri))
         assert content == input.content
 
@@ -35,6 +35,6 @@ def test_write_list() -> None:
         )
         task_result = run_test_task(input.dict(), TASK_PATH)
         assert isinstance(task_result, CompletedTaskResult)
-        output = WriteOutput.parse_obj(task_result.output)
+        output = WriteOutput.model_validate(task_result.output)
         content = storage.read_json(storage.get_path(output.uri))
         assert content == input.content

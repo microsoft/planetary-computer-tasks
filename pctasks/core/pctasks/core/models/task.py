@@ -2,7 +2,8 @@ from base64 import b64decode, b64encode
 from typing import Any, Dict, List, Optional, Union
 
 import orjson
-from pydantic import Field, validator
+from pydantic import Field, field_validator, model_validator
+from typing_extensions import Self
 
 from pctasks.core.constants import (
     TASK_CONFIG_SCHEMA_VERSION,
@@ -21,7 +22,7 @@ from pctasks.core.utils import StrEnum
 class TaskDefinition(PCBaseModel):
     id: str
     image: Optional[str] = None
-    image_key: Optional[str] = None
+    image_key: Optional[str] = Field(default=None, validation_alias="image-key")
     code: Optional[CodeConfig] = None
     task: str
     args: Dict[str, Any] = {}
@@ -29,19 +30,16 @@ class TaskDefinition(PCBaseModel):
     environment: Optional[Dict[str, str]] = None
     schema_version: str = TASK_CONFIG_SCHEMA_VERSION
 
-    @validator("image_key", always=True)
-    def image_key_or_image_validator(
-        cls, v: Optional[str], values: Dict[str, Any]
-    ) -> Optional[str]:
-        if values.get("image") is not None:
-            if v:
-                raise ValueError("Specify either image_key or image.")
-        elif v is None:
-            raise ValueError("Must specify either image_key or image.")
-        return v
+    @model_validator(mode="after")
+    def image_key_or_image_validator(self) -> Self:
+        if self.image_key and self.image:
+            raise ValueError("Specify either image_key or image, but not both.")
+        elif not (self.image_key or self.image):
+            raise ValueError("Must specify either image_key or image, at most one")
+        return self
 
-    @validator("id")
-    def validate_jobs(cls, v: Optional[str]) -> Optional[str]:
+    @field_validator("id", mode="after")
+    def validate_id(cls, v: Optional[str]) -> Optional[str]:
         if v:
             try:
                 validate_table_key(v)
@@ -83,7 +81,7 @@ class TaskRunMessage(PCBaseModel):
 
     @classmethod
     def decode(cls, msg_text: str) -> "TaskRunMessage":
-        return cls.parse_obj(
+        return cls.model_validate(
             orjson.loads(b64decode(msg_text.encode("utf-8")).decode("utf-8"))
         )
 
@@ -134,11 +132,11 @@ class TaskResult(PCBaseModel):
         cls, obj: Dict[str, Any]
     ) -> Union["CompletedTaskResult", "WaitTaskResult", "FailedTaskResult"]:
         if obj["status"] == TaskResultType.COMPLETED:
-            return CompletedTaskResult.parse_obj(obj)
+            return CompletedTaskResult.model_validate(obj)
         elif obj["status"] == TaskResultType.WAIT:
-            return WaitTaskResult.parse_obj(obj)
+            return WaitTaskResult.model_validate(obj)
         elif obj["status"] == TaskResultType.FAILED:
-            return FailedTaskResult.parse_obj(obj)
+            return FailedTaskResult.model_validate(obj)
         else:
             raise ValueError(f"Unknown task result status: {obj['status']}")
 

@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional, Set, Union
 
-from pydantic import Field, validator
+from pydantic import Field, field_validator, validator
 
 from pctasks.core.constants import WORKFLOW_SCHEMA_VERSION
 from pctasks.core.models.base import ForeachConfig, PCBaseModel
@@ -47,7 +47,7 @@ class JobDefinition(PCBaseModel):
 
     needs: Optional[Union[str, List[str]]] = None
 
-    @validator("id")
+    @field_validator("id", mode="after")
     def _validate_jobs(cls, v: Optional[str]) -> Optional[str]:
         if v:
             cls.validate_job_id(v)
@@ -109,7 +109,7 @@ class WorkflowDefinition(PCBaseModel):
             if not job.id:
                 job.id = id
 
-    @validator("jobs")
+    @field_validator("jobs")
     def _validate_jobs(cls, v: Dict[str, JobDefinition]) -> Dict[str, JobDefinition]:
         for job_id in v:
             # Only validate if job_id is set to None

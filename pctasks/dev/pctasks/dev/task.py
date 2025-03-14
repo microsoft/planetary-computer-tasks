@@ -55,7 +55,7 @@ class TestTask(Task[TestTaskInput, TestTaskOutput]):
                 raise TestTaskError(f"Input file {input.uri} does not exist.")
 
             try:
-                history = TestTaskAsset.parse_obj(
+                history = TestTaskAsset.model_validate(
                     input_storage.read_json(input_path)
                 ).history
             except:

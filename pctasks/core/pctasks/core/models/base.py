@@ -14,12 +14,12 @@ class PCBaseModel(BaseModel):
     def dict(self, **kwargs: Any) -> Dict[str, Any]:
         kwargs.setdefault("by_alias", True)
         kwargs.setdefault("exclude_none", True)
-        return super().dict(**kwargs)
+        return super().model_dump(**kwargs)
 
     def json(self, **kwargs: Any) -> str:
         kwargs.setdefault("by_alias", True)
         kwargs.setdefault("exclude_none", True)
-        return super().json(**kwargs)
+        return super().model_dump_json(**kwargs)
 
     def to_json(self, *args: Any, **kwargs: Any) -> str:
         """Passed through to .json()

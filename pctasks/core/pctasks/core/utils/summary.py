@@ -620,7 +620,7 @@ class KeySetsType(str, Enum):
 class KeySet(BaseModel):
     """Represents a set of keys that are present in objects."""
 
-    keys: Set[str]
+    keys: Set[str | int]
     """The distinct set of keys that are present in an object."""
     count_with: int
     """The number of objects that have this set of keys."""
@@ -849,6 +849,6 @@ class ObjectSummary(BaseModel):
         return cls(count=0, keys={}, key_sets=DistinctKeySets(values=[]))
 
 
-ObjectListSummary.update_forward_refs()
-ObjectPropertySummary.update_forward_refs()
-MixedObjectListSummary.update_forward_refs()
+ObjectListSummary.model_rebuild()
+ObjectPropertySummary.model_rebuild()
+MixedObjectListSummary.model_rebuild()

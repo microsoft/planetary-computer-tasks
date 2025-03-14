@@ -26,16 +26,18 @@ class SectionDoesNotExist(Exception):
     pass
 
 
-class YamlValidationError(ValidationError):
+class YamlValidationError(ValueError):
+    # yaml_ext = Field(default=None)
+    # yaml_ext = Field(default=None)
     def __init__(
         self,
         yml_text: str,
         errors: List[YamlValidationErrorInfo],
-        model: Any,
+        # model: Any,
     ) -> None:
         self.yaml_ext = yml_text
         self.yaml_errors = errors
-        super().__init__([e.pydantic_error for e in errors], model)
+        # super().__init__([e.pydantic_error for e in errors], model)
 
     def __str__(self) -> str:
         result = "\nValidation errors while parsing YAML:\n"
@@ -130,4 +132,4 @@ def model_from_yaml(
                 ),
             )
 
-        raise YamlValidationError(yml_text=yaml_txt, errors=errors, model=model)
+        raise YamlValidationError(yml_text=yaml_txt, errors=errors)
