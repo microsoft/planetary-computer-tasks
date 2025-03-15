@@ -32,7 +32,7 @@ class Link(PCBaseModel):
 
 
 class RecordResponse(Generic[T], PCBaseModel):
-    links: Optional[List[Link]] = Field(default_factory=list)
+    links: Optional[List[Link]] = Field(default=[])
     record: T
 
 
@@ -49,7 +49,7 @@ class JobPartitionRunRecordResponse(RecordResponse[JobPartitionRunRecord]):
 
 
 class RecordListResponse(Generic[T], PCBaseModel):
-    links: Optional[List[Link]] = Field(default_factory=list)
+    links: Optional[List[Link]] = Field(default=[])
     records: List[T]
     next_page_token: Optional[str] = Field(None, alias="nextPageToken")
 

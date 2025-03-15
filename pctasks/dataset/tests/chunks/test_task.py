@@ -47,7 +47,7 @@ def test_task():
         task_result = run_test_task(args.dict(), task_path)
         assert isinstance(task_result, CompletedTaskResult)
 
-        result = ChunksOutput.parse_obj(task_result.output)
+        result = ChunksOutput.model_validate(task_result.output)
 
         test_asset_folder = str(TEST_ASSETS_PATH).strip("/")
 
@@ -119,7 +119,7 @@ def test_naip_since_date():
         )
         assert isinstance(task_result, CompletedTaskResult)
 
-        result = ChunksOutput.parse_obj(task_result.output)
+        result = ChunksOutput.model_validate(task_result.output)
 
         assert len(result.chunks) == 12
         for chunk in result.chunks:
@@ -150,7 +150,7 @@ def test_task_simple_assets() -> None:
 
         assert isinstance(task_result, CompletedTaskResult)
 
-        result = ChunksOutput.parse_obj(task_result.output)
+        result = ChunksOutput.model_validate(task_result.output)
         print(result.to_json(indent=2))
         for chunk in result.chunks:
             print(chunk.uri)
@@ -185,7 +185,7 @@ def test_task_list_folders():
         task_result = run_test_task(args.dict(), task_path)
         assert isinstance(task_result, CompletedTaskResult)
 
-        result = ChunksOutput.parse_obj(task_result.output)
+        result = ChunksOutput.model_validate(task_result.output)
 
         test_asset_folder = str(TEST_ASSETS_PATH.parent / "simple-assets").strip("/")
 

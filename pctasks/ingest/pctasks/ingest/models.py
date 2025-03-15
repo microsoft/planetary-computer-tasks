@@ -1,6 +1,6 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Annotated, Any, Dict, List, Optional, Union
 
-from pydantic import Field, validator
+from pydantic import Discriminator, Field, Tag, validator
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.event import STACCollectionEventType, STACItemEventType
@@ -31,7 +31,7 @@ class NdjsonFolder(PCBaseModel):
 
 
 class IngestNdjsonInput(PCBaseModel):
-    type: str = Field(default=NDJSON_MESSAGE_TYPE, const=True)
+    type: str = Field(default=NDJSON_MESSAGE_TYPE, frozen=True)
     uris: Optional[Union[str, List[str]]] = None
     ndjson_folder: Optional[NdjsonFolder] = None
 
@@ -46,12 +46,28 @@ class IngestNdjsonInput(PCBaseModel):
 
 
 class IngestCollectionsInput(PCBaseModel):
-    type: str = Field(default=COLLECTIONS_MESSAGE_TYPE, const=True)
+    type: str = Field(default=COLLECTIONS_MESSAGE_TYPE, frozen=True)
     collections: List[Dict[str, Any]]
 
 
+def _get_discriminator_tag(v: Any) -> str:
+    if isinstance(v, IngestNdjsonInput):
+        return NDJSON_MESSAGE_TYPE
+    elif isinstance(v, IngestCollectionsInput):
+        return COLLECTIONS_MESSAGE_TYPE
+    else:
+        return "Any"
+
+
 class IngestTaskInput(PCBaseModel):
-    content: Union[IngestNdjsonInput, IngestCollectionsInput, Dict[str, Any]]
+    content: Annotated[
+        Union[
+            Annotated[IngestNdjsonInput, Tag(NDJSON_MESSAGE_TYPE)],
+            Annotated[IngestCollectionsInput, Tag(COLLECTIONS_MESSAGE_TYPE)],
+            Annotated[Dict[str, Any], Tag("Any")],
+        ],
+        Discriminator(_get_discriminator_tag),
+    ]
     """The content of the message.
 
     Can be a STAC Collection or Item JSON dict, or a NdjsonMessageData object.

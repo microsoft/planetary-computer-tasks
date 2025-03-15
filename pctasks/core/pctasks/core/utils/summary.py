@@ -4,7 +4,6 @@ Module for generating summaries from JSON objects.
 Useful for generating Collection "summaries" and "item-assets" fields.
 """
 
-
 from abc import abstractmethod
 from enum import Enum
 from functools import reduce
@@ -17,24 +16,24 @@ from pctasks.core.utils import map_opt
 
 class SummarySettings(BaseModel):
 
-    max_distinct_values = 4
+    max_distinct_values: int = Field(default=4)
     """The max number of distinct values to collect in a distinct value summary.
 
     If there are more values collected than this settings, the DistinctValueSummary
     will be converted into a MixedValueSummary.
     """
 
-    max_distinct_key_sets = 5
+    max_distinct_key_sets: int = Field(default=5)
     """The max number of distinct values to collect in a distinct key sets.
 
     If there are more values collected than this setting, the DistinctKeySets
     will be converted to a MixedKeySets.
     """
 
-    max_mixed_object_list_samples = 3
+    max_mixed_object_list_samples: int = Field(default=3)
     """The max number of distinct samples to include in a mixed object list summary."""
 
-    max_mixed_summary_samples = 4
+    max_mixed_summary_samples: int = Field(default=4)
     """The max number of distinct samples to include in a mixed summary."""
 
 
@@ -81,42 +80,42 @@ class ValueCount(BaseModel):
 class BoolValueCount(ValueCount):
     """Count of boolean values."""
 
-    type: str = Field(default=ValueTypes.BOOLEAN, const=True)
+    type: str = Field(default=ValueTypes.BOOLEAN, frozen=True)
     value: bool
 
 
 class IntValueCount(ValueCount):
     """Count of integer values."""
 
-    type: str = Field(default=ValueTypes.INT, const=True)
+    type: str = Field(default=ValueTypes.INT, frozen=True)
     value: int
 
 
 class FloatValueCount(ValueCount):
     """Count of float values."""
 
-    type: str = Field(default=ValueTypes.FLOAT, const=True)
+    type: str = Field(default=ValueTypes.FLOAT, frozen=True)
     value: float
 
 
 class StringValueCount(ValueCount):
     """Count of string values."""
 
-    type: str = Field(default=ValueTypes.STRING, const=True)
+    type: str = Field(default=ValueTypes.STRING, frozen=True)
     value: str
 
 
 class NullValueCount(ValueCount):
     """Count of null values."""
 
-    type: str = Field(default=ValueTypes.NULL, const=True)
-    value: Optional[str] = Field(default=None, const=True)
+    type: str = Field(default=ValueTypes.NULL, frozen=True)
+    value: Optional[str] = Field(default=None, frozen=True)
 
 
 class ListValueCount(ValueCount):
     """Count of list values."""
 
-    type: str = Field(default=ValueTypes.LIST, const=True)
+    type: str = Field(default=ValueTypes.LIST, frozen=True)
     value: List[Any]
 
 
@@ -177,7 +176,7 @@ class DistinctValueSummary(PropertySummary):
     The values can be bool, int, float, string, list, or null.
     """
 
-    type: str = Field(default=SummaryTypes.DISTINCT, const=True)
+    type: str = Field(default=SummaryTypes.DISTINCT, frozen=True)
     values: ValueCountList
 
     def merge(
@@ -279,7 +278,7 @@ class DistinctValueSummary(PropertySummary):
 class IntRangeSummary(PropertySummary):
     """Represents a property that is an integer in a specific range."""
 
-    type: str = Field(default=SummaryTypes.INT_RANGE, const=True)
+    type: str = Field(default=SummaryTypes.INT_RANGE, frozen=True)
     min: int
     max: int
 
@@ -331,7 +330,7 @@ class IntRangeSummary(PropertySummary):
 class FloatRangeSummary(PropertySummary):
     """Represents a property that is an float in a specific range."""
 
-    type: str = Field(default=SummaryTypes.FLOAT_RANGE, const=True)
+    type: str = Field(default=SummaryTypes.FLOAT_RANGE, frozen=True)
     min: float
     max: float
 
@@ -383,7 +382,7 @@ class FloatRangeSummary(PropertySummary):
 class ObjectPropertySummary(PropertySummary):
     """Represents a property that is an JSON Object."""
 
-    type: str = Field(default="object", const=True)
+    type: str = Field(default="object", frozen=True)
     summary: "ObjectSummary"
 
     def merge(
@@ -431,7 +430,7 @@ class ObjectPropertySummary(PropertySummary):
 class ObjectListSummary(PropertySummary):
     """Represents a property that is a list of JSON Objects."""
 
-    type: str = Field(default=SummaryTypes.OBJECT_LIST, const=True)
+    type: str = Field(default=SummaryTypes.OBJECT_LIST, frozen=True)
     values: List["ObjectSummary"]
 
     def merge(
@@ -470,7 +469,7 @@ class ObjectListSummary(PropertySummary):
 class MixedObjectListSummary(PropertySummary):
     """Represents a property that is a non-uniform list of JSON Objects."""
 
-    type: str = Field(default=SummaryTypes.MIXED_OBJECT_LIST, const=True)
+    type: str = Field(default=SummaryTypes.MIXED_OBJECT_LIST, frozen=True)
     lengths: Set[int]
     sample: List[List["ObjectSummary"]]
 
@@ -520,7 +519,7 @@ class MixedValueSummary(PropertySummary):
     not be represented in the samples.
     """
 
-    type: str = Field(default=SummaryTypes.MIXED_VALUE, const=True)
+    type: str = Field(default=SummaryTypes.MIXED_VALUE, frozen=True)
     data_types: Set[str]
     sample: ValueCountAndRangeList
 
@@ -564,7 +563,7 @@ class MixedValueSummary(PropertySummary):
 class MixedSummary(PropertySummary):
     """Represents a property that is represented by a mix of summary types."""
 
-    type: str = Field(default=SummaryTypes.MIXED_SUMMARIES, const=True)
+    type: str = Field(default=SummaryTypes.MIXED_SUMMARIES, frozen=True)
     summary_types: Set[str]
     sample: List[PropertySummary]
 
@@ -621,7 +620,7 @@ class KeySetsType(str, Enum):
 class KeySet(BaseModel):
     """Represents a set of keys that are present in objects."""
 
-    keys: Set[str]
+    keys: Set[str | int]
     """The distinct set of keys that are present in an object."""
     count_with: int
     """The number of objects that have this set of keys."""
@@ -630,7 +629,7 @@ class KeySet(BaseModel):
 class DistinctKeySets(BaseModel):
     """Represents a set of distinct key sets."""
 
-    type: KeySetsType = Field(default=KeySetsType.DISTINCT, const=True)
+    type: KeySetsType = Field(default=KeySetsType.DISTINCT, frozen=True)
     values: List[KeySet]
 
     def merge(self, other: "KeySetType", settings: SummarySettings) -> "KeySetType":
@@ -671,7 +670,7 @@ class MixedKeySets(BaseModel):
     The number of samples present is limited by the max_mixed_key_sets setting.
     """
 
-    type: KeySetsType = Field(default=KeySetsType.MIXED, const=True)
+    type: KeySetsType = Field(default=KeySetsType.MIXED, frozen=True)
     sample_values: List[KeySet]
 
     def merge(self, other: "KeySetType", settings: SummarySettings) -> "KeySetType":
@@ -850,6 +849,6 @@ class ObjectSummary(BaseModel):
         return cls(count=0, keys={}, key_sets=DistinctKeySets(values=[]))
 
 
-ObjectListSummary.update_forward_refs()
-ObjectPropertySummary.update_forward_refs()
-MixedObjectListSummary.update_forward_refs()
+ObjectListSummary.model_rebuild()
+ObjectPropertySummary.model_rebuild()
+MixedObjectListSummary.model_rebuild()

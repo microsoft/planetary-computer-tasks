@@ -2,14 +2,16 @@ import logging
 import os
 from abc import abstractmethod
 from pathlib import Path
-from typing import Any, Dict, Hashable, List, Optional, Tuple, Type, TypeVar, Union
+from typing import Hashable, List, Optional, Tuple, Type, TypeVar, Union
 
-import yaml
 from cachetools import Cache, LRUCache, cachedmethod
 from cachetools.keys import hashkey
-from pydantic import BaseSettings, Field, ValidationError
-from pydantic.env_settings import SettingsSourceCallable
-from yaml import Loader
+from pydantic import Field, ValidationError
+from pydantic_settings import (
+    BaseSettings,
+    PydanticBaseSettingsSource,
+    YamlConfigSettingsSource,
+)
 
 from pctasks.core.constants import (
     DEFAULT_PROFILE,
@@ -49,15 +51,18 @@ class SettingsError(Exception):
         super().__init__(message, *args)
 
 
+_settings_cache: Cache = LRUCache(maxsize=100)
+
+
 class SettingsConfig(PCBaseModel):
-    _cache: Cache = LRUCache(maxsize=100)
 
     """Configuration for the settings location."""
+
     profile: Optional[str] = None
     settings_file: Optional[str] = None
 
     @classmethod
-    @cachedmethod(lambda cls: cls._cache)
+    @cachedmethod(lambda cls: _settings_cache)
     def get(
         cls,
         profile: Optional[str] = None,
@@ -137,24 +142,6 @@ class SettingsConfig(PCBaseModel):
         )
 
 
-def _get_yaml_settings_source(
-    settings_file: Path,
-) -> SettingsSourceCallable:
-    def yaml_config_settings_source(settings: BaseSettings) -> Dict[str, Any]:
-        """
-        A settings source that loads configuration from YAML.
-        """
-        if settings_file.exists():
-            with open(settings_file) as f:
-                yaml_txt = f.read()
-            result: Dict[str, Any] = yaml.load(yaml_txt, Loader=Loader)
-            return result
-        else:
-            return {}
-
-    return yaml_config_settings_source
-
-
 def get_settings(
     model: Type[T],
     section_name: str,
@@ -165,39 +152,40 @@ def get_settings(
     _settings_file = settings_config.get_settings_file()
 
     class _Settings(BaseSettings):
+        model_config = {
+            "env_prefix": ENV_VAR_PCTASK_PREFIX,
+            "extra": "ignore",
+            "env_nested_delimiter": "__",
+        }
         # mypy doesn't like using type vars here,
         # but it works and defines pydantic validation.
         section: model = Field(  # type: ignore
             default_factory=model,
-            alias=section_name,
-            env=f"{ENV_VAR_PCTASK_PREFIX}{section_name.upper()}",
+            alias=f"{ENV_VAR_PCTASK_PREFIX}{section_name.upper()}",
         )
 
-        class Config:
-            env_prefix = ENV_VAR_PCTASK_PREFIX
-            extra = "ignore"
-            env_nested_delimiter = "__"
-
-            @classmethod
-            def customise_sources(
-                cls,
-                init_settings: SettingsSourceCallable,
-                env_settings: SettingsSourceCallable,
-                file_secret_settings: SettingsSourceCallable,
-            ) -> Any:
-                if _settings_file.exists():
-                    return (
-                        init_settings,
-                        env_settings,
-                        _get_yaml_settings_source(_settings_file),
-                        file_secret_settings,
-                    )
-                else:
-                    return (
-                        init_settings,
-                        env_settings,
-                        file_secret_settings,
-                    )
+        @classmethod
+        def settings_customise_sources(
+            cls,
+            settings_cls: Type[BaseSettings],
+            init_settings: PydanticBaseSettingsSource,
+            env_settings: PydanticBaseSettingsSource,
+            dotenv_settings: PydanticBaseSettingsSource,
+            file_secret_settings: PydanticBaseSettingsSource,
+        ) -> Tuple[PydanticBaseSettingsSource, ...]:
+            if _settings_file.exists():
+                return (
+                    init_settings,
+                    env_settings,
+                    YamlConfigSettingsSource(settings_cls, yaml_file=_settings_file),
+                    file_secret_settings,
+                )
+            else:
+                return (
+                    init_settings,
+                    env_settings,
+                    file_secret_settings,
+                )
 
     try:
         # type ignore as pydantic reports issue with missing 'section'
@@ -205,9 +193,13 @@ def get_settings(
         settings = _Settings()  # type:ignore
         return settings.section
     except Exception as e:
-        msg = "Could not load settings from environment"
+        msg = f"Could not load {model.__name__} settings from environment"
         if _settings_file:
-            msg += f" or settings file at {_settings_file}"
+            msg += f" or settings file at {_settings_file}."
+        msg += (
+            f" Model config is {_Settings.model_config} and "
+            f"model fields are {_Settings.model_fields}"
+        )
         msg += f" - {e}"
         raise SettingsError(
             msg,
@@ -224,16 +216,17 @@ def settings_hash_key(
     return hashkey((cls.section_name(), profile, settings_file))
 
 
-class PCTasksSettings(PCBaseModel):
-    _cache: Cache = LRUCache(maxsize=100)
+_cache: Cache = LRUCache(maxsize=100)
 
+
+class PCTasksSettings(PCBaseModel):
     @classmethod
     @abstractmethod
     def section_name(cls) -> str:
         raise NotImplementedError
 
     @classmethod
-    @cachedmethod(lambda cls: cls._cache, key=settings_hash_key)
+    @cachedmethod(lambda cls: _cache, key=settings_hash_key)
     def get(
         cls: Type[T],
         profile: Optional[str] = None,

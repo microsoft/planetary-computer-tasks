@@ -21,7 +21,7 @@ def test_list_prefixes_local() -> None:
 
     assert isinstance(task_result, CompletedTaskResult)
 
-    output = ListPrefixesOutput.parse_obj(task_result.output)
+    output = ListPrefixesOutput.model_validate(task_result.output)
 
     print(output.uris)
 
@@ -46,7 +46,7 @@ def test_list_files_blob() -> None:
 
         assert isinstance(task_result, CompletedTaskResult)
 
-        output = ListPrefixesOutput.parse_obj(task_result.output)
+        output = ListPrefixesOutput.model_validate(task_result.output)
 
         expected = [
             storage.get_uri(x) for x in os.listdir(TEST_DIR) if (TEST_DIR / x).is_dir()

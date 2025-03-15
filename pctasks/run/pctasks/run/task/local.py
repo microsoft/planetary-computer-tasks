@@ -85,7 +85,7 @@ class LocalTaskRunner(TaskRunner):
                 self.local_dev_endpoints_url + f"/poll/{runner_id['id']}"
             )
             if resp.status_code == 200:
-                return TaskPollResult.parse_obj(resp.json())
+                return TaskPollResult.model_validate(resp.json())
             elif resp.status_code == 404:
                 if previous_poll_count < MAX_MISSING_POLLS:
                     return TaskPollResult(task_status=TaskRunStatus.PENDING)

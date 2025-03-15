@@ -308,7 +308,7 @@ class ModelTableService(Generic[M], TableService):
                 "Data column must be a string. "
                 f"partition_key={partition_key} row_key={row_key}"
             )
-        return self._model.parse_obj(decode_dict(data))
+        return self._model.model_validate(decode_dict(data))
 
     def insert(self, partition_key: str, row_key: str, entity: M) -> None:
         self._ensure_table_client()

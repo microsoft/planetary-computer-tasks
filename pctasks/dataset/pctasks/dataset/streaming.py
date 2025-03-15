@@ -80,8 +80,7 @@ class StreamingCreateItemsInput(PCBaseModel):
     ]
     extra_env: Dict[str, str] = pydantic.Field(default_factory=dict)
 
-    class Config:
-        extra = "forbid"
+    model_config = {"extra": "forbid"}
 
 
 class ExtraOptions(TypedDict):

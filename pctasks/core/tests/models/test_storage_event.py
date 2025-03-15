@@ -35,7 +35,7 @@ def event_body():
 
 
 def test_storage_event_created(event_body):
-    event = StorageEvent.parse_obj(event_body)
+    event = StorageEvent.model_validate(event_body)
     assert event.time == "2017-06-26T18:41:00.9584103Z"
     assert event.type == StorageEventType.CREATED
     assert event.data.api == "CreateFile"
@@ -46,7 +46,7 @@ def test_storage_event_created(event_body):
 
 
 def test_storage_events_record(event_body):
-    record = StorageEventRecord.parse_obj(event_body)
+    record = StorageEventRecord.model_validate(event_body)
 
     assert record.get_id() == "831e1650-001e-001b-66ab-eeb76e069631"
     assert StorageEventRecord.migrate(event_body)
@@ -56,7 +56,7 @@ def test_create_item_error(event_body):
     event_body["run_id"] = "test"
     event_body["traceback"] = "ZeroDivisionError"
     event_body["dequeue_count"] = 1
-    event = StorageEventRecord.parse_obj(event_body)
+    event = StorageEventRecord.model_validate(event_body)
     record = CreateItemErrorRecord(
         input=event,
         attempt=0,

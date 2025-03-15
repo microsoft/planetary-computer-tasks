@@ -14,12 +14,12 @@ class PCBaseModel(BaseModel):
     def dict(self, **kwargs: Any) -> Dict[str, Any]:
         kwargs.setdefault("by_alias", True)
         kwargs.setdefault("exclude_none", True)
-        return super().dict(**kwargs)
+        return super().model_dump(**kwargs)
 
     def json(self, **kwargs: Any) -> str:
         kwargs.setdefault("by_alias", True)
         kwargs.setdefault("exclude_none", True)
-        return super().json(**kwargs)
+        return super().model_dump_json(**kwargs)
 
     def to_json(self, *args: Any, **kwargs: Any) -> str:
         """Passed through to .json()
@@ -58,9 +58,9 @@ class PCBaseModel(BaseModel):
     def from_yaml(cls: Type[T], yaml_str: str, section: Optional[str] = None) -> T:
         return model_from_yaml(cls, yaml_str, section=section)
 
-    class Config:
-        exclude_none = True
-        allow_population_by_field_name = True
+    model_config = {
+        "populate_by_name": True,
+    }
 
 
 class RunRecordId(PCBaseModel):

@@ -78,7 +78,7 @@ def test_create_items():
         task_result = run_test_task(args.dict(), TASK_PATH)
         assert isinstance(task_result, CompletedTaskResult)
 
-        result = CreateItemsOutput.parse_obj(task_result.output)
+        result = CreateItemsOutput.model_validate(task_result.output)
         ndjson_uri = result.ndjson_uri
         assert ndjson_uri
         assert Path(ndjson_uri).exists()

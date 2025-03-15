@@ -23,7 +23,7 @@ def test_local_file_template():
     yaml_dict = yaml.safe_load(yaml_str)
     templated_dict = LocalTemplater().template_dict(yaml_dict)
 
-    data = IngestCollectionsInput.parse_obj(templated_dict)
+    data = IngestCollectionsInput.model_validate(templated_dict)
 
     assert data.collections
     assert data.collections[0]["id"] == "test-collection"

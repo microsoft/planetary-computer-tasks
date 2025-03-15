@@ -17,7 +17,7 @@ def test_list_files_local() -> None:
 
     assert isinstance(task_result, CompletedTaskResult)
 
-    output = ListFilesOutput.parse_obj(task_result.output)
+    output = ListFilesOutput.model_validate(task_result.output)
 
     print(output.uris)
 
@@ -42,6 +42,6 @@ def test_list_files_blob() -> None:
 
         assert isinstance(task_result, CompletedTaskResult)
 
-        output = ListFilesOutput.parse_obj(task_result.output)
+        output = ListFilesOutput.model_validate(task_result.output)
 
         assert set(output.uris) == expected

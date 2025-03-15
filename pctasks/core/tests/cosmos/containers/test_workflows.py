@@ -120,7 +120,6 @@ def test_workflow_runs_pagination(temp_cosmosdb_containers):
             assert items1_2[0].run_id == items2_1[0].run_id
 
             # Test job_run.task_group_count trigger update
-
             def fetch_workflow() -> WorkflowRecord:
                 fetched_workflow = workflows.get(workflow_id, partition_key=workflow_id)
                 assert fetched_workflow is not None

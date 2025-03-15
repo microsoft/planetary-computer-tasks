@@ -128,7 +128,7 @@ class SimpleWorkflowExecutor:
         task_outputs: Dict[str, Any] = {}
 
         for task_config in job.tasks:
-            copied_task = task_config.__class__.parse_obj(task_config.dict())
+            copied_task = task_config.__class__.model_validate(task_config.dict())
             copied_task.args = template_args(
                 copied_task.args,
                 job_outputs=previous_job_outputs or {},

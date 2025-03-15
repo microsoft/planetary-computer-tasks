@@ -24,7 +24,7 @@ def template_workflow_dict(
     base_path = base_path or Path(".")
     workflow_dict = LocalTemplater(base_path).template_dict(workflow_dict)
 
-    return WorkflowDefinition.parse_obj(workflow_dict)
+    return WorkflowDefinition.model_validate(workflow_dict)
 
 
 def template_workflow_contents(

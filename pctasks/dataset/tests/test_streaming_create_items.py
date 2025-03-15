@@ -190,7 +190,7 @@ def test_streaming_create_items_rewrite_url(monkeypatch, storage_event):
 
         url = root_storage.get_url("data/item.json")
         storage_event["data"]["url"] = url
-        message_data = StorageEventData.parse_obj(storage_event["data"])
+        message_data = StorageEventData.model_validate(storage_event["data"])
 
         assert url.startswith(f"http://{host}:{port}")
 

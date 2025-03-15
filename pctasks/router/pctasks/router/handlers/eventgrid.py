@@ -43,5 +43,5 @@ def handle_blob_event(event: CloudEvent) -> bool:
 
 class EventGridMessageHandler(MessageHandler):
     def handle(self, message: Dict[str, Any]) -> None:
-        event = CloudEvent.parse_obj(message)
+        event = CloudEvent.model_validate(message)
         handle_blob_event(event)

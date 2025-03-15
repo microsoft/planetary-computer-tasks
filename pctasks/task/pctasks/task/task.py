@@ -49,7 +49,7 @@ class Task(ABC, Generic[T, U]):
         pass
 
     def parse_and_run(self, data: Dict[str, Any], context: TaskContext) -> TaskResult:
-        args = self._input_model.parse_obj(data)
+        args = self._input_model.model_validate(data)
         output = self.run(args, context)
 
         if isinstance(output, WaitTaskResult):

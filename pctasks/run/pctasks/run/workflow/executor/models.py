@@ -390,7 +390,9 @@ class JobPartitionState:
                 )
             task_data = self.job_part_submit_msg.job_partition.task_data[task_index]
 
-            copied_task = next_task_config.__class__.parse_obj(next_task_config.dict())
+            copied_task = next_task_config.__class__.model_validate(
+                next_task_config.dict()
+            )
             copied_task.args = template_args(
                 copied_task.args,
                 job_outputs=self.job_part_submit_msg.job_outputs,
