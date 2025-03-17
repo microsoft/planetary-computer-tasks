@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional
 
-from pydantic import validator
+from pydantic import field_validator
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.storage.blob import BlobStorage, BlobUri
@@ -59,7 +59,7 @@ class ImageConfig(PCBaseModel):
     environment: Optional[List[str]] = None
     tags: Optional[List[str]] = None
 
-    @validator("environment")
+    @field_validator("environment")
     def _environment_validator(cls, v: Optional[List[str]]) -> Optional[List[str]]:
         if v:
             for env in v:
@@ -67,7 +67,7 @@ class ImageConfig(PCBaseModel):
                     raise ValueError(f"Environment entry {env} is invalid.")
         return v
 
-    @validator("tags")
+    @field_validator("tags")
     def _tags_validator(cls, v: Optional[List[str]]) -> Optional[List[str]]:
         if v:
             for tag in v:

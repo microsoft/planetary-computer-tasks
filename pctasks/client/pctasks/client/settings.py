@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 from urllib.parse import urlparse
 
-from pydantic import validator
+from pydantic import field_validator
 
 from pctasks.core.models.workflow import WorkflowDefinition
 from pctasks.core.settings import PCTasksSettings
@@ -21,7 +21,7 @@ class ClientSettings(PCTasksSettings):
     default_args: Optional[Dict[str, str]] = None
     default_page_size: int = DEFAULT_PAGE_SIZE
 
-    @validator("endpoint")
+    @field_validator("endpoint", mode="after")
     def _validate_endpoint(cls, v: str) -> str:
         try:
             parsed = urlparse(v)

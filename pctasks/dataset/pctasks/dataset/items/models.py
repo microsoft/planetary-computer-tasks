@@ -1,6 +1,7 @@
 from typing import Any, Dict, Optional
 
-from pydantic import validator
+from pydantic import field_validator, model_validator
+from typing_extensions import Self
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.config import CodeConfig
@@ -47,23 +48,19 @@ class CreateItemsInput(PCBaseModel):
 
     options: CreateItemsOptions = CreateItemsOptions()
 
-    @validator("asset_chunk_info")
-    def _validate_chunk_uri(
-        cls, v: Optional[str], values: Dict[str, Any]
-    ) -> Optional[str]:
-        if v is None and values.get("asset_uri") is None:
+    @model_validator(mode="after")
+    def _validate_chunk_uri(self) -> Self:
+        if self.asset_chunk_info is None and self.asset_uri is None:
             raise ValueError("Either asset_chunk_info or asset_uri must be specified")
-        return v
+        return self
 
-    @validator("item_chunkset_uri")
-    def _validate_output_uri(
-        cls, v: Optional[str], values: Dict[str, Any]
-    ) -> Optional[str]:
-        if v is None and values.get("asset_chunk_info") is None:
+    @model_validator(mode="after")
+    def _validate_output_uri(self) -> Self:
+        if self.item_chunkset_uri is None and self.asset_chunk_info is None:
             raise ValueError(
                 "item_chunkset_uri must be specified if not processing asset_chunk_info"
             )
-        return v
+        return self
 
 
 class CreateItemsOutput(PCBaseModel):

@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Any, Dict, Optional
 
 import pystac
-from pydantic import Field, validator
+from pydantic import Field, field_validator
 
 from pctasks.core.models.record import Record
 from pctasks.core.utils import StrEnum
@@ -17,7 +17,7 @@ class ItemRecord(Record):
     type: ItemRecordType
     stac_id: str
 
-    @validator("stac_id")
+    @field_validator("stac_id")
     def _stac_id_validator(cls, v: str) -> str:
         # Ensure a single forward slash in the string
         if v.count("/") != 1:
@@ -86,6 +86,6 @@ class ItemUpdatedRecord(ItemRecord):
     message_inserted_time: Optional[datetime] = None
     version: Optional[str]
 
-    @validator("version")
+    @field_validator("version")
     def _version_validator(cls, v: Optional[str]) -> str:
         return v or ""

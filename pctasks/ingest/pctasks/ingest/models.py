@@ -1,6 +1,7 @@
 from typing import Annotated, Any, Dict, List, Optional, Union
 
-from pydantic import Discriminator, Field, Tag, validator
+from pydantic import Discriminator, Field, Tag, model_validator
+from typing_extensions import Self
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.event import STACCollectionEventType, STACItemEventType
@@ -35,14 +36,11 @@ class IngestNdjsonInput(PCBaseModel):
     uris: Optional[Union[str, List[str]]] = None
     ndjson_folder: Optional[NdjsonFolder] = None
 
-    @validator("ndjson_folder")
-    def _validate_ndjson_folder(
-        cls, v: Optional[NdjsonFolder], values: Dict[str, Any]
-    ) -> Optional[NdjsonFolder]:
-        if v is None:
-            if values["uris"] is None:
-                raise ValueError("Either ndjson_folder or uris must be provided.")
-        return v
+    @model_validator(mode="after")
+    def _validate_ndjson_folder(self) -> Self:
+        if self.ndjson_folder is None and self.uris is None:
+            raise ValueError("Either ndjson_folder or uris must be provided.")
+        return self
 
 
 class IngestCollectionsInput(PCBaseModel):
@@ -96,11 +94,11 @@ class IngestTaskOutput(PCBaseModel):
     items: Optional[List[ItemIngestTaskOutput]] = None
     """List of items created by the ingest task."""
 
-    @validator("items", always=True)
-    def _validate_items(cls, v: Any, values: Dict[str, Any]) -> Any:
-        if not v and values["collections"] is None and not values["bulk_load"]:
+    @model_validator(mode="after")
+    def _validate_items(self) -> Any:
+        if not self.items and self.collections is None and not self.bulk_load:
             raise ValueError("Must supply either collections or items")
-        return v
+        return self
 
 
 class IngestTaskConfig(TaskDefinition):

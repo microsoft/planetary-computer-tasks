@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Optional, Set, Union
 
-from pydantic import Field, field_validator, validator
+from pydantic import Field, field_validator, model_validator
+from typing_extensions import Self
 
 from pctasks.core.constants import WORKFLOW_SCHEMA_VERSION
 from pctasks.core.models.base import ForeachConfig, PCBaseModel
@@ -118,10 +119,11 @@ class WorkflowDefinition(PCBaseModel):
                 JobDefinition.validate_job_id(job_id)
         return v
 
-    @validator("is_streaming")
+    @model_validator(mode="after")
     def _validate_is_streaming(
-        cls, v: bool, values: Dict[str, Any], **kwargs: Dict[str, Any]
-    ) -> bool:
+        # cls, v: bool, values: Dict[str, Any], **kwargs: Dict[str, Any]
+        self,
+    ) -> Self:
         """
         A streaming workflow is similar to other pctasks workflows, but requires a few
         additional properties on the streaming tasks within the workflow:
@@ -142,8 +144,8 @@ class WorkflowDefinition(PCBaseModel):
         to run indefinitely. They should continuously process messages from a queue,
         and leave starting, stopping, and scaling to the pctasks framework.
         """
-        if v:
-            jobs = values["jobs"]
+        if self.is_streaming:
+            jobs = self.jobs
             n_jobs = len(jobs)
             if n_jobs != 1:
                 raise ValueError(
@@ -182,7 +184,7 @@ class WorkflowDefinition(PCBaseModel):
                         f"on the task."
                     )
 
-        return v
+        return self
 
     def template_args(self, args: Optional[Dict[str, Any]]) -> "WorkflowDefinition":
         return DictTemplater({"args": args}, strict=False).template_model(self)

@@ -3,7 +3,8 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Union
 from urllib.parse import urlparse
 
-from pydantic import Field, validator
+from pydantic import Field, model_validator
+from typing_extensions import Self
 
 from pctasks.core.constants import (
     DEFAULT_CODE_CONTAINER,
@@ -135,62 +136,56 @@ class RunSettings(PCTasksSettings):
             submit_threads=self.batch_submit_threads,
         )
 
-    @validator("keyvault_url", always=True)
-    def keyvault_url_validator(
-        cls, v: Optional[str], values: Dict[str, Any]
-    ) -> Optional[str]:
-        if not values.get("local_secrets"):
-            if not v:
+    @model_validator(mode="after")
+    def keyvault_url_validator(self) -> Self:
+        if not self.local_secrets:
+            if not self.keyvault_url:
                 raise ValueError("Must specify keyvault_url.")
-        return v
+        return self
 
-    @validator("task_runner_type", always=True)
-    def _task_runner_type_validator(
-        cls, v: TaskRunnerType, values: Dict[str, Any]
-    ) -> TaskRunnerType:
-        if v == TaskRunnerType.LOCAL:
-            if values.get("local_dev_endpoints_url") is None:
+    @model_validator(mode="after")
+    def _task_runner_type_validator(self) -> Self:
+        if self.task_runner_type == TaskRunnerType.LOCAL:
+            if self.local_dev_endpoints_url is None:
                 raise ValueError(
                     "Must specify local_dev_endpoints_url for local remote runner type."
                 )
 
-        if v == TaskRunnerType.ARGO:
-            if values.get("argo_host") is None:
+        if self.task_runner_type == TaskRunnerType.ARGO:
+            if self.argo_host is None:
                 raise ValueError("Must specify argo_host for argo remote runner type.")
-            if values.get("argo_token") is None:
+            if self.argo_token is None:
                 raise ValueError("Must specify argo_token for argo remote runner type.")
 
-        if v == TaskRunnerType.BATCH:
-            if values.get("batch_url") is None:
+        if self.task_runner_type == TaskRunnerType.BATCH:
+            if self.batch_url is None:
                 raise ValueError("Must specify batch_url for batch remote runner type.")
-            if values.get("batch_key") is None:
+            if self.batch_key is None:
                 raise ValueError("Must specify batch_key for batch remote runner type.")
-            if values.get("batch_default_pool_id") is None:
+            if self.batch_default_pool_id is None:
                 raise ValueError(
                     "Must specify batch_default_pool_id for batch remote runner type."
                 )
 
-        return v
+        return self
 
-    @validator("workflow_runner_type", always=True)
-    def _workflow_runner_type_validator(
-        cls, v: WorkflowRunnerType, values: Dict[str, Any]
-    ) -> WorkflowRunnerType:
-        if v == WorkflowRunnerType.ARGO:
-            if values.get("argo_host") is None:
+    @model_validator(mode="after")
+    def _workflow_runner_type_validator(self) -> Self:
+        if self.workflow_runner_type == WorkflowRunnerType.ARGO:
+            if self.argo_host is None:
                 raise ValueError(
                     "Must specify argo_host for argo workflow runner type."
                 )
-            if values.get("argo_token") is None:
+            if self.argo_token is None:
                 raise ValueError(
                     "Must specify argo_token for argo workflow runner type."
                 )
-            if values.get("workflow_runner_image") is None:
+            if self.workflow_runner_image is None:
                 raise ValueError(
                     "Must specify workflow_runner_image "
                     "for argo workflow runner type."
                 )
-        return v
+        return self
 
     # Don't cache tables; executor is not thread-safe
 
