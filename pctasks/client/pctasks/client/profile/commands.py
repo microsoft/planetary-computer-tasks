@@ -141,7 +141,7 @@ def set_profile(ctx: click.Context, profile: str) -> None:
         rprint(f"[red]Profile [bold]{profile}[/bold] does not exists[/red]")
         ctx.exit(1)
 
-    profile_only_config = settings_config.copy(update={"settings_file": None})
+    profile_only_config = settings_config.model_copy(update={"settings_file": None})
     profile_settings_file = profile_only_config.get_settings_file()
     if not Path(profile_settings_file).exists():
         raise click.UsageError(
@@ -160,7 +160,7 @@ def show_profile(ctx: click.Context, profile: str) -> None:
         rprint(f"[red]Profile [bold]{profile}[/bold] does not exists[/red]")
         ctx.exit(1)
 
-    profile_only_config = settings_config.copy(update={"settings_file": None})
+    profile_only_config = settings_config.model_copy(update={"settings_file": None})
     yaml_txt = profile_only_config.get_settings_file().read_text()
     console = Console()
     console.print(Syntax(yaml_txt, "yaml"))

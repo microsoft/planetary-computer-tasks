@@ -220,7 +220,7 @@ def template_model(
     model: T,
     get_value: Callable[[List[str]], Optional[TemplateValue]],
 ) -> T:
-    return model.__class__.parse_obj(template_dict(model.dict(), get_value))
+    return model.__class__.model_validate(template_dict(model.dict(), get_value))
 
 
 class Templater(ABC):

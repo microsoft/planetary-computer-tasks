@@ -21,4 +21,4 @@ def test_error_handling():
         )
     except YamlValidationError as e:
         error_text = str(e)
-        assert "jobs -> name: value is not a valid dict" in error_text
+        assert "dataset: Field required" in error_text

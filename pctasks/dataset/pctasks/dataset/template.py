@@ -18,7 +18,7 @@ def template_dataset(
         root = Path.cwd()
     templater = LocalTemplater(root)
     dataset_dict = templater.template_dict(dataset_dict)
-    return DatasetDefinition.parse_obj(dataset_dict)
+    return DatasetDefinition.model_validate(dataset_dict)
 
 
 def template_dataset_file(

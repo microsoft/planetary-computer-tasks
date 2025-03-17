@@ -128,7 +128,7 @@ class BaseCosmosDBContainer(Generic[T], ABC):
 
     def model_from_item(self, model_type: Type[T], item: Dict[str, Any]) -> T:
         """Transform a cosmosdb item (dict) into a model."""
-        return model_type.parse_obj(item)
+        return model_type.model_validate(item)
 
     def _prepare_put_item(self, model: T) -> Dict[str, Any]:
         # Set created or updated time

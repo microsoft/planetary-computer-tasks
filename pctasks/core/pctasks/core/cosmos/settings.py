@@ -1,13 +1,14 @@
 import os
 import re
-from typing import Any, Dict, Optional
+from typing import Optional
 from urllib.parse import urlparse
 
 import azure.identity.aio
 from azure.cosmos import CosmosClient
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.identity import DefaultAzureCredential
-from pydantic import validator
+from pydantic import field_validator, model_validator
+from typing_extensions import Self
 
 from pctasks.core.constants import COSMOSDB_EMULATOR_HOST_ENV_VAR
 from pctasks.core.settings import PCTasksSettings
@@ -67,11 +68,11 @@ class CosmosDBSettings(PCTasksSettings):
     def get_process_item_errors_container_name(self) -> str:
         return f"{self.process_item_errors_container_name}{self.test_container_suffix}"
 
-    @validator("test_container_suffix", always=True)
+    @field_validator("test_container_suffix")
     def _validate_test_container_suffix(cls, v: Optional[str]) -> str:
         return v or ""
 
-    @validator("connection_string")
+    @field_validator("connection_string")
     def _validate_connection_string(cls, v: Optional[str]) -> Optional[str]:
         if v:
             if not re.search(r"AccountEndpoint=(.*?);", v):
@@ -80,15 +81,14 @@ class CosmosDBSettings(PCTasksSettings):
                 raise ValueError("Cannot find AccountKey in connection_string")
         return v
 
-    @validator("key", always=True)  # Validates all connection properties (last defined)
-    def _validate_key(cls, v: Optional[str], values: Dict[str, Any]) -> Optional[str]:
-        if v:
-            if values.get("connection_string"):
-                raise ValueError("Cannot set both key and connection_string")
-            if not values.get("url"):
-                raise ValueError("Must set url when setting key")
+    @model_validator(mode="after")  # Validates all connection properties (last defined)
+    def _key_or_connection_string(self) -> Self:
+        if self.key and self.connection_string:
+            raise ValueError("Cannot set both key and connection_string")
+        if self.key and not self.url:
+            raise ValueError("Must set url when setting key")
 
-        return v
+        return self
 
     def get_cosmosdb_url(self) -> str:
         if self.connection_string:

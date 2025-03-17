@@ -1,6 +1,8 @@
 import os
 from typing import List, Optional, Union
 
+from pydantic import Field
+
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.task import FailedTaskResult, WaitTaskResult
 from pctasks.task.context import TaskContext
@@ -20,7 +22,7 @@ class TestTaskInput(PCBaseModel):
     uri: Optional[str] = None
     check_exists_uri: Optional[str] = None
     output_dir: str
-    options = TestTaskOptions()
+    options: TestTaskOptions = Field(default=TestTaskOptions())
 
 
 class TestTaskOutput(PCBaseModel):
@@ -55,7 +57,7 @@ class TestTask(Task[TestTaskInput, TestTaskOutput]):
                 raise TestTaskError(f"Input file {input.uri} does not exist.")
 
             try:
-                history = TestTaskAsset.parse_obj(
+                history = TestTaskAsset.model_validate(
                     input_storage.read_json(input_path)
                 ).history
             except:

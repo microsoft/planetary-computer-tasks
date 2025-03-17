@@ -194,6 +194,7 @@ def test_job_part_bulk_put(temp_cosmosdb_containers):
         mock_job_partition_runs = MockWorkflowRunsContainer(
             JobPartitionRunRecord, db=temp_cosmosdb_containers
         )
+
         with mock_job_partition_runs:
             mock_job_partition_runs.bulk_put(job_parts)
 

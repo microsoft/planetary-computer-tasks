@@ -39,5 +39,5 @@ run_id: test-workflow-noauth
 def test_run_workflow_invalid_workflow(client: TestClient) -> None:
     with ignore_ssl_warnings():
         response = client.post("/workflows/test-workflow", json={"invalid": "workflow"})
-        assert "field required" in response.content.decode("utf-8")
+        assert "field required" in response.content.decode("utf-8").lower()
         assert response.status_code == 400

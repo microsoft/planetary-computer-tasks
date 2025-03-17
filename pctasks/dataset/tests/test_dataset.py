@@ -100,10 +100,10 @@ def test_process_items_is_update_workflow(tmp_path, has_args, extra_uri) -> None
 
     if extra_uri:
         asset_storage = ds_config.collections[0].asset_storage
-        asset_storage.append(asset_storage[0].copy())
+        asset_storage.append(asset_storage[0].model_copy())
 
     if not has_args:
-        ds_config = ds_config.copy(update={"args": None})
+        ds_config = ds_config.model_copy(update={"args": None})
         assert ds_config.args is None
 
     collection_config = ds_config.collections[0]

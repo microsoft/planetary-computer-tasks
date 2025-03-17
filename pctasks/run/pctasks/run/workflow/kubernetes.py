@@ -231,7 +231,7 @@ def build_streaming_deployment(
         env.append(V1EnvVar(name=k, value=str(v)))
 
     resources = build_resources(
-        Resources.parse_obj(task_definition.args["streaming_options"]["resources"])
+        Resources.model_validate(task_definition.args["streaming_options"]["resources"])
     )
 
     container = V1Container(
