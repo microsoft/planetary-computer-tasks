@@ -7,6 +7,6 @@ from pctasks.core.models.base import PCBaseModel, RunRecordId
 T = TypeVar("T", bound=BaseModel)
 
 
-class ActivityMessage(Generic[T], PCBaseModel):
+class ActivityMessage(PCBaseModel, Generic[T]):
     run_record_id: RunRecordId
     msg: T

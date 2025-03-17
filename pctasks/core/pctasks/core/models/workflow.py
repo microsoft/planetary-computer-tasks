@@ -262,7 +262,7 @@ class WorkflowSubmitMessage(PCBaseModel):
     def get_workflow_with_templated_args(self) -> Workflow:
         if self.args is None:
             return self.workflow
-        return self.workflow.copy(
+        return self.workflow.model_copy(
             update={"definition": self.workflow.definition.template_args(self.args)}
         )
 

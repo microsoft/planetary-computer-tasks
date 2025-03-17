@@ -87,7 +87,7 @@ class CreateSplitsTaskConfig(TaskDefinition):
 
             storage_chunk_options = asset_storage_config.chunks.options
             if chunk_options:
-                storage_chunk_options = storage_chunk_options.copy(
+                storage_chunk_options = storage_chunk_options.model_copy(
                     update=chunk_options.dict(exclude_defaults=True)
                 )
             split_inputs.append(

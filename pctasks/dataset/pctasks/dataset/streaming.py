@@ -193,7 +193,7 @@ class StreamingCreateItemsTask(
         create_items_function = extra_options["create_items_function"]
 
         logger.info("Processing message id=%s", message.id)
-        parsed_message = StorageEvent.parse_raw(message.content)
+        parsed_message = StorageEvent.model_validate_json(message.content)
 
         try:
             items = self.create_items(

@@ -37,7 +37,7 @@ def run_workflow(
         )
 
         run_settings = RunSettings.get()
-        run_settings = run_settings.copy(deep=True)
+        run_settings = run_settings.model_copy(deep=True)
         run_settings.task_poll_seconds = 5
         run_settings.max_concurrent_workflow_tasks = 5
         run_settings.remote_runner_threads = 2

@@ -56,7 +56,7 @@ class CreateItemsInput(PCBaseModel):
 
     @model_validator(mode="after")
     def _validate_output_uri(self) -> Self:
-        if self.item_chunkset_uri is None and self.asset_chunk_info is None:
+        if self.asset_chunk_info is None and self.item_chunkset_uri is not None:
             raise ValueError(
                 "item_chunkset_uri must be specified if not processing asset_chunk_info"
             )

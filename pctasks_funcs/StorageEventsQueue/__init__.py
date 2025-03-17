@@ -14,7 +14,7 @@ from pctasks.core.models.event import StorageEventRecord
 # TODO: use async
 def main(msg: func.QueueMessage) -> None:
     body = msg.get_body().decode("utf-8")
-    event = StorageEventRecord.parse_raw(body)
+    event = StorageEventRecord.model_validate_json(body)
     with StorageEventsContainer(StorageEventRecord) as cosmos_client:
         cosmos_client.put(event)
 

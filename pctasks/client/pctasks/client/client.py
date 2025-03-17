@@ -369,7 +369,7 @@ class PCTasksClient:
 
         workflow_def = workflow.definition
 
-        request = request.copy()
+        request = request.model_copy()
 
         # Ensure arguments
         request.args = self.settings.add_default_args(
