@@ -1,0 +1,282 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "c-cap"
+    },
+    "minzoom": 5,
+    "assets": [
+      "data"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 7,
+    "mosaic_preview_coords": [
+      26.7409,
+      -80.9714
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "All years",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "id"
+              },
+              {
+                "interval": [
+                  "1975-01-01",
+                  "2016-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2016 (CONUS)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "id"
+              },
+              {
+                "interval": [
+                  "2016-01-01",
+                  "2016-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2010 (CONUS)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "id"
+              },
+              {
+                "interval": [
+                  "2010-01-01",
+                  "2010-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2006 (CONUS)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "id"
+              },
+              {
+                "interval": [
+                  "2006-01-01",
+                  "2006-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2005 (HI)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "id"
+              },
+              {
+                "interval": [
+                  "2005-01-01",
+                  "2005-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2001 (CONUS/HI)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "id"
+              },
+              {
+                "interval": [
+                  "2001-01-01",
+                  "2001-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "1996 (CONUS)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "id"
+              },
+              {
+                "interval": [
+                  "1996-01-01",
+                  "1996-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "1992 (CONUS/HI)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "id"
+              },
+              {
+                "interval": [
+                  "1992-01-01",
+                  "1992-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "1985 (CONUS)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "id"
+              },
+              {
+                "interval": [
+                  "1985-01-01",
+                  "1985-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "1975 (CONUS)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "id"
+              },
+              {
+                "interval": [
+                  "1975-01-01",
+                  "1975-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Classification",
+        "description": "Default colormap",
+        "type": "raster-tile",
+        "options": "assets=data&colormap_name=c-cap",
+        "vector_options": null,
+        "min_zoom": 5,
+        "legend": {
+          "type": "classmap",
+          "labels": [
+            "Background (No data)",
+            "Unclassified (Cloud, Shadow, etc)",
+            "Developed, High Intensity",
+            "Developed, Medium Intensity",
+            "Developed, Low Intensity",
+            "Developed, Open Space",
+            "Cultivated Crops",
+            "Pasture/Hay",
+            "Grassland/Herbaceous",
+            "Deciduous Forest",
+            "Evergreen Forest",
+            "Mixed Forest",
+            "Scrub/Shrub",
+            "Palustrine Forested Wetland",
+            "Palustrine Scrub/Shrub Wetland",
+            "Palustrine Emergent Wetland (Persistent)",
+            "Estuarine Forested Wetland",
+            "Estuarine Scrub/Shrub Wetland",
+            "Estuarine Emergent Wetland",
+            "Unconsolidated Shore",
+            "Barren Land",
+            "Open Water",
+            "Palustrine Aquatic Bed",
+            "Estuarine Aquatic Bed",
+            "Tundra",
+            "Perennial Ice/Snow"
+          ],
+          "trim_start": 2,
+          "trim_end": null,
+          "scale_factor": null
+        },
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 7,
+      "coordinates": [
+        26.7409,
+        -80.9714
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

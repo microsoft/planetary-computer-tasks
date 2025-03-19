@@ -1,0 +1,56 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "color_formula": "gamma RGB 3.0, saturation 1.9, sigmoidal RGB 0 0.55"
+    },
+    "minzoom": 5,
+    "assets": [
+      "sur_refl_b02",
+      "sur_refl_b01",
+      "sur_refl_b01"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 4,
+    "mosaic_preview_coords": [
+      40.17,
+      -105.1
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "",
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "False color",
+        "description": "False color composite of bands 2 and 1",
+        "type": "raster-tile",
+        "options": "assets=sur_refl_b02&assets=sur_refl_b01&assets=sur_refl_b01&color_formula=gamma RGB 3.0, saturation 1.9, sigmoidal RGB 0 0.55",
+        "vector_options": null,
+        "min_zoom": 5,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 7,
+      "coordinates": [
+        40.17,
+        -105.1
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

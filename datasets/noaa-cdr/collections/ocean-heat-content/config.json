@@ -1,0 +1,366 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "rdylbu_r",
+      "rescale": [
+        "-25,25"
+      ]
+    },
+    "minzoom": 1,
+    "assets": [
+      "heat_content"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 3,
+    "mosaic_preview_coords": [
+      -26.0,
+      28.0
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "0-2000m, yearly",
+        "description": null,
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:interval"
+              },
+              "yearly"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:max_depth"
+              },
+              2000
+            ]
+          }
+        ]
+      },
+      {
+        "name": "0-2000m, seasonal",
+        "description": null,
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:interval"
+              },
+              "seasonal"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:max_depth"
+              },
+              2000
+            ]
+          }
+        ]
+      },
+      {
+        "name": "0-2000m, monthly",
+        "description": null,
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:interval"
+              },
+              "monthly"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:max_depth"
+              },
+              2000
+            ]
+          }
+        ]
+      },
+      {
+        "name": "0-2000m, pentadal",
+        "description": null,
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:interval"
+              },
+              "pentadal"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:max_depth"
+              },
+              2000
+            ]
+          }
+        ]
+      },
+      {
+        "name": "0-700m, yearly",
+        "description": null,
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:interval"
+              },
+              "yearly"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:max_depth"
+              },
+              700
+            ]
+          }
+        ]
+      },
+      {
+        "name": "0-700m, seasonal",
+        "description": null,
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:interval"
+              },
+              "seasonal"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:max_depth"
+              },
+              700
+            ]
+          }
+        ]
+      },
+      {
+        "name": "0-700m, monthly",
+        "description": null,
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:interval"
+              },
+              "monthly"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:max_depth"
+              },
+              700
+            ]
+          }
+        ]
+      },
+      {
+        "name": "0-700m, pentadal",
+        "description": null,
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:interval"
+              },
+              "pentadal"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:max_depth"
+              },
+              700
+            ]
+          }
+        ]
+      },
+      {
+        "name": "0-100m, yearly",
+        "description": null,
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:interval"
+              },
+              "yearly"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:max_depth"
+              },
+              100
+            ]
+          }
+        ]
+      },
+      {
+        "name": "0-100m, seasonal",
+        "description": null,
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:interval"
+              },
+              "seasonal"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:max_depth"
+              },
+              100
+            ]
+          }
+        ]
+      },
+      {
+        "name": "0-100m, pentadal",
+        "description": null,
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:interval"
+              },
+              "pentadal"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_cdr:max_depth"
+              },
+              100
+            ]
+          }
+        ]
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Heat content anomaly",
+        "description": "Heat content anomaly colormap",
+        "type": "raster-tile",
+        "options": "assets=heat_content&colormap_name=rdylbu_r&rescale=-25,25",
+        "vector_options": null,
+        "min_zoom": 1,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Mean salinity anomaly",
+        "description": "Mean salinity anomaly colormap",
+        "type": "raster-tile",
+        "options": "assets=mean_salinity&colormap_name=brbg_r&rescale=-0.1,0.1",
+        "vector_options": null,
+        "min_zoom": 1,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Mean temperature anomaly",
+        "description": "Mean temperature anomaly colormap",
+        "type": "raster-tile",
+        "options": "assets=mean_temperature&colormap_name=rdylbu_r&rescale=-1,1",
+        "vector_options": null,
+        "min_zoom": 1,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Mean halosteric sea level anomaly",
+        "description": "Mean halosteric sea level anomaly colormap",
+        "type": "raster-tile",
+        "options": "assets=mean_halosteric_sea_level&colormap_name=rdbu_r&rescale=-50,50",
+        "vector_options": null,
+        "min_zoom": 1,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Mean thermosteric sea level anomaly",
+        "description": "Mean thermosteric sea level anomaly colormap",
+        "type": "raster-tile",
+        "options": "assets=mean_thermosteric_sea_level&colormap_name=rdbu_r&rescale=-50,50",
+        "vector_options": null,
+        "min_zoom": 1,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Mean total steric sea level anomaly",
+        "description": "Mean total steric sea level anomaly colormap",
+        "type": "raster-tile",
+        "options": "assets=mean_total_steric_sea_level&colormap_name=rdbu_r&rescale=-50,50",
+        "vector_options": null,
+        "min_zoom": 1,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 3,
+      "coordinates": [
+        26.0,
+        -29.0
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

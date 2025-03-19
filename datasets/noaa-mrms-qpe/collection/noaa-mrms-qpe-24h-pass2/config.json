@@ -1,0 +1,66 @@
+{
+  "render_config": {
+    "render_params": {
+      "colormap_name": "qpe",
+      "rescale": [
+        "0,120"
+      ]
+    },
+    "minzoom": 3,
+    "assets": [
+      "cog"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 4,
+    "mosaic_preview_coords": [
+      39.8283,
+      -98.5795
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": null,
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Precipitation (mm)",
+        "description": "Precipitation",
+        "type": "raster-tile",
+        "options": "assets=cog&rescale=0,120&colormap_name=qpe",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": {
+          "type": "continuous",
+          "labels": [
+            ">0",
+            "60",
+            "120"
+          ],
+          "trim_start": 1,
+          "trim_end": null,
+          "scale_factor": null
+        },
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 4,
+      "coordinates": [
+        39.8283,
+        -98.5795
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

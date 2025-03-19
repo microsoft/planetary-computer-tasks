@@ -23,6 +23,26 @@
   "mosaic_info": {
     "mosaics": [
       {
+        "name": "2023",
+        "description": "2023 Use/Land Cover",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2023-01-01T23:59:59Z",
+                  "2023-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
         "name": "2022",
         "description": "2022 Use/Land Cover",
         "cql": [
@@ -158,8 +178,8 @@
     "default_location": {
       "zoom": 4,
       "coordinates": [
-        -0.8749,
-        109.8456
+        4.0,
+        -73.0
       ]
     },
     "default_custom_query": null,

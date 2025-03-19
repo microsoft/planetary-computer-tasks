@@ -1,0 +1,108 @@
+{
+  "render_config": {
+    "render_params": {
+      "colormap_name": "terrain",
+      "rescale": [
+        "-1000,4000"
+      ]
+    },
+    "minzoom": 8,
+    "assets": [
+      "data"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 8,
+    "mosaic_preview_coords": [
+      47.1113,
+      -120.8578
+    ],
+    "requires_token": true,
+    "max_items_per_tile": 25,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "",
+        "cql": [
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "timestamp": "2020-05-06"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Hillshade",
+        "description": "",
+        "type": "raster-tile",
+        "options": "assets=data&colormap_name=gray&algorithm=hillshade&buffer=3&algorithm_params=%7B%22azimuth%22%3A%20315%2C%20%22angle_altitude%22%3A%2045%7D",
+        "vector_options": null,
+        "min_zoom": 8,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Contours",
+        "description": "",
+        "type": "raster-tile",
+        "options": "assets=data&algorithm=contours&buffer=3&algorithm_params=%7B%22minz%22%3A-1000%2C%22maxz%22%3A4000%2C%22thickness%22%3A8%7D",
+        "vector_options": null,
+        "min_zoom": 8,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Elevation (terrain)",
+        "description": "Elevation data scaled -1000 to 4000 with terrain colormap",
+        "type": "raster-tile",
+        "options": "assets=data&rescale=-1000,4000&colormap_name=terrain",
+        "vector_options": null,
+        "min_zoom": 8,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Elevation (viridis)",
+        "description": "Elevation data scaled -1000 to 4000 with viridis colormap",
+        "type": "raster-tile",
+        "options": "assets=data&rescale=-1000,4000&colormap_name=viridis",
+        "vector_options": null,
+        "min_zoom": 8,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Elevation (gray)",
+        "description": "Elevation data scaled -1000 to 4000 with gray colormap",
+        "type": "raster-tile",
+        "options": "assets=data&rescale=-1000,4000&colormap_name=gray_r",
+        "vector_options": null,
+        "min_zoom": 8,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 8,
+      "coordinates": [
+        47.1113,
+        -120.8578
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

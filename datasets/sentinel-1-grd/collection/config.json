@@ -1,0 +1,225 @@
+{
+  "render_config": {
+    "render_params": {
+      "expression": "vv;vh;vv/vh",
+      "rescale": [
+        "0,600",
+        "0,270",
+        "0,9"
+      ],
+      "asset_as_band": true,
+      "tile_format": "png"
+    },
+    "minzoom": 8,
+    "assets": [
+      "vv",
+      "vh"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 7,
+    "mosaic_preview_coords": [
+      26.7409,
+      -80.9714
+    ],
+    "requires_token": true,
+    "max_items_per_tile": 15,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent - VV, VH",
+        "description": null,
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "sar:polarizations"
+              },
+              [
+                "VV",
+                "VH"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Most recent - HH, HV",
+        "description": null,
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "sar:polarizations"
+              },
+              [
+                "HH",
+                "HV"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Most recent - VV",
+        "description": null,
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "sar:polarizations"
+              },
+              [
+                "VV"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Most recent - VH",
+        "description": null,
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "sar:polarizations"
+              },
+              [
+                "VH"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Most recent - HH",
+        "description": null,
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "sar:polarizations"
+              },
+              [
+                "HH"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Most recent - Any",
+        "description": null,
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "VV, VH False-color composite",
+        "description": "False-color composite, using VV, VH, VV/VH for the RGB channels. Rescaled at `0,600`, `0,270`, `0,9` per channel",
+        "type": "raster-tile",
+        "options": "expression=vv;vh;vv/vh&rescale=0,600&rescale=0,270&rescale=0,9&asset_as_band=true",
+        "vector_options": null,
+        "min_zoom": 8,
+        "legend": null,
+        "conditions": [
+          {
+            "property": "sar:polarizations",
+            "value": [
+              "VV",
+              "VH"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "HH, HV False-color composite",
+        "description": "False-color composite, using HH, HV, and HH/HV for the RGB channels. Rescaled at `0,800`, `0,800`, `0,10` per channel",
+        "type": "raster-tile",
+        "options": "expression=hh;hv;hh/hv&rescale=0,800&rescale=0,800&rescale=0,10&asset_as_band=true",
+        "vector_options": null,
+        "min_zoom": 8,
+        "legend": null,
+        "conditions": [
+          {
+            "property": "sar:polarizations",
+            "value": [
+              "HH",
+              "HV"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "VV polarization",
+        "description": "VV asset scaled to `0,250`.",
+        "type": "raster-tile",
+        "options": "assets=vv&rescale=0,250&colormap_name=gray",
+        "vector_options": null,
+        "min_zoom": 8,
+        "legend": null,
+        "conditions": [
+          {
+            "property": "sar:polarizations",
+            "value": [
+              "VV"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "VH polarization",
+        "description": "VH asset scaled to `0,250`.",
+        "type": "raster-tile",
+        "options": "assets=vh&rescale=0,250&colormap_name=gray",
+        "vector_options": null,
+        "min_zoom": 8,
+        "legend": null,
+        "conditions": [
+          {
+            "property": "sar:polarizations",
+            "value": [
+              "VH"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "HH polarization",
+        "description": "HH asset scaled to `0,250`.",
+        "type": "raster-tile",
+        "options": "assets=hh&rescale=0,250&colormap_name=gray",
+        "vector_options": null,
+        "min_zoom": 8,
+        "legend": null,
+        "conditions": [
+          {
+            "property": "sar:polarizations",
+            "value": [
+              "HH"
+            ]
+          }
+        ]
+      }
+    ],
+    "default_location": {
+      "zoom": 9,
+      "coordinates": [
+        -16.494,
+        124.0274
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

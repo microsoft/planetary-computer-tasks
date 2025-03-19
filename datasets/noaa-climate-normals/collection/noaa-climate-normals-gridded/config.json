@@ -1,0 +1,396 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "ylorrd",
+      "rescale": [
+        "-15,35"
+      ]
+    },
+    "minzoom": 3,
+    "assets": [
+      "tavg_norm"
+    ],
+    "maxzoom": 8,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 4,
+    "mosaic_preview_coords": [
+      39.0,
+      -98.0
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Daily (1991-2020)",
+        "description": "Daily climate normals for time period 1991-2020",
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:frequency"
+              },
+              "daily"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:period"
+              },
+              "1991-2020"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Daily (2006-2020)",
+        "description": "Daily climate normals for time period 2006-2020",
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:frequency"
+              },
+              "daily"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:period"
+              },
+              "2006-2020"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Monthly (1901-2000)",
+        "description": "Monthly climate normals for time period 1901-2000",
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:frequency"
+              },
+              "monthly"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:period"
+              },
+              "1901-2000"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Monthly (1991-2020)",
+        "description": "Monthly climate normals for time period 1991-2020",
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:frequency"
+              },
+              "monthly"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:period"
+              },
+              "1991-2020"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Monthly (2006-2020)",
+        "description": "Monthly climate normals for time period 2006-2020",
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:frequency"
+              },
+              "monthly"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:period"
+              },
+              "2006-2020"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Seasonal (1901-2000)",
+        "description": "Seasonal climate normals for time period 1901-2000",
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:frequency"
+              },
+              "seasonal"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:period"
+              },
+              "1901-2000"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Seasonal (1991-2020)",
+        "description": "Seasonal climate normals for time period 1991-2020",
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:frequency"
+              },
+              "seasonal"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:period"
+              },
+              "1991-2020"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Seasonal (2006-2020)",
+        "description": "Seasonal climate normals for time period 2006-2020",
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:frequency"
+              },
+              "seasonal"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:period"
+              },
+              "2006-2020"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Annual (1901-2000)",
+        "description": "Annual climate normals for time period 1901-2020",
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:frequency"
+              },
+              "annual"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:period"
+              },
+              "1901-2000"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Annual (1991-2020)",
+        "description": "Annual climate normals for time period 1991-2020",
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:frequency"
+              },
+              "annual"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:period"
+              },
+              "1991-2020"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Annual (2006-2020)",
+        "description": "Annual climate normals for time period 2006-2020",
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:frequency"
+              },
+              "annual"
+            ]
+          },
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "noaa_climate_normals:period"
+              },
+              "2006-2020"
+            ]
+          }
+        ]
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Daily Precipitation (mm)",
+        "description": "Normal Daily Precipitation",
+        "type": "raster-tile",
+        "options": "assets=prcp_norm&colormap_name=ylgnbu&rescale=0,10",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": [
+          {
+            "property": "noaa_climate_normals:frequency",
+            "value": "daily"
+          }
+        ]
+      },
+      {
+        "name": "Monthly Precipitation (mm)",
+        "description": "Normal Monthly Precipitation",
+        "type": "raster-tile",
+        "options": "assets=prcp_norm&colormap_name=ylgnbu&rescale=0,250",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": [
+          {
+            "property": "noaa_climate_normals:frequency",
+            "value": "monthly"
+          }
+        ]
+      },
+      {
+        "name": "Seasonal Precipitation (mm)",
+        "description": "Normal Seasonal Precipitation",
+        "type": "raster-tile",
+        "options": "assets=prcp_norm&colormap_name=ylgnbu&rescale=0,750",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": [
+          {
+            "property": "noaa_climate_normals:frequency",
+            "value": "seasonal"
+          }
+        ]
+      },
+      {
+        "name": "Annual Precipitation (mm)",
+        "description": "Normal Annual Precipitation",
+        "type": "raster-tile",
+        "options": "assets=prcp_norm&colormap_name=ylgnbu&rescale=0,2500",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": [
+          {
+            "property": "noaa_climate_normals:frequency",
+            "value": "annual"
+          }
+        ]
+      },
+      {
+        "name": "Average Temperature (°C)",
+        "description": "Normal Average Temperature",
+        "type": "raster-tile",
+        "options": "assets=tavg_norm&colormap_name=ylorrd&rescale=-15,35",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Minimum Temperature (°C)",
+        "description": "Normal Minimum Temperature",
+        "type": "raster-tile",
+        "options": "assets=tmin_norm&colormap_name=ylorrd&rescale=-25,35",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Maximum Temperature (°C)",
+        "description": "Normal Maximum Temperature",
+        "type": "raster-tile",
+        "options": "assets=tmax_norm&colormap_name=ylorrd&rescale=-10,45",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 4,
+      "coordinates": [
+        39.0,
+        -98.0
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

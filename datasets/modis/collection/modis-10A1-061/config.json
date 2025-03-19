@@ -1,0 +1,54 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "modis-10A1"
+    },
+    "minzoom": 5,
+    "assets": [
+      "NDSI_Snow_Cover"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 4,
+    "mosaic_preview_coords": [
+      40.17,
+      -105.1
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "",
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Normalized difference snow index (NDSI) daily",
+        "description": "Normalized difference snow index (NDSI) snow cover daily 500m",
+        "type": "raster-tile",
+        "options": "assets=NDSI_Snow_Cover&colormap_name=modis-10A1",
+        "vector_options": null,
+        "min_zoom": 5,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 7,
+      "coordinates": [
+        40.17,
+        -105.1
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

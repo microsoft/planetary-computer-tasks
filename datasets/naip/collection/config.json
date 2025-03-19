@@ -1,0 +1,355 @@
+{
+  "render_config": {
+    "render_params": {
+      "asset_bidx": "image|1,2,3"
+    },
+    "minzoom": 11,
+    "assets": [
+      "image"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 13,
+    "mosaic_preview_coords": [
+      36.0891,
+      -111.8577
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent available",
+        "description": "",
+        "cql": []
+      },
+      {
+        "name": "2023",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2023-01-01",
+                  "2023-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2022",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2022-01-01",
+                  "2022-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2021",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2021-01-01",
+                  "2021-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2020",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2020-01-01",
+                  "2020-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2019",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2019-01-01",
+                  "2019-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2018",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2018-01-01",
+                  "2018-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2017",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2017-01-01",
+                  "2017-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2016",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2016-01-01",
+                  "2016-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2015",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2015-01-01",
+                  "2015-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2014",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2014-01-01",
+                  "2014-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2013",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2013-01-01",
+                  "2013-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2012",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2012-01-01",
+                  "2012-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2011",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2011-01-01",
+                  "2011-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2010",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2010-01-01",
+                  "2010-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Natural color",
+        "description": "RGB from visual assets",
+        "type": "raster-tile",
+        "options": "assets=image&asset_bidx=image|1,2,3",
+        "vector_options": null,
+        "min_zoom": 12,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Color infrared",
+        "description": "Highlights healthy (red) and unhealthy (blue/gray) vegetation.",
+        "type": "raster-tile",
+        "options": "assets=image&asset_bidx=image|4,1,2&color_formula=Sigmoidal RGB 15 0.35",
+        "vector_options": null,
+        "min_zoom": 12,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Normalized Difference Veg. Index (NDVI)",
+        "description": "Normalized Difference Vegetation Index (NIR-Red)/(NIR+Red), darker green indicates healthier vegetation.",
+        "type": "raster-tile",
+        "options": "expression=(image_b4 - image_b1)/(image_b4 + image_b1)&rescale=-1,1&colormap_name=rdylgn",
+        "vector_options": null,
+        "min_zoom": 12,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 13,
+      "coordinates": [
+        36.0891,
+        -111.8577
+      ]
+    },
+    "default_custom_query": {
+      "op": "args"
+    },
+    "animation_hint": null
+  }
+}
