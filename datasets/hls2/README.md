@@ -27,3 +27,15 @@ curl https://planetarycomputer.microsoft.com/api/stac/v1/collections/hls2-l30/it
 ```
 
 To get the workflow to work with cron, use `pctasks workflow update ...`
+
+## Publishing Collection Configurations
+
+You will need access to the `mspc` CLI, then you may run:
+
+```shell
+repo_root=$(git rev-parse --show-toplevel)
+environment=test # or green/blue depending on what is active
+
+mspc collections render-configs publish $environment $repo_root hls2-l30
+mspc collections render-configs publish $environment $repo_root hls2-s30
+```
