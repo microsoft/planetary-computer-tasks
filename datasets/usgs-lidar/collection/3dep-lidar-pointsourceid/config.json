@@ -1,0 +1,50 @@
+{
+  "render_config": {
+    "render_params": {
+      "nodata": -9999
+    },
+    "minzoom": 11,
+    "assets": [
+      "data"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": null,
+    "mosaic_preview_coords": null,
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "",
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "PointSourceId",
+        "description": "USGS 3DEP Lidar PointSourceId Dimension",
+        "type": "raster-tile",
+        "options": "assets=data&colormap_name=terrain&rescale=0,800",
+        "vector_options": null,
+        "min_zoom": 11,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 11,
+      "coordinates": [
+        47.1113,
+        -120.8578
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

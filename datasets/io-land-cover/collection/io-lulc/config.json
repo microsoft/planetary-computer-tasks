@@ -1,0 +1,68 @@
+{
+  "render_config": {
+    "render_params": {
+      "colormap_name": "io-lulc"
+    },
+    "minzoom": 4,
+    "assets": [
+      "data"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 4,
+    "mosaic_preview_coords": [
+      -0.8749,
+      109.8456
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "Most recent Land Use/Land Cover",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2020-06-15T00:00:00Z",
+                  "2020-06-15T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Default",
+        "description": "Land cover classification using 10 class custom colormap",
+        "type": "raster-tile",
+        "options": "assets=data&exitwhenfull=False&skipcovered=False&colormap_name=io-lulc",
+        "vector_options": null,
+        "min_zoom": 4,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 4,
+      "coordinates": [
+        -0.8749,
+        109.8456
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "render_config": {
+    "render_params": {
+      "colormap_name": "jrc-occurrence",
+      "nodata": 0
+    },
+    "minzoom": 4,
+    "assets": [
+      "occurrence"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 10,
+    "mosaic_preview_coords": [
+      24.21647,
+      91.015209
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2020-06-06T00:00:00Z",
+                  "2020-06-06T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Water occurrence",
+        "description": "Shows where surface water occurred between 1984 and 2020",
+        "type": "raster-tile",
+        "options": "assets=occurrence&colormap_name=jrc-occurrence&nodata=0",
+        "vector_options": null,
+        "min_zoom": 4,
+        "legend": {
+          "type": "continuous",
+          "labels": [
+            "Sometimes water",
+            "Always water"
+          ],
+          "trim_start": 1,
+          "trim_end": null,
+          "scale_factor": null
+        },
+        "conditions": null
+      },
+      {
+        "name": "Annual water recurrence",
+        "description": "Shows frequency that water returns from one year to another",
+        "type": "raster-tile",
+        "options": "assets=recurrence&colormap_name=jrc-recurrence&nodata=0",
+        "vector_options": null,
+        "min_zoom": 4,
+        "legend": {
+          "type": "continuous",
+          "labels": [
+            ">0%",
+            "100%"
+          ],
+          "trim_start": 1,
+          "trim_end": 2,
+          "scale_factor": null
+        },
+        "conditions": null
+      },
+      {
+        "name": "Water Occurrence change intensity",
+        "description": "Shows where surface water occurrence increased, decreased, or did not change between 1984 and 2020",
+        "type": "raster-tile",
+        "options": "assets=change&colormap_name=jrc-change&nodata=0",
+        "vector_options": null,
+        "min_zoom": 4,
+        "legend": {
+          "type": "continuous",
+          "labels": [
+            "Decrease",
+            "No change",
+            "Increase"
+          ],
+          "trim_start": null,
+          "trim_end": 3,
+          "scale_factor": null
+        },
+        "conditions": null
+      },
+      {
+        "name": "Water seasonality",
+        "description": "Indicates more seasonal or permanent surface water features during the course of a year",
+        "type": "raster-tile",
+        "options": "assets=seasonality&colormap_name=jrc-seasonality&nodata=0",
+        "vector_options": null,
+        "min_zoom": 4,
+        "legend": {
+          "type": "continuous",
+          "labels": [
+            "Seasonal",
+            "Permanent"
+          ],
+          "trim_start": 1,
+          "trim_end": 1,
+          "scale_factor": null
+        },
+        "conditions": null
+      },
+      {
+        "name": "Water transitions",
+        "description": "Classifies the change in water state between the first and last years of observation",
+        "type": "raster-tile",
+        "options": "assets=transitions&colormap_name=jrc-transitions&nodata=0",
+        "vector_options": null,
+        "min_zoom": 4,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Maximum water extent",
+        "description": "Show the maximum observed water extent during the course of 1984 to 2020",
+        "type": "raster-tile",
+        "options": "assets=extent&colormap_name=jrc-extent&nodata=0",
+        "vector_options": null,
+        "min_zoom": 4,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 10,
+      "coordinates": [
+        24.21647,
+        91.015209
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

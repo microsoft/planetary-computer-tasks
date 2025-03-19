@@ -76,8 +76,9 @@ class StreamingTaskOptions(PCBaseModel):
     allow_spot_instances: bool = False
     resources: Resources
 
-    class Config:
-        extra = "forbid"
+    model_config = {
+        "extra": "forbid",
+    }
 
 
 class NoOutput(PCBaseModel):

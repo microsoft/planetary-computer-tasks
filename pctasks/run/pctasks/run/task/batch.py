@@ -253,7 +253,7 @@ class BatchTaskRunner(TaskRunner):
 
         for job_id, task_ids in groupby(
             [
-                (BatchTaskId.parse_obj(batch_id), (partition_id, task_id))
+                (BatchTaskId.model_validate(batch_id), (partition_id, task_id))
                 for partition_id, task_map in runner_ids.items()
                 for task_id, batch_id in task_map.items()
             ],
@@ -336,7 +336,7 @@ class BatchTaskRunner(TaskRunner):
     ) -> TaskPollResult:
         batch_client = self._get_batch_client()
 
-        task_id = BatchTaskId.parse_obj(runner_id)
+        task_id = BatchTaskId.model_validate(runner_id)
 
         task_status_result = batch_client.get_task_status(
             job_id=task_id.batch_job_id, task_id=task_id.batch_task_id
@@ -362,7 +362,7 @@ class BatchTaskRunner(TaskRunner):
     def cancel_task(self, runner_id: Dict[str, Any]) -> None:
         batch_client = self._get_batch_client()
 
-        task_id = BatchTaskId.parse_obj(runner_id)
+        task_id = BatchTaskId.model_validate(runner_id)
 
         batch_client.terminate_task(
             job_id=task_id.batch_job_id, task_id=task_id.batch_task_id

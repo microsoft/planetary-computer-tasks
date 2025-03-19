@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Set, Union
 
-from pydantic import Field, validator
+from pydantic import Field, field_validator
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.config import CodeConfig
@@ -97,7 +97,7 @@ class ChunksConfig(PCBaseModel):
     options: ChunkOptions = ChunkOptions()
     splits: Optional[List[SplitDefinition]] = None
 
-    @validator("splits")
+    @field_validator("splits", mode="after")
     def _validate_splits(
         cls, v: Optional[List[SplitDefinition]]
     ) -> Optional[List[SplitDefinition]]:
@@ -147,8 +147,9 @@ class CollectionDefinition(PCBaseModel):
 
         return tokens
 
-    class Config:
-        allow_population_by_field_name = True
+    model_config = {
+        "populate_by_name": True,
+    }
 
 
 class DatasetDefinition(PCBaseModel):
@@ -181,7 +182,7 @@ class DatasetDefinition(PCBaseModel):
     def template_args(self, args: Dict[str, str]) -> "DatasetDefinition":
         return DictTemplater({"args": args}, strict=False).template_model(self)
 
-    @validator("id")
+    @field_validator("id")
     def _validate_name(cls, v: str) -> str:
         try:
             validate_table_key(v)
@@ -189,7 +190,7 @@ class DatasetDefinition(PCBaseModel):
             raise ValueError(f"Invalid dataset id: {e.INFO_MESSAGE}")
         return v
 
-    @validator("collections")
+    @field_validator("collections", mode="after")
     def _validate_collections(
         cls, v: List[CollectionDefinition]
     ) -> List[CollectionDefinition]:

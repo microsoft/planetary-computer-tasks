@@ -1,0 +1,91 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "ylgnbu",
+      "rescale": [
+        0,
+        250
+      ]
+    },
+    "minzoom": 3,
+    "assets": [
+      "prcp",
+      "tavg",
+      "tmin",
+      "tmax"
+    ],
+    "maxzoom": 8,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 4,
+    "mosaic_preview_coords": [
+      39.0,
+      -98.0
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "",
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Precipitation (mm)",
+        "description": "Monthly Precipitation",
+        "type": "raster-tile",
+        "options": "assets=prcp&colormap_name=ylgnbu&rescale=0,250",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Average Temperature (°C)",
+        "description": "Monthly Average Temperature",
+        "type": "raster-tile",
+        "options": "assets=tavg&colormap_name=ylorrd&rescale=-15,35",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Maximum Temperature (°C)",
+        "description": "Monthly Maximum Temperature",
+        "type": "raster-tile",
+        "options": "assets=tmax&colormap_name=ylorrd&rescale=-10,45",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Minimum Temperature (°C)",
+        "description": "Monthly Minimum Temperature",
+        "type": "raster-tile",
+        "options": "assets=tmin&colormap_name=ylorrd&rescale=-25,35",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 4,
+      "coordinates": [
+        39.0,
+        -98.0
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

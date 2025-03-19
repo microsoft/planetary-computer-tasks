@@ -1,6 +1,7 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Annotated, Any, Dict, List, Optional, Union
 
-from pydantic import Field, validator
+from pydantic import Discriminator, Field, Tag, model_validator
+from typing_extensions import Self
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.event import STACCollectionEventType, STACItemEventType
@@ -31,27 +32,40 @@ class NdjsonFolder(PCBaseModel):
 
 
 class IngestNdjsonInput(PCBaseModel):
-    type: str = Field(default=NDJSON_MESSAGE_TYPE, const=True)
+    type: str = Field(default=NDJSON_MESSAGE_TYPE, frozen=True)
     uris: Optional[Union[str, List[str]]] = None
     ndjson_folder: Optional[NdjsonFolder] = None
 
-    @validator("ndjson_folder")
-    def _validate_ndjson_folder(
-        cls, v: Optional[NdjsonFolder], values: Dict[str, Any]
-    ) -> Optional[NdjsonFolder]:
-        if v is None:
-            if values["uris"] is None:
-                raise ValueError("Either ndjson_folder or uris must be provided.")
-        return v
+    @model_validator(mode="after")
+    def _validate_ndjson_folder(self) -> Self:
+        if self.ndjson_folder is None and self.uris is None:
+            raise ValueError("Either ndjson_folder or uris must be provided.")
+        return self
 
 
 class IngestCollectionsInput(PCBaseModel):
-    type: str = Field(default=COLLECTIONS_MESSAGE_TYPE, const=True)
+    type: str = Field(default=COLLECTIONS_MESSAGE_TYPE, frozen=True)
     collections: List[Dict[str, Any]]
 
 
+def _get_discriminator_tag(v: Any) -> str:
+    if isinstance(v, IngestNdjsonInput):
+        return NDJSON_MESSAGE_TYPE
+    elif isinstance(v, IngestCollectionsInput):
+        return COLLECTIONS_MESSAGE_TYPE
+    else:
+        return "Any"
+
+
 class IngestTaskInput(PCBaseModel):
-    content: Union[IngestNdjsonInput, IngestCollectionsInput, Dict[str, Any]]
+    content: Annotated[
+        Union[
+            Annotated[IngestNdjsonInput, Tag(NDJSON_MESSAGE_TYPE)],
+            Annotated[IngestCollectionsInput, Tag(COLLECTIONS_MESSAGE_TYPE)],
+            Annotated[Dict[str, Any], Tag("Any")],
+        ],
+        Discriminator(_get_discriminator_tag),
+    ]
     """The content of the message.
 
     Can be a STAC Collection or Item JSON dict, or a NdjsonMessageData object.
@@ -80,11 +94,11 @@ class IngestTaskOutput(PCBaseModel):
     items: Optional[List[ItemIngestTaskOutput]] = None
     """List of items created by the ingest task."""
 
-    @validator("items", always=True)
-    def _validate_items(cls, v: Any, values: Dict[str, Any]) -> Any:
-        if not v and values["collections"] is None and not values["bulk_load"]:
+    @model_validator(mode="after")
+    def _validate_items(self) -> Any:
+        if not self.items and self.collections is None and not self.bulk_load:
             raise ValueError("Must supply either collections or items")
-        return v
+        return self
 
 
 class IngestTaskConfig(TaskDefinition):

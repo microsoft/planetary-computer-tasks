@@ -1,0 +1,64 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "modis-16A3GF-ET"
+    },
+    "minzoom": 5,
+    "assets": [
+      "ET_500m"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 7,
+    "mosaic_preview_coords": [
+      40.17,
+      -105.1
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "",
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Total evapotranspiration yearly 500m (kg/m²/year)",
+        "description": "Total evapotranspiration yearly 500m (kg/m²/year)",
+        "type": "raster-tile",
+        "options": "assets=ET_500m&colormap_name=modis-16A3GF-ET",
+        "vector_options": null,
+        "min_zoom": 5,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Total potential evapotranspiration yearly 500m (kg/m²/year)",
+        "description": "Total potential evapotranspiration yearly 500m (kg/m²/year)",
+        "type": "raster-tile",
+        "options": "assets=PET_500m&colormap_name=modis-16A3GF-PET",
+        "vector_options": null,
+        "min_zoom": 5,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 7,
+      "coordinates": [
+        40.17,
+        -105.1
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

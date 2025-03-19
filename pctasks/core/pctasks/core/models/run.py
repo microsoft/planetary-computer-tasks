@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from pydantic import Field, validator
+from pydantic import Field, model_validator
+from typing_extensions import Self
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.event import CloudEvent
@@ -94,18 +95,18 @@ class RunRecord(Record):
             StatusHistoryEntry(status=status, timestamp=tzutc_now())
         )
 
-    @validator("status_history", always=True)
-    def _validate_status_history(
-        cls, v: List[StatusHistoryEntry], values: Dict[str, Any]
-    ) -> List[StatusHistoryEntry]:
+    @model_validator(mode="after")
+    def _validate_status_history(self) -> Self:
         # Always ensure the status history is valid
-        if not v:
-            return [StatusHistoryEntry(status=values["status"], timestamp=tzutc_now())]
-        return v
+        if not self.status_history:
+            self.status_history = [
+                StatusHistoryEntry(status=self.status, timestamp=tzutc_now())
+            ]
+        return self
 
 
 class TaskRunRecord(RunRecord):
-    type: str = Field(default=RunRecordType.TASK_RUN, const=True)
+    type: str = Field(default=RunRecordType.TASK_RUN, frozen=True)
 
     run_id: str
     job_id: str
@@ -140,7 +141,7 @@ class TaskRunRecord(RunRecord):
 
 
 class JobPartitionRunRecord(RunRecord):
-    type: str = Field(default=RunRecordType.JOB_PARTITION_RUN, const=True)
+    type: str = Field(default=RunRecordType.JOB_PARTITION_RUN, frozen=True)
 
     run_id: str
     job_id: str
@@ -188,7 +189,7 @@ class JobPartitionRunRecord(RunRecord):
 
 
 class JobRunRecord(RunRecord):
-    type: str = Field(default=RunRecordType.JOB_RUN, const=True)
+    type: str = Field(default=RunRecordType.JOB_RUN, frozen=True)
 
     run_id: str
     job_id: str
@@ -223,7 +224,7 @@ class JobRunRecord(RunRecord):
 
 
 class WorkflowRunRecord(RunRecord):
-    type: str = Field(default=RunRecordType.WORKFLOW_RUN, const=True)
+    type: str = Field(default=RunRecordType.WORKFLOW_RUN, frozen=True)
 
     dataset_id: str
     run_id: str

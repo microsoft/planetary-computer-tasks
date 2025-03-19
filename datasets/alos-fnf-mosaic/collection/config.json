@@ -1,0 +1,181 @@
+{
+  "render_config": {
+    "render_params": {
+      "colormap_name": "alos-fnf"
+    },
+    "minzoom": 7,
+    "assets": [
+      "C"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": null,
+    "mosaic_preview_coords": null,
+    "requires_token": true,
+    "max_items_per_tile": 50,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "All years",
+        "description": "",
+        "cql": []
+      },
+      {
+        "name": "2020",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2020-01-01",
+                  "2020-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2019",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2019-01-01",
+                  "2019-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2018",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2018-01-01",
+                  "2018-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2017",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2017-01-01",
+                  "2017-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2016",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2016-01-01",
+                  "2016-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2015",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2015-01-01",
+                  "2015-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Forest / non-forest",
+        "description": "Forest / non-forest mask",
+        "type": "raster-tile",
+        "options": "assets=C&colormap_name=alos-fnf",
+        "vector_options": null,
+        "min_zoom": 7,
+        "legend": {
+          "type": "classmap",
+          "labels": [
+            "Forest (>90% canopy cover)",
+            "Forest (10-90% canopy cover)",
+            "Non-forest",
+            "Water"
+          ],
+          "trim_start": null,
+          "trim_end": null,
+          "scale_factor": null
+        },
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 8,
+      "coordinates": [
+        47.1113,
+        -120.8578
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

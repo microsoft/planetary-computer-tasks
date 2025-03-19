@@ -1,0 +1,76 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "modis-17A2H|A2HGF"
+    },
+    "minzoom": 5,
+    "assets": [
+      "Gpp_500m"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 7,
+    "mosaic_preview_coords": [
+      40.17,
+      -105.1
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "",
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Gross primary productivity 8-day 500m (kgC/m²)",
+        "description": "Gross primary productivity 8-day 500m (kgC/m²)",
+        "type": "raster-tile",
+        "options": "assets=Gpp_500m&colormap_name=modis-17A2H|A2HGF",
+        "vector_options": null,
+        "min_zoom": 5,
+        "legend": {
+          "type": "interval",
+          "labels": null,
+          "trim_start": null,
+          "trim_end": null,
+          "scale_factor": null
+        },
+        "conditions": null
+      },
+      {
+        "name": "Net photosynthesis 8-day 500m (kgC/m²)",
+        "description": "Net photosynthesis 8-day 500m (kgC/m²)",
+        "type": "raster-tile",
+        "options": "assets=PsnNet_500m&colormap_name=modis-17A2H|A2HGF",
+        "vector_options": null,
+        "min_zoom": 5,
+        "legend": {
+          "type": "interval",
+          "labels": null,
+          "trim_start": null,
+          "trim_end": null,
+          "scale_factor": null
+        },
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 7,
+      "coordinates": [
+        40.17,
+        -105.1
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

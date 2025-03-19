@@ -23,7 +23,7 @@ def test_activity_serializes_properly() -> None:
         ).json()
     )
 
-    result = TestModel.parse_raw(result_str)
+    result = TestModel.model_validate_json(result_str)
 
     assert result.input == "test-in-processed"
     assert result.output == "test-out-processed"

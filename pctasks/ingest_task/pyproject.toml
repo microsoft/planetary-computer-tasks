@@ -1,0 +1,60 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pctasks.ingest-task"
+dynamic = ["version"]
+description = "Planetary Computer Tasks framework - Ingest Task."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.8"
+authors = [
+    { name = "Microsoft", email = "planetarycomputer@microsoft.com" },
+]
+keywords = [
+    "Planetary",
+    "STAC",
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.8",
+]
+dependencies = [
+    "fire==0.4.0",
+    "orjson>=3.5.2",
+    "pctasks.ingest @ {root:parent:uri}/ingest",
+    "pctasks.task @ {root:parent:uri}/task",
+    "plpygis==0.2.0",
+    "pypgstac[psycopg]>=0.8.5,<0.9",
+    "pystac>=1.0.0,<2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "pytest",
+    "pytest-cov",
+]
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+    "pdocs",
+]
+
+[project.urls]
+Homepage = "https://github.com/Microsoft/planetary-computer-tasks"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.version]
+path = "pctasks/ingest_task/version.py"
+
+[tool.hatch.build.targets.wheel]
+include = [
+    "/pctasks/ingest_task",
+]

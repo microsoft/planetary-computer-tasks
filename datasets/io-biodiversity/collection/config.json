@@ -1,0 +1,146 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "io-bii",
+      "rescale": [
+        "0,1"
+      ],
+      "expression": "0.97*(data_b1**3.84)"
+    },
+    "minzoom": 2,
+    "assets": [
+      "data"
+    ],
+    "maxzoom": 11,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 4,
+    "mosaic_preview_coords": [
+      49.7716,
+      17.1015
+    ],
+    "requires_token": true,
+    "max_items_per_tile": 35,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "2020",
+        "description": "2020 Biodiversity Intactness",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2020-01-01T00:00:00Z",
+                  "2020-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2019",
+        "description": "2019 Biodiversity Intactness",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2019-01-01T00:00:00Z",
+                  "2019-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2018",
+        "description": "2018 Biodiversity Intactness",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2018-01-01T00:00:00Z",
+                  "2018-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2017",
+        "description": "2017 Biodiversity Intactness",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2017-01-01T00:00:00Z",
+                  "2017-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Biodiversity Intactness",
+        "description": "Impact Observatory Biodiversity Intactness",
+        "type": "raster-tile",
+        "options": "expression=0.97*(data_b1**3.84)&rescale=0,1&colormap_name=io-bii",
+        "vector_options": null,
+        "min_zoom": 2,
+        "legend": {
+          "type": "continuous",
+          "labels": [
+            "0",
+            "0.6",
+            "0.8",
+            "0.9",
+            "0.95",
+            "1"
+          ],
+          "trim_start": null,
+          "trim_end": null,
+          "scale_factor": null
+        },
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 4,
+      "coordinates": [
+        49.7716,
+        17.1015
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

@@ -34,13 +34,13 @@ def wrap_activity(
         if "msg" not in msg_dict:
             raise ValueError(f"Missing 'msg' in message: {msg_dict}")
 
-        msg_model = model_class.parse_obj(msg_dict["msg"])
+        msg_model = model_class.model_validate(msg_dict["msg"])
         event_tag_msg: Optional[str] = None
         if event_tag:
             event_tag_msg = event_tag(msg_model)
 
         activity_msg: ActivityMessage[T] = ActivityMessage(
-            run_record_id=RunRecordId.parse_obj(msg_dict.get("run_record_id")),
+            run_record_id=RunRecordId.model_validate(msg_dict.get("run_record_id")),
             msg=msg_model,
         )
 

@@ -1,0 +1,312 @@
+{
+  "render_config": {
+    "render_params": {
+      "color_formula": "gamma RGB 2.6, saturation 1.0, sigmoidal RGB 14 0.5"
+    },
+    "minzoom": 8,
+    "assets": [
+      "nir08",
+      "red",
+      "green"
+    ],
+    "maxzoom": 13,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 10,
+    "mosaic_preview_coords": [
+      36.8387,
+      53.8992
+    ],
+    "requires_token": true,
+    "max_items_per_tile": 20,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "1972 – 1976 (low cloud)",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "1972-01-01",
+                  "1976-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "1977 – 1981 (low cloud)",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "1977-01-01",
+                  "1981-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "1982 – 1986 (low cloud)",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "1982-01-01",
+                  "1986-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "1987 – 1991 (low cloud)",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "1987-01-01",
+                  "1991-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "1992 – 1996 (low cloud)",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "1992-01-01",
+                  "1996-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "1997 – 2001 (low cloud)",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "1997-01-01",
+                  "2001-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2002 – 2006 (low cloud)",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2002-01-01",
+                  "2006-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2007 – 2012 (low cloud)",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2007-01-01",
+                  "2013-01-07T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Most recent (low cloud)",
+        "description": "",
+        "cql": [
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Most recent (any cloud cover)",
+        "description": "",
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Color infrared",
+        "description": "Highlights healthy (red) and unhealthy (blue/gray) vegetation (nir08, red, green).",
+        "type": "raster-tile",
+        "options": "assets=nir08&assets=red&assets=green&nodata=0&color_formula=gamma RGB 2.6, saturation 1.0, sigmoidal RGB 14 0.5",
+        "vector_options": null,
+        "min_zoom": 8,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Normalized Difference Veg. Index (NDVI)",
+        "description": "Normalized Difference Vegetation Index (nir08-red)/(nir08+red), darker green indicates healthier vegetation.",
+        "type": "raster-tile",
+        "options": "nodata=0&expression=(nir08-red)/(nir08+red)&rescale=-1,1&colormap_name=rdylgn&asset_as_band=true",
+        "vector_options": null,
+        "min_zoom": 8,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 10,
+      "coordinates": [
+        36.8387,
+        53.8992
+      ]
+    },
+    "default_custom_query": {},
+    "animation_hint": null
+  }
+}

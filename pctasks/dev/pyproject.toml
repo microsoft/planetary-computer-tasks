@@ -1,0 +1,55 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pctasks.dev"
+dynamic = ["version"]
+description = "Planetary Computer Tasks framework."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.8"
+authors = [
+    { name = "Microsoft", email = "planetarycomputer@microsoft.com" },
+]
+keywords = [
+    "Planetary",
+    "STAC",
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.8",
+]
+dependencies = [
+    "pctasks.cli @ {root:parent:uri}/cli",
+    "pctasks.client @ {root:parent:uri}/client",
+    "pctasks.ingest @ {root:parent:uri}/ingest",
+    "pctasks.run @ {root:parent:uri}/run",
+    "pctasks.task @ {root:parent:uri}/task",
+]
+
+[project.optional-dependencies]
+server = [
+    "fastapi>=0.111.0",
+    "uvicorn[standard]>=0.30.0",
+]
+
+[project.scripts]
+pctasks-dev = "pctasks.dev.cli:cli"
+
+[project.urls]
+Homepage = "https://github.com/Microsoft/planetary-computer-tasks"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.version]
+path = "pctasks/dev/version.py"
+
+[tool.hatch.build.targets.wheel]
+include = [
+    "/pctasks/dev",
+]

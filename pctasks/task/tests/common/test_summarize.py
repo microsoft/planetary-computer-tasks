@@ -31,7 +31,7 @@ def test_summarize_jsons() -> None:
         prefix_input = ListPrefixesInput(src_uri=storage.get_uri(), depth=1)
         prefix_task_result = run_test_task(prefix_input.dict(), LIST_PREFIXES_TASK_PATH)
         assert isinstance(prefix_task_result, CompletedTaskResult)
-        prefix_output = ListPrefixesOutput.parse_obj(prefix_task_result.output)
+        prefix_output = ListPrefixesOutput.model_validate(prefix_task_result.output)
 
         map_outputs: List[SummarizeOutput] = []
         for prefix_uri in prefix_output.uris:
@@ -40,18 +40,18 @@ def test_summarize_jsons() -> None:
                 list_files_input.dict(), LIST_FILES_TASK_PATH
             )
             assert isinstance(files_task_result, CompletedTaskResult)
-            files_output = ListFilesOutput.parse_obj(files_task_result.output)
+            files_output = ListFilesOutput.model_validate(files_task_result.output)
 
             map_input = SummarizeMapInput(uris=files_output.uris)
             map_task_result = run_test_task(map_input.dict(), MAP_TASK_PATH)
             assert isinstance(map_task_result, CompletedTaskResult)
-            map_output = SummarizeOutput.parse_obj(map_task_result.output)
+            map_output = SummarizeOutput.model_validate(map_task_result.output)
             map_outputs.append(map_output)
 
         reduce_input = SummarizeReduceInput(summaries=[x.summary for x in map_outputs])
         reduce_task_result = run_test_task(reduce_input.dict(), REDUCE_TASK_PATH)
         assert isinstance(reduce_task_result, CompletedTaskResult)
-        reduce_output = SummarizeOutput.parse_obj(reduce_task_result.output)
+        reduce_output = SummarizeOutput.model_validate(reduce_task_result.output)
         summary = reduce_output.summary.dict()
 
         assert set(

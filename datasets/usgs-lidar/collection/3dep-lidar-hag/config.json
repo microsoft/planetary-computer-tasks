@@ -1,0 +1,73 @@
+{
+  "render_config": {
+    "render_params": {
+      "colormap_name": "lidar-hag",
+      "nodata": -9999
+    },
+    "minzoom": 11,
+    "assets": [
+      "data"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": null,
+    "mosaic_preview_coords": null,
+    "requires_token": true,
+    "max_items_per_tile": 20,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "",
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Height Above Ground",
+        "description": "USGS 3DEP Lidar Height Above Ground (HAG)",
+        "type": "raster-tile",
+        "options": "assets=data&colormap_name=lidar-hag&exitwhenfull=False&skipcovered=False",
+        "vector_options": null,
+        "min_zoom": 11,
+        "legend": {
+          "type": "interval",
+          "labels": null,
+          "trim_start": null,
+          "trim_end": null,
+          "scale_factor": null
+        },
+        "conditions": null
+      },
+      {
+        "name": "Height Above Ground (Alternative)",
+        "description": "USGS 3DEP Lidar Height Above Ground (HAG)",
+        "type": "raster-tile",
+        "options": "assets=data&colormap_name=lidar-hag-alternative&exitwhenfull=False&skipcovered=False",
+        "vector_options": null,
+        "min_zoom": 11,
+        "legend": {
+          "type": "interval",
+          "labels": null,
+          "trim_start": null,
+          "trim_end": null,
+          "scale_factor": null
+        },
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 11,
+      "coordinates": [
+        38.87,
+        -77.05
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

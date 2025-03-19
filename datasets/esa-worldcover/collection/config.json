@@ -1,0 +1,88 @@
+{
+  "render_config": {
+    "render_params": {
+      "colormap_name": "esa-worldcover"
+    },
+    "minzoom": 6,
+    "assets": [
+      "map"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 8,
+    "mosaic_preview_coords": [
+      37.265,
+      -107.825
+    ],
+    "requires_token": true,
+    "max_items_per_tile": 20,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "2021 (version 2)",
+        "description": "2021 Land Cover",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2021-01-01T23:59:59Z",
+                  "2021-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2020 (version 1)",
+        "description": "2020 Land Cover",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2020-01-01T23:59:59Z",
+                  "2020-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Classification",
+        "description": "ESA WorldCover land cover classification colormap",
+        "type": "raster-tile",
+        "options": "assets=map&colormap_name=esa-worldcover",
+        "vector_options": null,
+        "min_zoom": 6,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 8,
+      "coordinates": [
+        37.265,
+        -107.825
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

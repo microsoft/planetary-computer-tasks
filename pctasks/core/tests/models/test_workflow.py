@@ -8,6 +8,7 @@ from pctasks.core.models.workflow import (
     WorkflowDefinition,
     WorkflowSubmitMessage,
 )
+from pctasks.core.yaml import YamlValidationError
 
 
 def test_sets_job_id():
@@ -162,7 +163,7 @@ def test_missing_args():
 
 
 def test_job_ids_no_commas():
-    with pytest.raises(ValidationError):
+    with pytest.raises(YamlValidationError):
         _ = WorkflowDefinition.from_yaml(
             """
             name: A workflow*  *with* *asterisks

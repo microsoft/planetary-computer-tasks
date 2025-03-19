@@ -2,7 +2,8 @@ import re
 from typing import Any, Dict, Optional
 from uuid import uuid4
 
-from pydantic import Field, validator
+from pydantic import Field, model_validator
+from typing_extensions import Self
 
 from pctasks.core.constants import MICROSOFT_OWNER
 from pctasks.core.models.base import PCBaseModel
@@ -105,12 +106,10 @@ class STACItemEventRegistration(EventRegistration):
                 return False
         return True
 
-    @validator("eventgrid_channel_info", always=True)
-    def validate_eventgrid_channel_info(
-        cls, v: Optional[EventGridChannelInfo], values: Dict[str, Any]
-    ) -> Optional[EventGridChannelInfo]:
-        if not v and not values.get("webhook_endpoint"):
+    @model_validator(mode="after")
+    def validate_eventgrid_channel_info(self) -> Self:
+        if not self.eventgrid_channel_info and not self.webhook_endpoint:
             raise ValueError(
                 "Either eventgrid_channel_info or webhook_endpoint must be set"
             )
-        return v
+        return self

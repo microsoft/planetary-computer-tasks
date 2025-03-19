@@ -1,0 +1,416 @@
+{
+  "render_config": {
+    "render_params": {
+      "colormap_name": "chloris-biomass",
+      "rescale": [
+        "1,750000"
+      ]
+    },
+    "minzoom": 2,
+    "assets": [
+      "biomass_wm"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 2,
+    "mosaic_preview_coords": [
+      30.0572,
+      80.1735
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "All years",
+        "description": "",
+        "cql": []
+      },
+      {
+        "name": "2019",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2018-08-01",
+                  "2019-01-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2018",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2017-08-01",
+                  "2018-01-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2017",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2016-08-01",
+                  "2017-01-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2016",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2015-08-01",
+                  "2016-01-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2015",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2014-08-01",
+                  "2015-01-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2014",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2013-08-01",
+                  "2014-01-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2013",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2012-08-01",
+                  "2013-01-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2012",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2011-08-01",
+                  "2012-01-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2011",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2010-08-01",
+                  "2011-01-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2010",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2009-08-01",
+                  "2010-01-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2009",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2008-08-01",
+                  "2009-01-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2008",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2007-08-01",
+                  "2008-01-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2007",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2006-08-01",
+                  "2007-01-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2006",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2005-08-01",
+                  "2006-01-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2005",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2004-08-01",
+                  "2005-01-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2004",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2003-08-01",
+                  "2004-01-01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2003",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2002-08-01",
+                  "2003-01-01"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Aboveground Biomass (tonnes)",
+        "description": "Annual estimates of aboveground woody biomass",
+        "type": "raster-tile",
+        "options": "assets=biomass_wm&colormap_name=chloris-biomass&rescale=1,750000",
+        "vector_options": null,
+        "min_zoom": 2,
+        "legend": {
+          "type": "continuous",
+          "labels": [
+            "0",
+            "375k",
+            "> 750k"
+          ],
+          "trim_start": null,
+          "trim_end": null,
+          "scale_factor": null
+        },
+        "conditions": null
+      },
+      {
+        "name": "Biomass Change from prior year (tonnes)",
+        "description": "Annual estimates of changes (gains and losses) in aboveground woody biomass.",
+        "type": "raster-tile",
+        "options": "assets=biomass_change_wm&colormap_name=spectral&rescale=-5000,5000",
+        "vector_options": null,
+        "min_zoom": 2,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 4,
+      "coordinates": [
+        -4.3028,
+        -58.0357
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

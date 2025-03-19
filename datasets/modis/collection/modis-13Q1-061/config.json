@@ -1,0 +1,77 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "modis-13A1|Q1",
+      "rescale": [
+        "0,10000"
+      ]
+    },
+    "minzoom": 5,
+    "assets": [
+      "250m_16_days_NDVI"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 7,
+    "mosaic_preview_coords": [
+      40.17,
+      -105.1
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "",
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Normalized difference vegetation index (NDVI) 16-day",
+        "description": "Normalized difference vegetation index (NDVI) 16-day 250m",
+        "type": "raster-tile",
+        "options": "assets=250m_16_days_NDVI&exitwhenfull=False&skipcovered=False&colormap_name=modis-13A1|Q1",
+        "vector_options": null,
+        "min_zoom": 5,
+        "legend": {
+          "type": "continuous",
+          "labels": [
+            "0",
+            "1",
+            "unknown"
+          ],
+          "trim_start": null,
+          "trim_end": null,
+          "scale_factor": null
+        },
+        "conditions": null
+      },
+      {
+        "name": "Enhanced vegetation index (EVI) 16-day",
+        "description": "Enhanced vegetation index (EVI) 16-day 250m",
+        "type": "raster-tile",
+        "options": "assets=250m_16_days_EVI&exitwhenfull=False&skipcovered=False&colormap_name=modis-13A1|Q1",
+        "vector_options": null,
+        "min_zoom": 5,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 7,
+      "coordinates": [
+        40.17,
+        -105.1
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}
