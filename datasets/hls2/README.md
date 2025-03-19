@@ -19,12 +19,12 @@ any future updates, do the command with the -u flag
 Process (create) Items with:
 
 ```bash
+pctasks dataset process-items -d dataset.yaml -c hls2-l30 test-ingest -a registry pccomponents.azurecr.io --limit 100 --submit
+or for test-
 pctasks profile list
 pctasks profile set openpctest
-pctasks dataset process-items -d dataset.yaml -c hls2-l30 test-ingest -a registry pccomponents.azurecr.io --limit 100 --submit
-or
-pctasks dataset process-items -d dataset.yaml -c hls2-l30 test-ingest -a registry pccomponents.azurecr.io --submit
-pctasks dataset process-items -d dataset.yaml -c hls2-s30 test-ingest -a registry pccomponents.azurecr.io --submit
+pctasks dataset process-items -d dataset.yaml -c hls2-l30 test-ingest -a registry pccomponentstest.azurecr.io --submit
+pctasks dataset process-items -d dataset.yaml -c hls2-s30 test-ingest -a registry pccomponentstest.azurecr.io --submit
 pctasks runs status <workflow id from output>
 pctasks runs get run-log <workflow id from output>
 pctasks runs get task-log <workflow id from output> create-splits create-splits -p 0
