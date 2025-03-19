@@ -1,0 +1,55 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "rdylbu_r",
+      "rescale": "0,35"
+    },
+    "minzoom": 1,
+    "assets": [
+      "sea_surface_temperature"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 2,
+    "mosaic_preview_coords": [
+      26.7409,
+      -80.9714
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": null,
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Sea surface temperature",
+        "description": "Sea surface temperature colormap",
+        "type": "raster-tile",
+        "options": "assets=sea_surface_temperature&colormap_name=rdylbu_r&rescale=0,35",
+        "vector_options": null,
+        "min_zoom": 1,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 2,
+      "coordinates": [
+        26.7409,
+        -80.9714
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

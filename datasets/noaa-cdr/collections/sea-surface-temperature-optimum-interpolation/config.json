@@ -1,0 +1,77 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "rdylbu_r",
+      "rescale": [
+        "-1000,3500"
+      ]
+    },
+    "minzoom": 1,
+    "assets": [
+      "sst"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 2,
+    "mosaic_preview_coords": [
+      26.7409,
+      -80.9714
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": null,
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Sea surface temperature",
+        "description": "Sea surface temperature colormap",
+        "type": "raster-tile",
+        "options": "assets=sst&colormap_name=rdylbu_r&rescale=-1000,3500",
+        "vector_options": null,
+        "min_zoom": 1,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Sea ice concentration",
+        "description": "Sea ice concentration colormap",
+        "type": "raster-tile",
+        "options": "assets=ice&colormap_name=blues&rescale=0,100",
+        "vector_options": null,
+        "min_zoom": 1,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Sea surface temperature anomolies",
+        "description": "Sea ice temperature anomolies colormap",
+        "type": "raster-tile",
+        "options": "assets=anom&colormap_name=rdylbu_r&rescale=-200,200",
+        "vector_options": null,
+        "min_zoom": 1,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 2,
+      "coordinates": [
+        26.7409,
+        -80.9714
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

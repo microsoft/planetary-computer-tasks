@@ -1,0 +1,88 @@
+{
+  "render_config": {
+    "render_params": {
+      "colormap_name": "drcog-lulc"
+    },
+    "minzoom": 13,
+    "assets": [
+      "data"
+    ],
+    "maxzoom": 22,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 13,
+    "mosaic_preview_coords": [
+      39.7392,
+      -104.9903
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent (2020)",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2020-01-01",
+                  "2020-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2018",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2018-01-01",
+                  "2018-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "render_options": [
+      {
+        "name": "data",
+        "description": "Denver Regional Council of Governments (DRCOG) Land Use Land Cover (LULC) classifications",
+        "type": "raster-tile",
+        "options": "assets=data&colormap_name=drcog-lulc",
+        "vector_options": null,
+        "min_zoom": 13,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 18,
+      "coordinates": [
+        39.7392,
+        -104.9903
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

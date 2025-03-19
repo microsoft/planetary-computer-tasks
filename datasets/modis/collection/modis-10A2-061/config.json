@@ -1,0 +1,60 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "modis-10A2"
+    },
+    "minzoom": 5,
+    "assets": [
+      "Maximum_Snow_Extent"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 4,
+    "mosaic_preview_coords": [
+      40.17,
+      -105.1
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "",
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Maximum snow extent 8-day 500m",
+        "description": "Maximum snow extent 8-day 500m",
+        "type": "raster-tile",
+        "options": "assets=Maximum_Snow_Extent&colormap_name=modis-10A2",
+        "vector_options": null,
+        "min_zoom": 5,
+        "legend": {
+          "type": "classmap",
+          "labels": null,
+          "trim_start": 2,
+          "trim_end": 2,
+          "scale_factor": null
+        },
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 7,
+      "coordinates": [
+        40.17,
+        -105.1
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

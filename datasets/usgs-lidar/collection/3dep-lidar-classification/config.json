@@ -1,0 +1,51 @@
+{
+  "render_config": {
+    "render_params": {
+      "colormap_name": "lidar-classification",
+      "nodata": -9999
+    },
+    "minzoom": 10,
+    "assets": [
+      "data"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": null,
+    "mosaic_preview_coords": null,
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "",
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Classification",
+        "description": "Classification",
+        "type": "raster-tile",
+        "options": "assets=data&colormap_name=lidar-classification",
+        "vector_options": null,
+        "min_zoom": 10,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 12,
+      "coordinates": [
+        27.3521,
+        -97.7134
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

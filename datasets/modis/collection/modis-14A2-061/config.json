@@ -1,0 +1,60 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "modis-14A1|A2"
+    },
+    "minzoom": 5,
+    "assets": [
+      "FireMask"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 7,
+    "mosaic_preview_coords": [
+      39.4836,
+      -119.7864
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "",
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Confidence of fire 8-day",
+        "description": "Confidence of fire (low, nominal, and high) 8-day 1km",
+        "type": "raster-tile",
+        "options": "assets=FireMask&exitwhenfull=False&skipcovered=False&colormap_name=modis-14A1|A2",
+        "vector_options": null,
+        "min_zoom": 5,
+        "legend": {
+          "type": "classmap",
+          "labels": null,
+          "trim_start": 4,
+          "trim_end": null,
+          "scale_factor": null
+        },
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 7,
+      "coordinates": [
+        39.4836,
+        -119.7864
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}
