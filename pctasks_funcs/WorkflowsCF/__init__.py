@@ -22,7 +22,7 @@ async def main(container: func.DocumentList) -> None:
 
 async def handle_workflow(data: Dict[str, Any]) -> None:
     """Handle a workflow record."""
-    record = WorkflowRecord.parse_obj(data)
+    record = WorkflowRecord.model_validate(data)
 
     async with AsyncRecordsContainer(WorkflowRecord) as container:
         await container.put(record)

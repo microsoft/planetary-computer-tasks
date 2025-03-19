@@ -1,0 +1,102 @@
+{
+  "render_config": {
+    "render_params": {
+      "colormap_name": "greens",
+      "nodata": 0,
+      "rescale": [
+        "0,255"
+      ]
+    },
+    "minzoom": 2,
+    "assets": [
+      "aboveground"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 9,
+    "mosaic_preview_coords": [
+      -7.641129,
+      39.162521
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2010-12-31T00:00:00Z",
+                  "2010-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Above ground biomass carbon density",
+        "description": "",
+        "type": "raster-tile",
+        "options": "assets=aboveground&colormap_name=greens&nodata=0&rescale=0,255",
+        "vector_options": null,
+        "min_zoom": 2,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Below ground biomass carbon density",
+        "description": "",
+        "type": "raster-tile",
+        "options": "assets=belowground&colormap_name=greens&nodata=0&rescale=0,255",
+        "vector_options": null,
+        "min_zoom": 2,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Above ground biomass - accumulated uncertainty",
+        "description": "",
+        "type": "raster-tile",
+        "options": "assets=aboveground_uncertainty&colormap_name=reds&nodata=0&rescale=0,50",
+        "vector_options": null,
+        "min_zoom": 2,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Below ground biomass - accumulated uncertainty",
+        "description": "",
+        "type": "raster-tile",
+        "options": "assets=belowground_uncertainty&colormap_name=reds&nodata=0&rescale=0,50",
+        "vector_options": null,
+        "min_zoom": 2,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 9,
+      "coordinates": [
+        -7.641129,
+        39.162521
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

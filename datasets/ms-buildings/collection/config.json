@@ -1,0 +1,87 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "viridis"
+    },
+    "minzoom": 0,
+    "assets": [
+      "data"
+    ],
+    "maxzoom": 15,
+    "create_links": false,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 7,
+    "mosaic_preview_coords": [
+      26.7409,
+      -80.9714
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": [
+      {
+        "id": "global-footprints",
+        "name": "Global Bing ML building footprints",
+        "maxzoom": 13,
+        "minzoom": 0,
+        "center": null,
+        "bounds": null
+      }
+    ],
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Global",
+        "description": null,
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Default",
+        "description": "Default dark polygons",
+        "type": "vt-polygon",
+        "options": "",
+        "vector_options": {
+          "tilejson_key": "global-footprints",
+          "source_layer": "bingmlbuildings",
+          "fill_color": "#0078d4",
+          "stroke_color": "#004d88",
+          "stroke_width": 1,
+          "filter": null
+        },
+        "min_zoom": 0,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Light color",
+        "description": "Default light polygons",
+        "type": "vt-polygon",
+        "options": "",
+        "vector_options": {
+          "tilejson_key": "global-footprints",
+          "source_layer": "bingmlbuildings",
+          "fill_color": "#ffff00",
+          "stroke_color": "#ffd500",
+          "stroke_width": 1,
+          "filter": null
+        },
+        "min_zoom": 0,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 13,
+      "coordinates": [
+        -1.96,
+        30.1
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

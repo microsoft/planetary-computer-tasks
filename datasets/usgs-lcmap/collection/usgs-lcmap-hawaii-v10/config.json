@@ -1,0 +1,479 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "usgs-lcmap"
+    },
+    "minzoom": 7,
+    "assets": [
+      "lcpri"
+    ],
+    "maxzoom": 14,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 8,
+    "mosaic_preview_coords": [
+      19.641,
+      -155.4804
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent (2020)",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2020-01-01",
+                  "2020-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2019",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2019-01-01",
+                  "2019-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2018",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2018-01-01",
+                  "2018-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2017",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2017-01-01",
+                  "2017-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2016",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2016-01-01",
+                  "2016-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2015",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2015-01-01",
+                  "2015-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2014",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2014-01-01",
+                  "2014-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2013",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2013-01-01",
+                  "2013-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2012",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2012-01-01",
+                  "2012-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2011",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2011-01-01",
+                  "2011-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2010",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2010-01-01",
+                  "2010-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2009",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2009-01-01",
+                  "2009-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2008",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2008-01-01",
+                  "2008-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2007",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2007-01-01",
+                  "2007-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2006",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2006-01-01",
+                  "2006-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2005",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2005-01-01",
+                  "2005-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2004",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2004-01-01",
+                  "2004-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2003",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2003-01-01",
+                  "2003-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2002",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2002-01-01",
+                  "2002-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2001",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2001-01-01",
+                  "2001-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2000",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2000-01-01",
+                  "2000-12-31"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Land Cover",
+        "description": "USGS LCMAP primary land cover classification",
+        "type": "raster-tile",
+        "options": "assets=lcpri&colormap_name=usgs-lcmap",
+        "vector_options": null,
+        "min_zoom": 7,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Land Cover Change",
+        "description": "USGS LCMAP annual land cover change",
+        "type": "raster-tile",
+        "options": "assets=lcachg&colormap_name=usgs-lcmap",
+        "vector_options": null,
+        "min_zoom": 7,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 8,
+      "coordinates": [
+        19.641,
+        -155.4804
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "render_config": {
+    "render_params": {
+      "color_formula": "gamma RGB 2.7, saturation 1.5, sigmoidal RGB 15 0.55"
+    },
+    "minzoom": 8,
+    "assets": [
+      "B04",
+      "B03",
+      "B02"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 11,
+    "mosaic_preview_coords": [
+      26.7409,
+      -80.9714
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent (low cloud)",
+        "description": "",
+        "cql": [
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Most recent (any cloud cover)",
+        "description": "",
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Natural color",
+        "description": "True color composite of visible bands (red, green, blue)",
+        "type": "raster-tile",
+        "options": "assets=B04&assets=B03&assets=B02&nodata=0&color_formula=Gamma RGB 3.7 Saturation 1.5 Sigmoidal RGB 15 0.35",
+        "vector_options": null,
+        "min_zoom": 8,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 7,
+      "coordinates": [
+        26.7409,
+        -80.9714
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

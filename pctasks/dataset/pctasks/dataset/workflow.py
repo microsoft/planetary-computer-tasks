@@ -314,7 +314,7 @@ def modify_for_update(workflow_definition: WorkflowDefinition) -> WorkflowDefini
     4. The ``process-chunk`` task will be modified to include the ``since`` value in
        the in the chunk file prefix at ``item_chunkset_uri``.
     """
-    workflow_definition = workflow_definition.copy(deep=True)
+    workflow_definition = workflow_definition.model_copy(deep=True)
     if workflow_definition.args is None:
         workflow_definition.args = ["since"]
     else:

@@ -1,0 +1,174 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "usda-cdl"
+    },
+    "minzoom": 7,
+    "assets": [
+      "cropland"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 7,
+    "mosaic_preview_coords": [
+      26.7409,
+      -80.9714
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent cropland",
+        "description": "Most recent cropland data",
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "usda_cdl:type"
+              },
+              "cropland"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Most recent frequency",
+        "description": "Most recent frequency data",
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "usda_cdl:type"
+              },
+              "frequency"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Most recent cultivated",
+        "description": "Most recent cultivated data",
+        "cql": [
+          {
+            "op": "=",
+            "args": [
+              {
+                "property": "usda_cdl:type"
+              },
+              "cultivated"
+            ]
+          }
+        ]
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Default",
+        "description": "Default colormap",
+        "type": "raster-tile",
+        "options": "assets=cropland&colormap_name=usda-cdl",
+        "vector_options": null,
+        "min_zoom": 7,
+        "legend": null,
+        "conditions": [
+          {
+            "property": "usda_cdl:type",
+            "value": "cropland"
+          }
+        ]
+      },
+      {
+        "name": "Corn",
+        "description": "Corn frequency",
+        "type": "raster-tile",
+        "options": "assets=corn&colormap_name=usda-cdl-corn",
+        "vector_options": null,
+        "min_zoom": 7,
+        "legend": null,
+        "conditions": [
+          {
+            "property": "usda_cdl:type",
+            "value": "frequency"
+          }
+        ]
+      },
+      {
+        "name": "Soybeans",
+        "description": "Soybeans frequency",
+        "type": "raster-tile",
+        "options": "assets=soybeans&colormap_name=usda-cdl-soybeans",
+        "vector_options": null,
+        "min_zoom": 7,
+        "legend": null,
+        "conditions": [
+          {
+            "property": "usda_cdl:type",
+            "value": "frequency"
+          }
+        ]
+      },
+      {
+        "name": "Cotton",
+        "description": "Cotton frequency",
+        "type": "raster-tile",
+        "options": "assets=cotton&colormap_name=usda-cdl-cotton",
+        "vector_options": null,
+        "min_zoom": 7,
+        "legend": null,
+        "conditions": [
+          {
+            "property": "usda_cdl:type",
+            "value": "frequency"
+          }
+        ]
+      },
+      {
+        "name": "Wheat",
+        "description": "Wheat frequency",
+        "type": "raster-tile",
+        "options": "assets=wheat&colormap_name=usda-cdl-wheat",
+        "vector_options": null,
+        "min_zoom": 7,
+        "legend": null,
+        "conditions": [
+          {
+            "property": "usda_cdl:type",
+            "value": "frequency"
+          }
+        ]
+      },
+      {
+        "name": "Cultivated",
+        "description": "Cultivated",
+        "type": "raster-tile",
+        "options": "assets=cultivated&nodata=1",
+        "vector_options": null,
+        "min_zoom": 7,
+        "legend": null,
+        "conditions": [
+          {
+            "property": "usda_cdl:type",
+            "value": "cultivated"
+          }
+        ]
+      }
+    ],
+    "default_location": {
+      "zoom": 7,
+      "coordinates": [
+        26.7409,
+        -80.9714
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

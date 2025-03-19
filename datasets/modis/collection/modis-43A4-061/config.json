@@ -1,0 +1,56 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "rescale": "0,2000"
+    },
+    "minzoom": 5,
+    "assets": [
+      "Nadir_Reflectance_Band1",
+      "Nadir_Reflectance_Band4",
+      "Nadir_Reflectance_Band3"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 4,
+    "mosaic_preview_coords": [
+      40.17,
+      -105.1
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "",
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Natural color",
+        "description": "True color composite of visible bands (Nadir_Reflectance_Band1, Nadir_Reflectance_Band4, Nadir_Reflectance_Band3)",
+        "type": "raster-tile",
+        "options": "assets=Nadir_Reflectance_Band1&assets=Nadir_Reflectance_Band4&assets=Nadir_Reflectance_Band3&rescale=0,2000",
+        "vector_options": null,
+        "min_zoom": 5,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 5,
+      "coordinates": [
+        40.17,
+        -105.1
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

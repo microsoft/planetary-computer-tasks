@@ -1,0 +1,54 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "chesapeake-lc-7"
+    },
+    "minzoom": 12,
+    "assets": [
+      "data"
+    ],
+    "maxzoom": 16,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 13,
+    "mosaic_preview_coords": [
+      39.265,
+      -76.595
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": null,
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Classification",
+        "description": "Chesapeake Bay Watershed land cover 7-class colormap",
+        "type": "raster-tile",
+        "options": "assets=data&colormap_name=chesapeake-lc-7",
+        "vector_options": null,
+        "min_zoom": 12,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 13,
+      "coordinates": [
+        39.265,
+        -76.595
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

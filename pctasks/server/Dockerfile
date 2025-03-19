@@ -6,38 +6,39 @@ RUN tdnf install -y ca-certificates build-essential git \
 ARG DEVELOPMENT=FALSE
 
 ENV PIP_NO_CACHE_DIR=1
-RUN pip install "setuptools>=65.5.1"
+RUN pip install "setuptools>=65.5.1" uv
 
 WORKDIR /opt/src
 
 COPY core /opt/src/core
 RUN cd /opt/src/core && \
-     pip install .
+     uv pip install --system --no-deps .
 
 COPY cli /opt/src/cli
 RUN cd /opt/src/cli && \
-     pip install .
+     uv pip install --system --no-deps .
 
 COPY client /opt/src/client
 RUN cd /opt/src/client && \
-     pip install .
+     uv pip install --system --no-deps .
 
 COPY task /opt/src/task
 RUN cd /opt/src/task && \
-     pip install .
+     uv pip install --system --no-deps .
 
 COPY run /opt/src/run
 RUN cd /opt/src/run && \
-     pip install .
+     uv pip install --system --no-deps .
 
 COPY server /opt/src/server
 RUN cd /opt/src/server && \
-     pip install .[server]
+     uv pip install --system -r requirements.txt && \
+     uv pip install --system --no-deps .[server]
 
 RUN if [ "${DEVELOPMENT}" = "TRUE" ]; then \
      echo "INSTALLING DEVELOPMENT DEPENDENCIES"; \
      yum install -y azure-cli; \
-     pip install \
+     uv pip install --system \
      -e /opt/src/core \
      -e /opt/src/cli \
      -e /opt/src/client \

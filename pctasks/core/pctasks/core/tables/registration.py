@@ -131,7 +131,9 @@ class STACWebHookEventRegistrationTable(
     def get_registration_key(
         self, notification: NotificationMessage, target_environment: Optional[str]
     ) -> Optional[str]:
-        return super().get_registration_key(notification, target_environment)
+        return super().get_registration_key(  # type: ignore
+            notification, target_environment
+        )
 
 
 class BlobTriggerEventRegistrationTable(

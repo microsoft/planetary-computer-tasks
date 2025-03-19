@@ -1,5 +1,4 @@
 # Non-essential development enviroment servers
-
 services:
   stac-api:
     container_name: pctasks-stac-api
@@ -56,5 +55,5 @@ services:
 networks:
   default:
     # Network created during scripts/setup
-    external:
-      name: pctasks-network
+    name: pctasks-network
+    external: true

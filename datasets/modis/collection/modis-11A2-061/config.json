@@ -1,0 +1,67 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "jet",
+      "rescale": [
+        "255,310"
+      ]
+    },
+    "minzoom": 5,
+    "assets": [
+      "LST_Day_1km"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 5,
+    "mosaic_preview_coords": [
+      40.17,
+      -105.1
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "",
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Daytime land surface temperature 8-day 1km (Kelvin)",
+        "description": "Daytime land surface temperature 8-day 1km (Kelvin)",
+        "type": "raster-tile",
+        "options": "assets=LST_Day_1km&colormap_name=jet&rescale=255,310&unscale=True",
+        "vector_options": null,
+        "min_zoom": 5,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Nighttime land surface temperature 8-day 1km (Kelvin)",
+        "description": "Nighttime land surface temperature 8-day 1km (Kelvin)",
+        "type": "raster-tile",
+        "options": "assets=LST_Night_1km&colormap_name=jet&rescale=255,310&unscale=True",
+        "vector_options": null,
+        "min_zoom": 5,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 5,
+      "coordinates": [
+        40.17,
+        -105.1
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

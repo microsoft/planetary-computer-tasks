@@ -41,8 +41,14 @@ within cronjob-
 "workflow_id": "hls2-s30-update"
 "workflow_id": "hls2-l30-update"
 
-```bash
+## Publishing Collection Configurations
 
-pctasks dataset process-items --is-update-workflow sentinel-2-l2a-update -d datasets/sentinel-2/dataset.yaml -u
+You will need access to the `mspc` CLI, then you may run:
 
+```shell
+repo_root=$(git rev-parse --show-toplevel)
+environment=test # or green/blue depending on what is active
+
+mspc collections render-configs publish $environment $repo_root hls2-l30
+mspc collections render-configs publish $environment $repo_root hls2-s30
 ```

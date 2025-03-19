@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional, Type, TypeVar, cast
 import strictyaml
 import yaml
 from pydantic import BaseModel, ValidationError
-from pydantic.error_wrappers import ErrorList
+from pydantic_core import ErrorDetails
 from yaml import Loader
 
 T = TypeVar("T", bound=BaseModel)
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class YamlValidationErrorInfo:
-    pydantic_error: ErrorList
+    pydantic_error: ErrorDetails
     start_line: Optional[int] = None
     end_line: Optional[int] = None
     path: Optional[str] = None
@@ -26,16 +26,18 @@ class SectionDoesNotExist(Exception):
     pass
 
 
-class YamlValidationError(ValidationError):
+class YamlValidationError(ValueError):
+    # yaml_ext = Field(default=None)
+    # yaml_ext = Field(default=None)
     def __init__(
         self,
         yml_text: str,
         errors: List[YamlValidationErrorInfo],
-        model: Any,
+        # model: Any,
     ) -> None:
         self.yaml_ext = yml_text
         self.yaml_errors = errors
-        super().__init__([e.pydantic_error for e in errors], model)
+        # super().__init__([e.pydantic_error for e in errors], model)
 
     def __str__(self) -> str:
         result = "\nValidation errors while parsing YAML:\n"
@@ -126,8 +128,8 @@ def model_from_yaml(
                     start_line=start_line,
                     end_line=end_line,
                     path=path,
-                    pydantic_error=cast(ErrorList, error),
+                    pydantic_error=error,
                 ),
             )
 
-        raise YamlValidationError(yml_text=yaml_txt, errors=errors, model=model)
+        raise YamlValidationError(yml_text=yaml_txt, errors=errors)

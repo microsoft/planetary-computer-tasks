@@ -1,0 +1,65 @@
+{
+  "render_config": {
+    "render_params": {
+      "colormap_name": "nrcan-lulc"
+    },
+    "minzoom": 4,
+    "assets": [
+      "landcover"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 7,
+    "mosaic_preview_coords": [
+      51.3913,
+      -124.8087
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "Most recent Land Use/Land Cover",
+        "cql": [
+          {
+            "op": ">=",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "timestamp": "2015-01-01"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Default",
+        "description": "Land cover classification using custom colormap",
+        "type": "raster-tile",
+        "options": "assets=landcover&exitwhenfull=False&skipcovered=False&colormap_name=nrcan-lulc",
+        "vector_options": null,
+        "min_zoom": 4,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 7,
+      "coordinates": [
+        51.3913,
+        -124.5087
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

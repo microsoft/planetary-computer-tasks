@@ -1,0 +1,210 @@
+{
+  "render_config": {
+    "render_params": {
+      "colormap_name": "magma",
+      "nodata": 128,
+      "rescale": "0,1"
+    },
+    "minzoom": 3,
+    "assets": [
+      "SpeciesRichness_All"
+    ],
+    "maxzoom": 18,
+    "create_links": false,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 4,
+    "mosaic_preview_coords": [
+      37.3052,
+      -85.8457
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent (2020)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2020-04-14T00:00:00Z",
+                  "2020-04-14T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Species richness for all species",
+        "description": null,
+        "type": "raster-tile",
+        "options": "assets=SpeciesRichness_All&colormap_name=magma&rescale=0,14&nodata=128",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Species richness for vertebrates",
+        "description": null,
+        "type": "raster-tile",
+        "options": "assets=SpeciesRichness_Vertebrates&colormap_name=magma&rescale=0,11",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Species richness for aquatic invertebrates",
+        "description": null,
+        "type": "raster-tile",
+        "options": "assets=SpeciesRichness_AquaticInverts&colormap_name=magma&rescale=0,19&nodata=128",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Species richness for vascular plants",
+        "description": null,
+        "type": "raster-tile",
+        "options": "assets=SpeciesRichness_Plants&colormap_name=magma&rescale=0,17",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Species richness for pollinators",
+        "description": null,
+        "type": "raster-tile",
+        "options": "assets=SpeciesRichness_PollinatorInverts&colormap_name=magma&rescale=0,4",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Protection-weighted range-size rarity for all species",
+        "description": null,
+        "type": "raster-tile",
+        "options": "assets=PWRSR_GAP12_SUM_All&colormap_name=magma&rescale=0,.001",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Protection-weighted range-size rarity for vertebrates",
+        "description": null,
+        "type": "raster-tile",
+        "options": "assets=PWRSR_GAP12_SUM_Vertebrates&colormap_name=magma&rescale=0,.001",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Protection-weighted range-size rarity for aquatic invertebrates",
+        "description": null,
+        "type": "raster-tile",
+        "options": "assets=PWRSR_GAP12_SUM_AquaticInverts&colormap_name=magma&rescale=0,.001",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Protection-weighted range-size rarity for vascular plants",
+        "description": null,
+        "type": "raster-tile",
+        "options": "assets=PWRSR_GAP12_SUM_Plants&colormap_name=magma&rescale=0,.001",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Protection-weighted range-size rarity for pollinators",
+        "description": null,
+        "type": "raster-tile",
+        "options": "assets=PWRSR_GAP12_SUM_PollinatorInverts&colormap_name=magma&rescale=0,.001",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Range-size rarity for all species",
+        "description": "",
+        "type": "raster-tile",
+        "options": "assets=RSR_All&colormap_name=magma&rescale=0,.001",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Range-size rarity for vertebrates",
+        "description": "",
+        "type": "raster-tile",
+        "options": "assets=RSR_Vertebrates&colormap_name=magma&rescale=0,.001",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Range-size rarity for aquatic invertebrates",
+        "description": "",
+        "type": "raster-tile",
+        "options": "assets=RSR_AquaticInverts&colormap_name=magma&rescale=0,.001",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Range-size rarity for vascular plants",
+        "description": "",
+        "type": "raster-tile",
+        "options": "assets=RSR_Plants&colormap_name=magma&rescale=0,.001",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Range-size rarity for pollinators",
+        "description": null,
+        "type": "raster-tile",
+        "options": "assets=RSR_PollinatorInverts&colormap_name=magma&rescale=0,.001",
+        "vector_options": null,
+        "min_zoom": 3,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 4,
+      "coordinates": [
+        37.3052,
+        -85.8457
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

@@ -174,7 +174,7 @@ class PCTasksClient:
                 route,
                 params=params,
             )
-            result = record_list_response_type.parse_obj(resp)
+            result = record_list_response_type.model_validate(resp)
             yield from result.records
             page_count += 1
             page_token = result.next_page_token
@@ -285,7 +285,7 @@ class PCTasksClient:
             result = self._call_api(
                 "GET", WORKFLOW_ROUTE.format(workflow_id=workflow_id)
             )
-            return WorkflowRecordResponse.parse_obj(result).record
+            return WorkflowRecordResponse.model_validate(result).record
         except HTTPError as e:
             if e.response.status_code == 404:
                 return None
@@ -369,7 +369,7 @@ class PCTasksClient:
 
         workflow_def = workflow.definition
 
-        request = request.copy()
+        request = request.model_copy()
 
         # Ensure arguments
         request.args = self.settings.add_default_args(
@@ -452,7 +452,7 @@ class PCTasksClient:
             route += f"?dataset={dataset_id}"
         try:
             result = self._call_api("GET", route)
-            return WorkflowRunRecordResponse.parse_obj(result).record
+            return WorkflowRunRecordResponse.model_validate(result).record
         except HTTPError as e:
             if e.response.status_code == 404:
                 return None
@@ -497,7 +497,7 @@ class PCTasksClient:
         )
         try:
             result = self._call_api("GET", route)
-            return JobPartitionRunRecordResponse.parse_obj(result).record
+            return JobPartitionRunRecordResponse.model_validate(result).record
         except HTTPError as e:
             if e.response.status_code == 404:
                 return None

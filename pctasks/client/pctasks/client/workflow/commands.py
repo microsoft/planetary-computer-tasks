@@ -264,7 +264,7 @@ def cli_handle_workflow(
         workflow_id = workflow_def.workflow_id
 
     else:
-        workflow_def = workflow_def.copy(update={"workflow_id": workflow_id})
+        workflow_def = workflow_def.model_copy(update={"workflow_id": workflow_id})
 
     if not client:
         client = PCTasksClient(settings=ClientSettings.from_context(ctx.obj))

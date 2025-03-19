@@ -1,0 +1,64 @@
+{
+  "render_config": {
+    "render_params": {
+      "tile_format": "png",
+      "colormap_name": "modis-13A1|Q1"
+    },
+    "minzoom": 5,
+    "assets": [
+      "500m_16_days_NDVI"
+    ],
+    "maxzoom": 18,
+    "create_links": true,
+    "has_mosaic": false,
+    "mosaic_preview_zoom": 7,
+    "mosaic_preview_coords": [
+      40.17,
+      -105.1
+    ],
+    "requires_token": true,
+    "max_items_per_tile": null,
+    "vector_tilesets": null,
+    "hidden": false
+  },
+  "mosaic_info": {
+    "mosaics": [
+      {
+        "name": "Most recent",
+        "description": "",
+        "cql": []
+      }
+    ],
+    "render_options": [
+      {
+        "name": "Normalized difference vegetation index (NDVI) 16-day",
+        "description": "Normalized difference vegetation index 16-day 500m",
+        "type": "raster-tile",
+        "options": "assets=500m_16_days_NDVI&colormap_name=modis-13A1|Q1",
+        "vector_options": null,
+        "min_zoom": 5,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Enhanced vegetation index (EVI) 16-day",
+        "description": "Enhanced vegetation index 16-day 500m",
+        "type": "raster-tile",
+        "options": "assets=500m_16_days_EVI&colormap_name=modis-13A1|Q1",
+        "vector_options": null,
+        "min_zoom": 5,
+        "legend": null,
+        "conditions": null
+      }
+    ],
+    "default_location": {
+      "zoom": 7,
+      "coordinates": [
+        40.17,
+        -105.1
+      ]
+    },
+    "default_custom_query": null,
+    "animation_hint": null
+  }
+}

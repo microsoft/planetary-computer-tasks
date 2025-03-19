@@ -80,8 +80,7 @@ class StreamingCreateItemsInput(PCBaseModel):
     ]
     extra_env: Dict[str, str] = pydantic.Field(default_factory=dict)
 
-    class Config:
-        extra = "forbid"
+    model_config = {"extra": "forbid"}
 
 
 class ExtraOptions(TypedDict):
@@ -194,7 +193,7 @@ class StreamingCreateItemsTask(
         create_items_function = extra_options["create_items_function"]
 
         logger.info("Processing message id=%s", message.id)
-        parsed_message = StorageEvent.parse_raw(message.content)
+        parsed_message = StorageEvent.model_validate_json(message.content)
 
         try:
             items = self.create_items(

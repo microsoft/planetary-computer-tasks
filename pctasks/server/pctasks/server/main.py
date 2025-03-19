@@ -4,8 +4,8 @@ from typing import Any, Awaitable, Callable, Dict
 
 from fastapi import FastAPI, Request, Response
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import ORJSONResponse
-from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import PlainTextResponse
 
 from pctasks.server.logging import init_logging
@@ -26,12 +26,15 @@ logger = logging.getLogger(__name__)
 APP_ROOT_PATH = os.environ.get("APP_ROOT_PATH", "")
 logger.info(f"APP_ROOT_PATH: {APP_ROOT_PATH}")
 
-app = FastAPI(root_path=APP_ROOT_PATH, default_response_class=ORJSONResponse)
+app = FastAPI(
+    root_path=APP_ROOT_PATH,
+    default_response_class=ORJSONResponse,
+)
 
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins="*",
+    allow_origins=["*"],
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )

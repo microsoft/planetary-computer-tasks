@@ -5,7 +5,6 @@ Sets up the Cosmos DB emulator.
 import time
 from contextlib import contextmanager
 from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple
-from urllib.parse import urljoin
 from uuid import uuid1
 
 import click
@@ -30,7 +29,6 @@ CONTAINERS: List[Tuple[Callable[[CosmosDBSettings], str], str]] = [
 
 
 def wait_for_emulator_start(url: str) -> None:
-    url = urljoin(url, "_explorer/emulator.pem")
     print(f"Waiting for emulator to start via {url}...", flush=True)
     with ignore_ssl_warnings():
         try_count = 0
@@ -176,8 +174,10 @@ def setup_db(db: DatabaseProxy, settings: CosmosDBSettings) -> None:
     print("Creating lease container...")
     db.create_container_if_not_exists("leases", partition_key=PartitionKey("/id"))
 
-    update_stored_procedures(db, settings)
-    update_triggers(db, settings)
+    # https://learn.microsoft.com/en-us/azure/cosmos-db/emulator-linux#feature-support
+    if not settings.is_cosmosdb_emulator():
+        update_stored_procedures(db, settings)
+        update_triggers(db, settings)
 
 
 def setup_cosmosdb() -> None:

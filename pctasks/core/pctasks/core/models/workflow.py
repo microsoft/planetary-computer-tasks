@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Optional, Set, Union
 
-from pydantic import Field, validator
+from pydantic import Field, field_validator, model_validator
+from typing_extensions import Self
 
 from pctasks.core.constants import WORKFLOW_SCHEMA_VERSION
 from pctasks.core.models.base import ForeachConfig, PCBaseModel
@@ -47,7 +48,7 @@ class JobDefinition(PCBaseModel):
 
     needs: Optional[Union[str, List[str]]] = None
 
-    @validator("id")
+    @field_validator("id", mode="after")
     def _validate_jobs(cls, v: Optional[str]) -> Optional[str]:
         if v:
             cls.validate_job_id(v)
@@ -101,7 +102,7 @@ class WorkflowDefinition(PCBaseModel):
     on: Optional[TriggerDefinition] = None
     is_streaming: bool = False
 
-    schema_version: str = Field(default=WORKFLOW_SCHEMA_VERSION, const=True)
+    schema_version: str = Field(default=WORKFLOW_SCHEMA_VERSION, frozen=True)
 
     def __init__(self, **data: Any) -> None:
         super().__init__(**data)
@@ -109,7 +110,7 @@ class WorkflowDefinition(PCBaseModel):
             if not job.id:
                 job.id = id
 
-    @validator("jobs")
+    @field_validator("jobs")
     def _validate_jobs(cls, v: Dict[str, JobDefinition]) -> Dict[str, JobDefinition]:
         for job_id in v:
             # Only validate if job_id is set to None
@@ -118,10 +119,11 @@ class WorkflowDefinition(PCBaseModel):
                 JobDefinition.validate_job_id(job_id)
         return v
 
-    @validator("is_streaming")
+    @model_validator(mode="after")
     def _validate_is_streaming(
-        cls, v: bool, values: Dict[str, Any], **kwargs: Dict[str, Any]
-    ) -> bool:
+        # cls, v: bool, values: Dict[str, Any], **kwargs: Dict[str, Any]
+        self,
+    ) -> Self:
         """
         A streaming workflow is similar to other pctasks workflows, but requires a few
         additional properties on the streaming tasks within the workflow:
@@ -142,8 +144,8 @@ class WorkflowDefinition(PCBaseModel):
         to run indefinitely. They should continuously process messages from a queue,
         and leave starting, stopping, and scaling to the pctasks framework.
         """
-        if v:
-            jobs = values["jobs"]
+        if self.is_streaming:
+            jobs = self.jobs
             n_jobs = len(jobs)
             if n_jobs != 1:
                 raise ValueError(
@@ -182,7 +184,7 @@ class WorkflowDefinition(PCBaseModel):
                         f"on the task."
                     )
 
-        return v
+        return self
 
     def template_args(self, args: Optional[Dict[str, Any]]) -> "WorkflowDefinition":
         return DictTemplater({"args": args}, strict=False).template_model(self)
@@ -234,7 +236,7 @@ class Workflow(PCBaseModel):
 
 
 class WorkflowRecord(Record):
-    type: str = Field(default=WorkflowRecordType.WORKFLOW, const=True)
+    type: str = Field(default=WorkflowRecordType.WORKFLOW, frozen=True)
     workflow_id: str
     workflow: Workflow
 
@@ -260,7 +262,7 @@ class WorkflowSubmitMessage(PCBaseModel):
     def get_workflow_with_templated_args(self) -> Workflow:
         if self.args is None:
             return self.workflow
-        return self.workflow.copy(
+        return self.workflow.model_copy(
             update={"definition": self.workflow.definition.template_args(self.args)}
         )
 
