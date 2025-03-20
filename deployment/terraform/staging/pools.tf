@@ -5,8 +5,8 @@ module "batch_pool_d3_v3" {
   name                = var.batch_default_pool_id
   resource_group_name = module.resources.resource_group
   account_name        = module.resources.batch_account_name
-  display_name        = "D v3 family four core"
-  vm_size             = "STANDARD_D3_V2"
+  display_name        = "D family four core"
+  vm_size             = "Standard_D4as_v4"
   max_tasks_per_node  = 4
   # max_tasks_per_node  = 1
 
@@ -30,8 +30,8 @@ module "batch_pool_d3_v3_ingest" {
   name                = "ingest_pool"
   resource_group_name = module.resources.resource_group
   account_name        = module.resources.batch_account_name
-  display_name        = "D v3 family four core"
-  vm_size             = "STANDARD_D3_V2"
+  display_name        = "D family four core"
+  vm_size             = "Standard_D4as_v4"
   max_tasks_per_node  = 1
 
   min_dedicated = 0
@@ -79,7 +79,7 @@ module "batch_pool_d3_v3_landsat" {
   resource_group_name = module.resources.resource_group
   account_name        = module.resources.batch_account_name
   display_name        = "landsat_pool"
-  vm_size             = "STANDARD_D3_V2"
+  vm_size             = "Standard_D4as_v4"
   max_tasks_per_node  = 4
 
   min_dedicated = 0

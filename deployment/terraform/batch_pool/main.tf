@@ -37,12 +37,12 @@ resource "azurerm_batch_pool" "batch_pool" {
     }
   }
 
-  node_agent_sku_id = "batch.node.ubuntu 20.04"
+  node_agent_sku_id = "batch.node.ubuntu 22.04"
 
   storage_image_reference {
-    publisher = "microsoft-azure-batch"
-    offer     = "ubuntu-server-container"
-    sku       = "20-04-lts"
+    publisher = "microsoft-dsvm"
+    offer     = "ubuntu-hpc"
+    sku       = "2204"
     version   = "latest"
   }
 
