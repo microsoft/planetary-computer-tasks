@@ -14,7 +14,14 @@
     "https://stac-extensions.github.io/view/v1.0.0/schema.json",
     "https://stac-extensions.github.io/scientific/v1.0.0/schema.json"
   ],
-  "keywords": ["Sentinel", "Landsat", "HLS", "Satellite", "Global", "Imagery"],
+  "keywords": [
+    "Sentinel",
+    "Landsat",
+    "HLS",
+    "Satellite",
+    "Global",
+    "Imagery"
+  ],
   "msft:short_description": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0, Landsat Portion",
   "msft:storage_account": "hls2euwest",
   "msft:group_id": "hls2",
@@ -23,18 +30,31 @@
   "providers": [
     {
       "name": "USGS",
-      "roles": ["producer", "licensor"],
+      "roles": [
+        "producer",
+        "licensor"
+      ],
       "url": "https://lpdaac.usgs.gov/news/release-of-harmonized-landsat-and-sentinel-2-hls-version-20/"
     },
     {
       "name": "Microsoft",
-      "roles": ["host"],
+      "roles": [
+        "host"
+      ],
       "url": "https://planetarycomputer.microsoft.com"
     }
   ],
-  "assets": {},
+  "assets": {
+    "thumbnail": {
+      "type": "image/webp",
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/hls2-l30.webp",
+      "title": "HLS2 Landsat Collection Thumbnail"
+    }
+  },
   "summaries": {
-    "platform": ["Landsat 8, Landsat 9"]
+    "platform": [
+      "Landsat 8, Landsat 9"
+    ]
   },
   "item_assets": {
     "B01": {
@@ -47,7 +67,9 @@
           "full_width_half_max": 0.02
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Coastal Aerosol"
     },
     "B02": {
@@ -60,7 +82,9 @@
           "full_width_half_max": 0.06
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Blue"
     },
     "B03": {
@@ -73,7 +97,9 @@
           "full_width_half_max": 0.06
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Green"
     },
     "B04": {
@@ -86,7 +112,9 @@
           "full_width_half_max": 0.04
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Red"
     },
     "B05": {
@@ -99,7 +127,9 @@
           "full_width_half_max": 0.03
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "NIR Narrow"
     },
     "B06": {
@@ -112,7 +142,9 @@
           "full_width_half_max": 0.08
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "SWIR 1"
     },
     "B07": {
@@ -125,7 +157,9 @@
           "full_width_half_max": 0.2
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "SWIR 2"
     },
     "B09": {
@@ -138,7 +172,9 @@
           "full_width_half_max": 0.02
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Cirrus"
     },
     "B10": {
@@ -151,7 +187,9 @@
           "full_width_half_max": 0.8
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Thermal Infrared 1"
     },
     "B11": {
@@ -164,7 +202,9 @@
           "full_width_half_max": 1.0
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Thermal Infrared 2"
     },
     "Fmask": {
@@ -174,7 +214,9 @@
           "name": "Fmask"
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Fmask"
     },
     "SZA": {
@@ -184,7 +226,9 @@
           "name": "SZA"
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "SZA"
     },
     "SAA": {
@@ -194,7 +238,9 @@
           "name": "SAA"
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "SAA"
     },
     "VZA": {
@@ -204,7 +250,9 @@
           "name": "VZA"
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "VZA"
     },
     "VAA": {
@@ -214,21 +262,30 @@
           "name": "VAA"
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "VAA"
-    },
-    "thumbnail": {
-      "type": "image/jpeg",
-      "roles": ["thumbnail"],
-      "title": "Thumbnail"
     }
   },
   "extent": {
     "spatial": {
-      "bbox": [[-180, -90, 180, 90]]
+      "bbox": [
+        [
+          -180,
+          -90,
+          180,
+          90
+        ]
+      ]
     },
     "temporal": {
-      "interval": [["2020-01-01T00:00:00Z", null]]
+      "interval": [
+        [
+          "2020-01-01T00:00:00Z",
+          null
+        ]
+      ]
     }
   }
 }

@@ -14,7 +14,14 @@
     "https://stac-extensions.github.io/view/v1.0.0/schema.json",
     "https://stac-extensions.github.io/scientific/v1.0.0/schema.json"
   ],
-  "keywords": ["Sentinel", "Landsat", "HLS", "Satellite", "Global", "Imagery"],
+  "keywords": [
+    "Sentinel",
+    "Landsat",
+    "HLS",
+    "Satellite",
+    "Global",
+    "Imagery"
+  ],
   "msft:short_description": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0, Sentinel-2 Portion",
   "msft:storage_account": "hls2euwest",
   "msft:container": "hls2",
@@ -23,18 +30,32 @@
   "providers": [
     {
       "name": "USGS",
-      "roles": ["producer", "licensor"],
+      "roles": [
+        "producer",
+        "licensor"
+      ],
       "url": "https://lpdaac.usgs.gov/news/release-of-harmonized-landsat-and-sentinel-2-hls-version-20/"
     },
     {
       "name": "Microsoft",
-      "roles": ["host"],
+      "roles": [
+        "host"
+      ],
       "url": "https://planetarycomputer.microsoft.com"
     }
   ],
-  "assets": {},
+  "assets": {
+    "thumbnail": {
+      "type": "image/webp",
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/hls2-s30.webp",
+      "title": "HLS2 Sentinel Collection Thumbnail"
+    }
+  },
   "summaries": {
-    "platform": ["Sentinel-2A", "Sentinel-2B"]
+    "platform": [
+      "Sentinel-2A",
+      "Sentinel-2B"
+    ]
   },
   "item_assets": {
     "B01": {
@@ -47,7 +68,9 @@
           "full_width_half_max": 0.027
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Coastal Aerosol"
     },
     "B02": {
@@ -60,7 +83,9 @@
           "full_width_half_max": 0.098
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Blue"
     },
     "B03": {
@@ -73,7 +98,9 @@
           "full_width_half_max": 0.045
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Green"
     },
     "B04": {
@@ -86,7 +113,9 @@
           "full_width_half_max": 0.038
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Red"
     },
     "B05": {
@@ -98,7 +127,9 @@
           "full_width_half_max": 0.019
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Red-Edge 1"
     },
     "B06": {
@@ -110,7 +141,9 @@
           "full_width_half_max": 0.018
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Red-Edge 2"
     },
     "B07": {
@@ -122,7 +155,9 @@
           "full_width_half_max": 0.028
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Red-Edge 3"
     },
     "B08": {
@@ -135,7 +170,9 @@
           "full_width_half_max": 0.145
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "NIR Broad"
     },
     "B8A": {
@@ -147,7 +184,9 @@
           "full_width_half_max": 0.033
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "NIR Narrow"
     },
     "B09": {
@@ -159,7 +198,9 @@
           "full_width_half_max": 0.026
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Water Vapor"
     },
     "B10": {
@@ -172,7 +213,9 @@
           "full_width_half_max": 0.075
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Cirrus"
     },
     "B11": {
@@ -185,7 +228,9 @@
           "full_width_half_max": 0.143
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "SWIR 1"
     },
     "B12": {
@@ -198,7 +243,9 @@
           "full_width_half_max": 0.242
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "SWIR 2"
     },
     "Fmask": {
@@ -208,7 +255,9 @@
           "name": "Fmask"
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "Fmask"
     },
     "SZA": {
@@ -218,7 +267,9 @@
           "name": "SZA"
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "SZA"
     },
     "SAA": {
@@ -228,7 +279,9 @@
           "name": "SAA"
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "SAA"
     },
     "VZA": {
@@ -238,7 +291,9 @@
           "name": "VZA"
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "VZA"
     },
     "VAA": {
@@ -248,21 +303,30 @@
           "name": "VAA"
         }
       ],
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "title": "VAA"
-    },
-    "thumbnail": {
-      "type": "image/jpeg",
-      "roles": ["thumbnail"],
-      "title": "Thumbnail"
     }
   },
   "extent": {
     "spatial": {
-      "bbox": [[-180, -90, 180, 90]]
+      "bbox": [
+        [
+          -180,
+          -90,
+          180,
+          90
+        ]
+      ]
     },
     "temporal": {
-      "interval": [["2020-01-01T00:00:00Z", null]]
+      "interval": [
+        [
+          "2020-01-01T00:00:00Z",
+          null
+        ]
+      ]
     }
   }
 }
