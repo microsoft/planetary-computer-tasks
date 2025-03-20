@@ -6,7 +6,7 @@ from typing import Hashable, List, Optional, Tuple, Type, TypeVar, Union
 
 from cachetools import Cache, LRUCache, cachedmethod
 from cachetools.keys import hashkey
-from pydantic import Field, ValidationError
+from pydantic import AliasChoices, Field, ValidationError
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -161,7 +161,9 @@ def get_settings(
         # but it works and defines pydantic validation.
         section: model = Field(  # type: ignore
             default_factory=model,
-            alias=f"{ENV_VAR_PCTASK_PREFIX}{section_name.upper()}",
+            validation_alias=AliasChoices(
+                f"{ENV_VAR_PCTASK_PREFIX}{section_name.upper()}", section_name
+            ),
         )
 
         @classmethod
