@@ -1,3 +1,4 @@
+import json
 from typing import Any, Dict, List, Optional, Type, TypeVar, Union
 
 import yaml
@@ -19,7 +20,8 @@ class PCBaseModel(BaseModel):
     def json(self, **kwargs: Any) -> str:
         kwargs.setdefault("by_alias", True)
         kwargs.setdefault("exclude_none", True)
-        return super().model_dump_json(**kwargs)
+        indent = kwargs.pop("indent", 2)
+        return json.dumps(super().model_dump(**kwargs), indent=indent)
 
     def to_json(self, *args: Any, **kwargs: Any) -> str:
         """Passed through to .json()
