@@ -55,13 +55,63 @@
         "min_zoom": 8,
         "legend": null,
         "conditions": null
+      },
+      {
+        "name": "Short wave infrared",
+        "description": "Darker shades of green indicate denser vegetation. Brown is indicative of bare soil and built-up areas (B12, B8A, B04).",
+        "type": "raster-tile",
+        "options": "assets=B07&assets=B05&assets=B04&color_formula=Gamma RGB 3.7 Saturation 1.5 Sigmoidal RGB 15 0.35",
+        "vector_options": null,
+        "min_zoom": 9,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Agriculture",
+        "description": "Darker shades of green indicate denser vegetation (B11, B08, B02).",
+        "type": "raster-tile",
+        "options": "assets=B06&assets=B05&assets=B02&color_formula=Gamma RGB 3.7 Saturation 1.5 Sigmoidal RGB 15 0.35",
+        "vector_options": null,
+        "min_zoom": 9,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Normalized Difference Veg. Index (NDVI)",
+        "description": "Normalized Difference Vegetation Index (B08-B04)/(B08+B04), darker green indicates healthier vegetation.",
+        "type": "raster-tile",
+        "options": "expression=(B05-B04)/(B05+B04)&rescale=-1,1&colormap_name=rdylgn&asset_as_band=true",
+        "vector_options": null,
+        "min_zoom": 9,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Moisture Index (NDWI)",
+        "description": "Index indicating water stress in plants (B8A-B11)/(B8A+B11)",
+        "type": "raster-tile",
+        "options": "expression=(B05-B06)/(B05+B06)&rescale=-1,1&colormap_name=rdbu&asset_as_band=true",
+        "vector_options": null,
+        "min_zoom": 9,
+        "legend": null,
+        "conditions": null
+      },
+      {
+        "name": "Atmospheric penetration",
+        "description": "False color rendering with non-visible bands to reduce effects of atmospheric particles (B12, B11, B8A).",
+        "type": "raster-tile",
+        "options": "assets=B07&assets=B06&assets=B05&color_formula=Gamma RGB 3.7 Saturation 1.5 Sigmoidal RGB 15 0.35",
+        "vector_options": null,
+        "min_zoom": 9,
+        "legend": null,
+        "conditions": null
       }
     ],
     "default_location": {
-      "zoom": 7,
+      "zoom": 11,
       "coordinates": [
-        26.7409,
-        -80.9714
+        37.07,
+        -7.9
       ]
     },
     "default_custom_query": null,
