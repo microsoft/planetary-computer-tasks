@@ -55,6 +55,9 @@
     "platform": [
       "Landsat 8",
       "Landsat 9"
+    ],
+    "gsd": [
+      30
     ]
   },
   "item_assets": {
