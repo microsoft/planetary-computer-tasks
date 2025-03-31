@@ -11,7 +11,7 @@ T = TypeVar("T")
 def get_plugin_subcommands(command_type: Type[T], entry_point_group: str) -> List[T]:
     result: List[T] = []
     entry_points: List[EntryPoint] = list(
-        importlib.metadata.entry_points().get(entry_point_group) or []
+        importlib.metadata.entry_points(group=entry_point_group)
     )
 
     start = time.perf_counter()
