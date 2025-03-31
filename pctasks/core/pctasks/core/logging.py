@@ -1,5 +1,5 @@
-"""Logging to Azure Application Insights
-"""
+"""Logging to Azure Application Insights"""
+
 import logging
 import os
 from datetime import datetime

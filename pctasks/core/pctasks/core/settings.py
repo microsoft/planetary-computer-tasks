@@ -55,7 +55,6 @@ _settings_cache: Cache = LRUCache(maxsize=100)
 
 
 class SettingsConfig(PCBaseModel):
-
     """Configuration for the settings location."""
 
     profile: Optional[str] = None

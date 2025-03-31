@@ -101,9 +101,11 @@ class IngestTask(Task[IngestTaskInput, IngestTaskOutput]):
                     collections=[
                         CollectionIngestTaskOutput(
                             collection_id=collection_id,
-                            event_type=STACCollectionEventType.CREATED
-                            if inserted
-                            else STACCollectionEventType.UPDATED,
+                            event_type=(
+                                STACCollectionEventType.CREATED
+                                if inserted
+                                else STACCollectionEventType.UPDATED
+                            ),
                         )
                         for collection_id, inserted in collections_to_status.items()
                     ]
@@ -124,9 +126,11 @@ class IngestTask(Task[IngestTaskInput, IngestTaskOutput]):
                         collections=[
                             CollectionIngestTaskOutput(
                                 collection_id=collection_id,
-                                event_type=STACCollectionEventType.CREATED
-                                if inserted
-                                else STACCollectionEventType.UPDATED,
+                                event_type=(
+                                    STACCollectionEventType.CREATED
+                                    if inserted
+                                    else STACCollectionEventType.UPDATED
+                                ),
                             )
                         ]
                     )
@@ -155,9 +159,11 @@ class IngestTask(Task[IngestTaskInput, IngestTaskOutput]):
                                 collection_id=collection_id,
                                 item_id=item_id,
                                 geometry=geometry,
-                                event_type=STACItemEventType.CREATED
-                                if not inserted
-                                else STACItemEventType.UPDATED,
+                                event_type=(
+                                    STACItemEventType.CREATED
+                                    if not inserted
+                                    else STACItemEventType.UPDATED
+                                ),
                             )
                         ]
                     )

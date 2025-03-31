@@ -21,7 +21,7 @@ class PCBaseModel(BaseModel):
         kwargs.setdefault("by_alias", True)
         kwargs.setdefault("exclude_none", True)
         indent = kwargs.pop("indent", 2)
-        return json.dumps(super().model_dump(**kwargs), indent=indent)
+        return json.dumps(super().model_dump(**kwargs), indent=indent, default=str)
 
     def to_json(self, *args: Any, **kwargs: Any) -> str:
         """Passed through to .json()
@@ -42,9 +42,9 @@ class PCBaseModel(BaseModel):
             return dict(
                 sorted(
                     d.items(),
-                    key=lambda x: field_order.index(x[0])
-                    if x[0] in field_order
-                    else _len,
+                    key=lambda x: (
+                        field_order.index(x[0]) if x[0] in field_order else _len
+                    ),
                 )
             )
 

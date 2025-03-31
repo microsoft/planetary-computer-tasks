@@ -140,8 +140,7 @@ class PropertySummary(BaseModel):
     @abstractmethod
     def merge(
         self, other: "PropertySummary", settings: SummarySettings
-    ) -> "PropertySummary":
-        ...
+    ) -> "PropertySummary": ...
 
 
 ValueCountList = List[

@@ -108,8 +108,7 @@ class BaseCosmosDBContainer(Generic[T], ABC):
         )
 
     @abstractmethod
-    def get_partition_key(self, model: T) -> str:
-        ...
+    def get_partition_key(self, model: T) -> str: ...
 
     def get_trigger(
         self, operation: ContainerOperation, trigger_type: TriggerType
