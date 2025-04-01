@@ -27,3 +27,12 @@ $ pctasks dataset process-items '${{ args.since }}' \
 
 - Chunking takes about 20 minutes with a product and year prefix (`year-prefix` argument) and using the `--since` argument
 - Item creation for a few days of data and a chunk size of 200 takes about 20 minutes.
+
+## Run ingestion manually
+
+```bash
+pctasks dataset process-items -d dataset.yaml test-ingest -a registry pccomponents.azurecr.io --limit 100 --submit --arg year-prefix 2025
+or 
+pctasks dataset process-items -d dataset.yaml test-ingest -a registry pccomponents.azurecr.io --submit --arg year-prefix 2025
+pctasks runs status -w <run id>
+```
