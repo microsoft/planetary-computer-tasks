@@ -22,7 +22,8 @@ RUN mkdir -p ~/miniconda3 \
 RUN bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3 \ 
     && rm ~/miniconda3/miniconda.sh \
     && source ~/miniconda3/bin/activate \ 
-    && conda install -c conda-forge sqlite gdal libgdal \
+    && conda install -c conda-forge \
+    python=3.12 cython gdal libgdal \
     libgdal-arrow-parquet libgdal-avif \
     libgdal-core \
     libgdal-fits libgdal-grib \ 
@@ -30,7 +31,7 @@ RUN bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3 \
     libgdal-kea libgdal-netcdf libgdal-pdf libgdal-pg libgdal-postgisraster \
     libgdal-tiledb libgdal-xls
 
-# Put all the GDAL tools in PATH
+
 ENV PATH=/root/miniconda3/bin:$PATH
 # Help the loader
 ENV LD_LIBRARY_PATH=/root/miniconda3/lib:$LD_LIBRARY_PATH
