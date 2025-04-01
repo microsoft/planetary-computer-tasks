@@ -20,13 +20,11 @@ anyio==4.3.0
 argo-workflows==6.3.10
     # via pctasks-run
     # from https://pypi.org/simple
-async-timeout==4.0.3
-    # via aiohttp
-    # from https://pypi.org/simple
 attrs==23.2.0
     # via
     #   aiohttp
     #   jsonschema
+    #   referencing
     # from https://pypi.org/simple
 azure-batch==11.0.0
     # via pctasks-run
@@ -106,11 +104,6 @@ cryptography==42.0.5
 distlib==0.3.8
     # via virtualenv
     # from https://pypi.org/simple
-exceptiongroup==1.2.1
-    # via
-    #   anyio
-    #   pytest
-    # from https://pypi.org/simple
 fastapi==0.115.11
     # via pctasks-server (./pctasks/server/pyproject.toml)
     # from https://pypi.org/simple
@@ -164,10 +157,13 @@ isodate==0.6.1
     #   azure-storage-queue
     #   msrest
     # from https://pypi.org/simple
-jsonschema==4.17.3
+jsonschema==4.23.0
     # via
     #   pctasks-core
     #   stac-validator
+    # from https://pypi.org/simple
+jsonschema-specifications==2024.10.1
+    # via jsonschema
     # from https://pypi.org/simple
 kubernetes==29.0.0
     # via pctasks-run
@@ -310,10 +306,7 @@ pyjwt==2.8.0
     #   adal
     #   msal
     # from https://pypi.org/simple
-pyrsistent==0.20.0
-    # via jsonschema
-    # from https://pypi.org/simple
-pystac==1.8.3
+pystac==1.10.1
     # via
     #   pctasks-core
     #   planetary-computer
@@ -357,6 +350,11 @@ pyyaml==6.0.1
     #   pctasks-core
     #   pre-commit
     # from https://pypi.org/simple
+referencing==0.36.2
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
+    # from https://pypi.org/simple
 requests==2.31.0
     # via
     #   adal
@@ -378,6 +376,11 @@ requests-oauthlib==2.0.0
     # from https://pypi.org/simple
 rich==13.7.1
     # via pctasks-client
+    # from https://pypi.org/simple
+rpds-py==0.24.0
+    # via
+    #   jsonschema
+    #   referencing
     # from https://pypi.org/simple
 rsa==4.9
     # via google-auth
@@ -408,14 +411,8 @@ starlette==0.46.1
 strictyaml==1.7.3
     # via pctasks-core
     # from https://pypi.org/simple
-tomli==2.0.1
-    # via
-    #   coverage
-    #   pytest
-    # from https://pypi.org/simple
 typing-extensions==4.12.2
     # via
-    #   anyio
     #   azure-core
     #   azure-cosmos
     #   azure-data-tables
@@ -425,6 +422,7 @@ typing-extensions==4.12.2
     #   fastapi
     #   pydantic
     #   pydantic-core
+    #   referencing
     # from https://pypi.org/simple
 urllib3==2.2.1
     # via

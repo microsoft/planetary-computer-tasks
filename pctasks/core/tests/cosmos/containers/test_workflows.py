@@ -15,7 +15,7 @@ from pctasks.core.models.workflow import (
 )
 
 
-def test_workflow_runs_pagination(temp_cosmosdb_containers):
+def test_workflow_runs_pagination(temp_cosmosdb_containers) -> None:
     workflow_id = "test-workflow"
     run_id_1 = "test-run-1"
     run_id_2 = "test-run-2"

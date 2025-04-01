@@ -39,6 +39,7 @@ maps to the nested object:
 And would ensure that a cloud event with the URL given above would be dispatched
 to the `goes-glm` queue.
 """
+
 import json
 import logging
 import os
