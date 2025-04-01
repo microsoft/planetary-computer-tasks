@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM mcr.microsoft.com/azurelinux/base/python:3.12
 
 # Setup timezone info
 ENV TZ=UTC
@@ -6,13 +6,12 @@ ENV TZ=UTC
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 ENV PIP_NO_CACHE_DIR=1
-RUN pip install "setuptools>=65.5.1"
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Install common packages
 COPY requirements-task-base.txt /tmp/requirements.txt
-RUN python -m pip install --no-build-isolation --upgrade pip uv
+RUN pip install uv
 RUN uv pip install --system -r /tmp/requirements.txt
 
 #
