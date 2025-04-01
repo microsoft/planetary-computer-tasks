@@ -7,9 +7,11 @@ logger = logging.getLogger(__name__)
 
 def reduce_coordinate_precision(coords: List[Any], precision: int = 7) -> List[Any]:
     return [
-        round(x, precision)
-        if type(x) is float or type(x) is int
-        else reduce_coordinate_precision(x, precision=precision)
+        (
+            round(x, precision)
+            if type(x) is float or type(x) is int
+            else reduce_coordinate_precision(x, precision=precision)
+        )
         for x in coords
     ]
 

@@ -140,8 +140,7 @@ class PropertySummary(BaseModel):
     @abstractmethod
     def merge(
         self, other: "PropertySummary", settings: SummarySettings
-    ) -> "PropertySummary":
-        ...
+    ) -> "PropertySummary": ...
 
 
 ValueCountList = List[
@@ -734,7 +733,7 @@ class ObjectSummary(BaseModel):
             for key in include_keys:
                 split = key.split(".")
                 indexed_keys[split[0]] = map_opt(
-                    lambda l: ".".join(l), split[1:] or None
+                    lambda x: ".".join(x), split[1:] or None
                 )
 
         # If 'include_keys' is set and the current key isn't

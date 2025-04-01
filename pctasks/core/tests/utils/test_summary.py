@@ -313,7 +313,7 @@ def test_several_asset_descriptions():
     items: List[Dict[str, Any]] = []
     for i in range(100):
         it = deepcopy(item)
-        it["assets"]["image"]["description"] = f"Image {i%20}"
+        it["assets"]["image"]["description"] = f"Image {i % 20}"
         items.append(it)
 
     summary = ObjectSummary.summarize(

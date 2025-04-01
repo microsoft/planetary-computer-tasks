@@ -35,9 +35,11 @@ class CreateSplitsTask(Task[CreateSplitsInput, CreateSplitsOutput]):
 
                 logger.info(f"Walking prefixes in {assets_uri}...")
                 split_prefixes = [
-                    s.prefix + "/"
-                    if s.prefix and not s.prefix.endswith("/")
-                    else s.prefix
+                    (
+                        s.prefix + "/"
+                        if s.prefix and not s.prefix.endswith("/")
+                        else s.prefix
+                    )
                     for s in splits
                 ]
                 for split_config in splits:

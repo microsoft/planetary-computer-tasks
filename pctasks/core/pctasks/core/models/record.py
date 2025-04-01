@@ -24,8 +24,7 @@ class Record(PCBaseModel, ABC):
     """
 
     @abstractmethod
-    def get_id(self) -> str:
-        ...
+    def get_id(self) -> str: ...
 
     @staticmethod
     def migrate(item: Dict[str, Any]) -> Dict[str, Any]:

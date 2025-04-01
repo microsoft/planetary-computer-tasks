@@ -341,9 +341,9 @@ def modify_for_update(workflow_definition: WorkflowDefinition) -> WorkflowDefini
     item_chunkset_uri = create_items_task.args["item_chunkset_uri"]
     assert item_chunkset_uri.endswith(f"/{ITEM_CHUNKS_PREFIX}")
     prefix, suffix = item_chunkset_uri.rsplit("/", 1)
-    create_items_task.args[
-        "item_chunkset_uri"
-    ] = f"{prefix}/${{{{ args.since }}}}/{suffix}"
+    create_items_task.args["item_chunkset_uri"] = (
+        f"{prefix}/${{{{ args.since }}}}/{suffix}"
+    )
 
     return workflow_definition
 
