@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/cbl-mariner/base/python:3.9
+FROM mcr.microsoft.com/azurelinux/base/python:3.12
 
 RUN tdnf install -y ca-certificates build-essential git \
     && tdnf clean all
@@ -37,7 +37,7 @@ RUN cd /opt/src/server && \
 
 RUN if [ "${DEVELOPMENT}" = "TRUE" ]; then \
      echo "INSTALLING DEVELOPMENT DEPENDENCIES"; \
-     yum install -y azure-cli; \
+     tdnf install -y azure-cli; \
      uv pip install --system \
      -e /opt/src/core \
      -e /opt/src/cli \
