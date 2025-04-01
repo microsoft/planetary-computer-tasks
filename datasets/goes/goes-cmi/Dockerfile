@@ -11,6 +11,30 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN tdnf install build-essential jq unzip ca-certificates awk wget curl git azure-cli -y \
     && tdnf clean all
 
+# Install GDAL through conda
+# Rasterio doesn't make `gdal_translate` available
+# and the stactools package depends on calling `gdal_translate`.
+RUN mkdir -p ~/miniconda3 \
+    && wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh \
+    && chmod +x ~/miniconda3/miniconda.sh
+
+# Do we need all of these?
+RUN bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3 \ 
+    && rm ~/miniconda3/miniconda.sh \
+    && source ~/miniconda3/bin/activate \ 
+    && conda install -c conda-forge sqlite gdal libgdal \
+    libgdal-arrow-parquet libgdal-avif \
+    libgdal-core \
+    libgdal-fits libgdal-grib \ 
+    libgdal-hdf4 libgdal-hdf5 libgdal-heif libgdal-jp2openjpeg \
+    libgdal-kea libgdal-netcdf libgdal-pdf libgdal-pg libgdal-postgisraster \
+    libgdal-tiledb libgdal-xls
+
+# Put all the GDAL tools in PATH
+ENV PATH=/root/miniconda3/bin:$PATH
+# Help the loader
+ENV LD_LIBRARY_PATH=/root/miniconda3/lib:$LD_LIBRARY_PATH
+
 # Install common packages
 COPY requirements-task-base.txt /tmp/requirements.txt
 RUN pip install --no-build-isolation -r /tmp/requirements.txt
