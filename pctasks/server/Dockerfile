@@ -37,7 +37,7 @@ RUN cd /opt/src/server && \
 
 RUN if [ "${DEVELOPMENT}" = "TRUE" ]; then \
      echo "INSTALLING DEVELOPMENT DEPENDENCIES"; \
-     yum install -y azure-cli; \
+     tdnf install -y azure-cli; \
      uv pip install --system \
      -e /opt/src/core \
      -e /opt/src/cli \
