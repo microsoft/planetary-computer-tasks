@@ -4,6 +4,7 @@ Monitors the task status and ensures the
 STAC Collection and Items were successfully created/updated
 in the development database.
 """
+
 import logging
 import textwrap
 from pathlib import Path

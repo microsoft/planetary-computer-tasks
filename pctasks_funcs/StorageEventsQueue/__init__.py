@@ -2,6 +2,7 @@
 Azure Function to forward Blob Storage Events to the `storage-events`
 container in Cosmos DB.
 """
+
 import json
 import logging
 

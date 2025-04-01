@@ -222,17 +222,17 @@ class BatchTaskRunner(TaskRunner):
                         if task_error:
                             err: Any = task_error.message
                             error_msg = err.value
-                            submit_results[
-                                batch_task_info.index
-                            ] = FailedTaskSubmitResult(errors=[error_msg])
+                            submit_results[batch_task_info.index] = (
+                                FailedTaskSubmitResult(errors=[error_msg])
+                            )
                         else:
-                            submit_results[
-                                batch_task_info.index
-                            ] = SuccessfulTaskSubmitResult(
-                                task_runner_id=BatchTaskId(
-                                    batch_job_id=batch_job_id,
-                                    batch_task_id=task_id,
-                                ).dict(),
+                            submit_results[batch_task_info.index] = (
+                                SuccessfulTaskSubmitResult(
+                                    task_runner_id=BatchTaskId(
+                                        batch_job_id=batch_job_id,
+                                        batch_task_id=task_id,
+                                    ).dict(),
+                                )
                             )
 
             except Exception as e:

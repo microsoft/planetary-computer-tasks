@@ -9,13 +9,11 @@ aiosignal==1.3.1
 annotated-types==0.7.0
     # via pydantic
     # from https://pypi.org/simple
-async-timeout==4.0.3
-    # via aiohttp
-    # from https://pypi.org/simple
 attrs==23.2.0
     # via
     #   aiohttp
     #   jsonschema
+    #   referencing
     # from https://pypi.org/simple
 azure-core==1.30.1
     # via
@@ -94,10 +92,13 @@ isodate==0.6.1
     #   azure-storage-blob
     #   azure-storage-queue
     # from https://pypi.org/simple
-jsonschema==4.17.3
+jsonschema==4.23.0
     # via
     #   pctasks-core (./pctasks/core/pyproject.toml)
     #   stac-validator
+    # from https://pypi.org/simple
+jsonschema-specifications==2024.10.1
+    # via jsonschema
     # from https://pypi.org/simple
 msal==1.28.0
     # via
@@ -178,10 +179,7 @@ pydantic-settings==2.8.1
 pyjwt==2.8.0
     # via msal
     # from https://pypi.org/simple
-pyrsistent==0.20.0
-    # via jsonschema
-    # from https://pypi.org/simple
-pystac==1.8.3
+pystac==1.10.1
     # via
     #   pctasks-core (./pctasks/core/pyproject.toml)
     #   planetary-computer
@@ -208,6 +206,11 @@ pytz==2024.1
 pyyaml==6.0.1
     # via pctasks-core (./pctasks/core/pyproject.toml)
     # from https://pypi.org/simple
+referencing==0.36.2
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
+    # from https://pypi.org/simple
 requests==2.31.0
     # via
     #   azure-core
@@ -217,6 +220,11 @@ requests==2.31.0
     #   planetary-computer
     #   pystac-client
     #   stac-validator
+    # from https://pypi.org/simple
+rpds-py==0.24.0
+    # via
+    #   jsonschema
+    #   referencing
     # from https://pypi.org/simple
 rsa==4.9
     # via google-auth
@@ -243,6 +251,7 @@ typing-extensions==4.12.2
     #   azure-storage-queue
     #   pydantic
     #   pydantic-core
+    #   referencing
     # from https://pypi.org/simple
 urllib3==2.2.1
     # via requests

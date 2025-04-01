@@ -375,7 +375,7 @@ class BatchClient:
                     if self._dry_run:
                         print(f"{task.id} - {last_modified}")
 
-            except (batchmodels.BatchErrorException):
+            except batchmodels.BatchErrorException:
 
                 # stdout.txt doesn't exist
                 # Check if it's been running without output for
@@ -452,9 +452,11 @@ class BatchClient:
             if execution_info.exit_code != 0:
                 return (
                     TaskRunStatus.FAILED,
-                    execution_info.failure_info.message
-                    if execution_info.failure_info
-                    else None,
+                    (
+                        execution_info.failure_info.message
+                        if execution_info.failure_info
+                        else None
+                    ),
                 )
             else:
                 return (TaskRunStatus.COMPLETED, None)
