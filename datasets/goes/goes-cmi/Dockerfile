@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/azurelinux/base/python:3.12
+FROM ubuntu:20.04
 
 # Setup timezone info
 ENV TZ=UTC
@@ -8,37 +8,38 @@ ENV LANG=C.UTF-8
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN tdnf install build-essential jq unzip ca-certificates awk wget curl git azure-cli -y \
-    && tdnf clean all
+RUN apt-get update && apt-get install -y software-properties-common
 
-# Install GDAL through conda
-# Rasterio doesn't make `gdal_translate` available
-# and the stactools package depends on calling `gdal_translate`.
-RUN mkdir -p ~/miniconda3 \
-    && wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh \
-    && chmod +x ~/miniconda3/miniconda.sh
+RUN add-apt-repository ppa:ubuntugis/ppa && \
+    apt-get update && \
+    apt-get install -y build-essential python3-dev python3-pip \
+    jq unzip ca-certificates wget curl git && \
+    apt-get autoremove && apt-get autoclean && apt-get clean
 
-# Do we need all of these?
-RUN bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3 \ 
-    && rm ~/miniconda3/miniconda.sh \
-    && source ~/miniconda3/bin/activate \ 
-    && conda install -c conda-forge \
-    python=3.12 cython gdal libgdal \
-    libgdal-arrow-parquet libgdal-avif \
-    libgdal-core \
-    libgdal-fits libgdal-grib \ 
-    libgdal-hdf4 libgdal-hdf5 libgdal-heif libgdal-jp2openjpeg \
-    libgdal-kea libgdal-netcdf libgdal-pdf libgdal-pg libgdal-postgisraster \
-    libgdal-tiledb libgdal-xls
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
+# See https://github.com/mapbox/rasterio/issues/1289
+ENV CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
-ENV PATH=/root/miniconda3/bin:$PATH
-# Help the loader
-ENV LD_LIBRARY_PATH=/root/miniconda3/lib:$LD_LIBRARY_PATH
+# Install Python 3.10
+RUN curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh" \
+    && bash "Miniforge3-$(uname)-$(uname -m).sh" -b -p /opt/conda \
+    && rm -rf "Miniforge3-$(uname)-$(uname -m).sh"
+
+ENV PATH /opt/conda/bin:$PATH
+ENV LD_LIBRARY_PATH /opt/conda/lib/:$LD_LIBRARY_PATH
+
+RUN mamba install -y -c conda-forge python=3.10 gdal libgdal-netcdf pip setuptools cython numpy
+
+RUN python -m pip install --upgrade pip
 
 # Install common packages
 COPY requirements-task-base.txt /tmp/requirements.txt
-RUN pip install --no-build-isolation -r /tmp/requirements.txt
+RUN python -m pip install --no-build-isolation -r /tmp/requirements.txt
+
+#
+# Copy and install packages
+#
 
 COPY pctasks/core /opt/src/pctasks/core
 RUN cd /opt/src/pctasks/core && \
@@ -65,7 +66,8 @@ RUN cd /opt/src/pctasks/dataset && \
     pip install .
 
 COPY datasets/goes/goes-cmi/requirements.txt /opt/src/datasets/goes/goes-cmi/requirements.txt
-RUN pip install -r /opt/src/datasets/goes/goes-cmi/requirements.txt
+RUN python3 -m pip install -r /opt/src/datasets/goes/goes-cmi/requirements.txt
+RUN python3 -m pip install rasterio --force-reinstall --no-binary rasterio
 
 # Setup Python Path to allow import of test modules
 ENV PYTHONPATH=/opt/src:$PYTHONPATH

@@ -1,5 +1,5 @@
 id: goes_cmi
-image: ${{ args.registry }}/pctasks-goes-cmi:2025.04.01.3
+image: ${{ args.registry }}/pctasks-goes-cmi:2025.04.01.8
 
 args:
 - registry
@@ -10,6 +10,7 @@ code:
 
 environment:
   APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+  OGR_ENABLE_PARTIAL_REPROJECTION: "TRUE"
 
 collections:
   - id: goes-cmi
