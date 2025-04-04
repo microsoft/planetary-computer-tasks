@@ -7,7 +7,7 @@ import azure.identity.aio
 from azure.cosmos import CosmosClient
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.identity import DefaultAzureCredential
-from pydantic import field_validator, model_validator
+from pydantic import Field, field_validator, model_validator
 from typing_extensions import Self
 
 from pctasks.core.constants import COSMOSDB_EMULATOR_HOST_ENV_VAR
@@ -38,7 +38,7 @@ class CosmosDBSettings(PCTasksSettings):
     key: Optional[str] = None
 
     # Cast to empty string if `None` is provided
-    test_container_suffix: Optional[str] = None
+    test_container_suffix: Optional[str] = Field(default=None, validate_default=True)
 
     database: str = DEFAULT_DATABASE_NAME
     workflows_container_name: str = DEFAULT_WORKFLOWS_CONTAINER

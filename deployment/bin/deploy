@@ -140,9 +140,6 @@ fi
 if [[ -z $USER_AUTH ]]; then
     require_env "ARM_SUBSCRIPTION_ID"
     require_env "ARM_TENANT_ID"
-    require_env "ARM_CLIENT_ID"
-    require_env "ARM_USE_OIDC"
-
 fi
 
 setup_env
