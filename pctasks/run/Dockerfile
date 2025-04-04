@@ -1,6 +1,7 @@
-FROM python:3.9-slim
+FROM mcr.microsoft.com/azurelinux/base/python:3.12
 
-ENV CURL_CA_BUNDLE /etc/ssl/certs/ca-certificates.crt
+RUN tdnf install ca-certificates azure-cli -y \
+     && tdnf clean all
 ENV PIP_NO_CACHE_DIR=1
 RUN pip install "setuptools>=65.5.1"
 

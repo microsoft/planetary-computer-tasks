@@ -32,7 +32,7 @@ class TableSasConfig(PCBaseModel):
 class TableAccountKeyConfig(PCBaseModel):
     account_url: str
     account_name: str
-    account_key: str
+    account_key: Optional[str] = None
     table_name: str
 
 
