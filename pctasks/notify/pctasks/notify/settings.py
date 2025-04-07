@@ -1,7 +1,6 @@
 from typing import Optional
 
 from cachetools import cachedmethod
-from typing import Optional
 
 from pctasks.core.constants import DEFAULT_WEBHOOKS_TABLE_NAME
 from pctasks.core.settings import PCTasksSettings
