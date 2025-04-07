@@ -1,3 +1,5 @@
+from typing import Optional
+
 from cachetools import cachedmethod
 
 from pctasks.core.constants import DEFAULT_WEBHOOKS_TABLE_NAME
@@ -17,7 +19,7 @@ class NotificationSettings(PCTasksSettings):
     # Tables - used for downstream STAC event registrations
     tables_account_url: str
     tables_account_name: str
-    tables_account_key: str
+    tables_account_key: Optional[str] = None
     stac_webhooks_table_name: str = DEFAULT_WEBHOOKS_TABLE_NAME
 
     @cachedmethod(
