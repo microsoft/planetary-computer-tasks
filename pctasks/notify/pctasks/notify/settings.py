@@ -1,3 +1,5 @@
+from typing import Optional
+
 from cachetools import cachedmethod
 from typing import Optional
 
