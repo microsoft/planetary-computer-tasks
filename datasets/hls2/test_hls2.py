@@ -22,6 +22,7 @@ def test_hls2_landsat(asset_uri: str) -> None:
     assert item.properties["platform"] == "landsat-9"
     assert len(item.assets) == 16
     assert "thumbnail" in item.assets
+    item.validate()
 
 @pytest.mark.parametrize(
     "asset_uri",
@@ -40,3 +41,4 @@ def test_hls2_sentinel(asset_uri: str) -> None:
     assert item.properties["platform"] == "sentinel-2a"
     assert len(item.assets) == 19 # 18 bands and 1 thumbnail
     assert "thumbnail" in item.assets
+    item.validate()
