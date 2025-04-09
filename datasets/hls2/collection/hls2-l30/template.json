@@ -1,0 +1,295 @@
+{
+  "stac_version": "1.0.0",
+  "type": "Collection",
+  "id": "hls2-l30",
+  "title": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0, Landsat Portion",
+  "description": "{{ collection.description }}",
+  "license": "not-provided",
+  "links": [],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+    "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/view/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/scientific/v1.0.0/schema.json"
+  ],
+  "keywords": [
+    "Sentinel",
+    "Landsat",
+    "HLS",
+    "Satellite",
+    "Global",
+    "Imagery"
+  ],
+  "msft:short_description": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0, Landsat Portion",
+  "msft:storage_account": "hls2euwest",
+  "msft:group_id": "hls2",
+  "msft:container": "hls2",
+  "msft:region": "westeurope",
+  "providers": [
+    {
+      "name": "USGS",
+      "roles": [
+        "producer",
+        "licensor"
+      ],
+      "url": "https://lpdaac.usgs.gov/news/release-of-harmonized-landsat-and-sentinel-2-hls-version-20/"
+    },
+    {
+      "name": "Microsoft",
+      "roles": [
+        "host"
+      ],
+      "url": "https://planetarycomputer.microsoft.com"
+    }
+  ],
+  "assets": {
+    "thumbnail": {
+      "type": "image/webp",
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/hls2-l30.webp",
+      "title": "HLS2 Landsat Collection Thumbnail"
+    }
+  },
+  "summaries": {
+    "platform": [
+      "Landsat 8",
+      "Landsat 9"
+    ],
+    "gsd": [
+      30
+    ]
+  },
+  "item_assets": {
+    "B01": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "eo:bands": [
+        {
+          "name": "B01",
+          "common_name": "coastal",
+          "center_wavelength": 0.48,
+          "full_width_half_max": 0.02
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "title": "Coastal Aerosol"
+    },
+    "B02": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "eo:bands": [
+        {
+          "name": "B02",
+          "common_name": "blue",
+          "center_wavelength": 0.44,
+          "full_width_half_max": 0.06
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "title": "Blue"
+    },
+    "B03": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "eo:bands": [
+        {
+          "name": "B03",
+          "common_name": "green",
+          "center_wavelength": 0.56,
+          "full_width_half_max": 0.06
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "title": "Green"
+    },
+    "B04": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "eo:bands": [
+        {
+          "name": "B04",
+          "common_name": "red",
+          "center_wavelength": 0.65,
+          "full_width_half_max": 0.04
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "title": "Red"
+    },
+    "B05": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "eo:bands": [
+        {
+          "name": "B05",
+          "common_name": "nir",
+          "center_wavelength": 0.86,
+          "full_width_half_max": 0.03
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "title": "NIR Narrow"
+    },
+    "B06": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "eo:bands": [
+        {
+          "name": "B06",
+          "common_name": "swir16",
+          "center_wavelength": 1.6,
+          "full_width_half_max": 0.08
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "title": "SWIR 1"
+    },
+    "B07": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "eo:bands": [
+        {
+          "name": "B07",
+          "common_name": "swir22",
+          "center_wavelength": 2.2,
+          "full_width_half_max": 0.2
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "title": "SWIR 2"
+    },
+    "B09": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "eo:bands": [
+        {
+          "name": "B09",
+          "common_name": "cirrus",
+          "center_wavelength": 1.37,
+          "full_width_half_max": 0.02
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "title": "Cirrus"
+    },
+    "B10": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "eo:bands": [
+        {
+          "name": "B10",
+          "common_name": "lwir11",
+          "center_wavelength": 10.9,
+          "full_width_half_max": 0.8
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "title": "Thermal Infrared 1"
+    },
+    "B11": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "eo:bands": [
+        {
+          "name": "B11",
+          "common_name": "lwir12",
+          "center_wavelength": 12.0,
+          "full_width_half_max": 1.0
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "title": "Thermal Infrared 2"
+    },
+    "Fmask": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "eo:bands": [
+        {
+          "name": "Fmask"
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "title": "Fmask"
+    },
+    "SZA": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "eo:bands": [
+        {
+          "name": "SZA"
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "title": "SZA"
+    },
+    "SAA": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "eo:bands": [
+        {
+          "name": "SAA"
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "title": "SAA"
+    },
+    "VZA": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "eo:bands": [
+        {
+          "name": "VZA"
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "title": "VZA"
+    },
+    "VAA": {
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "eo:bands": [
+        {
+          "name": "VAA"
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "title": "VAA"
+    }
+  },
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -180,
+          -90,
+          180,
+          90
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2020-01-01T00:00:00Z",
+          null
+        ]
+      ]
+    }
+  }
+}
