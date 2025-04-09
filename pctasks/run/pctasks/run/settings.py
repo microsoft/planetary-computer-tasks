@@ -70,13 +70,13 @@ class RunSettings(PCTasksSettings):
     # Tables
     tables_account_url: str
     tables_account_name: str
-    tables_account_key: Optional[str]
+    tables_account_key: Optional[str] = None
     image_key_table_name: str = DEFAULT_IMAGE_KEY_TABLE_NAME
 
     # Blob
     blob_account_url: str
     blob_account_name: str
-    blob_account_key: Optional[str]
+    blob_account_key: Optional[str] = None
     log_blob_container: str = DEFAULT_LOG_CONTAINER
     task_io_blob_container: str = DEFAULT_TASK_IO_CONTAINER
     code_blob_container: str = DEFAULT_CODE_CONTAINER

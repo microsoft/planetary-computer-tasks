@@ -24,7 +24,7 @@ class RouterSettings(PCTasksSettings):
     # Tables - used for blob event registrations (source eventing)
     tables_account_url: str
     tables_account_name: str
-    tables_account_key: Optional[str]
+    tables_account_key: Optional[str] = None
     blob_trigger_registration_table_name: str = (
         DEFAULT_BLOB_TRIGGER_REGISTRATION_TABLE_NAME
     )
