@@ -93,8 +93,6 @@ class GOESPaths:
             path_parts.append("goes-17")
         elif nc_file_name.platform == PlatformId.G18:
             path_parts.append("goes-18")
-        elif nc_file_name.platform == PlatformId.G19:
-            path_parts.append("goes-19")
         else:
             path_parts.append("goes-16")
         path_parts.append(self._get_product_folder(product))

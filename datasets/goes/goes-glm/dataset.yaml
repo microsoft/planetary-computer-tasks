@@ -50,16 +50,5 @@ collections:
             - prefix: GLM-L2-LCFA/${{args.year-prefix}}/
               depth: 2
 
-      - uri: blob://goeseuwest/noaa-goes19/
-        token: ${{ pc.get_token(goeseuwest, noaa-goes19) }}
-        chunks:
-          options:
-            ends_with: .nc
-            chunk_length: 50000
-          splits:
-            # Prefixing with 2023 is an optimization for update jobs.
-            - prefix: GLM-L2-LCFA/${{args.year-prefix}}/
-              depth: 2
-
     chunk_storage:
       uri: blob://goeseuwest/noaa-goes-etl-data/pctasks/glm/

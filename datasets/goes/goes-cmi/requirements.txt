@@ -1,2 +1,1 @@
-stactools-goes==0.1.8
-pystac==1.10.1
+git+https://github.com/stactools-packages/goes@d7ae77eedf1be52f13cd6eba1cc0ae9366b8a9c5

@@ -1,5 +1,5 @@
 id: goes_cmi
-image: ${{ args.registry }}/pctasks-goes-cmi:2025.03.31.3
+image: ${{ args.registry }}/pctasks-goes-cmi:2023.7.6.0
 
 args:
 - registry
@@ -47,18 +47,6 @@ collections:
       #     options:
       #       ends_with: .nc
       - uri: blob://goeseuwest/noaa-goes18/
-        chunks:
-          splits:
-            - prefix: ABI-L2-MCMIPC/${{ args.year-prefix }}  # CONUS
-              depth: 3  # daily
-            - prefix: ABI-L2-MCMIPM/${{ args.year-prefix }}  # Mesoscale
-              depth: 3  # daily
-            - prefix: ABI-L2-MCMIPF/${{ args.year-prefix }}  # Full Disk
-              depth: 3  # daily
-          options:
-            ends_with: .nc
-
-      - uri: blob://goeseuwest/noaa-goes19/
         chunks:
           splits:
             - prefix: ABI-L2-MCMIPC/${{ args.year-prefix }}  # CONUS

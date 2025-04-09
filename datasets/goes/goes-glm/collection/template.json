@@ -150,9 +150,7 @@
         ],
         "platform": [
             "GOES-16",
-            "GOES-17",
-            "GOES-18",
-            "GOES-19"
+            "GOES-17"
         ],
         "instruments": [
             "FM1",
