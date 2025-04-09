@@ -29,6 +29,13 @@
   "msft:region": "westeurope",
   "providers": [
     {
+      "name": "ESA",
+      "roles": [
+        "producer"
+      ],
+      "url": "https://www.esa.int/Applications/Observing_the_Earth/Copernicus/Sentinel-2"
+    },
+    {
       "name": "USGS",
       "roles": [
         "producer",
