@@ -2,9 +2,9 @@
   "stac_version": "1.0.0",
   "type": "Collection",
   "id": "hls2-l30",
-  "title": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0, Landsat Portion",
+  "title": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0, Landsat Data",
   "description": "{{ collection.description }}",
-  "license": "not-provided",
+  "license": "Data Citation Guidance: https://lpdaac.usgs.gov/data/data-citations-and-guidelines",
   "links": [],
   "stac_extensions": [
     "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
@@ -22,19 +22,19 @@
     "Global",
     "Imagery"
   ],
-  "msft:short_description": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0, Landsat Portion",
+  "msft:short_description": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0, Landsat Data",
   "msft:storage_account": "hls2euwest",
   "msft:group_id": "hls2",
   "msft:container": "hls2",
   "msft:region": "westeurope",
   "providers": [
     {
-      "name": "USGS",
+      "name": "LP DAAC",
       "roles": [
         "producer",
         "licensor"
       ],
-      "url": "https://lpdaac.usgs.gov/news/release-of-harmonized-landsat-and-sentinel-2-hls-version-20/"
+      "url": "https://doi.org/10.5067/HLS/HLSL30.002"
     },
     {
       "name": "Microsoft",

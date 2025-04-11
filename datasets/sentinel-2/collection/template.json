@@ -83,7 +83,8 @@
   "summaries": {
     "platform": [
       "Sentinel-2A",
-      "Sentinel-2B"
+      "Sentinel-2B",
+      "Sentinel-2C"
     ],
     "constellation": [
       "sentinel-2"

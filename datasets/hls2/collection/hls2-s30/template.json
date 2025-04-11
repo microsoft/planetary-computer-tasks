@@ -2,9 +2,9 @@
   "stac_version": "1.0.0",
   "type": "Collection",
   "id": "hls2-s30",
-  "title": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0, Sentinel-2 Portion",
+  "title": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0, Sentinel-2 Data",
   "description": "{{ collection.description }}",
-  "license": "not-provided",
+  "license": "Data Citation Guidance: https://lpdaac.usgs.gov/data/data-citations-and-guidelines",
   "links": [],
   "stac_extensions": [
     "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
@@ -22,7 +22,7 @@
     "Global",
     "Imagery"
   ],
-  "msft:short_description": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0, Sentinel-2 Portion",
+  "msft:short_description": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0, Sentinel-2 Data",
   "msft:storage_account": "hls2euwest",
   "msft:container": "hls2",
   "msft:group_id": "hls2",
@@ -36,12 +36,12 @@
       "url": "https://www.esa.int/Applications/Observing_the_Earth/Copernicus/Sentinel-2"
     },
     {
-      "name": "USGS",
+      "name": "LP DAAC",
       "roles": [
         "producer",
         "licensor"
       ],
-      "url": "https://lpdaac.usgs.gov/news/release-of-harmonized-landsat-and-sentinel-2-hls-version-20/"
+      "url": "https://doi.org/10.5067/HLS/HLSL30.002"
     },
     {
       "name": "Microsoft",
