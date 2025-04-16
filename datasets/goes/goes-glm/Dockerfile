@@ -22,7 +22,6 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 ENV CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
 # Install Python 3.11
-# Install Python 3.10
 RUN curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh" \
      && bash "Miniforge3-$(uname)-$(uname -m).sh" -b -p /opt/conda \
      && rm -rf "Miniforge3-$(uname)-$(uname -m).sh"
