@@ -10,6 +10,21 @@ GOES Cloud & Moisture Imagery
 - Not replicating `handle_duplicates` from ETL. Handling duplicates appears to be an ETL feature that was not ported to pctasks.
 - If an exception is caught in the `create_item` method, an error message with the exception info is logged and an empty list is returned. This is in lieu of ETL's behaviour of returning an error record, which is not supported by pctasks.
 - `GoesCmiCollection` was ported as faithfully as possible from ETL. The complexity is inherited from ETL.
+- On April 4, 2025 GOES-19 becomes operational and we will start publishing GOES-19 STAC items.
+
+## Updating the collection
+
+CMI:
+
+```
+pctasks dataset ingest-collection -d datasets/goes/goes-cmi/dataset.yaml --submit -a registry pccommonponents -a year-prefix 2025
+```
+
+GLM
+
+```
+pctasks dataset ingest-collection -d datasets/goes/goes-glm/dataset.yaml --submit -a registry pccommonponents -a year-prefix 2025
+```
 
 ## Chunking for dynamic ingest
 
@@ -17,6 +32,9 @@ GOES Cloud & Moisture Imagery
 - Chunk creation with the `year-prefix` arg and the `--since` arg takes about 10 minutes.
 
 ## Building the Docker image
+
+From the root of the repo, test building the image with `docker build -f datasets/goes/goes-cmi/Dockerfile . -t goes-cmi`.
+Drop into the image with `docker run -it --rm goes-cmi /bin/bash`
 
 - To build and push a custom docker image to our container registry:
 
@@ -28,6 +46,15 @@ GOES Cloud & Moisture Imagery
 - Note the --force-reinstall --no-binary of rasterio on L70, which cleaned up some rasterio errors.
 
 ## Dynamic Updates
+
+```
+pctasks dataset process-items '${{ args.since }}' -a since 2025-02-01T18:40:02+0000 -a registry pccomponents.azurecr.io -a year-prefix 2025 \
+    -d datasets/goes/goes-cmi/dataset.yaml \
+    -c goes-cmi \
+    --workflow-id goes-cmi-update \
+    --is-update-workflow \
+    --upsert --submit
+```
 
 ```
 $ pctasks dataset process-items '${{ args.since }}' \
