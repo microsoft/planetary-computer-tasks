@@ -33,7 +33,8 @@ pctasks dataset ingest-collection -d datasets/goes/goes-glm/dataset.yaml --submi
 
 ## Building the Docker image
 
-From the root of the repo, test building the image with `docker build -f datasets/goes/goes-cmi/Dockerfile .`.
+From the root of the repo, test building the image with `docker build -f datasets/goes/goes-cmi/Dockerfile . -t goes-cmi`.
+Drop into the image with `docker run -it --rm goes-cmi /bin/bash`
 
 - To build and push a custom docker image to our container registry:
 

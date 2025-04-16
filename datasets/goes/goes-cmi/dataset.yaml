@@ -1,5 +1,5 @@
 id: goes_cmi
-image: ${{ args.registry }}/pctasks-goes-cmi:2025.04.03.1
+image: ${{ args.registry }}/pctasks-goes-cmi:2025.04.15.1
 
 args:
 - registry

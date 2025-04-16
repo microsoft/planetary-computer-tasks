@@ -26,8 +26,8 @@ RUN curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/downloa
     && bash "Miniforge3-$(uname)-$(uname -m).sh" -b -p /opt/conda \
     && rm -rf "Miniforge3-$(uname)-$(uname -m).sh"
 
-ENV PATH /opt/conda/bin:$PATH
-ENV LD_LIBRARY_PATH /opt/conda/lib/:$LD_LIBRARY_PATH
+ENV PATH=/opt/conda/bin:$PATH
+ENV LD_LIBRARY_PATH=/opt/conda/lib/:$LD_LIBRARY_PATH
 
 RUN mamba install -y -c conda-forge python=3.10 gdal libgdal-netcdf pip setuptools cython numpy
 
@@ -71,5 +71,13 @@ RUN python3 -m pip install rasterio --force-reinstall --no-binary rasterio
 
 # Setup Python Path to allow import of test modules
 ENV PYTHONPATH=/opt/src:$PYTHONPATH
+# Recent version of GDAL doesn't allow proj.db to be found unless you activate
+# the conda environment. This is a workaround to set the PROJ_DATA directory
+# unconditionally. Without this, you might see error like:
+#    ERROR 1: PROJ: proj_create_from_database: Open of /opt/conda/share/proj failed
+# Which indicate the the proj.db file is not found.
+# https://proj.org/en/stable/resource_files.html
+# You'll know the image works if `gdalsrsinfo epsg:3857` returns WKT.
+ENV PROJ_DATA=/opt/conda/share/proj
 
 WORKDIR /opt/src
