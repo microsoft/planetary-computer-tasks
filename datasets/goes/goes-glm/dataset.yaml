@@ -1,5 +1,5 @@
 id: goes_glm
-image: ${{ args.registry }}/pctasks-goes-glm:2023.7.6.0
+image: ${{ args.registry }}/pctasks-goes-glm:2025.04.16.0
 
 args:
 - registry
@@ -7,8 +7,6 @@ args:
 
 code:
   src: ${{ local.path(./goes_glm.py) }}
-  # This requirements.txt is used in the Dockerfile.
-  # requirements: ${{ local.path(./requirements.txt) }}
 
 environment:
   APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
