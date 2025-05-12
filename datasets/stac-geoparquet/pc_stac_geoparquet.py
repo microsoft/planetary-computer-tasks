@@ -24,7 +24,7 @@ import psycopg
 import pystac
 import requests
 from stac_geoparquet.arrow import parse_stac_items_to_arrow, to_parquet
-from stac_geoparquet.pgstac_reader import pgstac_to_iter
+from stac_geoparquet.pgstac_reader import pgstac_to_iter, get_pgstac_partitions, Partition, pgstac_to_parquet, pgstac_to_arrow
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.task import FailedTaskResult, WaitTaskResult
@@ -147,35 +147,6 @@ def _pairwise(
     next(b, None)
     return zip(a, b)
 
-def query_collection_partitions_updated_after(conninfo: str, updated_after: datetime.datetime | None = None) -> Generator[Partition, None, None]:
-    with psycopg.connect(conninfo) as conn:
-        with conn.cursor(row_factory=psycopg.rows.class_row(Partition)) as cur:
-            q = """
-                SELECT
-                    collection,
-                    CASE WHEN lower(partition_dtrange) = '-infinity' OR upper(partition_dtrange) = 'infinity' THEN
-                        'items.parquet'
-                    ELSE
-                        format(
-                            'items_%%s_%%s.parquet',
-                            to_char(lower(partition_dtrange),'YYYYMMDD'),
-                            to_char(upper(partition_dtrange),'YYYYMMDD')
-                        )
-                    END AS partition,
-                    lower(dtrange) as start,
-                    upper(dtrange) as end,
-                    last_updated
-                FROM partitions_view
-                """
-            args = ()
-            if updated_after is not None:
-                q += " WHERE last_updated >= %s"
-                args = (updated_after,)
-            q += " ORDER BY last_updated asc"
-            cur.execute(q, args)
-            for row in cur:
-                yield row
-
 def _build_output_path(
     base_output_path: str,
     part_number: int | None,
@@ -199,14 +170,6 @@ def _build_output_path(
             f"{base_output_path}/part-{token}_{a.isoformat()}_{b.isoformat()}.parquet"
         )
     return output_path
-
-@dataclasses.dataclass
-class Partition:
-    collection: str
-    partition: str
-    start: datetime.datetime
-    end: datetime.datetime
-    last_updated: datetime.datetime
 
 def inject_links(item: dict[str, Any]) -> dict[str, Any]:
     item["links"] = [
@@ -262,6 +225,24 @@ def inject_assets(item: dict[str, Any], render_config: str | None) -> dict[str, 
         "title": "Rendered preview",
         "type": "image/png",
     }
+    return item
+
+def naip_year_to_int(item: dict[str, Any]) -> dict[str, Any]:
+    """Convert the year to an integer."""
+    if "naip:year" in item["properties"] and isinstance(item["properties"]["naip:year"], str):
+            item["properties"]["naip:year"] = int(item["properties"]["naip:year"])
+    return item
+
+def clean_item(item: dict[str, Any], render_config: str | None) -> dict[str, Any]:
+    """Clean items by making sure that naip:year is an int and injecting links and assets."""
+    item = inject_links(inject_assets(item, render_config))
+
+    if "proj:epsg" in item["properties"] and not item["properties"]["proj:epsg"]:
+        # This cannot be null
+        item["properties"]["proj:epsg"] = ""
+
+    if item["collection"] == "naip":
+        item = naip_year_to_int(item)
     return item
 
 @dataclasses.dataclass
@@ -330,27 +311,32 @@ class CollectionConfig:
         conninfo: str,
         output_protocol: str,
         output_path: str,
-        partition: Partition | None = None,
+        start_datetime: datetime.datetime | None = None,
+        end_datetime: datetime.datetime | None = None,
         storage_options: dict[str, Any] | None = None,
         rewrite: bool = False,
-        skip_empty_partitions: bool = False,
     ) -> str | None:
-        fs = fsspec.filesystem(output_protocol, **storage_options)
+        # pass
+        fs = fsspec.filesystem(output_protocol, **storage_options)  # type: ignore
         if fs.exists(output_path) and not rewrite:
             logger.debug("Path %s already exists.", output_path)
             return output_path
-        if partition is not None:
-            items = pgstac_to_iter(
-                conninfo, collection=self.collection_id, start_datetime=partition.start, end_datetime=partition.end
-            )
-        else:
-            items = pgstac_to_iter(
-                conninfo, collection=self.collection_id
-            )
-        items = map(lambda i: inject_assets(inject_links(i), self.render_config), items)
-        arrow = parse_stac_items_to_arrow(items)
-        to_parquet(arrow, output_path, filesystem=fs)
+
+        def _row_func(item: dict[str, Any]) -> dict[str, Any]:
+            return clean_item(item, self.render_config)
+        arrow = pgstac_to_arrow(
+            conninfo=conninfo,
+            collection=self.collection_id,
+            start_datetime=start_datetime,
+            end_datetime=end_datetime,
+            row_func=_row_func,
+        )
+        to_parquet(
+            arrow,
+            output_path,
+            filesystem=fs)
         return output_path
+
 
     def export_partition_for_endpoints(
         self,
@@ -369,21 +355,14 @@ class CollectionConfig:
         """
         start, end = endpoints
         partition_path = _build_output_path(output_path, part_number, total, start, end)
-        p = Partition(
-            collection=self.collection_id,
-            partition=partition_path,
-            start=start,
-            end=end,
-            last_updated=datetime.datetime.now(),
-        )
         return self.export_partition(
             conninfo,
             output_protocol,
             partition_path,
-            partition=p,
+            start_datetime=start,
+            end_datetime=end,
             storage_options=storage_options,
             rewrite=rewrite,
-            skip_empty_partitions=skip_empty_partitions,
         )
     
     def export_exists(
@@ -694,7 +673,7 @@ def run(
     failure = []
 
     one_year_ago = datetime.datetime.now() - datetime.timedelta(days=365)
-    collection_partitions = list(query_collection_partitions_updated_after(conninfo=connection_info, updated_after=one_year_ago))
+    collection_partitions = list(get_pgstac_partitions(conninfo=connection_info, updated_after=one_year_ago))
     recent_collection_updates: dict[str, list[Partition]] = {}
     for partition in collection_partitions:
         recent_collection_updates.setdefault(partition.collection, []).append(partition)
