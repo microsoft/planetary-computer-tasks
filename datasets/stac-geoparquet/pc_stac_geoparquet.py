@@ -11,7 +11,7 @@ import logging
 import os
 import time
 import urllib
-from typing import Any, Generator, Set, Union
+from typing import Any, Set, Union
 
 import azure.core.credentials
 import azure.data.tables
@@ -20,11 +20,10 @@ import azure.identity
 import dateutil
 import fsspec
 import pandas as pd
-import psycopg
 import pystac
 import requests
-from stac_geoparquet.arrow import parse_stac_items_to_arrow, to_parquet
-from stac_geoparquet.pgstac_reader import pgstac_to_iter, get_pgstac_partitions, Partition, pgstac_to_parquet, pgstac_to_arrow
+from stac_geoparquet.arrow import to_parquet
+from stac_geoparquet.pgstac_reader import get_pgstac_partitions, Partition, pgstac_to_arrow, pgstac_to_iter
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.task import FailedTaskResult, WaitTaskResult
@@ -324,19 +323,27 @@ class CollectionConfig:
 
         def _row_func(item: dict[str, Any]) -> dict[str, Any]:
             return clean_item(item, self.render_config)
-        arrow = pgstac_to_arrow(
-            conninfo=conninfo,
-            collection=self.collection_id,
-            start_datetime=start_datetime,
-            end_datetime=end_datetime,
-            row_func=_row_func,
-        )
-        to_parquet(
-            arrow,
-            output_path,
-            filesystem=fs)
+        if any(
+            pgstac_to_iter(
+                conninfo=conninfo,
+                collection=self.collection_id,
+                start_datetime=start_datetime,
+                end_datetime=end_datetime,
+                row_func=_row_func,
+            )
+        ):
+            arrow = pgstac_to_arrow(
+                conninfo=conninfo,
+                collection=self.collection_id,
+                start_datetime=start_datetime,
+                end_datetime=end_datetime,
+                row_func=_row_func,
+            )
+            to_parquet(
+                arrow,
+                output_path,
+                filesystem=fs)
         return output_path
-
 
     def export_partition_for_endpoints(
         self,
@@ -364,7 +371,7 @@ class CollectionConfig:
             storage_options=storage_options,
             rewrite=rewrite,
         )
-    
+
     def export_exists(
         self,
         output_protocol: str,
@@ -385,10 +392,10 @@ class CollectionConfig:
         rewrite: bool = False,
         skip_empty_partitions: bool = False,
     ) -> list[str | None]:
-        
+
         if not self.partition_frequency:
             logger.info("Exporting single-partition collection %s", self.collection_id)
-            
+
             results = [
                 self.export_partition(
                     conninfo,
