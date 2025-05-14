@@ -1,20 +1,25 @@
 name: stac-geoparquet
-dataset: microsoft/stac-geoparquet
+dataset: stac-geoparquet
 id: stac-geoparquet
 
 jobs:
-  stac:
+  geoparquet:
     tasks:
-      - id: create
-        image: pccomponents.azurecr.io/pctasks-stac-geoparquet:2023.7.10.1
+      - id: update
+        image: pccomponents.azurecr.io/pctasks-stac-geoparquet:guhidalgo
         code:
           src: ${{ local.path(pc_stac_geoparquet.py) }}
+          requirements: ${{ local.path(./requirements.txt) }}
         task: pc_stac_geoparquet:StacGeoparquetTask
+        # tags:
+        #   # temporarily set this when creating the geoparquet files
+        #   # for a new collection to avoid OOM kills
+        #   batch_pool_id: tsk_db_gr
         args:
           table_account_url: "https://pcapi.table.core.windows.net"
-          table_name: "bluecollectionconfig"
+          table_name: "greencollectionconfig"
           storage_options_account_name: "pcstacitems"
-          # collections: "io-lulc-annual-v02" # Set if you want to generate only one geoparquet file
+          # collections: "hls2-l30" # Set if you want to generate only one geoparquet file
           extra_skip:
             - "chesapeake-lc-13"
             - "chesapeake-lc-7"
