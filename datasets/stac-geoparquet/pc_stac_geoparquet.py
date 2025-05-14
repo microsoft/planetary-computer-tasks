@@ -383,12 +383,30 @@ class CollectionConfig:
             output_path = f"{output_protocol}://{output_path}"
         return fs.exists(output_path)
 
+    def _partition_needs_to_be_rewritten(
+        self,
+        output_protocol: str,
+        output_path: str,
+        storage_options: dict[str, Any],
+        partition: Partition,
+    ) -> bool:
+        fs = fsspec.filesystem(output_protocol, **storage_options)
+        if output_protocol:
+            output_path = f"{output_protocol}://{output_path}"
+        if not fs.exists(output_path):
+            return True
+        file_info = fs.info(output_path)
+        file_modified_time = datetime.datetime.fromtimestamp(file_info["last_modified"])
+        partition_modified_time = partition.last_updated
+        return file_modified_time < partition_modified_time
+
     def export_collection(
         self,
         conninfo: str,
         output_protocol: str,
         output_path: str,
         storage_options: dict[str, Any],
+        pgstac_partitions: dict[str, list[Partition]],
         rewrite: bool = False,
         skip_empty_partitions: bool = False,
     ) -> list[str | None]:
@@ -404,11 +422,11 @@ class CollectionConfig:
                     storage_options=storage_options)
             ]
 
-        else:
+        elif self.partition_frequency and len(pgstac_partitions[self.collection_id]) == 1:
             endpoints = self.generate_endpoints()
             total = len(endpoints)
             logger.info(
-                "Exporting %d partitions for collection %s", total, self.collection_id
+                "Exporting %d partitions for collection %s with frequency %s", total, self.collection_id, self.partition_frequency
             )
 
             results = []
@@ -426,6 +444,45 @@ class CollectionConfig:
                         total=total,
                     )
                 )
+        else:
+            partitions = pgstac_partitions[self.collection_id]
+            total = len(partitions)
+            # some collections are not partitioned in pgstac, some are.
+            # If a collection is not partition in pgstac, then we will apply the partitioning scheme of the STAC collection
+            # In pgstac, you always have to opt-into a partitioning scheme,
+            # either None/Monthly/Yearly in the collections table.
+            # Ideal size is 10M to 20M rows per partition, but that it dataset dependent.
+            logger.info(
+                "Exporting %d partitions for collection %s using pgstac partitions", total, self.collection_id
+            )
+
+            results = []
+            for i, partition in tqdm.auto.tqdm(enumerate(partitions), total=total):
+                partition_path = _build_output_path(output_path, i, total, partition.start, partition.end)
+                if self._partition_needs_to_be_rewritten(
+                    output_protocol=output_protocol,
+                    output_path=partition_path,
+                    storage_options=storage_options,
+                    partition=partition,
+                ):
+                    results.append(
+                        self.export_partition(
+                            conninfo=conninfo,
+                            output_protocol=output_protocol,
+                            output_path=partition_path,
+                            start_datetime=partition.start,
+                            end_datetime=partition.end,
+                            storage_options=storage_options,
+                            rewrite=rewrite
+                        )
+                )
+                else:
+                    logger.info(
+                        "Partition %s already exists and was last updated at %s, skipping",
+                        partition_path,
+                        partition.last_updated,
+                    )
+                    results.append(partition_path)
 
         return results
 
@@ -679,23 +736,14 @@ def run(
     success = []
     failure = []
 
-    one_year_ago = datetime.datetime.now() - datetime.timedelta(days=365)
-    collection_partitions = list(get_pgstac_partitions(conninfo=connection_info, updated_after=one_year_ago))
+    collection_partitions = list(get_pgstac_partitions(conninfo=connection_info))
     recent_collection_updates: dict[str, list[Partition]] = {}
     for partition in collection_partitions:
         recent_collection_updates.setdefault(partition.collection, []).append(partition)
-    logger.info(f"Found {len(collection_partitions)} partitions updated after {one_year_ago}")
+    logger.info(f"Found {len(collection_partitions)} pgstac partitions")
 
     for i, config in enumerate(configs.values(), 1):
         output_path=f"items/{config.collection_id}.parquet"
-        if config.export_exists(
-            output_protocol=output_protocol,
-            output_path=output_path,
-            storage_options=storage_options,
-        ) and (config.collection_id not in recent_collection_updates):
-            logger.info(f"Existing collection export for {config.collection_id} has no updates since {one_year_ago}")
-            continue
-        logger.info(f"Processing {config.collection_id} [{i}/{N}]")
         try:
             t0 = time.monotonic()
             config.export_collection(
@@ -703,7 +751,9 @@ def run(
                 output_protocol,
                 output_path,
                 storage_options,
+                pgstac_partitions=recent_collection_updates,
                 skip_empty_partitions=True,
+                rewrite=True
             )
             t1 = time.monotonic()
             logger.info(f"Completed {config.collection_id} [{i}/{N}] in {t1-t0:.2f}s")
