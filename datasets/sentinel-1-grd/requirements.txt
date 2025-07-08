@@ -1,1 +1,3 @@
-stactools-sentinel1==0.5.0
+stactools-sentinel1==0.8.1
+pystac==1.9.0
+stactools>=0.4.5

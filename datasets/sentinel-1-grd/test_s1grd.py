@@ -1,11 +1,97 @@
 import pathlib
 import pystac
 
+import logging
 import s1grd
+from stactools.sentinel1.metadata_links import MetadataLinks
 from pctasks.core.storage import StorageFactory
+import pytest
 
 
 HERE = pathlib.Path(__file__).parent
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+if not logger.hasHandlers():
+    handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter("[%(levelname)s]:%(asctime)s: %(message)s"))
+    logger.addHandler(handler)
+
+
+@pytest.mark.parametrize(
+    "item_id, annotation_name, expected_key",
+    [
+        (
+            "S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1",
+            "s1a-iw-grd-vh-20230628t210705-20230628t210730-049191-05ea4d-002",
+            "vh",
+        ),
+        (
+            "S1C_IW_GRDH_1SDV_20250708T025935_20250708T030005_003123_00655C_BA99",
+            "s1c-iw-grd-vh-20250708t025935-20250708t030005-003123-00655c-002",
+            "vh",
+        ),
+    ],
+)
+def test_metadata_links_annotation_pattern_parametrized(
+    tmp_path, item_id: str, annotation_name: str, expected_key: str
+):
+    """
+    test_metadata_links_annotation_pattern_parametrized # noqa: E501
+
+    Test that MetadataLinks accepts various annotation filename patterns.
+
+    :param tmp_path: pytest fixture for temporary directory
+    :type tmp_path: pathlib.Path
+    :param item_id: ID of the item being tested
+    :type item_id: str
+    :param annotation_name: name of the annotation file to test
+    :type annotation_name: str
+    :param expected_key: expected key in the annotation_hrefs
+    :type expected_key: str
+    :return: None
+    :rtype: None
+
+    Example:
+
+        ```python
+        test_metadata_links_annotation_pattern_parametrized(tmp_path, "item_id", "filename.xml", "key")
+        ```
+    """
+    # Setup: create a minimal manifest.safe with dataObjectSection and fileLocation
+    archive_dir = tmp_path / item_id
+    annotation_filename = f"{annotation_name}.xml"
+    annotation_dir = archive_dir / "annotation"
+    annotation_dir.mkdir(parents=True)
+    annotation_file = annotation_dir / annotation_filename
+    annotation_file.write_text("<xml></xml>")
+
+    # The manifest must reference the annotation file
+    manifest_content = f"""
+    <manifest>
+      <dataObjectSection>
+        <dataObject>
+          <byteStream>
+            <fileLocation href="annotation/{annotation_filename}"/>
+          </byteStream>
+        </dataObject>
+      </dataObjectSection>
+    </manifest>
+    """
+    manifest_file = archive_dir / "manifest.safe"
+    manifest_file.write_text(manifest_content)
+    try:
+        logger.info(f"Creating MetadataLinks for {archive_dir}")
+        ml = MetadataLinks(str(archive_dir))
+        annotation_hrefs = ml.annotation_hrefs
+        logger.info(f"Annotation hrefs: {annotation_hrefs}")
+    except Exception as e:
+        assert False, f"MetadataLinks failed: {e}"
+
+    assert any(
+        expected_key in key and annotation_file.name in href
+        for key, href in annotation_hrefs
+    )
 
 
 def test_get_item_storage():

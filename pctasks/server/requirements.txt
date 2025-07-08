@@ -3,14 +3,22 @@
 adal==1.2.7
     # via msrestazure
     # from https://pypi.org/simple
+affine==2.4.0
+    # via rasterio
+    # from https://pypi.org/simple
 aiohttp==3.9.5
-    # via pctasks-core
+    # via
+    #   fsspec
+    #   pctasks-core
     # from https://pypi.org/simple
 aiosignal==1.3.1
     # via aiohttp
     # from https://pypi.org/simple
 annotated-types==0.7.0
     # via pydantic
+    # from https://pypi.org/simple
+antimeridian==0.4.1
+    # via stactools
     # from https://pypi.org/simple
 anyio==4.3.0
     # via
@@ -24,6 +32,7 @@ attrs==23.2.0
     # via
     #   aiohttp
     #   jsonschema
+    #   rasterio
     #   referencing
     # from https://pypi.org/simple
 azure-batch==11.0.0
@@ -72,6 +81,8 @@ certifi==2024.2.2
     #   httpx
     #   kubernetes
     #   msrest
+    #   pyproj
+    #   rasterio
     #   requests
     # from https://pypi.org/simple
 cffi==1.16.0
@@ -85,9 +96,19 @@ charset-normalizer==3.3.2
     # from https://pypi.org/simple
 click==8.1.7
     # via
+    #   click-plugins
+    #   cligj
     #   pctasks-cli
     #   planetary-computer
+    #   rasterio
     #   stac-validator
+    #   stactools
+    # from https://pypi.org/simple
+click-plugins==1.1.1.2
+    # via rasterio
+    # from https://pypi.org/simple
+cligj==0.7.2
+    # via rasterio
     # from https://pypi.org/simple
 coverage==7.5.0
     # via pytest-cov
@@ -114,6 +135,9 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
+    # from https://pypi.org/simple
+fsspec==2025.5.1
+    # via stactools
     # from https://pypi.org/simple
 google-api-core==2.18.0
     # via opencensus
@@ -160,6 +184,7 @@ isodate==0.6.1
 jsonschema==4.23.0
     # via
     #   pctasks-core
+    #   pystac
     #   stac-validator
     # from https://pypi.org/simple
 jsonschema-specifications==2024.10.1
@@ -167,6 +192,9 @@ jsonschema-specifications==2024.10.1
     # from https://pypi.org/simple
 kubernetes==29.0.0
     # via pctasks-run
+    # from https://pypi.org/simple
+lxml==6.0.0
+    # via stactools
     # from https://pypi.org/simple
 markdown-it-py==3.0.0
     # via rich
@@ -200,6 +228,13 @@ networkx==2.8.8
     # from https://pypi.org/simple
 nodeenv==1.8.0
     # via pre-commit
+    # from https://pypi.org/simple
+numpy==2.3.1
+    # via
+    #   antimeridian
+    #   rasterio
+    #   shapely
+    #   stactools
     # from https://pypi.org/simple
 oauthlib==3.2.2
     # via
@@ -306,14 +341,23 @@ pyjwt==2.8.0
     #   adal
     #   msal
     # from https://pypi.org/simple
-pystac==1.10.1
+pyparsing==3.2.3
+    # via rasterio
+    # from https://pypi.org/simple
+pyproj==3.7.1
+    # via stactools
+    # from https://pypi.org/simple
+pystac==1.9.0
     # via
     #   pctasks-core
     #   planetary-computer
     #   pystac-client
+    #   stactools
     # from https://pypi.org/simple
-pystac-client==0.6.1
-    # via planetary-computer
+pystac-client==0.6.0
+    # via
+    #   pctasks-core
+    #   planetary-computer
     # from https://pypi.org/simple
 pytest==8.1.1
     # via
@@ -349,6 +393,9 @@ pyyaml==6.0.1
     #   kubernetes
     #   pctasks-core
     #   pre-commit
+    # from https://pypi.org/simple
+rasterio==1.4.3
+    # via stactools
     # from https://pypi.org/simple
 referencing==0.36.2
     # via
@@ -388,6 +435,11 @@ rsa==4.9
 setuptools==69.5.1
     # via nodeenv
     # from https://pypi.org/simple
+shapely==2.1.1
+    # via
+    #   antimeridian
+    #   stactools
+    # from https://pypi.org/simple
 six==1.16.0
     # via
     #   azure-core
@@ -403,6 +455,9 @@ sniffio==1.3.1
     #   httpx
     # from https://pypi.org/simple
 stac-validator==3.3.2
+    # via pctasks-core
+    # from https://pypi.org/simple
+stactools==0.5.3
     # via pctasks-core
     # from https://pypi.org/simple
 starlette==0.46.1
