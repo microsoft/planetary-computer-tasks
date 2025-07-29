@@ -140,8 +140,17 @@ class S1GRDCollection(Collection):
                     is_throttle=backoff_throttle_check,
                 )
 
-            item: pystac.Item = create_item(temp_archive_dir, archive_format=Format.COG)
-            item = rewrite_asset_hrefs(item, archive_storage, temp_archive_dir)
+            try:
+                item: pystac.Item = create_item(
+                    temp_archive_dir, archive_format=Format.COG
+                )
+                item = rewrite_asset_hrefs(item, archive_storage, temp_archive_dir)
+            except FileNotFoundError as e:
+                logger.error(f"Failed to create STAC item for {archive}: {str(e)}")
+                return []
+            except Exception as e:
+                logger.error(f"Unexpected error processing {archive}: {str(e)}")
+                return []
 
         # Remove checksum from id
         item.id = "_".join(item.id.split("_")[0:-1])

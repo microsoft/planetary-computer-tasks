@@ -66,7 +66,10 @@ RUN cd /opt/src/pctasks/dataset && \
     pip install .
 
 COPY ./datasets/sentinel-1-grd/requirements.txt /opt/src/datasets/sentinel-1-grd/requirements.txt
-RUN python3 -m pip install -r /opt/src/datasets/sentinel-1-grd/requirements.txt
+
+# stactools-sentinel1 needs pystac==1.9 and stactools>=0.4.5, so we have to override and use 1.10.1 here
+RUN python3 -m pip install -r /opt/src/datasets/sentinel-1-grd/requirements.txt && \
+    python3 -m pip install pystac==1.10.1
 
 # Setup Python Path to allow import of test modules
 ENV PYTHONPATH=/opt/src:$PYTHONPATH

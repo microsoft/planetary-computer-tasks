@@ -101,7 +101,8 @@
     ],
     "platform": [
       "SENTINEL-1A",
-      "SENTINEL-1B"
+      "SENTINEL-1B",
+      "SENTINEL-1C",
     ],
     "sar:frequency_band": [
       "C"

@@ -38,6 +38,14 @@ class PgSTAC:
             else:
                 raise
 
+    def unique_items(self, items, key_func):
+        seen = set()
+        for item in items:
+            k = key_func(item)
+            if k not in seen:
+                seen.add(k)
+                yield item
+
     def ingest_items(
         self,
         items: Iterable[bytes],
@@ -50,7 +58,8 @@ class PgSTAC:
             groups = [items]
 
         for i, group in enumerate(groups):
-            logger.info(f"  ...Loading group {i+1}")
+            group = list(self.unique_items(group, lambda b: orjson.loads(b)["id"]))
+            logger.info(f"  ...Loading group {i + 1}")
             self._with_connection_retry(
                 lambda: self.loader.load_items(iter(group), insert_mode=mode)
             )
