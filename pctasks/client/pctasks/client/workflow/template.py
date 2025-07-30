@@ -24,7 +24,6 @@ def template_workflow_dict(
     base_path = base_path or Path(".")
 
     if "args" in workflow_dict and isinstance(workflow_dict["args"], dict):
-        # Store defaults separately if needed, or convert to list
         workflow_dict["args"] = list(workflow_dict["args"].keys())
 
     workflow_dict = LocalTemplater(base_path).template_dict(workflow_dict)
