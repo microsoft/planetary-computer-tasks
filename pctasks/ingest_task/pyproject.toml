@@ -30,7 +30,7 @@ dependencies = [
     "pctasks.task @ {root:parent:uri}/task",
     "plpygis==0.2.0",
     "pypgstac[psycopg]>=0.8.5,<0.9",
-    "pystac==1.9.0",
+    "pystac==1.10.1",
 ]
 
 [project.optional-dependencies]
