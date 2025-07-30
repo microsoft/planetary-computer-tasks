@@ -2,11 +2,11 @@ import contextlib
 import logging
 import os
 import time
+import traceback
 from typing import Callable, Iterator, List, Optional, Union
 
 import orjson
 import pystac
-import traceback
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 from pctasks.core.models.task import FailedTaskResult, WaitTaskResult

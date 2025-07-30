@@ -1,14 +1,16 @@
+from typing import Any, Dict, List
+from unittest.mock import MagicMock, patch
+
 import pytest
 import yaml
-from unittest.mock import patch, MagicMock
-from typing import List, Dict, Any
+from pydantic import ValidationError
+
 from pctasks.client.workflow.template import (
-    template_workflow_dict,
     template_workflow_contents,
+    template_workflow_dict,
     template_workflow_file,
 )
 from pctasks.core.models.workflow import WorkflowDefinition
-from pydantic import ValidationError
 
 
 @pytest.fixture

@@ -38,7 +38,9 @@ class PgSTAC:
             else:
                 raise
 
-    def unique_items(self, items, key_func):
+    def unique_items(
+        self, items: Iterable[bytes], key_func: Callable[[bytes], Any]
+    ) -> Iterable[bytes]:
         seen = set()
         for item in items:
             k = key_func(item)
