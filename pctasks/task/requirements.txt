@@ -192,8 +192,10 @@ pystac==1.10.1
     #   planetary-computer
     #   pystac-client
     # from https://pypi.org/simple
-pystac-client==0.6.0
-    # via planetary-computer
+pystac-client==0.6.1
+    # via
+    #   pctasks-core
+    #   planetary-computer
     # from https://pypi.org/simple
 python-dateutil==2.8.2
     # via

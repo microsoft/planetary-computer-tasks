@@ -7,7 +7,7 @@ pytest-asyncio==0.18.*
 kubernetes
 
 planetary-computer
-pystac[validation]==1.9.0
+pystac[validation]==1.10.1
 
 azure-functions
 azure-functions-durable
