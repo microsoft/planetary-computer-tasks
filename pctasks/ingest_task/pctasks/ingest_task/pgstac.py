@@ -60,10 +60,12 @@ class PgSTAC:
             groups = [items]
 
         for i, group in enumerate(groups):
-            group = list(self.unique_items(group, lambda b: orjson.loads(b)["id"]))
             logger.info(f"  ...Loading group {i + 1}")
             self._with_connection_retry(
-                lambda: self.loader.load_items(iter(group), insert_mode=mode)
+                lambda: self.loader.load_items(
+                    self.unique_items(group, lambda b: orjson.loads(b)["id"]),
+                    insert_mode=mode,
+                )
             )
 
     def ingest_collections(

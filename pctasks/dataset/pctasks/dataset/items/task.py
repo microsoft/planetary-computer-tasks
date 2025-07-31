@@ -211,7 +211,7 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                 except Exception as e:
                     tb_str = traceback.format_exc()
                     logger.error(
-                        f"Failed to create item from {asset_uri}: {type(e).__name__}: {str(e)}\n{tb_str}"
+                        f"Failed to create item from {asset_uri}: {type(e).__name__}: {str(e)}\n{tb_str}"  # noqa: E501
                     )
                 if isinstance(result, WaitTaskResult):
                     return result
