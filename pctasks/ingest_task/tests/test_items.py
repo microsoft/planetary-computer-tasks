@@ -1,5 +1,6 @@
 import json
 import pathlib
+
 import orjson
 
 from pctasks.core.models.task import FailedTaskResult
@@ -10,8 +11,8 @@ from pctasks.ingest.models import (
     IngestTaskInput,
     NdjsonFolder,
 )
-from pctasks.ingest_task.task import ingest_task
 from pctasks.ingest_task.pgstac import PgSTAC
+from pctasks.ingest_task.task import ingest_task
 from tests.conftest import ingest_test_environment
 
 HERE = pathlib.Path(__file__).parent
