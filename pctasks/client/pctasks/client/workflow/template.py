@@ -22,10 +22,6 @@ def template_workflow_dict(
         The workflow model with template values.
     """
     base_path = base_path or Path(".")
-
-    if "args" in workflow_dict and isinstance(workflow_dict["args"], dict):
-        workflow_dict["args"] = list(workflow_dict["args"].keys())
-
     workflow_dict = LocalTemplater(base_path).template_dict(workflow_dict)
 
     return WorkflowDefinition.model_validate(workflow_dict)

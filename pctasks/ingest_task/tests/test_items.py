@@ -1,8 +1,6 @@
 import json
 import pathlib
 
-import orjson
-
 from pctasks.core.models.task import FailedTaskResult
 from pctasks.dev.mocks import MockTaskContext
 from pctasks.ingest.models import (
@@ -11,7 +9,6 @@ from pctasks.ingest.models import (
     IngestTaskInput,
     NdjsonFolder,
 )
-from pctasks.ingest_task.pgstac import PgSTAC
 from pctasks.ingest_task.task import ingest_task
 from tests.conftest import ingest_test_environment
 
@@ -19,7 +16,6 @@ HERE = pathlib.Path(__file__).parent
 TEST_COLLECTION = HERE / "data-files/test_collection.json"
 TEST_SINGLE_ITEM = HERE / "data-files/items/item1.json"
 TEST_NDJSON = HERE / "data-files/items/items.ndjson"
-TEST_DUPE_NDJSON = HERE / "data-files/items/items_dupe.ndjson"
 
 
 def test_single_item_ingest():
@@ -28,6 +24,7 @@ def test_single_item_ingest():
     task_context = MockTaskContext.default()
 
     with ingest_test_environment():
+
         # Ensure collection is ingested
         with open(TEST_COLLECTION, "r") as f:
             ingest_task.run(
@@ -53,6 +50,7 @@ def test_ndjson_ingest():
     task_context = MockTaskContext.default()
 
     with ingest_test_environment():
+
         # Ensure collection is ingested
         with open(TEST_COLLECTION, "r") as f:
             ingest_task.run(
@@ -116,6 +114,7 @@ def test_empty_ndjson_ingest(tmp_path):
     p.write_text("")
 
     with ingest_test_environment():
+
         # Ensure collection is ingested
         with open(TEST_COLLECTION, "r") as f:
             ingest_task.run(
@@ -131,40 +130,3 @@ def test_empty_ndjson_ingest(tmp_path):
         result = ingest_task.run(input=message_data, context=task_context)
 
         assert not isinstance(result, FailedTaskResult)
-
-
-def test_ingest_dupe_items_ndjson():
-    task_context = MockTaskContext.default()
-
-    with ingest_test_environment():
-        # Ensure collection is ingested
-        with open(TEST_COLLECTION, "r") as f:
-            ingest_task.run(
-                input=IngestTaskInput(content=json.load(f)),
-                context=task_context,
-            )
-
-        # Ingest Ndjson
-        message_data = IngestTaskInput(
-            content=IngestNdjsonInput(uris=[str(TEST_DUPE_NDJSON.absolute())])
-        )
-
-        result = ingest_task.run(input=message_data, context=task_context)
-
-        assert not isinstance(result, FailedTaskResult)
-
-
-def test_unique_items_deduplication():
-    pgstac = PgSTAC("postgresql://dummy:dummy@localhost:5432/dummy")
-
-    with open(TEST_DUPE_NDJSON, "r") as f:
-        lines = [line.strip().encode("utf-8") for line in f.readlines() if line.strip()]
-
-    unique_items = list(pgstac.unique_items(lines, lambda b: orjson.loads(b)["id"]))
-
-    assert len(lines) == 5
-    assert len(unique_items) == 3
-
-    unique_ids = [orjson.loads(item)["id"] for item in unique_items]
-    assert len(set(unique_ids)) == 3
-    assert set(unique_ids) == {"item1", "item2", "item3"}
