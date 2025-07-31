@@ -8,12 +8,12 @@ ENV LANG=C.UTF-8
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN tdnf install jq tar unzip ca-certificates awk wget curl git azure-cli -y \
+RUN tdnf install jq tar unzip ca-certificates awk wget curl git azure-cli icu -y \
     && tdnf clean all
 
 # Install Azure Function Tools
-RUN wget https://github.com/Azure/azure-functions-core-tools/releases/download/4.0.5700/Azure.Functions.Cli.linux-x64.4.0.5700.zip \
-    && unzip Azure.Functions.Cli.linux-x64.4.0.5700.zip -d /usr/local/azure-functions-core-tools-4 \
+RUN wget https://github.com/Azure/azure-functions-core-tools/releases/download/4.1.0/Azure.Functions.Cli.linux-x64.4.1.0.zip \
+    && unzip Azure.Functions.Cli.linux-x64.4.1.0.zip -d /usr/local/azure-functions-core-tools-4 \
     && chmod +x /usr/local/azure-functions-core-tools-4/func \
     && chmod +x /usr/local/azure-functions-core-tools-4/gozip \
     && ln -s /usr/local/azure-functions-core-tools-4/func /usr/local/bin/func \
