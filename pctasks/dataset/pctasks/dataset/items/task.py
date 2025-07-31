@@ -2,7 +2,6 @@ import contextlib
 import logging
 import os
 import time
-import traceback
 from typing import Callable, Iterator, List, Optional, Union
 
 import orjson
@@ -138,14 +137,16 @@ def traced_create_item(
     if i is not None and asset_count is not None:
         # asset_chunk_info case
         logger.info(
-            f"({((i + 1) / asset_count) * 100:06.2f}%) "
+            f"({((i+1)/asset_count)*100:06.2f}%) "
             f"[{end_time - start_time:.2f}s] "
             f" - {asset_uri} "
-            f"({i + 1} of {asset_count})"
+            f"({i+1} of {asset_count})"
         )
     else:
         # asset_uri case
-        logger.info(f"Created items from {asset_uri} in {end_time - start_time:.2f}s")
+        logger.info(
+            f"Created items from {asset_uri} in " f"{end_time - start_time:.2f}s"
+        )
 
     properties = {
         "custom_dimensions": {
@@ -209,10 +210,9 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                     ):
                         result = self._create_item(asset_uri, storage_factory)
                 except Exception as e:
-                    tb_str = traceback.format_exc()
-                    logger.error(
-                        f"Failed to create item from {asset_uri}: {type(e).__name__}: {str(e)}\n{tb_str}"  # noqa: E501
-                    )
+                    raise CreateItemsError(
+                        f"Failed to create item from {asset_uri}"
+                    ) from e
                 if isinstance(result, WaitTaskResult):
                     return result
                 else:

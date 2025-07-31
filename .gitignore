@@ -132,10 +132,3 @@ docs/reference/generated/
 deployment/deploy-values.yaml
 deployment/terraform/*/tf_output.json
 deployment/tf_output.json
-
-# azurite
-# Azurite
-__blobstorage__
-__queuestorage__
-__tablestorage__
-__azurite_db*.json

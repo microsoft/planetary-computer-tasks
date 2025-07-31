@@ -1,1 +1,1 @@
-stactools>=0.4.5
+stactools==0.3.*
