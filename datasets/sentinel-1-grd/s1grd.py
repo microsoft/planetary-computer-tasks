@@ -9,7 +9,7 @@ import requests
 import urllib3
 from stactools.core.utils.antimeridian import Strategy, fix_item
 from pctasks.core.storage.base import Storage
-from stactools.sentinel1.grd import Format
+from stactools.sentinel1.formats import Format
 from stactools.sentinel1.grd.stac import create_item
 
 from pctasks.core.models.task import WaitTaskResult
@@ -80,7 +80,9 @@ def backoff_throttle_check(e: Exception) -> bool:
     )
 
 
-def get_item_storage(asset_uri: str, storage_factory: StorageFactory) -> Tuple[Storage, str]:
+def get_item_storage(
+    asset_uri: str, storage_factory: StorageFactory
+) -> Tuple[Storage, str]:
     is_blob_storage = asset_uri.startswith("blob://")
     # We also write the individual STAC items to a storage container
     # for another processing stream.
@@ -138,10 +140,17 @@ class S1GRDCollection(Collection):
                     is_throttle=backoff_throttle_check,
                 )
 
-            item: pystac.Item = create_item(
-                temp_archive_dir, archive_format=Format.COG
-            )
-            item = rewrite_asset_hrefs(item, archive_storage, temp_archive_dir)
+            try:
+                item: pystac.Item = create_item(
+                    temp_archive_dir, archive_format=Format.COG
+                )
+                item = rewrite_asset_hrefs(item, archive_storage, temp_archive_dir)
+            except FileNotFoundError as e:
+                logger.error(f"Failed to create STAC item for {archive}: {str(e)}")
+                return []
+            except Exception as e:
+                logger.error(f"Unexpected error processing {archive}: {str(e)}")
+                return []
 
         # Remove checksum from id
         item.id = "_".join(item.id.split("_")[0:-1])
@@ -184,7 +193,9 @@ class S1GRDCollection(Collection):
         return [item]
 
 
-def rewrite_asset_hrefs(item: pystac.Item, storage: Storage, relative_to: str) -> pystac.Item:
+def rewrite_asset_hrefs(
+    item: pystac.Item, storage: Storage, relative_to: str
+) -> pystac.Item:
     """
     Rewrite the item's assets to link to Blob Storage instead of local paths.
 
