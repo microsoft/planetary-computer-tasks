@@ -63,7 +63,7 @@ class PgSTAC:
             logger.info(f"  ...Loading group {i + 1}")
             self._with_connection_retry(
                 lambda: self.loader.load_items(
-                    self.unique_items(group, lambda b: orjson.loads(b)["id"]),
+                    iter(self.unique_items(group, lambda b: orjson.loads(b)["id"])),
                     insert_mode=mode,
                 )
             )
