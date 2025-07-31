@@ -24,7 +24,6 @@ def test_single_item_ingest():
     task_context = MockTaskContext.default()
 
     with ingest_test_environment():
-
         # Ensure collection is ingested
         with open(TEST_COLLECTION, "r") as f:
             ingest_task.run(
@@ -50,7 +49,6 @@ def test_ndjson_ingest():
     task_context = MockTaskContext.default()
 
     with ingest_test_environment():
-
         # Ensure collection is ingested
         with open(TEST_COLLECTION, "r") as f:
             ingest_task.run(
@@ -114,7 +112,6 @@ def test_empty_ndjson_ingest(tmp_path):
     p.write_text("")
 
     with ingest_test_environment():
-
         # Ensure collection is ingested
         with open(TEST_COLLECTION, "r") as f:
             ingest_task.run(

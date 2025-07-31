@@ -15,25 +15,6 @@ from pctasks.core.models.workflow import WorkflowDefinition
 
 @pytest.fixture
 def basic_job_definition() -> Dict[str, Any]:
-    """basic_job_definition # noqa: E501
-
-    Fixture providing a basic job definition for workflow tests
-
-    :return: Dictionary containing basic job structure
-    :rtype: dict
-
-    Example:
-
-        ```python
-        def test_something(basic_job_definition):
-            workflow_dict = {
-                "name": "Test",
-                "dataset": "test-dataset",
-                "id": "test-id",
-                "jobs": {"test_job": basic_job_definition}
-            }
-        ```
-    """
     return {
         "tasks": [
             {
@@ -47,23 +28,6 @@ def basic_job_definition() -> Dict[str, Any]:
 
 @pytest.fixture
 def workflow_dict_with_args_as_dict(basic_job_definition) -> Dict[str, Any]:
-    """workflow_dict_with_args_as_dict # noqa: E501
-
-    Fixture providing workflow dictionary with args as dictionary format
-
-    :param basic_job_definition: Basic job definition fixture
-    :type basic_job_definition: dict
-    :return: Workflow dictionary with args as dict containing default values
-    :rtype: dict
-
-    Example:
-
-        ```python
-        def test_args_conversion(workflow_dict_with_args_as_dict):
-            result = template_workflow_dict(workflow_dict_with_args_as_dict)
-            assert isinstance(result.args, list)
-        ```
-    """
     return {
         "name": "Sentinel 1 GRD",
         "dataset": "microsoft/sentinel-1-grd",
@@ -96,23 +60,6 @@ def workflow_dict_with_args_as_dict(basic_job_definition) -> Dict[str, Any]:
 
 @pytest.fixture
 def workflow_dict_with_args_as_list(basic_job_definition) -> Dict[str, Any]:
-    """workflow_dict_with_args_as_list # noqa: E501
-
-    Fixture providing workflow dictionary with args as list format
-
-    :param basic_job_definition: Basic job definition fixture
-    :type basic_job_definition: dict
-    :return: Workflow dictionary with args as list of parameter names
-    :rtype: dict
-
-    Example:
-
-        ```python
-        def test_args_preservation(workflow_dict_with_args_as_list):
-            result = template_workflow_dict(workflow_dict_with_args_as_list)
-            assert result.args == ["storage_container_name", "force", "start_datetime"]
-        ```
-    """
     return {
         "name": "Test Workflow",
         "dataset": "test-dataset",
@@ -124,23 +71,6 @@ def workflow_dict_with_args_as_list(basic_job_definition) -> Dict[str, Any]:
 
 @pytest.fixture
 def workflow_dict_without_args(basic_job_definition) -> Dict[str, Any]:
-    """workflow_dict_without_args # noqa: E501
-
-    Fixture providing workflow dictionary with no args specified
-
-    :param basic_job_definition: Basic job definition fixture
-    :type basic_job_definition: dict
-    :return: Workflow dictionary without args field
-    :rtype: dict
-
-    Example:
-
-        ```python
-        def test_no_args(workflow_dict_without_args):
-            result = template_workflow_dict(workflow_dict_without_args)
-            assert result.args is None
-        ```
-    """
     return {
         "name": "Test Workflow",
         "dataset": "test-dataset",
@@ -151,23 +81,6 @@ def workflow_dict_without_args(basic_job_definition) -> Dict[str, Any]:
 
 @pytest.fixture
 def workflow_dict_with_empty_args(basic_job_definition) -> Dict[str, Any]:
-    """workflow_dict_with_empty_args # noqa: E501
-
-    Fixture providing workflow dictionary with empty args dictionary
-
-    :param basic_job_definition: Basic job definition fixture
-    :type basic_job_definition: dict
-    :return: Workflow dictionary with empty args dict
-    :rtype: dict
-
-    Example:
-
-        ```python
-        def test_empty_args(workflow_dict_with_empty_args):
-            result = template_workflow_dict(workflow_dict_with_empty_args)
-            assert result.args == []
-        ```
-    """
     return {
         "name": "Test Workflow",
         "dataset": "test-dataset",
@@ -179,24 +92,6 @@ def workflow_dict_with_empty_args(basic_job_definition) -> Dict[str, Any]:
 
 @pytest.fixture
 def workflow_dict_with_complex_args(basic_job_definition) -> Dict[str, Any]:
-    """workflow_dict_with_complex_args # noqa: E501
-
-    Fixture providing workflow dictionary with complex args containing various data types
-
-    :param basic_job_definition: Basic job definition fixture
-    :type basic_job_definition: dict
-    :return: Workflow dictionary with args containing different data types as defaults
-    :rtype: dict
-
-    Example:
-
-        ```python
-        def test_complex_args(workflow_dict_with_complex_args):
-            result = template_workflow_dict(workflow_dict_with_complex_args)
-            assert "string_param" in result.args
-            assert "dict_param" in result.args
-        ```
-    """
     return {
         "name": "Complex Args Workflow",
         "dataset": "test-dataset",
@@ -216,21 +111,6 @@ def workflow_dict_with_complex_args(basic_job_definition) -> Dict[str, Any]:
 
 @pytest.fixture
 def expected_args_from_dict() -> List[str]:
-    """expected_args_from_dict # noqa: E501
-
-    Fixture providing expected args list from dictionary conversion
-
-    :return: List of expected argument names after dict-to-list conversion
-    :rtype: list
-
-    Example:
-
-        ```python
-        def test_conversion(workflow_dict_with_args_as_dict, expected_args_from_dict):
-            result = template_workflow_dict(workflow_dict_with_args_as_dict)
-            assert result.args == expected_args_from_dict
-        ```
-    """
     return [
         "storage_container_name",
         "force",
@@ -243,21 +123,6 @@ def expected_args_from_dict() -> List[str]:
 
 @pytest.fixture
 def expected_complex_args() -> List[str]:
-    """expected_complex_args # noqa: E501
-
-    Fixture providing expected args list from complex dictionary conversion
-
-    :return: List of expected argument names from complex args dictionary
-    :rtype: list
-
-    Example:
-
-        ```python
-        def test_complex_conversion(workflow_dict_with_complex_args, expected_complex_args):
-            result = template_workflow_dict(workflow_dict_with_complex_args)
-            assert all(arg in result.args for arg in expected_complex_args)
-        ```
-    """
     return [
         "string_param",
         "int_param",
@@ -271,21 +136,6 @@ def expected_complex_args() -> List[str]:
 
 @pytest.fixture
 def sample_yaml_content() -> str:
-    """sample_yaml_content # noqa: E501
-
-    Fixture providing sample YAML content for workflow template testing
-
-    :return: YAML string containing workflow definition with args dictionary
-    :rtype: str
-
-    Example:
-
-        ```python
-        def test_yaml_parsing(sample_yaml_content):
-            result = template_workflow_contents(sample_yaml_content)
-            assert result.name == "Sentinel 1 GRD"
-        ```
-    """
     return """
 name: Sentinel 1 GRD
 dataset: microsoft/sentinel-1-grd
@@ -313,22 +163,6 @@ jobs:
 
 @pytest.fixture
 def file_yaml_content() -> str:
-    """file_yaml_content # noqa: E501
-
-    Fixture providing YAML content for file-based workflow template testing
-
-    :return: YAML string for mocked file content testing
-    :rtype: str
-
-    Example:
-
-        ```python
-        def test_file_processing(file_yaml_content):
-            with patch('pathlib.Path.read_text', return_value=file_yaml_content):
-                result = template_workflow_file("/fake/path.yaml")
-                assert result.name == "Test Workflow File"
-        ```
-    """
     return """
 name: Test Workflow File
 dataset: test-dataset
@@ -353,24 +187,33 @@ jobs:
 
 
 @pytest.fixture
+def invalid_workflow_yaml_content() -> str:
+    return """
+name: Test Workflow
+args:
+param1: value1
+param2: value2
+# Missing required 'dataset' and 'jobs' fields
+"""
+
+
+@pytest.fixture
+def malformed_yaml_content() -> str:
+    return """
+name: Test Workflow
+dataset: test-dataset  
+id: test
+args:
+param1: value1
+param2: [unclosed list
+jobs:
+test_job:
+tasks: []
+"""
+
+
+@pytest.fixture
 def invalid_workflow_dict_missing_name(basic_job_definition):
-    """invalid_workflow_dict_missing_name # noqa: E501
-
-    Fixture providing workflow dictionary missing required 'name' field
-
-    :param basic_job_definition: Basic job definition fixture
-    :type basic_job_definition: dict
-    :return: Invalid workflow dictionary missing name field
-    :rtype: dict
-
-    Example:
-
-        ```python
-        def test_validation_failure(invalid_workflow_dict_missing_name):
-            with pytest.raises(ValidationError):
-                template_workflow_dict(invalid_workflow_dict_missing_name)
-        ```
-    """
     return {
         # Missing required 'name' field
         "dataset": "test-dataset",
@@ -382,23 +225,6 @@ def invalid_workflow_dict_missing_name(basic_job_definition):
 
 @pytest.fixture
 def invalid_workflow_dict_missing_dataset(basic_job_definition):
-    """invalid_workflow_dict_missing_dataset # noqa: E501
-
-    Fixture providing workflow dictionary missing required 'dataset' field
-
-    :param basic_job_definition: Basic job definition fixture
-    :type basic_job_definition: dict
-    :return: Invalid workflow dictionary missing dataset field
-    :rtype: dict
-
-    Example:
-
-        ```python
-        def test_dataset_validation_failure(invalid_workflow_dict_missing_dataset):
-            with pytest.raises(ValidationError):
-                template_workflow_dict(invalid_workflow_dict_missing_dataset)
-        ```
-    """
     return {
         "name": "Test Workflow",
         # Missing required 'dataset' field
@@ -410,21 +236,6 @@ def invalid_workflow_dict_missing_dataset(basic_job_definition):
 
 @pytest.fixture
 def invalid_workflow_dict_missing_jobs():
-    """invalid_workflow_dict_missing_jobs # noqa: E501
-
-    Fixture providing workflow dictionary missing required 'jobs' field
-
-    :return: Invalid workflow dictionary missing jobs field
-    :rtype: dict
-
-    Example:
-
-        ```python
-        def test_jobs_validation_failure(invalid_workflow_dict_missing_jobs):
-            with pytest.raises(ValidationError):
-                template_workflow_dict(invalid_workflow_dict_missing_jobs)
-        ```
-    """
     return {
         "name": "Test Workflow",
         "dataset": "test-dataset",
@@ -436,21 +247,6 @@ def invalid_workflow_dict_missing_jobs():
 
 @pytest.fixture
 def invalid_workflow_dict_empty_jobs():
-    """invalid_workflow_dict_empty_jobs # noqa: E501
-
-    Fixture providing workflow dictionary with empty jobs dictionary
-
-    :return: Invalid workflow dictionary with empty jobs
-    :rtype: dict
-
-    Example:
-
-        ```python
-        def test_empty_jobs_validation_failure(invalid_workflow_dict_empty_jobs):
-            with pytest.raises(ValidationError):
-                template_workflow_dict(invalid_workflow_dict_empty_jobs)
-        ```
-    """
     return {
         "name": "Test Workflow",
         "dataset": "test-dataset",
@@ -462,21 +258,6 @@ def invalid_workflow_dict_empty_jobs():
 
 @pytest.fixture
 def invalid_workflow_dict_malformed_jobs():
-    """invalid_workflow_dict_malformed_jobs # noqa: E501
-
-    Fixture providing workflow dictionary with malformed jobs structure
-
-    :return: Invalid workflow dictionary with malformed jobs
-    :rtype: dict
-
-    Example:
-
-        ```python
-        def test_malformed_jobs_validation_failure(invalid_workflow_dict_malformed_jobs):
-            with pytest.raises(ValidationError):
-                template_workflow_dict(invalid_workflow_dict_malformed_jobs)
-        ```
-    """
     return {
         "name": "Test Workflow",
         "dataset": "test-dataset",
@@ -500,24 +281,6 @@ def test_template_workflow_dict_with_args_as_dict(
     workflow_dict_with_args_as_dict: Dict[str, Any],
     expected_args_from_dict: List[str],
 ) -> None:
-    """test_template_workflow_dict_with_args_as_dict # noqa: E501
-
-    Test that args dictionary with default values is converted to list format
-
-    :param workflow_dict_with_args_as_dict: Workflow dict with args as dictionary
-    :type workflow_dict_with_args_as_dict: dict
-    :param expected_args_from_dict: Expected args list after conversion
-    :type expected_args_from_dict: list
-    :return: None - test validation through assertions
-    :rtype: None
-
-    Example:
-
-        ```python
-        result = template_workflow_dict(workflow_dict_with_args_as_dict)
-        assert result.args == expected_args_from_dict
-        ```
-    """
     result = template_workflow_dict(workflow_dict_with_args_as_dict)
 
     # Verify that args dictionary was converted to list of keys
@@ -530,24 +293,6 @@ def test_template_workflow_dict_with_args_as_dict(
 def test_template_workflow_dict_with_args_as_list(
     workflow_dict_with_args_as_list: dict,
 ) -> None:
-    """test_template_workflow_dict_with_args_as_list # noqa: E501
-
-    Test that existing args list format is preserved unchanged
-
-
-
-    :param workflow_dict_with_args_as_list: Workflow dict with args as list
-    :type workflow_dict_with_args_as_list: dict
-    :return: None - test validation through assertions
-    :rtype: None
-
-    Example:
-
-        ```python
-        result = template_workflow_dict(workflow_dict_with_args_as_list)
-        assert result.args == ["storage_container_name", "force", "start_datetime"]
-        ```
-    """
     result = template_workflow_dict(workflow_dict_with_args_as_list)
 
     # Verify that args list was preserved unchanged
@@ -558,22 +303,6 @@ def test_template_workflow_dict_with_args_as_list(
 def test_template_workflow_dict_without_args(
     workflow_dict_without_args: Dict[str, Any],
 ) -> None:
-    """test_template_workflow_dict_without_args # noqa: E501
-
-    Test workflow template processing when no args are specified
-
-    :param workflow_dict_without_args: Workflow dict without args field
-    :type workflow_dict_without_args: dict
-    :return: None - test validation through assertions
-    :rtype: None
-
-    Example:
-
-        ```python
-        result = template_workflow_dict(workflow_dict_without_args)
-        assert result.args is None
-        ```
-    """
     result = template_workflow_dict(workflow_dict_without_args)
 
     assert result.args is None
@@ -583,24 +312,6 @@ def test_template_workflow_dict_without_args(
 def test_template_workflow_contents_with_yaml_string(
     sample_yaml_content: str, expected_args_from_dict: List[str]
 ) -> None:
-    """test_template_workflow_contents_with_yaml_string # noqa: E501
-
-    Test workflow template processing from YAML string content
-
-    :param sample_yaml_content: Sample YAML content for testing
-    :type sample_yaml_content: str
-    :param expected_args_from_dict: Expected args list after conversion
-    :type expected_args_from_dict: list
-    :return: None - test validation through assertions
-    :rtype: None
-
-    Example:
-
-        ```python
-        result = template_workflow_contents(sample_yaml_content)
-        assert result.args == expected_args_from_dict
-        ```
-    """
     result = template_workflow_contents(sample_yaml_content)
 
     assert result.args == expected_args_from_dict
@@ -612,25 +323,6 @@ def test_template_workflow_contents_with_yaml_string(
 def test_template_workflow_file_with_mocked_file(
     mock_read_text: MagicMock, file_yaml_content: str
 ) -> None:
-    """test_template_workflow_file_with_mocked_file # noqa: E501
-
-    Test workflow template processing from file with mocked file system
-
-    :param mock_read_text: Mock for Path.read_text method
-    :type mock_read_text: MagicMock
-    :param file_yaml_content: YAML content for mocked file
-    :type file_yaml_content: str
-    :return: None - test validation through assertions
-    :rtype: None
-
-    Example:
-
-        ```python
-        mock_read_text.return_value = file_yaml_content
-        result = template_workflow_file("/path/to/workflow.yaml")
-        assert "container_name" in result.args
-        ```
-    """
     mock_read_text.return_value = file_yaml_content
 
     result = template_workflow_file("/fake/path/workflow.yaml")
@@ -645,22 +337,6 @@ def test_template_workflow_file_with_mocked_file(
 def test_template_workflow_dict_args_dict_empty(
     workflow_dict_with_empty_args: Dict[str, Any],
 ) -> None:
-    """test_template_workflow_dict_args_dict_empty # noqa: E501
-
-    Test behavior when args dictionary is empty
-
-    :param workflow_dict_with_empty_args: Workflow dict with empty args dictionary
-    :type workflow_dict_with_empty_args: dict
-    :return: None - test validation through assertions
-    :rtype: None
-
-    Example:
-
-        ```python
-        result = template_workflow_dict(workflow_dict_with_empty_args)
-        assert result.args == []
-        ```
-    """
     result = template_workflow_dict(workflow_dict_with_empty_args)
 
     assert result.args == []
@@ -671,24 +347,6 @@ def test_template_workflow_dict_with_complex_args_values(
     workflow_dict_with_complex_args: Dict[str, Any],
     expected_complex_args: List[str],
 ) -> None:
-    """test_template_workflow_dict_with_complex_args_values # noqa: E501
-
-    Test args dictionary conversion with various data types as default values
-
-    :param workflow_dict_with_complex_args: Workflow dict with complex args types
-    :type workflow_dict_with_complex_args: dict
-    :param expected_complex_args: Expected args list from complex dictionary
-    :type expected_complex_args: list
-    :return: None - test validation through assertions
-    :rtype: None
-
-    Example:
-
-        ```python
-        result = template_workflow_dict(workflow_dict_with_complex_args)
-        assert all(arg in result.args for arg in expected_complex_args)
-        ```
-    """
     result = template_workflow_dict(workflow_dict_with_complex_args)
 
     # Args should contain all keys regardless of their default value types
@@ -700,25 +358,6 @@ def test_template_workflow_dict_with_complex_args_values(
 def test_template_workflow_dict_validation_failure_missing_name(
     invalid_workflow_dict_missing_name,
 ):
-    """test_template_workflow_dict_validation_failure_missing_name # noqa: E501
-
-    Test that model validation fails when required 'name' field is missing
-
-    :param invalid_workflow_dict_missing_name: Invalid workflow dict missing name
-    :type invalid_workflow_dict_missing_name: dict
-    :return: None - test validation through exception assertion
-    :rtype: None
-    :raises ValidationError: When workflow validation fails
-
-    Example:
-
-        ```python
-        with pytest.raises(ValidationError) as exc_info:
-            template_workflow_dict(invalid_workflow_dict_missing_name)
-        assert "name" in str(exc_info.value)
-        ```
-    """
-
     with pytest.raises(ValidationError) as exc_info:
         template_workflow_dict(invalid_workflow_dict_missing_name)
 
@@ -730,25 +369,6 @@ def test_template_workflow_dict_validation_failure_missing_name(
 def test_template_workflow_dict_validation_failure_missing_dataset(
     invalid_workflow_dict_missing_dataset: Dict[str, Any],
 ) -> None:
-    """test_template_workflow_dict_validation_failure_missing_dataset # noqa: E501
-
-    Test that model validation fails when required 'dataset' field is missing
-
-    :param invalid_workflow_dict_missing_dataset: Invalid workflow dict missing dataset
-    :type invalid_workflow_dict_missing_dataset: dict
-    :return: None - test validation through exception assertion
-    :rtype: None
-    :raises ValidationError: When workflow validation fails
-
-    Example:
-
-        ```python
-        with pytest.raises(ValidationError) as exc_info:
-            template_workflow_dict(invalid_workflow_dict_missing_dataset)
-        assert "dataset" in str(exc_info.value)
-        ```
-    """
-
     with pytest.raises(ValidationError) as exc_info:
         template_workflow_dict(invalid_workflow_dict_missing_dataset)
 
@@ -760,25 +380,6 @@ def test_template_workflow_dict_validation_failure_missing_dataset(
 def test_template_workflow_dict_validation_failure_missing_jobs(
     invalid_workflow_dict_missing_jobs: Dict[str, Any],
 ) -> None:
-    """test_template_workflow_dict_validation_failure_missing_jobs # noqa: E501
-
-    Test that model validation fails when required 'jobs' field is missing
-
-    :param invalid_workflow_dict_missing_jobs: Invalid workflow dict missing jobs
-    :type invalid_workflow_dict_missing_jobs: dict
-    :return: None - test validation through exception assertion
-    :rtype: None
-    :raises ValidationError: When workflow validation fails
-
-    Example:
-
-        ```python
-        with pytest.raises(ValidationError) as exc_info:
-            template_workflow_dict(invalid_workflow_dict_missing_jobs)
-        assert "jobs" in str(exc_info.value)
-        ```
-    """
-
     with pytest.raises(ValidationError) as exc_info:
         template_workflow_dict(invalid_workflow_dict_missing_jobs)
 
@@ -790,25 +391,6 @@ def test_template_workflow_dict_validation_failure_missing_jobs(
 def test_template_workflow_dict_validation_failure_empty_jobs(
     invalid_workflow_dict_empty_jobs: Dict[str, Any],
 ) -> None:
-    """test_template_workflow_dict_validation_failure_empty_jobs # noqa: E501
-
-    Test that model validation fails when jobs dictionary is empty
-
-    :param invalid_workflow_dict_empty_jobs: Invalid workflow dict with empty jobs
-    :type invalid_workflow_dict_empty_jobs: dict
-    :return: None - test validation through exception assertion
-    :rtype: None
-    :raises ValidationError: When workflow validation fails due to empty jobs
-
-    Example:
-
-        ```python
-        with pytest.raises(ValidationError) as exc_info:
-            template_workflow_dict(invalid_workflow_dict_empty_jobs)
-        # Validation should fail for empty jobs
-        ```
-    """
-
     # Note: This test might pass if empty jobs dict is actually allowed
     # Adjust expectation based on actual WorkflowDefinition validation rules
     try:
@@ -825,25 +407,6 @@ def test_template_workflow_dict_validation_failure_empty_jobs(
 def test_template_workflow_dict_validation_failure_malformed_jobs(
     invalid_workflow_dict_malformed_jobs: Dict[str, Any],
 ) -> None:
-    """test_template_workflow_dict_validation_failure_malformed_jobs # noqa: E501
-
-    Test that model validation fails when jobs contain malformed task definitions
-
-    :param invalid_workflow_dict_malformed_jobs: Invalid workflow dict with malformed jobs
-    :type invalid_workflow_dict_malformed_jobs: dict
-    :return: None - test validation through exception assertion
-    :rtype: None
-    :raises ValidationError: When workflow validation fails due to malformed jobs
-
-    Example:
-
-        ```python
-        with pytest.raises(ValidationError) as exc_info:
-            template_workflow_dict(invalid_workflow_dict_malformed_jobs)
-        # Should fail because task is missing required 'id' field
-        ```
-    """
-
     with pytest.raises(ValidationError) as exc_info:
         template_workflow_dict(invalid_workflow_dict_malformed_jobs)
 
@@ -854,25 +417,6 @@ def test_template_workflow_dict_validation_failure_malformed_jobs(
 
 
 def test_template_workflow_dict_args_conversion_then_validation_failure() -> None:
-    """test_template_workflow_dict_args_conversion_then_validation_failure # noqa: E501
-
-    Test that args are converted from dict to list even when validation fails
-
-    :return: None - test validation through exception assertion
-    :rtype: None
-    :raises ValidationError: When workflow validation fails after args conversion
-
-    Example:
-
-        ```python
-        # Verify that args conversion happens before validation failure
-        invalid_dict = {"args": {"param1": "value1"}}  # missing required fields
-        with pytest.raises(ValidationError):
-            template_workflow_dict(invalid_dict)
-        # Args should have been converted to list before validation failed
-        ```
-    """
-
     # Create a workflow dict that has args as dict but missing required fields
     invalid_workflow_with_args_dict = {
         "args": {
@@ -890,69 +434,18 @@ def test_template_workflow_dict_args_conversion_then_validation_failure() -> Non
     assert any(keyword in error_str.lower() for keyword in ["name", "dataset", "jobs"])
 
 
-def test_template_workflow_contents_validation_failure_malformed_yaml() -> None:
-    """test_template_workflow_contents_validation_failure_malformed_yaml # noqa: E501
-
-    Test that template_workflow_contents fails gracefully with malformed YAML
-
-    :return: None - test validation through exception assertion
-    :rtype: None
-    :raises YAMLError: When YAML parsing fails
-
-    Example:
-
-        ```python
-        malformed_yaml = "name: Test\n  invalid: yaml: structure"
-        with pytest.raises(yaml.YAMLError):
-            template_workflow_contents(malformed_yaml)
-        ```
-    """
-
-    malformed_yaml = """
-name: Test Workflow
-dataset: test-dataset  
-id: test
-args:
-param1: value1
-param2: [unclosed list
-jobs:
-test_job:
-tasks: []
-"""
-
+def test_template_workflow_contents_validation_failure_malformed_yaml_content(
+    malformed_yaml_content: str,
+) -> None:
     with pytest.raises(yaml.YAMLError):
-        template_workflow_contents(malformed_yaml)
+        template_workflow_contents(malformed_yaml_content)
 
 
-def test_template_workflow_contents_validation_failure_invalid_content() -> None:
-    """test_template_workflow_contents_validation_failure_invalid_content # noqa: E501
-
-    Test that template_workflow_contents fails with valid YAML but invalid workflow
-
-    :return: None - test validation through exception assertion
-    :rtype: None
-    :raises ValidationError: When workflow model validation fails
-
-    Example:
-
-        ```python
-        invalid_yaml = "name: Test\nargs: {param1: value1}"  # missing required fields
-        with pytest.raises(ValidationError):
-            template_workflow_contents(invalid_yaml)
-        ```
-    """
-
-    # Valid YAML but invalid workflow (missing required fields)
-    invalid_workflow_yaml = """
-name: Test Workflow
-args:
-param1: value1
-param2: value2
-# Missing required 'dataset' and 'jobs' fields
-"""
-
+def test_template_workflow_contents_validation_failure_invalid_content(
+    invalid_workflow_yaml_content: str,
+) -> None:
     with pytest.raises(ValidationError) as exc_info:
-        template_workflow_contents(invalid_workflow_yaml)
+        template_workflow_contents(invalid_workflow_yaml_content)
 
     error_str = str(exc_info.value)
     assert any(keyword in error_str.lower() for keyword in ["dataset", "jobs"])

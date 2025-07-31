@@ -36,28 +36,6 @@ if not logger.hasHandlers():
 def test_metadata_links_annotation_pattern_parametrized(
     tmp_path, item_id: str, annotation_name: str, expected_key: str
 ):
-    """
-    test_metadata_links_annotation_pattern_parametrized # noqa: E501
-
-    Test that MetadataLinks accepts various annotation filename patterns.
-
-    :param tmp_path: pytest fixture for temporary directory
-    :type tmp_path: pathlib.Path
-    :param item_id: ID of the item being tested
-    :type item_id: str
-    :param annotation_name: name of the annotation file to test
-    :type annotation_name: str
-    :param expected_key: expected key in the annotation_hrefs
-    :type expected_key: str
-    :return: None
-    :rtype: None
-
-    Example:
-
-        ```python
-        test_metadata_links_annotation_pattern_parametrized(tmp_path, "item_id", "filename.xml", "key")
-        ```
-    """
     # Setup: create a minimal manifest.safe with dataObjectSection and fileLocation
     archive_dir = tmp_path / item_id
     annotation_filename = f"{annotation_name}.xml"
