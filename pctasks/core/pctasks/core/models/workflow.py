@@ -97,7 +97,7 @@ class WorkflowDefinition(PCBaseModel):
     dataset_id: str = Field(alias="dataset")
     tokens: Optional[Dict[str, StorageAccountTokens]] = None
     target_environment: Optional[str] = None
-    args: Optional[List[str]] = None
+    args: Optional[Union[List[str], Dict[str, Any]]] = None
     jobs: Dict[str, JobDefinition]
     on: Optional[TriggerDefinition] = None
     is_streaming: bool = False
@@ -186,18 +186,106 @@ class WorkflowDefinition(PCBaseModel):
 
         return self
 
+    def get_argument_names(self) -> Set[str]:
+        """get_argument_names # noqa: E501
+
+        Returns the set of valid argument names for this workflow.
+        Works with both list and dict formats.
+
+        :return: Set of argument names
+        :rtype: Set[str]
+
+        Example:
+
+            ```python
+            # List format
+            workflow = WorkflowDefinition(args=["name", "force"])
+            assert workflow.get_argument_names() == {"name", "force"}
+
+            # Dict format
+            workflow = WorkflowDefinition(args={"name": "world", "force": False})
+            assert workflow.get_argument_names() == {"name", "force"}
+            ```
+        """
+        if self.args is None:
+            return set()
+        elif isinstance(self.args, list):
+            return set(self.args)
+        else:  # dict
+            return set(self.args.keys())
+
+    def get_default_args(self) -> Dict[str, Any]:
+        """get_default_args # noqa: E501
+
+        Returns the default argument values for this workflow.
+        Only dict-format args have defaults.
+
+        :return: Dictionary of default argument values
+        :rtype: Dict[str, Any]
+
+        Example:
+
+            ```python
+            # List format - no defaults
+            workflow = WorkflowDefinition(args=["name"])
+            assert workflow.get_default_args() == {}
+
+            # Dict format - has defaults
+            workflow = WorkflowDefinition(args={"name": "world", "force": False})
+            assert workflow.get_default_args() == {"name": "world", "force": False}
+            ```
+        """
+        if isinstance(self.args, dict):
+            return self.args.copy()
+        return {}
+
     def template_args(self, args: Optional[Dict[str, Any]]) -> "WorkflowDefinition":
-        return DictTemplater({"args": args}, strict=False).template_model(self)
+        """template_args # noqa: E501
+
+        Creates a new workflow definition with templated argument values.
+        Merges provided args with workflow defaults.
+
+        :param args: Runtime argument values
+        :type args: Optional[Dict[str, Any]]
+        :return: New workflow definition with templated values
+        :rtype: WorkflowDefinition
+
+        Example:
+
+            ```python
+            workflow = WorkflowDefinition(args={"name": "world", "force": False})
+            templated = workflow.template_args({"name": "user"})
+            # Results in final_args = {"name": "user", "force": False}
+            ```
+        """
+        final_args = self.get_default_args()
+        if args:
+            final_args.update(args)
+
+        return DictTemplater({"args": final_args}, strict=False).template_model(self)
 
     def get_argument_errors(
         self, args: Optional[Dict[str, Any]]
     ) -> Optional[List[str]]:
-        """Checks if there are errors with provided arguments.
+        """get_argument_errors # noqa: E501
 
-        Returns a list of error messages or None if there no errors.
+        Validates provided arguments against workflow argument definitions.
+
+        :param args: Arguments to validate
+        :type args: Optional[Dict[str, Any]]
+        :return: List of error messages or None if valid
+        :rtype: Optional[List[str]]
+
+        Example:
+
+            ```python
+            workflow = WorkflowDefinition(args={"name": "world"})
+            errors = workflow.get_argument_errors({"invalid": "value"})
+            assert "Unexpected args" in str(errors)
+            ```
         """
         args_keys: Set[str] = set(args.keys() if args else [])
-        workflow_args: Set[str] = set(self.args or [])
+        workflow_args: Set[str] = self.get_argument_names()
 
         missing_args = workflow_args - args_keys
         unexpected_args = args_keys - workflow_args
@@ -208,10 +296,7 @@ class WorkflowDefinition(PCBaseModel):
         if unexpected_args:
             errors.append(f"Unexpected args provided: {','.join(unexpected_args)}")
 
-        if errors:
-            return errors
-        else:
-            return None
+        return errors if errors else None
 
 
 class Workflow(PCBaseModel):
@@ -287,7 +372,6 @@ class WorkflowSubmitRequest(PCBaseModel):
 
 
 class WorkflowRunStatus(StrEnum):
-
     SUBMITTED = "submitted"
     RUNNING = "running"
     COMPLETED = "completed"

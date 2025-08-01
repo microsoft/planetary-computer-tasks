@@ -77,6 +77,32 @@ def test_args():
     assert templated.definition.jobs["test-job"].tasks[0].args["hello"] == "world"
 
 
+def test_default_args():
+    workflow = """
+    name: Test workflow
+    dataset: test-dataset
+
+    args:
+      name: "world"
+
+    jobs:
+      test-job:
+        tasks:
+          - id: test-task
+            image_key: ingest-prod
+            task: tests.test_submit.MockTask
+            args:
+              hello: ${{ args.name }}
+    """
+    workflow_def = WorkflowDefinition.from_yaml(workflow)
+    workflow = Workflow(id="test-workflow", definition=workflow_def)
+    submit_message = WorkflowSubmitMessage(
+        workflow=workflow, args={"name": "world"}, run_id="test-run"
+    )
+    templated = submit_message.get_workflow_with_templated_args()
+    assert templated.definition.jobs["test-job"].tasks[0].args["hello"] == "world"
+
+
 def test_unexpected_args():
     workflow = """
     name: Test workflow
@@ -182,9 +208,8 @@ def test_job_ids_no_commas():
 
 
 def test_job_get_dependencies():
-    assert (
-        WorkflowDefinition.from_yaml(
-            """
+    assert WorkflowDefinition.from_yaml(
+        """
             name: A workflow*  *with* *asterisks
             dataset: microsoft/test-dataset
 
@@ -198,15 +223,10 @@ def test_job_get_dependencies():
                         args:
                           hello: world
         """
-        )
-        .jobs["test-job"]
-        .get_dependencies()
-        == ["job1"]
-    )
+    ).jobs["test-job"].get_dependencies() == ["job1"]
 
-    assert (
-        WorkflowDefinition.from_yaml(
-            """
+    assert WorkflowDefinition.from_yaml(
+        """
             name: A workflow*  *with* *asterisks
             dataset: microsoft/test-dataset
 
@@ -222,11 +242,7 @@ def test_job_get_dependencies():
                         args:
                           hello: world
         """
-        )
-        .jobs["test-job"]
-        .get_dependencies()
-        == ["job1", "job2"]
-    )
+    ).jobs["test-job"].get_dependencies() == ["job1", "job2"]
 
 
 def test_validate_streaming_workflow():
