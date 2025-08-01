@@ -208,8 +208,9 @@ def test_job_ids_no_commas():
 
 
 def test_job_get_dependencies():
-    assert WorkflowDefinition.from_yaml(
-        """
+    assert (
+        WorkflowDefinition.from_yaml(
+            """
             name: A workflow*  *with* *asterisks
             dataset: microsoft/test-dataset
 
@@ -223,10 +224,15 @@ def test_job_get_dependencies():
                         args:
                           hello: world
         """
-    ).jobs["test-job"].get_dependencies() == ["job1"]
+        )
+        .jobs["test-job"]
+        .get_dependencies()
+        == ["job1"]
+    )
 
-    assert WorkflowDefinition.from_yaml(
-        """
+    assert (
+        WorkflowDefinition.from_yaml(
+            """
             name: A workflow*  *with* *asterisks
             dataset: microsoft/test-dataset
 
@@ -242,7 +248,11 @@ def test_job_get_dependencies():
                         args:
                           hello: world
         """
-    ).jobs["test-job"].get_dependencies() == ["job1", "job2"]
+        )
+        .jobs["test-job"]
+        .get_dependencies()
+        == ["job1", "job2"]
+    )
 
 
 def test_validate_streaming_workflow():
