@@ -258,7 +258,7 @@ def create_process_items_workflow(
         tasks=items_tasks,
         foreach=ForeachConfig(
             items="${{ "
-            + (f"jobs.{chunks_job_id}." f"tasks.{chunks_job_id}.output.chunks")
+            + (f"jobs.{chunks_job_id}.tasks.{chunks_job_id}.output.chunks")
             + " }}"
         ),
     )
@@ -315,10 +315,18 @@ def modify_for_update(workflow_definition: WorkflowDefinition) -> WorkflowDefini
        the in the chunk file prefix at ``item_chunkset_uri``.
     """
     workflow_definition = workflow_definition.model_copy(deep=True)
+
+    # Handle both list and dict argforms when adding 'since'
     if workflow_definition.args is None:
         workflow_definition.args = ["since"]
+    elif isinstance(workflow_definition.args, list):
+        if "since" not in workflow_definition.args:
+            workflow_definition.args.append("since")
+    elif isinstance(workflow_definition.args, dict):
+        if "since" not in workflow_definition.args:
+            workflow_definition.args["since"] = None
     else:
-        workflow_definition.args.append("since")
+        workflow_definition.args = ["since"]
 
     # Add a 'since' argument to each create-splits
     for input_ in workflow_definition.jobs["create-splits"].tasks[0].args["inputs"]:
