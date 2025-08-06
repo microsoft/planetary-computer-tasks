@@ -113,9 +113,7 @@ def find_value(
                 else:
                     raise ValueError(f"Expected dict at key {head}, got {type(v)}")
             else:
-                if not (
-                    isinstance(v, (dict, list, str, int, float, bool))
-                ):
+                if not (isinstance(v, (dict, list, str, int, float, bool))):
                     raise ValueError(
                         f"Expected final value at key {head}, got {type(v)}"
                     )

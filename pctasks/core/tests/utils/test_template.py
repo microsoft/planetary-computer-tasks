@@ -48,6 +48,7 @@ def test_template() -> None:
     assert result["environment"]["level2"] == "b"
     assert result["environment"]["list"] == "two"
 
+
 def test_template_new_types() -> None:
     params = {
         "force": True,
