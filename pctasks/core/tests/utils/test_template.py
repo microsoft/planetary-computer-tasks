@@ -48,6 +48,33 @@ def test_template() -> None:
     assert result["environment"]["level2"] == "b"
     assert result["environment"]["list"] == "two"
 
+def test_template_new_types() -> None:
+    params = {
+        "force": True,
+        "int_value": 1,
+        "float_value": 1.0,
+    }
+
+    data = {
+        "id": "something",
+        "environment": {
+            "force": r"${{ params.force }}",
+            "int_value": r"${{ params.int_value }}",
+            "float_value": r"${{ params.float_value }}",
+        },
+    }
+
+    def _get_value(path: List[str]) -> Optional[str]:
+        if path[0] == "params":
+            return find_value(params, path[1:])
+
+    result = template_dict(data, _get_value)
+
+    assert result["id"] == "something"
+    assert result["environment"]["force"]
+    assert result["environment"]["int_value"] == 1
+    assert result["environment"]["float_value"] == 1.0
+
 
 def test_split_path():
     s = "a.b.c"
