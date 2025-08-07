@@ -4,12 +4,11 @@ import math
 import time
 from typing import Any, Dict, Optional, Protocol, Tuple, Union
 
-import azure.identity
 import azure.storage.queue
 
 from pctasks.core.models.base import PCBaseModel
-from pctasks.task.context import TaskContext
 from pctasks.core.utils.credential import get_credential
+from pctasks.task.context import TaskContext
 
 logger = logging.getLogger(__name__)
 
