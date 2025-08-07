@@ -1,4 +1,3 @@
-import os
 from azure.identity import DefaultAzureCredential
 
 
