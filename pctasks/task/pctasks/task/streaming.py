@@ -127,10 +127,7 @@ class StreamingTaskMixin:
     def run(self, input: StreamingTaskInput, context: TaskContext) -> NoOutput:
         # queue_credential should only be used for testing with azurite.
         # Otherwise, use managed identities.
-        credential = (
-            input.streaming_options.queue_credential
-            or get_credential()
-        )
+        credential = input.streaming_options.queue_credential or get_credential()
         qc = azure.storage.queue.QueueClient.from_queue_url(
             input.streaming_options.queue_url, credential=credential
         )
