@@ -129,7 +129,7 @@ class CosmosDBSettings(PCTasksSettings):
             if self.is_cosmosdb_emulator():
                 credential: str | DefaultAzureCredential | None = self.key
             else:
-                credential = get_credential() 
+                credential = get_credential()
             return CosmosClient(
                 self.url,
                 credential=credential,  # type: ignore
