@@ -19,6 +19,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.data.tables import TableClient, TableEntity, TableServiceClient
 from azure.identity import DefaultAzureCredential
 from pydantic.main import BaseModel
+from pctasks.core.utils.credential import get_credential
 
 from pctasks.core.models.config import TableSasConfig
 
@@ -141,7 +142,7 @@ class TableService:
         ) -> Tuple[Optional[TableServiceClient], TableClient]:
             credential: Union[DefaultAzureCredential, AzureNamedKeyCredential]
             if _key is None:
-                credential = DefaultAzureCredential()
+                credential = get_credential()
             else:
                 # azurite
                 credential = AzureNamedKeyCredential(_name, _key)

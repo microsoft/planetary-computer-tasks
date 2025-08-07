@@ -9,6 +9,7 @@ import azure.storage.queue
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.task.context import TaskContext
+from pctasks.core.utils.credential import get_credential
 
 logger = logging.getLogger(__name__)
 
@@ -128,7 +129,7 @@ class StreamingTaskMixin:
         # Otherwise, use managed identities.
         credential = (
             input.streaming_options.queue_credential
-            or azure.identity.DefaultAzureCredential()
+            or get_credential()
         )
         qc = azure.storage.queue.QueueClient.from_queue_url(
             input.streaming_options.queue_url, credential=credential
