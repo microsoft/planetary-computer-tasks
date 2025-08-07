@@ -6,9 +6,9 @@ from azure.keyvault.secrets import SecretClient
 from cachetools import Cache, LRUCache, TTLCache, cachedmethod
 
 from pctasks.core.utils.backoff import with_backoff
+from pctasks.core.utils.credential import get_credential
 from pctasks.run.secrets.base import SecretsProvider
 from pctasks.run.settings import RunSettings
-from pctasks.core.utils.credential import get_credential
 
 secret_lock = threading.Lock()
 
