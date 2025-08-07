@@ -19,9 +19,9 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.data.tables import TableClient, TableEntity, TableServiceClient
 from azure.identity import DefaultAzureCredential
 from pydantic.main import BaseModel
-from pctasks.core.utils.credential import get_credential
 
 from pctasks.core.models.config import TableSasConfig
+from pctasks.core.utils.credential import get_credential
 
 T = TypeVar("T", bound="TableService")
 M = TypeVar("M", bound=BaseModel)

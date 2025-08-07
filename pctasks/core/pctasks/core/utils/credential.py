@@ -1,5 +1,5 @@
-from azure.identity import DefaultAzureCredential
 import os
+from azure.identity import DefaultAzureCredential
 
 
 def get_credential() -> DefaultAzureCredential:

@@ -9,10 +9,10 @@ from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.identity import DefaultAzureCredential
 from pydantic import Field, field_validator, model_validator
 from typing_extensions import Self
-from pctasks.core.utils.credential import get_credential
 
 from pctasks.core.constants import COSMOSDB_EMULATOR_HOST_ENV_VAR
 from pctasks.core.settings import PCTasksSettings
+from pctasks.core.utils.credential import get_credential
 
 DEFAULT_DATABASE_NAME = "pctasks"
 DEFAULT_WORKFLOW_RUNS_CONTAINER = "workflow-runs"
