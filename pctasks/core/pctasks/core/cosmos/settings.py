@@ -12,6 +12,7 @@ from typing_extensions import Self
 
 from pctasks.core.constants import COSMOSDB_EMULATOR_HOST_ENV_VAR
 from pctasks.core.settings import PCTasksSettings
+from pctasks.core.utils.credential import get_credential
 
 DEFAULT_DATABASE_NAME = "pctasks"
 DEFAULT_WORKFLOW_RUNS_CONTAINER = "workflow-runs"
@@ -128,7 +129,7 @@ class CosmosDBSettings(PCTasksSettings):
             if self.is_cosmosdb_emulator():
                 credential: str | DefaultAzureCredential | None = self.key
             else:
-                credential = DefaultAzureCredential()
+                credential = get_credential()
             return CosmosClient(
                 self.url,
                 credential=credential,  # type: ignore

@@ -2,10 +2,10 @@ import os
 from pctasks.core.models.base import PCBaseModel
 from pctasks.task.context import TaskContext
 from pctasks.task.task import Task
+from pctasks.core.utils.credential import get_credential
 from pydantic import BaseModel
 from typing import List
 import adlfs
-import azure.identity
 import geopandas
 import logging
 import planetary_computer
@@ -48,7 +48,7 @@ class ParquetEnumerationTask(Task[ParquetEnumerationInput, ParquetEnumerationOut
     ) -> ParquetEnumerationOutput:
         fs = adlfs.AzureBlobFileSystem(
             account_name="pcstacitems",
-            credential=azure.identity.DefaultAzureCredential(),
+            credential=get_credential(),
         )
         parquet_files = fs.ls(input.parquet_prefix)
         parquet_urls = [f"az://{f}" for f in parquet_files]
@@ -74,7 +74,7 @@ class LidarAudit(Task[LidarAuditInput, LidarAuditOutput]):
         # URI must look like "az://items/3dep-lidar-hag.parquet/part-000_2012-01-01T00:00:00+00:00_2013-01-01T00:00:00+00:00.parquet",
         parquet_storage_options = dict(
             account_name="pcstacitems",
-            credential=azure.identity.DefaultAzureCredential(),
+            credential=get_credential(),
         )
         parquet_url = input.parquet_url
         df = geopandas.read_parquet(
@@ -92,7 +92,7 @@ class LidarAudit(Task[LidarAuditInput, LidarAuditOutput]):
     def write_to_csv(self, df: geopandas.GeoDataFrame, output_url: str) -> None:
         etl_storage_options = dict(
             account_name="usgslidareuwest",
-            credential=azure.identity.DefaultAzureCredential(),
+            credential=get_credential(),
         )
         logger.info(f"Writing audit output to {output_url}.")
         df.to_csv(

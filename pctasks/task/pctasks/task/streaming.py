@@ -4,10 +4,10 @@ import math
 import time
 from typing import Any, Dict, Optional, Protocol, Tuple, Union
 
-import azure.identity
 import azure.storage.queue
 
 from pctasks.core.models.base import PCBaseModel
+from pctasks.core.utils.credential import get_credential
 from pctasks.task.context import TaskContext
 
 logger = logging.getLogger(__name__)
@@ -126,10 +126,7 @@ class StreamingTaskMixin:
     def run(self, input: StreamingTaskInput, context: TaskContext) -> NoOutput:
         # queue_credential should only be used for testing with azurite.
         # Otherwise, use managed identities.
-        credential = (
-            input.streaming_options.queue_credential
-            or azure.identity.DefaultAzureCredential()
-        )
+        credential = input.streaming_options.queue_credential or get_credential()
         qc = azure.storage.queue.QueueClient.from_queue_url(
             input.streaming_options.queue_url, credential=credential
         )

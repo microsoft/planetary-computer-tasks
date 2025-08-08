@@ -6,6 +6,7 @@ from azure.keyvault.secrets import SecretClient
 from cachetools import Cache, LRUCache, TTLCache, cachedmethod
 
 from pctasks.core.utils.backoff import with_backoff
+from pctasks.core.utils.credential import get_credential
 from pctasks.run.secrets.base import SecretsProvider
 from pctasks.run.settings import RunSettings
 
@@ -36,7 +37,7 @@ class KeyvaultSecretsProvider(SecretsProvider):
         if tenant_id and client_id and client_secret:
             self._creds = ClientSecretCredential(tenant_id, client_id, client_secret)
         else:
-            self._creds = DefaultAzureCredential()
+            self._creds = get_credential()
 
     def __enter__(self) -> "SecretsProvider":
         self._client = SecretClient(
