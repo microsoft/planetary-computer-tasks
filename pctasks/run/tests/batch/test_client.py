@@ -1,7 +1,9 @@
-import pytest
 from unittest.mock import Mock
-from azure.batch.models import BatchError, TaskAddResult
+
+import pytest
 from azure.batch.custom.custom_errors import CreateTasksErrorException
+from azure.batch.models import BatchError, TaskAddResult
+
 from pctasks.run.batch.client import BatchClient
 from pctasks.run.batch.task import BatchTask
 from pctasks.run.settings import BatchSettings
