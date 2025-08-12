@@ -229,10 +229,15 @@ class BatchClient:
                 task_add_result = cast(batchmodels.TaskAddResult, failure_task)
                 error = cast(batchmodels.BatchError, task_add_result.error)
                 if error:
-                    logger.error(
-                        f"Task {task_add_result.task_id} failed with error: "
-                        f"{error.message}"
-                    )
+                    error_message = getattr(error, "message", None)
+                    if error_message:
+                        logger.error(
+                            f"Task {task_add_result.task_id} failed with error: {error_message}"
+                        )
+                    else:
+                        logger.error(
+                            f"Task {task_add_result.task_id} failed with an unknown error."
+                        )
                     error_details = cast(batchmodels.BatchError, error).values
                     if error_details:
                         for detail in error_details:
@@ -376,7 +381,6 @@ class BatchClient:
                         print(f"{task.id} - {last_modified}")
 
             except batchmodels.BatchErrorException:
-
                 # stdout.txt doesn't exist
                 # Check if it's been running without output for
                 # the max time.
