@@ -273,7 +273,7 @@ six==1.17.0
     #   opencensus
     #   python-dateutil
     # from https://pypi.org/simple
-stac-validator==3.10.1
+stac-validator==3.3.2
     # via pctasks-core
     # from https://pypi.org/simple
 strictyaml==1.7.3
