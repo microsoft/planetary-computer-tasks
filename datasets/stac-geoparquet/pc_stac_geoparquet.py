@@ -7,13 +7,13 @@ from typing import Union, Set
 
 import azure.core.credentials
 import azure.data.tables
-import azure.identity
 from stac_geoparquet import pc_runner
 
 from pctasks.task.task import Task
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.task import FailedTaskResult, WaitTaskResult
 from pctasks.task.context import TaskContext
+from pctasks.core.utils.credential import get_credential
 
 
 handler = logging.StreamHandler()
@@ -122,7 +122,7 @@ def run(
             "STAC_GEOPARQUET_CONNECTION_INFO must be set if not explicitly provided"
         ) from e
     table_credential = table_credential or os.environ.get(
-        "STAC_GEOPARQUET_TABLE_CREDENTIAL", azure.identity.DefaultAzureCredential()
+        "STAC_GEOPARQUET_TABLE_CREDENTIAL", get_credential()
     )
     assert table_credential is not None
     table_name = table_name or os.environ["STAC_GEOPARQUET_TABLE_NAME"]
@@ -135,7 +135,7 @@ def run(
     )
     storage_options_credential = storage_options_credential or os.environ.get(
         "STAC_GEOPARQUET_STORAGE_OPTIONS_CREDENTIAL",
-        azure.identity.DefaultAzureCredential(),
+        get_credential(),
     )
 
     extra_skip = extra_skip or set()
