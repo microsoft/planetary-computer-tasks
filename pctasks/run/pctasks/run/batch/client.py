@@ -10,6 +10,7 @@ import requests.exceptions
 import urllib3.exceptions
 from azure.batch import BatchServiceClient
 from azure.batch.custom.custom_errors import CreateTasksErrorException
+from azure.batch.models import BatchError, ErrorMessage, BatchErrorDetail
 from dateutil.tz import tzutc
 from requests import Response
 
@@ -123,6 +124,45 @@ class BatchClient:
 
         return map_opt(_mo, result)
 
+    def _to_batch_error(self, error: Exception) -> BatchError:
+        """
+        Convert any exception to BatchError format.
+
+        :param error: Any exception that needs to be converted to BatchError
+        :type error: Exception
+        :return: A BatchError representation of the exception
+        :rtype: ~azure.batch.models.BatchError
+        :raises AttributeError: If the ErrorMessage object cannot be properly created
+
+        Example:
+
+        ```python
+        try:
+            # Some batch operation
+        except Exception as e:
+            batch_error = _to_batch_error(e)
+            logger.error(f"Operation failed: {batch_error.message}")
+        ```
+        """
+
+        code: str = getattr(error, "code", type(error).__name__)
+
+        if hasattr(error, "message"):
+            message = error.message
+        else:
+            message = str(error)
+
+        if isinstance(message, ErrorMessage):
+            error_message = message
+        else:
+            error_message = ErrorMessage(value=message)
+
+        values: List[BatchErrorDetail] = []
+        if hasattr(error, "values"):
+            values = cast(List[BatchErrorDetail], error.values)
+
+        return BatchError(code=code, message=error_message, values=values)
+
     def get_job(self, job_id: str) -> Optional[batchmodels.CloudJob]:
         client = self._ensure_client()
         try:
@@ -210,38 +250,35 @@ class BatchClient:
         params = [task.to_params() for task in tasks]
         try:
             result: batchmodels.TaskAddCollectionResult = self._with_backoff(
-                lambda: cast(
-                    batchmodels.TaskAddCollectionResult,
-                    client.task.add_collection(
-                        job_id=job_id,
-                        value=params,
-                        threads=self.settings.submit_threads,
-                    ),
+                lambda: client.task.add_collection(
+                    job_id=job_id,
+                    value=params,
+                    threads=self.settings.submit_threads,
                 )
             )
             task_results: List[batchmodels.TaskAddResult] = result.value  # type: ignore
         except CreateTasksErrorException as e:
-            logger.warn("Failed to add tasks...")
+            logger.error("Failed to add tasks...")
+
             for exc in e.errors:
-                logger.warn(" -- RETURNED EXCEPTION --")
-                logger.exception(exc)
-            for failure_task in e.failure_tasks:
-                task_add_result = cast(batchmodels.TaskAddResult, failure_task)
-                error = cast(batchmodels.BatchError, task_add_result.error)
-                if error:
-                    error_message = getattr(error, "message", None)
-                    if error_message:
-                        logger.error(
-                            f"Task {task_add_result.task_id} failed with error: {error_message}"
-                        )
-                    else:
-                        logger.error(
-                            f"Task {task_add_result.task_id} failed with an unknown error."
-                        )
-                    error_details = cast(batchmodels.BatchError, error).values
-                    if error_details:
-                        for detail in error_details:
-                            logger.error(f"  - {detail.key}: {detail.value}")
+                exc = cast(Exception, exc)
+                logger.error(" -- RETURNED EXCEPTION --")
+                logger.error(exc)
+
+            for task_add_result in e.failure_tasks:
+                task_add_result = cast(batchmodels.TaskAddResult, task_add_result)
+
+                if task_add_result.error is None:
+                    continue
+
+                batch_error = self._to_batch_error(task_add_result.error)
+                logger.error(
+                    f"Failed to create task {task_add_result.task_id} with error: {batch_error.message.value}"  # noqa: E501
+                )
+
+                if batch_error.values:
+                    for detail in batch_error.values:
+                        logger.error(f"  - {detail.key}: {detail.value}")
             raise
         return [r.error for r in task_results]
 
