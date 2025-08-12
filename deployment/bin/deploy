@@ -3,6 +3,8 @@
 # Eg to make changes to staging (pctasksteststaging batch account)
 # give yourself KV Secrets Officer role on pc-test-deploy-secrets which I dont think can be done through PIM
 # give yourself KV Secrets Officer role on kv-pctaskstest-staging which can be done through PIM
+# give yourself Azure Kubernetes Service Cluster Admin Role on Planetary Computer Test subscription -- need this for argo workflows on AKS
+# give yourself Azure Kubernetes Service RBAC Cluster Admin Role on Planetary Computer Test subscription -- need this for argo workflows on AKS
 # add your IP to the firewall of the KV
 # temporarily enable key access on pctesttfstate storage account
 # az login
