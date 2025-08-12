@@ -10,7 +10,7 @@ import requests.exceptions
 import urllib3.exceptions
 from azure.batch import BatchServiceClient
 from azure.batch.custom.custom_errors import CreateTasksErrorException
-from azure.batch.models import BatchError, ErrorMessage, BatchErrorDetail
+from azure.batch.models import BatchError, BatchErrorDetail, ErrorMessage
 from dateutil.tz import tzutc
 from requests import Response
 
