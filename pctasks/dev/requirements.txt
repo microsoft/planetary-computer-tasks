@@ -61,7 +61,7 @@ azure-storage-blob==12.26.0
 azure-storage-queue==12.13.0
     # via pctasks-core
     # from https://pypi.org/simple
-cachetools==5.5.2
+cachetools==5.3.3
     # via google-auth
     # from https://pypi.org/simple
 certifi==2025.8.3

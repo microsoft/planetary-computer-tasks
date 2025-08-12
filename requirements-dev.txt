@@ -24,7 +24,6 @@ types-python-dateutil
 types-ujson
 types-PyYAML
 
-myst-parser
 pydata-sphinx-theme
 sphinx
 sphinx-autobuild
