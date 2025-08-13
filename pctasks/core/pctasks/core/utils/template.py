@@ -23,7 +23,7 @@ class TemplateError(Exception):
     pass
 
 
-TemplateValue = Union[str, List[Any], Dict[str, Any]]
+TemplateValue = Union[bool, int, float, str, List[Any], Dict[str, Any]]
 # TemplateValue = Union[str, List["TemplateValue"], Dict[str, Any]]
 # If https://github.com/python/mypy/issues/731 is closed, use above.
 
@@ -113,9 +113,7 @@ def find_value(
                 else:
                     raise ValueError(f"Expected dict at key {head}, got {type(v)}")
             else:
-                if not (
-                    isinstance(v, dict) or isinstance(v, list) or isinstance(v, str)
-                ):
+                if not (isinstance(v, (dict, list, str, int, float, bool))):
                     raise ValueError(
                         f"Expected final value at key {head}, got {type(v)}"
                     )
