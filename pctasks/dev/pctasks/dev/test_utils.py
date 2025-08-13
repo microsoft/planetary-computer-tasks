@@ -54,7 +54,7 @@ class CliTestError(Exception):
 def run_pctasks(
     cmd: List[Any], catch_exceptions: bool = False, silent: bool = False
 ) -> Result:
-    runner = CliRunner(mix_stderr=False)
+    runner = CliRunner()
 
     if len(cmd) == 0:
         raise Exception("Empty command")
