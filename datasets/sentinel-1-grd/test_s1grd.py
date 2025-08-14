@@ -134,7 +134,6 @@ def test_s1grd_create_item_id_handling(
     )
     asset_uri = f"blob://sentinel1euwest/s1-grd/GRD/2023/6/28/IW/DV/{item_id_with_checksum}/manifest.safe"  # noqa: E501
 
-    # Mock the storage and file interactions
     mock_storage = MagicMock()
     mock_get_item_storage.return_value = (
         mock_storage,
@@ -158,13 +157,11 @@ def test_s1grd_create_item_id_handling(
 
     result = s1grd.S1GRDCollection.create_item(asset_uri, mock_storage_factory)
 
-    # Validate the result
     assert isinstance(result, list)
     assert len(result) == 1
-    assert (
-        result[0].id == item_id_without_checksum
-    ), f"Expected item_id to be '{item_id_without_checksum}', but got '{result[0].id}'"
+    assert result[0].id == item_id_without_checksum, (
+        f"Expected item_id to be '{item_id_without_checksum}', but got '{result[0].id}'"
+    )
 
-    # Validate that the item was not incorrectly modified
     mock_create_item.assert_called_once()
     mock_storage.list_files.assert_called_once()
