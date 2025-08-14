@@ -1,3 +1,4 @@
+import datetime
 import pathlib
 import pystac
 
@@ -5,6 +6,7 @@ import logging
 import s1grd
 from stactools.sentinel1.metadata_links import MetadataLinks
 from pctasks.core.storage import StorageFactory
+from unittest import mock
 import pytest
 
 
@@ -36,7 +38,6 @@ if not logger.hasHandlers():
 def test_metadata_links_annotation_pattern_parametrized(
     tmp_path, item_id: str, annotation_name: str, expected_key: str
 ):
-    # Setup: create a minimal manifest.safe with dataObjectSection and fileLocation
     archive_dir = tmp_path / item_id
     annotation_filename = f"{annotation_name}.xml"
     annotation_dir = archive_dir / "annotation"
@@ -76,10 +77,8 @@ def test_get_item_storage():
     asset_uri = "blob://sentinel1euwest/s1-grd/GRD/2023/6/20/EW/DH/S1A_EW_GRDM_1SDH_20230620T020009_20230620T020113_049063_05E665_5673/manifest.safe"  # noqa: E501
     storage_factory = StorageFactory()
     storage, path = s1grd.get_item_storage(asset_uri, storage_factory=storage_factory)
-    assert (
-        path
-        == "GRD/2023/6/20/EW/DH/S1A_EW_GRDM_1SDH_20230620T020009_20230620T020113_049063_05E665.json"
-    )  # noqa: E501
+    expected_path = "GRD/2023/6/20/EW/DH/S1A_EW_GRDM_1SDH_20230620T020009_20230620T020113_049063_05E665.json"  # noqa: E501
+    assert path == expected_path
     assert storage.root_uri == "blob://sentinel1euwest/s1-grd-stac"
 
 
@@ -111,3 +110,59 @@ def test_rewrite_asset_hrefs():
         "vv": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/measurement/iw-vv.tiff",
     }
     assert result == expected
+
+
+@mock.patch("s1grd.create_item")
+def test_s1grd_create_item_id_handling(mock_create_item):  # noqa: E501
+    # Setup test data
+    item_id_with_checksum = (
+        "S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1"
+    )
+    item_id_without_checksum = (
+        "S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D"
+    )
+    asset_uri = f"blob://sentinel1euwest/s1-grd/GRD/2023/6/28/IW/DV/{item_id_with_checksum}/manifest.safe"
+
+    mock_item = pystac.Item(
+        id=item_id_without_checksum,
+        geometry={
+            "type": "Polygon",
+            "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]],
+        },
+        bbox=[0, 0, 1, 1],
+        datetime=datetime.datetime.now(),
+        properties={},
+    )
+    mock_item.assets = {}
+    mock_create_item.return_value = mock_item
+
+    storage_factory = mock.MagicMock()
+    archive_storage = mock.MagicMock()
+    stac_item_storage = mock.MagicMock()
+
+    storage_factory.get_storage.side_effect = [archive_storage, stac_item_storage]
+    archive_storage.list_files.return_value = []
+    stac_item_storage.file_exists.return_value = False
+
+    with (
+        mock.patch("tempfile.TemporaryDirectory") as mock_temp_dir,
+        mock.patch("os.mkdir"),
+        mock.patch("os.path.isdir", return_value=False),
+        mock.patch("os.makedirs"),
+        mock.patch("s1grd.with_backoff"),
+        mock.patch("s1grd.fix_item", return_value=mock_item),
+    ):
+        # Configure temporary directory
+        mock_temp_dir.return_value.__enter__.return_value = "/tmp/mockdir"
+
+        # Call function under test
+        result = s1grd.S1GRDCollection.create_item(asset_uri, storage_factory)
+
+    mock_create_item.assert_called_once()
+    args, _ = mock_create_item.call_args
+    temp_dir_path = args[0]
+    assert item_id_with_checksum in temp_dir_path
+
+    assert isinstance(result, list)
+    assert len(result) == 1
+    assert result[0].id == item_id_without_checksum

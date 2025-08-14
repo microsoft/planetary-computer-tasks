@@ -152,9 +152,6 @@ class S1GRDCollection(Collection):
                 logger.error(f"Unexpected error processing {archive}: {str(e)}")
                 return []
 
-        # Remove checksum from id
-        item.id = "_".join(item.id.split("_")[0:-1])
-
         # Remove providers
         item.properties.pop("providers", None)
 
