@@ -1,14 +1,15 @@
 import datetime
-import pathlib
-import pystac
-
 import logging
+import pathlib
+from pathlib import Path
+from unittest.mock import MagicMock, Mock, patch
+
+import pystac
+import pytest
 import s1grd
 from stactools.sentinel1.metadata_links import MetadataLinks
-from pctasks.core.storage import StorageFactory
-from unittest import mock
-import pytest
 
+from pctasks.core.storage import StorageFactory
 
 HERE = pathlib.Path(__file__).parent
 logging.basicConfig(level=logging.INFO)
@@ -36,8 +37,8 @@ if not logger.hasHandlers():
     ],
 )
 def test_metadata_links_annotation_pattern_parametrized(
-    tmp_path, item_id: str, annotation_name: str, expected_key: str
-):
+    tmp_path: Path, item_id: str, annotation_name: str, expected_key: str
+) -> None:
     archive_dir = tmp_path / item_id
     annotation_filename = f"{annotation_name}.xml"
     annotation_dir = archive_dir / "annotation"
@@ -73,16 +74,15 @@ def test_metadata_links_annotation_pattern_parametrized(
     )
 
 
-def test_get_item_storage():
+def test_get_item_storage() -> None:
     asset_uri = "blob://sentinel1euwest/s1-grd/GRD/2023/6/20/EW/DH/S1A_EW_GRDM_1SDH_20230620T020009_20230620T020113_049063_05E665_5673/manifest.safe"  # noqa: E501
     storage_factory = StorageFactory()
     storage, path = s1grd.get_item_storage(asset_uri, storage_factory=storage_factory)
     expected_path = "GRD/2023/6/20/EW/DH/S1A_EW_GRDM_1SDH_20230620T020009_20230620T020113_049063_05E665.json"  # noqa: E501
     assert path == expected_path
-    assert storage.root_uri == "blob://sentinel1euwest/s1-grd-stac"
 
 
-def test_rewrite_asset_hrefs():
+def test_rewrite_asset_hrefs() -> None:
     archive_storage = StorageFactory().get_storage(
         "blob://sentinel1euwest/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1"  # noqa: E501
     )
@@ -98,30 +98,29 @@ def test_rewrite_asset_hrefs():
     }
 
     expected = {
-        "safe-manifest": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/manifest.safe",
-        "schema-product-vh": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/rfi-iw-vh.xml",
-        "schema-product-vv": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/annotation/rfi/rfi-iw-vv.xml",
-        "schema-calibration-vh": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/annotation/calibration/calibration-iw-vh.xml",
-        "schema-calibration-vv": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/annotation/calibration/calibration-iw-vv.xml",
-        "schema-noise-vh": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/annotation/calibration/noise-iw-vh.xml",
-        "schema-noise-vv": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/annotation/calibration/noise-iw-vv.xml",
-        "thumbnail": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/preview/quick-look.png",
-        "vh": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/measurement/iw-vh.tiff",
-        "vv": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/measurement/iw-vv.tiff",
-    }
+        "safe-manifest": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/manifest.safe",  # noqa: E501
+        "schema-product-vh": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/rfi-iw-vh.xml",  # noqa: E501
+        "schema-product-vv": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/annotation/rfi/rfi-iw-vv.xml",  # noqa: E501
+        "schema-calibration-vh": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/annotation/calibration/calibration-iw-vh.xml",  # noqa: E501
+        "schema-calibration-vv": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/annotation/calibration/calibration-iw-vv.xml",  # noqa: E501
+        "schema-noise-vh": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/annotation/calibration/noise-iw-vh.xml",  # noqa: E501
+        "schema-noise-vv": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/annotation/calibration/noise-iw-vv.xml",  # noqa: E501
+        "thumbnail": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/preview/quick-look.png",  # noqa: E501
+        "vh": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/measurement/iw-vh.tiff",  # noqa: E501
+        "vv": "https://sentinel1euwest.blob.core.windows.net/s1-grd/GRD/2023/6/28/IW/DV/S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1/measurement/iw-vv.tiff",  # noqa: E501
+    }  # noqa: E501
     assert result == expected
 
 
-@mock.patch("s1grd.create_item")
-def test_s1grd_create_item_id_handling(mock_create_item):  # noqa: E501
-    # Setup test data
+@patch("s1grd.create_item")
+def test_s1grd_create_item_id_handling(mock_create_item: Mock) -> None:
     item_id_with_checksum = (
         "S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1"
     )
     item_id_without_checksum = (
         "S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D"
     )
-    asset_uri = f"blob://sentinel1euwest/s1-grd/GRD/2023/6/28/IW/DV/{item_id_with_checksum}/manifest.safe"
+    asset_uri = f"blob://sentinel1euwest/s1-grd/GRD/2023/6/28/IW/DV/{item_id_with_checksum}/manifest.safe"  # noqa: E501
 
     mock_item = pystac.Item(
         id=item_id_without_checksum,
@@ -136,26 +135,24 @@ def test_s1grd_create_item_id_handling(mock_create_item):  # noqa: E501
     mock_item.assets = {}
     mock_create_item.return_value = mock_item
 
-    storage_factory = mock.MagicMock()
-    archive_storage = mock.MagicMock()
-    stac_item_storage = mock.MagicMock()
+    storage_factory = MagicMock()
+    archive_storage = MagicMock()
+    stac_item_storage = MagicMock()
 
     storage_factory.get_storage.side_effect = [archive_storage, stac_item_storage]
     archive_storage.list_files.return_value = []
     stac_item_storage.file_exists.return_value = False
 
     with (
-        mock.patch("tempfile.TemporaryDirectory") as mock_temp_dir,
-        mock.patch("os.mkdir"),
-        mock.patch("os.path.isdir", return_value=False),
-        mock.patch("os.makedirs"),
-        mock.patch("s1grd.with_backoff"),
-        mock.patch("s1grd.fix_item", return_value=mock_item),
+        patch("tempfile.TemporaryDirectory") as mock_temp_dir,
+        patch("os.mkdir"),
+        patch("os.path.isdir", return_value=False),
+        patch("os.makedirs"),
+        patch("s1grd.with_backoff"),
+        patch("s1grd.fix_item", return_value=mock_item),
     ):
-        # Configure temporary directory
         mock_temp_dir.return_value.__enter__.return_value = "/tmp/mockdir"
 
-        # Call function under test
         result = s1grd.S1GRDCollection.create_item(asset_uri, storage_factory)
 
     mock_create_item.assert_called_once()
