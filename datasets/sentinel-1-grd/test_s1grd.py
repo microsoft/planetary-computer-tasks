@@ -163,3 +163,8 @@ def test_s1grd_create_item_id_handling(mock_create_item: Mock) -> None:
     assert isinstance(result, list)
     assert len(result) == 1
     assert result[0].id == item_id_without_checksum
+
+    archive_storage.list_files.assert_called_once()
+    stac_item_storage.file_exists.assert_called_once_with(
+        f"GRD/2023/6/28/IW/DV/{item_id_without_checksum}.json"
+    )
