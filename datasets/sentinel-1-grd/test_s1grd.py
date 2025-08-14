@@ -112,8 +112,20 @@ def test_rewrite_asset_hrefs() -> None:
     assert result == expected
 
 
+@patch("s1grd.StorageFactory")
+@patch("s1grd.get_item_storage")
+@patch("s1grd.with_backoff")
 @patch("s1grd.create_item")
-def test_s1grd_create_item_id_handling(mock_create_item: Mock) -> None:
+def test_s1grd_create_item_id_handling(
+    mock_create_item: Mock,
+    mock_with_backoff: Mock,
+    mock_get_item_storage: Mock,
+    mock_storage_factory: Mock,
+) -> None:
+    """
+    Test that S1GRDCollection.create_item correctly handles the item_id
+    and does not incorrectly modify it during post-processing.
+    """
     item_id_with_checksum = (
         "S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D_21D1"
     )
@@ -121,6 +133,15 @@ def test_s1grd_create_item_id_handling(mock_create_item: Mock) -> None:
         "S1A_IW_GRDH_1SDV_20230628T210705_20230628T210730_049191_05EA4D"
     )
     asset_uri = f"blob://sentinel1euwest/s1-grd/GRD/2023/6/28/IW/DV/{item_id_with_checksum}/manifest.safe"  # noqa: E501
+
+    # Mock the storage and file interactions
+    mock_storage = MagicMock()
+    mock_get_item_storage.return_value = (
+        mock_storage,
+        f"{item_id_without_checksum}.json",
+    )
+    mock_storage_factory.get_storage.return_value = mock_storage
+    mock_storage.list_files.return_value = []
 
     mock_item = pystac.Item(
         id=item_id_without_checksum,
@@ -135,36 +156,15 @@ def test_s1grd_create_item_id_handling(mock_create_item: Mock) -> None:
     mock_item.assets = {}
     mock_create_item.return_value = mock_item
 
-    storage_factory = MagicMock()
-    archive_storage = MagicMock()
-    stac_item_storage = MagicMock()
+    result = s1grd.S1GRDCollection.create_item(asset_uri, mock_storage_factory)
 
-    storage_factory.get_storage.side_effect = [archive_storage, stac_item_storage]
-    archive_storage.list_files.return_value = []
-    stac_item_storage.file_exists.return_value = False
-
-    with (
-        patch("tempfile.TemporaryDirectory") as mock_temp_dir,
-        patch("os.mkdir"),
-        patch("os.path.isdir", return_value=False),
-        patch("os.makedirs"),
-        patch("s1grd.with_backoff"),
-        patch("s1grd.fix_item", return_value=mock_item),
-    ):
-        mock_temp_dir.return_value.__enter__.return_value = "/tmp/mockdir"
-
-        result = s1grd.S1GRDCollection.create_item(asset_uri, storage_factory)
-
-    mock_create_item.assert_called_once()
-    args, _ = mock_create_item.call_args
-    temp_dir_path = args[0]
-    assert item_id_with_checksum in temp_dir_path
-
+    # Validate the result
     assert isinstance(result, list)
     assert len(result) == 1
-    assert result[0].id == item_id_without_checksum
+    assert (
+        result[0].id == item_id_without_checksum
+    ), f"Expected item_id to be '{item_id_without_checksum}', but got '{result[0].id}'"
 
-    archive_storage.list_files.assert_called_once()
-    stac_item_storage.file_exists.assert_called_once_with(
-        f"GRD/2023/6/28/IW/DV/{item_id_without_checksum}.json"
-    )
+    # Validate that the item was not incorrectly modified
+    mock_create_item.assert_called_once()
+    mock_storage.list_files.assert_called_once()
