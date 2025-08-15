@@ -8,12 +8,12 @@ import pystac
 import requests
 import urllib3
 from stactools.core.utils.antimeridian import Strategy, fix_item
-from pctasks.core.storage.base import Storage
 from stactools.sentinel1.formats import Format
 from stactools.sentinel1.grd.stac import create_item
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
+from pctasks.core.storage.base import Storage
 from pctasks.core.utils.backoff import is_common_throttle_exception, with_backoff
 from pctasks.dataset.collection import Collection
 
@@ -152,9 +152,6 @@ class S1GRDCollection(Collection):
                 logger.error(f"Unexpected error processing {archive}: {str(e)}")
                 return []
 
-        # Remove checksum from id
-        item.id = "_".join(item.id.split("_")[0:-1])
-
         # Remove providers
         item.properties.pop("providers", None)
 
@@ -212,6 +209,6 @@ def rewrite_asset_hrefs(
 
     for asset in item.assets.values():
         path = pathlib.Path(asset.href).relative_to(relative_to)
-        asset.href = storage.get_url(path)
+        asset.href = storage.get_url(path)  # type: ignore
 
     return item

@@ -361,11 +361,13 @@ pyyaml==6.0.2
     #   kubernetes
     #   pctasks-core
     #   pre-commit
+    #   stac-validator
     # from https://pypi.org/simple
 referencing==0.36.2
     # via
     #   jsonschema
     #   jsonschema-specifications
+    #   stac-validator
     # from https://pypi.org/simple
 requests==2.32.4
     # via
