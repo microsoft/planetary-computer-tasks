@@ -27,7 +27,7 @@ dependencies = [
     "fastapi>=0.111.0",
     "pctasks.core @ {root:parent:uri}/core",
     "pctasks.run @ {root:parent:uri}/run",
-    "python-multipart==0.0.7",
+    "python-multipart==0.0.18",
 ]
 
 [project.optional-dependencies]
