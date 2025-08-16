@@ -350,7 +350,7 @@ python-dotenv==1.1.1
     #   planetary-computer
     #   pydantic-settings
     # from https://pypi.org/simple
-python-multipart==0.0.7
+python-multipart==0.0.18
     # via pctasks-server (./pctasks/server/pyproject.toml)
     # from https://pypi.org/simple
 pytz==2025.2

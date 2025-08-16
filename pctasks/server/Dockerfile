@@ -1,7 +1,9 @@
 FROM mcr.microsoft.com/azurelinux/base/python:3.12
 
-RUN tdnf install -y ca-certificates build-essential git \
-    && tdnf clean all
+RUN \
+     tdnf update -y && \
+     tdnf install -y ca-certificates build-essential git \
+     && tdnf clean all
 
 ARG DEVELOPMENT=FALSE
 
@@ -45,7 +47,7 @@ RUN if [ "${DEVELOPMENT}" = "TRUE" ]; then \
      -e /opt/src/task \
      -e /opt/src/run \
      -e /opt/src/server[dev,server]; \
-    fi
+     fi
 
 ENV APP_HOST=0.0.0.0
 ENV APP_PORT=81

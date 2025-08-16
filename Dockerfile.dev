@@ -8,7 +8,9 @@ ENV LANG=C.UTF-8
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN tdnf install build-essential jq unzip ca-certificates awk wget curl git azure-cli -y \
+RUN \
+     tdnf update -y && \
+     tdnf install build-essential jq unzip ca-certificates awk wget curl git azure-cli -y \
      && tdnf clean all
 
 RUN pip install --upgrade uv
@@ -38,7 +40,7 @@ RUN --mount=type=cache,target=/root/.cache \
 
 COPY pctasks/task /opt/src/pctasks/task
 RUN --mount=type=cache,target=/root/.cache \
-      cd /opt/src/pctasks/task && \
+     cd /opt/src/pctasks/task && \
      uv pip install --system -r requirements.txt && \
      uv pip install --system --no-deps -e .
 

@@ -8,7 +8,9 @@ ENV LANG=C.UTF-8
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN tdnf install jq tar unzip ca-certificates awk wget curl git azure-cli icu -y \
+RUN \
+    tdnf update -y && \
+    tdnf install jq tar unzip ca-certificates awk wget curl git azure-cli icu -y \
     && tdnf clean all
 
 # Install Azure Function Tools
