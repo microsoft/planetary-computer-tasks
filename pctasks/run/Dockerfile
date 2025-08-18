@@ -1,6 +1,8 @@
 FROM mcr.microsoft.com/azurelinux/base/python:3.12
 
-RUN tdnf install ca-certificates azure-cli -y \
+RUN \
+     tdnf update -y && \
+     tdnf install ca-certificates azure-cli -y \
      && tdnf clean all
 ENV PIP_NO_CACHE_DIR=1
 RUN pip install "setuptools>=65.5.1"
