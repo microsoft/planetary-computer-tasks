@@ -1,12 +1,15 @@
 import json
 import pathlib
-from typing import Generator, List, Optional
+from pathlib import Path
+from typing import Dict, Generator, List, Optional, Tuple
+from unittest.mock import MagicMock, Mock, patch
 
 import orjson
 import pytest
-from unittest.mock import patch, MagicMock
+from pypgstac.load import Methods
 
 from pctasks.core.models.task import FailedTaskResult
+from pctasks.core.utils import grouped
 from pctasks.dev.mocks import MockTaskContext
 from pctasks.ingest.models import (
     IngestNdjsonInput,
@@ -16,9 +19,7 @@ from pctasks.ingest.models import (
 )
 from pctasks.ingest_task.pgstac import PgSTAC
 from pctasks.ingest_task.task import ingest_task
-from pctasks.core.utils import grouped
 from tests.conftest import ingest_test_environment
-from pypgstac.load import Methods
 
 HERE = pathlib.Path(__file__).parent
 TEST_COLLECTION = HERE / "data-files/test_collection.json"
@@ -28,7 +29,7 @@ TEST_DUPE_NDJSON = HERE / "data-files/items/items_dupe.ndjson"
 
 
 @pytest.fixture
-def pgstac_fixture():
+def pgstac_fixture() -> Generator[Tuple[PgSTAC, Mock, Mock]]:
     with (
         patch("pypgstac.db.PgstacDB") as MockPgstacDB,
         patch("pypgstac.load.Loader") as MockLoader,
@@ -37,7 +38,7 @@ def pgstac_fixture():
         mock_loader = MockLoader.return_value
 
         pgstac = PgSTAC("postgresql://dummy:dummy@localhost:5432/dummy")
-        yield pgstac
+        yield (pgstac, mock_db, mock_loader)
 
 
 @pytest.fixture
@@ -58,10 +59,12 @@ def duplicate_items() -> List[bytes]:
 
 
 @pytest.fixture
-def capture_loader_calls():
+def capture_loader_calls() -> Tuple[MagicMock, List[dict]]:
     captured_calls = []
 
-    def mock_load_items(items_iter, insert_mode):
+    def mock_load_items(
+        items_iter: Generator[bytes, None, None], insert_mode: Methods
+    ) -> None:
         items_list = list(items_iter)
         captured_calls.append({"items": items_list, "mode": insert_mode})
         return None
@@ -72,7 +75,7 @@ def capture_loader_calls():
     return mock_loader, captured_calls
 
 
-def test_single_item_ingest():
+def test_single_item_ingest() -> None:
     """Test ingesting Items through the ingest task logic."""
 
     task_context = MockTaskContext.default()
@@ -97,7 +100,7 @@ def test_single_item_ingest():
         assert not isinstance(result, FailedTaskResult)
 
 
-def test_ndjson_ingest():
+def test_ndjson_ingest() -> None:
     """Test ingesting Items through the ingest task logic."""
 
     task_context = MockTaskContext.default()
@@ -120,7 +123,7 @@ def test_ndjson_ingest():
         assert not isinstance(result, FailedTaskResult)
 
 
-def test_ingest_ndjson_add_service_principal():
+def test_ingest_ndjson_add_service_principal() -> None:
     result = IngestTaskConfig.from_ndjson(
         ndjson_data=IngestNdjsonInput(ndjson_folder=NdjsonFolder(uri="test/")),
         add_service_principal=True,
@@ -151,13 +154,13 @@ def test_ingest_ndjson_add_service_principal():
     result = IngestTaskConfig.from_ndjson(
         ndjson_data=IngestNdjsonInput(ndjson_folder=NdjsonFolder(uri="test/")),
     )
-
+    assert result.environment is not None
     assert "AZURE_TENANT_ID" not in result.environment
-    assert "AZURE_TENANT_ID" not in result.environment
-    assert "AZURE_TENANT_ID" not in result.environment
+    assert "AZURE_CLIENT_ID" not in result.environment
+    assert "AZURE_CLIENT_SECRET" not in result.environment
 
 
-def test_empty_ndjson_ingest(tmp_path):
+def test_empty_ndjson_ingest(tmp_path: Path) -> None:
     """Test ingesting an empty item collection works."""
 
     task_context = MockTaskContext.default()
@@ -183,7 +186,7 @@ def test_empty_ndjson_ingest(tmp_path):
         assert not isinstance(result, FailedTaskResult)
 
 
-def test_ingest_dupe_items_ndjson():
+def test_ingest_dupe_items_ndjson() -> None:
     task_context = MockTaskContext.default()
 
     with ingest_test_environment():
@@ -205,10 +208,13 @@ def test_ingest_dupe_items_ndjson():
 
 
 def test_unique_items_deduplication(
-    pgstac_fixture: Generator[PgSTAC, None, None], dupe_ndjson_lines: List[bytes]
+    pgstac_fixture: Tuple[PgSTAC, Mock, Mock],
+    dupe_ndjson_lines: List[bytes],
 ) -> None:
     unique_items = list(
-        pgstac_fixture.unique_items(dupe_ndjson_lines, lambda b: orjson.loads(b)["id"])
+        pgstac_fixture[0].unique_items(
+            dupe_ndjson_lines, lambda b: orjson.loads(b)["id"]
+        )
     )
 
     assert len(dupe_ndjson_lines) == 5
@@ -220,10 +226,13 @@ def test_unique_items_deduplication(
 
 
 def test_unique_items_grouped_deduplication(
-    pgstac_fixture: Generator[PgSTAC, None, None], dupe_ndjson_lines: List[bytes]
+    pgstac_fixture: Tuple[PgSTAC, Mock, Mock],
+    dupe_ndjson_lines: List[bytes],
 ) -> None:
     unique_items = list(
-        pgstac_fixture.unique_items(dupe_ndjson_lines, lambda b: orjson.loads(b)["id"])
+        pgstac_fixture[0].unique_items(
+            dupe_ndjson_lines, lambda b: orjson.loads(b)["id"]
+        )
     )
     unique_ids = [orjson.loads(item)["id"] for item in unique_items]
 
@@ -232,7 +241,7 @@ def test_unique_items_grouped_deduplication(
 
     groups = grouped(unique_items, size=3)
 
-    seen_items = []
+    seen_items: List[str] = []
     for group in groups:
         assert group
         seen_items.extend(orjson.loads(item)["id"] for item in group)
@@ -245,24 +254,26 @@ def test_unique_items_grouped_deduplication(
     "insert_group_size, mode", [(None, Methods.upsert), (2, Methods.insert)]
 )
 def test_ingest_items_deduplication_and_grouping(
-    pgstac_fixture: Generator[PgSTAC, None, None],
+    pgstac_fixture: Tuple[PgSTAC, Mock, Mock],
     duplicate_items: List[bytes],
     insert_group_size: Optional[int],
     mode: Methods,
-):
-    captured_groups = []
-    modes_passed = []
+) -> None:
+    captured_groups: List[Dict[str, List[bytes]]] = []
+    modes_passed: List[Methods] = []
 
     # gets the groups from the actual code path to evaluate without side effects
-    def mock_load_items(items_iter, insert_mode):
+    def mock_load_items(
+        items_iter: Generator[bytes, None, None], insert_mode: Methods
+    ) -> None:
         items_list = list(items_iter)
         captured_groups.append({"items": items_list})
         modes_passed.append(insert_mode)
         return None
 
-    pgstac_fixture.loader.load_items = mock_load_items
+    pgstac_fixture[1].load_items = mock_load_items
 
-    pgstac_fixture.ingest_items(
+    pgstac_fixture[0].ingest_items(
         duplicate_items, mode=Methods.upsert, insert_group_size=insert_group_size
     )
 
@@ -285,20 +296,22 @@ def test_ingest_items_deduplication_and_grouping(
 
 @pytest.mark.parametrize("mode", [Methods.upsert, Methods.insert])
 def test_ingest_items_with_different_modes(
-    pgstac_fixture: Generator[PgSTAC, None, None],
+    pgstac_fixture: Tuple[PgSTAC, Mock, Mock],
     duplicate_items: List[bytes],
     mode: Methods,
 ) -> None:
     modes_passed = []
 
-    def mock_load_items(items_iter, insert_mode):
+    def mock_load_items(
+        items_iter: Generator[bytes, None, None], insert_mode: Methods
+    ) -> None:
         modes_passed.append(insert_mode)
         list(items_iter)
         return None
 
-    pgstac_fixture.loader.load_items = mock_load_items
+    pgstac_fixture[1].load_items = mock_load_items
 
-    pgstac_fixture.ingest_items(duplicate_items, mode=mode)
+    pgstac_fixture[0].ingest_items(duplicate_items, mode=mode)
 
     assert len(modes_passed) == 1, "load_items should be called once"
     assert modes_passed[0] == mode, f"Mode should be {mode}"
