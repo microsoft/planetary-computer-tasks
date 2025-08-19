@@ -29,7 +29,7 @@ TEST_DUPE_NDJSON = HERE / "data-files/items/items_dupe.ndjson"
 
 
 @pytest.fixture
-def pgstac_fixture() -> Generator[Tuple[PgSTAC, Mock, Mock]]:
+def pgstac_fixture() -> Generator[Tuple[PgSTAC, Mock, Mock], None, None]:
     with (
         patch("pypgstac.db.PgstacDB") as MockPgstacDB,
         patch("pypgstac.load.Loader") as MockLoader,
@@ -222,7 +222,7 @@ def test_unique_items_deduplication(
 
     unique_ids = [orjson.loads(item)["id"] for item in unique_items]
     assert len(unique_ids) == 3
-    assert unique_ids == {"item1", "item2", "item3"}
+    assert unique_ids == ["item1", "item2", "item3"]
 
 
 def test_unique_items_grouped_deduplication(
