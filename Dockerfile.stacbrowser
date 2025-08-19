@@ -1,6 +1,8 @@
 FROM mcr.microsoft.com/cbl-mariner/base/nodejs:16
 
-RUN tdnf install -y git
+RUN \
+    tdnf update -y && \
+    tdnf install -y git
 
 RUN mkdir -p /opt/src
 WORKDIR /opt/src
