@@ -271,7 +271,7 @@ def test_ingest_items_deduplication_and_grouping(
         modes_passed.append(insert_mode)
         return None
 
-    pgstac_fixture[1].load_items = mock_load_items
+    pgstac_fixture[2].load_items = mock_load_items
 
     pgstac_fixture[0].ingest_items(
         duplicate_items, mode=Methods.upsert, insert_group_size=insert_group_size
@@ -279,9 +279,9 @@ def test_ingest_items_deduplication_and_grouping(
 
     expected_group_count = 1 if insert_group_size is None else insert_group_size
 
-    assert (
-        len(captured_groups) == expected_group_count
-    ), f"Expected {expected_group_count} groups"
+    assert len(captured_groups) == expected_group_count, (
+        f"Expected {expected_group_count} groups"
+    )
 
     all_items = []
     for group in captured_groups:
@@ -309,7 +309,7 @@ def test_ingest_items_with_different_modes(
         list(items_iter)
         return None
 
-    pgstac_fixture[1].load_items = mock_load_items
+    pgstac_fixture[2].load_items = mock_load_items
 
     pgstac_fixture[0].ingest_items(duplicate_items, mode=mode)
 
