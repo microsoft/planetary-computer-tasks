@@ -54,16 +54,19 @@ class PgSTAC:
         mode: Methods = Methods.upsert,
         insert_group_size: Optional[int] = None,
     ) -> None:
+        all_unique_items = list(
+            self.unique_items(items, lambda b: orjson.loads(b)["id"])
+        )
         if insert_group_size:
-            groups = grouped(items, insert_group_size)
+            groups = grouped(all_unique_items, insert_group_size)
         else:
-            groups = [items]
+            groups = [all_unique_items]
 
         for i, group in enumerate(groups):
             logger.info(f"  ...Loading group {i + 1}")
             self._with_connection_retry(
                 lambda: self.loader.load_items(
-                    iter(self.unique_items(group, lambda b: orjson.loads(b)["id"])),
+                    iter(group),
                     insert_mode=mode,
                 )
             )
