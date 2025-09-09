@@ -261,16 +261,18 @@ def test_ingest_items_deduplication_and_grouping(
         return None
 
     pgstac_fixture[2].load_items = mock_load_items
+    pgstac_fixture[2].format_item = lambda item: item
 
-    pgstac_fixture[0].ingest_items(
-        dupe_ndjson_lines, mode=Methods.upsert, insert_group_size=insert_group_size
-    )
+    with patch.object(pgstac_fixture[0], "loader", pgstac_fixture[2]):
+        pgstac_fixture[0].ingest_items(
+            dupe_ndjson_lines, mode=Methods.upsert, insert_group_size=insert_group_size
+        )
 
     expected_group_count = 1 if insert_group_size is None else insert_group_size
 
-    assert (
-        len(captured_groups) == expected_group_count
-    ), f"Expected {expected_group_count} groups"
+    assert len(captured_groups) == expected_group_count, (
+        f"Expected {expected_group_count} groups"
+    )
 
     all_items = []
     for group in captured_groups:
@@ -299,8 +301,10 @@ def test_ingest_items_with_different_modes(
         return None
 
     pgstac_fixture[2].load_items = mock_load_items
+    pgstac_fixture[2].format_item = lambda item: item
 
-    pgstac_fixture[0].ingest_items(dupe_ndjson_lines, mode=mode)
+    with patch.object(pgstac_fixture[0], "loader", pgstac_fixture[2]):
+        pgstac_fixture[0].ingest_items(dupe_ndjson_lines, mode=mode)
 
     assert len(modes_passed) == 1, "load_items should be called once"
     assert modes_passed[0] == mode, f"Mode should be {mode}"
