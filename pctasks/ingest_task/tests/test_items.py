@@ -37,7 +37,7 @@ def pgstac_fixture() -> Generator[Tuple[PgSTAC, Mock, Mock], None, None]:
         mock_db = MockPgstacDB.return_value
         mock_loader = MockLoader.return_value
 
-        pgstac = PgSTAC("postgresql://dummy:dummy@localhost:5432/dummy")
+        pgstac = PgSTAC("postgresql://username:password@database:5432/postgis")
         yield (pgstac, mock_db, mock_loader)
 
 
@@ -279,9 +279,9 @@ def test_ingest_items_deduplication_and_grouping(
 
     expected_group_count = 1 if insert_group_size is None else insert_group_size
 
-    assert (
-        len(captured_groups) == expected_group_count
-    ), f"Expected {expected_group_count} groups"
+    assert len(captured_groups) == expected_group_count, (
+        f"Expected {expected_group_count} groups"
+    )
 
     all_items = []
     for group in captured_groups:
