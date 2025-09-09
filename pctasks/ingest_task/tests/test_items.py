@@ -48,17 +48,6 @@ def dupe_ndjson_lines() -> List[bytes]:
 
 
 @pytest.fixture
-def duplicate_items() -> List[bytes]:
-    return [
-        b'{"id": "item1", "data": "value1"}',
-        b'{"id": "item2", "data": "value2"}',
-        b'{"id": "item1", "data": "value1"}',  # Duplicate of item1
-        b'{"id": "item3", "data": "value3"}',
-        b'{"id": "item2", "data": "value2"}',  # Duplicate of item2
-    ]
-
-
-@pytest.fixture
 def capture_loader_calls() -> Tuple[MagicMock, List[dict]]:
     captured_calls = []
 
@@ -255,7 +244,7 @@ def test_unique_items_grouped_deduplication(
 )
 def test_ingest_items_deduplication_and_grouping(
     pgstac_fixture: Tuple[PgSTAC, Mock, Mock],
-    duplicate_items: List[bytes],
+    dupe_ndjson_lines: List[bytes],
     insert_group_size: Optional[int],
     mode: Methods,
 ) -> None:
@@ -274,7 +263,7 @@ def test_ingest_items_deduplication_and_grouping(
     pgstac_fixture[2].load_items = mock_load_items
 
     pgstac_fixture[0].ingest_items(
-        duplicate_items, mode=Methods.upsert, insert_group_size=insert_group_size
+        dupe_ndjson_lines, mode=Methods.upsert, insert_group_size=insert_group_size
     )
 
     expected_group_count = 1 if insert_group_size is None else insert_group_size
@@ -297,7 +286,7 @@ def test_ingest_items_deduplication_and_grouping(
 @pytest.mark.parametrize("mode", [Methods.upsert, Methods.insert])
 def test_ingest_items_with_different_modes(
     pgstac_fixture: Tuple[PgSTAC, Mock, Mock],
-    duplicate_items: List[bytes],
+    dupe_ndjson_lines: List[bytes],
     mode: Methods,
 ) -> None:
     modes_passed = []
@@ -311,7 +300,7 @@ def test_ingest_items_with_different_modes(
 
     pgstac_fixture[2].load_items = mock_load_items
 
-    pgstac_fixture[0].ingest_items(duplicate_items, mode=mode)
+    pgstac_fixture[0].ingest_items(dupe_ndjson_lines, mode=mode)
 
     assert len(modes_passed) == 1, "load_items should be called once"
     assert modes_passed[0] == mode, f"Mode should be {mode}"

@@ -178,21 +178,22 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
             try:
                 with traced_create_item(args.asset_uri, args.collection_id):
                     result = self._create_item(args.asset_uri, storage_factory)
+                    if isinstance(result, WaitTaskResult):
+                        return result
+                    elif result is None:
+                        logger.warning(f"No items created from {args.asset_uri}")
+                    else:
+                        results.extend(
+                            validate_create_items_result(
+                                result,
+                                collection_id=args.collection_id,
+                                skip_validation=args.options.skip_validation,
+                            )
+                        )
             except Exception as e:
-                raise CreateItemsError(
-                    f"Failed to create item from {args.asset_uri}"
-                ) from e
-            if isinstance(result, WaitTaskResult):
-                return result
-            elif result is None:
-                logger.warning(f"No items created from {args.asset_uri}")
-            else:
-                results.extend(
-                    validate_create_items_result(
-                        result,
-                        collection_id=args.collection_id,
-                        skip_validation=args.options.skip_validation,
-                    )
+                tb_str = traceback.format_exc()
+                logger.error(
+                    f"Failed to create item from {args.asset_uri}: {type(e).__name__}: {str(e)}\n{tb_str}"  # noqa: E501
                 )
         elif args.asset_chunk_info:
             chunk_storage, chunk_path = storage_factory.get_storage_for_file(
