@@ -208,24 +208,25 @@ class CreateItemsTask(Task[CreateItemsInput, CreateItemsOutput]):
                         asset_uri, args.collection_id, i=i, asset_count=asset_count
                     ):
                         result = self._create_item(asset_uri, storage_factory)
+                        if isinstance(result, WaitTaskResult):
+                            return result
+                        else:
+                            if not result:
+                                logger.warning(f"No items created from {asset_uri}")
+                            else:
+                                results.extend(
+                                    validate_create_items_result(
+                                        result,
+                                        collection_id=args.collection_id,
+                                        skip_validation=args.options.skip_validation,
+                                    )
+                                )
                 except Exception as e:
                     tb_str = traceback.format_exc()
                     logger.error(
                         f"Failed to create item from {asset_uri}: {type(e).__name__}: {str(e)}\n{tb_str}"  # noqa: E501
                     )
-                if isinstance(result, WaitTaskResult):
-                    return result
-                else:
-                    if not result:
-                        logger.warning(f"No items created from {asset_uri}")
-                    else:
-                        results.extend(
-                            validate_create_items_result(
-                                result,
-                                collection_id=args.collection_id,
-                                skip_validation=args.options.skip_validation,
-                            )
-                        )
+                    continue
 
         else:
             # Should be prevented by validator
