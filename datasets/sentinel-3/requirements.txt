@@ -1,1 +1,1 @@
-git+https://github.com/stactools-packages/sentinel3.git@36375cc63c053087380664ff931ceed5ad3b5f83
+git+https://github.com/stactools-packages/sentinel3.git@93518a430556f290d5e55d3ae0fa1d76cec26197

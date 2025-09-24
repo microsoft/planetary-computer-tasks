@@ -66,7 +66,7 @@ RUN cd /opt/src/pctasks/dataset && \
     pip install .
 
 COPY ./datasets/sentinel-3/requirements.txt /opt/src/datasets/sentinel-3/requirements.txt
-RUN python3 -m pip install -r /opt/src/datasets/sentinel-3/requirements.txt 
+RUN python3 -m pip install -r /opt/src/datasets/sentinel-3/requirements.txt
 
 # Setup Python Path to allow import of test modules
 ENV PYTHONPATH=/opt/src:$PYTHONPATH
