@@ -208,15 +208,12 @@ pytz==2025.2
     # via planetary-computer
     # from https://pypi.org/simple
 pyyaml==6.0.2
-    # via
-    #   pctasks-core (./pctasks/core/pyproject.toml)
-    #   stac-validator
+    # via pctasks-core (./pctasks/core/pyproject.toml)
     # from https://pypi.org/simple
 referencing==0.36.2
     # via
     #   jsonschema
     #   jsonschema-specifications
-    #   stac-validator
     # from https://pypi.org/simple
 requests==2.32.4
     # via

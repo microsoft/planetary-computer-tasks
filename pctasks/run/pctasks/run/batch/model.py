@@ -22,11 +22,11 @@ class BatchJobState(Enum):
 
     @classmethod
     def from_batch(
-        cls, job_state: batchmodels.JobState, failed_tasks: bool
+        cls, job_state: batchmodels.BatchJobState, failed_tasks: bool
     ) -> "BatchJobState":
         if (
-            job_state == batchmodels.JobState.completed
-            or job_state == batchmodels.JobState.terminating
+            job_state == batchmodels.BatchJobState.COMPLETED
+            or job_state == batchmodels.BatchJobState.TERMINATING
         ):
             if failed_tasks:
                 return BatchJobState.FAILED
@@ -34,11 +34,11 @@ class BatchJobState(Enum):
                 return BatchJobState.COMPLETED
 
         active_states = [
-            batchmodels.JobState.active,
-            batchmodels.JobState.deleting,
-            batchmodels.JobState.disabled,
-            batchmodels.JobState.disabling,
-            batchmodels.JobState.enabling,
+            batchmodels.BatchJobState.ACTIVE,
+            batchmodels.BatchJobState.DELETING,
+            batchmodels.BatchJobState.DISABLED,
+            batchmodels.BatchJobState.DISABLING,
+            batchmodels.BatchJobState.ENABLING,
         ]
 
         if job_state in active_states:
@@ -53,17 +53,18 @@ class BatchJobInfo:
 
     @classmethod
     def from_batch(
-        cls, cloud_job: batchmodels.CloudJob, tasks: List[batchmodels.CloudTask]
+        cls, cloud_job: batchmodels.BatchJob, tasks: List[batchmodels.BatchTask]
     ) -> "BatchJobInfo":
         failed_tasks = [
-            cast(batchmodels.CloudTask, task)
+            cast(batchmodels.BatchTask, task)
             for task in tasks
-            if cast(batchmodels.TaskExecutionInformation, task.execution_info).result
+            if cast(batchmodels.BatchTaskExecutionInfo, task.execution_info).result
             == "failure"
         ]
 
         state = BatchJobState.from_batch(
-            cast(batchmodels.JobState, cloud_job.state), failed_tasks=any(failed_tasks)
+            cast(batchmodels.BatchJobState, cloud_job.state),
+            failed_tasks=any(failed_tasks),
         )
 
         return BatchJobInfo(state=state)
