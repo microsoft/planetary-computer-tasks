@@ -30,6 +30,7 @@ source scripts/env
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     pip install uv
+    uv venv
     # Dependencies must be mutually compatible across all projects
     uv pip install --prerelease allow \
         -r "pctasks/core/requirements.txt" \

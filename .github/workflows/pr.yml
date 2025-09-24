@@ -63,6 +63,9 @@ jobs:
       #   run: ./scripts/citest-integration
       #   if: ${{ github.base_ref  == 'main' }}
 
+      - name: Ensure Docker network exists
+        run: docker network create pctasks-network || true
+      
       - name: Get docker compose logs
         run: docker compose logs
         if: always()
