@@ -248,7 +248,7 @@ class BatchClient:
                 )
             )
             task_results: List[batchmodels.TaskAddResult] = result.value  # type: ignore
-        except HttpResponseError as _e:
+        except HttpResponseError:
             logger.error("Failed to add tasks...")
 
             # # for exc in e.error:
@@ -400,7 +400,7 @@ class BatchClient:
                     if self._dry_run:
                         print(f"{task.id} - {last_modified}")
 
-            except HttpResponseError as _e:
+            except HttpResponseError:
                 # stdout.txt doesn't exist
                 # Check if it's been running without output for
                 # the max time.
