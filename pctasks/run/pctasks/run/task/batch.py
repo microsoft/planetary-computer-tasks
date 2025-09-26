@@ -5,8 +5,8 @@ from itertools import groupby
 from threading import Lock
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
-import azure.batch.models as batchmodels
 import cachetools
+from azure.core.exceptions import HttpResponseError
 
 from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.models.task import TaskDefinition
@@ -298,9 +298,9 @@ class BatchTaskRunner(TaskRunner):
                 try:
                     job_info = batch_client.get_job_info(job_id)
                     job_failed = job_info.state == BatchJobState.FAILED
-                except batchmodels.BatchErrorException as e:
-                    error: Any = e.error  # Avoid type hinting error
-                    if error.code == "JobNotFound":
+                except HttpResponseError as e:
+                    error = e.error  # Avoid type hinting error
+                    if error and error.code == "JobNotFound":
                         job_failed = True
                     else:
                         logger.exception(
