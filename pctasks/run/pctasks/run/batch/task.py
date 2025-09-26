@@ -49,17 +49,17 @@ class BatchTask:
 
         return (run_opts, " ".join(cmds))
 
-    def to_params(self) -> batchmodels.TaskAddParameter:
+    def to_params(self) -> batchmodels.BatchTaskCreateContent:
         task_id = make_valid_batch_id(self.task_id)
 
         container_run_options, task_command = self._get_command()
 
-        task_container_settings = batchmodels.TaskContainerSettings(
+        task_container_settings = batchmodels.BatchTaskContainerSettings(
             image_name=self.image
         )
         task_container_settings.container_run_options = container_run_options
 
-        return batchmodels.TaskAddParameter(
+        return batchmodels.BatchTaskCreateContent(
             id=task_id,
             command_line=task_command,
             container_settings=task_container_settings,

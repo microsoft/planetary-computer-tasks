@@ -29,7 +29,6 @@ class LocalWorkflowRunner(WorkflowRunner):
     def submit_workflow(
         self, submit_msg: WorkflowSubmitMessage
     ) -> WorkflowSubmitResult:
-        global _workflow_count
         global _thread_pool
         with RemoteWorkflowExecutor(self.get_executor_config()) as executor:
             with _pool_lock:
