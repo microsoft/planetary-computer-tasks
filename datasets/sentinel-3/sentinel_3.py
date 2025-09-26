@@ -12,7 +12,7 @@ from stactools.sentinel3.stac import create_item
 
 import pctasks.dataset.collection
 from pctasks.core.models.task import WaitTaskResult
-from pctasks.core.storage import Storage, StorageFactory
+from pctasks.core.storage import StorageFactory
 from pctasks.core.utils.backoff import is_common_throttle_exception, with_backoff
 
 handler = logging.StreamHandler()
@@ -240,7 +240,6 @@ class Sentinel3Collections(pctasks.dataset.collection.Collection):
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
-
         # Only create Items for NT (Not Time critical) products
         sen3_archive = os.path.dirname(asset_uri)
         assert sen3_archive.endswith(".SEN3")

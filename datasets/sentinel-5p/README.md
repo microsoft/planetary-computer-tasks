@@ -15,12 +15,13 @@ az acr build -r {the registry} --subscription {the subscription} -t pctasks-sent
 This collection is updated regularly.
 
 ```console
-$ pctasks dataset process-items '${{ args.since }}' \
+$ pctasks dataset process-items \
     -d datasets/sentinel-5p/dataset.yaml \
     -c sentinel-5p-l2-netcdf \
     --workflow-id=sentinel-5p-l2-netcdf-update \
-    --is-update-workflow \
-    --upsert
+    --is-update-workflow sentinel-5p-l2-netcdf-update \
+    -u \
+    -y
 ```
 
 **Notes:**
