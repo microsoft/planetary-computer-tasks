@@ -20,7 +20,6 @@ from azure.batch.models import (
 )
 from azure.core.exceptions import HttpResponseError
 from dateutil.tz import tzutc
-from requests import Response
 
 from pctasks.core.models.run import TaskRunStatus
 from pctasks.core.utils import map_opt
@@ -249,7 +248,7 @@ class BatchClient:
                 )
             )
             task_results: List[batchmodels.TaskAddResult] = result.value  # type: ignore
-        except HttpResponseError as e:
+        except HttpResponseError as _e:
             logger.error("Failed to add tasks...")
 
             # # for exc in e.error:
@@ -383,7 +382,6 @@ class BatchClient:
         hanging_tasks = []
 
         for task in running_tasks:
-            r: Optional[Response] = None
             try:
                 raw_resp = client.get_task_file_properties(
                     job_id=job_id, task_id=task.id, file_path="stdout.txt"  # type: ignore
@@ -402,7 +400,7 @@ class BatchClient:
                     if self._dry_run:
                         print(f"{task.id} - {last_modified}")
 
-            except HttpResponseError as e:
+            except HttpResponseError as _e:
                 # stdout.txt doesn't exist
                 # Check if it's been running without output for
                 # the max time.
