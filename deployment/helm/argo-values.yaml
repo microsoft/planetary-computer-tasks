@@ -6,14 +6,14 @@ server:
   image:
     registry: pccomponentstest.azurecr.io
     repository: argoproj/argocli
-    tag: v3.7.1
+    tag: v3.7.2
 controller:
   image:
     registry: pccomponentstest.azurecr.io
     repository: argoproj/workflow-controller
-    tag: v3.7.1
+    tag: v3.7.2
 executor:
   image:
     registry: pccomponentstest.azurecr.io
     repository: argoproj/argoexec
-    tag: v3.7.1
+    tag: v3.7.2

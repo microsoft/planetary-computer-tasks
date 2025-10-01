@@ -34,7 +34,7 @@ def wait_for_emulator_start(url: str) -> None:
         try_count = 0
         while True:
             try:
-                resp = requests.get(url, verify=False)
+                resp = requests.get(url, verify=False)  # CodeQL [SM03157] justification
                 resp.raise_for_status()
                 break
             except Exception as e:
