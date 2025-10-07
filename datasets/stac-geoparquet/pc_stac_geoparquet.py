@@ -30,6 +30,7 @@ from pctasks.core.models.task import FailedTaskResult, WaitTaskResult
 from pctasks.task.context import TaskContext
 from pctasks.task.task import Task
 import tqdm.auto
+import tempfile
 
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter("[%(levelname)s]:%(asctime)s: %(message)s"))
@@ -38,6 +39,7 @@ logger = logging.getLogger(__name__)
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
 
+CHUNK_SIZE = 8192
 
 PARTITION_FREQUENCIES = {
     "3dep-lidar-classification": "YS",
@@ -332,17 +334,22 @@ class CollectionConfig:
                 row_func=_row_func,
             )
         ):
-            arrow = pgstac_to_arrow(
-                conninfo=conninfo,
-                collection=self.collection_id,
-                start_datetime=start_datetime,
-                end_datetime=end_datetime,
-                row_func=_row_func,
-            )
-            to_parquet(
-                arrow,
-                output_path,
-                filesystem=fs)
+            logger.info(f"Running parquet export with chunk size of {CHUNK_SIZE}")
+            with tempfile.TemporaryDirectory() as tmpdir:
+                arrow = pgstac_to_arrow(
+                    conninfo=conninfo,
+                    collection=self.collection_id,
+                    start_datetime=start_datetime,
+                    end_datetime=end_datetime,
+                    row_func=_row_func,
+                    schema="ChunksToDisk",
+                    tmpdir=tmpdir,
+                    chunk_size=CHUNK_SIZE
+                )
+                to_parquet(
+                    arrow,
+                    output_path,
+                    filesystem=fs)
         return output_path
 
     def export_partition_for_endpoints(
@@ -396,7 +403,15 @@ class CollectionConfig:
         if not fs.exists(output_path):
             return True
         file_info = fs.info(output_path)
-        file_modified_time = datetime.datetime.fromtimestamp(file_info["last_modified"])
+
+        # Handle case where last_modified is already a datetime object or a timestamp
+        last_modified = file_info["last_modified"]
+        if isinstance(last_modified, datetime.datetime):
+            file_modified_time = last_modified
+        else:
+            # Assume it's a timestamp (int/float)
+            file_modified_time = datetime.datetime.fromtimestamp(last_modified)
+            
         partition_modified_time = partition.last_updated
         return file_modified_time < partition_modified_time
 

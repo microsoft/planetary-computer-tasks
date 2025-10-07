@@ -6,7 +6,7 @@ jobs:
   geoparquet:
     tasks:
       - id: update
-        image: pccomponents.azurecr.io/pctasks-stac-geoparquet:guhidalgo
+        image: pccomponents.azurecr.io/pctasks-stac-geoparquet:2025.10.1.1
         code:
           src: ${{ local.path(pc_stac_geoparquet.py) }}
           requirements: ${{ local.path(./requirements.txt) }}
@@ -19,7 +19,7 @@ jobs:
           table_account_url: "https://pcapi.table.core.windows.net"
           table_name: "greencollectionconfig"
           storage_options_account_name: "pcstacitems"
-          # collections: "hls2-l30" # Set if you want to generate only one geoparquet file
+          collections: "sentinel-2-l2a" # Set if you want to generate only one geoparquet file
           extra_skip:
             - "chesapeake-lc-13"
             - "chesapeake-lc-7"

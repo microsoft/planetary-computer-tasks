@@ -1,5 +1,9 @@
 # stac-geoparquet[pgstac,pc]==0.6.0
-git+https://github.com/stac-utils/stac-geoparquet.git@89c71d17a4d9e7cde677a40d3eefa775b6b407eb#egg=stac-geoparquet[pgstac,pc]
+git+https://github.com/liamlego/stac-geoparquet.git@47aff71bc7eb674b1f2ffa38a1f1496c59cf7319#egg=stac-geoparquet[pgstac,pc]
 psycopg[binary,pool]==3.2.6
 azure-data-tables==12.5.0
 pypgstac==0.8.6
+fsspec==2025.9.0
+tqdm==4.67.1
+adlfs==2025.8.0
+azure-datalake-store==0.0.53
