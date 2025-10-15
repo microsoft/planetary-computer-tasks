@@ -33,16 +33,16 @@ The chart can be brought into the `deployment/helm/vendored` directory by runnin
 ```console
 cd deployment/helm/vendored
 helm repo add argo https://argoproj.github.io/argo-helm
-helm pull argo/argo-workflows --version 3.7.2
+helm pull argo/argo-workflows --version 3.7.1
 ```
 
 The images can be imported into your ACR by running the following command:
 
 ```console
 az acr login --name pccomponentstest
-az acr import -n pccomponentstest --source quay.io/argoproj/argocli:v3.7.2 -t argoproj/argocli:v3.7.2 --subscription "Planetary Computer Test"
-az acr import -n pccomponentstest --source quay.io/argoproj/workflow-controller:v3.7.2 -t argoproj/workflow-controller:v3.7.2 --subscription "Planetary Computer Test"
-az acr import -n pccomponentstest --source quay.io/argoproj/argoexec:v3.7.2 -t argoproj/argoexec:v3.7.2 --subscription "Planetary Computer Test"
+az acr import -n pccomponentstest --source quay.io/argoproj/argocli:v3.7.1 -t argoproj/argocli:v3.7.1 --subscription "Planetary Computer Test"
+az acr import -n pccomponentstest --source quay.io/argoproj/workflow-controller:v3.7.1 -t argoproj/workflow-controller:v3.7.1 --subscription "Planetary Computer Test"
+az acr import -n pccomponentstest --source quay.io/argoproj/argoexec:v3.7.1 -t argoproj/argoexec:v3.7.1  --subscription "Planetary Computer Test"
 ```
 
 The image and tag values are specified in the `argo-values.yaml` file and used during installs.
