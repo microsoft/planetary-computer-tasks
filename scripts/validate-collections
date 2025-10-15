@@ -2,4 +2,4 @@
 
 set -e
 
-ls -1N datasets/**/*/template.json | xargs -I {} pctasks dataset validate-collection "{}" 2>&1
+ls -1N datasets/**/*/template.json | xargs -I {} uv run pctasks dataset validate-collection "{}" 2>&1
