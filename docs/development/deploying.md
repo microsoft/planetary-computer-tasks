@@ -42,7 +42,7 @@ The images can be imported into your ACR by running the following command:
 az acr login --name pccomponentstest
 az acr import -n pccomponentstest --source quay.io/argoproj/argocli:v3.7.1 -t argoproj/argocli:v3.7.1 --subscription "Planetary Computer Test"
 az acr import -n pccomponentstest --source quay.io/argoproj/workflow-controller:v3.7.1 -t argoproj/workflow-controller:v3.7.1 --subscription "Planetary Computer Test"
-az acr import -n pccomponentstest --source quay.io/argoproj/argoexec:v3.7.1 -t argoproj/argoexec:v3.7.1  --subscription "Planetary Computer Test"
+az acr import -n pccomponentstest --source quay.io/argoproj/argoexec:v3.7.1 -t argoproj/argoexec:v3.7.1 --subscription "Planetary Computer Test"
 ```
 
 The image and tag values are specified in the `argo-values.yaml` file and used during installs.
