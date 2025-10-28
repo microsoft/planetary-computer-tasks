@@ -23,7 +23,11 @@ import pandas as pd
 import pystac
 import requests
 from stac_geoparquet.arrow import to_parquet
-from stac_geoparquet.pgstac_reader import get_pgstac_partitions, Partition, pgstac_to_arrow, pgstac_to_iter
+from stac_geoparquet.pgstac_reader import (
+    get_pgstac_partitions,
+    Partition,
+    pgstac_to_iter
+)
 
 from pctasks.core.models.base import PCBaseModel
 from pctasks.core.models.task import FailedTaskResult, WaitTaskResult
@@ -31,6 +35,10 @@ from pctasks.task.context import TaskContext
 from pctasks.task.task import Task
 import tqdm.auto
 import tempfile
+from stac_geoparquet.arrow import (
+    parse_stac_items_to_arrow,
+)
+
 
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter("[%(levelname)s]:%(asctime)s: %(message)s"))
@@ -336,16 +344,17 @@ class CollectionConfig:
         ):
             logger.info(f"Running parquet export with chunk size of {CHUNK_SIZE}")
             with tempfile.TemporaryDirectory() as tmpdir:
-                arrow = pgstac_to_arrow(
-                    conninfo=conninfo,
+                items = pgstac_to_iter(
+                    conninfo,
                     collection=self.collection_id,
                     start_datetime=start_datetime,
                     end_datetime=end_datetime,
+                    cursor_itersize=CHUNK_SIZE,
                     row_func=_row_func,
-                    schema="ChunksToDisk",
-                    tmpdir=tmpdir,
-                    chunk_size=CHUNK_SIZE
                 )
+
+                arrow = parse_stac_items_to_arrow(items, chunk_size=CHUNK_SIZE, schema="ChunksToDisk")
+
                 to_parquet(
                     arrow,
                     output_path,
