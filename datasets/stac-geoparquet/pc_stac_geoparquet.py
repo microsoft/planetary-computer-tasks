@@ -353,7 +353,12 @@ class CollectionConfig:
                     row_func=_row_func,
                 )
 
-                arrow = parse_stac_items_to_arrow(items, chunk_size=CHUNK_SIZE, schema="ChunksToDisk")
+                arrow = parse_stac_items_to_arrow(
+                    items,
+                    chunk_size=CHUNK_SIZE,
+                    schema="ChunksToDisk",
+                    tmpdir=tmpdir,
+                )
 
                 to_parquet(
                     arrow,
