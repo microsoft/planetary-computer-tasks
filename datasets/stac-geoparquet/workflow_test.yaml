@@ -6,7 +6,7 @@ jobs:
   stac:
     tasks:
       - id: create
-        image: pccomponentstest.azurecr.io/pctasks-stac-geoparquet:2025.9.25.0
+        image: pccomponentstest.azurecr.io/pctasks-stac-geoparquet:2025.10.28.0
         code:
           src: ${{ local.path(pc_stac_geoparquet.py) }}
         task: pc_stac_geoparquet:StacGeoparquetTask
