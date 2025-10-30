@@ -26,7 +26,8 @@ from stac_geoparquet.arrow import to_parquet
 from stac_geoparquet.pgstac_reader import (
     get_pgstac_partitions,
     Partition,
-    pgstac_to_iter
+    pgstac_to_arrow,
+    pgstac_to_iter,
 )
 
 from pctasks.core.models.base import PCBaseModel
@@ -344,20 +345,15 @@ class CollectionConfig:
         ):
             logger.info(f"Running parquet export with chunk size of {CHUNK_SIZE}")
             with tempfile.TemporaryDirectory() as tmpdir:
-                items = pgstac_to_iter(
-                    conninfo,
+                arrow = pgstac_to_arrow(
+                    conninfo=conninfo,
                     collection=self.collection_id,
                     start_datetime=start_datetime,
                     end_datetime=end_datetime,
-                    cursor_itersize=CHUNK_SIZE,
                     row_func=_row_func,
-                )
-
-                arrow = parse_stac_items_to_arrow(
-                    items,
-                    chunk_size=CHUNK_SIZE,
                     schema="ChunksToDisk",
                     tmpdir=tmpdir,
+                    chunk_size=CHUNK_SIZE
                 )
 
                 to_parquet(

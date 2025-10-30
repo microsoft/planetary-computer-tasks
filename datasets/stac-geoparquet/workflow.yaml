@@ -6,7 +6,7 @@ jobs:
   geoparquet:
     tasks:
       - id: update
-        image: pccomponents.azurecr.io/pctasks-stac-geoparquet:2025.10.28.2
+        image: pccomponents.azurecr.io/pctasks-stac-geoparquet:2025.10.28.5
         code:
           src: ${{ local.path(pc_stac_geoparquet.py) }}
           requirements: ${{ local.path(./requirements.txt) }}
