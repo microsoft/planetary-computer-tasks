@@ -19,7 +19,7 @@ jobs:
           table_account_url: "https://pcapi.table.core.windows.net"
           table_name: "greencollectionconfig"
           storage_options_account_name: "pcstacitems"
-          collections: "sentinel-2-l2a" # Set if you want to generate only one geoparquet file
+          # collections: "sentinel-2-l2a" # Set if you want to generate only one geoparquet file
           extra_skip:
             - "chesapeake-lc-13"
             - "chesapeake-lc-7"
