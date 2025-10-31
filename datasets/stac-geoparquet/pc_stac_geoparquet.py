@@ -238,7 +238,7 @@ def inject_assets(item: dict[str, Any], render_config: str | None) -> dict[str, 
 def naip_year_to_int(item: dict[str, Any]) -> dict[str, Any]:
     """Convert the year to an integer."""
     if "naip:year" in item["properties"] and isinstance(item["properties"]["naip:year"], str):
-            item["properties"]["naip:year"] = int(item["properties"]["naip:year"])
+        item["properties"]["naip:year"] = int(item["properties"]["naip:year"])
     return item
 
 def clean_item(item: dict[str, Any], render_config: str | None) -> dict[str, Any]:
@@ -737,10 +737,6 @@ def run(
         "STAC_GEOPARQUET_TABLE_CREDENTIAL", azure.identity.DefaultAzureCredential()
     )
     assert table_credential is not None
-    table_name = table_name or os.environ["STAC_GEOPARQUET_TABLE_NAME"]
-    table_account_url = (
-        table_account_url or os.environ["STAC_GEOPARQUET_TABLE_ACCOUNT_URL"]
-    )
     storage_options_account_name = (
         storage_options_account_name
         or os.environ["STAC_GEOPARQUET_STORAGE_OPTIONS_ACCOUNT_NAME"]
@@ -766,7 +762,7 @@ def run(
     logger.info(f"Found {len(collection_partitions)} pgstac partitions")
 
     for i, config in enumerate(configs.values(), 1):
-        output_path=f"items/{config.collection_id}.parquet"
+        output_path = f"items/{config.collection_id}.parquet"
         try:
             t0 = time.monotonic()
             config.export_collection(
