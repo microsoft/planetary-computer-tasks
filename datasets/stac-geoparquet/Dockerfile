@@ -39,14 +39,6 @@ COPY pctasks/client /opt/src/pctasks/client
 RUN cd /opt/src/pctasks/client && \
      uv pip install .
 
-# COPY pctasks/ingest /opt/src/pctasks/ingest
-# RUN cd /opt/src/pctasks/ingest && \
-#      uv pip install .
-
-# COPY pctasks/dataset /opt/src/pctasks/dataset
-# RUN cd /opt/src/pctasks/dataset && \
-#      uv pip install .
-
 COPY datasets/stac-geoparquet /opt/src/datasets/stac-geoparquet
 RUN uv pip install -r /opt/src/datasets/stac-geoparquet/requirements.txt
 
