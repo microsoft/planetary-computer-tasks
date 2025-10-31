@@ -1,7 +1,8 @@
-FROM python:3.8-slim
+FROM mcr.microsoft.com/azurelinux/base/python:3.12
 
-
-ENV CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+RUN \
+    tdnf update -y && \
+    tdnf ca-certificates curl -y
 
 ENV PATH=$PATH:/install/bin
 

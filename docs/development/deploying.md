@@ -33,16 +33,16 @@ The chart can be brought into the `deployment/helm/vendored` directory by runnin
 ```console
 cd deployment/helm/vendored
 helm repo add argo https://argoproj.github.io/argo-helm
-helm pull argo/argo-workflows --version 3.5.8
+helm pull argo/argo-workflows --version 3.7.1
 ```
 
 The images can be imported into your ACR by running the following command:
 
 ```console
 az acr login --name pccomponentstest
-az acr import -n pccomponentstest --source quay.io/argoproj/argocli:v3.5.8 -t argoproj/argocli:v3.5.8 --subscription "Planetary Computer Test"
-az acr import -n pccomponentstest --source quay.io/argoproj/workflow-controller:v3.5.8 -t argoproj/workflow-controller:v3.5.8 --subscription "Planetary Computer Test"
-az acr import -n pccomponentstest --source quay.io/argoproj/argoexec:v3.5.8 -t argoproj/argoexec:v3.5.8 --subscription "Planetary Computer Test"
+az acr import -n pccomponentstest --source quay.io/argoproj/argocli:v3.7.1 -t argoproj/argocli:v3.7.1 --subscription "Planetary Computer Test"
+az acr import -n pccomponentstest --source quay.io/argoproj/workflow-controller:v3.7.1 -t argoproj/workflow-controller:v3.7.1 --subscription "Planetary Computer Test"
+az acr import -n pccomponentstest --source quay.io/argoproj/argoexec:v3.7.1 -t argoproj/argoexec:v3.7.1 --subscription "Planetary Computer Test"
 ```
 
 The image and tag values are specified in the `argo-values.yaml` file and used during installs.
@@ -52,6 +52,7 @@ The image and tag values are specified in the `argo-values.yaml` file and used d
 You'll need a service principal that has sufficient permissions to deploy Azure resources, including creating resource groups and assigning IAM roles.
 
 The service principal information fed to the deployment container through the following environment vars on the host:
+
 - AZURE_SUBSCRIPTION_ID
 - AZURE_TENANT_ID
 - AZURE_CLIENT_ID
@@ -126,7 +127,7 @@ Create a second app registration for the frontend app:
 
 #### Merge app registration values into manifest files templates
 
-You'll need to take 4 values from newly created app registrations and merge them into the corresponding app registration manifest template files. Do this for **both** the backend and frontend manifest templates.
+You'll need to take 4 values from newly created app registrations and merge them into the corresponding app registration manifest template files. Do this for __both__ the backend and frontend manifest templates.
 
 | Manifest key name | Template marker               |
 |-------------------|-------------------------------|
@@ -150,7 +151,7 @@ Then, go to the Azure portal and update the backend app registration with the ne
 
 - Click the "Manifest" link under the "Manage" heading
 - Replace the existing manifest file with the fully templated new manifest file
-- **Temporarily remove the value for `preAuthorizedApplications`**. Cut the value of the list so it's just an empty array (`[]`). We can't reference the permission ids that are also being created from the manifest file.
+- __Temporarily remove the value for `preAuthorizedApplications`__. Cut the value of the list so it's just an empty array (`[]`). We can't reference the permission ids that are also being created from the manifest file.
 - Click save
 - Paste back the preAuthorizedApplications value
 - Click save

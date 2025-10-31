@@ -36,9 +36,7 @@ from pctasks.task.context import TaskContext
 from pctasks.task.task import Task
 import tqdm.auto
 import tempfile
-from stac_geoparquet.arrow import (
-    parse_stac_items_to_arrow,
-)
+from pctasks.core.utils.credential import get_credential
 
 
 handler = logging.StreamHandler()
@@ -646,7 +644,7 @@ def list_planetary_computer_collection_configs(
             "STAC_GEOPARQUET_CONNECTION_INFO must be set if not explicitly provided"
         ) from e
     table_credential = table_credential or os.environ.get(
-        "STAC_GEOPARQUET_TABLE_CREDENTIAL", azure.identity.DefaultAzureCredential()
+        "STAC_GEOPARQUET_TABLE_CREDENTIAL", get_credential()
     )
     assert table_credential is not None
     table_name = table_name or os.environ["STAC_GEOPARQUET_TABLE_NAME"]
@@ -659,7 +657,7 @@ def list_planetary_computer_collection_configs(
     )
     storage_options_credential = storage_options_credential or os.environ.get(
         "STAC_GEOPARQUET_STORAGE_OPTIONS_CREDENTIAL",
-        azure.identity.DefaultAzureCredential(),
+        get_credential(),
     )
 
     extra_skip = extra_skip or set()

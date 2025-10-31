@@ -1,6 +1,8 @@
 FROM mcr.microsoft.com/azurelinux/base/python:3.12
 
-RUN tdnf install ca-certificates git azure-cli -y \
+RUN \
+     tdnf update -y && \
+     tdnf install ca-certificates git azure-cli -y \
      && tdnf clean all
 
 # Setup timezone info

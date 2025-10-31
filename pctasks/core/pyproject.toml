@@ -35,7 +35,7 @@ dependencies = [
     "opencensus-ext-azure>=1.1.0",
     "opencensus-ext-logging>=0.1.1",
     "orjson>=3.0.0,<4",
-    "planetary-computer>=0.4.0",
+    "planetary-computer==1.0.0",
     "pystac==1.10.1",
     "pydantic>=2.0.0",
     "pydantic-settings>=2.0.0",

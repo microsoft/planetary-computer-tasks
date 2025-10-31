@@ -47,6 +47,7 @@ from pctasks.core.storage.base import Storage, StorageFileInfo
 from pctasks.core.storage.path_filter import PathFilter
 from pctasks.core.utils import map_opt
 from pctasks.core.utils.backoff import with_backoff
+from pctasks.core.utils.credential import get_credential
 
 logger = logging.getLogger(__name__)
 
@@ -241,13 +242,13 @@ class BlobStorage(Storage):
                     tenant_id=client_secret_credentials.tenant_id,
                 )
             elif os.environ.get("AZURE_CLIENT_ID"):
-                self._blob_creds = DefaultAzureCredential()
+                self._blob_creds = get_credential()
             elif os.environ.get("AZURE_STORAGE_SAS_TOKEN"):
                 self._blob_creds = os.environ["AZURE_STORAGE_SAS_TOKEN"]
             else:
                 # Base case, let Azure SDK handle any other
                 # possibility or error out.
-                self._blob_creds = DefaultAzureCredential()
+                self._blob_creds = get_credential()
 
             self.account_url = (
                 account_url or f"https://{storage_account_name}.blob.core.windows.net"
@@ -839,7 +840,7 @@ def maybe_rewrite_blob_storage_url(url: str) -> str:
 
 
 def get_user_delegation_key(account_url: str) -> UserDelegationKey:
-    credential = DefaultAzureCredential()
+    credential = get_credential()
     blob_service_client = BlobServiceClient(
         account_url=account_url,
         credential=credential,
