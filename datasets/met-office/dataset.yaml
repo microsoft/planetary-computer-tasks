@@ -1,0 +1,85 @@
+id: met-office
+image: ${{ args.registry }}/pctasks-task-base:latest
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./met_office.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+
+environment:
+  APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+
+collections:
+  - id: met-office-global-deterministic-height-level
+    template: ${{ local.path(./collection/met-office-global-deterministic-height-level/) }}
+    asset_storage:
+    # This depends how you want to store the netcdf locally
+      - uri: blob://metofficeeuwest/global-deterministic-height-level/
+        chunks:
+          options:
+            extensions: [.netcdf]
+
+  - id: met-office-global-deterministic-pressure-level
+    template: ${{ local.path(./collection/met-office-global-deterministic-pressure-level/) }}
+    asset_storage:
+    # This depends how you want to store the netcdf locally
+      - uri: blob://metofficeeuwest/global-deterministic-pressure-level/
+        chunks:
+          options:
+            extensions: [.netcdf]
+
+  - id: met-office-global-deterministic-near-surface-level
+    template: ${{ local.path(./collection/met-office-global-deterministic-near-surface-level/) }}
+    asset_storage:
+    # This depends how you want to store the netcdf locally
+      - uri: blob://metofficeeuwest/global-deterministic-near-surface-level/
+        chunks:
+          options:
+            extensions: [.netcdf]
+
+  - id: met-office-global-deterministic-whole-atmosphere-level
+    template: ${{ local.path(./collection/met-office-global-deterministic-whole-atmosphere-level/) }}
+    asset_storage:
+    # This depends how you want to store the netcdf locally
+      - uri: blob://metofficeeuwest/global-deterministic-whole-atmosphere-level/
+        chunks:
+          options:
+            extensions: [.netcdf]
+
+  - id: met-office-uk-deterministic-height-level
+    template: ${{ local.path(./collection/met-office-uk-deterministic-height-level/) }}
+    asset_storage:
+    # This depends how you want to store the netcdf locally
+      - uri: blob://metofficeeuwest/uk-deterministic-height-level/
+        chunks:
+          options:
+            extensions: [.netcdf]
+
+  - id: met-office-uk-deterministic-pressure-level
+    template: ${{ local.path(./collection/met-office-uk-deterministic-pressure-level/) }}
+    asset_storage:
+    # This depends how you want to store the netcdf locally
+      - uri: blob://metofficeeuwest/uk-deterministic-pressure-level/
+        chunks:
+          options:
+            extensions: [.netcdf]
+
+  - id: met-office-uk-deterministic-near-surface-level
+    template: ${{ local.path(./collection/met-office-uk-deterministic-near-surface-level/) }}
+    asset_storage:
+    # This depends how you want to store the netcdf locally
+      - uri: blob://metofficeeuwest/uk-deterministic-near-surface-level/
+        chunks:
+          options:
+            extensions: [.netcdf]
+
+  - id: met-office-uk-deterministic-whole-atmosphere-level
+    template: ${{ local.path(./collection/met-office-uk-deterministic-whole-atmosphere-level/) }}
+    asset_storage:
+    # This depends how you want to store the netcdf locally
+      - uri: blob://metofficeeuwest/uk-deterministic-whole-atmosphere-level/
+        chunks:
+          options:
+            extensions: [.netcdf]
