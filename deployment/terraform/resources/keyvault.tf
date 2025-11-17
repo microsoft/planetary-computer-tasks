@@ -9,6 +9,17 @@ resource "azurerm_role_assignment" "functions-secrets-user" {
   scope                = data.azurerm_key_vault.pctasks.id
 }
 
+# Required for Batch UserSubscription mode
+data "azuread_service_principal" "batch" {
+  display_name = "Microsoft Azure Batch"
+}
+
+resource "azurerm_role_assignment" "batch-keyvault-secrets-officer" {
+  role_definition_name = "Key Vault Secrets Officer"
+  principal_id         = data.azuread_service_principal.batch.object_id
+  scope                = data.azurerm_key_vault.pctasks.id
+}
+
 # Store database information as a secret
 
 resource "azurerm_key_vault_secret" "pgstac-connection-string" {
@@ -18,8 +29,8 @@ resource "azurerm_key_vault_secret" "pgstac-connection-string" {
 }
 
 resource "azurerm_key_vault_secret" "task-application-insights-connection-string" {
-  name = "task-application-insights-connection-string"
-  value = azurerm_application_insights.pctasks.connection_string
+  name         = "task-application-insights-connection-string"
+  value        = azurerm_application_insights.pctasks.connection_string
   key_vault_id = data.azurerm_key_vault.pctasks.id
 }
 

@@ -86,10 +86,6 @@ output "batch_url" {
   value = "https://${azurerm_batch_account.pctasks.account_endpoint}"
 }
 
-output "batch_key" {
-  value = azurerm_batch_account.pctasks.primary_access_key
-}
-
 output "batch_default_pool_id" {
   value = var.batch_default_pool_id
 }
