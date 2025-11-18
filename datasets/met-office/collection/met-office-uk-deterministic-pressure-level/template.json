@@ -1,5 +1,5 @@
 {
-    "id": "met-office-global-deterministic-height-level",
+    "id": "met-office-UK-deterministic-pressure-level",
     "type": "Collection",
     "links": [
         {
@@ -18,7 +18,7 @@
             "title": "Met Office Dataset Documentation"
         }
     ],
-    "title": "Met Office Global Deterministic Height Level",
+    "title": "Met Office UK Deterministic Pressure Level",
     "assets": {
         "thumbnail": {
             "href": "",
@@ -26,17 +26,17 @@
             "roles": [
                 "thumbnail"
             ],
-            "title": "Met Office Global Deterministic Height Level Thumbnail"
+            "title": "Met Office UK Deterministic Pressure Level Thumbnail"
         }
     },
     "extent": {
         "spatial": {
             "bbox": [
                 [
-                    -180,
-                    -90,
-                    180,
-                    90
+                    15,
+                    50,
+                    5,
+                    62
                 ]
             ]
         },
@@ -52,7 +52,7 @@
     "license": "proprietary",
     "keywords": [
         "MetOffice",
-        "Global",
+        "UK",
         "Cloud"
     ],
     "providers": [
@@ -74,11 +74,39 @@
             ]
         }
     ],
-    "description": "The Met Office Global Deterministic Height Level dataset provides a composite of weather parameters generated for specific atmospheric height levels.",
+    "description": "The Met Office UK Deterministic Pressure Level dataset provides a composite of weather parameters generated for specific atmospheric pressure levels.",
     "item_assets": {
-        "cloud_amount_on_height_levels": {
+        "height_ASL_on_pressure_levels": {
             "type": "application/netcdf",
-            "title": "Cloud amount on height levels",            
+            "title": "Height above sea level on pressure levels",
+            "roles": [
+                "data"
+            ]
+        },
+        "relative_humidity_on_pressure_levels": {
+            "type": "application/netcdf",
+            "title": "Relative humidity on pressure levels",
+            "roles": [
+                "data"
+            ]
+        },        
+        "temperature_on_pressure_levels": {
+            "type": "application/netcdf",
+            "title": "Temperature on pressure levels",
+            "roles": [
+                "data"
+            ]
+        },
+        "wind_direction_on_pressure_levels": {
+            "type": "application/netcdf",
+            "title": "Wind direction on pressure levels",
+            "roles": [
+                "data"
+            ]
+        },        
+        "wind_speed_on_pressure_levels": {
+            "type": "application/netcdf",
+            "title": "Wind speed on pressure levels",
             "roles": [
                 "data"
             ]
@@ -94,6 +122,6 @@
         "https://stac-extensions.github.io/forecast/v0.2.0/schema.json"
     ],
     "msft:storage_account": "metofficeeuwest",
-    "msft:short_description": "Met Office Global Deterministic Height Level",
+    "msft:short_description": "Met Office UK Deterministic Pressure Level",
     "msft:region": "westeurope"
 }

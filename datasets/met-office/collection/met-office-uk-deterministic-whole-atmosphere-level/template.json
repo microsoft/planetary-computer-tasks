@@ -1,0 +1,169 @@
+{
+    "id": "met-office-uk-deterministic-whole-atmosphere-level",
+    "type": "Collection",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
+            "type": "text/html",
+            "title": "Creative Commons Attribution-ShareAlike 4.0"
+        },
+        {
+            "rel": "cite-as",
+            "title": "British Crown copyright 2023-2025, the Met Office, is licensed under CC BY-SA"
+        },        
+        {
+            "rel": "describedBy",
+            "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
+            "title": "Met Office Dataset Documentation"
+        }
+    ],
+    "title": "Met Office UK Deterministic Whole Atmosphere Level",
+    "assets": {
+        "thumbnail": {
+            "href": "",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "Met Office UK Deterministic Whole Atmosphere Level Thumbnail"
+        }
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    15,
+                    50,
+                    5,
+                    62
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2 years ago",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "MetOffice",
+        "UK",
+        "Cloud"
+    ],
+    "providers": [
+        {
+            "url": "https://www.metoffice.gov.uk/",
+            "name": "Met Office",
+            "roles": [
+                "producer",
+                "licensor",
+                "processor"
+            ]
+        },
+        {
+            "url": "https://planetarycomputer.microsoft.com",
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ]
+        }
+    ],
+    "description": "The Met Office UK Deterministic Whole Atmosphere Level dataset provides a composite of weather parameters generated throughout the atmospheric column.",
+    "item_assets": {
+        "CAPE_most_unstable_below_500hPa": {
+            "type": "application/netcdf",
+            "title": "Convective Available Potential Energy most unstable below 500hPa",
+            "roles": [
+                "data"
+            ]
+        },        
+        "CAPE_surface": {
+            "type": "application/netcdf",
+            "title": "Convective Available Potential Energy with respect to surface",
+            "roles": [
+                "data"
+            ]
+        },
+        "cloud_amount_below_1000ft_ASL": {
+            "type": "application/netcdf",
+            "title": "Cloud amount below 1000ft Above Sea Level",
+            "roles": [
+                "data"
+            ]
+        },
+        "cloud_amount_of_high_cloud": {
+            "type": "application/netcdf",
+            "title": "Cloud amount of high cloud",
+            "roles": [
+                "data"
+            ]
+        },
+        "cloud_amount_of_low_cloud": {
+            "type": "application/netcdf",
+            "title": "Cloud amount of low cloud",
+            "roles": [
+                "data"
+            ]
+        },
+        "cloud_amount_of_medium_cloud": {
+            "type": "application/netcdf",
+            "title": "Cloud amount of medium cloud",
+            "roles": [
+                "data"
+            ]
+        },
+        "cloud_amount_of_total_cloud": {
+            "type": "application/netcdf",
+            "title": "Cloud amount of total cloud",
+            "roles": [
+                "data"
+            ]
+        },
+        "height_AGL_at_cloud_base_where_cloud_cover_2p5_oktas": {
+            "type": "application/netcdf",
+            "title": "Height above ground level at cloud base where cloud cover 2p5 oktas",
+            "roles": [
+                "data"
+            ]
+        },
+        "height_AGL_at_freezing_level": {
+            "type": "application/netcdf",
+            "title": "Height above ground level at freezing level",
+            "roles": [
+                "data"
+            ]
+        },
+        "height_AGL_at_wet_bulb_freezing_level": {
+            "type": "application/netcdf",
+            "title": "Height above ground level at wet bulb freezing level",
+            "roles": [
+                "data"
+            ]
+        },
+        "lightning_flash_accumulation-PT01H": {
+            "type": "application/netcdf",
+            "title": "Hourly number of lightning flashes per unit area",
+            "roles": [
+                "data"
+            ]
+        }
+    },
+    "stac_version": "1.0.0",
+    "msft:group_id": "metoffice",
+    "msft:container": "",
+    "stac_extensions": [
+        "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+        "https://stac-extensions.github.io/forecast/v0.2.0/schema.json"
+    ],
+    "msft:storage_account": "metofficeeuwest",
+    "msft:short_description": "Met Office UK Deterministic Whole Atmosphere Level",
+    "msft:region": "westeurope"
+}

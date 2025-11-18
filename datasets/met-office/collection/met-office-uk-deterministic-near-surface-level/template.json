@@ -1,0 +1,330 @@
+{
+    "id": "met-office-uk-deterministic-near-surface-level",
+    "type": "Collection",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
+            "type": "text/html",
+            "title": "Creative Commons Attribution-ShareAlike 4.0"
+        },
+        {
+            "rel": "cite-as",
+            "title": "British Crown copyright 2023-2025, the Met Office, is licensed under CC BY-SA"
+        },        
+        {
+            "rel": "describedBy",
+            "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
+            "title": "Met Office Dataset Documentation"
+        }
+    ],
+    "title": "Met Office UK Deterministic Near Surface Level",
+    "assets": {
+        "thumbnail": {
+            "href": "",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "Met Office UK Deterministic Near Surface Level Thumbnail"
+        }
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    15,
+                    50,
+                    5,
+                    62
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2 years ago",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "MetOffice",
+        "UK",
+        "Cloud"
+    ],
+    "providers": [
+        {
+            "url": "https://www.metoffice.gov.uk/",
+            "name": "Met Office",
+            "roles": [
+                "producer",
+                "licensor",
+                "processor"
+            ]
+        },
+        {
+            "url": "https://planetarycomputer.microsoft.com",
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ]
+        }
+    ],
+    "description": "The Met Office UK Deterministic Near Surface Level dataset provides a composite of weather parameters generated for near surface levels.",
+    "item_assets": {
+        "fog_fraction_at_screen_level": {
+            "type": "application/netcdf",
+            "title": "Fog fraction at screen level",
+            "roles": [
+                "data"
+            ]
+        },
+        "hail_fall_accumulation-PT01H": {
+            "type": "application/netcdf",
+            "title": "Hourly hail fall accumulation",
+            "roles": [
+                "data"
+            ]
+        },
+        "hail_fall_rate": {
+            "type": "application/netcdf",
+            "title": "Hail fall rate",
+            "roles": [
+                "data"
+            ]
+        },
+        "landsea_mask": {
+            "type": "application/netcdf",
+            "title": "Land binary mask",
+            "roles": [
+                "data"
+            ]
+        },
+        "precipitation_accumulation-PT01H": {
+            "type": "application/netcdf",
+            "title": "Hourly precipitation accumulation",
+            "roles": [
+                "data"
+            ]
+        },
+        "precipitation_accumulation-PT03H": {
+            "type": "application/netcdf",
+            "title": "Three hourly precipitation accumulation",
+            "roles": [
+                "data"
+            ]
+        },
+        "precipitation_rate": {
+            "type": "application/netcdf",
+            "title": "Precipitation rate",
+            "roles": [
+                "data"
+            ]
+        },
+        "pressure_at_mean_sea_level": {
+            "type": "application/netcdf",
+            "title": "Pressure at mean sea level",
+            "roles": [
+                "data"
+            ]
+        },
+        "pressure_at_surface": {
+            "type": "application/netcdf",
+            "title": "Pressure at surface",
+            "roles": [
+                "data"
+            ]
+        },
+        "radiation_flux_in_longwave_downward_at_surface": {
+            "type": "application/netcdf",
+            "title": "Radiation flux in longwave downward at surface",
+            "roles": [
+                "data"
+            ]
+        },
+        "radiation_flux_in_shortwave_diffuse_downward_at_surface": {
+            "type": "application/netcdf",
+            "title": "Radiation flux in shortwave diffuse downward at surface",
+            "roles": [
+                "data"
+            ]
+        },
+        "radiation_flux_in_shortwave_direct_downward_at_surface": {
+            "type": "application/netcdf",
+            "title": "Radiation flux in shortwave direct downward at surface",
+            "roles": [
+                "data"
+            ]
+        },
+        "radiation_flux_in_shortwave_total_downward_at_surface": {
+            "type": "application/netcdf",
+            "title": "Radiation flux in shortwave total downward at surface",
+            "roles": [
+                "data"
+            ]
+        },
+        "radiation_flux_in_uv_downward_at_surface": {
+            "type": "application/netcdf",
+            "title": "Radiation flux in uv downward at surface",
+            "roles": [
+                "data"
+            ]
+        },
+        "rainfall_accumulation-PT01H": {
+            "type": "application/netcdf",
+            "title": "Hourly rainfall accumulation",
+            "roles": [
+                "data"
+            ]
+        },
+        "rainfall_accumulation-PT03H": {
+            "type": "application/netcdf",
+            "title": "Three hourly rainfall accumulation",
+            "roles": [
+                "data"
+            ]
+        },
+        "rainfall_rate": {
+            "type": "application/netcdf",
+            "title": "Rainfall rate",
+            "roles": [
+                "data"
+            ]
+        },
+        "relative_humidity_at_screen_level": {
+            "type": "application/netcdf",
+            "title": "Relative humidity at screen level",
+            "roles": [
+                "data"
+            ]
+        },
+        "sensible_heat_flux_at_surface": {
+            "type": "application/netcdf",
+            "title": "Sensible heat flux at surface",
+            "roles": [
+                "data"
+            ]
+        },
+        "snow_depth_water_equivalent": {
+            "type": "application/netcdf",
+            "title": "Snow depth water equivalent",
+            "roles": [
+                "data"
+            ]
+        },
+        "snowfall_accumulation-PT01H": {
+            "type": "application/netcdf",
+            "title": "Hourly snowfall accumulation",
+            "roles": [
+                "data"
+            ]
+        },
+        "snowfall_accumulation-PT03H": {
+            "type": "application/netcdf",
+            "title": "Three hourly snowfall accumulation",
+            "roles": [
+                "data"
+            ]
+        },
+        "snowfall_rate": {
+            "type": "application/netcdf",
+            "title": "Snowfall rate",
+            "roles": [
+                "data"
+            ]
+        },
+        "temperature_at_screen_level": {
+            "type": "application/netcdf",
+            "title": "Temperature at screen level",
+            "roles": [
+                "data"
+            ]
+        },
+        "temperature_at_screen_level_max-PT01H": {
+            "type": "application/netcdf",
+            "title": "Hourly temperature at screen level max",
+            "roles": [
+                "data"
+            ]
+        },
+        "temperature_at_screen_level_min-PT01H": {
+            "type": "application/netcdf",
+            "title": "Hourly temperature at screen level min",
+            "roles": [
+                "data"
+            ]
+        },
+        "temperature_at_surface": {
+            "type": "application/netcdf",
+            "title": "Temperature at surface",
+            "roles": [
+                "data"
+            ]
+        },
+        "temperature_of_dew_point_at_screen_level": {
+            "type": "application/netcdf",
+            "title": "Dew point temperature at screen level",
+            "roles": [
+                "data"
+            ]
+        },
+        "visibility_at_screen_level": {
+            "type": "application/netcdf",
+            "title": "Visibility at screen level",
+            "roles": [
+                "data"
+            ]
+        },
+        "wind_direction_at_10m": {
+            "type": "application/netcdf",
+            "title": "Wind direction at 10m",
+            "roles": [
+                "data"
+            ]
+        },
+        "wind_gust_at_10m": {
+            "type": "application/netcdf",
+            "title": "Wind gust at 10m",
+            "roles": [
+                "data"
+            ]
+        },
+        "wind_gust_at_10m_max-PT01H": {
+            "type": "application/netcdf",
+            "title": "Hourly wind gust at 10m max",
+            "roles": [
+                "data"
+            ]
+        },
+        "wind_gust_at_10m_max-PT03H": {
+            "type": "application/netcdf",
+            "title": "Three hourly wind gust at 10m max",
+            "roles": [
+                "data"
+            ]
+        },
+        "wind_speed_at_10m": {
+            "type": "application/netcdf",
+            "title": "Wind speed at 10m",
+            "roles": [
+                "data"
+            ]
+        }
+    },
+    "stac_version": "1.0.0",
+    "msft:group_id": "metoffice",
+    "msft:container": "",
+    "stac_extensions": [
+        "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+        "https://stac-extensions.github.io/forecast/v0.2.0/schema.json"
+    ],
+    "msft:storage_account": "metofficeeuwest",
+    "msft:short_description": "Met Office UK Deterministic Near Surface Level",
+    "msft:region": "westeurope"
+}

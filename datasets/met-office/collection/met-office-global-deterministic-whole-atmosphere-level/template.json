@@ -1,0 +1,190 @@
+{
+    "id": "met-office-global-deterministic-whole-atmosphere-level",
+    "type": "Collection",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
+            "type": "text/html",
+            "title": "Creative Commons Attribution-ShareAlike 4.0"
+        },
+        {
+            "rel": "cite-as",
+            "title": "British Crown copyright 2023-2025, the Met Office, is licensed under CC BY-SA"
+        },        
+        {
+            "rel": "describedBy",
+            "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
+            "title": "Met Office Dataset Documentation"
+        }
+    ],
+    "title": "Met Office Global Deterministic Whole Atmosphere Level",
+    "assets": {
+        "thumbnail": {
+            "href": "",
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "Met Office Global Deterministic Whole Atmosphere Level Thumbnail"
+        }
+    },
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2 years ago",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "MetOffice",
+        "Global",
+        "Cloud"
+    ],
+    "providers": [
+        {
+            "url": "https://www.metoffice.gov.uk/",
+            "name": "Met Office",
+            "roles": [
+                "producer",
+                "licensor",
+                "processor"
+            ]
+        },
+        {
+            "url": "https://planetarycomputer.microsoft.com",
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ]
+        }
+    ],
+    "description": "The Met Office Global Deterministic Whole Atmosphere Level dataset provides a composite of weather parameters generated throughout the atmospheric column.",
+    "item_assets": {
+        "CAPE_mixed_layer_lowest_500m": {
+            "type": "application/netcdf",
+            "title": "Convective Available Potential Energy mixed layer lowest 500m",
+            "roles": [
+                "data"
+            ]
+        },
+        "CAPE_most_unstable_below_500hPa": {
+            "type": "application/netcdf",
+            "title": "Convective Available Potential Energy most unstable below 500hPa",
+            "roles": [
+                "data"
+            ]
+        },        
+        "CAPE_surface": {
+            "type": "application/netcdf",
+            "title": "Convective Available Potential Energy with respect to surface",
+            "roles": [
+                "data"
+            ]
+        },
+        "CIN_mixed_layer_lowest_500m": {
+            "type": "application/netcdf",
+            "title": "Convective Inhibition mixed layer lowest 500m",
+            "roles": [
+                "data"
+            ]
+        },
+        "CIN_most_unstable_below_500hPa": {
+            "type": "application/netcdf",
+            "title": "Convective Inhibition most unstable below 500hPa",
+            "roles": [
+                "data"
+            ]
+        },        
+        "CIN_surface": {
+            "type": "application/netcdf",
+            "title": "Convective Inhibition with respect to surface",
+            "roles": [
+                "data"
+            ]
+        },
+        "cloud_amount_below_1000ft_ASL": {
+            "type": "application/netcdf",
+            "title": "Cloud amount below 1000ft Above Sea Level",
+            "roles": [
+                "data"
+            ]
+        },
+        "cloud_amount_of_high_cloud": {
+            "type": "application/netcdf",
+            "title": "Cloud amount of high cloud",
+            "roles": [
+                "data"
+            ]
+        },
+        "cloud_amount_of_low_cloud": {
+            "type": "application/netcdf",
+            "title": "Cloud amount of low cloud",
+            "roles": [
+                "data"
+            ]
+        },
+        "cloud_amount_of_medium_cloud": {
+            "type": "application/netcdf",
+            "title": "Cloud amount of medium cloud",
+            "roles": [
+                "data"
+            ]
+        },
+        "cloud_amount_of_total_cloud": {
+            "type": "application/netcdf",
+            "title": "Cloud amount of total cloud",
+            "roles": [
+                "data"
+            ]
+        },
+        "cloud_amount_of_total_convective_cloud": {
+            "type": "application/netcdf",
+            "title": "Cloud amount of total convective cloud",
+            "roles": [
+                "data"
+            ]
+        },
+        "pressure_at_tropopause": {
+            "type": "application/netcdf",
+            "title": "Pressure at tropopause",
+            "roles": [
+                "data"
+            ]
+        },
+        "temperature_at_tropopause": {
+            "type": "application/netcdf",
+            "title": "Temperature at tropopause",
+            "roles": [
+                "data"
+            ]
+        }
+    },
+    "stac_version": "1.0.0",
+    "msft:group_id": "metoffice",
+    "msft:container": "",
+    "stac_extensions": [
+        "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+        "https://stac-extensions.github.io/forecast/v0.2.0/schema.json"
+    ],
+    "msft:storage_account": "metofficeeuwest",
+    "msft:short_description": "Met Office Global Deterministic Whole Atmosphere Level",
+    "msft:region": "westeurope"
+}
