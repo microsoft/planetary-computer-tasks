@@ -130,10 +130,6 @@ output "sa_account_name" {
   value = azurerm_storage_account.pctasks.name
 }
 
-output "sa_connection_string" {
-  value = azurerm_storage_account.pctasks.primary_connection_string
-}
-
 ## Keyvault
 
 output "keyvault_url" {
