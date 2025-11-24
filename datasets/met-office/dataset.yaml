@@ -1,0 +1,28 @@
+id: met-office
+image: ${{ args.registry }}/pctasks-task-base:2025.4.8.2
+
+args:
+  - registry
+
+code:
+  src: ${{ local.path(./met_office.py) }}
+
+environment:
+  APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+
+collections:
+  - id: met-office-global-deterministic-height-level
+    template: ${{ local.path(./collection/met-office-global-deterministic-height-level) }}
+    class: met_office:MetOfficeCollection
+    asset_storage:
+      - uri: blob://ukmoforecasts/global/height
+        chunks:
+          splits:
+            - depth: 1
+          options:
+            ends_with: .nc
+            min_depth: 6
+            max_depth: 6
+            chunk_length: 20000
+    chunk_storage:
+      uri: blob://ukmoforecasts/met-office-deterministic-info/pctasks-chunks/
