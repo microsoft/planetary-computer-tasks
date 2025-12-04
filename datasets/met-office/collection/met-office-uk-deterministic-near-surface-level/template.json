@@ -9,7 +9,7 @@
             "title": "Creative Commons Attribution-ShareAlike 4.0"
         },
         {
-            "rel": "describedBy",
+            "rel": "describedby",
             "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
             "title": "Met Office Dataset Documentation"
         }
