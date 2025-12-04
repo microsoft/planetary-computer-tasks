@@ -9,7 +9,7 @@
             "title": "Creative Commons Attribution-ShareAlike 4.0"
         },
         {
-            "rel": "describedBy",
+            "rel": "describedby",
             "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
             "title": "Met Office Dataset Documentation"
         }
@@ -39,7 +39,7 @@
         "temporal": {
             "interval": [
                 [
-                    "2024-01-01T00:00:00Z",
+                    "2023-12-15T00:00:00Z",
                     null
                 ]
             ]
@@ -105,7 +105,7 @@
                 "data"
             ]
         },
-        "height_of_orography ": {
+        "height_of_orography": {
             "type": "application/netcdf",
             "title": "Height of orography",
             "description": "Altitude or (geometric) height above the geoid of the surface (ground). It is worth remembering that orographic height can be negative, particularly in some of the inland sea areas (e.g. Caspian Sea at -27m and Dead Sea at -430m).",

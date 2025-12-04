@@ -2,31 +2,30 @@ This collection offers 35 parameters at near-surface level from the Met Office U
 
 The data is available as NetCDF files. It's offered on a free, unsupported basis, so we don’t recommend using it for any critical business purposes. 
 
-## Coverage area 
+## Coverage area
 The forecast covers the UK and Ireland, with the following latitude and longitude coordinates for each corner of the included area: 
 * Southwest: 48.8643°N, 10.6734°W 
 * Northwest: 61.3322°N, 13.7254°W 
 * Northeast: 61.6102°N, 4.3408°E 
 * Southeast: 49.0594°N, 2.4654°E 
 
-## Timesteps 
+## Timesteps
 The following time steps are available: 
 * every hour from 0 to 54 hours (for most parameters, see parameter table for exceptions) 
 * every 3 hours from 57 to 120 hours 
  
-## Update frequency 
+## Update frequency
 There are three lengths of model run, each with its own update frequency: 
 * The Nowcast-length runs forecast the next 12 hours and are at 0100, 0200, 0400, 0500, 0700, 0800, 1000, 1100, 1300, 1400, 1600, 1700, 1900, 2000, 2200 and 2300 UTC. 
 * The Short-length runs forecast the next 54 hours and are at 0000, 0600, 0900, 1200, 1800 and 2100 UTC. 
 * The Medium-Length runs forecast the next 120 hours and are at 0300 and 1500 UTC.
 
 ## Archive length and latency
-
-As of January 2026, the archive contains data from January 2024 onwards. Forecasts will continue to be available for at least two years from their data date. 
+As of December 2025, the archive contains data from December 2023 onwards. Forecasts will continue to be available for at least two years from their data date. 
 
 The data is typically available approximately 3-3.5 hours after the model run time. 
 
-## Technical specs 
+## Technical specs
 The data is available as NetCDF files. NetCDF (Network Common Data Form) is an interface for array-orientated data access and a library that supports the interface. It is composed of 3 components: 
 * variables store the data 
 * dimensions give relevant dimension information for the variables 
@@ -38,21 +37,18 @@ Iris supports NetCDF files through reading, writing and handling. Iris implement
 
 [Find further support on using Iris with NetCDF files.](https://scitools-iris.readthedocs.io/en/stable/) 
 
-## Help us improve the data services we offer 
-
+## Help us improve the data services we offer
 [Join the Met Office research panel](https://forms.office.com/Pages/ResponsePage.aspx?id=YYHxF9cgRkeH_VD-PjtmGdxioYGoFbFIkZuB_q8Fb3VUQkoxRVQzTFdUMzNMVzczWVM5VTc3QTY3MC4u) to help us understand how people interact with weather and climate data, uncover challenges and explore opportunities.  
 
-## How to cite 
-
+## How to cite
 UKV 2km deterministic forecast was accessed on DATE from _insert Planetary Computer link_. 
 
 ## License
-
 British Crown copyright 2023-2025, the Met Office, is licensed under [CC BY-SA](https://creativecommons.org/licenses/by-sa/4.0/deed.en).
 
-## Providers 
+## Providers
 [Met Office](https://www.metoffice.gov.uk/)
 See all datasets managed by [Met Office.](https://registry.opendata.aws/?search=managedBy:met%20office)
 
-## Contact 
+## Contact
 [servicedesk@metoffice.gov.uk](mailto:servicedesk@metoffice.gov.uk). Service desk is only available Mon – Fri, 09:00 until 17:00 UTC (-1 hour during BST). As a non-operational service we aim to respond to any service support enquiries within 3-5 business days. 
