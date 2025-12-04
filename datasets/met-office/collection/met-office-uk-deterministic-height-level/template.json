@@ -7,18 +7,14 @@
             "href": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
             "type": "text/html",
             "title": "Creative Commons Attribution-ShareAlike 4.0"
-        },
-        {
-            "rel": "cite-as",
-            "title": "British Crown copyright 2023-2025, the Met Office, is licensed under CC BY-SA"
         },        
         {
-            "rel": "describedBy",
+            "rel": "describedby",
             "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
             "title": "Met Office Dataset Documentation"
         }
     ],
-    "title": "Met Office UK Deterministic Height Level",
+    "title": "Height levels collection Met Office UKV 2km deterministic forecast",
     "assets": {
         "thumbnail": {
             "href": "",
@@ -26,24 +22,24 @@
             "roles": [
                 "thumbnail"
             ],
-            "title": "Met Office UK Deterministic Height Level Thumbnail"
+            "title": "Height levels collection Met Office UKV 2km deterministic forecast thumbnail"
         }
     },
     "extent": {
         "spatial": {
             "bbox": [
                 [
-                    -24.51,
-                    44.52,
-                    15.28,
-                    61.83
+                    15,
+                    50,
+                    5,
+                    62
                 ]
             ]
         },
         "temporal": {
             "interval": [
                 [
-                    "2 years ago",
+                    "2023-12-15T00:00:00Z",
                     null
                 ]
             ]
@@ -51,9 +47,14 @@
     },
     "license": "proprietary",
     "keywords": [
-        "MetOffice",
+        "Met Office",
+        "Weather",
+        "Forecast",
         "UK",
-        "Cloud"
+        "Cloud",
+        "Temperature",
+        "Wind",
+        "Height"
     ],
     "providers": [
         {
@@ -74,32 +75,39 @@
             ]
         }
     ],
-    "description": "The Met Office UK Deterministic Height Level dataset provides a composite of weather parameters generated for specific atmospheric height levels.",
     "item_assets": {
         "cloud_amount_on_height_levels": {
             "type": "application/netcdf",
-            "title": "Cloud amount on height levels",            
+            "title": "Cloud amount on height levels",
+            "description": "Fraction of horizontal grid square occupied by cloud in layers centred on height levels.",
+            "unit": "1",
             "roles": [
                 "data"
             ]
         },
         "temperature_on_height_levels": {
             "type": "application/netcdf",
-            "title": "Temperature on height levels",            
+            "title": "Temperature on height levels",
+            "description": "Air temperature on height levels.",
+            "unit": "K",
             "roles": [
                 "data"
             ]
         },
         "wind_direction_on_height_levels": {
             "type": "application/netcdf",
-            "title": "Wind direction on height levels",            
+            "title": "Wind direction on height levels",
+            "description": "Wind direction on height levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. In meteorological reports the direction of the wind vector is given as the direction from which it is blowing.",
+            "unit": "degrees",
             "roles": [
                 "data"
             ]
         },
         "wind_speed_on_height_levels": {
             "type": "application/netcdf",
-            "title": "Wind speed on height levels",            
+            "title": "Wind speed on height levels",
+            "description": "Wind speed on height levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. The speed is the magnitude of velocity.",           
+            "unit": "m/s",
             "roles": [
                 "data"
             ]
