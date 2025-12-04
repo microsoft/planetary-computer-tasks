@@ -105,7 +105,7 @@
                 "data"
             ]
         },
-        "height_of_orography ": {
+        "height_of_orography": {
             "type": "application/netcdf",
             "title": "Height of orography",
             "description": "Altitude or (geometric) height above the geoid of the surface (ground). It is worth remembering that orographic height can be negative, particularly in some of the inland sea areas (e.g. Caspian Sea at -27m and Dead Sea at -430m).",
