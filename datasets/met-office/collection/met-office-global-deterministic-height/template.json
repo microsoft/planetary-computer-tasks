@@ -1,0 +1,58 @@
+{
+  "id": "met-office-global-deterministic-height",
+  "type": "Collection",
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
+      "type": "text/html",
+      "title": "Creative Commons Attribution-ShareAlike 4.0"
+    },
+    {
+      "rel": "describedBy",
+      "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
+      "title": "Met Office Dataset Documentation"
+    }
+  ],
+  "title": "Met Office Global Deterministic Height Level",
+  "assets": {},
+  "extent": {
+    "spatial": {
+      "bbox": [[-180, -90, 180, 90]]
+    },
+    "temporal": {
+      "interval": [["2023-12-04T00:00:00Z", null]]
+    }
+  },
+  "license": "proprietary",
+  "keywords": ["MetOffice", "Global", "Cloud"],
+  "providers": [
+    {
+      "url": "https://www.metoffice.gov.uk/",
+      "name": "Met Office",
+      "roles": ["producer", "licensor", "processor"]
+    },
+    {
+      "url": "https://planetarycomputer.microsoft.com",
+      "name": "Microsoft",
+      "roles": ["host", "processor"]
+    }
+  ],
+  "description": "{{ collection.description }}",
+  "item_assets": {
+    "cloud_amount_on_height_levels": {
+      "type": "application/netcdf",
+      "title": "Cloud amount on height levels",
+      "roles": ["data"]
+    }
+  },
+  "stac_version": "1.0.0",
+  "msft:group_id": "metoffice",
+  "msft:container": "staging",
+  "stac_extensions": [
+    "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+  ],
+  "msft:storage_account": "ukmoforecasts",
+  "msft:short_description": "Met Office Global Deterministic Height Level",
+  "msft:region": "westeurope"
+}

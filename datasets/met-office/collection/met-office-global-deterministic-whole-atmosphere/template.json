@@ -1,0 +1,126 @@
+{
+  "id": "met-office-global-deterministic-whole-atmosphere",
+  "type": "Collection",
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
+      "type": "text/html",
+      "title": "Creative Commons Attribution-ShareAlike 4.0"
+    },
+    {
+      "rel": "describedBy",
+      "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
+      "title": "Met Office Dataset Documentation"
+    }
+  ],
+  "title": "Met Office Global Deterministic Whole Atmosphere Level",
+  "assets": {},
+  "extent": {
+    "spatial": {
+      "bbox": [[-180, -90, 180, 90]]
+    },
+    "temporal": {
+      "interval": [["2023-12-04T00:00:00Z", null]]
+    }
+  },
+  "license": "proprietary",
+  "keywords": ["MetOffice", "Global", "Cloud"],
+  "providers": [
+    {
+      "url": "https://www.metoffice.gov.uk/",
+      "name": "Met Office",
+      "roles": ["producer", "licensor", "processor"]
+    },
+    {
+      "url": "https://planetarycomputer.microsoft.com",
+      "name": "Microsoft",
+      "roles": ["host", "processor"]
+    }
+  ],
+  "description": "{{ collection.description }}",
+  "item_assets": {
+    "CAPE_mixed_layer_lowest_500m": {
+      "type": "application/netcdf",
+      "title": "Convective Available Potential Energy mixed layer lowest 500m",
+      "roles": ["data"]
+    },
+    "CAPE_most_unstable_below_500hPa": {
+      "type": "application/netcdf",
+      "title": "Convective Available Potential Energy most unstable below 500hPa",
+      "roles": ["data"]
+    },
+    "CAPE_surface": {
+      "type": "application/netcdf",
+      "title": "Convective Available Potential Energy with respect to surface",
+      "roles": ["data"]
+    },
+    "CIN_mixed_layer_lowest_500m": {
+      "type": "application/netcdf",
+      "title": "Convective Inhibition mixed layer lowest 500m",
+      "roles": ["data"]
+    },
+    "CIN_most_unstable_below_500hPa": {
+      "type": "application/netcdf",
+      "title": "Convective Inhibition most unstable below 500hPa",
+      "roles": ["data"]
+    },
+    "CIN_surface": {
+      "type": "application/netcdf",
+      "title": "Convective Inhibition with respect to surface",
+      "roles": ["data"]
+    },
+    "cloud_amount_below_1000ft_ASL": {
+      "type": "application/netcdf",
+      "title": "Cloud amount below 1000ft Above Sea Level",
+      "roles": ["data"]
+    },
+    "cloud_amount_of_high_cloud": {
+      "type": "application/netcdf",
+      "title": "Cloud amount of high cloud",
+      "roles": ["data"]
+    },
+    "cloud_amount_of_low_cloud": {
+      "type": "application/netcdf",
+      "title": "Cloud amount of low cloud",
+      "roles": ["data"]
+    },
+    "cloud_amount_of_medium_cloud": {
+      "type": "application/netcdf",
+      "title": "Cloud amount of medium cloud",
+      "roles": ["data"]
+    },
+    "cloud_amount_of_total_cloud": {
+      "type": "application/netcdf",
+      "title": "Cloud amount of total cloud",
+      "roles": ["data"]
+    },
+    "cloud_amount_of_total_convective_cloud": {
+      "type": "application/netcdf",
+      "title": "Cloud amount of total convective cloud",
+      "roles": ["data"]
+    },
+    "pressure_at_tropopause": {
+      "type": "application/netcdf",
+      "title": "Pressure at tropopause",
+      "roles": ["data"]
+    },
+    "temperature_at_tropopause": {
+      "type": "application/netcdf",
+      "title": "Temperature at tropopause",
+      "roles": ["data"]
+    }
+  },
+  "stac_version": "1.0.0",
+  "msft:group_id": "metoffice",
+  "msft:container": "staging",
+  "stac_extensions": [
+    "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+    "https://stac-extensions.github.io/forecast/v0.2.0/schema.json"
+  ],
+  "msft:storage_account": "ukmoforecasts",
+  "msft:short_description": "Met Office Global Deterministic Whole Atmosphere Level",
+  "msft:region": "westeurope"
+}

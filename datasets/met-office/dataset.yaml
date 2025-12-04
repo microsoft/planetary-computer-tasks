@@ -1,21 +1,107 @@
 id: met-office
-image: ${{ args.registry }}/pctasks-task-base:2025.4.8.2
+image: ${{ args.registry }}/pctasks-task-base:latest
 
 args:
   - registry
 
 code:
   src: ${{ local.path(./met_office.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
 
 environment:
   APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+  DB_CONNECTION_STRING: ${{ secrets.staging-db-connection-string }}
 
 collections:
-  - id: met-office-global-deterministic-height-level
-    template: ${{ local.path(./collection/met-office-global-deterministic-near-surface-level) }}
+  - id: met-office-global-deterministic-height
+    template: ${{ local.path(./collection/met-office-global-deterministic-height) }}
+    class: met_office:MetOfficeCollection
+    asset_storage:
+      - uri: blob://ukmoforecasts/staging/global/height
+        chunks:
+          options:
+            min_depth: 1
+            max_depth: 1
+            chunk_length: 20000
+    chunk_storage:
+      uri: blob://ukmoforecasts/staging/staging-chunks/
+  - id: met-office-global-deterministic-near-surface
+    template: ${{ local.path(./collection/met-office-global-deterministic-near-surface) }}
     class: met_office:MetOfficeCollection
     asset_storage:
       - uri: blob://ukmoforecasts/staging/global/near-surface
+        chunks:
+          options:
+            min_depth: 1
+            max_depth: 1
+            chunk_length: 20000
+    chunk_storage:
+      uri: blob://ukmoforecasts/staging/staging-chunks/
+  - id: met-office-global-deterministic-pressure
+    template: ${{ local.path(./collection/met-office-global-deterministic-pressure) }}
+    class: met_office:MetOfficeCollection
+    asset_storage:
+      - uri: blob://ukmoforecasts/staging/global/pressure
+        chunks:
+          options:
+            min_depth: 1
+            max_depth: 1
+            chunk_length: 20000
+    chunk_storage:
+      uri: blob://ukmoforecasts/staging/staging-chunks/
+  - id: met-office-global-deterministic-whole-atmosphere
+    template: ${{ local.path(./collection/met-office-global-deterministic-whole-atmosphere) }}
+    class: met_office:MetOfficeCollection
+    asset_storage:
+      - uri: blob://ukmoforecasts/staging/global/whole-atmosphere
+        chunks:
+          options:
+            min_depth: 1
+            max_depth: 1
+            chunk_length: 20000
+    chunk_storage:
+      uri: blob://ukmoforecasts/staging/staging-chunks/
+  - id: met-office-uk-deterministic-height
+    template: ${{ local.path(./collection/met-office-uk-deterministic-height) }}
+    class: met_office:MetOfficeCollection
+    asset_storage:
+      - uri: blob://ukmoforecasts/staging/uk/height
+        chunks:
+          options:
+            min_depth: 1
+            max_depth: 1
+            chunk_length: 20000
+    chunk_storage:
+      uri: blob://ukmoforecasts/staging/staging-chunks/
+  - id: met-office-uk-deterministic-near-surface
+    template: ${{ local.path(./collection/met-office-uk-deterministic-near-surface) }}
+    class: met_office:MetOfficeCollection
+    asset_storage:
+      - uri: blob://ukmoforecasts/staging/uk/near-surface
+        chunks:
+          options:
+            min_depth: 1
+            max_depth: 1
+            chunk_length: 20000
+    chunk_storage:
+      uri: blob://ukmoforecasts/staging/staging-chunks/
+  - id: met-office-uk-deterministic-pressure
+    template: ${{ local.path(./collection/met-office-uk-deterministic-pressure) }}
+    class: met_office:MetOfficeCollection
+    asset_storage:
+      - uri: blob://ukmoforecasts/staging/uk/pressure
+        chunks:
+          options:
+            min_depth: 1
+            max_depth: 1
+            chunk_length: 20000
+    chunk_storage:
+      uri: blob://ukmoforecasts/staging/staging-chunks/
+  - id: met-office-uk-deterministic-whole-atmosphere
+    template: ${{ local.path(./collection/met-office-uk-deterministic-whole-atmosphere) }}
+    class: met_office:MetOfficeCollection
+    asset_storage:
+      - uri: blob://ukmoforecasts/staging/uk/whole-atmosphere
         chunks:
           options:
             min_depth: 1
