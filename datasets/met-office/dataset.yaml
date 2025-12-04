@@ -12,17 +12,17 @@ environment:
 
 collections:
   - id: met-office-global-deterministic-height-level
-    template: ${{ local.path(./collection/met-office-global-deterministic-height-level) }}
+    template: ${{ local.path(./collection/met-office-global-deterministic-near-surface-level) }}
     class: met_office:MetOfficeCollection
     asset_storage:
-      - uri: blob://ukmoforecasts/global/height
+      - uri: blob://ukmoforecasts/staging
         chunks:
           splits:
-            - depth: 1
+            - depth: 3
           options:
             ends_with: .nc
-            min_depth: 6
-            max_depth: 6
+            min_depth: 1
+            max_depth: 1
             chunk_length: 20000
     chunk_storage:
-      uri: blob://ukmoforecasts/met-office-deterministic-info/pctasks-chunks/
+      uri: blob://ukmoforecasts/staging-info/pctasks-chunks/
