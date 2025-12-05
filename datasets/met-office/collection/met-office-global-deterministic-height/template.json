@@ -52,7 +52,7 @@
   "stac_extensions": [
     "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
   ],
-  "msft:storage_account": "ukmoforecasts",
+  "msft:storage_account": "ukmoeuwest",
   "msft:short_description": "Met Office Global Deterministic Height Level",
   "msft:region": "westeurope"
 }

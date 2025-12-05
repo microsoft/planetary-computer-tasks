@@ -85,7 +85,7 @@
     "https://stac-extensions.github.io/table/v1.2.0/schema.json",
     "https://stac-extensions.github.io/forecast/v0.2.0/schema.json"
   ],
-  "msft:storage_account": "ukmoforecasts",
+  "msft:storage_account": "ukmoeuwest",
   "msft:short_description": "Met Office Global Deterministic Pressure Level",
   "msft:region": "westeurope"
 }
