@@ -19,7 +19,7 @@
   "assets": {},
   "extent": {
     "spatial": {
-      "bbox": [[15, 50, 5, 62]]
+      "bbox": [[5, 50, 15, 62]]
     },
     "temporal": {
       "interval": [["2023-12-15T00:00:00Z", null]]
