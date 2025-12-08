@@ -95,9 +95,9 @@
             "unit": "m",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+1 to T+54",
-                "3h_timesteps": "-",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+1 to T+54",
+                "3H_timesteps": "-",
                 "content_type": "application/netcdf"
             }
         },
@@ -107,9 +107,9 @@
             "unit": "m/s",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "T+0 to T+54",
-                "1h_timesteps": "-",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "T+0 to T+54",
+                "1H_timesteps": "-",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -119,9 +119,9 @@
             "unit": "m",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -131,9 +131,9 @@
             "unit": "1",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -143,9 +143,9 @@
             "unit": "m",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+1 to T+54",
-                "3h_timesteps": "-",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+1 to T+54",
+                "3H_timesteps": "-",
                 "content_type": "application/netcdf"
             }
         },
@@ -155,9 +155,9 @@
             "unit": "m",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "-",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "-",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -167,9 +167,9 @@
             "unit": "m/s",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "T+0 to T+54",
-                "1h_timesteps": "-",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "T+0 to T+54",
+                "1H_timesteps": "-",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -179,9 +179,9 @@
             "unit": "Pa",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -191,9 +191,9 @@
             "unit": "Pa",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -203,9 +203,9 @@
             "unit": "W/m2",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -215,9 +215,9 @@
             "unit": "W/m2",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -227,9 +227,9 @@
             "unit": "W/m2",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -239,9 +239,9 @@
             "unit": "W/m2",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -251,9 +251,9 @@
             "unit": "W/m2",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -263,9 +263,9 @@
             "unit": "m",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+1 to T+54",
-                "3h_timesteps": "-",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+1 to T+54",
+                "3H_timesteps": "-",
                 "content_type": "application/netcdf"
             }
         },
@@ -275,9 +275,9 @@
             "unit": "m",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "-",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "-",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -287,9 +287,9 @@
             "unit": "m/s",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "T+0 to T+54",
-                "1h_timesteps": "-",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "T+0 to T+54",
+                "1H_timesteps": "-",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -299,9 +299,9 @@
             "unit": "1",
             "attrs": {
                 "height": "1.5m",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -311,9 +311,9 @@
             "unit": "W/m2",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -323,9 +323,9 @@
             "unit": "m",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -335,9 +335,9 @@
             "unit": "m",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+1 to T+54",
-                "3h_timesteps": "-",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+1 to T+54",
+                "3H_timesteps": "-",
                 "content_type": "application/netcdf"
             }
         },
@@ -347,9 +347,9 @@
             "unit": "m",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "-",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "-",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -359,9 +359,9 @@
             "unit": "m/s",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "T+0 to T+54",
-                "1h_timesteps": "-",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "T+0 to T+54",
+                "1H_timesteps": "-",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -371,9 +371,9 @@
             "unit": "K",
             "attrs": {
                 "height": "1.5m",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -383,9 +383,9 @@
             "unit": "K",
             "attrs": {
                 "height": "1.5m",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+1 to T+120",
-                "3h_timesteps": "-",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+1 to T+120",
+                "3H_timesteps": "-",
                 "content_type": "application/netcdf"
             }
         },
@@ -395,9 +395,9 @@
             "unit": "K",
             "attrs": {
                 "height": "1.5m",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+1 to T+120",
-                "3h_timesteps": "-",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+1 to T+120",
+                "3H_timesteps": "-",
                 "content_type": "application/netcdf"
             }
         },
@@ -407,9 +407,9 @@
             "unit": "K",
             "attrs": {
                 "height": "surface",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -419,9 +419,9 @@
             "unit": "K",
             "attrs": {
                 "height": "1.5m",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -431,9 +431,9 @@
             "unit": "m",
             "attrs": {
                 "height": "1.5m",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -443,9 +443,9 @@
             "unit": "degrees",
             "attrs": {
                 "height": "10.0m",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -455,9 +455,9 @@
             "unit": "m/s",
             "attrs": {
                 "height": "10.0m",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -467,9 +467,9 @@
             "unit": "m/s",
             "attrs": {
                 "height": "10.0m",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+1 to T+54",
-                "3h_timesteps": "-",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+1 to T+54",
+                "3H_timesteps": "-",
                 "content_type": "application/netcdf"
             }
         },
@@ -479,9 +479,9 @@
             "unit": "m/s",
             "attrs": {
                 "height": "10.0m",
-                "15m_timesteps": "-",
-                "1h_timesteps": "-",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "-",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         },
@@ -491,9 +491,9 @@
             "unit": "m/s",
             "attrs": {
                 "height": "10.0m",
-                "15m_timesteps": "-",
-                "1h_timesteps": "T+0 to T+54",
-                "3h_timesteps": "T+57 to T+120",
+                "15M_timesteps": "-",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+120",
                 "content_type": "application/netcdf"
             }
         }
