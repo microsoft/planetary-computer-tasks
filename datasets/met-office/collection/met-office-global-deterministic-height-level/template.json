@@ -43,7 +43,7 @@
         "temporal": {
             "interval": [
                 [
-                    "2 years ago",
+                    "2023-12-15T00:00:00Z",
                     null
                 ]
             ]
@@ -75,20 +75,25 @@
         }
     ],
     "description": "The Met Office Global Deterministic Height Level dataset provides a composite of weather parameters generated for specific atmospheric height levels.",
-    "item_assets": {
+    "cube:variables": {
         "cloud_amount_on_height_levels": {
-            "type": "application/netcdf",
-            "title": "Cloud amount on height levels",            
-            "roles": [
-                "data"
-            ]
+            "description": "Fraction of horizontal grid square occupied by cloud in layers centred on height levels. The levels are height above ground.",
+            "dimensions": [],
+            "unit": "1",
+            "attrs": {
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         }
     },
     "stac_version": "1.0.0",
     "msft:group_id": "metoffice",
     "msft:container": "",
     "stac_extensions": [
-        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+        "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
+        "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
     ],
     "msft:storage_account": "metofficeeuwest",
     "msft:short_description": "Met Office Global Deterministic Height Level",

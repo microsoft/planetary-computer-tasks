@@ -43,7 +43,7 @@
         "temporal": {
             "interval": [
                 [
-                    "2 years ago",
+                    "2023-12-15T00:00:00Z",
                     null
                 ]
             ]
@@ -75,65 +75,110 @@
         }
     ],
     "description": "The Met Office Global Deterministic Pressure Level dataset provides a composite of weather parameters generated for specific atmospheric pressure levels.",
-    "item_assets": {
+    "cube:variables": {
+        "geopotential_height_on_pressure_levels": {
+            "description": "Geopotential height of the pressure levels. Note: from January 2026, this parameter will replace height_ASL_on_pressure_levels",
+            "dimensions": [],
+            "unit": "m",
+            "attrs": {
+                "pressure_levels": "All",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
+        },        
         "height_ASL_on_pressure_levels": {
-            "type": "application/netcdf",
-            "title": "Height above sea level on pressure levels",
-            "roles": [
-                "data"
-            ]
+            "description": "Height above sea level of the pressure levels. Note: from January 2026, this parameter will be replaced by geopotential_height_on_pressure_levels",
+            "dimensions": [],
+            "unit": "m",
+            "attrs": {
+                "pressure_levels": "All",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },
         "relative_humidity_on_pressure_levels": {
-            "type": "application/netcdf",
-            "title": "Relative humidity on pressure levels",
-            "roles": [
-                "data"
-            ]
+            "description": "Fractional relative humidity (ratio of the partial pressure of water vapour to the equilibrium vapour pressure of water) on pressure levels",
+            "dimensions": [],
+            "unit": "1",
+            "attrs": {
+                "pressure_levels": "All",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },        
         "temperature_on_pressure_levels": {
-            "type": "application/netcdf",
-            "title": "Temperature on pressure levels",
-            "roles": [
-                "data"
-            ]
+            "description": "Air temperature on pressure levels",
+            "dimensions": [],
+            "unit": "K",
+            "attrs": {
+                "pressure_levels": "All",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },
         "wet_bulb_potential_temperature_on_pressure_levels": {
-            "type": "application/netcdf",
-            "title": "Wet bulb temperature on pressure levels",
-            "roles": [
-                "data"
-            ]
+            "description": "Wet bulb potential temperature on pressure levels. Wet bulb potential temperature is defined as the temperature that a parcel of air would have if it were brought down to the standard pressure of 1000hPa following a saturated adiabatic lapse rate.",
+            "dimensions": [],
+            "unit": "K",
+            "attrs": {
+                "pressure_levels": "92500.0, 85000.0, 70000.0",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },
         "wind_direction_on_pressure_levels": {
-            "type": "application/netcdf",
-            "title": "Wind direction on pressure levels",
-            "roles": [
-                "data"
-            ]
+            "description": "Wind direction on pressure levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. In meteorological reports the direction of the wind vector is given as the direction from which it is blowing.",
+            "dimensions": [],
+            "unit": "degrees",
+            "attrs": {
+                "pressure_levels": "All",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },        
         "wind_speed_on_pressure_levels": {
-            "type": "application/netcdf",
-            "title": "Wind speed on pressure levels",
-            "roles": [
-                "data"
-            ]
+            "description": "Wind speed on pressure levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. The speed is the magnitude of velocity.",
+            "dimensions": [],
+            "unit": "m/s",
+            "attrs": {
+                "pressure_levels": "All",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },
         "wind_vertical_velocity_on_pressure_levels": {
-            "type": "application/netcdf",
-            "title": "Wind vertical velocity on pressure levels",
-            "roles": [
-                "data"
-            ]
+            "description": "Speed of the vertical component of the air motion at a pressure levels. Upwards is positive and downwards is negative.",
+            "dimensions": [],
+            "unit": "m/s",
+            "attrs": {
+                "pressure_levels": "70000.0",
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         }
     },
     "stac_version": "1.0.0",
     "msft:group_id": "metoffice",
     "msft:container": "",
     "stac_extensions": [
-        "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
-        "https://stac-extensions.github.io/forecast/v0.2.0/schema.json"
+        "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
+        "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
     ],
     "msft:storage_account": "metofficeeuwest",
     "msft:short_description": "Met Office Global Deterministic Pressure Level",

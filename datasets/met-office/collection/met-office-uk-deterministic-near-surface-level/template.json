@@ -330,7 +330,7 @@
             }
         },
         "snowfall_accumulation-PT01H": {
-            "description": "Implied depth of the (LWE) snow (as a depth) produced by the model precipitation scheme and deposited on the surface in the previous hour. This excludes the snow produced by the model  convection scheme. ",
+            "description": "Implied depth of the (LWE) snow (as a depth) produced by the model precipitation scheme and deposited on the surface in the previous hour. This excludes the snow produced by the model  convection scheme.",
             "dimensions": [],
             "unit": "m",
             "attrs": {
@@ -462,7 +462,7 @@
             }
         },
         "wind_gust_at_10m_max-PT01H": {
-            "description": "Maximum diagnosed instantaneous wind gust at 10m in the previous hour. This can be considered as the extreme wind speed that might be experienced in this period. ",
+            "description": "Maximum diagnosed instantaneous wind gust at 10m in the previous hour. This can be considered as the extreme wind speed that might be experienced in this period.",
             "dimensions": [],
             "unit": "m/s",
             "attrs": {
@@ -502,10 +502,8 @@
     "msft:group_id": "metoffice",
     "msft:container": "",
     "stac_extensions": [
-        "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
-        "https://stac-extensions.github.io/forecast/v0.2.0/schema.json"
+        "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
+        "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
     ],
     "msft:storage_account": "metofficeeuwest",
     "msft:short_description": "Met Office UK Deterministic Near Surface Level",

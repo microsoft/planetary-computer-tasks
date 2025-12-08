@@ -43,7 +43,7 @@
         "temporal": {
             "interval": [
                 [
-                    "2 years ago",
+                    "2023-12-15T00:00:00Z",
                     null
                 ]
             ]
@@ -75,114 +75,168 @@
         }
     ],
     "description": "The Met Office Global Deterministic Whole Atmosphere Level dataset provides a composite of weather parameters generated throughout the atmospheric column.",
-    "item_assets": {
+    "cube:variables": {
         "CAPE_mixed_layer_lowest_500m": {
-            "type": "application/netcdf",
-            "title": "Convective Available Potential Energy mixed layer lowest 500m",
-            "roles": [
-                "data"
-            ]
+            "description": "CAPE (Convective Available Potential Energy) calculated for a mixed layer parcel where a mixed layer parcel is defined as a parcel with thermodynamic properties of the density-weighted mean of the lowest 500 m above ground level.",
+            "dimensions": [],
+            "unit": "J/kg",
+            "attrs": {
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },
         "CAPE_most_unstable_below_500hPa": {
-            "type": "application/netcdf",
-            "title": "Convective Available Potential Energy most unstable below 500hPa",
-            "roles": [
-                "data"
-            ]
+            "description": "CAPE (Convective Available Potential Energy) calculated for the most unstable parcel where the most unstable parcel is defined as the parcel with the highest fixed level CAPE launched from any level (including screen-level=1.5m) within 500hPa of the surface pressure.",
+            "dimensions": [],
+            "unit": "J/kg",
+            "attrs": {
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },        
         "CAPE_surface": {
-            "type": "application/netcdf",
-            "title": "Convective Available Potential Energy with respect to surface",
-            "roles": [
-                "data"
-            ]
+            "description": "Value of CAPE (Convective Available Potential Energy) calculated for a surface based parcel where a surface based parcel is defined as a parcel initiated with thermodynamic properties at screen level height (1.5m) i.e. the parcel is launched from screen level.",
+            "dimensions": [],
+            "unit": "J/kg",
+            "attrs": {
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },
         "CIN_mixed_layer_lowest_500m": {
-            "type": "application/netcdf",
-            "title": "Convective Inhibition mixed layer lowest 500m",
-            "roles": [
-                "data"
-            ]
+            "description": "Convective Inhibition calculated as the additional energy required to lift a mixed-layer parcel to its level of free convection. Where a mixed layer parcel is defined as parcel with thermodynamic properties of the density weighted mean of the lowest 500 m above ground level (AGL).",
+            "dimensions": [],
+            "unit": "J/kg",
+            "attrs": {
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },
         "CIN_most_unstable_below_500hPa": {
-            "type": "application/netcdf",
-            "title": "Convective Inhibition most unstable below 500hPa",
-            "roles": [
-                "data"
-            ]
+            "description": "Convective Inhibition calculated as the additional energy required to lift the most unstable parcel to its level of free convection. Where most unstable parcel is defined as the parcel with the highest fixed-level CAPE launched from any level (including screen-level) within 500 hPa of the surface pressure.",
+            "dimensions": [],
+            "unit": "J/kg",
+            "attrs": {
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },        
         "CIN_surface": {
-            "type": "application/netcdf",
-            "title": "Convective Inhibition with respect to surface",
-            "roles": [
-                "data"
-            ]
+            "description": "Convective Inhibition calculated as the additional energy required to lift a surface based parcel (i.e. a parcel launched from screen-level (1.5m)) to its level of free convection.",
+            "dimensions": [],
+            "unit": "J/kg",
+            "attrs": {
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },
         "cloud_amount_below_1000ft_ASL": {
-            "type": "application/netcdf",
-            "title": "Cloud amount below 1000ft Above Sea Level",
-            "roles": [
-                "data"
-            ]
+            "description": "Fraction of horizontal grid square occupied by cloud below 1000 feet above sea level.",
+            "dimensions": [],
+            "unit": "1",
+            "attrs": {
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },
         "cloud_amount_of_high_cloud": {
-            "type": "application/netcdf",
-            "title": "Cloud amount of high cloud",
-            "roles": [
-                "data"
-            ]
+            "description": "Fraction of horizontal grid square occupied by cloud in the high-level cloud height range (from the lowest model layer containing the 5574m height level up to but excluding the lowest model layer containing 13608m height level).",
+            "dimensions": [],
+            "unit": "1",
+            "attrs": {
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },
         "cloud_amount_of_low_cloud": {
-            "type": "application/netcdf",
-            "title": "Cloud amount of low cloud",
-            "roles": [
-                "data"
-            ]
+            "description": "Fraction of horizontal grid square occupied by cloud in the low-level cloud height range (from the lowest model layer containing the 111m height level up to but excluding the lowest model layer containing 1949m height level).",
+            "dimensions": [],
+            "unit": "1",
+            "attrs": {
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },
         "cloud_amount_of_medium_cloud": {
-            "type": "application/netcdf",
-            "title": "Cloud amount of medium cloud",
-            "roles": [
-                "data"
-            ]
+            "description": "Fraction of horizontal grid square occupied by cloud in the mid-level cloud height range (from the lowest model layer containing the 1949m height level up to but excluding the lowest model layer containing 5574m height level).",
+            "dimensions": [],
+            "unit": "1",
+            "attrs": {
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },
         "cloud_amount_of_total_cloud": {
-            "type": "application/netcdf",
-            "title": "Cloud amount of total cloud",
-            "roles": [
-                "data"
-            ]
+            "description": "Fraction of horizontal grid square occupied by cloud as diagnosed by the model cloud scheme. This is for the whole atmosphere column as seen from the surface or the top of the atmosphere.",
+            "dimensions": [],
+            "unit": "1",
+            "attrs": {
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },
         "cloud_amount_of_total_convective_cloud": {
-            "type": "application/netcdf",
-            "title": "Cloud amount of total convective cloud",
-            "roles": [
-                "data"
-            ]
+            "description": "Fraction of horizontal grid square occupied by convective cloud as diagnosed by the model convection scheme. This is for the whole atmosphere column as seen from the surface or the top of the atmosphere.",
+            "dimensions": [],
+            "unit": "1",
+            "attrs": {
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },
         "pressure_at_tropopause": {
-            "type": "application/netcdf",
-            "title": "Pressure at tropopause",
-            "roles": [
-                "data"
-            ]
+            "description": "Air pressure at the tropopause.",
+            "dimensions": [],
+            "unit": "Pa",
+            "attrs": {
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         },
         "temperature_at_tropopause": {
-            "type": "application/netcdf",
-            "title": "Temperature at tropopause",
-            "roles": [
-                "data"
-            ]
+            "description": "Air temperature at the tropopause.",
+            "dimensions": [],
+            "unit": "K",
+            "attrs": {
+                "1H_timesteps": "T+0 to T+54",
+                "3H_timesteps": "T+57 to T+144",
+                "6H_timesteps": "T+150 to T+168",
+                "content_type": "application/netcdf"
+            }
         }
     },
     "stac_version": "1.0.0",
     "msft:group_id": "metoffice",
     "msft:container": "",
     "stac_extensions": [
-        "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
-        "https://stac-extensions.github.io/forecast/v0.2.0/schema.json"
+        "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
+        "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
     ],
     "msft:storage_account": "metofficeeuwest",
     "msft:short_description": "Met Office Global Deterministic Whole Atmosphere Level",
