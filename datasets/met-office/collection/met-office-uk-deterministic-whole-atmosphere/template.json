@@ -1,201 +1,180 @@
 {
-    "id": "met-office-uk-deterministic-whole-atmosphere-level",
-    "type": "Collection",
-    "links": [
-        {
-            "rel": "license",
-            "href": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
-            "type": "text/html",
-            "title": "Creative Commons Attribution-ShareAlike 4.0"
-        },       
-        {
-            "rel": "describedby",
-            "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
-            "title": "Met Office Dataset Documentation"
-        }
-    ],
-    "title": "Whole-atmosphere collection Met Office UKV 2km deterministic forecast",
-    "assets": {
-        "thumbnail": {
-            "href": "",
-            "type": "image/png",
-            "roles": [
-                "thumbnail"
-            ],
-            "title": "Whole-atmosphere collection Met Office UKV 2km deterministic forecast thumbnail"
-        }
+  "id": "met-office-uk-deterministic-whole-atmosphere",
+  "type": "Collection",
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
+      "type": "text/html",
+      "title": "Creative Commons Attribution-ShareAlike 4.0"
     },
-    "extent": {
-        "spatial": {
-            "bbox": [
-                [
-                    15,
-                    50,
-                    5,
-                    62
-                ]
-            ]
-        },
-        "temporal": {
-            "interval": [
-                [
-                    "2023-12-15T00:00:00Z",
-                    null
-                ]
-            ]
-        }
+    {
+      "rel": "describedby",
+      "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
+      "title": "Met Office Dataset Documentation"
+    }
+  ],
+  "title": "Whole-atmosphere collection Met Office UKV 2km deterministic forecast",
+  "assets": {
+    "thumbnail": {
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/met-office-uk-deterministic-whole-atmosphere.jpg",
+      "type": "image/png",
+      "roles": ["thumbnail"],
+      "title": "Whole-atmosphere collection Met Office UKV 2km deterministic forecast thumbnail"
+    }
+  },
+  "extent": {
+    "spatial": {
+      "bbox": [[15, 50, 5, 62]]
     },
-    "license": "proprietary",
-    "keywords": [
-        "Met Office",
-        "Weather",
-        "Forecast",
-        "UK",
-        "CAPE",
-        "Cloud",
-        "Freezing",
-        "Wet Bulb",
-        "Lightning"
-    ],
-    "providers": [
-        {
-            "url": "https://www.metoffice.gov.uk/",
-            "name": "Met Office",
-            "roles": [
-                "producer",
-                "licensor",
-                "processor"
-            ]
-        },
-        {
-            "url": "https://planetarycomputer.microsoft.com",
-            "name": "Microsoft",
-            "roles": [
-                "host",
-                "processor"
-            ]
-        }
-    ],
-    "cube:variables": {
-        "CAPE_most_unstable_below_500hPa": {
-            "description": "CAPE (Convective Available Potential Energy) calculated for the most unstable parcel where the most unstable parcel is defined as the parcel with the highest fixed level CAPE launched from any level (including screen-level=1.5m) within 500hPa of the surface pressure.",
-            "dimensions": [],
-            "unit": "J/kg",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },        
-        "CAPE_surface": {
-            "description": "Value of CAPE (Convective Available Potential Energy) calculated for a surface based parcel where a surface based parcel is defined as a parcel initiated with thermodynamic properties at screen level height (1.5m) i.e. the parcel is launched from screen level.",
-            "dimensions": [],
-            "unit": "J/kg",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "cloud_amount_below_1000ft_ASL": {
-            "description": "Fraction of horizontal grid square occupied by cloud below 1000 feet above sea level.",
-            "dimensions": [],
-            "unit": "1",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "cloud_amount_of_high_cloud": {
-            "description": "Fraction of horizontal grid square occupied by cloud in the high-level cloud height range (from the lowest model layer containing the 5574m height level up to but excluding the lowest model layer containing 13608m height level).",
-            "dimensions": [],
-            "unit": "1",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "cloud_amount_of_low_cloud": {
-            "description": "Fraction of horizontal grid square occupied by cloud in the low-level cloud height range (from the lowest model layer containing the 111m height level up to but excluding the lowest model layer containing 1949m height level).",
-            "dimensions": [],
-            "unit": "1",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "cloud_amount_of_medium_cloud": {
-            "description": "Fraction of horizontal grid square occupied by cloud in the mid-level cloud height range (from the lowest model layer containing the 1949m height level up to but excluding the lowest model layer containing 5574m height level).",
-            "dimensions": [],
-            "unit": "1",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "cloud_amount_of_total_cloud": {
-            "description": "Fraction of horizontal grid square occupied by cloud as diagnosed by the model cloud scheme. This is for the whole atmosphere column as seen from the surface or the top of the atmosphere.",
-            "dimensions": [],
-            "unit": "1",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "height_AGL_at_cloud_base_where_cloud_cover_2p5_oktas": {
-            "description": "Height of the base of the lowest cloud above the surface (ground) where there is at least 2.5 oktas (eighths) of cloud cover. This corresponds to scattered cloud.",
-            "dimensions": [],
-            "unit": "m",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "height_AGL_at_freezing_level": {
-            "description": "Height of the 0oC isotherm (freezing level) above the surface (ground).",
-            "dimensions": [],
-            "unit": "m",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "height_AGL_at_wet_bulb_freezing_level": {
-            "description": "Height of the wet bulb freezing level (i.e. where the wet bulb temperature is 0oC) above sea level. This is also referred to as the altitude of the wet bulb freezing level or (geometric) height above the geoid, which is the reference geopotential surface. Wet bulb temperature is defined as the temperature of a parcel of air cooled to saturation (100% relative humidity) by the evaporation of water into it with the latent heat supplied by the parcel.",
-            "dimensions": [],
-            "unit": "m",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "lightning_flash_accumulation-PT01H": {
-            "description": "This represents the total (cloud-to-cloud and cloud-to-ground) lightning flashes per square metre within the previous hour",
-            "dimensions": [],
-            "unit": "count/m2",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "-",
-                "content_type": "application/netcdf"
-            }
-        }
+    "temporal": {
+      "interval": [["2023-12-15T00:00:00Z", null]]
+    }
+  },
+  "license": "proprietary",
+  "keywords": [
+    "Met Office",
+    "Weather",
+    "Forecast",
+    "UK",
+    "CAPE",
+    "Cloud",
+    "Freezing",
+    "Wet Bulb",
+    "Lightning"
+  ],
+  "providers": [
+    {
+      "url": "https://www.metoffice.gov.uk/",
+      "name": "Met Office",
+      "roles": ["producer", "licensor", "processor"]
     },
-    "stac_version": "1.0.0",
-    "msft:group_id": "metoffice",
-    "msft:container": "",
-    "stac_extensions": [
-        "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
-        "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
-    ],
-    "msft:storage_account": "metofficeeuwest",
-    "msft:short_description": "Met Office UK Deterministic Whole Atmosphere Level",
-    "msft:region": "westeurope"
+    {
+      "url": "https://planetarycomputer.microsoft.com",
+      "name": "Microsoft",
+      "roles": ["host", "processor"]
+    }
+  ],
+  "cube:variables": {
+    "CAPE_most_unstable_below_500hPa": {
+      "description": "CAPE (Convective Available Potential Energy) calculated for the most unstable parcel where the most unstable parcel is defined as the parcel with the highest fixed level CAPE launched from any level (including screen-level=1.5m) within 500hPa of the surface pressure.",
+      "dimensions": [],
+      "unit": "J/kg",
+      "attrs": {
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "CAPE_surface": {
+      "description": "Value of CAPE (Convective Available Potential Energy) calculated for a surface based parcel where a surface based parcel is defined as a parcel initiated with thermodynamic properties at screen level height (1.5m) i.e. the parcel is launched from screen level.",
+      "dimensions": [],
+      "unit": "J/kg",
+      "attrs": {
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "cloud_amount_below_1000ft_ASL": {
+      "description": "Fraction of horizontal grid square occupied by cloud below 1000 feet above sea level.",
+      "dimensions": [],
+      "unit": "1",
+      "attrs": {
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "cloud_amount_of_high_cloud": {
+      "description": "Fraction of horizontal grid square occupied by cloud in the high-level cloud height range (from the lowest model layer containing the 5574m height level up to but excluding the lowest model layer containing 13608m height level).",
+      "dimensions": [],
+      "unit": "1",
+      "attrs": {
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "cloud_amount_of_low_cloud": {
+      "description": "Fraction of horizontal grid square occupied by cloud in the low-level cloud height range (from the lowest model layer containing the 111m height level up to but excluding the lowest model layer containing 1949m height level).",
+      "dimensions": [],
+      "unit": "1",
+      "attrs": {
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "cloud_amount_of_medium_cloud": {
+      "description": "Fraction of horizontal grid square occupied by cloud in the mid-level cloud height range (from the lowest model layer containing the 1949m height level up to but excluding the lowest model layer containing 5574m height level).",
+      "dimensions": [],
+      "unit": "1",
+      "attrs": {
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "cloud_amount_of_total_cloud": {
+      "description": "Fraction of horizontal grid square occupied by cloud as diagnosed by the model cloud scheme. This is for the whole atmosphere column as seen from the surface or the top of the atmosphere.",
+      "dimensions": [],
+      "unit": "1",
+      "attrs": {
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "height_AGL_at_cloud_base_where_cloud_cover_2p5_oktas": {
+      "description": "Height of the base of the lowest cloud above the surface (ground) where there is at least 2.5 oktas (eighths) of cloud cover. This corresponds to scattered cloud.",
+      "dimensions": [],
+      "unit": "m",
+      "attrs": {
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "height_AGL_at_freezing_level": {
+      "description": "Height of the 0oC isotherm (freezing level) above the surface (ground).",
+      "dimensions": [],
+      "unit": "m",
+      "attrs": {
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "height_AGL_at_wet_bulb_freezing_level": {
+      "description": "Height of the wet bulb freezing level (i.e. where the wet bulb temperature is 0oC) above sea level. This is also referred to as the altitude of the wet bulb freezing level or (geometric) height above the geoid, which is the reference geopotential surface. Wet bulb temperature is defined as the temperature of a parcel of air cooled to saturation (100% relative humidity) by the evaporation of water into it with the latent heat supplied by the parcel.",
+      "dimensions": [],
+      "unit": "m",
+      "attrs": {
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "lightning_flash_accumulation-PT01H": {
+      "description": "This represents the total (cloud-to-cloud and cloud-to-ground) lightning flashes per square metre within the previous hour",
+      "dimensions": [],
+      "unit": "count/m2",
+      "attrs": {
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "-",
+        "content_type": "application/netcdf"
+      }
+    }
+  },
+  "stac_version": "1.0.0",
+  "msft:group_id": "metoffice",
+  "msft:container": "",
+  "stac_extensions": [
+    "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
+    "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
+  ],
+  "msft:storage_account": "metofficeeuwest",
+  "msft:short_description": "Met Office UK Deterministic Whole Atmosphere Level",
+  "msft:region": "westeurope"
 }

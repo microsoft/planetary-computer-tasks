@@ -1,130 +1,109 @@
 {
-    "id": "met-office-uk-deterministic-height-level",
-    "type": "Collection",
-    "links": [
-        {
-            "rel": "license",
-            "href": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
-            "type": "text/html",
-            "title": "Creative Commons Attribution-ShareAlike 4.0"
-        },        
-        {
-            "rel": "describedby",
-            "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
-            "title": "Met Office Dataset Documentation"
-        }
-    ],
-    "title": "Height levels collection Met Office UKV 2km deterministic forecast",
-    "assets": {
-        "thumbnail": {
-            "href": "",
-            "type": "image/png",
-            "roles": [
-                "thumbnail"
-            ],
-            "title": "Height levels collection Met Office UKV 2km deterministic forecast thumbnail"
-        }
+  "id": "met-office-uk-deterministic-height",
+  "type": "Collection",
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
+      "type": "text/html",
+      "title": "Creative Commons Attribution-ShareAlike 4.0"
     },
-    "extent": {
-        "spatial": {
-            "bbox": [
-                [
-                    15,
-                    50,
-                    5,
-                    62
-                ]
-            ]
-        },
-        "temporal": {
-            "interval": [
-                [
-                    "2023-12-15T00:00:00Z",
-                    null
-                ]
-            ]
-        }
+    {
+      "rel": "describedby",
+      "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
+      "title": "Met Office Dataset Documentation"
+    }
+  ],
+  "title": "Height levels collection Met Office UKV 2km deterministic forecast",
+  "assets": {
+    "thumbnail": {
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/met-office-uk-deterministic-height.jpg",
+      "type": "image/png",
+      "roles": ["thumbnail"],
+      "title": "Height levels collection Met Office UKV 2km deterministic forecast thumbnail"
+    }
+  },
+  "extent": {
+    "spatial": {
+      "bbox": [[15, 50, 5, 62]]
     },
-    "license": "proprietary",
-    "keywords": [
-        "Met Office",
-        "Weather",
-        "Forecast",
-        "UK",
-        "Cloud",
-        "Temperature",
-        "Wind",
-        "Height"
-    ],
-    "providers": [
-        {
-            "url": "https://www.metoffice.gov.uk/",
-            "name": "Met Office",
-            "roles": [
-                "producer",
-                "licensor",
-                "processor"
-            ]
-        },
-        {
-            "url": "https://planetarycomputer.microsoft.com",
-            "name": "Microsoft",
-            "roles": [
-                "host",
-                "processor"
-            ]
-        }
-    ],
-    "cube:variables": {
-        "cloud_amount_on_height_levels": {
-            "description": "Fraction of horizontal grid square occupied by cloud in layers centred on height levels.",
-            "dimensions": [],
-            "unit": "1",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "temperature_on_height_levels": {
-            "description": "Air temperature on height levels.",
-            "dimensions": [],            
-            "unit": "K",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "wind_direction_on_height_levels": {
-            "description": "Wind direction on height levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. In meteorological reports the direction of the wind vector is given as the direction from which it is blowing.",
-            "dimensions": [],            
-            "unit": "degrees",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "wind_speed_on_height_levels": {
-            "description": "Wind speed on height levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. The speed is the magnitude of velocity.",           
-            "dimensions": [],            
-            "unit": "m/s",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        }
+    "temporal": {
+      "interval": [["2023-12-15T00:00:00Z", null]]
+    }
+  },
+  "license": "proprietary",
+  "keywords": [
+    "Met Office",
+    "Weather",
+    "Forecast",
+    "UK",
+    "Cloud",
+    "Temperature",
+    "Wind",
+    "Height"
+  ],
+  "providers": [
+    {
+      "url": "https://www.metoffice.gov.uk/",
+      "name": "Met Office",
+      "roles": ["producer", "licensor", "processor"]
     },
-    "stac_version": "1.0.0",
-    "msft:group_id": "metoffice",
-    "msft:container": "",
-    "stac_extensions": [
-        "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
-        "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
-    ],
-    "msft:storage_account": "metofficeeuwest",
-    "msft:short_description": "Met Office UK Deterministic Height Level",
-    "msft:region": "westeurope"
+    {
+      "url": "https://planetarycomputer.microsoft.com",
+      "name": "Microsoft",
+      "roles": ["host", "processor"]
+    }
+  ],
+  "cube:variables": {
+    "cloud_amount_on_height_levels": {
+      "description": "Fraction of horizontal grid square occupied by cloud in layers centred on height levels.",
+      "dimensions": [],
+      "unit": "1",
+      "attrs": {
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "temperature_on_height_levels": {
+      "description": "Air temperature on height levels.",
+      "dimensions": [],
+      "unit": "K",
+      "attrs": {
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "wind_direction_on_height_levels": {
+      "description": "Wind direction on height levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. In meteorological reports the direction of the wind vector is given as the direction from which it is blowing.",
+      "dimensions": [],
+      "unit": "degrees",
+      "attrs": {
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "wind_speed_on_height_levels": {
+      "description": "Wind speed on height levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. The speed is the magnitude of velocity.",
+      "dimensions": [],
+      "unit": "m/s",
+      "attrs": {
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    }
+  },
+  "stac_version": "1.0.0",
+  "msft:group_id": "metoffice",
+  "msft:container": "",
+  "stac_extensions": [
+    "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
+    "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
+  ],
+  "msft:storage_account": "metofficeeuwest",
+  "msft:short_description": "Met Office UK Deterministic Height Level",
+  "msft:region": "westeurope"
 }

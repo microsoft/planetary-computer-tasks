@@ -1,511 +1,490 @@
 {
-    "id": "met-office-uk-deterministic-near-surface-level",
-    "type": "Collection",
-    "links": [
-        {
-            "rel": "license",
-            "href": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
-            "type": "text/html",
-            "title": "Creative Commons Attribution-ShareAlike 4.0"
-        },
-        {
-            "rel": "describedby",
-            "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
-            "title": "Met Office Dataset Documentation"
-        }
-    ],
-    "title": "Near-surface level collection Met Office UKV 2km deterministic forecast",
-    "assets": {
-        "thumbnail": {
-            "href": "",
-            "type": "image/png",
-            "roles": [
-                "thumbnail"
-            ],
-            "title": "Near-surface level collection Met Office UKV 2km deterministic forecast Thumbnail"
-        }
+  "id": "met-office-uk-deterministic-near-surface",
+  "type": "Collection",
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
+      "type": "text/html",
+      "title": "Creative Commons Attribution-ShareAlike 4.0"
     },
-    "extent": {
-        "spatial": {
-            "bbox": [
-                [
-                    15,
-                    50,
-                    5,
-                    62
-                ]
-            ]
-        },
-        "temporal": {
-            "interval": [
-                [
-                    "2023-12-15T00:00:00Z",
-                    null
-                ]
-            ]
-        }
+    {
+      "rel": "describedby",
+      "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
+      "title": "Met Office Dataset Documentation"
+    }
+  ],
+  "title": "Near-surface level collection Met Office UKV 2km deterministic forecast",
+  "assets": {
+    "thumbnail": {
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/met-office-uk-deterministic-near-surface.jpg",
+      "type": "image/png",
+      "roles": ["thumbnail"],
+      "title": "Near-surface level collection Met Office UKV 2km deterministic forecast Thumbnail"
+    }
+  },
+  "extent": {
+    "spatial": {
+      "bbox": [[15, 50, 5, 62]]
     },
-    "license": "proprietary",
-    "keywords": [
-        "Met Office",
-        "Weather",
-        "Forecast",
-        "UK",
-        "Precipitation",
-        "Temperature",
-        "Wind",
-        "Pressure",
-        "Humidity"
-    ],
-    "providers": [
-        {
-            "url": "https://www.metoffice.gov.uk/",
-            "name": "Met Office",
-            "roles": [
-                "producer",
-                "licensor",
-                "processor"
-            ]
-        },
-        {
-            "url": "https://planetarycomputer.microsoft.com",
-            "name": "Microsoft",
-            "roles": [
-                "host",
-                "processor"
-            ]
-        }
-    ],
-    "cube:variables": {
-        "fog_fraction_at_screen_level": {
-            "description": "Here fog means a visibility of 1000 m or lower. The reduction in visibility is caused by  water droplets or minute ice crystals forming close to the surface. This quantity represents the fraction of horizontal  grid square occupied by fog. An alternative interpretation is that this represents the fractional probability of fog being present at any location in the grid square.",
-            "dimensions": [],
-            "unit": "1",
-            "attrs": {
-                "height": "1.5m",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "hail_fall_accumulation-PT01H": {
-            "description": "Implied depth of the layer of liquid water equivalent (LWE) hail produced by the model precipitation scheme and deposited on the surface in the previous hour.",
-            "dimensions": [],
-            "unit": "m",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+1 to T+54",
-                "3H_timesteps": "-",
-                "content_type": "application/netcdf"
-            }
-        },
-        "hail_fall_rate": {
-            "description": "Instantaneous rate at which liquid water equivalent (LWE) hail (as a depth) has been produced by the model precipitation scheme and deposited on the surface.",
-            "dimensions": [],
-            "unit": "m/s",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "T+0 to T+54",
-                "1H_timesteps": "-",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "height_of_orography": {
-            "description": "Altitude or (geometric) height above the geoid of the surface (ground). It is worth remembering that orographic height can be negative, particularly in some of the inland sea areas (e.g. Caspian Sea at -27m and Dead Sea at -430m).",
-            "dimensions": [],
-            "unit": "m",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "landsea_mask": {
-            "description": "Binary indicator of whether a  point is considered land (value = 1) or sea (value = 0). This is useful to identify the coastline and characterise points for correct interpretation of forecast data by users.",
-            "dimensions": [],
-            "unit": "1",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "precipitation_accumulation-PT01H": {
-            "description": "Implied depth of the layer of liquid water which has been deposited on the surface in the previous hour. This includes rain, snow and hail, with the ice phase precipitation being considered as a liquid water equivalent (LWE) value. It includes the contribution from the model convection scheme if this is invoked.",
-            "dimensions": [],
-            "unit": "m",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+1 to T+54",
-                "3H_timesteps": "-",
-                "content_type": "application/netcdf"
-            }
-        },
-        "precipitation_accumulation-PT03H": {
-            "description": "Implied depth of the layer of liquid water which has been deposited on the surface in the previous 3 hours. This includes rain, snow and hail, with the ice phase precipitation being considered as a liquid water equivalent (LWE)  value. It includes the contribution from the model convection scheme if this is invoked.",
-            "dimensions": [],
-            "unit": "m",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "-",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "precipitation_rate": {
-            "description": "Instantaneous rate at which liquid water (as a depth) was being deposited on the surface. This includes rain, snow and hail with the ice phase precipitation being considered as a liquid water equivalent (LWE)  value. It includes the contribution from the model convection scheme if this is invoked.",
-            "dimensions": [],
-            "unit": "m/s",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "T+0 to T+54",
-                "1H_timesteps": "-",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "pressure_at_mean_sea_level": {
-            "description": "Air pressure at mean sea level which is close to the geoid in sea areas. Air pressure at sea level is the quantity often abbreviated as MSLP or PMSL.",
-            "dimensions": [],
-            "unit": "Pa",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "pressure_at_surface": {
-            "description": "Air pressure at the surface (lower boundary of the atmosphere).",
-            "dimensions": [],
-            "unit": "Pa",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "radiation_flux_in_longwave_downward_at_surface": {
-            "description": "Longwave radiation at the surface from above directed at the ground.",
-            "dimensions": [],
-            "unit": "W/m2",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "radiation_flux_in_shortwave_diffuse_downward_at_surface": {
-            "description": "Diffuse component of shortwave radiation at the surface from above directed at the ground.",
-            "dimensions": [],
-            "unit": "W/m2",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "radiation_flux_in_shortwave_direct_downward_at_surface": {
-            "description": "Direct component of shortwave radiation at the surface from above directed at the ground.",
-            "dimensions": [],
-            "unit": "W/m2",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "radiation_flux_in_shortwave_total_downward_at_surface": {
-            "description": "Total shortwave radiation at the surface from above directed at the ground.",
-            "dimensions": [],
-            "unit": "W/m2",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "radiation_flux_in_uv_downward_at_surface": {
-            "description": "Ultraviolet  radiation at the surface from above directed at the ground.",
-            "dimensions": [],
-            "unit": "W/m2",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "rainfall_accumulation-PT01H": {
-            "description": "Implied depth of the rain produced by the model precipitation scheme which has been deposited on the surface in the previous hour. This excludes the rain produced by the model convection scheme.",
-            "dimensions": [],
-            "unit": "m",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+1 to T+54",
-                "3H_timesteps": "-",
-                "content_type": "application/netcdf"
-            }
-        },
-        "rainfall_accumulation-PT03H": {
-            "description": "Implied depth of the rain produced by the model precipitation scheme which has been deposited on the surface in the previous 3 hours. This excludes the rain produced by the model convection scheme.",
-            "dimensions": [],
-            "unit": "m",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "-",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "rainfall_rate": {
-            "description": "Instantaneous rate at which rain (as a depth) was being produced by the model precipitation scheme and deposited on the surface. This excludes the rain produced by the model convection scheme.",
-            "dimensions": [],
-            "unit": "m/s",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "T+0 to T+54",
-                "1H_timesteps": "-",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "relative_humidity_at_screen_level": {
-            "description": "Fractional relative humidity (ratio of the partial pressure of water vapour to the equilibrium vapour pressure of water) at screen level (1.5m above the surface.)",
-            "dimensions": [],
-            "unit": "1",
-            "attrs": {
-                "height": "1.5m",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "sensible_heat_flux_at_surface": {
-            "description": "Exchange of heat between the surface and the air by motion of air, also called turbulent heat flux.",
-            "dimensions": [],
-            "unit": "W/m2",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "snow_depth_water_equivalent": {
-            "description": "Liquid water equivalent (LWE) depth of the snow lying on the surface (ground). Typically water is 10 times as dense as snow, so multiplying by 10 gives an approximate depth of the snow, although wet snow can be significantly denser and powder snow much less dense.",
-            "dimensions": [],
-            "unit": "m",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "snowfall_accumulation-PT01H": {
-            "description": "Implied depth of the (LWE) snow (as a depth) produced by the model precipitation scheme and deposited on the surface in the previous hour. This excludes the snow produced by the model  convection scheme.",
-            "dimensions": [],
-            "unit": "m",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+1 to T+54",
-                "3H_timesteps": "-",
-                "content_type": "application/netcdf"
-            }
-        },
-        "snowfall_accumulation-PT03H": {
-            "description": "Implied depth of the (LWE) snow (as a depth) produced by the model precipitation scheme and deposited on the surface in the previous 3 hours. This excludes the snow produced by the model  convection scheme.",
-            "dimensions": [],
-            "unit": "m",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "-",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "snowfall_rate": {
-            "description": "Instantaneous rate at which liquid water equivalent (LWE) snow (as a depth) was produced by the model precipitation scheme and deposited on the surface. This excludes the snow produced by the  model convection scheme.",
-            "dimensions": [],
-            "unit": "m/s",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "T+0 to T+54",
-                "1H_timesteps": "-",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "temperature_at_screen_level": {
-            "description": "Instantaneous air temperature at screen level (1.5m).",
-            "dimensions": [],
-            "unit": "K",
-            "attrs": {
-                "height": "1.5m",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "temperature_at_screen_level_max-PT01H": {
-            "description": "Maximum instantaneous air temperature at screen level (1.5m) in the previous hour.",
-            "dimensions": [],
-            "unit": "K",
-            "attrs": {
-                "height": "1.5m",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+1 to T+120",
-                "3H_timesteps": "-",
-                "content_type": "application/netcdf"
-            }
-        },
-        "temperature_at_screen_level_min-PT01H": {
-            "description": "Minimum instantaneous air temperature at screen level (1.5m) in the previous hour.",
-            "dimensions": [],
-            "unit": "K",
-            "attrs": {
-                "height": "1.5m",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+1 to T+120",
-                "3H_timesteps": "-",
-                "content_type": "application/netcdf"
-            }
-        },
-        "temperature_at_surface": {
-            "description": "Temperature at the surface interface between the air and the ground.",
-            "dimensions": [],
-            "unit": "K",
-            "attrs": {
-                "height": "surface",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "temperature_of_dew_point_at_screen_level": {
-            "description": "Instantaneous dew point temperature (temperature at which a parcel of air reaches saturation upon being cooled at constant pressure and specific humidity) at screen level (1.5m).",
-            "dimensions": [],
-            "unit": "K",
-            "attrs": {
-                "height": "1.5m",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "visibility_at_screen_level": {
-            "description": "Horizontal distance at which something can be seen horizontally from screen level (1.5m).",
-            "dimensions": [],
-            "unit": "m",
-            "attrs": {
-                "height": "1.5m",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "wind_direction_at_10m": {
-            "description": "Wind at 10m above the surface is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. In meteorological reports the direction of the wind vector is given as the direction from which it is blowing. Note: This with wind speed at 10m replaces x wind at 10m and y wind at 10m.",
-            "dimensions": [],
-            "unit": "degrees",
-            "attrs": {
-                "height": "10.0m",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "wind_gust_at_10m": {
-            "description": "Diagnosed instantaneous wind gust at 10m. This can be considered as the extreme rather than steady wind speed that might be experienced at this specific time.",
-            "dimensions": [],
-            "unit": "m/s",
-            "attrs": {
-                "height": "10.0m",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "wind_gust_at_10m_max-PT01H": {
-            "description": "Maximum diagnosed instantaneous wind gust at 10m in the previous hour. This can be considered as the extreme wind speed that might be experienced in this period.",
-            "dimensions": [],
-            "unit": "m/s",
-            "attrs": {
-                "height": "10.0m",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+1 to T+54",
-                "3H_timesteps": "-",
-                "content_type": "application/netcdf"
-            }
-        },
-        "wind_gust_at_10m_max-PT03H": {
-            "description": "Maximum diagnosed instantaneous wind gust at 10m in the previous 3 hours. This can be considered as the extreme wind speed that might be experienced in this period.",
-            "dimensions": [],
-            "unit": "m/s",
-            "attrs": {
-                "height": "10.0m",
-                "15M_timesteps": "-",
-                "1H_timesteps": "-",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "wind_speed_at_10m": {
-            "description": "Wind at 10m above the surface is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. The speed is the magnitude of velocity.",
-            "dimensions": [],
-            "unit": "m/s",
-            "attrs": {
-                "height": "10.0m",
-                "15M_timesteps": "-",
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        }
+    "temporal": {
+      "interval": [["2023-12-15T00:00:00Z", null]]
+    }
+  },
+  "license": "proprietary",
+  "keywords": [
+    "Met Office",
+    "Weather",
+    "Forecast",
+    "UK",
+    "Precipitation",
+    "Temperature",
+    "Wind",
+    "Pressure",
+    "Humidity"
+  ],
+  "providers": [
+    {
+      "url": "https://www.metoffice.gov.uk/",
+      "name": "Met Office",
+      "roles": ["producer", "licensor", "processor"]
     },
-    "stac_version": "1.0.0",
-    "msft:group_id": "metoffice",
-    "msft:container": "",
-    "stac_extensions": [
-        "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
-        "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
-    ],
-    "msft:storage_account": "metofficeeuwest",
-    "msft:short_description": "Met Office UK Deterministic Near Surface Level",
-    "msft:region": "westeurope"
+    {
+      "url": "https://planetarycomputer.microsoft.com",
+      "name": "Microsoft",
+      "roles": ["host", "processor"]
+    }
+  ],
+  "cube:variables": {
+    "fog_fraction_at_screen_level": {
+      "description": "Here fog means a visibility of 1000 m or lower. The reduction in visibility is caused by  water droplets or minute ice crystals forming close to the surface. This quantity represents the fraction of horizontal  grid square occupied by fog. An alternative interpretation is that this represents the fractional probability of fog being present at any location in the grid square.",
+      "dimensions": [],
+      "unit": "1",
+      "attrs": {
+        "height": "1.5m",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "hail_fall_accumulation-PT01H": {
+      "description": "Implied depth of the layer of liquid water equivalent (LWE) hail produced by the model precipitation scheme and deposited on the surface in the previous hour.",
+      "dimensions": [],
+      "unit": "m",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+1 to T+54",
+        "3H_timesteps": "-",
+        "content_type": "application/netcdf"
+      }
+    },
+    "hail_fall_rate": {
+      "description": "Instantaneous rate at which liquid water equivalent (LWE) hail (as a depth) has been produced by the model precipitation scheme and deposited on the surface.",
+      "dimensions": [],
+      "unit": "m/s",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "T+0 to T+54",
+        "1H_timesteps": "-",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "height_of_orography": {
+      "description": "Altitude or (geometric) height above the geoid of the surface (ground). It is worth remembering that orographic height can be negative, particularly in some of the inland sea areas (e.g. Caspian Sea at -27m and Dead Sea at -430m).",
+      "dimensions": [],
+      "unit": "m",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "landsea_mask": {
+      "description": "Binary indicator of whether a  point is considered land (value = 1) or sea (value = 0). This is useful to identify the coastline and characterise points for correct interpretation of forecast data by users.",
+      "dimensions": [],
+      "unit": "1",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "precipitation_accumulation-PT01H": {
+      "description": "Implied depth of the layer of liquid water which has been deposited on the surface in the previous hour. This includes rain, snow and hail, with the ice phase precipitation being considered as a liquid water equivalent (LWE) value. It includes the contribution from the model convection scheme if this is invoked.",
+      "dimensions": [],
+      "unit": "m",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+1 to T+54",
+        "3H_timesteps": "-",
+        "content_type": "application/netcdf"
+      }
+    },
+    "precipitation_accumulation-PT03H": {
+      "description": "Implied depth of the layer of liquid water which has been deposited on the surface in the previous 3 hours. This includes rain, snow and hail, with the ice phase precipitation being considered as a liquid water equivalent (LWE)  value. It includes the contribution from the model convection scheme if this is invoked.",
+      "dimensions": [],
+      "unit": "m",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "-",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "precipitation_rate": {
+      "description": "Instantaneous rate at which liquid water (as a depth) was being deposited on the surface. This includes rain, snow and hail with the ice phase precipitation being considered as a liquid water equivalent (LWE)  value. It includes the contribution from the model convection scheme if this is invoked.",
+      "dimensions": [],
+      "unit": "m/s",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "T+0 to T+54",
+        "1H_timesteps": "-",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "pressure_at_mean_sea_level": {
+      "description": "Air pressure at mean sea level which is close to the geoid in sea areas. Air pressure at sea level is the quantity often abbreviated as MSLP or PMSL.",
+      "dimensions": [],
+      "unit": "Pa",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "pressure_at_surface": {
+      "description": "Air pressure at the surface (lower boundary of the atmosphere).",
+      "dimensions": [],
+      "unit": "Pa",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "radiation_flux_in_longwave_downward_at_surface": {
+      "description": "Longwave radiation at the surface from above directed at the ground.",
+      "dimensions": [],
+      "unit": "W/m2",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "radiation_flux_in_shortwave_diffuse_downward_at_surface": {
+      "description": "Diffuse component of shortwave radiation at the surface from above directed at the ground.",
+      "dimensions": [],
+      "unit": "W/m2",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "radiation_flux_in_shortwave_direct_downward_at_surface": {
+      "description": "Direct component of shortwave radiation at the surface from above directed at the ground.",
+      "dimensions": [],
+      "unit": "W/m2",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "radiation_flux_in_shortwave_total_downward_at_surface": {
+      "description": "Total shortwave radiation at the surface from above directed at the ground.",
+      "dimensions": [],
+      "unit": "W/m2",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "radiation_flux_in_uv_downward_at_surface": {
+      "description": "Ultraviolet  radiation at the surface from above directed at the ground.",
+      "dimensions": [],
+      "unit": "W/m2",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "rainfall_accumulation-PT01H": {
+      "description": "Implied depth of the rain produced by the model precipitation scheme which has been deposited on the surface in the previous hour. This excludes the rain produced by the model convection scheme.",
+      "dimensions": [],
+      "unit": "m",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+1 to T+54",
+        "3H_timesteps": "-",
+        "content_type": "application/netcdf"
+      }
+    },
+    "rainfall_accumulation-PT03H": {
+      "description": "Implied depth of the rain produced by the model precipitation scheme which has been deposited on the surface in the previous 3 hours. This excludes the rain produced by the model convection scheme.",
+      "dimensions": [],
+      "unit": "m",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "-",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "rainfall_rate": {
+      "description": "Instantaneous rate at which rain (as a depth) was being produced by the model precipitation scheme and deposited on the surface. This excludes the rain produced by the model convection scheme.",
+      "dimensions": [],
+      "unit": "m/s",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "T+0 to T+54",
+        "1H_timesteps": "-",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "relative_humidity_at_screen_level": {
+      "description": "Fractional relative humidity (ratio of the partial pressure of water vapour to the equilibrium vapour pressure of water) at screen level (1.5m above the surface.)",
+      "dimensions": [],
+      "unit": "1",
+      "attrs": {
+        "height": "1.5m",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "sensible_heat_flux_at_surface": {
+      "description": "Exchange of heat between the surface and the air by motion of air, also called turbulent heat flux.",
+      "dimensions": [],
+      "unit": "W/m2",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "snow_depth_water_equivalent": {
+      "description": "Liquid water equivalent (LWE) depth of the snow lying on the surface (ground). Typically water is 10 times as dense as snow, so multiplying by 10 gives an approximate depth of the snow, although wet snow can be significantly denser and powder snow much less dense.",
+      "dimensions": [],
+      "unit": "m",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "snowfall_accumulation-PT01H": {
+      "description": "Implied depth of the (LWE) snow (as a depth) produced by the model precipitation scheme and deposited on the surface in the previous hour. This excludes the snow produced by the model  convection scheme.",
+      "dimensions": [],
+      "unit": "m",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+1 to T+54",
+        "3H_timesteps": "-",
+        "content_type": "application/netcdf"
+      }
+    },
+    "snowfall_accumulation-PT03H": {
+      "description": "Implied depth of the (LWE) snow (as a depth) produced by the model precipitation scheme and deposited on the surface in the previous 3 hours. This excludes the snow produced by the model  convection scheme.",
+      "dimensions": [],
+      "unit": "m",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "-",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "snowfall_rate": {
+      "description": "Instantaneous rate at which liquid water equivalent (LWE) snow (as a depth) was produced by the model precipitation scheme and deposited on the surface. This excludes the snow produced by the  model convection scheme.",
+      "dimensions": [],
+      "unit": "m/s",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "T+0 to T+54",
+        "1H_timesteps": "-",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "temperature_at_screen_level": {
+      "description": "Instantaneous air temperature at screen level (1.5m).",
+      "dimensions": [],
+      "unit": "K",
+      "attrs": {
+        "height": "1.5m",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "temperature_at_screen_level_max-PT01H": {
+      "description": "Maximum instantaneous air temperature at screen level (1.5m) in the previous hour.",
+      "dimensions": [],
+      "unit": "K",
+      "attrs": {
+        "height": "1.5m",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+1 to T+120",
+        "3H_timesteps": "-",
+        "content_type": "application/netcdf"
+      }
+    },
+    "temperature_at_screen_level_min-PT01H": {
+      "description": "Minimum instantaneous air temperature at screen level (1.5m) in the previous hour.",
+      "dimensions": [],
+      "unit": "K",
+      "attrs": {
+        "height": "1.5m",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+1 to T+120",
+        "3H_timesteps": "-",
+        "content_type": "application/netcdf"
+      }
+    },
+    "temperature_at_surface": {
+      "description": "Temperature at the surface interface between the air and the ground.",
+      "dimensions": [],
+      "unit": "K",
+      "attrs": {
+        "height": "surface",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "temperature_of_dew_point_at_screen_level": {
+      "description": "Instantaneous dew point temperature (temperature at which a parcel of air reaches saturation upon being cooled at constant pressure and specific humidity) at screen level (1.5m).",
+      "dimensions": [],
+      "unit": "K",
+      "attrs": {
+        "height": "1.5m",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "visibility_at_screen_level": {
+      "description": "Horizontal distance at which something can be seen horizontally from screen level (1.5m).",
+      "dimensions": [],
+      "unit": "m",
+      "attrs": {
+        "height": "1.5m",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "wind_direction_at_10m": {
+      "description": "Wind at 10m above the surface is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. In meteorological reports the direction of the wind vector is given as the direction from which it is blowing. Note: This with wind speed at 10m replaces x wind at 10m and y wind at 10m.",
+      "dimensions": [],
+      "unit": "degrees",
+      "attrs": {
+        "height": "10.0m",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "wind_gust_at_10m": {
+      "description": "Diagnosed instantaneous wind gust at 10m. This can be considered as the extreme rather than steady wind speed that might be experienced at this specific time.",
+      "dimensions": [],
+      "unit": "m/s",
+      "attrs": {
+        "height": "10.0m",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "wind_gust_at_10m_max-PT01H": {
+      "description": "Maximum diagnosed instantaneous wind gust at 10m in the previous hour. This can be considered as the extreme wind speed that might be experienced in this period.",
+      "dimensions": [],
+      "unit": "m/s",
+      "attrs": {
+        "height": "10.0m",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+1 to T+54",
+        "3H_timesteps": "-",
+        "content_type": "application/netcdf"
+      }
+    },
+    "wind_gust_at_10m_max-PT03H": {
+      "description": "Maximum diagnosed instantaneous wind gust at 10m in the previous 3 hours. This can be considered as the extreme wind speed that might be experienced in this period.",
+      "dimensions": [],
+      "unit": "m/s",
+      "attrs": {
+        "height": "10.0m",
+        "15M_timesteps": "-",
+        "1H_timesteps": "-",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    },
+    "wind_speed_at_10m": {
+      "description": "Wind at 10m above the surface is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. The speed is the magnitude of velocity.",
+      "dimensions": [],
+      "unit": "m/s",
+      "attrs": {
+        "height": "10.0m",
+        "15M_timesteps": "-",
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+120",
+        "content_type": "application/netcdf"
+      }
+    }
+  },
+  "stac_version": "1.0.0",
+  "msft:group_id": "metoffice",
+  "msft:container": "",
+  "stac_extensions": [
+    "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
+    "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
+  ],
+  "msft:storage_account": "metofficeeuwest",
+  "msft:short_description": "Met Office UK Deterministic Near Surface Level",
+  "msft:region": "westeurope"
 }

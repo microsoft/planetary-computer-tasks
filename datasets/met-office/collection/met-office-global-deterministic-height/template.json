@@ -1,101 +1,73 @@
 {
-    "id": "met-office-global-deterministic-height-level",
-    "type": "Collection",
-    "links": [
-        {
-            "rel": "license",
-            "href": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
-            "type": "text/html",
-            "title": "Creative Commons Attribution-ShareAlike 4.0"
-        },
-        {
-            "rel": "cite-as",
-            "title": "British Crown copyright 2023-2025, the Met Office, is licensed under CC BY-SA"
-        },        
-        {
-            "rel": "describedBy",
-            "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
-            "title": "Met Office Dataset Documentation"
-        }
-    ],
-    "title": "Met Office Global Deterministic Height Level",
-    "assets": {
-        "thumbnail": {
-            "href": "",
-            "type": "image/png",
-            "roles": [
-                "thumbnail"
-            ],
-            "title": "Met Office Global Deterministic Height Level Thumbnail"
-        }
+  "id": "met-office-global-deterministic-height",
+  "type": "Collection",
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
+      "type": "text/html",
+      "title": "Creative Commons Attribution-ShareAlike 4.0"
     },
-    "extent": {
-        "spatial": {
-            "bbox": [
-                [
-                    -180,
-                    -90,
-                    180,
-                    90
-                ]
-            ]
-        },
-        "temporal": {
-            "interval": [
-                [
-                    "2023-12-15T00:00:00Z",
-                    null
-                ]
-            ]
-        }
+
+    {
+      "rel": "describedBy",
+      "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
+      "title": "Met Office Dataset Documentation"
+    }
+  ],
+  "title": "Met Office Global Deterministic Height Level",
+  "assets": {
+    "thumbnail": {
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/met-office-global-deterministic-height.jpg",
+      "type": "image/png",
+      "roles": ["thumbnail"],
+      "title": "Met Office Global Deterministic Height Level Thumbnail"
+    }
+  },
+  "extent": {
+    "spatial": {
+      "bbox": [[-180, -90, 180, 90]]
     },
-    "license": "proprietary",
-    "keywords": [
-        "MetOffice",
-        "Global",
-        "Cloud"
-    ],
-    "providers": [
-        {
-            "url": "https://www.metoffice.gov.uk/",
-            "name": "Met Office",
-            "roles": [
-                "producer",
-                "licensor",
-                "processor"
-            ]
-        },
-        {
-            "url": "https://planetarycomputer.microsoft.com",
-            "name": "Microsoft",
-            "roles": [
-                "host",
-                "processor"
-            ]
-        }
-    ],
-    "description": "The Met Office Global Deterministic Height Level dataset provides a composite of weather parameters generated for specific atmospheric height levels.",
-    "cube:variables": {
-        "cloud_amount_on_height_levels": {
-            "description": "Fraction of horizontal grid square occupied by cloud in layers centred on height levels. The levels are height above ground.",
-            "dimensions": [],
-            "unit": "1",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+144",
-                "6H_timesteps": "T+150 to T+168",
-                "content_type": "application/netcdf"
-            }
-        }
+    "temporal": {
+      "interval": [["2023-12-15T00:00:00Z", null]]
+    }
+  },
+  "license": "proprietary",
+  "keywords": ["MetOffice", "Global", "Cloud"],
+  "providers": [
+    {
+      "url": "https://www.metoffice.gov.uk/",
+      "name": "Met Office",
+      "roles": ["producer", "licensor", "processor"]
     },
-    "stac_version": "1.0.0",
-    "msft:group_id": "metoffice",
-    "msft:container": "",
-    "stac_extensions": [
-        "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
-        "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
-    ],
-    "msft:storage_account": "metofficeeuwest",
-    "msft:short_description": "Met Office Global Deterministic Height Level",
-    "msft:region": "westeurope"
+    {
+      "url": "https://planetarycomputer.microsoft.com",
+      "name": "Microsoft",
+      "roles": ["host", "processor"]
+    }
+  ],
+  "description": "The Met Office Global Deterministic Height Level dataset provides a composite of weather parameters generated for specific atmospheric height levels.",
+  "cube:variables": {
+    "cloud_amount_on_height_levels": {
+      "description": "Fraction of horizontal grid square occupied by cloud in layers centred on height levels. The levels are height above ground.",
+      "dimensions": [],
+      "unit": "1",
+      "attrs": {
+        "1H_timesteps": "T+0 to T+54",
+        "3H_timesteps": "T+57 to T+144",
+        "6H_timesteps": "T+150 to T+168",
+        "content_type": "application/netcdf"
+      }
+    }
+  },
+  "stac_version": "1.0.0",
+  "msft:group_id": "metoffice",
+  "msft:container": "",
+  "stac_extensions": [
+    "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
+    "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
+  ],
+  "msft:storage_account": "metofficeeuwest",
+  "msft:short_description": "Met Office Global Deterministic Height Level",
+  "msft:region": "westeurope"
 }
