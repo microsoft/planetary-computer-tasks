@@ -11,14 +11,14 @@ The following timesteps are available:
 ## Update Frequency
 The model is run four times each day, with forecast reference times of 00:00, 06:00, 12:00 and 18:00 (UTC).
 
-The runs at 00:00 and 12:00 provide data for the next 168 hours. The runs at 12:00 and 18:00 provide data for the next 66 hours.
+The runs at 00:00 and 12:00 provide data for the next 168 hours. The runs at 06:00 and 18:00 provide data for the next 67 hours.
 
 The forecast reference time represents the nominal data time or start time of a model forecast run, rather than the time when the data is available.
 
 ## Archive length and latency
 As of December 2025, the archive contains data from December 2023 onwards. Forecasts will continue to be available for at least two years from their data date.
 
-The data is typically available approximately Y hours after the model run time.
+The data is typically available 6 hours after the model run time.
 
 ## Technical specs
 The data is available as NetCDF files. NetCDF (Network Common Data Form) is an interface for array-orientated data access and a library that supports the interface. It is composed of 3 components:
