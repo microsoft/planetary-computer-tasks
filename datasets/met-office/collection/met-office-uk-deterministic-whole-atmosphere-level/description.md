@@ -22,7 +22,7 @@ There are three lengths of model run, each with its own update frequency:
 
 As of December 2025, the archive contains data from December 2023 onwards. Forecasts will continue to be available for at least two years from their data date.
 
-The data is typically available approximately 3-3.5 hours after the model run time.
+The data is typically available 3-6 hours after the model run time.
 
 ## Technical specs
 The data is available as NetCDF files. NetCDF (Network Common Data Form) is an interface for array-orientated data access and a library that supports the interface. It is composed of 3 components:
