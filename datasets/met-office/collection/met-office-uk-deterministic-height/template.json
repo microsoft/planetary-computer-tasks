@@ -98,12 +98,12 @@
   },
   "stac_version": "1.0.0",
   "msft:group_id": "metoffice",
-  "msft:container": "",
+  "msft:container": "staging",
   "stac_extensions": [
     "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
     "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
   ],
-  "msft:storage_account": "metofficeeuwest",
+  "msft:storage_account": "ukmoeuwest",
   "msft:short_description": "Met Office UK Deterministic Height Level",
   "msft:region": "westeurope"
 }
