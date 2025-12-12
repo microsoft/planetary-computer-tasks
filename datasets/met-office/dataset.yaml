@@ -20,10 +20,11 @@ collections:
       - uri: blob://ukmoeuwest/staging/global/height
         chunks:
           options:
-            min_depth: 0
-            max_depth: 0
+            min_depth: 1
+            max_depth: 1
+            extensions:
+              - .updated
             chunk_length: 20000
-            list_folders: true
     chunk_storage:
       uri: blob://ukmoeuwest/staging/staging-chunks/
   - id: met-office-global-deterministic-near-surface
@@ -33,10 +34,11 @@ collections:
       - uri: blob://ukmoeuwest/staging/global/near-surface
         chunks:
           options:
-            min_depth: 0
-            max_depth: 0
+            min_depth: 1
+            max_depth: 1
+            extensions:
+              - .updated
             chunk_length: 20000
-            list_folders: true
     chunk_storage:
       uri: blob://ukmoeuwest/staging/staging-chunks/
   - id: met-office-global-deterministic-pressure
@@ -46,10 +48,11 @@ collections:
       - uri: blob://ukmoeuwest/staging/global/pressure
         chunks:
           options:
-            min_depth: 0
-            max_depth: 0
+            min_depth: 1
+            max_depth: 1
+            extensions:
+              - .updated
             chunk_length: 20000
-            list_folders: true
     chunk_storage:
       uri: blob://ukmoeuwest/staging/staging-chunks/
   - id: met-office-global-deterministic-whole-atmosphere
@@ -59,10 +62,11 @@ collections:
       - uri: blob://ukmoeuwest/staging/global/whole-atmosphere
         chunks:
           options:
-            min_depth: 0
-            max_depth: 0
+            min_depth: 1
+            max_depth: 1
+            extensions:
+              - .updated
             chunk_length: 20000
-            list_folders: true
     chunk_storage:
       uri: blob://ukmoeuwest/staging/staging-chunks/
   - id: met-office-uk-deterministic-height
@@ -72,10 +76,11 @@ collections:
       - uri: blob://ukmoeuwest/staging/uk/height
         chunks:
           options:
-            min_depth: 0
-            max_depth: 0
+            min_depth: 1
+            max_depth: 1
+            extensions:
+              - .updated
             chunk_length: 20000
-            list_folders: true
     chunk_storage:
       uri: blob://ukmoeuwest/staging/staging-chunks/
   - id: met-office-uk-deterministic-near-surface
@@ -85,10 +90,11 @@ collections:
       - uri: blob://ukmoeuwest/staging/uk/near-surface
         chunks:
           options:
-            min_depth: 0
-            max_depth: 0
+            min_depth: 1
+            max_depth: 1
+            extensions:
+              - .updated
             chunk_length: 20000
-            list_folders: true
     chunk_storage:
       uri: blob://ukmoeuwest/staging/staging-chunks/
   - id: met-office-uk-deterministic-pressure
@@ -98,10 +104,11 @@ collections:
       - uri: blob://ukmoeuwest/staging/uk/pressure
         chunks:
           options:
-            min_depth: 0
-            max_depth: 0
+            min_depth: 1
+            max_depth: 1
+            extensions:
+              - .updated
             chunk_length: 20000
-            list_folders: true
     chunk_storage:
       uri: blob://ukmoeuwest/staging/staging-chunks/
   - id: met-office-uk-deterministic-whole-atmosphere
@@ -111,9 +118,10 @@ collections:
       - uri: blob://ukmoeuwest/staging/uk/whole-atmosphere
         chunks:
           options:
-            min_depth: 0
-            max_depth: 0
+            min_depth: 1
+            max_depth: 1
+            extensions:
+              - .updated
             chunk_length: 20000
-            list_folders: true
     chunk_storage:
       uri: blob://ukmoeuwest/staging/staging-chunks/

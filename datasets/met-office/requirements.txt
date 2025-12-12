@@ -1,1 +1,1 @@
-stactools-met-office-deterministic==0.3.0
+stactools-met-office-deterministic==0.3.2

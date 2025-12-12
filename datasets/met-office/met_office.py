@@ -24,11 +24,26 @@ class MetOfficeCollection(Collection):
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[list[Item], WaitTaskResult]:
-        logger.info(f"Creating items for {asset_uri}")
-        storage = storage_factory.get_storage(asset_uri)
-        hrefs = list(storage.get_url(path) for path in storage.list_files())
+        logger.info(f"Found sentinel file: {asset_uri}")
+        parts = asset_uri.split("/")
+        storage_uri = "/".join(parts[0:-1])
+        item_id = parts[-1].split(".")[0]
+        storage = storage_factory.get_storage(storage_uri)
+        logger.info(f"Listing {storage_uri} for item {item_id}")
+        hrefs = list(
+            storage.get_url(path)
+            for path in storage.list_files(name_starts_with=item_id, extensions=[".nc"])
+        )
         logger.info(f"Found {len(hrefs)} hrefs")
+        # Should only create one
         items = stac.create_items(hrefs, model=cls.model, theme=cls.theme)
+        if len(items) > 1:
+            logger.warning(
+                f"Expected to only create 1 item, but created {len(items)} instead. Ids: {', '.join(item.id for item in items)}"
+            )
+        logger.info(f"Deleting sentinel file: {asset_uri}")
+        blob_client, path = storage_factory.get_storage_for_file(asset_uri)
+        blob_client.delete_file(path)
         return items
 
 
