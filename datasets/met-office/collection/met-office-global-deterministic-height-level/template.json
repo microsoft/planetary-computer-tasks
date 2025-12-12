@@ -51,7 +51,9 @@
     },
     "license": "proprietary",
     "keywords": [
-        "MetOffice",
+        "Met Office",
+        "Weather",
+        "Forecast",
         "Global",
         "Cloud"
     ],
