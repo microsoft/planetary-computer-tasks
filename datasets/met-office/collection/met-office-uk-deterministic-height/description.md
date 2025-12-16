@@ -13,7 +13,7 @@ The forecast covers the UK and Ireland, with the following latitude and longitud
 
 ## Timesteps
 The following time steps are available:
-* every hour from 0 to 54 hours (for most parameters, see parameter table for exceptions) 
+* every hour from 0 to 54 hours
 * every 3 hours from 57 to 120 hours 
  
 ## Update frequency

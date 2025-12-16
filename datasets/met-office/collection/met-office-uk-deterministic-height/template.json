@@ -75,48 +75,6 @@
             ]
         }
     ],
-    "cube:variables": {
-        "cloud_amount_on_height_levels": {
-            "description": "Fraction of horizontal grid square occupied by cloud in layers centred on height levels.",
-            "dimensions": [],
-            "unit": "1",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "temperature_on_height_levels": {
-            "description": "Air temperature on height levels.",
-            "dimensions": [],            
-            "unit": "K",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "wind_direction_on_height_levels": {
-            "description": "Wind direction on height levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. In meteorological reports the direction of the wind vector is given as the direction from which it is blowing.",
-            "dimensions": [],            
-            "unit": "degrees",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        },
-        "wind_speed_on_height_levels": {
-            "description": "Wind speed on height levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. The speed is the magnitude of velocity.",           
-            "dimensions": [],            
-            "unit": "m/s",
-            "attrs": {
-                "1H_timesteps": "T+0 to T+54",
-                "3H_timesteps": "T+57 to T+120",
-                "content_type": "application/netcdf"
-            }
-        }
-    },
     "stac_version": "1.0.0",
     "msft:group_id": "metoffice",
     "msft:container": "",
@@ -126,5 +84,136 @@
     ],
     "msft:storage_account": "metofficeeuwest",
     "msft:short_description": "Met Office UK Deterministic Height Level",
-    "msft:region": "westeurope"
+    "msft:region": "westeurope",
+    "item_assets": {
+        "cloud_amount_on_height_levels": {
+            "type": "application/netcdf",
+            "title": "Cloud amount on height levels",
+            "roles": ["data"],
+            "forecast:variable": "",
+            "cube:dimensions": {
+                "latitude": {
+                    "type": "spatial",
+                    "axis": "y",
+                    "extent": [50, 62]
+                },
+                "longitude": {
+                    "type": "spatial",
+                    "axis": "x",
+                    "extent": [5, 15]
+                },
+                "height": {
+                    "type": "spatial",
+                    "values": [
+                        5, 10, 20, 30, 50, 75, 100, 150, 200, 250, 300, 400, 500, 600, 700,
+                        800, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250,
+                        3500, 3750, 4000, 4500, 5000, 5500, 6000
+                    ]
+                }
+            }
+        },
+        "temperature_on_height_levels": {
+            "type": "application/netcdf",
+            "title": "Temperature on height levels",
+            "roles": ["data"],
+            "forecast:variable": "",
+            "cube:dimensions": {
+                "latitude": {
+                    "type": "spatial",
+                    "axis": "y",
+                    "extent": [50, 62]
+                },
+                "longitude": {
+                    "type": "spatial",
+                    "axis": "x",
+                    "extent": [5, 15]
+                },
+                "height": {
+                    "type": "spatial",
+                    "values": [
+                        5, 10, 20, 30, 50, 75, 100, 150, 200, 250, 300, 400, 500, 600, 700,
+                        800, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250,
+                        3500, 3750, 4000, 4500, 5000, 5500, 6000
+                    ]
+                }
+            }            
+        },
+        "wind_direction_on_height_levels": {
+            "type": "application/netcdf",
+            "title": "Wind direction on height levels",
+            "roles": ["data"],
+            "forecast:variable": "",
+            "cube:dimensions": {
+                "latitude": {
+                    "type": "spatial",
+                    "axis": "y",
+                    "extent": [50, 62]
+                },
+                "longitude": {
+                    "type": "spatial",
+                    "axis": "x",
+                    "extent": [5, 15]
+                },
+                "height": {
+                    "type": "spatial",
+                    "values": [
+                        5, 10, 20, 30, 50, 75, 100, 150, 200, 250, 300, 400, 500, 600, 700,
+                        800, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250,
+                        3500, 3750, 4000, 4500, 5000, 5500, 6000
+                    ]
+                }
+            }            
+        },
+        "wind_speed_on_height_levels": {
+            "type": "application/netcdf",
+            "title": "Wind speed on height levels",
+            "roles": ["data"],
+            "forecast:variable": "",
+            "cube:dimensions": {
+                "latitude": {
+                    "type": "spatial",
+                    "axis": "y",
+                    "extent": [50, 62]
+                },
+                "longitude": {
+                    "type": "spatial",
+                    "axis": "x",
+                    "extent": [5, 15]
+                },
+                "height": {
+                    "type": "spatial",
+                    "values": [
+                        5, 10, 20, 30, 50, 75, 100, 150, 200, 250, 300, 400, 500, 600, 700,
+                        800, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250,
+                        3500, 3750, 4000, 4500, 5000, 5500, 6000
+                    ]
+                }
+            }            
+        },
+        "cube:variables": {
+            "cloud_amount_on_height_levels": {
+                "description": "Fraction of horizontal grid square occupied by cloud in layers centred on height levels.",
+                "dimensions": ["latitude", "longitude", "height"],
+                "type": "data",
+                "unit": "1"
+            },
+            "temperature_on_height_levels": {
+                "description": "Air temperature on height levels.",
+                "dimensions": ["latitude", "longitude", "height"],
+                "type": "data",         
+                "unit": "K"
+            },
+            "wind_direction_on_height_levels": {
+                "description": "Wind direction on height levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. In meteorological reports the direction of the wind vector is given as the direction from which it is blowing.",
+                "dimensions": ["latitude", "longitude", "height"],
+                "type": "data",         
+                "unit": "degrees"
+            },
+            "wind_speed_on_height_levels": {
+                "description": "Wind speed on height levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. The speed is the magnitude of velocity.",           
+                "dimensions": ["latitude", "longitude", "height"],
+                "type": "data",
+                "unit": "m/s"
+            }
+        }
 }

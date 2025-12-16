@@ -9,16 +9,12 @@
             "title": "Creative Commons Attribution-ShareAlike 4.0"
         },
         {
-            "rel": "cite-as",
-            "title": "British Crown copyright 2023-2025, the Met Office, is licensed under CC BY-SA"
-        },        
-        {
             "rel": "describedBy",
             "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
             "title": "Met Office Dataset Documentation"
         }
     ],
-    "title": "Met Office Global Deterministic Height Level",
+    "title": "Height levels collection Met Office Global 10km deterministic weather forecast",
     "assets": {
         "thumbnail": {
             "href": "",
@@ -26,7 +22,7 @@
             "roles": [
                 "thumbnail"
             ],
-            "title": "Met Office Global Deterministic Height Level Thumbnail"
+            "title": "Height levels collection Met Office Global 10km deterministic weather forecast thumbnail"
         }
     },
     "extent": {
@@ -110,27 +106,12 @@
                         800, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250,
                         3500, 3750, 4000, 4500, 5000, 5500, 6000
                     ]
-                },
-                "1H_timesteps": {
-                    "type": "temporal",
-                    "extent": [0, 54],
-                    "step": "PT01H"
-                },
-                "3H_timesteps": {
-                    "type": "temporal",
-                    "extent": [57, 144],
-                    "step": "PT03H"
-                },
-                "6H_timesteps": {
-                    "type": "temporal",
-                    "extent": [150, 168],
-                    "step": "PT06H"
                 }
             },
             "cube:variables": {
                 "cloud_volume_fraction_in_atmosphere_layer": {
                     "description": "Fraction of horizontal grid square occupied by cloud in layers centred on height levels. The levels are height above ground.",
-                    "dimensions": ["latitude", "longitude", "height", "1H_timesteps", "3H_timesteps", "6H_timesteps"],
+                    "dimensions": ["latitude", "longitude", "height"],
                     "type": "data",
                     "unit": "1"
                 }

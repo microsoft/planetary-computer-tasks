@@ -8,7 +8,7 @@ Available height levels, in metres (m) above ground, are:
 
 ## Timesteps
 The following timesteps are available:
-* every hour from 0 to 54 hours (for most parameters, see parameter table for exceptions)
+* every hour from 0 to 54 hours
 * every 3 hours from 57 to 144 hours
 * every 6 hours from 150 to 168 hours
 
