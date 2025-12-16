@@ -54,85 +54,6 @@
       "roles": ["host", "processor"]
     }
   ],
-  "cube:variables": {
-    "geopotential_height_on_pressure_levels": {
-      "description": "Note: from January 2026, this parameter will replace height_ASL_on_pressure_levels.",
-      "dimensions": [],
-      "unit": "m",
-      "attrs": {
-        "pressure_levels": "All",
-        "1H_timesteps": "T+0 to T+54",
-        "3H_timesteps": "T+57 to T+120",
-        "content_type": "application/netcdf"
-      }
-    },
-    "height_ASL_on_pressure_levels": {
-      "description": "Note: from January 2026, this parameter will be replaced by geopotential_height_on_pressure_levels.",
-      "dimensions": [],
-      "unit": "m",
-      "attrs": {
-        "pressure_levels": "All",
-        "1H_timesteps": "T+0 to T+54",
-        "3H_timesteps": "T+57 to T+120",
-        "content_type": "application/netcdf"
-      }
-    },
-    "relative_humidity_on_pressure_levels": {
-      "description": "Ratio of the partial pressure of water vapour to the equilibrium vapour pressure of water.",
-      "dimensions": [],
-      "unit": "1",
-      "attrs": {
-        "pressure_levels": "All",
-        "1H_timesteps": "T+0 to T+54",
-        "3H_timesteps": "T+57 to T+120",
-        "content_type": "application/netcdf"
-      }
-    },
-    "temperature_on_pressure_levels": {
-      "description": "Air temperature on pressure levels.",
-      "dimensions": [],
-      "unit": "K",
-      "attrs": {
-        "pressure_levels": "All",
-        "1H_timesteps": "T+0 to T+54",
-        "3H_timesteps": "T+57 to T+120",
-        "content_type": "application/netcdf"
-      }
-    },
-    "wet_bulb_potential_temperature_on_pressure_levels": {
-      "description": "Wet bulb potential temperature is defined as the temperature that a parcel of air would have if it were brought down to the standard pressure of 1000hPa following a saturated adiabatic lapse rate. Available on levels: 85000.0, 70000.0, 50000.0 Pa",
-      "dimensions": [],
-      "unit": "K",
-      "attrs": {
-        "pressure_levels": "85000.0, 70000.0, 50000.0",
-        "1H_timesteps": "T+0 to T+54",
-        "3H_timesteps": "T+57 to T+120",
-        "content_type": "application/netcdf"
-      }
-    },
-    "wind_direction_on_pressure_levels": {
-      "description": "Wind direction on pressure levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. In meteorological reports the direction of the wind vector is given as the direction from which it is blowing.",
-      "dimensions": [],
-      "unit": "degrees",
-      "attrs": {
-        "pressure_levels": "All",
-        "1H_timesteps": "T+0 to T+54",
-        "3H_timesteps": "T+57 to T+120",
-        "content_type": "application/netcdf"
-      }
-    },
-    "wind_speed_on_pressure_levels": {
-      "description": "Wind speed on pressure levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. The speed is the magnitude of velocity.",
-      "dimensions": [],
-      "unit": "m/s",
-      "attrs": {
-        "pressure_levels": "All",
-        "1H_timesteps": "T+0 to T+54",
-        "3H_timesteps": "T+57 to T+120",
-        "content_type": "application/netcdf"
-      }
-    }
-  },
   "stac_version": "1.0.0",
   "msft:group_id": "metoffice",
   "msft:container": "",
@@ -142,5 +63,249 @@
   ],
   "msft:storage_account": "metofficeeuwest",
   "msft:short_description": "Met Office UK Deterministic Pressure Level",
-  "msft:region": "westeurope"
+  "msft:region": "westeurope",
+  "item_assets": {
+    "geopotential_height_on_pressure_levels": {
+      "type": "application/netcdf",
+      "title": "Geopotential height on pressure levels",
+      "roles": ["data"],
+      "forecast:variable": "geopotential_height",
+      "cube:dimensions": {
+        "latitude": {
+            "type": "spatial",
+            "axis": "y",
+            "extent": [50, 62]
+        },
+        "longitude": {
+            "type": "spatial",
+            "axis": "x",
+            "extent": [5, 15]
+        },
+        "pressure_levels": {
+            "type": "spatial",
+            "values": [
+                100000, 97500, 95000, 92500, 90000, 85000, 80000, 75000, 70000, 6500,
+                60000, 55000, 50000, 45000, 40000, 37500, 35000, 32500, 30000, 27500, 
+                25000, 22500, 20000, 17500, 15000, 12500, 10000, 7000, 5000, 4000,
+                3000, 2000, 1000
+            ]
+        }
+      },
+      "cube:variables": {
+        "geopotential_height": {
+          "description": "Note: from January 2026, this parameter will replace height_ASL_on_pressure_levels.",
+          "dimensions": ["latitude", "longitude", "pressure_levels"],
+          "unit": "m",
+          "type": "data"
+        }
+    },
+    "height_ASL_on_pressure_levels": {
+      "type": "application/netcdf",
+      "title": "Height Above Sea Level on pressure levels",
+      "roles": ["data"],
+      "forecast:variable": "geopotential_height",
+      "cube:dimensions": {
+        "latitude": {
+            "type": "spatial",
+            "axis": "y",
+            "extent": [50, 62]
+        },
+        "longitude": {
+            "type": "spatial",
+            "axis": "x",
+            "extent": [5, 15]
+        },
+        "pressure_levels": {
+            "type": "spatial",
+            "values": [
+                100000, 97500, 95000, 92500, 90000, 85000, 80000, 75000, 70000, 6500,
+                60000, 55000, 50000, 45000, 40000, 37500, 35000, 32500, 30000, 27500, 
+                25000, 22500, 20000, 17500, 15000, 12500, 10000, 7000, 5000, 4000,
+                3000, 2000, 1000
+            ]
+        }
+      },
+      "cube:variables": {
+        "geopotential_height": {
+          "description": "Note: from January 2026, this parameter will be replaced by geopotential_height_on_pressure_levels.",
+          "dimensions": ["latitude", "longitude", "pressure_levels"],
+          "unit": "m",
+          "type": "data"
+        }
+      }
+    },
+    "relative_humidity_on_pressure_levels": {
+      "type": "application/netcdf",
+      "title": "Relative humidity on pressure levels",
+      "roles": ["data"],
+      "forecast:variable": "relative_humidity",
+      "cube:dimensions": {
+        "latitude": {
+            "type": "spatial",
+            "axis": "y",
+            "extent": [50, 62]
+        },
+        "longitude": {
+            "type": "spatial",
+            "axis": "x",
+            "extent": [5, 15]
+        },
+        "pressure_levels": {
+            "type": "spatial",
+            "values": [
+                100000, 97500, 95000, 92500, 90000, 85000, 80000, 75000, 70000, 6500,
+                60000, 55000, 50000, 45000, 40000, 37500, 35000, 32500, 30000, 27500, 
+                25000, 22500, 20000, 17500, 15000, 12500, 10000, 7000, 5000, 4000,
+                3000, 2000, 1000
+            ]
+        }
+      },
+      "cube:variables": {
+        "relative_humidity": {
+          "description": "Ratio of the partial pressure of water vapour to the equilibrium vapour pressure of water.",
+          "dimensions": ["latitude", "longitude", "pressure_levels"],
+          "unit": "1",
+          "type": "data"
+        }
+      }
+    },
+    "temperature_on_pressure_levels": {
+      "type": "application/netcdf",
+      "title": "Temperature on pressure levels",
+      "roles": ["data"],
+      "forecast:variable": "air_temperature",
+      "cube:dimensions": {
+          "latitude": {
+              "type": "spatial",
+              "axis": "y",
+              "extent": [50, 62]
+          },
+          "longitude": {
+              "type": "spatial",
+              "axis": "x",
+              "extent": [5, 15]
+          },
+          "pressure_levels": {
+              "type": "spatial",
+              "values": [
+                  100000, 97500, 95000, 92500, 90000, 85000, 80000, 75000, 70000, 6500,
+                  60000, 55000, 50000, 45000, 40000, 37500, 35000, 32500, 30000, 27500, 
+                  25000, 22500, 20000, 17500, 15000, 12500, 10000, 7000, 5000, 4000,
+                  3000, 2000, 1000
+              ]
+          }
+        },
+        "cube:variables": {
+          "air_temperature": {
+            "description": "Air temperature on pressure levels",
+            "dimensions": ["latitude", "longitude", "pressure_levels"],
+            "type": "data",
+            "unit": "K"
+          }
+        }
+      }
+    },
+    "wet_bulb_potential_temperature_on_pressure_levels": {
+      "type": "application/netcdf",
+      "title": "Wet bulb potential temperature on pressure levels",
+      "roles": ["data"],
+      "forecast:variable": "wet_bulb_potential_temperature",
+      "cube:dimensions": {
+        "latitude": {
+            "type": "spatial",
+            "axis": "y",
+            "extent": [50, 62]
+        },
+        "longitude": {
+            "type": "spatial",
+            "axis": "x",
+            "extent": [5, 15]
+        },
+        "pressure_levels": {
+            "type": "spatial",
+            "values": [
+                92500, 85000, 70000
+            ]
+        }
+      },
+      "cube:variables": {
+        "wet_bulb_potential_temperature": {
+          "description": "Wet bulb potential temperature on pressure levels. Wet bulb potential temperature is defined as the temperature that a parcel of air would have if it were brought down to the standard pressure of 1000hPa following a saturated adiabatic lapse rate.",
+          "dimensions": ["latitude", "longitude", "pressure_levels"],
+          "type": "data",        
+          "unit": "K"
+        }
+      }
+    },
+    "wind_direction_on_pressure_levels": {
+      "type": "application/netcdf",
+      "title": "Wind direction on pressure levels",
+      "roles": ["data"],
+      "forecast:variable": "wind_from_direction",
+      "cube:dimensions": {
+        "latitude": {
+            "type": "spatial",
+            "axis": "y",
+            "extent": [50, 62]
+        },
+        "longitude": {
+            "type": "spatial",
+            "axis": "x",
+            "extent": [5, 15]
+        },
+        "pressure_levels": {
+            "type": "spatial",
+            "values": [
+                100000, 97500, 95000, 92500, 90000, 85000, 80000, 75000, 70000, 6500,
+                60000, 55000, 50000, 45000, 40000, 37500, 35000, 32500, 30000, 27500, 
+                25000, 22500, 20000, 17500, 15000, 12500, 10000, 7000, 5000, 4000,
+                3000, 2000, 1000
+            ]
+        }
+      },
+      "cube:variables": {
+        "wind_from_direction": {
+          "description": "Wind direction on pressure levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. In meteorological reports the direction of the wind vector is given as the direction from which it is blowing.",
+          "dimensions": ["latitude", "longitude", "pressure_levels"],
+          "type": "data",
+          "unit": "degrees"
+        }
+      }
+    },
+    "wind_speed_on_pressure_levels": {
+      "type": "application/netcdf",
+      "title": "Wind speed on pressure levels",
+      "roles": ["data"],
+      "forecast:variable": "wind_speed",
+      "cube:dimensions": {
+        "latitude": {
+            "type": "spatial",
+            "axis": "y",
+            "extent": [50, 62]
+        },
+        "longitude": {
+            "type": "spatial",
+            "axis": "x",
+            "extent": [5, 15]
+        },
+        "pressure_levels": {
+            "type": "spatial",
+            "values": [
+                100000, 97500, 95000, 92500, 90000, 85000, 80000, 75000, 70000, 6500,
+                60000, 55000, 50000, 45000, 40000, 37500, 35000, 32500, 30000, 27500, 
+                25000, 22500, 20000, 17500, 15000, 12500, 10000, 7000, 5000, 4000,
+                3000, 2000, 1000
+            ]
+        }
+      },
+      "cube:variables": {
+        "wind_speed": {
+          "description": "Wind speed on pressure levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. The speed is the magnitude of velocity.",
+          "dimensions": ["latitude", "longitude", "pressure_levels"],
+          "type": "data",
+          "unit": "m/s"
+        }
+      }
+    }
+  }
 }
