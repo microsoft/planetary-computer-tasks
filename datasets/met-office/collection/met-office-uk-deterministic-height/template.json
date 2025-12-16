@@ -110,7 +110,15 @@
                         3500, 3750, 4000, 4500, 5000, 5500, 6000
                     ]
                 }
-            }
+            },
+            "cube:variables": {
+                "cloud_volume_fraction_in_atmosphere_layer": {
+                    "description": "Fraction of horizontal grid square occupied by cloud in layers centred on height levels.",
+                    "dimensions": ["latitude", "longitude", "height"],
+                    "type": "data",
+                    "unit": "1"
+                }
+            }       
         },
         "temperature_on_height_levels": {
             "type": "application/netcdf",
@@ -136,7 +144,15 @@
                         3500, 3750, 4000, 4500, 5000, 5500, 6000
                     ]
                 }
-            }            
+            },
+            "cube:variables": {
+                "air_temperature": {
+                    "description": "Air temperature on height levels.",
+                    "dimensions": ["latitude", "longitude", "height"],
+                    "type": "data",         
+                    "unit": "K"
+                }
+            }
         },
         "wind_direction_on_height_levels": {
             "type": "application/netcdf",
@@ -162,7 +178,15 @@
                         3500, 3750, 4000, 4500, 5000, 5500, 6000
                     ]
                 }
-            }            
+            },
+            "cube:variables": {
+                "wind_from_direction": {
+                    "description": "Wind direction on height levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. In meteorological reports the direction of the wind vector is given as the direction from which it is blowing.",
+                    "dimensions": ["latitude", "longitude", "height"],
+                    "type": "data",         
+                    "unit": "degrees"
+                }
+            }          
         },
         "wind_speed_on_height_levels": {
             "type": "application/netcdf",
@@ -188,32 +212,14 @@
                         3500, 3750, 4000, 4500, 5000, 5500, 6000
                     ]
                 }
-            }            
-        },
-        "cube:variables": {
-            "cloud_volume_fraction_in_atmosphere_layer": {
-                "description": "Fraction of horizontal grid square occupied by cloud in layers centred on height levels.",
-                "dimensions": ["latitude", "longitude", "height"],
-                "type": "data",
-                "unit": "1"
             },
-            "air_temperature": {
-                "description": "Air temperature on height levels.",
-                "dimensions": ["latitude", "longitude", "height"],
-                "type": "data",         
-                "unit": "K"
-            },
-            "wind_from_direction": {
-                "description": "Wind direction on height levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. In meteorological reports the direction of the wind vector is given as the direction from which it is blowing.",
-                "dimensions": ["latitude", "longitude", "height"],
-                "type": "data",         
-                "unit": "degrees"
-            },
-            "wind_speed": {
-                "description": "Wind speed on height levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. The speed is the magnitude of velocity.",           
-                "dimensions": ["latitude", "longitude", "height"],
-                "type": "data",
-                "unit": "m/s"
+            "cube:variables": {
+                "wind_speed": {
+                    "description": "Wind speed on height levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. The speed is the magnitude of velocity.",           
+                    "dimensions": ["latitude", "longitude", "height"],
+                    "type": "data",
+                    "unit": "m/s"
+                }
             }
         }
     }
