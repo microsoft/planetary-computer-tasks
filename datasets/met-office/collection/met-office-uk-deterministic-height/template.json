@@ -90,7 +90,7 @@
             "type": "application/netcdf",
             "title": "Cloud amount on height levels",
             "roles": ["data"],
-            "forecast:variable": "",
+            "forecast:variable": "cloud_volume_fraction_in_atmosphere_layer",
             "cube:dimensions": {
                 "latitude": {
                     "type": "spatial",
@@ -116,7 +116,7 @@
             "type": "application/netcdf",
             "title": "Temperature on height levels",
             "roles": ["data"],
-            "forecast:variable": "",
+            "forecast:variable": "air_temperature",
             "cube:dimensions": {
                 "latitude": {
                     "type": "spatial",
@@ -142,7 +142,7 @@
             "type": "application/netcdf",
             "title": "Wind direction on height levels",
             "roles": ["data"],
-            "forecast:variable": "",
+            "forecast:variable": "wind_from_direction",
             "cube:dimensions": {
                 "latitude": {
                     "type": "spatial",
@@ -168,7 +168,7 @@
             "type": "application/netcdf",
             "title": "Wind speed on height levels",
             "roles": ["data"],
-            "forecast:variable": "",
+            "forecast:variable": "wind_speed",
             "cube:dimensions": {
                 "latitude": {
                     "type": "spatial",
@@ -191,25 +191,25 @@
             }            
         },
         "cube:variables": {
-            "cloud_amount_on_height_levels": {
+            "cloud_volume_fraction_in_atmosphere_layer": {
                 "description": "Fraction of horizontal grid square occupied by cloud in layers centred on height levels.",
                 "dimensions": ["latitude", "longitude", "height"],
                 "type": "data",
                 "unit": "1"
             },
-            "temperature_on_height_levels": {
+            "air_temperature": {
                 "description": "Air temperature on height levels.",
                 "dimensions": ["latitude", "longitude", "height"],
                 "type": "data",         
                 "unit": "K"
             },
-            "wind_direction_on_height_levels": {
+            "wind_from_direction": {
                 "description": "Wind direction on height levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. In meteorological reports the direction of the wind vector is given as the direction from which it is blowing.",
                 "dimensions": ["latitude", "longitude", "height"],
                 "type": "data",         
                 "unit": "degrees"
             },
-            "wind_speed_on_height_levels": {
+            "wind_speed": {
                 "description": "Wind speed on height levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. The speed is the magnitude of velocity.",           
                 "dimensions": ["latitude", "longitude", "height"],
                 "type": "data",
