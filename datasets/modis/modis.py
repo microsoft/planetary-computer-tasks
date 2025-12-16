@@ -6,10 +6,7 @@ from typing import List, Union
 import pystac
 import stactools.modis.cog
 import stactools.modis.stac
-from azure.core.exceptions import ResourceNotFoundError
-from stactools.core.utils.antimeridian import Strategy
 from stactools.modis.file import File
-from misc import add_platform_field
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
@@ -23,6 +20,42 @@ logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
 COG_CONTAINER = "blob://modiseuwest/modis-061-cogs/"
+
+
+# Add back in the platform property which NASA removed from their XML on March 13 2024
+# On the MODIS side terra is distributed as MOD and aqua as MYD,
+# but Within MPC both are distributed as MODxxx
+# Copied the method from misc.py and deleted the file
+def add_platform_field(item, href, logger):
+    """
+    add_platform_field # noqa: E501
+
+    Adds the platform field to a STAC item based on the HDF file href.
+    NASA removed this property from their XML metadata on March 13, 2024.
+
+    :param item: The STAC item to update
+    :type item: pystac.Item
+    :param href: The href path containing MOD/MYD/MCD prefix
+    :type href: str
+    :param logger: Logger instance for debug/warning messages
+    :type logger: logging.Logger
+    :return: The updated STAC item with platform field
+    :rtype: pystac.Item
+    """
+    if ("platform" not in item.properties) or (item.properties["platform"] == ""):
+        logger.debug("platform field missing, filling it in based on original xml href")
+        try:
+            if href.split('/')[4][0:3] == "MOD":
+                item.properties["platform"] = "terra"
+            elif href.split('/')[4][0:3] == "MYD":
+                item.properties["platform"] = "aqua"
+            elif href.split('/')[4][0:3] == "MCD":
+                item.properties["platform"] = "terra,aqua"
+            else:
+                logger.warning("href did not contain MOD/MYD/MCD in the usual spot")
+        except Exception as e:
+            logger.warning(f"href did not contain MOD/MYD/MCD in the usual spot, got error: {e}")
+    return item
 
 
 class MODISCollection(Collection):
@@ -50,17 +83,9 @@ class MODISCollection(Collection):
             file = File(os.path.join(temporary_directory, os.path.basename(asset_uri)))
             logger.debug(f"Downloading {asset_uri}")
             asset_storage.download_file(asset_path, file.hdf_href)
-            logger.debug(f"Downloading {asset_uri}.xml")
-            try:
-                asset_storage.download_file(f"{asset_path}.xml", file.xml_href)
-            except ResourceNotFoundError as e:
-                logger.warning(f"Missing XML file, skipping: {e}")
-                return []
 
             logger.debug("Creating item")
-            item = stactools.modis.stac.create_item(
-                file.xml_href, antimeridian_strategy=Strategy.NORMALIZE
-            )
+            item = stactools.modis.stac.create_item(file.hdf_href)
 
             if create_cogs:
                 logger.debug(f"Adding COGS to item {item}")
@@ -83,10 +108,11 @@ class MODISCollection(Collection):
         file = File(asset_storage.get_url(asset_path))
         logger.debug(f"Setting HDF asset href to {file.hdf_href}")
         item.assets["hdf"].href = file.hdf_href
-        logger.debug(f"Setting metadata asset href to {file.xml_href}")
-        item.assets["metadata"].href = file.xml_href
-        item.assets["metadata"].href = file.xml_href
 
-        item = add_platform_field(item, file.xml_href, logger)
+        # Remove metadata asset if it exists since XML files are no longer provided
+        if "metadata" in item.assets:
+            del item.assets["metadata"]
+
+        item = add_platform_field(item, file.hdf_href, logger)
 
         return [item]

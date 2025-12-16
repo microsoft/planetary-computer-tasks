@@ -1,5 +1,5 @@
 id: modis
-image: ${{ args.registry }}/pctasks-modis:2023.7.6.0
+image: ${{ args.registry }}/pctasks-modis:2025.12.15.0
 
 args:
 - registry
