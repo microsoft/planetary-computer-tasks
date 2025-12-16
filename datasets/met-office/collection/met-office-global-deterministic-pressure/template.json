@@ -45,7 +45,6 @@
       "roles": ["host", "processor"]
     }
   ],
-  "description": "The Met Office Global Deterministic Pressure Level dataset provides a composite of weather parameters generated for specific atmospheric pressure levels.",
   "stac_version": "1.0.0",
   "msft:group_id": "metoffice",
   "msft:container": "",
