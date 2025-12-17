@@ -9,10 +9,33 @@ The forecast covers the UK and Ireland, with the following latitude and longitud
 * Northeast: 61.6102°N, 4.3408°E 
 * Southeast: 49.0594°N, 2.4654°E 
 
+## Data collection height
+There are 3 forecast heights used within the near-surface this collection:
+* Surface: the default collection height
+* Screen level: 1.5m above the surface
+* Wind parameters: 10m above the surface
+
 ## Timesteps
-For most parameters, the following time steps are available (see parameter table for exceptions):
+For most parameters, the following time steps are available, see exceptions below:
 * every hour from 0 to 54 hours
 * every 3 hours from 57 to 120 hours
+
+Exceptions (for `rate`, `accumulation`, `min` and `max` parameters):
+* Hourly hail fall accumulation (hail_fall_accumulation-PT01H) is only available every hour from 1 to 54 hours
+* Hail fall rate (hail_fall_rate) has 15 minutely timesteps from 0 to 54 hours
+* Hourly precipitation accumulation (precipitation_accumulation-PT01H) is only available every hour from 1 to 54 hours
+* 3H precipitation accumulation (precipitation_accumulation-PT03H) is only available every three hours from 57 to 120 hours
+* Precipitation rate (precipitation_rate) has 15 minutely timesteps from 0 to 54 hours
+* Hourly rainfall accumulation (rainfall_accumulation-PT01H) is only available every hour from 1 to 54 hours
+* 3H rainfall accumulation (rainfall_accumulation-PT03H) is only available every three hours from 57 to 120 hours
+* Rainfall rate (rainfall_rate) has 15 minutely timesteps from 0 to 54 hours
+* Hourly snowfall accumulation (snowfall_accumulation-PT01H) is only available every hour from 1 to 54 hours
+* 3H snowfall accumulation (snowfall_accumulation-PT03H) is only available every three hours from 57 to 120 hours
+* Snowfall rate (snowfall_rate) has 15 minutely timesteps from 0 to 54 hours
+* Hourly temperature at screen level maximum (temperature_at_screen_level_max-PT01H) is only available every hour from 1 to 120 hours
+* Hourly temperature at screen level minimum (temperature_at_screen_level_min-PT01H) is only available every hour from 1 to 120 hours
+* Hourly wind gust at 10m maximum (wind_gust_at_10m_max-PT01H) is only available every hour from 1 to 54 hours
+* 3H wind gust at 10m maximum(wind_gust_at_10m_max-PT03H) is only available every three hours from 57 to 120 hours
  
 ## Update frequency
 There are three lengths of model run, each with its own update frequency: 
