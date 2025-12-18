@@ -1,1 +1,1 @@
-git+https://github.com/stactools-packages/modis@419101223609805f9ac9d2a38401448a36331460
+git+https://github.com/stactools-packages/modis@8854ceb263907e7b42a183fb5a79476baace3219
