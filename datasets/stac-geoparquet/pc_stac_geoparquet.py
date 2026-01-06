@@ -734,7 +734,7 @@ def run(
             "STAC_GEOPARQUET_CONNECTION_INFO must be set if not explicitly provided"
         ) from e
     table_credential = table_credential or os.environ.get(
-        "STAC_GEOPARQUET_TABLE_CREDENTIAL", azure.identity.DefaultAzureCredential()
+        "STAC_GEOPARQUET_TABLE_CREDENTIAL", azure.identity.ManagedIdentityCredential()
     )
     assert table_credential is not None
     storage_options_account_name = (
@@ -743,7 +743,7 @@ def run(
     )
     storage_options_credential = storage_options_credential or os.environ.get(
         "STAC_GEOPARQUET_STORAGE_OPTIONS_CREDENTIAL",
-        azure.identity.DefaultAzureCredential(),
+        azure.identity.ManagedIdentityCredential(),
     )
 
     storage_options = {
@@ -803,11 +803,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
     configs = list_planetary_computer_collection_configs(
         connection_info=os.environ["STAC_GEOPARQUET_CONNECTION_INFO"],
-        table_credential=azure.identity.DefaultAzureCredential(),
+        table_credential=azure.identity.ManagedIdentityCredential(),
         table_name=os.environ["STAC_GEOPARQUET_TABLE_NAME"],
         table_account_url=os.environ["STAC_GEOPARQUET_TABLE_ACCOUNT_URL"],
         storage_options_account_name=os.environ["STAC_GEOPARQUET_STORAGE_OPTIONS_ACCOUNT_NAME"],
-        storage_options_credential=azure.identity.DefaultAzureCredential(),
+        storage_options_credential=azure.identity.ManagedIdentityCredential(),
         extra_skip=SKIP,
         collections=args.collection,
     )
