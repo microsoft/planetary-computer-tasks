@@ -46,7 +46,7 @@ Iris supports NetCDF files through reading, writing and handling. Iris implement
 
 ## How to cite
 
-UKV 2km deterministic forecast was accessed on DATE from _insert Planetary Computer link_.
+UKV 2km deterministic forecast was accessed on DATE from the Microsoft Planetary Computer (https://zenodo.org/records/7261897).
 
 ## License
 
