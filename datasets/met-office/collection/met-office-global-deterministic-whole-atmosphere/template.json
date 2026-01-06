@@ -19,35 +19,60 @@
     "thumbnail": {
       "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/met-office-global-deterministic-whole-atmosphere.jpg",
       "type": "image/jpeg",
-      "roles": ["thumbnail"],
+      "roles": [
+        "thumbnail"
+      ],
       "title": "Whole Atmosphere collection Met Office Global 10km deterministic weather forecast thumbnail"
     }
   },
   "extent": {
     "spatial": {
-      "bbox": [[-180, -90, 180, 90]]
+      "bbox": [
+        [
+          -180,
+          -90,
+          180,
+          90
+        ]
+      ]
     },
     "temporal": {
-      "interval": [["2023-12-15T00:00:00Z", null]]
+      "interval": [
+        [
+          "2023-12-15T00:00:00Z",
+          null
+        ]
+      ]
     }
   },
   "license": "proprietary",
-  "keywords": ["MetOffice", "Global", "Cloud"],
+  "keywords": [
+    "MetOffice",
+    "Global",
+    "Cloud"
+  ],
   "providers": [
     {
       "url": "https://www.metoffice.gov.uk/",
       "name": "Met Office",
-      "roles": ["producer", "licensor", "processor"]
+      "roles": [
+        "producer",
+        "licensor",
+        "processor"
+      ]
     },
     {
       "url": "https://planetarycomputer.microsoft.com",
       "name": "Microsoft",
-      "roles": ["host", "processor"]
+      "roles": [
+        "host",
+        "processor"
+      ]
     }
   ],
   "stac_version": "1.0.0",
-  "msft:group_id": "metoffice",
-  "msft:container": "staging",
+  "msft:group_id": "met-office-global-deterministic",
+  "msft:container": "deterministic",
   "stac_extensions": [
     "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
     "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
@@ -59,85 +84,113 @@
     "CAPE_mixed_layer_lowest_500m": {
       "type": "application/netcdf",
       "title": "CAPE mixed layer lowest 500m",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "atmosphere_convective_available_potential_energy"
     },
     "CAPE_most_unstable_below_500hPa": {
       "type": "application/netcdf",
       "title": "CAPE most unstable below 500hPa",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "atmosphere_convective_available_potential_energy"
     },
     "CAPE_surface": {
       "type": "application/netcdf",
       "title": "CAPE surface",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "atmosphere_convective_available_potential_energy_wrt_surface"
     },
     "CIN_mixed_layer_lowest_500m": {
       "type": "application/netcdf",
       "title": "CIN mixed layer lowest 500m",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "atmosphere_convective_inhibition"
     },
     "CIN_most_unstable_below_500hPa": {
       "type": "application/netcdf",
       "title": "CIN most unstable below 500hPa",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "atmosphere_convective_inhibition"
     },
     "CIN_surface": {
       "type": "application/netcdf",
       "title": "CIN surface",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "atmosphere_convective_inhibition_wrt_surface"
     },
     "cloud_amount_below_1000ft_ASL": {
       "type": "application/netcdf",
       "title": "Cloud amount below 1000ft ASL",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "cloud_area_fraction_assuming_only_consider_surface_to_1000_feet_asl"
     },
     "cloud_amount_of_high_cloud": {
       "type": "application/netcdf",
       "title": "Cloud amount of high cloud",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "high_type_cloud_area_fraction"
     },
     "cloud_amount_of_low_cloud": {
       "type": "application/netcdf",
       "title": "Cloud amount of low cloud",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "low_type_cloud_area_fraction"
     },
     "cloud_amount_of_medium_cloud": {
       "type": "application/netcdf",
       "title": "Cloud amount of medium cloud",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "medium_type_cloud_area_fraction"
     },
     "cloud_amount_of_total_cloud": {
       "type": "application/netcdf",
       "title": "Cloud amount of total cloud",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "cloud_area_fraction"
     },
     "cloud_amount_of_total_convective_cloud": {
       "type": "application/netcdf",
       "title": "Cloud amount of total convective cloud",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "convective_cloud_area_fraction"
     },
     "pressure_at_tropopause": {
       "type": "application/netcdf",
       "title": "Pressure at tropopause",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "tropopause_air_pressure"
     },
     "temperature_at_tropopause": {
       "type": "application/netcdf",
       "title": "Temperature at tropopause",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "tropopause_air_temperature"
     }
   },
@@ -146,20 +199,32 @@
     "latitude": {
       "type": "spatial",
       "axis": "y",
-      "extent": [-90, 90]
+      "extent": [
+        -90,
+        90
+      ]
     },
     "longitude": {
       "type": "spatial",
       "axis": "x",
-      "extent": [-180, 180]
+      "extent": [
+        -180,
+        180
+      ]
     },
     "forecast:reference_datetime": {
       "type": "temporal",
-      "extent": ["2023-12-15T00:00:00Z", null]
+      "extent": [
+        "2023-12-15T00:00:00Z",
+        null
+      ]
     },
     "forecast:horizon": {
       "type": "temporal",
-      "extent": [null, null],
+      "extent": [
+        null,
+        null
+      ],
       "values": [
         "PT0H",
         "PT1H",

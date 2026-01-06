@@ -13,44 +13,48 @@ from met_office import (
 from pctasks.core.storage import StorageFactory
 
 test_storage_account = "ukmoeuwest"
-test_container = "staging"
+test_container = "deterministic"
 
 
 @pytest.mark.parametrize(
     "asset_uri,collection_class",
     [
         (
-            f"blob://{test_storage_account}/{test_container}/global/height/20251205T1200Z/20251208T0000Z-PT0060H00M.updated",
+            f"blob://{test_storage_account}/{test_container}/global/height/update/2026/01/06/1200Z/20260113T1200Z-PT0168H00M.updated",
             MetOfficeGlobalHeightCollection,
         ),
         (
-            f"blob://{test_storage_account}/{test_container}/global/near-surface/20251205T1200Z/20251207T0800Z-PT0044H00M.updated",
+            f"blob://{test_storage_account}/{test_container}/global/near-surface/update/2026/01/06/1200Z/20260113T1200Z-PT0168H00M.updated",
             MetOfficeGlobalNearSurfaceCollection,
         ),
         (
-            f"blob://{test_storage_account}/{test_container}/global/pressure/20251205T1200Z/20251207T0400Z-PT0040H00M.updated",
+            f"blob://{test_storage_account}/{test_container}/global/pressure/update/2026/01/06/1200Z/20260113T1200Z-PT0168H00M.updated",
             MetOfficeGlobalPressureCollection,
         ),
         (
-            f"blob://{test_storage_account}/{test_container}/global/whole-atmosphere/20251205T1200Z/20251207T0500Z-PT0041H00M.updated",
+            f"blob://{test_storage_account}/{test_container}/global/whole-atmosphere/update/2026/01/06/1200Z/20260113T1200Z-PT0168H00M.updated",
             MetOfficeGlobalWholeAtmosphereCollection,
         ),
         (
-            f"blob://{test_storage_account}/{test_container}/uk/height/20251205T1500Z/20251205T1500Z-PT0000H00M.updated",
+            f"blob://{test_storage_account}/{test_container}/uk/height/update/2024/06/26/0700Z/20240626T1900Z-PT0012H00M.updated",
             MetOfficeUkHeightCollection,
         ),
         (
-            f"blob://{test_storage_account}/{test_container}/uk/near-surface/20251205T1500Z/20251205T1500Z-PT0000H00M.updated",
+            f"blob://{test_storage_account}/{test_container}/uk/near-surface/update/2024/11/29/0600Z/20241201T1200Z-PT0054H00M.updated",
             MetOfficeUkNearSurfaceCollection,
         ),
         (
-            f"blob://{test_storage_account}/{test_container}/uk/pressure/20251205T1500Z/20251205T1500Z-PT0000H00M.updated",
+            f"blob://{test_storage_account}/{test_container}/uk/pressure/update/2024/10/25/1700Z/20241026T0500Z-PT0012H00M.updated",
             MetOfficeUkPressureCollection,
         ),
         (
-            f"blob://{test_storage_account}/{test_container}/uk/whole-atmosphere/20251205T1500Z/20251205T1500Z-PT0000H00M.updated",
+            f"blob://{test_storage_account}/{test_container}/uk/whole-atmosphere/update/2024/12/13/1100Z/20241213T2300Z-PT0012H00M.updated",
             MetOfficeUkWholeAtmosphereCollection,
         ),
+        (
+            f"blob://{test_storage_account}/{test_container}/global/near-surface/update/2025/12/30/1200Z/20251230T1200Z-PT0000H00M.updated",
+            MetOfficeGlobalNearSurfaceCollection,
+        )
     ],
 )
 def test_met_office_collection(

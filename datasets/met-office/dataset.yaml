@@ -10,15 +10,17 @@ code:
 
 environment:
   APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
-  DB_CONNECTION_STRING: ${{ secrets.staging-db-connection-string }}
 
 collections:
   - id: met-office-global-deterministic-height
     template: ${{ local.path(./collection/met-office-global-deterministic-height) }}
     class: met_office:MetOfficeGlobalHeightCollection
     asset_storage:
-      - uri: blob://ukmoeuwest/staging/global/height
+      # "global/whole-atmosphere/update/2025/10/23/1200Z/20251023T1200Z-PT0000H00M.updated"
+      - uri: blob://ukmoeuwest/deterministic/global/height/updated
         chunks:
+          splits:
+            - depth: 3
           options:
             min_depth: 1
             max_depth: 1
@@ -26,12 +28,12 @@ collections:
               - .updated
             chunk_length: 20000
     chunk_storage:
-      uri: blob://ukmoeuwest/staging/staging-chunks/
+      uri: blob://ukmoeuwest/chunks
   - id: met-office-global-deterministic-near-surface
     template: ${{ local.path(./collection/met-office-global-deterministic-near-surface) }}
     class: met_office:MetOfficeGlobalNearSurfaceCollection
     asset_storage:
-      - uri: blob://ukmoeuwest/staging/global/near-surface
+      - uri: blob://ukmoeuwest/deterministic/global/near-surface
         chunks:
           options:
             min_depth: 1
@@ -40,12 +42,12 @@ collections:
               - .updated
             chunk_length: 20000
     chunk_storage:
-      uri: blob://ukmoeuwest/staging/staging-chunks/
+      uri: blob://ukmoeuwest/chunks
   - id: met-office-global-deterministic-pressure
     template: ${{ local.path(./collection/met-office-global-deterministic-pressure) }}
     class: met_office:MetOfficeGlobalPressureCollection
     asset_storage:
-      - uri: blob://ukmoeuwest/staging/global/pressure
+      - uri: blob://ukmoeuwest/deterministic/global/pressure
         chunks:
           options:
             min_depth: 1
@@ -54,12 +56,12 @@ collections:
               - .updated
             chunk_length: 20000
     chunk_storage:
-      uri: blob://ukmoeuwest/staging/staging-chunks/
+      uri: blob://ukmoeuwest/chunks
   - id: met-office-global-deterministic-whole-atmosphere
     template: ${{ local.path(./collection/met-office-global-deterministic-whole-atmosphere) }}
     class: met_office:MetOfficeGlobalWholeAtmosphereCollection
     asset_storage:
-      - uri: blob://ukmoeuwest/staging/global/whole-atmosphere
+      - uri: blob://ukmoeuwest/deterministic/global/whole-atmosphere
         chunks:
           options:
             min_depth: 1
@@ -68,12 +70,12 @@ collections:
               - .updated
             chunk_length: 20000
     chunk_storage:
-      uri: blob://ukmoeuwest/staging/staging-chunks/
+      uri: blob://ukmoeuwest/chunks
   - id: met-office-uk-deterministic-height
     template: ${{ local.path(./collection/met-office-uk-deterministic-height) }}
     class: met_office:MetOfficeUkHeightCollection
     asset_storage:
-      - uri: blob://ukmoeuwest/staging/uk/height
+      - uri: blob://ukmoeuwest/deterministic/uk/height
         chunks:
           options:
             min_depth: 1
@@ -82,12 +84,12 @@ collections:
               - .updated
             chunk_length: 20000
     chunk_storage:
-      uri: blob://ukmoeuwest/staging/staging-chunks/
+      uri: blob://ukmoeuwest/chunks
   - id: met-office-uk-deterministic-near-surface
     template: ${{ local.path(./collection/met-office-uk-deterministic-near-surface) }}
     class: met_office:MetOfficeUkNearSurfaceCollection
     asset_storage:
-      - uri: blob://ukmoeuwest/staging/uk/near-surface
+      - uri: blob://ukmoeuwest/deterministic/uk/near-surface
         chunks:
           options:
             min_depth: 1
@@ -96,12 +98,12 @@ collections:
               - .updated
             chunk_length: 20000
     chunk_storage:
-      uri: blob://ukmoeuwest/staging/staging-chunks/
+      uri: blob://ukmoeuwest/chunks
   - id: met-office-uk-deterministic-pressure
     template: ${{ local.path(./collection/met-office-uk-deterministic-pressure) }}
     class: met_office:MetOfficeUkPressureCollection
     asset_storage:
-      - uri: blob://ukmoeuwest/staging/uk/pressure
+      - uri: blob://ukmoeuwest/deterministic/uk/pressure
         chunks:
           options:
             min_depth: 1
@@ -110,12 +112,12 @@ collections:
               - .updated
             chunk_length: 20000
     chunk_storage:
-      uri: blob://ukmoeuwest/staging/staging-chunks/
+      uri: blob://ukmoeuwest/chunks
   - id: met-office-uk-deterministic-whole-atmosphere
     template: ${{ local.path(./collection/met-office-uk-deterministic-whole-atmosphere) }}
     class: met_office:MetOfficeUkWholeAtmosphereCollection
     asset_storage:
-      - uri: blob://ukmoeuwest/staging/uk/whole-atmosphere
+      - uri: blob://ukmoeuwest/deterministic/uk/whole-atmosphere
         chunks:
           options:
             min_depth: 1
@@ -124,4 +126,4 @@ collections:
               - .updated
             chunk_length: 20000
     chunk_storage:
-      uri: blob://ukmoeuwest/staging/staging-chunks/
+      uri: blob://ukmoeuwest/chunks

@@ -19,16 +19,30 @@
     "thumbnail": {
       "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/met-office-global-deterministic-near-surface.jpg",
       "type": "image/jpeg",
-      "roles": ["thumbnail"],
+      "roles": [
+        "thumbnail"
+      ],
       "title": "Near-surface level collection Met Office global deterministic 10km forecast thumbnail"
     }
   },
   "extent": {
     "spatial": {
-      "bbox": [[-180, -90, 180, 90]]
+      "bbox": [
+        [
+          -180,
+          -90,
+          180,
+          90
+        ]
+      ]
     },
     "temporal": {
-      "interval": [["2023-12-15T00:00:00Z", null]]
+      "interval": [
+        [
+          "2023-12-15T00:00:00Z",
+          null
+        ]
+      ]
     }
   },
   "license": "proprietary",
@@ -52,17 +66,24 @@
     {
       "url": "https://www.metoffice.gov.uk/",
       "name": "Met Office",
-      "roles": ["producer", "licensor", "processor"]
+      "roles": [
+        "producer",
+        "licensor",
+        "processor"
+      ]
     },
     {
       "url": "https://planetarycomputer.microsoft.com",
       "name": "Microsoft",
-      "roles": ["host", "processor"]
+      "roles": [
+        "host",
+        "processor"
+      ]
     }
   ],
   "stac_version": "1.0.0",
-  "msft:group_id": "metoffice",
-  "msft:container": "staging",
+  "msft:group_id": "met-office-global-deterministic",
+  "msft:container": "deterministic",
   "stac_extensions": [
     "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
     "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
@@ -74,289 +95,385 @@
     "fog_fraction_at_screen_level": {
       "type": "application/netcdf",
       "title": "Fog fraction at screen level",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "fog_area_fraction"
     },
     "height_of_orography": {
       "type": "application/netcdf",
       "title": "Height of orography",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "surface_altitude"
     },
     "latent_heat_flux_at_surface_mean-PT01H": {
       "type": "application/netcdf",
       "title": "Hourly latent heat flux at surface mean",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "surface_upward_latent_heat_flux"
     },
     "latent_heat_flux_at_surface_mean-PT03H": {
       "type": "application/netcdf",
       "title": "3H latent heat flux at surface mean",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "surface_upward_latent_heat_flux"
     },
     "latent_heat_flux_at_surface_mean-PT06H": {
       "type": "application/netcdf",
       "title": "6H latent heat flux at surface mean",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "surface_upward_latent_heat_flux"
     },
     "precipitation_accumulation-PT01H": {
       "type": "application/netcdf",
       "title": "Hourly precipitation accumulation",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "lwe_thickness_of_precipitation_amount"
     },
     "precipitation_accumulation-PT03H": {
       "type": "application/netcdf",
       "title": "3H precipitation accumulation",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "lwe_thickness_of_precipitation_amount"
     },
     "precipitation_accumulation-PT06H": {
       "type": "application/netcdf",
       "title": "6H precipitation accumulation",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "lwe_thickness_of_precipitation_amount"
     },
     "precipitation_rate": {
       "type": "application/netcdf",
       "title": "Precipitation rate",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "lwe_precipitation_rate"
     },
     "pressure_at_mean_sea_level": {
       "type": "application/netcdf",
       "title": "Pressure at mean sea level",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "air_pressure_at_sea_level"
     },
     "radiation_flux_in_longwave_downward_at_surface": {
       "type": "application/netcdf",
       "title": "Radiation flux in longwave downward at surface",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "surface_downwelling_longwave_flux_in_air"
     },
     "radiation_flux_in_shortwave_direct_downward_at_surface": {
       "type": "application/netcdf",
       "title": "Radiation flux in shortwave direct downward at surface",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "surface_direct_downwelling_shortwave_flux_in_air"
     },
     "radiation_flux_in_shortwave_total_downward_at_surface": {
       "type": "application/netcdf",
       "title": "Radiation flux in shortwave total downward at surface",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "surface_downwelling_shortwave_flux_in_air"
     },
     "radiation_flux_in_uv_downward_at_surface": {
       "type": "application/netcdf",
       "title": "Radiation flux in uv downward at surface",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "surface_downwelling_ultraviolet_flux_in_air"
     },
     "rainfall_accumulation-PT01H": {
       "type": "application/netcdf",
       "title": "Hourly rainfall accumulation",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "thickness_of_rainfall_amount"
     },
     "rainfall_accumulation-PT03H": {
       "type": "application/netcdf",
       "title": "3H rainfall accumulation",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "thickness_of_rainfall_amount"
     },
     "rainfall_accumulation-PT06H": {
       "type": "application/netcdf",
       "title": "6H rainfall accumulation",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "thickness_of_rainfall_amount"
     },
     "rainfall_rate": {
       "type": "application/netcdf",
       "title": "Rainfall rate",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "rainfall_rate"
     },
     "rainfall_rate_from_convection": {
       "type": "application/netcdf",
       "title": "Rainfall rate from convection",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "convective_rainfall_rate"
     },
     "rainfall_rate_from_convection_max-PT01H": {
       "type": "application/netcdf",
       "title": "Hourly rainfall rate from convection max",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "convective_rainfall_rate"
     },
     "rainfall_rate_from_convection_max-PT03H": {
       "type": "application/netcdf",
       "title": "3H rainfall rate from convection max",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "convective_rainfall_rate"
     },
     "rainfall_rate_from_convection_max-PT06H": {
       "type": "application/netcdf",
       "title": "6H rainfall rate from convection max",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "convective_rainfall_rate"
     },
     "relative_humidity_at_screen_level": {
       "type": "application/netcdf",
       "title": "Relative humidity at screen level",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "relative_humidity"
     },
     "snow_depth_water_equivalent": {
       "type": "application/netcdf",
       "title": "Snow depth water equivalent",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "lwe_thickness_of_surface_snow_amount"
     },
     "snowfall_rate": {
       "type": "application/netcdf",
       "title": "Snowfall rate",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "lwe_snowfall_rate"
     },
     "snowfall_rate_from_convection": {
       "type": "application/netcdf",
       "title": "Snowfall rate from convection",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "lwe_convective_snowfall_rate"
     },
     "snowfall_rate_from_convection_max-PT01H": {
       "type": "application/netcdf",
       "title": "Hourly snowfall rate from convection max",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "lwe_convective_snowfall_rate"
     },
     "snowfall_rate_from_convection_max-PT03H": {
       "type": "application/netcdf",
       "title": "3H snowfall rate from convection max",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "lwe_convective_snowfall_rate"
     },
     "snowfall_rate_from_convection_max-PT06H": {
       "type": "application/netcdf",
       "title": "6H snowfall rate from convection max",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "lwe_convective_snowfall_rate"
     },
     "snowfall_rate_from_convection_mean-PT01H": {
       "type": "application/netcdf",
       "title": "Hourly snowfall rate from convection mean",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "lwe_convective_snowfall_rate"
     },
     "snowfall_rate_from_convection_mean-PT03H": {
       "type": "application/netcdf",
       "title": "3H snowfall rate from convection mean",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "lwe_convective_snowfall_rate"
     },
     "snowfall_rate_from_convection_mean-PT06H": {
       "type": "application/netcdf",
       "title": "6H snowfall rate from convection mean",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "lwe_convective_snowfall_rate"
     },
     "temperature_at_screen_level": {
       "type": "application/netcdf",
       "title": "Temperature at screen level",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "air_temperature"
     },
     "temperature_at_screen_level_max-PT01H": {
       "type": "application/netcdf",
       "title": "Hourly temperature at screen level max",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "air_temperature"
     },
     "temperature_at_screen_level_max-PT03H": {
       "type": "application/netcdf",
       "title": "3H temperature at screen level max",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "air_temperature"
     },
     "temperature_at_screen_level_max-PT06H": {
       "type": "application/netcdf",
       "title": "6H temperature at screen level max",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "air_temperature"
     },
     "temperature_at_screen_level_min-PT01H": {
       "type": "application/netcdf",
       "title": "Hourly temperature at screen level min",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "air_temperature"
     },
     "temperature_at_screen_level_min-PT03H": {
       "type": "application/netcdf",
       "title": "3H remperature at screen level min",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "air_temperature"
     },
     "temperature_at_screen_level_min-PT06H": {
       "type": "application/netcdf",
       "title": "6H temperature at screen level min",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "air_temperature"
     },
     "temperature_at_surface": {
       "type": "application/netcdf",
       "title": "Temperature at surface",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "surface_temperature"
     },
     "temperature_of_dew_point_at_screen_level": {
       "type": "application/netcdf",
       "title": "Dew point temperature at screen level",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "dew_point_temperature"
     },
     "visibility_at_screen_level": {
       "type": "application/netcdf",
       "title": "Visibility at screen level",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "visibility_in_air"
     },
     "wind_direction_at_10m": {
       "type": "application/netcdf",
       "title": "Wind direction at 10m",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "wind_from_direction"
     },
     "wind_gust_at_10m": {
       "type": "application/netcdf",
       "title": "Wind gust at 10m",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "wind_speed_of_gust"
     },
     "wind_gust_at_10m_max-PT01H": {
       "type": "application/netcdf",
       "title": "Hourly wind gust at 10m max",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "wind_speed_of_gust"
     },
     "wind_gust_at_10m_max-PT03H": {
       "type": "application/netcdf",
       "title": "3H wind gust at 10m max",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "wind_speed_of_gust"
     },
     "wind_gust_at_10m_max-PT06H": {
       "type": "application/netcdf",
       "title": "6H wind gust at 10m max",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "wind_speed_of_gust"
     },
     "wind_speed_at_10m": {
       "type": "application/netcdf",
       "title": "Wind speed at 10m",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "wind_speed"
     }
   },
@@ -365,20 +482,32 @@
     "latitude": {
       "type": "spatial",
       "axis": "y",
-      "extent": [-90, 90]
+      "extent": [
+        -90,
+        90
+      ]
     },
     "longitude": {
       "type": "spatial",
       "axis": "x",
-      "extent": [-180, 180]
+      "extent": [
+        -180,
+        180
+      ]
     },
     "forecast:reference_datetime": {
       "type": "temporal",
-      "extent": ["2023-12-15T00:00:00Z", null]
+      "extent": [
+        "2023-12-15T00:00:00Z",
+        null
+      ]
     },
     "forecast:horizon": {
       "type": "temporal",
-      "extent": [null, null],
+      "extent": [
+        null,
+        null
+      ],
       "values": [
         "PT0H",
         "PT1H",

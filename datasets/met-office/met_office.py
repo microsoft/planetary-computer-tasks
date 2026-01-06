@@ -26,7 +26,8 @@ class MetOfficeCollection(Collection):
     ) -> Union[list[Item], WaitTaskResult]:
         logger.info(f"Found sentinel file: {asset_uri}")
         parts = asset_uri.split("/")
-        storage_uri = "/".join(parts[0:-1])
+        parent = "".join(parts[7:10]) + "T" + parts[10]
+        storage_uri = "/".join(parts[0:6] + [parent])
         item_id = parts[-1].split(".")[0]
         storage = storage_factory.get_storage(storage_uri)
         logger.info(f"Listing {storage_uri} for item {item_id}")
@@ -41,9 +42,6 @@ class MetOfficeCollection(Collection):
             logger.warning(
                 f"Expected to only create 1 item, but created {len(items)} instead. Ids: {', '.join(item.id for item in items)}"
             )
-        logger.info(f"Deleting sentinel file: {asset_uri}")
-        blob_client, path = storage_factory.get_storage_for_file(asset_uri)
-        blob_client.delete_file(path)
         return items
 
 

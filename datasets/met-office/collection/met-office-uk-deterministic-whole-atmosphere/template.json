@@ -19,16 +19,30 @@
     "thumbnail": {
       "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/met-office-uk-deterministic-whole-atmosphere.jpg",
       "type": "image/jpeg",
-      "roles": ["thumbnail"],
+      "roles": [
+        "thumbnail"
+      ],
       "title": "Whole Atmosphere collection Met Office UKV 2km deterministic forecast thumbnail"
     }
   },
   "extent": {
     "spatial": {
-      "bbox": [[-13.7254, 48.8643, 4.3408, 61.6102]]
+      "bbox": [
+        [
+          -13.7254,
+          48.8643,
+          4.3408,
+          61.6102
+        ]
+      ]
     },
     "temporal": {
-      "interval": [["2023-12-15T00:00:00Z", null]]
+      "interval": [
+        [
+          "2023-12-15T00:00:00Z",
+          null
+        ]
+      ]
     }
   },
   "license": "proprietary",
@@ -47,17 +61,24 @@
     {
       "url": "https://www.metoffice.gov.uk/",
       "name": "Met Office",
-      "roles": ["producer", "licensor", "processor"]
+      "roles": [
+        "producer",
+        "licensor",
+        "processor"
+      ]
     },
     {
       "url": "https://planetarycomputer.microsoft.com",
       "name": "Microsoft",
-      "roles": ["host", "processor"]
+      "roles": [
+        "host",
+        "processor"
+      ]
     }
   ],
   "stac_version": "1.0.0",
-  "msft:group_id": "metoffice",
-  "msft:container": "staging",
+  "msft:group_id": "met-office-uk-deterministic",
+  "msft:container": "deterministic",
   "stac_extensions": [
     "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
     "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
@@ -69,67 +90,89 @@
     "CAPE_most_unstable_below_500hPa": {
       "type": "application/netcdf",
       "title": "CAPE most unstable below 500hPa",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "atmosphere_convective_available_potential_energy"
     },
     "CAPE_surface": {
       "type": "application/netcdf",
       "title": "CAPE surface",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "atmosphere_convective_available_potential_energy_wrt_surface"
     },
     "cloud_amount_below_1000ft_ASL": {
       "type": "application/netcdf",
       "title": "Cloud amount below 1000ft ASL",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "cloud_area_fraction_assuming_only_consider_surface_to_1000_feet_asl"
     },
     "cloud_amount_of_high_cloud": {
       "type": "application/netcdf",
       "title": "Cloud amount of high cloud",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "high_type_cloud_area_fraction"
     },
     "cloud_amount_of_low_cloud": {
       "type": "application/netcdf",
       "title": "Cloud amount of low cloud",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "low_type_cloud_area_fraction"
     },
     "cloud_amount_of_medium_cloud": {
       "type": "application/netcdf",
       "title": "Cloud amount of medium cloud",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "medium_type_cloud_area_fraction"
     },
     "cloud_amount_of_total_cloud": {
       "type": "application/netcdf",
       "title": "Cloud amount of total cloud",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "cloud_area_fraction"
     },
     "height_AGL_at_cloud_base_where_cloud_cover_2p5_oktas": {
       "type": "application/netcdf",
       "title": "Height AGL at cloud base where cloud cover 2p5 oktas",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "cloud_base_height_2p5_oktas"
     },
     "height_AGL_at_freezing_level": {
       "type": "application/netcdf",
       "title": "Height AGL at freezing level",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "freezing_level_height"
     },
     "height_AGL_at_wet_bulb_freezing_level": {
       "type": "application/netcdf",
       "title": "Height AGL at wet bulb freezing level",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "wet_bulb_freezing_level_height"
     },
     "lightning_flash_accumulation-PT01H": {
       "type": "application/netcdf",
       "title": "Hourly lightning flash accumulation",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "number_of_lightning_flashes_per_unit_area"
     }
   },
@@ -138,20 +181,32 @@
     "latitude": {
       "type": "spatial",
       "axis": "y",
-      "extent": [50, 62]
+      "extent": [
+        50,
+        62
+      ]
     },
     "longitude": {
       "type": "spatial",
       "axis": "x",
-      "extent": [5, 15]
+      "extent": [
+        5,
+        15
+      ]
     },
     "forecast:reference_datetime": {
       "type": "temporal",
-      "extent": ["2023-12-15T00:00:00Z", null]
+      "extent": [
+        "2023-12-15T00:00:00Z",
+        null
+      ]
     },
     "forecast:horizon": {
       "type": "temporal",
-      "extent": [null, null],
+      "extent": [
+        null,
+        null
+      ],
       "values": [
         "PT0H",
         "PT1H",
