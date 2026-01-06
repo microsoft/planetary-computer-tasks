@@ -1,3 +1,5 @@
+"""A one-off cleanup script to move datacube information out of item assets up to the top level."""
+
 import json
 import sys
 from typing import Any
