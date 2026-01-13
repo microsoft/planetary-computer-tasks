@@ -1,6 +1,8 @@
 This collection offers 1 parameter at 33 available height levels (5m to 6000m) from the Met Office global deterministic 10km forecast. This is a numerical weather prediction forecast for the whole globe, with a resolution of approximately 0.09 degrees i.e. 10km (2,560 x 1,920 grid points). 
 
-The data is available as NetCDF files. It's offered on a free, unsupported basis, so we don’t recommend using it for any critical business purposes.
+The data is available as NetCDF files. It's offered on a free, unsupported basis, so we don't recommend using it for any critical business purposes.
+
+**Note: This dataset is not yet available in the Planetary Computer API, but can be accessed directly from Azure Blob Storage.**
 
 ## Height Levels
 Available height levels, in metres (m) above ground, are: 
@@ -47,7 +49,7 @@ Within this account forecasts are organized by region, category, and runtime. Ea
 
 deterministic/global/height/YYYYMMDDTHHMMZ
 
-Where YYYY is the 4-digit year, MM is the two-digit month, DD is the two-digit day, and HHMMZ is the UTC forecast runtime. Within that run’s directory are NetCDF files for each of the variables produced by the forecast. For example:
+Where YYYY is the 4-digit year, MM is the two-digit month, DD is the two-digit day, and HHMMZ is the UTC forecast runtime. Within that run's directory are NetCDF files for each of the variables produced by the forecast. For example:
 https://ukmoeuwest.blob.core.windows.net/deterministic/global/height/20250101T0000Z/20250101T0000Z-PT0000H00M-cloud_amount_on_height_levels.nc
 
 Users must use a Shared Access Signature (SAS) token to authorize requests to Azure Blob Storage. Users may request a read-only SAS token for a specific asset URL using the following endpoint: https://planetarycomputer.microsoft.com/api/sas/v1/sign?href={url}

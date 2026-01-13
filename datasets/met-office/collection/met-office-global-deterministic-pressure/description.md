@@ -1,6 +1,8 @@
 This collection offers 8 parameters at 33 available pressure levels (from 100000Pa to 1000Pa) from the Met Office global deterministic 10km forecast. This is a numerical weather prediction forecast for the whole globe, with a resolution of approximately 0.09 degrees i.e. 10km (2,560 x 1,920 grid points).
 
-The data is available as NetCDF files. It's offered on a free, unsupported basis, so we don’t recommend using it for any critical business purposes.
+The data is available as NetCDF files. It's offered on a free, unsupported basis, so we don't recommend using it for any critical business purposes.
+
+**Note: This dataset is not yet available in the Planetary Computer API, but can be accessed directly from Azure Blob Storage.**
 
 ## Pressure Levels
 Available pressure levels, in Pascals (Pa), are:

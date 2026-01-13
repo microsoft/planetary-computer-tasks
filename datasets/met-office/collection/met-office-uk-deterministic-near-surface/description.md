@@ -1,6 +1,8 @@
 This collection offers 35 parameters at near-surface level from the Met Office UKV 2km deterministic forecast. This is a high-resolution gridded weather forecast for the UK, with a resolution of 0.018 degrees, projected on to a 2km horizontal grid.
 
-The data is available as NetCDF files. It's offered on a free, unsupported basis, so we don’t recommend using it for any critical business purposes. 
+The data is available as NetCDF files. It's offered on a free, unsupported basis, so we don't recommend using it for any critical business purposes. 
+
+**Note: This dataset is not yet available in the Planetary Computer API, but can be accessed directly from Azure Blob Storage.**
 
 ## Coverage area
 The forecast covers the UK and Ireland, with the following latitude and longitude coordinates for each corner of the included area: 
