@@ -53,11 +53,11 @@ Within this account forecasts are organized by region, category, and runtime. Ea
 deterministic/uk/height/YYYYMMDDTHHMMZ
 
 Where YYYY is the 4-digit year, MM is the two-digit month, DD is the two-digit day, and HHMMZ is the UTC forecast runtime. Within that run's directory are NetCDF files for each of the variables produced by the forecast. For example:
-https://ukmoeuwest.blob.core.windows.net/deterministic/uk/height/20260101T0000Z/20260101T0000Z-PT0000H00M-temperature.nc
+https://ukmoeuwest.blob.core.windows.net/deterministic/uk/height/20250101T0000Z/20250101T0000Z-PT0000H00M-cloud_amount_on_height_levels.nc
 
 Users must use a Shared Access Signature (SAS) token to authorize requests to Azure Blob Storage. Users may request a read-only SAS token for a specific asset URL using the following endpoint: https://planetarycomputer.microsoft.com/api/sas/v1/sign?href={url}
 For example:
-https://planetarycomputer.microsoft.com/api/sas/v1/sign?href=https://ukmoeuwest.blob.core.windows.net/deterministic/uk/height/20260101T0000Z/20260101T0000Z-PT0000H00M-temperature.nc
+https://planetarycomputer.microsoft.com/api/sas/v1/sign?href=https://ukmoeuwest.blob.core.windows.net/deterministic/uk/height/20250101T0000Z/20250101T0000Z-PT0000H00M-cloud_amount_on_height_levels.nc
 
 Additionally, the Planetary Computer's SAS token endpoint allows for the generation of a read-only SAS token that grants access to all assets in the selected collection. For example, to receive a SAS token to access this collection please use:
 
