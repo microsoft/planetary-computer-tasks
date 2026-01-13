@@ -1,6 +1,7 @@
 {
   "id": "met-office-uk-deterministic-pressure",
   "type": "Collection",
+  "description": "{{ collection.description }}",
   "links": [
     {
       "rel": "license",
