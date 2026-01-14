@@ -1,8 +1,8 @@
 id: gbif
-image: ${{ args.registry }}/pctasks-gbif:20230607.1
+image: ${{ args.registry }}/pctasks-gbif:2026.01.12
 
 args:
-- registry
+  - registry
 
 code:
   src: ${{ local.path(./gbif.py) }}

@@ -1,8 +1,8 @@
 id: modis
-image: ${{ args.registry }}/pctasks-modis:2025.12.15.0
+image: ${{ args.registry }}/pctasks-modis:2026.01.12
 
 args:
-- registry
+  - registry
 
 code:
   src: ${{ local.path(./modis.py) }}
@@ -13,7 +13,7 @@ environment:
 collections:
   - id: modis-09A1-061
     template: ${{ local.path(./collection/modis-09A1-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       # The blob storage pattern is
       # | modis-09A1-061
@@ -37,7 +37,7 @@ collections:
 
   - id: modis-09Q1-061
     template: ${{ local.path(./collection/modis-09Q1-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD09Q1/
         chunks:
@@ -52,7 +52,7 @@ collections:
 
   - id: modis-10A1-061
     template: ${{ local.path(./collection/modis-10A1-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD10A1/
         chunks:
@@ -67,7 +67,7 @@ collections:
 
   - id: modis-10A2-061
     template: ${{ local.path(./collection/modis-10A2-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD10A2/
         chunks:
@@ -82,7 +82,7 @@ collections:
 
   - id: modis-11A1-061
     template: ${{ local.path(./collection/modis-11A1-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD11A1/
         chunks:
@@ -97,7 +97,7 @@ collections:
 
   - id: modis-11A2-061
     template: ${{ local.path(./collection/modis-11A2-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD11A2/
         chunks:
@@ -112,7 +112,7 @@ collections:
 
   - id: modis-13A1-061
     template: ${{ local.path(./collection/modis-13A1-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD13A1/
         chunks:
@@ -127,7 +127,7 @@ collections:
 
   - id: modis-13Q1-061
     template: ${{ local.path(./collection/modis-13Q1-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD13Q1/
         chunks:
@@ -142,7 +142,7 @@ collections:
 
   - id: modis-14A1-061
     template: ${{ local.path(./collection/modis-14A1-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD14A1/
         chunks:
@@ -157,7 +157,7 @@ collections:
 
   - id: modis-14A2-061
     template: ${{ local.path(./collection/modis-14A2-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD14A2/
         chunks:
@@ -172,7 +172,7 @@ collections:
 
   - id: modis-15A2H-061
     template: ${{ local.path(./collection/modis-15A2H-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD15A2H/
         chunks:
@@ -191,7 +191,7 @@ collections:
 
   - id: modis-15A3H-061
     template: ${{ local.path(./collection/modis-15A3H-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MCD15A3H/
         chunks:
@@ -202,7 +202,7 @@ collections:
 
   - id: modis-16A3GF-061
     template: ${{ local.path(./collection/modis-16A3GF-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD16A3GF/
         chunks:
@@ -217,7 +217,7 @@ collections:
 
   - id: modis-17A2H-061
     template: ${{ local.path(./collection/modis-17A2H-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD17A2H/
         chunks:
@@ -232,7 +232,7 @@ collections:
 
   - id: modis-17A2HGF-061
     template: ${{ local.path(./collection/modis-17A2HGF-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD17A2HGF/
         chunks:
@@ -247,7 +247,7 @@ collections:
 
   - id: modis-17A3HGF-061
     template: ${{ local.path(./collection/modis-17A3HGF-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD17A3HGF/
         chunks:
@@ -262,7 +262,7 @@ collections:
 
   - id: modis-21A2-061
     template: ${{ local.path(./collection/modis-21A2-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MOD21A2/
         chunks:
@@ -277,7 +277,7 @@ collections:
 
   - id: modis-43A4-061
     template: ${{ local.path(./collection/modis-43A4-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MCD43A4/
         chunks:
@@ -288,7 +288,7 @@ collections:
 
   - id: modis-64A1-061
     template: ${{ local.path(./collection/modis-64A1-061/) }}
-    class: modis:MODISCollection 
+    class: modis:MODISCollection
     asset_storage:
       - uri: blob://modiseuwest/modis-061/MCD64A1/
         chunks:

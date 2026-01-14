@@ -1,5 +1,5 @@
 id: hls2
-image: ${{ args.registry }}/pctasks-task-base:2025.4.8.2
+image: ${{ args.registry }}/pctasks-task-base:2026.01.12
 
 args:
   - registry
@@ -42,7 +42,6 @@ collections:
             chunk_length: 20000
     chunk_storage:
       uri: blob://hls2euwest/hls2-l30-info/pctasks-chunks/
-
 # The blob storage pattern is:
 # | container
 # |   S30/ or L30/ depending on collection

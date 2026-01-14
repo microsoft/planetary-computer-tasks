@@ -1,9 +1,9 @@
 id: goes_glm
-image: ${{ args.registry }}/pctasks-goes-glm:2025.04.16.0
+image: ${{ args.registry }}/pctasks-goes-glm:2026.01.12
 
 args:
-- registry
-- year-prefix
+  - registry
+  - year-prefix
 
 code:
   src: ${{ local.path(./goes_glm.py) }}

@@ -1,5 +1,5 @@
 id: met-office
-image: ${{ args.registry }}/pctasks-task-base:latest
+image: ${{ args.registry }}/pctasks-task-base:2026.01.12
 
 args:
   - registry
@@ -113,7 +113,7 @@ collections:
     template: ${{ local.path(./collection/met-office-uk-deterministic-pressure) }}
     class: met_office:MetOfficeUkPressureCollection
     asset_storage:
-      - uri: blob://ukmoeuwest/deterministic/uk/pressure/updatde
+      - uri: blob://ukmoeuwest/deterministic/uk/pressure/update
         chunks:
           splits:
             - depth: 3
