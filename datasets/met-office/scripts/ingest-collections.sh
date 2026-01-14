@@ -48,5 +48,5 @@ do
     -d dataset.yaml \
     -a registry pccomponents \
     -c "$collection" \
-    --submit --confirm
+    --confirm --submit
 done
