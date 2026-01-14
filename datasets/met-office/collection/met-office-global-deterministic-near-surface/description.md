@@ -2,8 +2,6 @@ This collection offers 48 parameters at near-surface level from the Met Office g
 
 The data is available as NetCDF files. It's offered on a free, unsupported basis, so we don't recommend using it for any critical business purposes.
 
-**Note: This dataset is not yet available in the Planetary Computer API, but can be accessed directly from Azure Blob Storage.**
-
 ## Data collection height
 There are 3 forecast heights used within the near-surface this collection:
 * Surface: the default collection height
@@ -73,27 +71,6 @@ Iris supports NetCDF files through reading, writing and handling. Iris implement
 
 ## Help us improve the data services we offer
 [Join the Met Office research panel](https://forms.office.com/Pages/ResponsePage.aspx?id=YYHxF9cgRkeH_VD-PjtmGdxioYGoFbFIkZuB_q8Fb3VUQkoxRVQzTFdUMzNMVzczWVM5VTc3QTY3MC4u) to help us understand how people interact with weather and climate data, uncover challenges and explore opportunities.
-
-## Data access
-
-These files are available from the Azure Blob Storage account at https://ukmoeuwest.blob.core.windows.net. This storage account is in Azure's West Europe region. Users wishing to perform large-scale processing on the data should also locate their compute in Azure's West Europe region. All data files are in NetCDF format.
-
-Within this account forecasts are organized by region, category, and runtime. Each file path within the container will start with:
-
-deterministic/global/near-surface/YYYYMMDDTHHMMZ
-
-Where YYYY is the 4-digit year, MM is the two-digit month, DD is the two-digit day, and HHMMZ is the UTC forecast runtime. Within that run's directory are NetCDF files for each of the variables produced by the forecast. For example:
-https://ukmoeuwest.blob.core.windows.net/deterministic/global/near-surface/20250101T0000Z/20250101T0000Z-PT0000H00M-fog_fraction_at_screen_level.nc
-
-Users must use a Shared Access Signature (SAS) token to authorize requests to Azure Blob Storage. Users may request a read-only SAS token for a specific asset URL using the following endpoint: https://planetarycomputer.microsoft.com/api/sas/v1/sign?href={url}
-For example:
-https://planetarycomputer.microsoft.com/api/sas/v1/sign?href=https://ukmoeuwest.blob.core.windows.net/deterministic/global/near-surface/20250101T0000Z/20250101T0000Z-PT0000H00M-fog_fraction_at_screen_level.nc
-
-Additionally, the Planetary Computer's SAS token endpoint allows for the generation of a read-only SAS token that grants access to all assets in the selected collection. For example, to receive a SAS token to access this collection please use:
-
-https://planetarycomputer.microsoft.com/api/sas/v1/token/met-office-global-deterministic-near-surface
-
-Users can use this token to connect to and read data from this container using Blobfuse2 (azure-storage-fuse).
 
 ## How to cite
 Met Office global deterministic 10km forecast was accessed on DATE from the Microsoft Planetary Computer (https://zenodo.org/records/7261897).
