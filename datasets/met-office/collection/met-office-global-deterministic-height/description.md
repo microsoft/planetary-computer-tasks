@@ -2,8 +2,6 @@ This collection offers 1 parameter at 33 available height levels (5m to 6000m) f
 
 The data is available as NetCDF files. It's offered on a free, unsupported basis, so we don't recommend using it for any critical business purposes.
 
-**Note: This dataset is not yet available in the Planetary Computer API, but can be accessed directly from Azure Blob Storage.**
-
 ## Height Levels
 Available height levels, in metres (m) above ground, are: 
 * 5.0 10.0 20.0 30.0 50.0 75.0 100.0 150.0 200.0 250.0 300.0 400.0 500.0 600.0 700.0 800.0 1000.0 1250.0 1500.0 1750.0 2000.0 2250.0 2500.0 2750.0 3000.0 3250.0 3500.0 3750.0 4000.0 4500.0 5000.0 5500.0 6000.0
@@ -40,27 +38,6 @@ Iris supports NetCDF files through reading, writing and handling. Iris implement
 
 ## Help us improve the data services we offer
 [Join the Met Office research panel](https://forms.office.com/Pages/ResponsePage.aspx?id=YYHxF9cgRkeH_VD-PjtmGdxioYGoFbFIkZuB_q8Fb3VUQkoxRVQzTFdUMzNMVzczWVM5VTc3QTY3MC4u) to help us understand how people interact with weather and climate data, uncover challenges and explore opportunities.
-
-## Data access
-
-These files are available from the Azure Blob Storage account at https://ukmoeuwest.blob.core.windows.net. This storage account is in Azure's West Europe region. Users wishing to perform large-scale processing on the data should also locate their compute in Azure's West Europe region. All data files are in NetCDF format.
-
-Within this account forecasts are organized by region, category, and runtime. Each file path within the container will start with:
-
-deterministic/global/height/YYYYMMDDTHHMMZ
-
-Where YYYY is the 4-digit year, MM is the two-digit month, DD is the two-digit day, and HHMMZ is the UTC forecast runtime. Within that run's directory are NetCDF files for each of the variables produced by the forecast. For example:
-https://ukmoeuwest.blob.core.windows.net/deterministic/global/height/20250101T0000Z/20250101T0000Z-PT0000H00M-cloud_amount_on_height_levels.nc
-
-Users must use a Shared Access Signature (SAS) token to authorize requests to Azure Blob Storage. Users may request a read-only SAS token for a specific asset URL using the following endpoint: https://planetarycomputer.microsoft.com/api/sas/v1/sign?href={url}
-For example:
-https://planetarycomputer.microsoft.com/api/sas/v1/sign?href=https://ukmoeuwest.blob.core.windows.net/deterministic/global/height/20250101T0000Z/20250101T0000Z-PT0000H00M-cloud_amount_on_height_levels.nc
-
-Additionally, the Planetary Computer's SAS token endpoint allows for the generation of a read-only SAS token that grants access to all assets in the selected collection. For example, to receive a SAS token to access this collection please use:
-
-https://planetarycomputer.microsoft.com/api/sas/v1/token/met-office-global-deterministic-height
-
-Users can use this token to connect to and read data from this container using Blobfuse2 (azure-storage-fuse).
 
 ## How to cite
 Met Office global deterministic 10km forecast was accessed on DATE from the Microsoft Planetary Computer (https://zenodo.org/records/7261897).
