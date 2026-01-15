@@ -80,7 +80,10 @@ British Crown copyright 2023-2025, the Met Office, is licensed under [CC BY-SA](
 
 ## Providers
 [Met Office](https://www.metoffice.gov.uk/)
-See all datasets managed by [Met Office.](https://registry.opendata.aws/?search=managedBy:met%20office)
+
+See all datasets managed by [Met Office.](https://planetarycomputer.microsoft.com/catalog?filter=met+office)
 
 ## Contact
-[servicedesk@metoffice.gov.uk](mailto:servicedesk@metoffice.gov.uk). Service desk is only available Mon – Fri, 09:00 until 17:00 UTC (-1 hour during BST). As a non-operational service we aim to respond to any service support enquiries within 3-5 business days.
+[servicedesk@metoffice.gov.uk](mailto:servicedesk@metoffice.gov.uk). Service desk is only available Mon – Fri, 09:00 until 17:00 UTC (-1 hour during BST). 
+
+As a non-operational service we aim to respond to any service support enquiries within 3-5 business days.
