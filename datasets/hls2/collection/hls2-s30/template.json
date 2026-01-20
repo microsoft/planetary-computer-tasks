@@ -5,6 +5,7 @@
   "title": "Harmonized Landsat Sentinel-2 (HLS) Version 2.0, Sentinel-2 Data",
   "description": "{{ collection.description }}",
   "license": "proprietary",
+  "sci:doi": "10.5067/HLS/HLSS30.002",
   "links": [
     {
       "rel": "license",
