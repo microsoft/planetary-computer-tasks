@@ -23,6 +23,18 @@
         "thumbnail"
       ],
       "title": "Pressure levels collection Met Office Global 10km deterministic weather forecast thumbnail"
+    },
+    "geoparquet-items": {
+      "href": "abfs://items/met-office-global-deterministic-pressure.parquet",
+      "type": "application/x-parquet",
+      "roles": [
+        "stac-items"
+      ],
+      "title": "GeoParquet STAC items",
+      "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+      "table:storage_options": {
+        "account_name": "pcstacitems"
+      }
     }
   },
   "extent": {

@@ -23,6 +23,18 @@
         "thumbnail"
       ],
       "title": "Near-surface level collection Met Office global deterministic 10km forecast thumbnail"
+    },
+    "geoparquet-items": {
+      "href": "abfs://items/met-office-global-deterministic-near-surface.parquet",
+      "type": "application/x-parquet",
+      "roles": [
+        "stac-items"
+      ],
+      "title": "GeoParquet STAC items",
+      "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+      "table:storage_options": {
+        "account_name": "pcstacitems"
+      }
     }
   },
   "extent": {

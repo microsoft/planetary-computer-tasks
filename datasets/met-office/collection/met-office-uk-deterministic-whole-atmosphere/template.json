@@ -23,6 +23,18 @@
         "thumbnail"
       ],
       "title": "Whole Atmosphere collection Met Office UKV 2km deterministic forecast thumbnail"
+    },
+    "geoparquet-items": {
+      "href": "abfs://items/met-office-uk-deterministic-whole-atmosphere.parquet",
+      "type": "application/x-parquet",
+      "roles": [
+        "stac-items"
+      ],
+      "title": "GeoParquet STAC items",
+      "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+      "table:storage_options": {
+        "account_name": "pcstacitems"
+      }
     }
   },
   "extent": {

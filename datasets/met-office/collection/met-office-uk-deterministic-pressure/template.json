@@ -20,16 +20,42 @@
     "thumbnail": {
       "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/met-office-uk-deterministic-pressure.jpg",
       "type": "image/jpeg",
-      "roles": ["thumbnail"],
+      "roles": [
+        "thumbnail"
+      ],
       "title": "Pressure levels collection Met Office UKV 2km deterministic forecast Thumbnail"
+    },
+    "geoparquet-items": {
+      "href": "abfs://items/met-office-uk-deterministic-pressure.parquet",
+      "type": "application/x-parquet",
+      "roles": [
+        "stac-items"
+      ],
+      "title": "GeoParquet STAC items",
+      "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+      "table:storage_options": {
+        "account_name": "pcstacitems"
+      }
     }
   },
   "extent": {
     "spatial": {
-      "bbox": [[-13.7254, 48.8643, 4.3408, 61.6102]]
+      "bbox": [
+        [
+          -13.7254,
+          48.8643,
+          4.3408,
+          61.6102
+        ]
+      ]
     },
     "temporal": {
-      "interval": [["2023-12-15T00:00:00Z", null]]
+      "interval": [
+        [
+          "2023-12-15T00:00:00Z",
+          null
+        ]
+      ]
     }
   },
   "license": "proprietary",
@@ -47,12 +73,19 @@
     {
       "url": "https://www.metoffice.gov.uk/",
       "name": "Met Office",
-      "roles": ["producer", "licensor", "processor"]
+      "roles": [
+        "producer",
+        "licensor",
+        "processor"
+      ]
     },
     {
       "url": "https://planetarycomputer.microsoft.com",
       "name": "Microsoft",
-      "roles": ["host", "processor"]
+      "roles": [
+        "host",
+        "processor"
+      ]
     }
   ],
   "stac_version": "1.0.0",
@@ -69,43 +102,57 @@
     "geopotential_height_on_pressure_levels": {
       "type": "application/netcdf",
       "title": "Geopotential height on pressure levels",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "geopotential_height"
     },
     "height_ASL_on_pressure_levels": {
       "type": "application/netcdf",
       "title": "Height Above Sea Level on pressure levels",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "geopotential_height"
     },
     "relative_humidity_on_pressure_levels": {
       "type": "application/netcdf",
       "title": "Relative humidity on pressure levels",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "relative_humidity"
     },
     "temperature_on_pressure_levels": {
       "type": "application/netcdf",
       "title": "Temperature on pressure levels",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "air_temperature"
     },
     "wet_bulb_potential_temperature_on_pressure_levels": {
       "type": "application/netcdf",
       "title": "Wet bulb potential temperature on pressure levels",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "wet_bulb_potential_temperature"
     },
     "wind_direction_on_pressure_levels": {
       "type": "application/netcdf",
       "title": "Wind direction on pressure levels",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "wind_from_direction"
     },
     "wind_speed_on_pressure_levels": {
       "type": "application/netcdf",
       "title": "Wind speed on pressure levels",
-      "roles": ["data"],
+      "roles": [
+        "data"
+      ],
       "forecast:variable": "wind_speed"
     }
   },
@@ -113,29 +160,70 @@
     "latitude": {
       "type": "spatial",
       "axis": "y",
-      "extent": [-90, 90]
+      "extent": [
+        -90,
+        90
+      ]
     },
     "longitude": {
       "type": "spatial",
       "axis": "x",
-      "extent": [-180, 180]
+      "extent": [
+        -180,
+        180
+      ]
     },
     "pressure_levels": {
       "type": "spatial",
       "values": [
-        100000, 97500, 95000, 92500, 90000, 85000, 80000, 75000, 70000, 6500,
-        60000, 55000, 50000, 45000, 40000, 37500, 35000, 32500, 30000, 27500,
-        25000, 22500, 20000, 17500, 15000, 12500, 10000, 7000, 5000, 4000, 3000,
-        2000, 1000
+        100000,
+        97500,
+        95000,
+        92500,
+        90000,
+        85000,
+        80000,
+        75000,
+        70000,
+        6500,
+        60000,
+        55000,
+        50000,
+        45000,
+        40000,
+        37500,
+        35000,
+        32500,
+        30000,
+        27500,
+        25000,
+        22500,
+        20000,
+        17500,
+        15000,
+        12500,
+        10000,
+        7000,
+        5000,
+        4000,
+        3000,
+        2000,
+        1000
       ]
     },
     "forecast:reference_datetime": {
       "type": "temporal",
-      "extent": ["2023-12-15T00:00:00Z", null]
+      "extent": [
+        "2023-12-15T00:00:00Z",
+        null
+      ]
     },
     "forecast:horizon": {
       "type": "temporal",
-      "extent": [null, null]
+      "extent": [
+        null,
+        null
+      ]
     }
   },
   "cube:variables": {
