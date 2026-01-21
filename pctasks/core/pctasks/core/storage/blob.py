@@ -3,6 +3,7 @@ import contextlib
 import logging
 import multiprocessing
 import os
+import re
 import sys
 from datetime import datetime as Datetime
 from datetime import timedelta, timezone
@@ -484,6 +485,8 @@ class BlobStorage(Storage):
         walk_limit: Optional[int] = None,
         file_limit: Optional[int] = None,
         match_full_path: bool = False,
+        folder_matches: Optional[str] = None,
+        folder_matches_at_depth: Optional[int] = None,
         max_concurrency: int = 32,
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
         # Ensure UTC set
@@ -530,6 +533,9 @@ class BlobStorage(Storage):
         path_filter = PathFilter(
             extensions=extensions, ends_with=ends_with, matches=matches
         )
+
+        # Compile folder filter regex once if provided
+        folder_pattern = re.compile(folder_matches) if folder_matches else None
 
         walk_count = 0
         file_count = 0
@@ -585,10 +591,20 @@ class BlobStorage(Storage):
                     root = self._strip_prefix(full_prefix or "") or "."
                     walk_count += 1
 
+                    # Filter folders before descending
+                    filtered_folders = folders
+                    if folder_pattern:
+                        # Apply filter at specific depth or all depths
+                        next_depth = prefix_depth + 1
+                        if folder_matches_at_depth is None or next_depth == folder_matches_at_depth:
+                            filtered_folders = [
+                                f for f in folders if folder_pattern.search(f)
+                            ]
+
                     next_level_prefixes.extend(
                         map(
                             lambda f: f"{os.path.join(full_prefix, f)}/",
-                            folders,
+                            filtered_folders,
                         )
                     )
                     file_count += len(files)

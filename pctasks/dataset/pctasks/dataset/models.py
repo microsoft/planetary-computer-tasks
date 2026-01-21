@@ -78,6 +78,12 @@ class ChunkOptions(PCBaseModel):
     list_folders: Optional[bool] = False
     """Whether to list files (the default) or folders instead of files."""
 
+    folder_matches: Optional[str] = None
+    """Regex pattern to filter folders during walk. Only folders matching this pattern will be descended into."""
+
+    folder_matches_at_depth: Optional[int] = None
+    """Apply folder_matches filter only at this specific depth (1-indexed from walk start). If None, filter applies at all depths."""
+
     chunk_file_name: str = "uris-list"
     """Chunk file name."""
 
