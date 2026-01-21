@@ -596,7 +596,10 @@ class BlobStorage(Storage):
                     if folder_pattern:
                         # Apply filter at specific depth or all depths
                         next_depth = prefix_depth + 1
-                        if folder_matches_at_depth is None or next_depth == folder_matches_at_depth:
+                        if (
+                            folder_matches_at_depth is None
+                            or next_depth == folder_matches_at_depth
+                        ):
                             filtered_folders = [
                                 f for f in folders if folder_pattern.search(f)
                             ]
