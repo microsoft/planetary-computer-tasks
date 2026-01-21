@@ -28,7 +28,7 @@ collections:
               - .updated
             chunk_length: 20000
     chunk_storage:
-      uri: blob://ukmoeuwest/chunks
+      uri: blob://ukmoeuwest/chunks/met-office-global-deterministic-height
   - id: met-office-global-deterministic-near-surface
     template: ${{ local.path(./collection/met-office-global-deterministic-near-surface) }}
     class: met_office:MetOfficeGlobalNearSurfaceCollection
@@ -44,7 +44,7 @@ collections:
               - .updated
             chunk_length: 20000
     chunk_storage:
-      uri: blob://ukmoeuwest/chunks
+      uri: blob://ukmoeuwest/chunks/met-office-global-deterministic-near-surface
   - id: met-office-global-deterministic-pressure
     template: ${{ local.path(./collection/met-office-global-deterministic-pressure) }}
     class: met_office:MetOfficeGlobalPressureCollection
@@ -60,7 +60,7 @@ collections:
               - .updated
             chunk_length: 20000
     chunk_storage:
-      uri: blob://ukmoeuwest/chunks
+      uri: blob://ukmoeuwest/chunks/met-office-global-deterministic-pressure
   - id: met-office-global-deterministic-whole-atmosphere
     template: ${{ local.path(./collection/met-office-global-deterministic-whole-atmosphere) }}
     class: met_office:MetOfficeGlobalWholeAtmosphereCollection
@@ -76,7 +76,7 @@ collections:
               - .updated
             chunk_length: 20000
     chunk_storage:
-      uri: blob://ukmoeuwest/chunks
+      uri: blob://ukmoeuwest/chunks/met-office-global-deterministic-whole-atmosphere
   - id: met-office-uk-deterministic-height
     template: ${{ local.path(./collection/met-office-uk-deterministic-height) }}
     class: met_office:MetOfficeUkHeightCollection
@@ -92,7 +92,7 @@ collections:
               - .updated
             chunk_length: 20000
     chunk_storage:
-      uri: blob://ukmoeuwest/chunks
+      uri: blob://ukmoeuwest/chunks/met-office-uk-deterministic-height
   - id: met-office-uk-deterministic-near-surface
     template: ${{ local.path(./collection/met-office-uk-deterministic-near-surface) }}
     class: met_office:MetOfficeUkNearSurfaceCollection
@@ -108,7 +108,7 @@ collections:
               - .updated
             chunk_length: 20000
     chunk_storage:
-      uri: blob://ukmoeuwest/chunks
+      uri: blob://ukmoeuwest/chunks/met-office-uk-deterministic-near-surface
   - id: met-office-uk-deterministic-pressure
     template: ${{ local.path(./collection/met-office-uk-deterministic-pressure) }}
     class: met_office:MetOfficeUkPressureCollection
@@ -124,7 +124,7 @@ collections:
               - .updated
             chunk_length: 20000
     chunk_storage:
-      uri: blob://ukmoeuwest/chunks
+      uri: blob://ukmoeuwest/chunks/met-office-uk-deterministic-near-surface
   - id: met-office-uk-deterministic-whole-atmosphere
     template: ${{ local.path(./collection/met-office-uk-deterministic-whole-atmosphere) }}
     class: met_office:MetOfficeUkWholeAtmosphereCollection
@@ -140,4 +140,4 @@ collections:
               - .updated
             chunk_length: 20000
     chunk_storage:
-      uri: blob://ukmoeuwest/chunks
+      uri: blob://ukmoeuwest/chunks/met-office-uk-deterministic-near-surface
