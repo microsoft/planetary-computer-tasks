@@ -23,7 +23,6 @@ class Sentinel5pNetCDFCollection(Collection):
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
-
         storage, nc_path = storage_factory.get_storage_for_file(asset_uri)
 
         with TemporaryDirectory() as tmp_dir:
