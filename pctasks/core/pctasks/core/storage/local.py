@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 import shutil
 from datetime import datetime as Datetime
 from pathlib import Path
@@ -83,6 +84,8 @@ class LocalStorage(Storage):
         walk_limit: Optional[int] = None,
         file_limit: Optional[int] = None,
         match_full_path: bool = False,
+        folder_matches: Optional[str] = None,
+        folder_matches_at_depth: Optional[int] = None,
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
         def _get_depth(path: str) -> int:
             relpath = os.path.relpath(path, self.base_dir)
@@ -108,7 +111,17 @@ class LocalStorage(Storage):
             else:
                 return path_filter(p)
 
+        # Compile folder filter regex if provided
+        folder_pattern = None
+        if folder_matches:
+            folder_pattern = re.compile(folder_matches)
+
         for root, folders, files in os.walk(self.base_dir):
+            # Filter folders before descending (modifies in-place for os.walk)
+            if folder_pattern:
+                depth = _get_depth(root) + 1  # Next level depth
+                if folder_matches_at_depth is None or depth == folder_matches_at_depth:
+                    folders[:] = [f for f in folders if folder_pattern.search(f)]
 
             files = [f for f in files if _filter_file(root, f)]
 

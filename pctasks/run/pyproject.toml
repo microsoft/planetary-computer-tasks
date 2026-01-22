@@ -26,6 +26,7 @@ classifiers = [
 dependencies = [
     "argo-workflows>=6.3.0,<6.4",
     "azure-batch==15.0.0b2",
+    "cachetools==5.3.3",
     "azure-keyvault-secrets>=4.0.0,<5",
     "kubernetes",
     "networkx>=2.0.0,<3",
