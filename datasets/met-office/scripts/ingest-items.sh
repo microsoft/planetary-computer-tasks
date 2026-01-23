@@ -71,7 +71,7 @@ SINCE_ARG=""
 SUBMIT_MODE="--upsert"
 if [ -n "$SINCE" ]; then
   SINCE_ARG="-a since $SINCE"
-  SUBMIT_MODE="--submit"
+  SUBMIT_MODE="--submit -a year-prefix 2026"
 fi
 
 for collection in $COLLECTIONS
@@ -80,7 +80,7 @@ do
     -d dataset.yaml \
     -a registry pccomponents.azurecr.io \
     --is-update-workflow \
-    --workflow-id met-office-$collection-process-items \
+    --workflow-id $collection-update \
     -c "$collection" ingest \
     --confirm $SUBMIT_MODE $SINCE_ARG
 done
