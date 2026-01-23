@@ -1,8 +1,8 @@
 id: ecmwf_forecast
-image: ${{ args.registry }}/pctasks-ecmwf-forecast:2024.6.13.0
+image: ${{ args.registry }}/pctasks-ecmwf-forecast:2026.01.12
 
 args:
-- registry
+  - registry
 
 code:
   src: ${{ local.path(./ecmwf_forecast.py) }}

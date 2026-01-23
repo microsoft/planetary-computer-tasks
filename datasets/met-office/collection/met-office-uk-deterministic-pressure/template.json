@@ -1,0 +1,303 @@
+{
+  "id": "met-office-uk-deterministic-pressure",
+  "type": "Collection",
+  "description": "{{ collection.description }}",
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
+      "type": "text/html",
+      "title": "Creative Commons Attribution-ShareAlike 4.0"
+    },
+    {
+      "rel": "describedby",
+      "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
+      "title": "Met Office Dataset Documentation"
+    }
+  ],
+  "title": "Pressure levels collection Met Office UKV 2km deterministic forecast",
+  "assets": {
+    "thumbnail": {
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/met-office-uk-deterministic-pressure.jpg",
+      "type": "image/jpeg",
+      "roles": [
+        "thumbnail"
+      ],
+      "title": "Pressure levels collection Met Office UKV 2km deterministic forecast Thumbnail"
+    },
+    "geoparquet-items": {
+      "href": "abfs://items/met-office-uk-deterministic-pressure.parquet",
+      "type": "application/x-parquet",
+      "roles": [
+        "stac-items"
+      ],
+      "title": "GeoParquet STAC items",
+      "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+      "table:storage_options": {
+        "account_name": "pcstacitems"
+      }
+    }
+  },
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -13.7254,
+          48.8643,
+          4.3408,
+          61.6102
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2023-12-15T00:00:00Z",
+          null
+        ]
+      ]
+    }
+  },
+  "license": "proprietary",
+  "keywords": [
+    "Met Office",
+    "Weather",
+    "Forecast",
+    "UK",
+    "Temperature",
+    "Wind",
+    "Pressure",
+    "Humidity"
+  ],
+  "providers": [
+    {
+      "url": "https://www.metoffice.gov.uk/",
+      "name": "Met Office",
+      "roles": [
+        "producer",
+        "licensor",
+        "processor"
+      ]
+    },
+    {
+      "url": "https://planetarycomputer.microsoft.com",
+      "name": "Microsoft",
+      "roles": [
+        "host",
+        "processor"
+      ]
+    }
+  ],
+  "stac_version": "1.0.0",
+  "msft:group_id": "met-office-uk-deterministic",
+  "msft:container": "deterministic",
+  "stac_extensions": [
+    "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
+    "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
+  ],
+  "msft:storage_account": "ukmoeuwest",
+  "msft:short_description": "Met Office UK Deterministic Pressure Level",
+  "msft:region": "westeurope",
+  "item_assets": {
+    "geopotential_height_on_pressure_levels": {
+      "type": "application/netcdf",
+      "title": "Geopotential height on pressure levels",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "geopotential_height"
+    },
+    "height_ASL_on_pressure_levels": {
+      "type": "application/netcdf",
+      "title": "Height Above Sea Level on pressure levels",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "geopotential_height"
+    },
+    "relative_humidity_on_pressure_levels": {
+      "type": "application/netcdf",
+      "title": "Relative humidity on pressure levels",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "relative_humidity"
+    },
+    "temperature_on_pressure_levels": {
+      "type": "application/netcdf",
+      "title": "Temperature on pressure levels",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "air_temperature"
+    },
+    "wet_bulb_potential_temperature_on_pressure_levels": {
+      "type": "application/netcdf",
+      "title": "Wet bulb potential temperature on pressure levels",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "wet_bulb_potential_temperature"
+    },
+    "wind_direction_on_pressure_levels": {
+      "type": "application/netcdf",
+      "title": "Wind direction on pressure levels",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "wind_from_direction"
+    },
+    "wind_speed_on_pressure_levels": {
+      "type": "application/netcdf",
+      "title": "Wind speed on pressure levels",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "wind_speed"
+    }
+  },
+  "cube:dimensions": {
+    "latitude": {
+      "type": "spatial",
+      "axis": "y",
+      "extent": [
+        -90,
+        90
+      ]
+    },
+    "longitude": {
+      "type": "spatial",
+      "axis": "x",
+      "extent": [
+        -180,
+        180
+      ]
+    },
+    "pressure_levels": {
+      "type": "spatial",
+      "values": [
+        100000,
+        97500,
+        95000,
+        92500,
+        90000,
+        85000,
+        80000,
+        75000,
+        70000,
+        6500,
+        60000,
+        55000,
+        50000,
+        45000,
+        40000,
+        37500,
+        35000,
+        32500,
+        30000,
+        27500,
+        25000,
+        22500,
+        20000,
+        17500,
+        15000,
+        12500,
+        10000,
+        7000,
+        5000,
+        4000,
+        3000,
+        2000,
+        1000
+      ]
+    },
+    "forecast:reference_datetime": {
+      "type": "temporal",
+      "extent": [
+        "2023-12-15T00:00:00Z",
+        null
+      ]
+    },
+    "forecast:horizon": {
+      "type": "temporal",
+      "extent": [
+        null,
+        null
+      ]
+    }
+  },
+  "cube:variables": {
+    "geopotential_height": {
+      "description": "Note: from January 2026, this parameter will replace height_ASL_on_pressure_levels.",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "pressure_levels",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "unit": "m",
+      "type": "data"
+    },
+    "relative_humidity": {
+      "description": "Ratio of the partial pressure of water vapour to the equilibrium vapour pressure of water.",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "pressure_levels",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "unit": "1",
+      "type": "data"
+    },
+    "air_temperature": {
+      "description": "Air temperature on pressure levels",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "pressure_levels",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "type": "data",
+      "unit": "K"
+    },
+    "wet_bulb_potential_temperature": {
+      "description": "Wet bulb potential temperature on pressure levels. Wet bulb potential temperature is defined as the temperature that a parcel of air would have if it were brought down to the standard pressure of 1000hPa following a saturated adiabatic lapse rate.",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "pressure_levels",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "type": "data",
+      "unit": "K"
+    },
+    "wind_from_direction": {
+      "description": "Wind direction on pressure levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. In meteorological reports the direction of the wind vector is given as the direction from which it is blowing.",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "pressure_levels",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "type": "data",
+      "unit": "degrees"
+    },
+    "wind_speed": {
+      "description": "Wind speed on pressure levels is defined as a two-dimensional (horizontal) air velocity vector with no vertical component. The speed is the magnitude of velocity.",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "pressure_levels",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "type": "data",
+      "unit": "m/s"
+    }
+  }
+}

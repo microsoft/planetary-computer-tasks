@@ -1,9 +1,9 @@
 id: landsat
-image: ${{ args.registry }}/pctasks-landsat:20230613.1
+image: ${{ args.registry }}/pctasks-landsat:2026.01.12
 
 args:
-- registry
-- year-prefix
+  - registry
+  - year-prefix
 
 code:
   src: ${{ local.path(./landsat.py) }}
@@ -28,7 +28,7 @@ collections:
   #   chunk_storage:
   #     uri: blob://landsateuwest/landsat-c2-etl-data/pctasks/landsat-c2-l1/
 
-  - id: landsat-c2-l2 
+  - id: landsat-c2-l2
     template: ${{ local.path(./collection/landsat-c2-l2) }}
     class: landsat:LandsatC2Collection
     asset_storage:
@@ -49,7 +49,7 @@ collections:
         token: ${{ pc.get_token(landsateuwest, landsat-c2) }}
         chunks:
           splits:
-            - depth: 1  # parallelize by Landsat WRS Row
+            - depth: 1 # parallelize by Landsat WRS Row
           options:
             ends_with: _MTL.xml
             chunk_length: 5000
@@ -57,7 +57,7 @@ collections:
         token: ${{ pc.get_token(landsateuwest, landsat-c2) }}
         chunks:
           splits:
-            - depth: 1  # parallelize by Landsat WRS Row
+            - depth: 1 # parallelize by Landsat WRS Row
           options:
             ends_with: _MTL.xml
             chunk_length: 5000

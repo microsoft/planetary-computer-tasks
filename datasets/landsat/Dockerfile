@@ -21,15 +21,15 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 # See https://github.com/mapbox/rasterio/issues/1289
 ENV CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
-# Install Python 3.8
-RUN curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh" \
-    && bash "Mambaforge-$(uname)-$(uname -m).sh" -b -p /opt/conda \
-    && rm -rf "Mambaforge-$(uname)-$(uname -m).sh"
+# Install Python 3.11
+RUN curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh" \
+    && bash "Miniforge3-$(uname)-$(uname -m).sh" -b -p /opt/conda \
+    && rm -rf "Miniforge3-$(uname)-$(uname -m).sh"
 
 ENV PATH /opt/conda/bin:$PATH
 ENV LD_LIBRARY_PATH /opt/conda/lib/:$LD_LIBRARY_PATH
 
-RUN mamba install -y -c conda-forge python=3.8 gdal=3.3.3 pip setuptools cython numpy==1.21.5
+RUN mamba install -y -c conda-forge python=3.11 gdal pip setuptools cython numpy
 
 RUN python -m pip install --upgrade pip
 
@@ -43,27 +43,33 @@ RUN python -m pip install --no-build-isolation -r /tmp/requirements.txt
 
 COPY pctasks/core /opt/src/pctasks/core
 RUN cd /opt/src/pctasks/core && \
-    pip install .
+    pip install -r requirements.txt && \
+    pip install --no-deps .
 
 COPY pctasks/cli /opt/src/pctasks/cli
 RUN cd /opt/src/pctasks/cli && \
-    pip install .
+    pip install -r requirements.txt && \
+    pip install --no-deps .
 
 COPY pctasks/task /opt/src/pctasks/task
 RUN cd /opt/src/pctasks/task && \
-    pip install .
+    pip install -r requirements.txt && \
+    pip install --no-deps .
 
 COPY pctasks/client /opt/src/pctasks/client
 RUN cd /opt/src/pctasks/client && \
-    pip install .
+    pip install -r requirements.txt && \
+    pip install --no-deps .
 
 COPY pctasks/ingest /opt/src/pctasks/ingest
 RUN cd /opt/src/pctasks/ingest && \
-    pip install .
+    pip install -r requirements.txt && \
+    pip install --no-deps .
 
 COPY pctasks/dataset /opt/src/pctasks/dataset
 RUN cd /opt/src/pctasks/dataset && \
-    pip install .
+    pip install -r requirements.txt && \
+    pip install --no-deps .
 
 COPY ./datasets/landsat/requirements.txt /opt/src/datasets/landsat/requirements.txt
 RUN python3 -m pip install -r /opt/src/datasets/landsat/requirements.txt

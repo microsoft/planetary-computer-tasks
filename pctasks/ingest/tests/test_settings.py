@@ -2,7 +2,7 @@ from pctasks.core.yaml import model_from_yaml
 from pctasks.ingest.settings import SECTION_NAME, IngestSettings
 
 
-def test_image_keys():
+def test_image_keys() -> None:
     yaml = """
 submit:
   account_name: pctrxetlrobrxetlsa

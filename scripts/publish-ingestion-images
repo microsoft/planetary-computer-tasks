@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -e
+
+TAG=2026.01.12
+REGISTRY=pccomponents.azurecr.io
+
+images=(
+    "pctasks-goes-glm:datasets/goes/goes-glm/Dockerfile"
+    "pctasks-goes-cmi:datasets/goes/goes-cmi/Dockerfile"
+    "pctasks-landsat:datasets/landsat/Dockerfile"
+    "pctasks-sentinel-2:datasets/sentinel-2/Dockerfile"
+    "pctasks-modis:datasets/modis/Dockerfile"
+    "pctasks-noaa-cdr:datasets/noaa-cdr/Dockerfile"
+    "pctasks-sentinel-1-grd:datasets/sentinel-1-grd/Dockerfile"
+    "pctasks-sentinel-1-rtc:datasets/sentinel-1-rtc/Dockerfile"
+    "pctasks-sentinel-3:datasets/sentinel-3/Dockerfile"
+    "pctasks-sentinel-5p:datasets/sentinel-5p/Dockerfile"
+    "pctasks-gbif:datasets/gbif/Dockerfile"
+    "pctasks-ecmwf-forecast:datasets/ecmwf-forecast/Dockerfile"
+)
+
+for entry in "${images[@]}"; do
+    name="${entry%%:*}"
+    dockerfile="${entry#*:}"
+    image="$REGISTRY/$name:$TAG"
+    echo "Building $image..."
+    docker build -t "$image" -f "$dockerfile" .
+    docker push "$image"
+done
+
+# Build image with build-arg
+image="$REGISTRY/pctasks-noaa-mrms-qpe:$TAG"
+echo "Building $image..."
+docker build -t "$image" -f datasets/noaa-mrms-qpe/Dockerfile --build-arg registry=$REGISTRY .
+docker push "$image"
