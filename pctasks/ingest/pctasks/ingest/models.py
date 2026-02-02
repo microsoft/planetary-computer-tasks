@@ -53,8 +53,13 @@ def _get_discriminator_tag(v: Any) -> str:
         return NDJSON_MESSAGE_TYPE
     elif isinstance(v, IngestCollectionsInput):
         return COLLECTIONS_MESSAGE_TYPE
-    else:
-        return "Any"
+    elif isinstance(v, dict):
+        type_value = v.get("type")
+        if type_value == NDJSON_MESSAGE_TYPE:
+            return NDJSON_MESSAGE_TYPE
+        elif type_value == COLLECTIONS_MESSAGE_TYPE:
+            return COLLECTIONS_MESSAGE_TYPE
+    return "Any"
 
 
 class IngestTaskInput(PCBaseModel):

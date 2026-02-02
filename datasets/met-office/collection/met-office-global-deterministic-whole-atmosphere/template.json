@@ -1,0 +1,467 @@
+{
+  "id": "met-office-global-deterministic-whole-atmosphere",
+  "type": "Collection",
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
+      "type": "text/html",
+      "title": "Creative Commons Attribution-ShareAlike 4.0"
+    },
+    {
+      "rel": "describedBy",
+      "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
+      "title": "Met Office Dataset Documentation"
+    }
+  ],
+  "title": "Whole Atmosphere collection Met Office Global 10km deterministic weather forecast",
+  "assets": {
+    "thumbnail": {
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/met-office-global-deterministic-whole-atmosphere.jpg",
+      "type": "image/jpeg",
+      "roles": [
+        "thumbnail"
+      ],
+      "title": "Whole Atmosphere collection Met Office Global 10km deterministic weather forecast thumbnail"
+    },
+    "geoparquet-items": {
+      "href": "abfs://items/met-office-global-deterministic-whole-atmosphere.parquet",
+      "type": "application/x-parquet",
+      "roles": [
+        "stac-items"
+      ],
+      "title": "GeoParquet STAC items",
+      "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+      "table:storage_options": {
+        "account_name": "pcstacitems"
+      }
+    }
+  },
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -180,
+          -90,
+          180,
+          90
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2023-12-15T00:00:00Z",
+          null
+        ]
+      ]
+    }
+  },
+  "license": "proprietary",
+  "keywords": [
+    "MetOffice",
+    "Global",
+    "Cloud"
+  ],
+  "providers": [
+    {
+      "url": "https://www.metoffice.gov.uk/",
+      "name": "Met Office",
+      "roles": [
+        "producer",
+        "licensor",
+        "processor"
+      ]
+    },
+    {
+      "url": "https://planetarycomputer.microsoft.com",
+      "name": "Microsoft",
+      "roles": [
+        "host",
+        "processor"
+      ]
+    }
+  ],
+  "stac_version": "1.0.0",
+  "msft:group_id": "met-office-global-deterministic",
+  "msft:container": "deterministic",
+  "stac_extensions": [
+    "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
+    "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
+  ],
+  "msft:storage_account": "ukmoeuwest",
+  "msft:short_description": "Met Office Global Deterministic Whole Atmosphere Level",
+  "msft:region": "westeurope",
+  "item_assets": {
+    "CAPE_mixed_layer_lowest_500m": {
+      "type": "application/netcdf",
+      "title": "CAPE mixed layer lowest 500m",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "atmosphere_convective_available_potential_energy"
+    },
+    "CAPE_most_unstable_below_500hPa": {
+      "type": "application/netcdf",
+      "title": "CAPE most unstable below 500hPa",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "atmosphere_convective_available_potential_energy"
+    },
+    "CAPE_surface": {
+      "type": "application/netcdf",
+      "title": "CAPE surface",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "atmosphere_convective_available_potential_energy_wrt_surface"
+    },
+    "CIN_mixed_layer_lowest_500m": {
+      "type": "application/netcdf",
+      "title": "CIN mixed layer lowest 500m",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "atmosphere_convective_inhibition"
+    },
+    "CIN_most_unstable_below_500hPa": {
+      "type": "application/netcdf",
+      "title": "CIN most unstable below 500hPa",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "atmosphere_convective_inhibition"
+    },
+    "CIN_surface": {
+      "type": "application/netcdf",
+      "title": "CIN surface",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "atmosphere_convective_inhibition_wrt_surface"
+    },
+    "cloud_amount_below_1000ft_ASL": {
+      "type": "application/netcdf",
+      "title": "Cloud amount below 1000ft ASL",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "cloud_area_fraction_assuming_only_consider_surface_to_1000_feet_asl"
+    },
+    "cloud_amount_of_high_cloud": {
+      "type": "application/netcdf",
+      "title": "Cloud amount of high cloud",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "high_type_cloud_area_fraction"
+    },
+    "cloud_amount_of_low_cloud": {
+      "type": "application/netcdf",
+      "title": "Cloud amount of low cloud",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "low_type_cloud_area_fraction"
+    },
+    "cloud_amount_of_medium_cloud": {
+      "type": "application/netcdf",
+      "title": "Cloud amount of medium cloud",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "medium_type_cloud_area_fraction"
+    },
+    "cloud_amount_of_total_cloud": {
+      "type": "application/netcdf",
+      "title": "Cloud amount of total cloud",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "cloud_area_fraction"
+    },
+    "cloud_amount_of_total_convective_cloud": {
+      "type": "application/netcdf",
+      "title": "Cloud amount of total convective cloud",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "convective_cloud_area_fraction"
+    },
+    "pressure_at_tropopause": {
+      "type": "application/netcdf",
+      "title": "Pressure at tropopause",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "tropopause_air_pressure"
+    },
+    "temperature_at_tropopause": {
+      "type": "application/netcdf",
+      "title": "Temperature at tropopause",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "tropopause_air_temperature"
+    }
+  },
+  "description": "{{ collection.description }}",
+  "cube:dimensions": {
+    "latitude": {
+      "type": "spatial",
+      "axis": "y",
+      "extent": [
+        -90,
+        90
+      ]
+    },
+    "longitude": {
+      "type": "spatial",
+      "axis": "x",
+      "extent": [
+        -180,
+        180
+      ]
+    },
+    "forecast:reference_datetime": {
+      "type": "temporal",
+      "extent": [
+        "2023-12-15T00:00:00Z",
+        null
+      ]
+    },
+    "forecast:horizon": {
+      "type": "temporal",
+      "extent": [
+        null,
+        null
+      ],
+      "values": [
+        "PT0H",
+        "PT1H",
+        "PT2H",
+        "PT3H",
+        "PT4H",
+        "PT5H",
+        "PT6H",
+        "PT7H",
+        "PT8H",
+        "PT9H",
+        "PT10H",
+        "PT11H",
+        "PT12H",
+        "PT13H",
+        "PT14H",
+        "PT15H",
+        "PT16H",
+        "PT17H",
+        "PT18H",
+        "PT19H",
+        "PT20H",
+        "PT21H",
+        "PT22H",
+        "PT23H",
+        "PT24H",
+        "PT25H",
+        "PT26H",
+        "PT27H",
+        "PT28H",
+        "PT29H",
+        "PT30H",
+        "PT31H",
+        "PT32H",
+        "PT33H",
+        "PT34H",
+        "PT35H",
+        "PT36H",
+        "PT37H",
+        "PT38H",
+        "PT39H",
+        "PT40H",
+        "PT41H",
+        "PT42H",
+        "PT43H",
+        "PT44H",
+        "PT45H",
+        "PT46H",
+        "PT47H",
+        "PT48H",
+        "PT49H",
+        "PT50H",
+        "PT51H",
+        "PT52H",
+        "PT53H",
+        "PT54H",
+        "PT57H",
+        "PT60H",
+        "PT63H",
+        "PT66H",
+        "PT69H",
+        "PT72H",
+        "PT75H",
+        "PT78H",
+        "PT81H",
+        "PT84H",
+        "PT87H",
+        "PT90H",
+        "PT93H",
+        "PT96H",
+        "PT99H",
+        "PT102H",
+        "PT105H",
+        "PT108H",
+        "PT111H",
+        "PT114H",
+        "PT117H",
+        "PT120H",
+        "PT123H",
+        "PT126H",
+        "PT129H",
+        "PT132H",
+        "PT135H",
+        "PT138H",
+        "PT141H",
+        "PT144H",
+        "PT150H",
+        "PT156H",
+        "PT162H",
+        "PT168H"
+      ]
+    }
+  },
+  "cube:variables": {
+    "atmosphere_convective_available_potential_energy": {
+      "description": "CAPE (Convective Available Potential Energy) calculated for the most unstable parcel where the most unstable parcel is defined as the parcel with the highest fixed level CAPE launched from any level (including screen-level=1.5m) within 500hPa of the surface pressure.",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "type": "data",
+      "unit": "J/kg"
+    },
+    "atmosphere_convective_available_potential_energy_wrt_surface": {
+      "description": "Value of CAPE (Convective Available Potential Energy) calculated for a surface based parcel where a surface based parcel is defined as a parcel initiated with thermodynamic properties at screen level height (1.5m) i.e. the parcel is launched from screen level.",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "type": "data",
+      "unit": "J/kg"
+    },
+    "atmosphere_convective_inhibition": {
+      "description": "Convective Inhibition calculated as the additional energy required to lift the most unstable parcel to its level of free convection. Where most unstable parcel is defined as the parcel with the highest fixed-level CAPE launched from any level (including screen-level) within 500 hPa of the surface pressure.",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "type": "data",
+      "unit": "J/kg"
+    },
+    "atmosphere_convective_inhibition_wrt_surface": {
+      "description": "Convective Inhibition calculated as the additional energy required to lift a surface based parcel (i.e. a parcel launched from screen-level (1.5m)) to its level of free convection.",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "type": "data",
+      "unit": "J/kg"
+    },
+    "cloud_area_fraction_assuming_only_consider_surface_to_1000_feet_asl": {
+      "description": "Fraction of horizontal grid square occupied by cloud below 1000 feet above sea level.",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "type": "data",
+      "unit": "1"
+    },
+    "high_type_cloud_area_fraction": {
+      "description": "Fraction of horizontal grid square occupied by cloud in the high-level cloud height range (from the lowest model layer containing the 5574m height level up to but excluding the lowest model layer containing 13608m height level).",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "type": "data",
+      "unit": "1"
+    },
+    "low_type_cloud_area_fraction": {
+      "description": "Fraction of horizontal grid square occupied by cloud in the low-level cloud height range (from the lowest model layer containing the 111m height level up to but excluding the lowest model layer containing 1949m height level).",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "type": "data",
+      "unit": "1"
+    },
+    "medium_type_cloud_area_fraction": {
+      "description": "Fraction of horizontal grid square occupied by cloud in the mid-level cloud height range (from the lowest model layer containing the 1949m height level up to but excluding the lowest model layer containing 5574m height level).",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "type": "data",
+      "unit": "1"
+    },
+    "cloud_area_fraction": {
+      "description": "Fraction of horizontal grid square occupied by cloud as diagnosed by the model cloud scheme. This is for the whole atmosphere column as seen from the surface or the top of the atmosphere.",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "type": "data",
+      "unit": "1"
+    },
+    "convective_cloud_area_fraction": {
+      "description": "Fraction of horizontal grid square occupied by convective cloud as diagnosed by the model convection scheme. This is for the whole atmosphere column as seen from the surface or the top of the atmosphere.",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "type": "data",
+      "unit": "1"
+    },
+    "tropopause_air_pressure": {
+      "description": "Air pressure at the tropopause.",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "type": "data",
+      "unit": "Pa"
+    },
+    "tropopause_air_temperature": {
+      "description": "Air temperature at the tropopause.",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "type": "data",
+      "unit": "K"
+    }
+  }
+}

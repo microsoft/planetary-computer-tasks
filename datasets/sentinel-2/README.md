@@ -3,8 +3,8 @@
 ## Chunk creation for dynamic ingest
 
 - Using the same chunking split level and options as ETL
-    - Listing the `manifest.safe` files
-    - Generates about 1000 tasks
+  - Listing the `manifest.safe` files
+  - Generates about 1000 tasks
 - 5-6 hour run-time with a `--since` option and run on the `pctasksteststaging` batch account
 - No faster set of chunking options found.
 
@@ -47,8 +47,23 @@ pctasks dataset process-items sentinel-2-l2a-update \
 ```
 
 **Parameters:**
+
 - `sentinel-2-l2a-update` - The chunkset ID for this workflow
 - `--is-update-workflow` - Creates an update workflow with `since` as a runtime argument
 - `--workflow-id` - Specifies the exact workflow ID to upsert (required for production)
 - `-d` - Path to the dataset configuration file
 - `-u` - Upsert the workflow through the API
+
+```bash
+pctasks dataset process-items --is-update-workflow sentinel-2-l2a-update -d datasets/sentinel-2/dataset.yaml -u
+```
+
+## Submit ingestion jobs on demand
+
+```bash
+pctasks dataset process-items \
+    --is-update-workflow sentinel-2-l2a-update \
+    -d datasets/sentinel-2/dataset.yaml -u --submit \
+    -a registry pccomponents.azurecr.io \
+    -a since "2025-06-16T00:00:00Z"
+```

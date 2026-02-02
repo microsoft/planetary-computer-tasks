@@ -1,14 +1,12 @@
-FROM python:3.9-slim
+FROM mcr.microsoft.com/azurelinux/base/python:3.12
 
-# Setup timezone info
 ENV TZ=UTC
-
-ENV LC_ALL=C.UTF-8
-ENV LANG=C.UTF-8
+RUN \
+     tdnf update -y && \
+     tdnf install ca-certificates azure-cli -y \
+     && tdnf clean all
 ENV PIP_NO_CACHE_DIR=1
 RUN pip install "setuptools>=65.5.1"
-
-RUN python -m pip install --upgrade pip
 
 #
 # Copy and install packages

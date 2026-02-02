@@ -72,7 +72,7 @@ cryptography==45.0.6
     #   msal
     #   pyjwt
     # from https://pypi.org/simple
-fire==0.4.0
+fire==0.7.1
     # via
     #   pctasks-ingest-task (./pctasks/ingest_task/pyproject.toml)
     #   pypgstac
@@ -90,6 +90,9 @@ google-auth==2.40.3
     # from https://pypi.org/simple
 googleapis-common-protos==1.70.0
     # via google-api-core
+    # from https://pypi.org/simple
+hydraters==0.1.3
+    # via pypgstac
     # from https://pypi.org/simple
 idna==3.10
     # via
@@ -181,7 +184,7 @@ packaging==25.0
 planetary-computer==1.0.0
     # via pctasks-core
     # from https://pypi.org/simple
-plpygis==0.2.0
+plpygis==0.6.1
     # via
     #   pctasks-ingest-task (./pctasks/ingest_task/pyproject.toml)
     #   pypgstac
@@ -243,7 +246,7 @@ pygments==2.19.2
 pyjwt==2.10.1
     # via msal
     # from https://pypi.org/simple
-pypgstac==0.8.6
+pypgstac==0.9.6
     # via pctasks-ingest-task (./pctasks/ingest_task/pyproject.toml)
     # from https://pypi.org/simple
 pystac==1.10.1
@@ -304,7 +307,6 @@ rsa==4.9.1
 six==1.17.0
     # via
     #   azure-core
-    #   fire
     #   opencensus
     #   python-dateutil
     # from https://pypi.org/simple

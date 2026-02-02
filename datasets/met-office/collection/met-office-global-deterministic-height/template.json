@@ -1,0 +1,283 @@
+{
+  "id": "met-office-global-deterministic-height",
+  "type": "Collection",
+  "links": [
+    {
+      "rel": "license",
+      "href": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
+      "type": "text/html",
+      "title": "Creative Commons Attribution-ShareAlike 4.0"
+    },
+    {
+      "rel": "describedBy",
+      "href": "https://www.metoffice.gov.uk/services/data/external-data-channels",
+      "title": "Met Office Dataset Documentation"
+    }
+  ],
+  "title": "Height levels collection Met Office Global 10km deterministic weather forecast",
+  "assets": {
+    "thumbnail": {
+      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/met-office-global-deterministic-height.jpg",
+      "type": "image/jpeg",
+      "roles": [
+        "thumbnail"
+      ],
+      "title": "Height levels collection Met Office Global 10km deterministic weather forecast thumbnail"
+    },
+    "geoparquet-items": {
+      "href": "abfs://items/met-office-global-deterministic-height.parquet",
+      "type": "application/x-parquet",
+      "roles": [
+        "stac-items"
+      ],
+      "title": "GeoParquet STAC items",
+      "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+      "table:storage_options": {
+        "account_name": "pcstacitems"
+      }
+    }
+  },
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -180,
+          -90,
+          180,
+          90
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2023-12-15T00:00:00Z",
+          null
+        ]
+      ]
+    }
+  },
+  "license": "proprietary",
+  "keywords": [
+    "Met Office",
+    "Weather",
+    "Forecast",
+    "Global",
+    "Cloud"
+  ],
+  "providers": [
+    {
+      "url": "https://www.metoffice.gov.uk/",
+      "name": "Met Office",
+      "roles": [
+        "producer",
+        "licensor",
+        "processor"
+      ]
+    },
+    {
+      "url": "https://planetarycomputer.microsoft.com",
+      "name": "Microsoft",
+      "roles": [
+        "host",
+        "processor"
+      ]
+    }
+  ],
+  "stac_version": "1.0.0",
+  "msft:group_id": "met-office-global-deterministic",
+  "msft:container": "deterministic",
+  "stac_extensions": [
+    "https://stac-extensions.github.io/forecast/v0.2.0/schema.json",
+    "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
+  ],
+  "msft:storage_account": "ukmoeuwest",
+  "msft:short_description": "Met Office Global Deterministic Height Level",
+  "msft:region": "westeurope",
+  "item_assets": {
+    "cloud_amount_on_height_levels": {
+      "type": "application/netcdf",
+      "title": "Cloud amount on height levels",
+      "roles": [
+        "data"
+      ],
+      "forecast:variable": "cloud_volume_fraction_in_atmosphere_layer"
+    }
+  },
+  "description": "{{ collection.description }}",
+  "cube:dimensions": {
+    "latitude": {
+      "type": "spatial",
+      "axis": "y",
+      "extent": [
+        -90,
+        90
+      ]
+    },
+    "longitude": {
+      "type": "spatial",
+      "axis": "x",
+      "extent": [
+        -180,
+        180
+      ]
+    },
+    "height": {
+      "type": "spatial",
+      "values": [
+        5,
+        10,
+        20,
+        30,
+        50,
+        75,
+        100,
+        150,
+        200,
+        250,
+        300,
+        400,
+        500,
+        600,
+        700,
+        800,
+        1000,
+        1250,
+        1500,
+        1750,
+        2000,
+        2250,
+        2500,
+        2750,
+        3000,
+        3250,
+        3500,
+        3750,
+        4000,
+        4500,
+        5000,
+        5500,
+        6000
+      ]
+    },
+    "forecast:reference_datetime": {
+      "type": "temporal",
+      "extent": [
+        "2023-12-15T00:00:00Z",
+        null
+      ]
+    },
+    "forecast:horizon": {
+      "type": "temporal",
+      "extent": [
+        null,
+        null
+      ],
+      "values": [
+        "PT0H",
+        "PT1H",
+        "PT2H",
+        "PT3H",
+        "PT4H",
+        "PT5H",
+        "PT6H",
+        "PT7H",
+        "PT8H",
+        "PT9H",
+        "PT10H",
+        "PT11H",
+        "PT12H",
+        "PT13H",
+        "PT14H",
+        "PT15H",
+        "PT16H",
+        "PT17H",
+        "PT18H",
+        "PT19H",
+        "PT20H",
+        "PT21H",
+        "PT22H",
+        "PT23H",
+        "PT24H",
+        "PT25H",
+        "PT26H",
+        "PT27H",
+        "PT28H",
+        "PT29H",
+        "PT30H",
+        "PT31H",
+        "PT32H",
+        "PT33H",
+        "PT34H",
+        "PT35H",
+        "PT36H",
+        "PT37H",
+        "PT38H",
+        "PT39H",
+        "PT40H",
+        "PT41H",
+        "PT42H",
+        "PT43H",
+        "PT44H",
+        "PT45H",
+        "PT46H",
+        "PT47H",
+        "PT48H",
+        "PT49H",
+        "PT50H",
+        "PT51H",
+        "PT52H",
+        "PT53H",
+        "PT54H",
+        "PT57H",
+        "PT60H",
+        "PT63H",
+        "PT66H",
+        "PT69H",
+        "PT72H",
+        "PT75H",
+        "PT78H",
+        "PT81H",
+        "PT84H",
+        "PT87H",
+        "PT90H",
+        "PT93H",
+        "PT96H",
+        "PT99H",
+        "PT102H",
+        "PT105H",
+        "PT108H",
+        "PT111H",
+        "PT114H",
+        "PT117H",
+        "PT120H",
+        "PT123H",
+        "PT126H",
+        "PT129H",
+        "PT132H",
+        "PT135H",
+        "PT138H",
+        "PT141H",
+        "PT144H",
+        "PT150H",
+        "PT156H",
+        "PT162H",
+        "PT168H"
+      ]
+    }
+  },
+  "cube:variables": {
+    "cloud_volume_fraction_in_atmosphere_layer": {
+      "description": "Fraction of horizontal grid square occupied by cloud in layers centred on height levels. The levels are height above ground.",
+      "dimensions": [
+        "latitude",
+        "longitude",
+        "height",
+        "forecast:reference_datetime",
+        "forecast:horizon"
+      ],
+      "type": "data",
+      "unit": "1"
+    }
+  }
+}

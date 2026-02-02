@@ -21,7 +21,7 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 # See https://github.com/mapbox/rasterio/issues/1289
 ENV CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
-# Install Python via Miniforge (Mambaforge was deprecated)
+# Install Python 3.11
 RUN curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh" \
     && bash "Miniforge3-$(uname)-$(uname -m).sh" -b -p /opt/conda \
     && rm -rf "Miniforge3-$(uname)-$(uname -m).sh"
