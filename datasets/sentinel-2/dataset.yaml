@@ -1,8 +1,8 @@
 id: sentinel-2
-image: ${{ args.registry }}/pctasks-sentinel-2:2026.01.21
+image: ${{ args.registry }}/pctasks-sentinel-2:2026.02.02
 
 args:
-- registry
+  - registry
 
 code:
   src: ${{ local.path(./sentinel2.py) }}
@@ -28,7 +28,7 @@ collections:
       - uri: blob://sentinel2l2a01/sentinel2-l2/
         chunks:
           splits:
-            - depth: 2  # depth: 1 --> 60 tasks; depth: 2 --> ~1000 tasks
+            - depth: 2 # depth: 1 --> 60 tasks; depth: 2 --> ~1000 tasks
           options:
             # extensions: [.safe]
             ends_with: manifest.safe
