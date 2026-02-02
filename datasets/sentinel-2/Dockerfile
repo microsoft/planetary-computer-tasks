@@ -27,7 +27,8 @@ RUN curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/downloa
     && rm -rf "Miniforge3-$(uname)-$(uname -m).sh"
 
 ENV PATH=/opt/conda/bin:$PATH
-ENV LD_LIBRARY_PATH=/opt/conda/lib/:$LD_LIBRARY_PATH
+ARG LD_LIBRARY_PATH=""
+ENV LD_LIBRARY_PATH=/opt/conda/lib/:${LD_LIBRARY_PATH}
 
 RUN mamba install -y -c conda-forge python=3.11 gdal pip setuptools cython numpy
 
@@ -75,6 +76,7 @@ COPY ./datasets/sentinel-2/requirements.txt /opt/src/datasets/sentinel-2/require
 RUN python3 -m pip install -r /opt/src/datasets/sentinel-2/requirements.txt
 
 # Setup Python Path to allow import of test modules
-ENV PYTHONPATH=/opt/src:$PYTHONPATH
+ARG PYTHONPATH=""
+ENV PYTHONPATH=/opt/src:${PYTHONPATH}
 
 WORKDIR /opt/src

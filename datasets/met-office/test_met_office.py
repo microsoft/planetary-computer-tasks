@@ -28,6 +28,10 @@ test_container = "deterministic"
             MetOfficeGlobalNearSurfaceCollection,
         ),
         (
+            f"blob://{test_storage_account}/{test_container}/global/pressure/update/2026/01/24/0600Z/20260124T0600Z-PT0000H00M.updated",
+            MetOfficeGlobalPressureCollection,
+        ),
+        (
             f"blob://{test_storage_account}/{test_container}/global/pressure/update/2026/01/06/1200Z/20260113T1200Z-PT0168H00M.updated",
             MetOfficeGlobalPressureCollection,
         ),

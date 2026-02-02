@@ -1,10 +1,7 @@
 import pytest
 import yaml
 
-from pctasks.ingest.models import (
-    IngestNdjsonInput,
-    IngestTaskInput,
-)
+from pctasks.ingest.models import IngestNdjsonInput, IngestTaskInput
 
 
 def test_ingest_task_input_model_validate_from_yaml() -> None:

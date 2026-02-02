@@ -73,6 +73,8 @@ class Storage(ABC):
         walk_limit: Optional[int] = None,
         file_limit: Optional[int] = None,
         match_full_path: bool = False,
+        folder_matches: Optional[str] = None,
+        folder_matches_at_depth: Optional[int] = None,
     ) -> Generator[Tuple[str, List[str], List[str]], None, None]:
         """
         Recursively walk storage.
@@ -91,6 +93,10 @@ class Storage(ABC):
             match_full_path: bool, default False
                 Whether to match on just the file name segment of the path (the default) or
                 the entire path, including the base path.
+            folder_matches: Optional regex pattern to filter which folders to descend into.
+                Only folders matching this pattern will be walked.
+            folder_matches_at_depth: Optional depth (1-indexed) at which to apply folder_matches.
+                If None, the filter applies at all depths.
 
         Returns:
             Generator of (path, files, folders) tuples. Similar to os.walk. Lists

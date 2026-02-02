@@ -1,8 +1,8 @@
 id: sentinel-2
-image: ${{ args.registry }}/pctasks-sentinel-2:2024.5.28.0
+image: ${{ args.registry }}/pctasks-sentinel-2:2026.02.02
 
 args:
-- registry
+  - registry
 
 code:
   src: ${{ local.path(./sentinel2.py) }}
@@ -28,7 +28,7 @@ collections:
       - uri: blob://sentinel2l2a01/sentinel2-l2/
         chunks:
           splits:
-            - depth: 2  # depth: 1 --> 60 tasks; depth: 2 --> ~1000 tasks
+            - depth: 2 # depth: 1 --> 60 tasks; depth: 2 --> ~1000 tasks
           options:
             # extensions: [.safe]
             ends_with: manifest.safe
@@ -37,5 +37,9 @@ collections:
             min_depth: 5
             max_depth: 5
             chunk_length: 20000
+            # Filter to only walk into 2026 folders
+            # Year is at depth 2 from the split point (Grid2/Year/Month/Day)
+            folder_matches: "^2026$"
+            folder_matches_at_depth: 2
     chunk_storage:
       uri: blob://sentinel2l2a01/sentinel2-l2-info/pctasks-chunks/
