@@ -71,7 +71,7 @@ SINCE_ARG=""
 SUBMIT_MODE="--upsert"
 if [ -n "$SINCE" ]; then
   SINCE_ARG="-a since $SINCE"
-  SUBMIT_MODE="--submit -a year-prefix 2026"
+  SUBMIT_MODE="--submit"
 fi
 
 for collection in $COLLECTIONS
@@ -82,5 +82,5 @@ do
     --is-update-workflow \
     --workflow-id $collection-update \
     -c "$collection" ingest \
-    --confirm $SUBMIT_MODE $SINCE_ARG
+    --confirm $SUBMIT_MODE $SINCE_ARG -a year-prefix 2026
 done
