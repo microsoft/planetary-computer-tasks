@@ -21,3 +21,13 @@ Created with
 ```
 pctasks dataset process-items --is-update-workflow sentinel-2-l2a-update -d datasets/sentinel-2/dataset.yaml -u
 ```
+
+## Submit ingestion jobs on demand
+
+```bash
+pctasks dataset process-items \
+    --is-update-workflow sentinel-2-l2a-update \
+    -d datasets/sentinel-2/dataset.yaml -u --submit \
+    -a registry pccomponents.azurecr.io \
+    -a since "2025-06-16T00:00:00Z"
+```
