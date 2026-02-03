@@ -47,6 +47,7 @@ azure-storage-queue==12.13.0
 cachetools==5.3.3
     # via
     #   google-auth
+    #   pctasks-core
     #   pypgstac
     # from https://pypi.org/simple
 certifi==2025.8.3

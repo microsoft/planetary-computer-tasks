@@ -26,7 +26,7 @@ classifiers = [
 dependencies = [
     "aiohttp>=3.9",
     "azure-cosmos>=4.5.0",
-    "cachetools==5.3.3",
+    "cachetools>=5.3.3",
     "azure-data-tables>=12.0.0,<13",
     "azure-identity>=1.0.0,<2",
     "azure-storage-blob",
