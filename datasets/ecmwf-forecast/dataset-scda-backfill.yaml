@@ -20,7 +20,7 @@ collections:
       - uri: blob://ai4edataeuwest/ecmwf/
         chunks:
           options:
-            matches: /(0p25|0p4-beta)/(scda)(?!-opendata)
+            matches: /(00z|06z|12z|18z)/(0p25|0p4-beta)/scda(?!-opendata)
             match_full_path: true
             extensions: [.grib2]
     chunk_storage:
