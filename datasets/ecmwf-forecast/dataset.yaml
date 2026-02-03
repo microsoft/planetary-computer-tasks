@@ -21,7 +21,7 @@ collections:
             # currently excluding "aifs", in favor of "ifs"
             # Could put that in a different collection, or modify
             # the stactools package.
-            matches: /ifs/(0p25|0p4-beta)/(enfo|oper|waef|wave)(?!-opendata)
+            matches: /ifs/(0p25|0p4-beta)/(enfo|oper|waef|wave|scda)(?!-opendata)
             match_full_path: true
             extensions: [.grib2]
     chunk_storage:
