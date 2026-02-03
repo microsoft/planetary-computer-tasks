@@ -1,0 +1,270 @@
+{
+    "type": "Collection",
+    "id": "nrcan-landcover",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://open.canada.ca/en/open-government-licence-canada",
+            "title": "Open Government Licence - Canada"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/nrcan-landcover",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/label/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/file/v2.1.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "item_assets": {
+        "metadata": {
+            "type": "application/json",
+            "roles": [
+                "metadata"
+            ],
+            "title": "Land cover of Canada metadata"
+        },
+        "landcover": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data",
+                "labels",
+                "labels-raster"
+            ],
+            "title": "Land cover of Canada COG",
+            "proj:epsg": 3978,
+            "file:values": [
+                {
+                    "values": [
+                        1
+                    ],
+                    "summary": "Temperate or sub-polar needleleaf forest"
+                },
+                {
+                    "values": [
+                        2
+                    ],
+                    "summary": "Sub-polar taiga needleleaf forest"
+                },
+                {
+                    "values": [
+                        5
+                    ],
+                    "summary": "Temperate or sub-polar broadleaf deciduous forest"
+                },
+                {
+                    "values": [
+                        6
+                    ],
+                    "summary": "Mixed forest"
+                },
+                {
+                    "values": [
+                        8
+                    ],
+                    "summary": "Temperate or sub-polar shrubland"
+                },
+                {
+                    "values": [
+                        10
+                    ],
+                    "summary": "Temperate or sub-polar grassland"
+                },
+                {
+                    "values": [
+                        11
+                    ],
+                    "summary": "Sub-polar or polar shrubland-lichen-moss"
+                },
+                {
+                    "values": [
+                        12
+                    ],
+                    "summary": "Sub-polar or polar grassland-lichen-moss"
+                },
+                {
+                    "values": [
+                        13
+                    ],
+                    "summary": "Sub-polar or polar barren-lichen-moss"
+                },
+                {
+                    "values": [
+                        14
+                    ],
+                    "summary": "Wetland"
+                },
+                {
+                    "values": [
+                        15
+                    ],
+                    "summary": "Cropland"
+                },
+                {
+                    "values": [
+                        16
+                    ],
+                    "summary": "Barren lands"
+                },
+                {
+                    "values": [
+                        17
+                    ],
+                    "summary": "Urban"
+                },
+                {
+                    "values": [
+                        18
+                    ],
+                    "summary": "Water"
+                },
+                {
+                    "values": [
+                        19
+                    ],
+                    "summary": "Snow and Ice"
+                }
+            ],
+            "raster:bands": [
+                {
+                    "nodata": 0,
+                    "sampling": "area",
+                    "data_type": "uint8",
+                    "spatial_resolution": 30
+                }
+            ]
+        }
+    },
+    "msft:container": "landcover",
+    "msft:storage_account": "nrcanlandcovereuwest",
+    "msft:short_description": "Collection of Land Cover products for Canada as produced by Natural Resources Canada using Landsat satellite imagery. This collection of cartographic products offers classified Land Cover of Canada at a 30 metre scale, updated on a 5 year basis.",
+    "msft:region": "westeurope",
+    "title": "Land Cover of Canada",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -141.003,
+                    41.6755,
+                    -52.6174,
+                    83.1139
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2015-01-01T00:00:00Z",
+                    "2020-01-01T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "OGL-Canada-2.0",
+    "keywords": [
+        "Land Cover",
+        "Remote Sensing",
+        "Landsat",
+        "North America",
+        "Canada"
+    ],
+    "providers": [
+        {
+            "name": "Natural Resources Canada | Ressources naturelles Canada",
+            "roles": [
+                "licensor",
+                "processor",
+                "producer"
+            ],
+            "url": "https://www.nrcan.gc.ca/maps-tools-publications/satellite-imagery-air-photos/application-development/land-cover/21755"
+        },
+        {
+            "name": "Sparkgeo",
+            "roles": [
+                "processor"
+            ],
+            "url": "https://sparkgeo.com"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "proj:epsg": [
+            3978
+        ],
+        "label:type": [
+            "raster"
+        ],
+        "label:tasks": [
+            "classification"
+        ],
+        "label:classes": [
+            {
+                "name": "",
+                "classes": [
+                    "Temperate or sub-polar needleleaf forest",
+                    "Sub-polar taiga needleleaf forest",
+                    "Temperate or sub-polar broadleaf deciduous forest",
+                    "Mixed forest",
+                    "Temperate or sub-polar shrubland",
+                    "Temperate or sub-polar grassland",
+                    "Sub-polar or polar shrubland-lichen-moss",
+                    "Sub-polar or polar grassland-lichen-moss",
+                    "Sub-polar or polar barren-lichen-moss",
+                    "Wetland",
+                    "Cropland",
+                    "Barren lands",
+                    "Urban",
+                    "Water",
+                    "Snow and Ice"
+                ]
+            }
+        ]
+    },
+    "assets": {
+        "metadata": {
+            "href": "https://open.canada.ca/data/en/dataset/4e615eae-b90c-420b-adee-2ca35896caf6.jsonld",
+            "type": "application/json",
+            "title": "Land cover of Canada metadata",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/nrcan-landcover.png",
+            "type": "image/png",
+            "title": "Land cover of Canada thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/nrcan-landcover.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}

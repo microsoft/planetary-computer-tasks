@@ -1,0 +1,121 @@
+{
+    "type": "Collection",
+    "id": "3dep-lidar-copc",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://www.usgs.gov/3d-elevation-program/about-3dep-products-services",
+            "title": "About 3DEP Products & Services"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/3dep-lidar-copc",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/pointcloud/v1.0.0/schema.json"
+    ],
+    "item_assets": {
+        "data": {
+            "type": "application/vnd.laszip+copc",
+            "roles": [
+                "data"
+            ],
+            "title": "COPC data",
+            "pc:type": "lidar",
+            "pc:encoding": "application/vnd.laszip+copc"
+        },
+        "thumbnail": {
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "3DEP Lidar COPC"
+        }
+    },
+    "msft:group_id": "3dep-lidar",
+    "msft:container": "usgs-3dep-copc",
+    "msft:storage_account": "usgslidareuwest",
+    "msft:short_description": "Nationwide Lidar point cloud data in COPC format.",
+    "msft:region": "westeurope",
+    "title": "USGS 3DEP Lidar Point Cloud",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -166.8546920006028,
+                    17.655357747708283,
+                    -64.56116757979399,
+                    71.39330810146807
+                ],
+                [
+                    144.60180842809473,
+                    13.21774453924126,
+                    146.08202179248926,
+                    18.18369664008955
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2012-01-01T00:00:00Z",
+                    "2022-01-01T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "USGS",
+        "3DEP",
+        "COG",
+        "Point cloud"
+    ],
+    "providers": [
+        {
+            "name": "Landrush",
+            "roles": [
+                "processor",
+                "producer"
+            ]
+        },
+        {
+            "name": "USGS",
+            "roles": [
+                "processor",
+                "producer",
+                "licensor"
+            ],
+            "url": "https://www.usgs.gov/core-science-systems/ngp/3dep/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "gsd": [
+            2.0
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/3dep-lidar-copc-thumbnail.png",
+            "type": "image/png",
+            "title": "Thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        }
+    }
+}

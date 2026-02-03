@@ -1,0 +1,151 @@
+{
+    "type": "Collection",
+    "id": "hrea",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://creativecommons.org/licenses/by/4.0/",
+            "title": "CC BY 4.0"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/hrea",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "item_assets": {
+        "lightscore": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Probability of electrification"
+        },
+        "light-composite": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Nighttime light annual composite"
+        },
+        "night-proportion": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Proportion of nights a settlement is brighter than uninhabited areas"
+        },
+        "estimated-brightness": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Estimated brightness levels"
+        }
+    },
+    "msft:container": "hrea",
+    "msft:storage_account": "hreadatasa",
+    "msft:short_description": "Settlement-level measures of electricity access, reliability, and usage derived from VIIRS satellite imagery",
+    "msft:region": "westeurope",
+    "title": "HREA: High Resolution Electricity Access",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -117.413972,
+                    -55.54235,
+                    -53.092722,
+                    32.718434
+                ],
+                [
+                    -25.361528,
+                    -34.838027,
+                    50.759908,
+                    37.552639
+                ],
+                [
+                    34.957638,
+                    -11.655904,
+                    157.037723,
+                    38.612083
+                ],
+                [
+                    155.392502,
+                    -20.251178,
+                    172.171458,
+                    14.721388
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2012-12-31T00:00:00Z",
+                    "2019-12-31T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "CC-BY-4.0",
+    "keywords": [
+        "HREA",
+        "Electricity",
+        "VIIRS"
+    ],
+    "providers": [
+        {
+            "name": "University of Michigan",
+            "roles": [
+                "producer",
+                "licensor"
+            ],
+            "url": "http://www-personal.umich.edu/~brianmin/HREA/index.html/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "gsd": [
+            30,
+            460
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/hrea.png",
+            "type": "image/png",
+            "title": "HREA",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/hrea.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}

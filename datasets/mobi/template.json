@@ -1,0 +1,210 @@
+{
+    "type": "Collection",
+    "id": "mobi",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://aka.ms/mobi-license",
+            "title": "NatureServe MoBI license"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/mobi",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "item_assets": {
+        "RSR_All": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Range-size rarity for all species"
+        },
+        "RSR_Plants": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Range-size rarity for vascular plants"
+        },
+        "RSR_Vertebrates": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Range-size rarity for vertebrates"
+        },
+        "RSR_AquaticInverts": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Range-size rarity for aquatic invertebrates"
+        },
+        "PWRSR_GAP12_SUM_All": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Protection-weighted range-size rarity for all species"
+        },
+        "SpeciesRichness_All": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Species richness for all species"
+        },
+        "RSR_PollinatorInverts": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Range-size rarity for pollinators"
+        },
+        "PWRSR_GAP12_SUM_Plants": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Protection-weighted range-size rarity for vascular plants"
+        },
+        "SpeciesRichness_Plants": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Species richness for vascular plants"
+        },
+        "PWRSR_GAP12_SUM_Vertebrates": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Protection-weighted range-size rarity for vertebrates"
+        },
+        "SpeciesRichness_Vertebrates": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Species richness for vertebrates"
+        },
+        "PWRSR_GAP12_SUM_AquaticInverts": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Protection-weighted range-size rarity for aquatic invertebrates"
+        },
+        "SpeciesRichness_AquaticInverts": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Species richness for aquatic invertebrates"
+        },
+        "PWRSR_GAP12_SUM_PollinatorInverts": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Protection-weighted range-size rarity for pollinators"
+        },
+        "SpeciesRichness_PollinatorInverts": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Species richness for pollinators"
+        }
+    },
+    "msft:container": "mobi",
+    "msft:storage_account": "ai4edataeuwest",
+    "msft:short_description": "Habitat information for 2,216 imperiled species occurring in the continental United States",
+    "msft:region": "westeurope",
+    "title": "MoBI: Map of Biodiversity Importance",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -130.23751729209377,
+                    21.736663926419077,
+                    -63.66198266211968,
+                    49.184200486300604
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2020-04-14T00:00:00Z",
+                    "2020-04-14T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "MoBI",
+        "Natureserve",
+        "United States",
+        "Biodiversity"
+    ],
+    "providers": [
+        {
+            "name": "NatureServe",
+            "roles": [
+                "producer",
+                "licensor"
+            ],
+            "url": "http://natureserve.org/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "gsd": [
+            990
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/mobi.png",
+            "type": "image/png",
+            "title": "MoBI",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/mobi.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}

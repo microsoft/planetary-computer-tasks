@@ -1,0 +1,1 @@
+gridMET is a dataset of daily surface meteorological data at approximately four-kilometer resolution, covering the contiguous U.S. from 1979 to the present. These data can provide important inputs for ecological, agricultural, and hydrological models.

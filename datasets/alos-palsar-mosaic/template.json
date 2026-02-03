@@ -1,0 +1,242 @@
+{
+    "type": "Collection",
+    "id": "alos-palsar-mosaic",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "handbook",
+            "href": "https://www.eorc.jaxa.jp/ALOS/en/dataset/pdf/DatasetDescription_PALSAR2_Mosaic_V200.pdf",
+            "type": "application/pdf",
+            "title": "Global 25 m Resolution PALSAR-2/PALSAR Mosaic (MOS)",
+            "description": "Also includes data usage information"
+        },
+        {
+            "rel": "license",
+            "href": "https://earth.jaxa.jp/policy/en.html",
+            "type": "text/html",
+            "title": "JAXA Terms of Use of Research Data"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/alos-palsar-mosaic",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/sar/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/sat/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/version/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "version": "2.0.0",
+    "item_assets": {
+        "HH": {
+            "role": "data",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "HH",
+            "description": "HH polarization backscattering coefficient, 16-bit DN."
+        },
+        "HV": {
+            "role": "data",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "HV",
+            "description": "HV polarization backscattering coefficient, 16-bit DN."
+        },
+        "VH": {
+            "role": "data",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "VH",
+            "description": "VH polarization backscattering coefficient, 16-bit DN (high-sensitive beam quad-mode only)."
+        },
+        "VV": {
+            "role": "data",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "VV",
+            "description": "VV polarization backscattering coefficient, 16-bit DN (high-sensitive beam quad-mode only)."
+        },
+        "date": {
+            "role": "date",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "date",
+            "description": "Observation date (days since Jan 1, 1970)."
+        },
+        "mask": {
+            "role": "data-mask",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "mask",
+            "description": "Quality Mask",
+            "raster:bands": [
+                {
+                    "nodata": 0,
+                    "data_type": "uint8"
+                }
+            ],
+            "classification:classes": [
+                {
+                    "name": "no_data",
+                    "value": 0,
+                    "description": "No data"
+                },
+                {
+                    "name": "water",
+                    "value": 50,
+                    "description": "Water"
+                },
+                {
+                    "name": "lay_over",
+                    "value": 100,
+                    "description": "Lay over"
+                },
+                {
+                    "name": "shadowing",
+                    "value": 150,
+                    "description": "Shadowing"
+                },
+                {
+                    "name": "land",
+                    "value": 255,
+                    "description": "Land"
+                }
+            ]
+        },
+        "linci": {
+            "role": "local-incidence-angle",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "linci",
+            "description": "Local incidence angle (degrees)."
+        },
+        "metadata": {
+            "type": "application/xml",
+            "title": "metadata",
+            "description": "Product metadata file"
+        }
+    },
+    "msft:container": "palsar",
+    "msft:storage_account": "https://pceo.blob.core.windows.net/",
+    "msft:short_description": "Global 25m resolution SAR image mosaic.",
+    "msft:region": "westeurope",
+    "title": "ALOS PALSAR Annual Mosaic",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180.0,
+                    85.0,
+                    180.0,
+                    -56.0
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2015-01-01T00:00:00Z",
+                    "2021-12-31T23:59:59Z"
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "ALOS",
+        "JAXA",
+        "Remote Sensing",
+        "Global"
+    ],
+    "providers": [
+        {
+            "name": "Japan Aerospace Exploration Agency",
+            "roles": [
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://www.eorc.jaxa.jp/ALOS/en/dataset/fnf_e.htm"
+        },
+        {
+            "name": "Development Seed",
+            "roles": [
+                "processor"
+            ],
+            "url": "https://developmentseed.org"
+        },
+        {
+            "name": "Microsoft Planetary Computer",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com/"
+        }
+    ],
+    "summaries": {
+        "platform": [
+            "ALOS",
+            "ALOS-2"
+        ],
+        "instruments": [
+            "PALSAR",
+            "PALSAR-2"
+        ],
+        "sat:orbit_state": [
+            "ascending",
+            "descending"
+        ],
+        "sar:polarizations": [
+            [
+                "HH",
+                "HV"
+            ],
+            [
+                "HH",
+                "HV",
+                "VH",
+                "VV"
+            ]
+        ],
+        "sar:instrument_mode": [
+            "F",
+            "U"
+        ],
+        "sar:observation_direction": [
+            "left",
+            "right"
+        ],
+        "palsar:number_of_polarizations": [
+            "D",
+            "Q"
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/alos-palsar-thumbnail.png",
+            "type": "image/png",
+            "title": "ALOS PALSAR MOSAIC",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/alos-palsar-mosaic.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "AS"
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}

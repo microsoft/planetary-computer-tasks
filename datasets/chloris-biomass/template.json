@@ -1,0 +1,162 @@
+{
+    "type": "Collection",
+    "id": "chloris-biomass",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://spdx.org/licenses/CC-BY-NC-SA-4.0.html",
+            "title": "Creative Commons Attribution Non Commercial Share Alike 4.0 International"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/chloris-biomass",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.1.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "item_assets": {
+        "biomass": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Annual estimates of aboveground woody biomass.",
+            "raster:bands": [
+                {
+                    "unit": "tonnes",
+                    "nodata": 2147483647,
+                    "data_type": "uint32"
+                }
+            ]
+        },
+        "biomass_wm": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Annual estimates of aboveground woody biomass (Web Mercator).",
+            "raster:bands": [
+                {
+                    "unit": "tonnes",
+                    "nodata": 2147483647,
+                    "data_type": "uint32"
+                }
+            ]
+        },
+        "biomass_change": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Annual estimates of changes (gains and losses) in aboveground woody biomass from the previous year.",
+            "raster:bands": [
+                {
+                    "unit": "tonnes",
+                    "nodata": -32768,
+                    "data_type": "int16"
+                }
+            ]
+        },
+        "biomass_change_wm": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Annual estimates of changes (gains and losses) in aboveground woody biomass from the previous year (Web Mercator).",
+            "raster:bands": [
+                {
+                    "unit": "tonnes",
+                    "nodata": -32768,
+                    "data_type": "int16"
+                }
+            ]
+        }
+    },
+    "msft:container": "chloris-biomass",
+    "msft:storage_account": "ai4edataeuwest",
+    "msft:short_description": "The Chloris Global Biomass 2003 - 2019 dataset provides estimates of stock and change in aboveground biomass for Earth's terrestrial woody vegetation ecosystems during the period 2003 - 2019, at annual time steps. The global dataset has a circa 4.6 km spatial resolution.",
+    "msft:region": "westeurope",
+    "title": "Chloris Biomass",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -179.95,
+                    -60,
+                    179.95,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2003-07-31T00:00:00Z",
+                    "2019-07-31T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "CC-BY-NC-SA-4.0",
+    "keywords": [
+        "Chloris",
+        "Biomass",
+        "MODIS",
+        "Carbon"
+    ],
+    "providers": [
+        {
+            "name": "Chloris",
+            "roles": [
+                "producer",
+                "licensor"
+            ],
+            "url": "http://chloris.earth/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "gsd": [
+            4633
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/chloris-biomass.jpg",
+            "type": "image/jpg",
+            "title": "Chloris Biomass",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/chloris-biomass.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}

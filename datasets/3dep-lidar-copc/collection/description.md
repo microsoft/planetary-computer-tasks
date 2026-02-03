@@ -1,0 +1,9 @@
+This collection contains source data from the [USGS 3DEP program](https://www.usgs.gov/3d-elevation-program) reformatted into the [COPC](https://copc.io) format. A COPC file is a LAZ 1.4 file that stores point data organized in a clustered octree. It contains a VLR that describes the octree organization of data that are stored in LAZ 1.4 chunks. The end product is a one-to-one mapping of LAZ to UTM-reprojected COPC files.
+
+LAZ data is geospatial [LiDAR point cloud](https://en.wikipedia.org/wiki/Point_cloud) (LPC) content stored in the compressed [LASzip](https://laszip.org?) format. Data were reorganized and stored in LAZ-compatible [COPC](https://copc.io) organization for use in Planetary Computer, which supports incremental spatial access and cloud streaming.
+
+LPC can be summarized for construction of digital terrain models (DTM), filtered for extraction of features like vegetation and buildings, and visualized to provide a point cloud map of the physical spaces the laser scanner interacted with. LPC content from 3DEP is used to compute and extract a variety of landscape characterization products, and some of them are provided by Planetary Computer, including Height Above Ground, Relative Intensity Image, and DTM and Digital Surface Models.
+
+The LAZ tiles represent a one-to-one mapping of original tiled content as provided by the [USGS 3DEP program](https://www.usgs.gov/3d-elevation-program), with the exception that the data were reprojected and normalized into appropriate UTM zones for their location without adjustment to the vertical datum. In some cases, vertical datum description may not match actual data values, especially for pre-2010 USGS 3DEP point cloud data.
+
+In addition to these COPC files, various higher-level derived products are available as Cloud Optimized GeoTIFFs in [other collections](https://planetarycomputer.microsoft.com/dataset/group/3dep-lidar).

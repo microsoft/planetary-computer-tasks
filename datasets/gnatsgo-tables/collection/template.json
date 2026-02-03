@@ -1,0 +1,408 @@
+{
+    "type": "Collection",
+    "id": "gnatsgo-tables",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "about",
+            "href": "https://www.nrcs.usda.gov/wps/PA_NRCSConsumption/download?cid=nrcs142p2_051847&ext=pdf",
+            "type": "application/pdf",
+            "title": "gSSURGO User Guide",
+            "description": "User guide for gSSURGO"
+        },
+        {
+            "rel": "about",
+            "href": "https://www.nrcs.usda.gov/wps/PA_NRCSConsumption/download?cid=nrcseprd1464658&ext=pdf",
+            "type": "application/pdf",
+            "title": "gNATSGO Overview Slides",
+            "description": "Slides giving a high level overview of the gNATSGO dataset"
+        },
+        {
+            "rel": "license",
+            "href": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "title": "CC0 1.0 Universal Public Domain Dedication"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/gnatsgo-tables",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "item_assets": {
+        "data": {
+            "type": "application/x-parquet",
+            "roles": [
+                "data"
+            ],
+            "table:storage_options": {
+                "account_name": "soils"
+            }
+        }
+    },
+    "table:tables": [
+        {
+            "name": "chaashto",
+            "description": "The Horizon AASHTO table contains the American Association of State Highway Transportation Officials classification(s) for the referenced horizon.  One row in this table is marked as the representative AASHTO classification for the horizon."
+        },
+        {
+            "name": "chconsistence",
+            "description": "The Horizon Consistence table contains descriptive terms of soil consistence -- rupture resistance, plasticity, and stickiness -- for the referenced horizon.  One row in this table is marked as having the representative characteristics for the horizon."
+        },
+        {
+            "name": "chdesgnsuffix",
+            "description": "The Horizon Designation Suffix table contains the designation suffix(es), one per row,  for the referenced horizon.  For example, the \"h\" and \"s\" of a Bhs horizon appear as two rows in this table."
+        },
+        {
+            "name": "chfrags",
+            "description": "The Horizon Fragments table lists the mineral and organic fragments that generally occur in the referenced horizon.  If the Volume % is greater than zero (low=5, RV=10, high=15) in a row, the kind and size of fragment in that row exists everywhere this horizon and component occur in the map unit.  If the Volume % includes zero (low=0, RV=5, high=10), the kind and size of fragment may exist in some places, but not in others."
+        },
+        {
+            "name": "chorizon",
+            "description": "The Horizon table lists the horizon(s) and related data for the referenced map unit component.  If the horizon thickness is greater than zero (low=5, RV=8, high=12), the horizon exists everywhere this component occurs.  If the horizon thickness includes zero (low=0, RV=1, high=3), the horizon may exist in some places, but not in other places.\r\nHorizons that have two distinct parts, such as E/B or E&Bt horizons, are recorded twice.  Once for the characteristics of the first part; and again on another row, using the same depths and thicknesses, for the characteristics of the other part."
+        },
+        {
+            "name": "chpores",
+            "description": "The Horizon Pores table lists the voids for the referenced horizon.  If the Quantity is greater than zero (low=2, RV=5, high=10) in a row, the voids in that row exist everywhere the horizon and component occur in the map unit.  If the Quantity includes zero (low=0, RV=2, high=5), the voids may exist in some places, but not in others.  More than one row can be marked as an RV row because a horizon may have more than one size or shape of void."
+        },
+        {
+            "name": "chstruct",
+            "description": "The Horizon Structure table lists the individual soil structure size, grade, and shape terms for the referenced horizon.  Terms in this table are assembled into a structure group string which is recorded in the Horizon Structure Group table."
+        },
+        {
+            "name": "chstructgrp",
+            "description": "The Horizon Structure Group table lists the ranges of  soil structure for the referenced horizon.  The row with the typically occurring structure is marked as being representative.  The entry in this table is based on grouping of entries in the Horizon Structure table."
+        },
+        {
+            "name": "chtext",
+            "description": "The Horizon Text table contains notes and narrative descriptions related to the referenced horizon.  Some notes may provide additional information about the horizon for which there is no explicit column for such data.  In many cases, the table is empty for a particular horizon."
+        },
+        {
+            "name": "chtexture",
+            "description": "The Horizon Texture table lists the individual texture(s), or term(s) used in lieu of texture, for the referenced horizon.  Only the unmodified texture terms are listed in the Horizon Texture table; modifiers are listed in the Horizon Texture Modifier table.  For example, a gravelly loamy sand is shown as \"GR-LS\" in the Horizon Texture Group table, \"ls\" in the Horizon Texture table, and \"gr\" in the Horizon Texture Modifier table."
+        },
+        {
+            "name": "chtexturegrp",
+            "description": "The Horizon Texture Group table lists the range of textures for the referenced horizon as a concatenation of horizon texture and texture modifier(s).  For example, a horizon that is gravelly loamy sand in some places and gravelly loamy coarse sand in other places is shown as GR-LS on one row and GR-LCOS on another row in this table.  The row with the typically occurring texture is identified as the RV row.  Stratified textures are shown in one row.  For example, a horizon that is stratified gravelly loamy fine sand and cobbly coarse sand is shown as SR- GR-LFS CB-COS on one row and the Stratified? column for that row is marked \"yes\".  If two or more textures always occur together but are not stratified, all of the textures are listed on one row and the Stratified? column for that row is marked \"no\"."
+        },
+        {
+            "name": "chtexturemod",
+            "description": "The Horizon Texture Modifier table lists the texture modifier(s) for the referenced texture.  For example, a gravelly loamy sand is shown as \"GR-LS\" in the Horizon Texture Group table, \"ls\" in the Horizon Texture table, and \"gr\" in this table."
+        },
+        {
+            "name": "chunified",
+            "description": "The Horizon Unified table contains the Unified Soil Classification(s) for the referenced horizon.  One row in the Horizon Unified table is marked as the representative Unified classification for the horizon."
+        },
+        {
+            "name": "cocanopycover",
+            "description": "The Component Canopy Cover table lists the overstory plants that typically occur on the referenced map unit component."
+        },
+        {
+            "name": "cocropyld",
+            "description": "The Component Crop Yield table lists commonly grown crops and their expected range in yields when grown on the referenced map unit component.  Yields for the map unit as a whole are given in the Mapunit Crop Yield table."
+        },
+        {
+            "name": "codiagfeatures",
+            "description": "The Component Diagnostic Features table lists the typical soil features, such as ochric epipedon or cambic horizon, for the referenced map unit component."
+        },
+        {
+            "name": "coecoclass",
+            "description": "The Component Ecological Classification table identifies the ecological sites typically associated with the referenced map unit component.  These may include the official NRCS forestland and rangland ecological sites, as well as those of other classification systems, such as the USFS Habitat Types."
+        },
+        {
+            "name": "coeplants",
+            "description": "The Component Existing Plants table lists the plants, either rangeland or forestland plants, that typically occur on the referenced map unit component."
+        },
+        {
+            "name": "coerosionacc",
+            "description": "The Component Erosion Accelerated table lists the kinds of accelerated erosion that occur on the referenced map unit component.  One row in this table is marked as the representative kind of accelerated erosion for that component."
+        },
+        {
+            "name": "coforprod",
+            "description": "The Component Forest Productivity table lists the site index and the annual productivity in cubic feet per acre per year (CAMI) of forest overstory tree species that typically occur on the referenced map unit component."
+        },
+        {
+            "name": "coforprodo",
+            "description": "The Component Forest Productivity - Other table lists the site index and annual productivity of forest overstory tree species in units other than cubic feet per acre per year for trees that typically occur on the referenced map unit component."
+        },
+        {
+            "name": "cogeomordesc",
+            "description": "The Component Geomorphic Description table lists the geomorphic features on which the referenced map unit component typically occurs."
+        },
+        {
+            "name": "cohydriccriteria",
+            "description": "The Component Hydric Criteria table lists the hydric soil criteria met for those referenced map unit components that are classified as a \"hydric soil.\""
+        },
+        {
+            "name": "cointerp",
+            "description": "The Component Interpretation table lists the predictions of behavior and limiting features for specified uses made for the referenced map unit component."
+        },
+        {
+            "name": "comonth",
+            "description": "The Component Month table lists the monthly flooding and ponding characteristics for the referenced map unit component.  This table has one row for each month of the year."
+        },
+        {
+            "name": "component",
+            "description": "The Component table lists the map unit components identified in the referenced map unit, and selected properties of each component.  If the Component % is greater than zero (low=65, RV=75, high=90) for a component, that component exists in every delineation of that mapunit.  If the Component % includes zero (low=0, RV=50, high=90), the component may exist in some delineations, but not in others."
+        },
+        {
+            "name": "copm",
+            "description": "The Component Parent Material table lists the individual parent material(s) for the referenced map unit component.    In some cases where soils developed in multiple materials in a vertical sequence, that sequence will be noted.  In other cases multiple entries with no vertical sequence noted indicates the soil may have formed in one of the materials listed."
+        },
+        {
+            "name": "copmgrp",
+            "description": "The Component Parent Material Group table lists the concatenated string of parent material(s) in which the referenced map unit component formed based on entries in the Component Parent Material table.  For example, a component formed in one parent material, such as loess, or one vertical sequence of parent materials, such as loamy glacial drift over silty residuum weathered from shale, has one row in this table.  A component formed in one parent material in some locations, but another parent material (or sequence of parent materials) in other locations has two rows in this table, one for each parent material (or sequence of parent materials).  One row is identified as the representative parent material."
+        },
+        {
+            "name": "copwindbreak",
+            "description": "The Component Potential Windbreak table lists the windbreak plant species commonly recommended for the referenced map unit component.  A windbreak plant listed in this table may be used alone or in combination with other plants."
+        },
+        {
+            "name": "corestrictions",
+            "description": "The Component Restrictions table lists the root restrictive feature(s) or layer(s) for the referenced map unit component.  If the thickness of the restrictive layer is greater than zero (low=5, RV=8, high=10), the restrictive layer exists in all delineations of the map unit where the component occurs.  If the thickness of the restrictive layer includes zero (low=0, RV=2, high=5), the restrictive layer may exist in some delineations, but not in others.  This table will be empty if the component does not have restrictive features, but could have several rows if several restrictive features occur in the soil."
+        },
+        {
+            "name": "cosoilmoist",
+            "description": "The Component Soil Moisture table describes the typical soil moisture profile for the referenced map unit component during the month referenced in the Component Month table.  The soil moisture profiles for each month, taken as a group of twelve months, describe the representative situation for the component throughout the year."
+        },
+        {
+            "name": "cosoiltemp",
+            "description": "The Component Soil Temperature table describes the typical soil temperature profile for the referenced map unit component during the month referenced in the Component Month table.  The soil temperature profiles for each month, taken as a group of twelve months, describe the representative situation for the component throughout the year."
+        },
+        {
+            "name": "cosurffrags",
+            "description": "The Component Surface Fragments table lists the organic or mineral fragments that generally occur on the surface of the referenced map unit component.  If the cover percent is greater than zero (low=0.1, RV=1, high=3) for a row in this table, the fragment is in every delineation of the map unit where the referenced component occurs.  If the Cover % includes zero (low=0, RV=0.01, high=1) for a row in this table, the fragment may exist in some delineations and not in others."
+        },
+        {
+            "name": "cosurfmorphgc",
+            "description": "The Component Three Dimensional Surface Morphometry table lists the typical geomorphic position (s) of the referenced map unit component, in three dimension terms.  The geomorphic position(s) listed in this table apply to the geomorphic feature referenced in the Component Geomorphic Description table."
+        },
+        {
+            "name": "cosurfmorphhpp",
+            "description": "The Component Two Dimensional Surface Morphometry table lists the geomorphic position(s) of the referenced map unit component, in two dimensional hillslope profile terms.  The geomorphic position(s) listed in this table apply to the geomorphic feature referenced  in the Component Geomorphic Description table."
+        },
+        {
+            "name": "cosurfmorphmr",
+            "description": "The Component Microrelief Surface Morphometry table lists microrelief features associated with the referenced geomorphic (microfeature) feature shown in the Component Geomorphic Description table."
+        },
+        {
+            "name": "cosurfmorphss",
+            "description": "The Component Slope Shape Surface Morphometry table lists the geomorphic shape(s) of the referenced map unit component, in slope shape terms.  The slope shape terms listed in this table apply to the referenced geomorphic feature shown in the Component Geomorphic Description table."
+        },
+        {
+            "name": "cotaxfmmin",
+            "description": "The Component Taxonomic Family Mineralogy table lists the mineralogy characteristics, as defined in Soil Taxonomy, that apply to the referenced map unit component."
+        },
+        {
+            "name": "cotaxmoistcl",
+            "description": "The Component Taxonomic Moisture Class table provides clear identification of the intended taxonomic moisture class, as defined in Soil Taxonomy, that apply to the referenced map unit component, even though moisture class is implied at a higher taxonomic level.  The class or classes listed in this table describe the representative situation for the component."
+        },
+        {
+            "name": "cotext",
+            "description": "The Component Text table contains notes and narrative descriptions for the referenced map unit component.  In many cases, the table will be empty for a particular component."
+        },
+        {
+            "name": "cotreestomng",
+            "description": "The Component Trees To Manage table lists the trees commonly recommended for managing on the referenced map unit component."
+        },
+        {
+            "name": "cotxfmother",
+            "description": "The Component Taxonomic Family Other Criteria table lists the other taxonomic characteristics, such as classes of coatings or permanent cracks, as defined in Soil Taxonomy, that apply to the referenced map unit component.  The characteristics listed in this table describe the representative situation for the component."
+        },
+        {
+            "name": "distinterpmd",
+            "description": "The Distribution Interp Metadata table records the set of NASIS fuzzy logic interpretations which were generated for the map unit components included in a set of distribution data."
+        },
+        {
+            "name": "distlegendmd",
+            "description": "The Distribution Legend Metadata table records information about the legends or soil survey areas selected for inclusion in a set of distributed data.  The presence of a legend in this table does not imply that all of the available data for that legend was included in the set of data that was distributed.  Only certain map units and components for that legend may have been selected.  The record of the criteria used for selecting map units and components may be found in the Distribution Metadata table."
+        },
+        {
+            "name": "distmd",
+            "description": "The Distribution Metadata table records information associated with the selection of a set of data for distribution to some entity or information system external to NASIS.  A set of distribution data may include only selected map units from a legend or legends, and only selected components of those map units.  This table records the criteria used for selecting map units and components for inclusion in the set of distributed data.  Other recorded information includes the name of the NASIS user who initiated a distribution request, and the times when that request was made, and when that request was ultimately processed."
+        },
+        {
+            "name": "laoverlap",
+            "description": "The Legend Area Overlap table lists the geographic areas that are coincident with the soil survey area identified in the Legend table.  For example, a survey area that covers two counties would have two rows in this table, one for each county.  Other types of geographic areas listed might include state, MLRA, rainfall (R) factor area, climate (C) factor area, etc."
+        },
+        {
+            "name": "legend",
+            "description": "The Legend table identifies the soil survey area that the legend is related to, and related information about that legend."
+        },
+        {
+            "name": "legendtext",
+            "description": "The Legend Text table contains notes and narrative descriptions related to the referenced legend.  Legend text is optional.  In many cases, this table is empty."
+        },
+        {
+            "name": "mapunit",
+            "description": "The Mapunit table identifies the map units included in the referenced legend.  Data related the map unit as a whole are also given."
+        },
+        {
+            "name": "muaggatt",
+            "description": "The Mapunit Aggregated Attribute table records a variety of soil attributes and interpretations that have been aggregated from the component level to a single value at the map unit level. They have been aggregated by one or more appropriate means in order to express a consolidated value or interpretation for the map unit as a whole."
+        },
+        {
+            "name": "muaoverlap",
+            "description": "The Mapunit Area Overlap table lists the map units that exist in the overlap between the entire soil survey area and the referenced geographic area in the Legend Area Overlap table."
+        },
+        {
+            "name": "mucropyld",
+            "description": "The Mapunit Crop Yield table lists commonly grown crops and their expected yields for the referenced map unit as a whole.  Yields for individual map unit components are given in the Component Crop Yield table."
+        },
+        {
+            "name": "mutext",
+            "description": "The Mapunit Text table contains notes and narrative descriptions related to the referenced map unit."
+        },
+        {
+            "name": "sacatalog",
+            "description": "This table records the primary dynamic metadata associated with a soil survey area.  This includes such things as survey area version, tabular data version, etc. The remaining dynamic metadata, which soil interpretations were generated for the corresponding soil survey area, is recorded in the Survey Area Interpretation table."
+        },
+        {
+            "name": "sainterp",
+            "description": "This table records information about the soil interpretations that were generated for a soil survey area."
+        },
+        {
+            "name": "valu1",
+            "description": "Included with the gSSURGO database, but not a part of the standard SSURGO dataset is a table called Valu1. This table contains 57 pre-summarized or 'ready to map' attributes derived from the official SSURGO database. These attribute data are pre-summarized to the map unit level using best-practice generalization methods intended to meet the needs of most users. The generalization methods include map unit component weighted averages and percent of the map unit meeting a given criteria. These themes were prepared to better meet the mapping needs of users of soil survey information and can be used with both SSURGO and gridded SSURGO (gSSURGO) datasets."
+        }
+    ],
+    "msft:group_id": "gnatsgo",
+    "msft:container": "gnatsgo-stac",
+    "msft:storage_account": "soils",
+    "msft:short_description": "The gridded National Soil Survey Geographic Database (gNATSGO) is a USDA-NRCS Soil & Plant Science Division (SPSD) composite database that provides complete coverage of the best available soils information for all areas of the United States and Island Territories.",
+    "msft:region": "westeurope",
+    "title": "gNATSGO Soil Database - Tables",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -170.8513,
+                    -14.3799,
+                    -169.4152,
+                    -14.1432
+                ],
+                [
+                    138.0315,
+                    5.116,
+                    163.1902,
+                    10.2773
+                ],
+                [
+                    144.6126,
+                    13.2327,
+                    144.9658,
+                    13.6572
+                ],
+                [
+                    -159.7909,
+                    18.8994,
+                    -154.7815,
+                    22.2464
+                ],
+                [
+                    170.969,
+                    6.0723,
+                    171.9169,
+                    8.71933
+                ],
+                [
+                    145.0127,
+                    14.1086,
+                    145.9242,
+                    18.8172
+                ],
+                [
+                    130.8048,
+                    2.9268,
+                    134.9834,
+                    8.0947
+                ],
+                [
+                    157.3678,
+                    49.0546,
+                    -117.2864,
+                    71.4567
+                ],
+                [
+                    -67.9506,
+                    17.014,
+                    -64.3973,
+                    19.3206
+                ],
+                [
+                    -127.8881,
+                    22.8782,
+                    -65.2748,
+                    51.6039
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2020-07-01T00:00:00Z",
+                    "2020-07-01T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "CC0-1.0",
+    "keywords": [
+        "Soils",
+        "NATSGO",
+        "SSURGO",
+        "STATSGO2",
+        "RSS",
+        "USDA",
+        "United States"
+    ],
+    "providers": [
+        {
+            "name": "United States Department of Agriculture, Natural Resources Conservation Service",
+            "roles": [
+                "licensor",
+                "producer",
+                "processor",
+                "host"
+            ],
+            "url": "https://www.nrcs.usda.gov/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "processor",
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/gnatsgo-tables.png",
+            "type": "image/png",
+            "title": "gNATSGO",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/gnatsgo-tables.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}

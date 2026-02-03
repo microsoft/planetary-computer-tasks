@@ -1,6 +1,8 @@
 {
-    "id": "modis-15A3H-061",
     "type": "Collection",
+    "id": "modis-15A3H-061",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
     "links": [
         {
             "rel": "help",
@@ -21,93 +23,20 @@
             "rel": "license",
             "href": "https://lpdaac.usgs.gov/data/data-citation-and-policies/",
             "title": "LP DAAC - Data Citation and Policies"
-        }
-    ],
-    "title": "MODIS Leaf Area Index/FPAR 4-Day",
-    "assets": {
-        "thumbnail": {
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/modis-15A3H-061.png",
-            "type": "image/png",
-            "roles": [
-                "thumbnail"
-            ],
-            "title": "MODIS Leaf Area Index/FPAR 4-Day thumbnail"
-        },
-        "geoparquet-items": {
-            "href": "abfs://items/modis-15A3H-061.parquet",
-            "type": "application/x-parquet",
-            "roles": [
-                "stac-items"
-            ],
-            "title": "GeoParquet STAC items",
-            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
-            "msft:partition_info": {
-                "is_partitioned": true,
-                "partition_frequency": "MS"
-            },
-            "table:storage_options": {
-                "account_name": "pcstacitems"
-            }
-        }
-    },
-    "extent": {
-        "spatial": {
-            "bbox": [
-                [
-                    -180,
-                    -90,
-                    180,
-                    90
-                ]
-            ]
-        },
-        "temporal": {
-            "interval": [
-                [
-                    "2002-07-04T00:00:00Z",
-                    null
-                ]
-            ]
-        }
-    },
-    "license": "proprietary",
-    "keywords": [
-        "NASA",
-        "MODIS",
-        "Satellite",
-        "Global",
-        "Vegetation",
-        "MCD15A3H"
-    ],
-    "providers": [
-        {
-            "url": "https://lpdaac.usgs.gov/",
-            "name": "NASA LP DAAC at the USGS EROS Center",
-            "roles": [
-                "producer",
-                "licensor",
-                "processor"
-            ]
         },
         {
-            "url": "https://planetarycomputer.microsoft.com",
-            "name": "Microsoft",
-            "roles": [
-                "host",
-                "processor"
-            ]
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/modis-15A3H-061",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
         }
     ],
-    "summaries": {
-        "platform": [
-            "aqua",
-            "terra"
-        ],
-        "instruments": [
-            "modis"
-        ]
-    },
-    "description": "The MCD15A3H Version 6.1 Moderate Resolution Imaging Spectroradiometer (MODIS) Level 4, Combined Fraction of Photosynthetically Active Radiation (FPAR), and Leaf Area Index (LAI) product is a 4-day composite data set with 500 meter pixel size. The algorithm chooses the best pixel available from all the acquisitions of both MODIS sensors located on NASA's Terra and Aqua satellites from within the 4-day period. LAI is defined as the one-sided green leaf area per unit ground area in broadleaf canopies and as one-half the total needle surface area per unit ground area in coniferous canopies. FPAR is defined as the fraction of incident photosynthetically active radiation (400-700 nm) absorbed by the green elements of a vegetation canopy.",
+    "stac_extensions": [
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
     "item_assets": {
         "hdf": {
             "type": "application/x-hdf",
@@ -210,15 +139,8 @@
             ]
         }
     },
-    "stac_version": "1.0.0",
     "msft:group_id": "modis",
     "msft:container": "modis-061",
-    "stac_extensions": [
-        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
-    ],
     "sci:publications": [
         {
             "doi": "10.5067/MODIS/MCD15A3H.061",
@@ -227,5 +149,89 @@
     ],
     "msft:storage_account": "modiseuwest",
     "msft:short_description": "MODIS Leaf Area Index/FPAR 4-Day",
-    "msft:region": "westeurope"
+    "msft:region": "westeurope",
+    "title": "MODIS Leaf Area Index/FPAR 4-Day",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2002-07-04T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "NASA",
+        "MODIS",
+        "Satellite",
+        "Global",
+        "Vegetation",
+        "MCD15A3H"
+    ],
+    "providers": [
+        {
+            "name": "NASA LP DAAC at the USGS EROS Center",
+            "roles": [
+                "producer",
+                "licensor",
+                "processor"
+            ],
+            "url": "https://lpdaac.usgs.gov/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "platform": [
+            "aqua",
+            "terra"
+        ],
+        "instruments": [
+            "modis"
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/modis-15A3H-061.png",
+            "type": "image/png",
+            "title": "MODIS Leaf Area Index/FPAR 4-Day thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/modis-15A3H-061.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "MS"
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
 }
