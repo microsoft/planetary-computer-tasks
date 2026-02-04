@@ -24,7 +24,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
 ]
 dependencies = [
-    "cachetools==5.3.3",
+    "cachetools>=5.3.3",
     "pctasks.cli @ {root:parent:uri}/cli",
     "pctasks.client @ {root:parent:uri}/client",
     "pctasks.ingest @ {root:parent:uri}/ingest",

@@ -56,7 +56,11 @@ azure-storage-queue==12.13.0
     # via pctasks-core
     # from https://pypi.org/simple
 cachetools==5.3.3
-    # via google-auth
+    # via
+    #   pctasks-dev (./pctasks/dev/pyproject.toml)
+    #   google-auth
+    #   pctasks-core
+    #   pctasks-run
     # from https://pypi.org/simple
 certifi==2025.8.3
     # via
