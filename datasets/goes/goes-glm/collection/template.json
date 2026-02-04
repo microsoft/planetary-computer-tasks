@@ -1,10 +1,8 @@
 {
-    "stac_version": "1.0.0",
     "type": "Collection",
     "id": "goes-glm",
-    "title": "GOES-R Lightning Detection",
+    "stac_version": "1.0.0",
     "description": "{{ collection.description }}",
-    "license": "proprietary",
     "links": [
         {
             "rel": "license",
@@ -32,6 +30,12 @@
         {
             "rel": "cite-as",
             "href": "https://doi.org/10.7289/V5KH0KK6"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/goes-glm",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
         }
     ],
     "stac_extensions": [
@@ -41,71 +45,23 @@
         "https://stac-extensions.github.io/table/v1.2.0/schema.json",
         "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
     ],
-    "keywords": [
-        "GOES",
-        "NOAA",
-        "NASA",
-        "Satellite",
-        "Lightning",
-        "Weather"
-    ],
-    "msft:short_description": "Continuous lightning detection over the Western Hemisphere from the Geostationary Lightning Mapper (GLM) instrument.",
-    "msft:storage_account": "goeseuwest",
-    "msft:container": "noaa-goes-geoparquet",
-    "msft:region": "westeurope",
-    "msft:group_id": "goes",
-    "providers": [
-        {
-            "name": "NASA",
+    "sci:doi": "10.7289/V5KH0KK6",
+    "item_assets": {
+        "netcdf": {
+            "type": "application/netcdf",
             "roles": [
-                "producer"
+                "data"
             ],
-            "url": "https://www.nasa.gov/content/goes"
-        },
-        {
-            "name": "NOAA",
-            "roles": [
-                "processor",
-                "producer",
-                "licensor"
-            ],
-            "url": "https://www.goes-r.gov/"
-        },
-        {
-            "name": "Microsoft",
-            "roles": [
-                "host",
-                "processor"
-            ],
-            "url": "https://planetarycomputer.microsoft.com"
-        }
-    ],
-    "assets": {
-        "thumbnail": {
-            "title": "GOES GLM Thumbnail",
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/goes-glm-thumb.png",
-            "type": "image/png",
-            "roles": [
-                "thumbnail"
-            ]
-        },
-        "geoparquet-items": {
-            "href": "abfs://items/goes-glm.parquet",
-            "type": "application/x-parquet",
-            "roles": [
-                "stac-items"
-            ],
-            "title": "GeoParquet STAC items",
-            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
-            "msft:partition_info": {
-                "is_partitioned": true,
-                "partition_frequency": "QS"
-            },
-            "table:storage_options": {
-                "account_name": "pcstacitems"
-            }
+            "title": "Original NetCDF4 file"
         }
     },
+    "msft:region": "westeurope",
+    "sci:citation": "GOES-R Algorithm Working Group and GOES-R Series Program, (2018): NOAA GOES-R Series Geostationary Lightning Mapper (GLM) Level 2 Lightning Detection: Events, Groups, and Flashes. NOAA National Centers for Environmental Information. doi:10.7289/V5KH0KK6.",
+    "msft:group_id": "goes",
+    "msft:container": "noaa-goes-geoparquet",
+    "msft:storage_account": "goeseuwest",
+    "msft:short_description": "Continuous lightning detection over the Western Hemisphere from the Geostationary Lightning Mapper (GLM) instrument.",
+    "title": "GOES-R Lightning Detection",
     "extent": {
         "spatial": {
             "bbox": [
@@ -132,20 +88,46 @@
             ]
         }
     },
-    "item_assets": {
-        "netcdf": {
-            "type": "application/netcdf",
-            "title": "Original NetCDF4 file",
+    "license": "proprietary",
+    "keywords": [
+        "GOES",
+        "NOAA",
+        "NASA",
+        "Satellite",
+        "Lightning",
+        "Weather"
+    ],
+    "providers": [
+        {
+            "name": "NASA",
             "roles": [
-                "data"
-            ]
+                "producer"
+            ],
+            "url": "https://www.nasa.gov/content/goes"
+        },
+        {
+            "name": "NOAA",
+            "roles": [
+                "processor",
+                "producer",
+                "licensor"
+            ],
+            "url": "https://www.goes-r.gov/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
         }
-    },
+    ],
     "summaries": {
-        "mission": [
-            "GOES"
+        "gsd": [
+            8000
         ],
-        "constellation": [
+        "mission": [
             "GOES"
         ],
         "platform": [
@@ -158,8 +140,8 @@
             "FM1",
             "FM2"
         ],
-        "gsd": [
-            8000
+        "constellation": [
+            "GOES"
         ],
         "processing:level": [
             "L2"
@@ -170,6 +152,30 @@
             "Test"
         ]
     },
-    "sci:doi": "10.7289/V5KH0KK6",
-    "sci:citation": "GOES-R Algorithm Working Group and GOES-R Series Program, (2018): NOAA GOES-R Series Geostationary Lightning Mapper (GLM) Level 2 Lightning Detection: Events, Groups, and Flashes. NOAA National Centers for Environmental Information. doi:10.7289/V5KH0KK6."
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/goes-glm-thumb.png",
+            "type": "image/png",
+            "title": "GOES GLM Thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/goes-glm.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "QS"
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
 }

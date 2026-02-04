@@ -1,0 +1,244 @@
+{
+    "type": "Collection",
+    "id": "jrc-gsw",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "cite-as",
+            "href": "https://doi.org/10.1038/nature20584"
+        },
+        {
+            "rel": "license",
+            "href": "https://www.copernicus.eu/en/about-copernicus/international-cooperation",
+            "title": "Copernicus Open Access Policy"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/jrc-gsw",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/file/v2.1.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "sci:doi": "10.1038/nature20584",
+    "item_assets": {
+        "change": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Occurrence Change Intensity",
+            "description": "Change in water occurrence between the two periods (1984-1999) and (2000-2020)"
+        },
+        "extent": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Maximum Water Extent",
+            "description": "Binary indicator of whether water was ever present (from 1984-2020)",
+            "file:values": [
+                {
+                    "values": [
+                        0
+                    ],
+                    "summary": "Not water"
+                },
+                {
+                    "values": [
+                        1
+                    ],
+                    "summary": "Water"
+                }
+            ]
+        },
+        "occurrence": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Occurrence",
+            "description": "Frequency with which water was present from March 1984 to December 2020"
+        },
+        "recurrence": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Recurrence",
+            "description": "Frequency with which water returns from year to year"
+        },
+        "seasonality": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Seasonality",
+            "description": "Number of months that water was present from January 2020 to December 2020"
+        },
+        "transitions": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Transitions",
+            "description": "Categorical change in surface water status from 1984 to 2020",
+            "file:values": [
+                {
+                    "values": [
+                        1
+                    ],
+                    "summary": "Permanent"
+                },
+                {
+                    "values": [
+                        2
+                    ],
+                    "summary": "New permanent"
+                },
+                {
+                    "values": [
+                        3
+                    ],
+                    "summary": "Lost permanent"
+                },
+                {
+                    "values": [
+                        4
+                    ],
+                    "summary": "Seasonal"
+                },
+                {
+                    "values": [
+                        5
+                    ],
+                    "summary": "New seasonal"
+                },
+                {
+                    "values": [
+                        6
+                    ],
+                    "summary": "Lost seasonal"
+                },
+                {
+                    "values": [
+                        7
+                    ],
+                    "summary": "Seasonal to permanent"
+                },
+                {
+                    "values": [
+                        8
+                    ],
+                    "summary": "Permanent to seasonal"
+                },
+                {
+                    "values": [
+                        9
+                    ],
+                    "summary": "Ephemeral permanent"
+                },
+                {
+                    "values": [
+                        10
+                    ],
+                    "summary": "Ephemeral seasonal"
+                }
+            ]
+        }
+    },
+    "sci:citation": "Jean-Francois Pekel, Andrew Cottam, Noel Gorelick, Alan S. Belward, High-resolution mapping of global surface water and its long-term changes. Nature 540, 418-422 (2016)",
+    "msft:container": "jrc-gsw",
+    "msft:storage_account": "ai4edataeuwest",
+    "msft:short_description": "Global surface water distribution and dynamics from 1984 to 2020",
+    "msft:region": "westeurope",
+    "title": "JRC Global Surface Water",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180.0,
+                    -56.0,
+                    180.0,
+                    78.0
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "1984-03-01T00:00:00Z",
+                    "2020-12-31T11:59:59Z"
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "Global",
+        "Water",
+        "Landsat"
+    ],
+    "providers": [
+        {
+            "name": "European Commission Joint Research Centre",
+            "roles": [
+                "producer",
+                "processor"
+            ],
+            "url": "https://global-surface-water.appspot.com/"
+        },
+        {
+            "name": "Google",
+            "roles": [
+                "producer"
+            ],
+            "url": "https://developers.google.com/earth-engine/datasets/tags/jrc"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "processor",
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "guide": {
+            "href": "https://storage.cloud.google.com/global-surface-water/downloads_ancillary/DataUsersGuidev2020.pdf",
+            "type": "application/pdf",
+            "title": "Users Guide",
+            "description": "Data users guide and description of the JRC GSW datasets",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/jrc-gsw.png",
+            "title": "European Commission Joint Research Centre - Global Surface Water",
+            "media_type": "image/png"
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/jrc-gsw.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}

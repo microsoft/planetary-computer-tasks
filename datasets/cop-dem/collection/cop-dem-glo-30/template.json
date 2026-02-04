@@ -1,0 +1,128 @@
+{
+    "type": "Collection",
+    "id": "cop-dem-glo-30",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://spacedata.copernicus.eu/documents/20126/0/CSCDA_ESA_Mission-specific+Annex.pdf",
+            "title": "Copernicus DEM License"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/cop-dem-glo-30",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "item_assets": {
+        "data": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ]
+        }
+    },
+    "msft:group_id": "copernicus-dem",
+    "msft:container": "copernicus-dem-stac",
+    "msft:storage_account": "elevationeuwest",
+    "msft:short_description": "Copernicus DEM 30 is a near-global digital surface model (DSM) with a horizontal resolution of approximately 30 meters, derived from radar satellite data acquired during the TanDEM-X mission.",
+    "msft:region": "westeurope",
+    "title": "Copernicus DEM GLO-30",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2021-04-22T00:00:00Z",
+                    "2021-04-22T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "Copernicus",
+        "DEM",
+        "DSM",
+        "Elevation"
+    ],
+    "providers": [
+        {
+            "name": "European Space Agency",
+            "roles": [
+                "licensor"
+            ],
+            "url": "https://spacedata.copernicus.eu/documents/20126/0/CSCDA_ESA_Mission-specific+Annex.pdf"
+        },
+        {
+            "name": "Sinergise",
+            "roles": [
+                "producer",
+                "processor"
+            ],
+            "url": "https://registry.opendata.aws/copernicus-dem/"
+        },
+        {
+            "name": "OpenTopography",
+            "roles": [
+                "host"
+            ],
+            "url": "https://doi.org/10.5069/G9028PQB"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "gsd": [
+            30
+        ],
+        "platform": [
+            "tandem-x"
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/cop-dem.png",
+            "type": "image/png",
+            "title": "COP DEM GLO-30",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/cop-dem-glo-30.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}

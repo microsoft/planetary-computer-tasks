@@ -1,0 +1,126 @@
+{
+    "type": "Collection",
+    "id": "alos-dem",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://earth.jaxa.jp/policy/en.html",
+            "title": "JAXA Terms of Use of Research Data"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/alos-dem",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "item_assets": {
+        "data": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ]
+        }
+    },
+    "msft:container": "alos-dem",
+    "msft:storage_account": "ai4edataeuwest",
+    "msft:short_description": "ALOS World 3D is a global digital surface model (DSM) with a horizontal resolution of approximately 30 meters, constructed from the Panchromatic Remote-sensing Instrument for Stereo Mapping (PRISM) on board Advanced Land Observing Satellite (ALOS).",
+    "msft:region": "westeurope",
+    "title": "ALOS World 3D-30m",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2016-12-07T00:00:00Z",
+                    "2016-12-07T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "ALOS",
+        "PRISM",
+        "JAXA",
+        "DEM",
+        "DSM",
+        "Elevation"
+    ],
+    "providers": [
+        {
+            "name": "Japan Aerospace Exploration Agency",
+            "roles": [
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://www.eorc.jaxa.jp/ALOS/en/aw3d30/index.htm"
+        },
+        {
+            "name": "OpenTopography",
+            "roles": [
+                "host"
+            ],
+            "url": "https://doi.org/10.5069/G94M92HB"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "gsd": [
+            30
+        ],
+        "platform": [
+            "alos"
+        ],
+        "instruments": [
+            "prism"
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/alos-dem.png",
+            "type": "image/png",
+            "title": "ALOS DEM",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/alos-dem.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}

@@ -1,0 +1,3 @@
+This collection is derived from the [USGS 3DEP COPC collection](https://planetarycomputer.microsoft.com/dataset/3dep-lidar-copc). It creates a Digital Terrain Model (DTM) using [`pdal.filters.smrf`](https://pdal.io/stages/filters.smrf.html#filters-smrf) to output a collection of Cloud Optimized GeoTIFFs.
+
+The Simple Morphological Filter (SMRF) classifies ground points based on the approach outlined in [Pingel2013](https://pdal.io/references.html#pingel2013).

@@ -1,10 +1,8 @@
 {
-    "stac_version": "1.0.0",
     "type": "Collection",
     "id": "io-biodiversity",
-    "title": "Biodiversity Intactness",
+    "stac_version": "1.0.0",
     "description": "{{ collection.description }}",
-    "license": "CC-BY-4.0",
     "links": [
         {
             "rel": "license",
@@ -17,6 +15,12 @@
             "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pdfs/io-biodiversity/Biodiversity_Intactness_whitepaper.pdf",
             "type": "application/pdf",
             "title": "Technical White Paper"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/io-biodiversity",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
         }
     ],
     "stac_extensions": [
@@ -24,14 +28,53 @@
         "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
         "https://stac-extensions.github.io/table/v1.2.0/schema.json"
     ],
+    "item_assets": {
+        "data": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Biodiversity Intactness",
+            "description": "Terrestrial biodiversity intactness at 100m resolution",
+            "raster:bands": [
+                {
+                    "sampling": "area",
+                    "data_type": "float32",
+                    "spatial_resolution": 100
+                }
+            ]
+        }
+    },
+    "msft:region": "westeurope",
+    "msft:container": "impact",
+    "msft:storage_account": "pcdata01euw",
+    "msft:short_description": "Global terrestrial biodiversity intactness at 100m resolution for years 2017-2020",
+    "title": "Biodiversity Intactness",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2017-01-01T00:00:00Z",
+                    "2020-12-31T23:59:59Z"
+                ]
+            ]
+        }
+    },
+    "license": "CC-BY-4.0",
     "keywords": [
         "Global",
         "Biodiversity"
     ],
-    "msft:short_description": "Global terrestrial biodiversity intactness at 100m resolution for years 2017-2020",
-    "msft:storage_account": "pcdata01euw",
-    "msft:container": "impact",
-    "msft:region": "westeurope",
     "providers": [
         {
             "name": "Impact Observatory",
@@ -57,67 +100,30 @@
             "url": "https://planetarycomputer.microsoft.com"
         }
     ],
-    "assets": {
-        "thumbnail": {
-            "title": "Biodiversity Intactness",
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/io-biodiversity-thumb.png",
-            "media_type": "image/png"
-        },
-        "geoparquet-items": {
-            "href": "abfs://items/io-biodiversity.parquet",
-            "title": "GeoParquet STAC items",
-            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
-            "type": "application/x-parquet",
-            "roles": [
-                "stac-items"
-            ],
-            "table:storage_options": {
-                "account_name": "pcstacitems"
-            },
-            "msft:partition_info": {
-                "is_partitioned": false
-            }
-        }
-    },
     "summaries": {
         "version": [
             "v1"
         ]
     },
-    "item_assets": {
-        "data": {
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/io-biodiversity-thumb.png",
             "title": "Biodiversity Intactness",
-            "description": "Terrestrial biodiversity intactness at 100m resolution",
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "sampling": "area",
-                    "spatial_resolution": 100
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        }
-    },
-    "extent": {
-        "spatial": {
-            "bbox": [
-                [
-                    -180,
-                    -90,
-                    180,
-                    90
-                ]
-            ]
+            "media_type": "image/png"
         },
-        "temporal": {
-            "interval": [
-                [
-                    "2017-01-01T00:00:00Z",
-                    "2020-12-31T23:59:59Z"
-                ]
+        "geoparquet-items": {
+            "href": "abfs://items/io-biodiversity.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
             ]
         }
     }

@@ -1,10 +1,8 @@
 {
-    "stac_version": "1.0.0",
     "type": "Collection",
     "id": "noaa-climate-normals-netcdf",
-    "title": "NOAA US Gridded Climate Normals (NetCDF)",
+    "stac_version": "1.0.0",
     "description": "{{ collection.description }}",
-    "license": "proprietary",
     "links": [
         {
             "rel": "about",
@@ -29,67 +27,31 @@
             "href": "https://www.ncei.noaa.gov/sites/default/files/2022-04/Documentation_Monthly_Gridded_Normals.pdf",
             "type": "application/pdf",
             "title": "Documentation for Monthly Gridded Normals"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/noaa-climate-normals-netcdf",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
         }
     ],
     "stac_extensions": [
         "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
     ],
-    "keywords": [
-        "NOAA",
-        "Climate Normals",
-        "Weather",
-        "Surface Observations",
-        "Climatology",
-        "CONUS"
-    ],
-    "msft:short_description": "Gridded Climate Normals for the contiguous United States in the original NetCDF format provided by NOAA's National Centers for Environmental Information.",
-    "msft:storage_account": "noaanormals",
-    "msft:container": "gridded-normals",
-    "msft:group_id": "noaa-climate-normals",
-    "msft:region": "eastus",
-    "providers": [
-        {
-            "name": "NOAA National Centers for Environmental Information",
+    "item_assets": {
+        "netcdf": {
+            "type": "application/netcdf",
             "roles": [
-                "producer",
-                "processor",
-                "licensor"
-            ],
-            "url": "https://www.ncei.noaa.gov/"
-        },
-        {
-            "name": "Microsoft",
-            "roles": [
-                "host"
-            ],
-            "url": "https://planetarycomputer.microsoft.com"
-        }
-    ],
-    "assets": {
-        "thumbnail": {
-            "title": "NOAA U.S. Gridded Climate Normals (NetCDF) Thumbnail",
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-climate-normals-netcdf-thumb.png",
-            "type": "image/png",
-            "roles": [
-                "thumbnail"
+                "data"
             ]
-        },
-        "geoparquet-items": {
-            "href": "abfs://items/noaa-climate-normals-netcdf.parquet",
-            "type": "application/x-parquet",
-            "roles": [
-                "stac-items"
-            ],
-            "title": "GeoParquet STAC items",
-            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
-            "msft:partition_info": {
-                "is_partitioned": false
-            },
-            "table:storage_options": {
-                "account_name": "pcstacitems"
-            }
-        } 
+        }
     },
+    "msft:region": "eastus",
+    "msft:group_id": "noaa-climate-normals",
+    "msft:container": "gridded-normals",
+    "msft:storage_account": "noaanormals",
+    "msft:short_description": "Gridded Climate Normals for the contiguous United States in the original NetCDF format provided by NOAA's National Centers for Environmental Information.",
+    "title": "NOAA US Gridded Climate Normals (NetCDF)",
     "extent": {
         "spatial": {
             "bbox": [
@@ -110,23 +72,67 @@
             ]
         }
     },
-    "item_assets": {
-        "netcdf": {
-            "type": "application/netcdf",
+    "license": "proprietary",
+    "keywords": [
+        "NOAA",
+        "Climate Normals",
+        "Weather",
+        "Surface Observations",
+        "Climatology",
+        "CONUS"
+    ],
+    "providers": [
+        {
+            "name": "NOAA National Centers for Environmental Information",
             "roles": [
-                "data"
-            ]
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://www.ncei.noaa.gov/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
         }
-    },
+    ],
     "summaries": {
-        "noaa_climate_normals:frequency": [
-            "daily",
-            "monthly"
-        ],
         "noaa_climate_normals:period": [
             "1901-2000",
             "1991-2020",
             "2006-2020"
+        ],
+        "noaa_climate_normals:frequency": [
+            "daily",
+            "monthly"
         ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-climate-normals-netcdf-thumb.png",
+            "type": "image/png",
+            "title": "NOAA U.S. Gridded Climate Normals (NetCDF) Thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/noaa-climate-normals-netcdf.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
     }
 }
