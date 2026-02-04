@@ -1,4 +1,6 @@
-id: ecmwf_forecast
+# https://dev.azure.com/msazure/One/_workitems/edit/36215771
+
+id: ecmwf_forecast_backfill
 image: ${{ args.registry }}/pctasks-ecmwf-forecast:2026.01.12
 
 args:
@@ -18,10 +20,7 @@ collections:
       - uri: blob://ai4edataeuwest/ecmwf/
         chunks:
           options:
-            # currently excluding "aifs", in favor of "ifs"
-            # Could put that in a different collection, or modify
-            # the stactools package.
-            matches: /ifs/(0p25|0p4-beta)/(enfo|oper|waef|wave|scda)(?!-opendata)
+            matches: /(00z|06z|12z|18z)/(0p25|0p4-beta)/scda(?!-opendata)
             match_full_path: true
             extensions: [.grib2]
     chunk_storage:
