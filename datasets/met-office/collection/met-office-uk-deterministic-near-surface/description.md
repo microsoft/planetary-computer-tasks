@@ -26,16 +26,23 @@ Exceptions (for `rate`, `accumulation`, `min` and `max` parameters):
 * Hourly precipitation accumulation (precipitation_accumulation-PT01H) is only available every hour from 1 to 54 hours
 * 3H precipitation accumulation (precipitation_accumulation-PT03H) is only available every three hours from 57 to 120 hours
 * Precipitation rate (precipitation_rate) has 15 minutely timesteps from 0 to 54 hours
+* Pressure at mean sea level (pressure_at_mean_sea_level) has 15 minutely timesteps from 0 to 12 hours, hourly timesteps from 13 to 54 hours and 3-hourly timesteps from 57 to 120 hours
 * Hourly rainfall accumulation (rainfall_accumulation-PT01H) is only available every hour from 1 to 54 hours
 * 3H rainfall accumulation (rainfall_accumulation-PT03H) is only available every three hours from 57 to 120 hours
 * Rainfall rate (rainfall_rate) has 15 minutely timesteps from 0 to 54 hours
 * Hourly snowfall accumulation (snowfall_accumulation-PT01H) is only available every hour from 1 to 54 hours
 * 3H snowfall accumulation (snowfall_accumulation-PT03H) is only available every three hours from 57 to 120 hours
 * Snowfall rate (snowfall_rate) has 15 minutely timesteps from 0 to 54 hours
+* Temperature at screen level (temperature_at_screen_level) has 15 minutely timesteps from 0 to 12 hours and hourly timesteps from 13 to 120 hours
 * Hourly temperature at screen level maximum (temperature_at_screen_level_max-PT01H) is only available every hour from 1 to 120 hours
 * Hourly temperature at screen level minimum (temperature_at_screen_level_min-PT01H) is only available every hour from 1 to 120 hours
+* Dew point temperature at screen level (temperature_of_dew_point_at_screen_level) has 15 minutely timesteps from 0 to 12 hours, hourly timesteps from 13 to 54 hours and 3-hourly timesteps from 57 to 120 hours
+* Visibility at screen level (visibility_at_screen_level) has 15 minutely timesteps from 0 to 12 hours, hourly timesteps from 13 to 54 hours and 3-hourly timesteps from 57 to 120 hours
+* Wind direction at 10m (wind_direction_at_10m) has 15 minutely timesteps from 0 to 12 hours, hourly timesteps from 13 to 54 hours and 3-hourly timesteps from 57 to 120 hours
+* Wind gust at 10m (wind_gust_at_10m) has 15 minutely timesteps from 0 to 12 hours, hourly timesteps from 13 to 54 hours and 3-hourly timesteps from 57 to 120 hours
 * Hourly wind gust at 10m maximum (wind_gust_at_10m_max-PT01H) is only available every hour from 1 to 54 hours
 * 3H wind gust at 10m maximum(wind_gust_at_10m_max-PT03H) is only available every three hours from 57 to 120 hours
+* Wind speed at 10m (wind_speed_at_10m) has 15 minutely timesteps from 0 to 12 hours, hourly timesteps from 13 to 54 hours and 3-hourly timesteps from 57 to 120 hours
  
 ## Update frequency
 There are three lengths of model run, each with its own update frequency: 

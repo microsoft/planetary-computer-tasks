@@ -13,6 +13,7 @@ The following time steps are available:
 * every 3 hours from 57 to 120 hours
 
 Exceptions:
+* CAPE surface (CAPE_surface) has 15 minutely timesteps from 0 to 12 hours, hourly timesteps from 13 to 54 hours and 3-hourly timesteps from 57 to 120 hours
 * Hourly lightning flash accumulation (lightning_flash_accumulation-PT01H) is only available every hour from 1 to 54 hours
  
 ## Update frequency
