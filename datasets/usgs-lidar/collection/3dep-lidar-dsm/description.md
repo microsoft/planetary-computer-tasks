@@ -1,0 +1,1 @@
+This collection is derived from the [USGS 3DEP COPC collection](https://planetarycomputer.microsoft.com/dataset/3dep-lidar-copc). It creates a Digital Surface Model (DSM) using [`pdal.filters.range`](https://pdal.io/stages/filters.range.html#filters-range) to output a collection of Cloud Optimized GeoTIFFs, removing all points that have been classified as noise.

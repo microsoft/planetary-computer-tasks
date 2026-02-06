@@ -1,6 +1,8 @@
 {
-    "id": "modis-11A2-061",
     "type": "Collection",
+    "id": "modis-11A2-061",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
     "links": [
         {
             "rel": "help",
@@ -31,94 +33,20 @@
             "rel": "license",
             "href": "https://lpdaac.usgs.gov/data/data-citation-and-policies/",
             "title": "LP DAAC - Data Citation and Policies"
-        }
-    ],
-    "title": "MODIS Land Surface Temperature/Emissivity 8-Day",
-    "assets": {
-        "thumbnail": {
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/modis-11A2-061.png",
-            "type": "image/png",
-            "roles": [
-                "thumbnail"
-            ],
-            "title": "MODIS Land Surface Temperature/Emissivity 8-Day thumbnail"
-        },
-        "geoparquet-items": {
-            "href": "abfs://items/modis-11A2-061.parquet",
-            "type": "application/x-parquet",
-            "roles": [
-                "stac-items"
-            ],
-            "title": "GeoParquet STAC items",
-            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
-            "msft:partition_info": {
-                "is_partitioned": true,
-                "partition_frequency": "MS"
-            },
-            "table:storage_options": {
-                "account_name": "pcstacitems"
-            }
-        }
-    },
-    "extent": {
-        "spatial": {
-            "bbox": [
-                [
-                    -180,
-                    -90,
-                    180,
-                    90
-                ]
-            ]
-        },
-        "temporal": {
-            "interval": [
-                [
-                    "2000-02-18T00:00:00Z",
-                    null
-                ]
-            ]
-        }
-    },
-    "license": "proprietary",
-    "keywords": [
-        "NASA",
-        "MODIS",
-        "Satellite",
-        "Global",
-        "Temperature",
-        "MOD11A2",
-        "MYD11A2"
-    ],
-    "providers": [
-        {
-            "url": "https://lpdaac.usgs.gov/",
-            "name": "NASA LP DAAC at the USGS EROS Center",
-            "roles": [
-                "producer",
-                "licensor",
-                "processor"
-            ]
         },
         {
-            "url": "https://planetarycomputer.microsoft.com",
-            "name": "Microsoft",
-            "roles": [
-                "host",
-                "processor"
-            ]
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/modis-11A2-061",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
         }
     ],
-    "summaries": {
-        "platform": [
-            "aqua",
-            "terra"
-        ],
-        "instruments": [
-            "modis"
-        ]
-    },
-    "description": "The Moderate Resolution Imaging Spectroradiometer (MODIS) Land Surface Temperature/Emissivity 8-Day Version 6.1 product provides an average 8-day per-pixel Land Surface Temperature and Emissivity (LST&E) with a 1 kilometer (km) spatial resolution in a 1,200 by 1,200 km grid. Each pixel value in the MOD11A2 is a simple average of all the corresponding MOD11A1 LST pixels collected within that 8-day period. The 8-day compositing period was chosen because twice that period is the exact ground track repeat period of the Terra and Aqua platforms. Provided along with the daytime and nighttime surface temperature bands are associated quality control assessments, observation times, view zenith angles, and clear-sky coverages along with bands 31 and 32 emissivities from land cover types.",
+    "stac_extensions": [
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
     "item_assets": {
         "hdf": {
             "type": "application/x-hdf",
@@ -305,15 +233,8 @@
             ]
         }
     },
-    "stac_version": "1.0.0",
     "msft:group_id": "modis",
     "msft:container": "modis-061",
-    "stac_extensions": [
-        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
-    ],
     "sci:publications": [
         {
             "doi": "10.5067/MODIS/MOD11A2.061",
@@ -326,5 +247,90 @@
     ],
     "msft:storage_account": "modiseuwest",
     "msft:short_description": "MODIS Land Surface Temperature/Emissivity 8-Day",
-    "msft:region": "westeurope"
+    "msft:region": "westeurope",
+    "title": "MODIS Land Surface Temperature/Emissivity 8-Day",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2000-02-18T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "NASA",
+        "MODIS",
+        "Satellite",
+        "Global",
+        "Temperature",
+        "MOD11A2",
+        "MYD11A2"
+    ],
+    "providers": [
+        {
+            "name": "NASA LP DAAC at the USGS EROS Center",
+            "roles": [
+                "producer",
+                "licensor",
+                "processor"
+            ],
+            "url": "https://lpdaac.usgs.gov/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "platform": [
+            "aqua",
+            "terra"
+        ],
+        "instruments": [
+            "modis"
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/modis-11A2-061.png",
+            "type": "image/png",
+            "title": "MODIS Land Surface Temperature/Emissivity 8-Day thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/modis-11A2-061.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "MS"
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
 }

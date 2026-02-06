@@ -1,10 +1,8 @@
 {
-    "stac_version": "1.0.0",
     "type": "Collection",
     "id": "chesapeake-lc-13",
-    "title": "Chesapeake Land Cover (13-class)",
+    "stac_version": "1.0.0",
     "description": "{{ collection.description }}",
-    "license": "proprietary",
     "links": [
         {
             "rel": "describedby",
@@ -23,6 +21,12 @@
             "href": "https://www.chesapeakeconservancy.org/conservation-innovation-center/precision-conservation/chesapeake-bay-program/",
             "type": "text/html",
             "title": "Data Availability Description"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/chesapeake-lc-13",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
         }
     ],
     "stac_extensions": [
@@ -30,59 +34,96 @@
         "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
         "https://stac-extensions.github.io/classification/v1.0.0/schema.json"
     ],
-    "keywords": [
-        "Land Cover",
-        "Chesapeake Bay Watershed",
-        "Chesapeake Conservancy"
-    ],
-    "msft:short_description": "Chesapeake Bay Watershed land cover product with 13 classes at 1m resolution.",
-    "msft:storage_account": "landcoverdata",
-    "msft:container": "chesapeake",
-    "msft:region": "westeurope",
-    "msft:group_id": "chesapeake-lulc",
-    "providers": [
-        {
-            "name": "Chesapeake Conservancy Conservation Innovation Center",
+    "item_assets": {
+        "data": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
-                "producer",
-                "processor",
-                "licensor"
+                "data"
             ],
-            "url": "https://www.chesapeakeconservancy.org/conservation-innovation-center/high-resolution-data/land-cover-data-project/"
-        },
-        {
-            "name": "Microsoft",
-            "roles": [
-                "host"
+            "title": "Land Cover Classes",
+            "raster:bands": [
+                {
+                    "nodata": 0,
+                    "sampling": "area",
+                    "data_type": "uint8",
+                    "spatial_resolution": 1
+                }
             ],
-            "url": "https://planetarycomputer.microsoft.com"
-        }
-    ],
-    "assets": {
-        "thumbnail": {
-            "title": "Chesapeake Land Cover (13-class) Thumbnail",
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/chesapeake-lc-13-thumb.png",
-            "type": "image/png",
-            "roles": [
-                "thumbnail"
+            "classification:classes": [
+                {
+                    "value": 1,
+                    "color-hint": "00C5FF",
+                    "description": "Water"
+                },
+                {
+                    "value": 2,
+                    "color-hint": "00A884",
+                    "description": "Emergent Wetlands"
+                },
+                {
+                    "value": 3,
+                    "color-hint": "267300",
+                    "description": "Tree Canopy"
+                },
+                {
+                    "value": 4,
+                    "color-hint": "4CE600",
+                    "description": "Shrubland"
+                },
+                {
+                    "value": 5,
+                    "color-hint": "A3FF73",
+                    "description": "Low Vegetation"
+                },
+                {
+                    "value": 6,
+                    "color-hint": "FFAA00",
+                    "description": "Barren"
+                },
+                {
+                    "value": 7,
+                    "color-hint": "FF0000",
+                    "description": "Structures"
+                },
+                {
+                    "value": 8,
+                    "color-hint": "9C9C9C",
+                    "description": "Impervious Surfaces"
+                },
+                {
+                    "value": 9,
+                    "color-hint": "000000",
+                    "description": "Impervious Roads"
+                },
+                {
+                    "value": 10,
+                    "color-hint": "737300",
+                    "description": "Tree Canopy over Structures"
+                },
+                {
+                    "value": 11,
+                    "color-hint": "E6E600",
+                    "description": "Tree Canopy over Impervious Surfaces"
+                },
+                {
+                    "value": 12,
+                    "color-hint": "FFFF73",
+                    "description": "Tree Canopy over impervious Roads"
+                },
+                {
+                    "value": 13,
+                    "color-hint": "C500FF",
+                    "description": "Aberdeen Proving Ground"
+                }
             ]
-        },
-        "geoparquet-items": {
-            "href": "abfs://items/chesapeake-lc-13.parquet",
-            "type": "application/x-parquet",
-            "roles": [
-                "stac-items"
-            ],
-            "title": "GeoParquet STAC items",
-            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
-            "msft:partition_info": {
-                "is_partitioned": false
-            },
-            "table:storage_options": {
-                "account_name": "pcstacitems"
-            }
-        } 
+        }
     },
+    "msft:group_id": "chesapeake-lulc",
+    "msft:container": "chesapeake",
+    "msft:storage_account": "landcoverdata",
+    "msft:short_description": "Chesapeake Bay Watershed land cover product with 13 classes at 1m resolution.",
+    "msft:region": "westeurope",
+    "title": "Chesapeake Land Cover (13-class)",
     "extent": {
         "spatial": {
             "bbox": [
@@ -103,87 +144,37 @@
             ]
         }
     },
-    "item_assets": {
-        "data": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Land Cover Classes",
-            "raster:bands": [
-                {
-                    "nodata": 0,
-                    "sampling": "area",
-                    "data_type": "uint8",
-                    "spatial_resolution": 1
-                }
-            ],
-            "classification:classes": [
-                {
-                    "value": 1,
-                    "description": "Water",
-                    "color-hint": "00C5FF"
-                },
-                {
-                    "value": 2,
-                    "description": "Emergent Wetlands",
-                    "color-hint": "00A884"
-                },
-                {
-                    "value": 3,
-                    "description": "Tree Canopy",
-                    "color-hint": "267300"
-                },
-                {
-                    "value": 4,
-                    "description": "Shrubland",
-                    "color-hint": "4CE600"
-                },
-                {
-                    "value": 5,
-                    "description": "Low Vegetation",
-                    "color-hint": "A3FF73"
-                },
-                {
-                    "value": 6,
-                    "description": "Barren",
-                    "color-hint": "FFAA00"
-                },
-                {
-                    "value": 7,
-                    "description": "Structures",
-                    "color-hint": "FF0000"
-                },
-                {
-                    "value": 8,
-                    "description": "Impervious Surfaces",
-                    "color-hint": "9C9C9C"
-                },
-                {
-                    "value": 9,
-                    "description": "Impervious Roads",
-                    "color-hint": "000000"
-                },
-                {
-                    "value": 10,
-                    "description": "Tree Canopy over Structures",
-                    "color-hint": "737300"
-                },
-                {
-                    "value": 11,
-                    "description": "Tree Canopy over Impervious Surfaces",
-                    "color-hint": "E6E600"
-                },
-                {
-                    "value": 12,
-                    "description": "Tree Canopy over impervious Roads",
-                    "color-hint": "FFFF73"
-                },
-                {
-                    "value": 13,
-                    "description": "Aberdeen Proving Ground",
-                    "color-hint": "C500FF"
-                }
-            ],
+    "license": "proprietary",
+    "keywords": [
+        "Land Cover",
+        "Chesapeake Bay Watershed",
+        "Chesapeake Conservancy"
+    ],
+    "providers": [
+        {
+            "name": "Chesapeake Conservancy Conservation Innovation Center",
             "roles": [
-                "data"
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://www.chesapeakeconservancy.org/conservation-innovation-center/high-resolution-data/land-cover-data-project/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/chesapeake-lc-13-thumb.png",
+            "type": "image/png",
+            "title": "Chesapeake Land Cover (13-class) Thumbnail",
+            "roles": [
+                "thumbnail"
             ]
         }
     }

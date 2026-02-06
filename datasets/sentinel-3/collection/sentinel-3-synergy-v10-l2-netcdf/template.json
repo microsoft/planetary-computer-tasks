@@ -1,10 +1,8 @@
 {
-    "stac_version": "1.0.0",
     "type": "Collection",
     "id": "sentinel-3-synergy-v10-l2-netcdf",
-    "title": "Sentinel-3 10-Day Surface Reflectance and NDVI (SPOT VEGETATION)",
+    "stac_version": "1.0.0",
     "description": "{{ collection.description }}",
-    "license": "proprietary",
     "links": [
         {
             "rel": "license",
@@ -17,6 +15,12 @@
             "href": "https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-3-synergy/product-types/level-2-vg1-v10",
             "type": "text/html",
             "title": "Sentinel-3 10-Day Surface Reflectance and NDVI Product (SPOT VEGETATION) User Guide"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/sentinel-3-synergy-v10-l2-netcdf",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
         }
     ],
     "stac_extensions": [
@@ -25,6 +29,186 @@
         "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
         "https://stac-extensions.github.io/eo/v1.1.0/schema.json"
     ],
+    "item_assets": {
+        "ag": {
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "description": "Aerosol optical thickness data"
+        },
+        "b0": {
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "eo:bands": [
+                {
+                    "name": "B0",
+                    "description": "OLCI channels Oa02, Oa03",
+                    "center_wavelength": 0.45,
+                    "full_width_half_max": 0.02
+                }
+            ],
+            "description": "Surface Reflectance Data Set associated with VGT-B0 channel"
+        },
+        "b2": {
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "eo:bands": [
+                {
+                    "name": "B2",
+                    "description": "OLCI channels Oa06, Oa07, Oa08, Oa09, Oa10",
+                    "center_wavelength": 0.645,
+                    "full_width_half_max": 0.035
+                }
+            ],
+            "description": "Surface Reflectance Data Set associated with VGT-B2 channel"
+        },
+        "b3": {
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "eo:bands": [
+                {
+                    "name": "B3",
+                    "description": "OLCI channels Oa16, Oa17, Oa18, Oa21",
+                    "center_wavelength": 0.835,
+                    "full_width_half_max": 0.055
+                }
+            ],
+            "description": "Surface Reflectance Data Set associated with VGT-B3 channel"
+        },
+        "og": {
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "description": "Total Ozone column data"
+        },
+        "sm": {
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "description": "Status Map data"
+        },
+        "tg": {
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "description": "Synthesis time data"
+        },
+        "mir": {
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "eo:bands": [
+                {
+                    "name": "MIR",
+                    "description": "SLSTR nadir and oblique channels S5, S6",
+                    "center_wavelength": 1.665,
+                    "full_width_half_max": 0.085
+                }
+            ],
+            "description": "Surface Reflectance Data Set associated with VGT-MIR channel"
+        },
+        "saa": {
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "description": "Solar azimuth angle data"
+        },
+        "sza": {
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "description": "Solar zenith angle data"
+        },
+        "vaa": {
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "description": "View azimuth angle data"
+        },
+        "vza": {
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "description": "View zenith angle data"
+        },
+        "wvg": {
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "description": "Total column Water vapour data"
+        },
+        "ndvi": {
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "eo:bands": [
+                {
+                    "name": "B2",
+                    "description": "OLCI channels Oa06, Oa07, Oa08, Oa09, Oa10",
+                    "center_wavelength": 0.645,
+                    "full_width_half_max": 0.035
+                },
+                {
+                    "name": "B3",
+                    "description": "OLCI channels Oa16, Oa17, Oa18, Oa21",
+                    "center_wavelength": 0.835,
+                    "full_width_half_max": 0.055
+                }
+            ],
+            "description": "Normalised difference vegetation index"
+        },
+        "safe-manifest": {
+            "type": "application/xml",
+            "roles": [
+                "metadata"
+            ],
+            "description": "SAFE product manifest"
+        }
+    },
+    "msft:region": "westeurope",
+    "msft:group_id": "sentinel-3",
+    "msft:container": "sentinel-3",
+    "msft:storage_account": "sentinel3euwest",
+    "msft:short_description": "Sentinel-3 10-day surface reflectance and NDVI (SYNERGY V10, a SPOT VEGETATION Continuity Product).",
+    "title": "Sentinel-3 10-Day Surface Reflectance and NDVI (SPOT VEGETATION)",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180.0,
+                    -56.0,
+                    180.0,
+                    75.0
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2018-09-27T11:17:21Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
     "keywords": [
         "Sentinel",
         "Copernicus",
@@ -33,11 +217,6 @@
         "Reflectance",
         "NDVI"
     ],
-    "msft:group_id": "sentinel-3",
-    "msft:short_description": "Sentinel-3 10-day surface reflectance and NDVI (SYNERGY V10, a SPOT VEGETATION Continuity Product).",
-    "msft:storage_account": "sentinel3euwest",
-    "msft:container": "sentinel-3",
-    "msft:region": "westeurope",
     "providers": [
         {
             "name": "ESA",
@@ -56,57 +235,7 @@
             "url": "https://planetarycomputer.microsoft.com"
         }
     ],
-    "assets": {
-        "thumbnail": {
-            "title": "Sentinel-3 10-Day Surface Reflectance and NDVI (SPOT VEGETATION) Thumbnail",
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-3-synergy-v10-l2-netcdf-thumb.png",
-            "media_type": "image/png"
-        },
-        "geoparquet-items": {
-            "href": "abfs://items/sentinel-3-synergy-v10-l2-netcdf.parquet",
-            "title": "GeoParquet STAC Items",
-            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
-            "type": "application/x-parquet",
-            "roles": [
-                "stac-items"
-            ],
-            "table:storage_options": {
-                "account_name": "pcstacitems"
-            },
-            "msft:partition_info": {
-                "is_partitioned": false
-            }
-        }
-    },
     "summaries": {
-        "constellation": [
-            "Sentinel-3"
-        ],
-        "platform": [
-            "Sentinel-3A",
-            "Sentinel-3B"
-        ],
-        "instruments": [
-            "OLCI",
-            "SLSTR"
-        ],
-        "sat:platform_international_designator": [
-            "2016-011A",
-            "2018-039A"
-        ],
-        "sat:orbit_state": [
-            "ascending",
-            "descending"
-        ],
-        "s3:product_type": [
-            "SY_2_V10___"
-        ],
-        "s3:product_name": [
-            "synergy-v10"
-        ],
-        "s3:processing_timeliness": [
-            "NT"
-        ],
         "eo:bands": [
             {
                 "name": "B0",
@@ -132,178 +261,55 @@
                 "center_wavelength": 1.665,
                 "full_width_half_max": 0.085
             }
+        ],
+        "platform": [
+            "Sentinel-3A",
+            "Sentinel-3B"
+        ],
+        "instruments": [
+            "OLCI",
+            "SLSTR"
+        ],
+        "constellation": [
+            "Sentinel-3"
+        ],
+        "s3:product_name": [
+            "synergy-v10"
+        ],
+        "s3:product_type": [
+            "SY_2_V10___"
+        ],
+        "sat:orbit_state": [
+            "ascending",
+            "descending"
+        ],
+        "s3:processing_timeliness": [
+            "NT"
+        ],
+        "sat:platform_international_designator": [
+            "2016-011A",
+            "2018-039A"
         ]
     },
-    "extent": {
-        "spatial": {
-            "bbox": [
-                [
-                    -180.0,
-                    -56.0,
-                    180.0,
-                    75.0
-                ]
-            ]
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-3-synergy-v10-l2-netcdf-thumb.png",
+            "title": "Sentinel-3 10-Day Surface Reflectance and NDVI (SPOT VEGETATION) Thumbnail",
+            "media_type": "image/png"
         },
-        "temporal": {
-            "interval": [
-                [
-                    "2018-09-27T11:17:21Z",
-                    null
-                ]
-            ]
-        }
-    },
-    "item_assets": {
-        "safe-manifest": {
-            "type": "application/xml",
-            "description": "SAFE product manifest",
+        "geoparquet-items": {
+            "href": "abfs://items/sentinel-3-synergy-v10-l2-netcdf.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC Items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
             "roles": [
-                "metadata"
-            ]
-        },
-        "b0": {
-            "type": "application/x-netcdf",
-            "description": "Surface Reflectance Data Set associated with VGT-B0 channel",
-            "eo:bands": [
-                {
-                    "name": "B0",
-                    "description": "OLCI channels Oa02, Oa03",
-                    "center_wavelength": 0.45,
-                    "full_width_half_max": 0.02
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "b2": {
-            "type": "application/x-netcdf",
-            "description": "Surface Reflectance Data Set associated with VGT-B2 channel",
-            "eo:bands": [
-                {
-                    "name": "B2",
-                    "description": "OLCI channels Oa06, Oa07, Oa08, Oa09, Oa10",
-                    "center_wavelength": 0.645,
-                    "full_width_half_max": 0.035
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "b3": {
-            "type": "application/x-netcdf",
-            "description": "Surface Reflectance Data Set associated with VGT-B3 channel",
-            "eo:bands": [
-                {
-                    "name": "B3",
-                    "description": "OLCI channels Oa16, Oa17, Oa18, Oa21",
-                    "center_wavelength": 0.835,
-                    "full_width_half_max": 0.055
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "mir": {
-            "type": "application/x-netcdf",
-            "description": "Surface Reflectance Data Set associated with VGT-MIR channel",
-            "eo:bands": [
-                {
-                    "name": "MIR",
-                    "description": "SLSTR nadir and oblique channels S5, S6",
-                    "center_wavelength": 1.665,
-                    "full_width_half_max": 0.085
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "ndvi": {
-            "type": "application/x-netcdf",
-            "description": "Normalised difference vegetation index",
-            "eo:bands": [
-                {
-                    "name": "B2",
-                    "description": "OLCI channels Oa06, Oa07, Oa08, Oa09, Oa10",
-                    "center_wavelength": 0.645,
-                    "full_width_half_max": 0.035
-                },
-                {
-                    "name": "B3",
-                    "description": "OLCI channels Oa16, Oa17, Oa18, Oa21",
-                    "center_wavelength": 0.835,
-                    "full_width_half_max": 0.055
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "vaa": {
-            "type": "application/x-netcdf",
-            "description": "View azimuth angle data",
-            "roles": [
-                "data"
-            ]
-        },
-        "vza": {
-            "type": "application/x-netcdf",
-            "description": "View zenith angle data",
-            "roles": [
-                "data"
-            ]
-        },
-        "saa": {
-            "type": "application/x-netcdf",
-            "description": "Solar azimuth angle data",
-            "roles": [
-                "data"
-            ]
-        },
-        "sza": {
-            "type": "application/x-netcdf",
-            "description": "Solar zenith angle data",
-            "roles": [
-                "data"
-            ]
-        },
-        "ag": {
-            "type": "application/x-netcdf",
-            "description": "Aerosol optical thickness data",
-            "roles": [
-                "data"
-            ]
-        },
-        "og": {
-            "type": "application/x-netcdf",
-            "description": "Total Ozone column data",
-            "roles": [
-                "data"
-            ]
-        },
-        "wvg": {
-            "type": "application/x-netcdf",
-            "description": "Total column Water vapour data",
-            "roles": [
-                "data"
-            ]
-        },
-        "tg": {
-            "type": "application/x-netcdf",
-            "description": "Synthesis time data",
-            "roles": [
-                "data"
-            ]
-        },
-        "sm": {
-            "type": "application/x-netcdf",
-            "description": "Status Map data",
-            "roles": [
-                "data"
+                "stac-items"
             ]
         }
     }

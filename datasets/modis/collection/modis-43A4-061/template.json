@@ -1,6 +1,8 @@
 {
-    "id": "modis-43A4-061",
     "type": "Collection",
+    "id": "modis-43A4-061",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
     "links": [
         {
             "rel": "help",
@@ -21,94 +23,22 @@
             "rel": "license",
             "href": "https://lpdaac.usgs.gov/data/data-citation-and-policies/",
             "title": "LP DAAC - Data Citation and Policies"
-        }
-    ],
-    "title": "MODIS Nadir BRDF-Adjusted Reflectance (NBAR) Daily",
-    "assets": {
-        "thumbnail": {
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/modis-43A4-061.png",
-            "type": "image/png",
-            "roles": [
-                "thumbnail"
-            ],
-            "title": "MODIS Nadir BRDF-Adjusted Reflectance (NBAR) Daily thumbnail"
-        },
-        "geoparquet-items": {
-            "href": "abfs://items/modis-43A4-061.parquet",
-            "type": "application/x-parquet",
-            "roles": [
-                "stac-items"
-            ],
-            "title": "GeoParquet STAC items",
-            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
-            "msft:partition_info": {
-                "is_partitioned": true,
-                "partition_frequency": "MS"
-            },
-            "table:storage_options": {
-                "account_name": "pcstacitems"
-            }
-        }
-    },
-    "extent": {
-        "spatial": {
-            "bbox": [
-                [
-                    -180,
-                    -90,
-                    180,
-                    90
-                ]
-            ]
-        },
-        "temporal": {
-            "interval": [
-                [
-                    "2000-02-16T00:00:00Z",
-                    null
-                ]
-            ]
-        }
-    },
-    "license": "proprietary",
-    "keywords": [
-        "NASA",
-        "MODIS",
-        "Satellite",
-        "Imagery",
-        "Global",
-        "Reflectance",
-        "MCD43A4"
-    ],
-    "providers": [
-        {
-            "url": "https://lpdaac.usgs.gov/",
-            "name": "NASA LP DAAC at the USGS EROS Center",
-            "roles": [
-                "producer",
-                "licensor",
-                "processor"
-            ]
         },
         {
-            "url": "https://planetarycomputer.microsoft.com",
-            "name": "Microsoft",
-            "roles": [
-                "host",
-                "processor"
-            ]
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/modis-43A4-061",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
         }
     ],
-    "summaries": {
-        "platform": [
-            "aqua",
-            "terra"
-        ],
-        "instruments": [
-            "modis"
-        ]
-    },
-    "description": "The Moderate Resolution Imaging Spectroradiometer (MODIS) MCD43A4 Version 6.1 Nadir Bidirectional Reflectance Distribution Function (BRDF)-Adjusted Reflectance (NBAR) dataset is produced daily using 16 days of Terra and Aqua MODIS data at 500 meter (m) resolution. The view angle effects are removed from the directional reflectances, resulting in a stable and consistent NBAR product. Data are temporally weighted to the ninth day which is reflected in the Julian date in the file name. Users are urged to use the band specific quality flags to isolate the highest quality full inversion results for their own science applications as described in the User Guide. The MCD43A4 provides NBAR and simplified mandatory quality layers for MODIS bands 1 through 7. Essential quality information provided in the corresponding MCD43A2 data file should be consulted when using this product.",
+    "stac_extensions": [
+        "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
     "item_assets": {
         "hdf": {
             "type": "application/x-hdf",
@@ -482,17 +412,8 @@
             ]
         }
     },
-    "stac_version": "1.0.0",
     "msft:group_id": "modis",
     "msft:container": "modis-061",
-    "stac_extensions": [
-        "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
-    ],
     "sci:publications": [
         {
             "doi": "10.5067/MODIS/MCD43A4.061",
@@ -501,5 +422,90 @@
     ],
     "msft:storage_account": "modiseuwest",
     "msft:short_description": "MODIS Nadir BRDF-Adjusted Reflectance (NBAR) Daily",
-    "msft:region": "westeurope"
+    "msft:region": "westeurope",
+    "title": "MODIS Nadir BRDF-Adjusted Reflectance (NBAR) Daily",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2000-02-16T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "NASA",
+        "MODIS",
+        "Satellite",
+        "Imagery",
+        "Global",
+        "Reflectance",
+        "MCD43A4"
+    ],
+    "providers": [
+        {
+            "name": "NASA LP DAAC at the USGS EROS Center",
+            "roles": [
+                "producer",
+                "licensor",
+                "processor"
+            ],
+            "url": "https://lpdaac.usgs.gov/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "platform": [
+            "aqua",
+            "terra"
+        ],
+        "instruments": [
+            "modis"
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/modis-43A4-061.png",
+            "type": "image/png",
+            "title": "MODIS Nadir BRDF-Adjusted Reflectance (NBAR) Daily thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/modis-43A4-061.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "MS"
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
 }

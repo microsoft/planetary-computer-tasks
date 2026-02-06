@@ -1,0 +1,222 @@
+{
+    "type": "Collection",
+    "id": "kaza-hydroforecast",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://cdla.dev/sharing-1-0/",
+            "type": "text/html",
+            "title": "Community Data License Agreement \u2013 Sharing, Version 1.0"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/kaza-hydroforecast",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+    ],
+    "version": "1.0.0",
+    "item_assets": {
+        "data": {
+            "type": "application/x-parquet",
+            "roles": [
+                "data"
+            ],
+            "title": "Forecast Data",
+            "description": "All seasonal river flow forecasts for a specific forecast site, produced by Upstream Tech's HydroForecast model"
+        }
+    },
+    "table:columns": [
+        {
+            "name": "initialization_time",
+            "type": "timestamp",
+            "description": "The initial timestamp in the forecast model which created this forecast step. All rows with the same initialization time are part of the same \"forecast\" and are produced at the same time."
+        },
+        {
+            "name": "valid_time",
+            "type": "timestamp",
+            "description": "The point in time this forecast step is predicting. valid_time = initialization_time + lead_time_hours. The discharge values in this row are the average rate from this time (inclusive) until the next valid time (exclusive)."
+        },
+        {
+            "name": "lead_time_hours",
+            "type": "int64",
+            "description": "The number of hours ahead of the initialization time this forecast step is predicting."
+        },
+        {
+            "name": "discharge_mean",
+            "type": "double",
+            "description": "The mean of the probabilistic streamflow prediction, as an average rate across the forecast step in m\u00b3/s."
+        },
+        {
+            "name": "discharge_median",
+            "type": "double",
+            "description": "The median of the probabilistic streamflow prediction, as an average rate across the forecast step in m\u00b3/s."
+        },
+        {
+            "name": "discharge_q0.01",
+            "type": "double",
+            "description": "The quantile 0.01 of the probabilistic streamflow prediction, as an average rate across the forecast step in m\u00b3/s."
+        },
+        {
+            "name": "discharge_q0.025",
+            "type": "double",
+            "description": "The quantile 0.025 of the probabilistic streamflow prediction, as an average rate across the forecast step in m\u00b3/s."
+        },
+        {
+            "name": "discharge_q0.05",
+            "type": "double",
+            "description": "The quantile 0.05 of the probabilistic streamflow prediction, as an average rate across the forecast step in m\u00b3/s."
+        },
+        {
+            "name": "discharge_q0.1",
+            "type": "double",
+            "description": "The quantile 0.1 of the probabilistic streamflow prediction, as an average rate across the forecast step in m\u00b3/s."
+        },
+        {
+            "name": "discharge_q0.25",
+            "type": "double",
+            "description": "The quantile 0.25 of the probabilistic streamflow prediction, as an average rate across the forecast step in m\u00b3/s."
+        },
+        {
+            "name": "discharge_q0.5",
+            "type": "double",
+            "description": "The quantile 0.5 of the probabilistic streamflow prediction, as an average rate across the forecast step in m\u00b3/s."
+        },
+        {
+            "name": "discharge_q0.75",
+            "type": "double",
+            "description": "The quantile 0.75 of the probabilistic streamflow prediction, as an average rate across the forecast step in m\u00b3/s."
+        },
+        {
+            "name": "discharge_q0.9",
+            "type": "double",
+            "description": "The quantile 0.9 of the probabilistic streamflow prediction, as an average rate across the forecast step in m\u00b3/s."
+        },
+        {
+            "name": "discharge_q0.95",
+            "type": "double",
+            "description": "The quantile 0.95 of the probabilistic streamflow prediction, as an average rate across the forecast step in m\u00b3/s."
+        },
+        {
+            "name": "discharge_q0.975",
+            "type": "double",
+            "description": "The quantile 0.975 of the probabilistic streamflow prediction, as an average rate across the forecast step in m\u00b3/s."
+        },
+        {
+            "name": "discharge_q0.99",
+            "type": "double",
+            "description": "The quantile 0.99 of the probabilistic streamflow prediction, as an average rate across the forecast step in m\u00b3/s."
+        }
+    ],
+    "msft:container": "hydroforecast",
+    "msft:storage_account": "ai4edataeuwest",
+    "msft:short_description": "Seasonal river flow forecasts for the Kwando and Upper Zambezi rivers in the KAZA region of Africa, produced by Upstream Tech's HydroForecast model.",
+    "msft:region": "westeurope",
+    "title": "HydroForecast - Kwando & Upper Zambezi Rivers",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    21.04494,
+                    -17.792517,
+                    23.343421,
+                    -13.08062
+                ],
+                [
+                    23.343421,
+                    -17.792517,
+                    23.343421,
+                    -17.792517
+                ],
+                [
+                    23.343421,
+                    -17.792517,
+                    23.343421,
+                    -17.792517
+                ],
+                [
+                    21.04494,
+                    -15.13158,
+                    21.04494,
+                    -15.13158
+                ],
+                [
+                    21.80157,
+                    -16.01209,
+                    21.80157,
+                    -16.01209
+                ],
+                [
+                    22.91715,
+                    -17.38856,
+                    22.91715,
+                    -17.38856
+                ],
+                [
+                    23.00610530305009,
+                    -17.347398048598034,
+                    23.00610530305009,
+                    -17.347398048598034
+                ],
+                [
+                    22.669092,
+                    -14.971843,
+                    22.669092,
+                    -14.971843
+                ],
+                [
+                    22.675487,
+                    -13.08062,
+                    22.675487,
+                    -13.08062
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2022-01-01T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "CDLA-Sharing-1.0",
+    "keywords": [
+        "Water",
+        "HydroForecast",
+        "Streamflow",
+        "Hydrology",
+        "Upstream Tech"
+    ],
+    "providers": [
+        {
+            "name": "Upstream Tech",
+            "roles": [
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://www.upstream.tech"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/kaza-hydroforecast-thumbnail.png",
+            "type": "image/png",
+            "title": "Thumbnail"
+        }
+    }
+}

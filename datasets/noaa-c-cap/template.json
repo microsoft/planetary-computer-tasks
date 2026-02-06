@@ -1,0 +1,306 @@
+{
+    "type": "Collection",
+    "id": "noaa-c-cap",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "describedby",
+            "href": "https://coast.noaa.gov/data/digitalcoast/pdf/ccap-product-page.pdf",
+            "type": "application/pdf",
+            "title": "Handout - C-CAP Products"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://coast.noaa.gov/data/digitalcoast/pdf/ccap-faq-regional.pdf",
+            "type": "application/pdf",
+            "title": "Frequently Asked Questions"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://coast.noaa.gov/data/digitalcoast/pdf/ccap-class-scheme-regional.pdf",
+            "type": "application/pdf",
+            "title": "C-CAP Classification Scheme and Class Definitions"
+        },
+        {
+            "rel": "license",
+            "href": "https://coast.noaa.gov/digitalcoast/data/ccapregional.html",
+            "type": "text/html",
+            "title": "C-CAP Regional Land Cover and Change"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/noaa-c-cap",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "item_assets": {
+        "data": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "data_type": "uint8",
+                    "spatial_resolution": 30
+                }
+            ],
+            "classification:classes": [
+                {
+                    "value": 0,
+                    "description": "Background"
+                },
+                {
+                    "value": 1,
+                    "description": "Unclassified (Cloud, Shadow, etc)"
+                },
+                {
+                    "value": 2,
+                    "color-hint": "FFFFFF",
+                    "description": "High Intensity Developed"
+                },
+                {
+                    "value": 3,
+                    "color-hint": "C1C1C1",
+                    "description": "Medium Intensity Developed"
+                },
+                {
+                    "value": 4,
+                    "color-hint": "979797",
+                    "description": "Low Intensity Developed"
+                },
+                {
+                    "value": 5,
+                    "color-hint": "CCCA42",
+                    "description": "Developed Open Space"
+                },
+                {
+                    "value": 6,
+                    "color-hint": "4E2409",
+                    "description": "Cultivated Crops"
+                },
+                {
+                    "value": 7,
+                    "color-hint": "BCA05B",
+                    "description": "Pasture/Hay"
+                },
+                {
+                    "value": 8,
+                    "color-hint": "EABB8E",
+                    "description": "Grassland/Herbaceous"
+                },
+                {
+                    "value": 9,
+                    "color-hint": "6FEC48",
+                    "description": "Deciduous Forest"
+                },
+                {
+                    "value": 10,
+                    "color-hint": "15380A",
+                    "description": "Evergreen Forest"
+                },
+                {
+                    "value": 11,
+                    "color-hint": "489D48",
+                    "description": "Mixed Forest"
+                },
+                {
+                    "value": 12,
+                    "color-hint": "6D6C1F",
+                    "description": "Scrub/Shrub"
+                },
+                {
+                    "value": 13,
+                    "color-hint": "245A5A",
+                    "description": "Palustrine Forested Wetland"
+                },
+                {
+                    "value": 14,
+                    "color-hint": "E2742D",
+                    "description": "Palustrine Scrub/Shrub Wetland"
+                },
+                {
+                    "value": 15,
+                    "color-hint": "DE3BEA",
+                    "description": "Palustrine Emergent Wetland (Persistent)"
+                },
+                {
+                    "value": 16,
+                    "color-hint": "37083B",
+                    "description": "Estuarine Forested Wetland"
+                },
+                {
+                    "value": 17,
+                    "color-hint": "631569",
+                    "description": "Estuarine Scrub/Shrub Wetland"
+                },
+                {
+                    "value": 18,
+                    "color-hint": "A028A9",
+                    "description": "Estuarine Emergent Wetland"
+                },
+                {
+                    "value": 19,
+                    "color-hint": "6DEEF0",
+                    "description": "Unconsolidated Shore"
+                },
+                {
+                    "value": 20,
+                    "color-hint": "F3F050",
+                    "description": "Bare Land"
+                },
+                {
+                    "value": 21,
+                    "color-hint": "000A72",
+                    "description": "Open Water"
+                },
+                {
+                    "value": 22,
+                    "color-hint": "0021E8",
+                    "description": "Palustrine Aquatic Bed"
+                },
+                {
+                    "value": 23,
+                    "color-hint": "6777D4",
+                    "description": "Estuarine Aquatic Bed"
+                },
+                {
+                    "value": 24,
+                    "color-hint": "F3D147",
+                    "description": "Tundra"
+                },
+                {
+                    "value": 25,
+                    "color-hint": "BBF7EF",
+                    "description": "Perennial Ice/Snow"
+                }
+            ]
+        },
+        "metadata": {
+            "type": "application/xml",
+            "roles": [
+                "metadata"
+            ]
+        }
+    },
+    "sci:citation": "National Oceanic and Atmospheric Administration, Office for Coastal Management. Name of Data Set: Coastal Change Analysis Program (C-CAP) Regional Land Cover. Charleston, SC: NOAA Office for Coastal Management. Accessed April 2022 at www.coast.noaa.gov/htdata/raster1/landcover/bulkdownload/30m_lc/.",
+    "msft:container": "noaa-c-cap",
+    "msft:storage_account": "ai4edataeuwest",
+    "msft:short_description": "Periodic coastal landcover classifications back to 1975",
+    "msft:region": "westeurope",
+    "title": "C-CAP Regional Land Cover and Change",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -160.315986,
+                    17.892786,
+                    -64.966857,
+                    49.471148
+                ],
+                [
+                    -127.984554,
+                    22.718719,
+                    -64.966857,
+                    49.471148
+                ],
+                [
+                    -160.315986,
+                    18.879215,
+                    -154.706564,
+                    22.271167
+                ],
+                [
+                    -67.290869,
+                    17.892786,
+                    -65.230246,
+                    18.538629
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "1975-01-01T00:00:00Z",
+                    "2016-12-31T00:00:00Z"
+                ],
+                [
+                    "1975-01-01T00:00:00Z",
+                    "2016-12-31T00:00:00Z"
+                ],
+                [
+                    "1992-01-01T00:00:00Z",
+                    "2005-12-31T00:00:00Z"
+                ],
+                [
+                    "2010-01-01T00:00:00Z",
+                    "2010-12-31T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "Land Cover",
+        "Land Use",
+        "NOAA",
+        "Coastal"
+    ],
+    "providers": [
+        {
+            "name": "National Oceanic and Atmospheric Administration, Office for Coastal Management",
+            "roles": [
+                "licensor",
+                "producer",
+                "processor"
+            ],
+            "url": "https://coast.noaa.gov/digitalcoast/data/ccapregional.html"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https//planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "boundary": {
+            "href": "https://coast.noaa.gov/data/digitalcoast/zip/ccap-mapping-bndry-wgs84.zip",
+            "type": "application/zip",
+            "title": "C-CAP Mapping Boundary (shp file)"
+        },
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-c-cap.png",
+            "type": "image/png",
+            "title": "NOAA C-CAP",
+            "roles": [
+                "data"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/noaa-c-cap.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}
