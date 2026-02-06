@@ -2,7 +2,7 @@ This collection offers 4 parameters at 33 available height levels (5m to 6000m) 
 
 ## Height Levels
 Available height levels, in metres (m) above ground, are: 
-* 5.0 10.0 20.0 30.0 50.0 75.0 100.0 150.0 200.0 250.0 300.0 400.0 500.0 600.0 700.0 800.0 1000.0 1250.0 1500.0 1750.0 2000.0 2250.0 2500.0 2750.0 3000.0 3250.0 3500.0 3750.0 4000.0 4500.0 5000.0 5500.0 6000.0
+* 5.0 10.0 20.0 30.0 40.0 50.0 60.0 75.0 100.0 125.0 150.0 175.0 200.0 225.0 250.0 275.0 300.0 350.0 400.0 450.0 500.0 600.0 700.0 800.0 900.0 1000.0 1125.0 1250.0 1375.0 1500.0 1625.0 1750.0 1875.0 2000.0 2125.0 2250.0 2375.0 2500.0 2625.0 2750.0 2875.0 3000.0 3125.0 3250.0 3375.0 3500.0 3625.0 3750.0 3875.0 4000.0 4500.0 5000.0 5500.0 6000.0 6750.0 7500.0
 
 ## Coverage area
 The forecast covers the UK and Ireland, with the following latitude and longitude coordinates for each corner of the included area:
