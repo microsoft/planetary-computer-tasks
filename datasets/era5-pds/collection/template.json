@@ -658,6 +658,15 @@
       "type": "image/png",
       "title": "Thumbnail"
     },
+    "era5-static-var": {
+      "href": "https://cpdataeuwest.blob.core.windows.net/era5/era5_static.nc",
+      "type": "application/netcdf",
+      "roles": [
+        "data"
+      ],
+      "title": "ERA5 static variables",
+      "description": "ERA5 static variables geopotential (z), land-sea mask (lsm), and soil type (slt). CC-BY licensed from Copernicus Climate Data Store."
+    },
     "geoparquet-items": {
       "href": "abfs://items/era5-pds.parquet",
       "title": "GeoParquet STAC items",
