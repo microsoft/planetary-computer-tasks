@@ -665,7 +665,7 @@
         "data"
       ],
       "title": "ERA5 static variables",
-      "description": "ERA5 static variables geopotential (z), land-sea mask (lsm), and soil type (slt). CC-BY licensed from Copernicus Climate Data Store."
+      "description": "ERA5 static variables (geopotential z, land-sea mask lsm, soil type slt) from the Copernicus Climate Change Service (C3S) Climate Data Store (CDS), licensed under CC BY (https://spdx.org/licenses/CC-BY-4.0) (DOI: 10.24381/cds.adbb2d47; accessed 2026-02-03). Attribution per CDS guidance."
     },
     "geoparquet-items": {
       "href": "abfs://items/era5-pds.parquet",
