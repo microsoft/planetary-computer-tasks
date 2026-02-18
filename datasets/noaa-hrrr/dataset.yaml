@@ -1,0 +1,30 @@
+id: noaa-hrrr
+image: ${{ args.registry }}/pctasks-noaa-hrrr:latest
+
+args:
+  - registry
+
+code:
+  src: ${{ local.path(./noaa_hrrr.py) }}
+  requirements: ${{ local.path(./requirements.txt) }}
+
+environment:
+  APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+
+collections:
+  - id: noaa-hrrr
+    template: ${{ local.path(./collection) }}
+    class: noaa_hrrr:NoaaHrrrCollection
+    asset_storage:
+      - uri: blob://noaa-hrrr/hrrr
+        token: ${{ pc.get_token(noaa-hrrr, hrrr) }}
+        chunks:
+          options:
+            extensions: [.grib2]
+            min_depth: 2
+            max_depth_depth: 2
+            chunk_length: 1000
+          splits:
+            - depth: 1
+    chunk_storage:
+      uri: blob://noaa-hrrr/noaa-hrrr-etl-data/
