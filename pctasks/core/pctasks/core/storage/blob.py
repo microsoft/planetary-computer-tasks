@@ -515,11 +515,20 @@ class BlobStorage(Storage):
             logger.info("Listing prefix=%s", full_prefix)
             folders = []
             files = []
+            prefix_len = len(full_prefix) if full_prefix else 0
             for item in client.container.walk_blobs(name_starts_with=full_prefix):
                 item_name: str = cast(str, item.name)
-                name = os.path.relpath(item_name, full_prefix)
+                # Use string slicing instead of os.path.relpath to extract
+                # the name relative to the current prefix.  walk_blobs
+                # guarantees results start with full_prefix, so simple
+                # slicing is correct and avoids os.path.relpath mis-handling
+                # blob names that start with "/" (which produces "../../.."
+                # relative paths on the filesystem).
+                name = item_name[prefix_len:]
                 if isinstance(item, BlobPrefix):
-                    folders.append(name.strip("/"))
+                    folder_name = name.strip("/")
+                    if folder_name:
+                        folders.append(folder_name)
                 else:
                     if item.size == 0:
                         # ADLS Gen 2 creates empty files as directory placeholders.
