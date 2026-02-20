@@ -1,0 +1,1 @@
+stactools-noaa-hrrr==1.0.0
