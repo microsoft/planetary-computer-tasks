@@ -24,7 +24,7 @@ class NoaaHrrrCollection(Collection):
             parsed_uri.reference_datetime,
             parsed_uri.forecast_hour,
         )
-        return item
+        return [item]
 
 
 @dataclass
@@ -38,7 +38,8 @@ class NoaaHrrrUri:
         r"hrrr\.(\d{4})(\d{2})(\d{2})"
         r"/(?P<region>conus|alaska)"
         r"/hrrr\.t(?P<cc>\d{2})z"
-        r"\.wrf(?P<product>prs|nat|sfc|subh)f(?P<fh>\d+)\.grib2$"
+        r"\.wrf(?P<product>prs|nat|sfc|subh)f(?P<fh>\d+)"
+        r"(?:\.\w+)?\.grib2$"
     )
 
     _PRODUCTS = {

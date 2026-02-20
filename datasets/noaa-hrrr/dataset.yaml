@@ -16,13 +16,13 @@ collections:
     template: ${{ local.path(./collection) }}
     class: noaa_hrrr:NoaaHrrrCollection
     asset_storage:
-      - uri: blob://noaa-hrrr/hrrr
+      - uri: blob://noaahrrr/hrrr
         token: ${{ pc.get_token(noaa-hrrr, hrrr) }}
         chunks:
           options:
             extensions: [.grib2]
-            min_depth: 2
-            max_depth_depth: 2
+            min_depth: 1
+            max_depth: 1
             chunk_length: 1000
           splits:
             - depth: 1
