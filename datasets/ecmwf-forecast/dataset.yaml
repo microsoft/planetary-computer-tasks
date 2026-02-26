@@ -3,7 +3,7 @@ image: ${{ args.registry }}/pctasks-ecmwf-forecast:2026.02.26
 
 args:
   - registry
-  - year_prefix
+  - year-prefix
 
 code:
   src: ${{ local.path(./ecmwf_forecast.py) }}
@@ -20,7 +20,7 @@ collections:
         chunks:
           splits:
             - depth: 1
-              folder_matches: ^${{ args.year_prefix }}
+              folder_matches: ^${{ args.year-prefix }}
           options:
             # currently excluding "aifs", in favor of "ifs"
             # Could put that in a different collection, or modify
