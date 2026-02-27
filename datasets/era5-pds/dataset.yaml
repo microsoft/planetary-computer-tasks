@@ -1,11 +1,11 @@
-id: goes_cmi
+id: era5-pds
 image: ${{ args.registry }}/pctasks-task-base:latest
 
 args:
-- registry
+  - registry
 
 collections:
-  - id: goes-cmi
+  - id: era5-pds
     template: ${{ local.path(./collection) }}
     class: pctasks.dataset.collection:PremadeItemCollection
     asset_storage:
