@@ -1,8 +1,9 @@
 id: ecmwf_forecast
-image: ${{ args.registry }}/pctasks-ecmwf-forecast:2026.01.12
+image: ${{ args.registry }}/pctasks-ecmwf-forecast:2026.02.26
 
 args:
   - registry
+  - year-prefix
 
 code:
   src: ${{ local.path(./ecmwf_forecast.py) }}
@@ -17,6 +18,9 @@ collections:
     asset_storage:
       - uri: blob://ai4edataeuwest/ecmwf/
         chunks:
+          splits:
+            - depth: 1
+              folder_matches: ^${{ args.year-prefix }}
           options:
             # currently excluding "aifs", in favor of "ifs"
             # Could put that in a different collection, or modify

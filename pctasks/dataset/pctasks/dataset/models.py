@@ -42,6 +42,7 @@ class SplitDefinition(PCBaseModel):
 
     prefix: Optional[str] = None
     depth: int
+    folder_matches: Optional[str] = None
 
 
 class ChunkOptions(PCBaseModel):
