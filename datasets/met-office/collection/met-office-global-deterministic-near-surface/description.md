@@ -19,10 +19,11 @@ Exceptions (for `accumulation`, `min`, `max` and `mean` parameters):
 * Hourly latent heat flux at surface mean (latent_heat_flux_at_surface_mean-PT01H) is only available every hour from 1 to 54 hours
 * 3H latent heat flux at surface mean (latent_heat_flux_at_surface_mean-PT03H) is only available every three hours from 57 to 144 hours
 * 6H latent heat flux at surface mean (latent_heat_flux_at_surface_mean-PT06H) is only available every six hours from 150 to 168 hours
-* Hourly precipitation accumulation (precipitation_accumulation-PT01H) is only available every hour from 1 to 48 hours
-* 3H precipitation accumulation (precipitation_accumulation-PT03H) is only available every three hours from 51 to 144 hours
+* Hourly precipitation accumulation (precipitation_accumulation-PT01H) is only available every hour from 1 to 54 hours
+* 3H precipitation accumulation (precipitation_accumulation-PT03H) is only available every three hours from 57 to 144 hours
 * 6H precipitation accumulation (precipitation_accumulation-PT06H) is only available every six hours from 150 to 168 hours
-* Radiation flux in uv downward at surface (radiation_flux_in_uv_downward_at_surface) has three hourly timesteps from 0 to 144 hours
+* Radiation flux in longwave downward at surface (radiation_flux_in_longwave_downward_at_surface) has six hourly timesteps from 150 to 162 hours
+* Radiation flux in uv downward at surface (radiation_flux_in_uv_downward_at_surface) has three hourly timesteps from 0 to 144 hours and six hourly timesteps from 150 to 162 hours
 * Hourly rainfall accumulation (rainfall_accumulation-PT01H) is only available every hour from 1 to 54 hours
 * 3H rainfall accumulation (rainfall_accumulation-PT03H) is only available every three hours from 57 to 144 hours
 * 6H rainfall accumulation (rainfall_accumulation-PT06H) is only available every six hours from 150 to 168 hours 
@@ -42,8 +43,8 @@ Exceptions (for `accumulation`, `min`, `max` and `mean` parameters):
 * 3H remperature at screen level min (temperature_at_screen_level_min-PT03H) is only available every three hours from 57 to 144 hours
 * 6H temperature at screen level min (temperature_at_screen_level_min-PT06H) is only available every six hours from 150 to 168 hours
 * Hourly wind gust at 10m max (wind_gust_at_10m_max-PT01H) is only available every hour from 1 to 54 hours 
-* 3H wind gust at 10m max (wind_gust_at_10m_max-PT03H) is only available every three hours from 57 to 144 hours
-* 6H wind gust at 10m max (wind_gust_at_10m_max-PT06H) is only available every six hours from 150 to 168 hours
+* 3H wind gust at 10m max (wind_gust_at_10m_max-PT03H) is only available every three hours from 3 to 144 hours
+* 6H wind gust at 10m max (wind_gust_at_10m_max-PT06H) is only available every six hours from 54 to 168 hours
 
 ## Update Frequency
 The model is run four times each day, with forecast reference times of 00:00, 06:00, 12:00 and 18:00 (UTC).
