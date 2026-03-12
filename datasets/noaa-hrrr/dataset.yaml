@@ -1,5 +1,5 @@
 id: noaa-hrrr
-image: ${{ args.registry }}/pctasks-noaa-hrrr:latest
+image: ${{ args.registry }}/pctasks-task-base:2026.01.12
 
 args:
   - registry
@@ -17,7 +17,6 @@ collections:
     class: noaa_hrrr:NoaaHrrrCollection
     asset_storage:
       - uri: blob://noaahrrr/hrrr
-        token: ${{ pc.get_token(noaa-hrrr, hrrr) }}
         chunks:
           options:
             extensions: [.grib2]
