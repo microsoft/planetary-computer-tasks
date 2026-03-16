@@ -26,4 +26,4 @@ collections:
           splits:
             - depth: 1
     chunk_storage:
-      uri: blob://noaa-hrrr/noaa-hrrr-etl-data/
+      uri: blob://noaahrrr/noaa-hrrr-etl-data/
