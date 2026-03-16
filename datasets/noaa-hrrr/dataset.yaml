@@ -3,6 +3,7 @@ image: ${{ args.registry }}/pctasks-task-base:2026.01.12
 
 args:
   - registry
+  - year-prefix
 
 code:
   src: ${{ local.path(./noaa_hrrr.py) }}
@@ -25,5 +26,6 @@ collections:
             chunk_length: 1000
           splits:
             - depth: 1
+              folder_matches: ^hrrr.${{ args.year-prefix }}
     chunk_storage:
       uri: blob://noaahrrr/noaa-hrrr-etl-data/
