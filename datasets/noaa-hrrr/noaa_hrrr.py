@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import datetime
 import re
 from dataclasses import dataclass
@@ -50,7 +48,7 @@ class NoaaHrrrUri:
     }
 
     @classmethod
-    def parse(cls, s: str) -> NoaaHrrrUri:
+    def parse(cls, s: str) -> "NoaaHrrrUri":
         match = cls._PATTERN.search(s)
         if not match:
             raise ValueError(f"Could not parse HRRR URI: {s}")
