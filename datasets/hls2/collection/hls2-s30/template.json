@@ -22,10 +22,8 @@
         "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
         "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
         "https://stac-extensions.github.io/view/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
         "https://stac-extensions.github.io/storage/v2.0.0/schema.json"
     ],
-    "sci:doi": "10.5067/HLS/HLSS30.002",
     "item_assets": {
         "B01": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
