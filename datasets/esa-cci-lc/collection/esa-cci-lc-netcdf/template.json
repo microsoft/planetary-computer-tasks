@@ -1,10 +1,8 @@
 {
-    "stac_version": "1.0.0",
     "type": "Collection",
     "id": "esa-cci-lc-netcdf",
-    "title": "ESA Climate Change Initiative Land Cover Maps (NetCDF)",
+    "stac_version": "1.0.0",
     "description": "{{ collection.description }}",
-    "license": "proprietary",
     "links": [
         {
             "rel": "license",
@@ -45,23 +43,62 @@
         {
             "rel": "cite-as",
             "href": "https://doi.org/10.24381/cds.006f2c9a"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/esa-cci-lc-netcdf",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
         }
     ],
     "stac_extensions": [
         "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
         "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
     ],
+    "sci:doi": "10.24381/cds.006f2c9a",
+    "item_assets": {
+        "netcdf": {
+            "type": "application/netcdf",
+            "roles": [
+                "data",
+                "quality"
+            ],
+            "title": "ESA CCI Land Cover NetCDF 4 File"
+        }
+    },
+    "msft:group_id": "esa-cci-lc",
+    "msft:container": "esa-cci-lc",
+    "msft:storage_account": "landcoverdata",
+    "msft:short_description": "ESA CCI global land cover maps in NetCDF format",
+    "msft:region": "westeurope",
+    "title": "ESA Climate Change Initiative Land Cover Maps (NetCDF)",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180.0,
+                    -90.0,
+                    180.0,
+                    90.0
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "1992-01-01T00:00:00Z",
+                    "2020-12-31T23:59:59Z"
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
     "keywords": [
         "Land Cover",
         "ESA",
         "CCI",
         "Global"
     ],
-    "msft:short_description": "ESA CCI global land cover maps in NetCDF format",
-    "msft:storage_account": "landcoverdata",
-    "msft:container": "esa-cci-lc",
-    "msft:region": "westeurope",
-    "msft:group_id": "esa-cci-lc",
     "providers": [
         {
             "name": "VITO",
@@ -111,11 +148,17 @@
             "url": "https://planetarycomputer.microsoft.com"
         }
     ],
+    "summaries": {
+        "esa_cci_lc:version": [
+            "2.0.7cds",
+            "2.1.1"
+        ]
+    },
     "assets": {
         "thumbnail": {
-            "title": "ESA CCI Land Cover NetCDF Thumbnail",
             "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/esa-cci-lc-netcdf-thumb.png",
             "type": "image/png",
+            "title": "ESA CCI Land Cover NetCDF Thumbnail",
             "roles": [
                 "thumbnail"
             ]
@@ -123,9 +166,6 @@
         "geoparquet-items": {
             "href": "abfs://items/esa-cci-lc-netcdf.parquet",
             "type": "application/x-parquet",
-            "roles": [
-                "stac-items"
-            ],
             "title": "GeoParquet STAC items",
             "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
             "msft:partition_info": {
@@ -133,44 +173,10 @@
             },
             "table:storage_options": {
                 "account_name": "pcstacitems"
-            }
-        } 
-    },
-    "extent": {
-        "spatial": {
-            "bbox": [
-                [
-                    -180.0,
-                    -90.0,
-                    180.0,
-                    90.0
-                ]
-            ]
-        },
-        "temporal": {
-            "interval": [
-                [
-                    "1992-01-01T00:00:00Z",
-                    "2020-12-31T23:59:59Z"
-                ]
-            ]
-        }
-    },
-    "item_assets": {
-        "netcdf": {
-            "title": "ESA CCI Land Cover NetCDF 4 File",
-            "type": "application/netcdf",
+            },
             "roles": [
-                "data",
-                "quality"
+                "stac-items"
             ]
         }
-    },
-    "sci:doi": "10.24381/cds.006f2c9a",
-    "summaries": {
-        "esa_cci_lc:version": [
-            "2.0.7cds",
-            "2.1.1"
-        ]
     }
 }

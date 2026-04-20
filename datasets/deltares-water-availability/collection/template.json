@@ -1,0 +1,339 @@
+{
+    "type": "Collection",
+    "id": "deltares-water-availability",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "documentation",
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/aod_docs/pc-deltares-water-availability-documentation.pdf",
+            "type": "application/pdf",
+            "title": "User Guide"
+        },
+        {
+            "rel": "license",
+            "href": "https://cdla.dev/permissive-1-0/",
+            "type": "text/html",
+            "title": "Community Data License Agreement - Permissive, Version 1.0"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/deltares-water-availability",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/datacube/v2.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+    ],
+    "item_assets": {
+        "data": {
+            "type": "application/x-netcdf",
+            "roles": [
+                "data"
+            ],
+            "title": "Flood Map",
+            "description": "Inundation maps of flood depth using a model that takes into account water level attenuation and is forced by sea level."
+        },
+        "index": {
+            "type": "application/json",
+            "roles": [
+                "index"
+            ],
+            "title": "Index file",
+            "description": "Kerchunk index file."
+        }
+    },
+    "cube:variables": {
+        "P": {
+            "type": "data",
+            "unit": "mm per day",
+            "attrs": {
+                "units": "mm per day",
+                "description": "Average precipitation upstream of reservoir"
+            },
+            "dimensions": [
+                "time",
+                "GrandID",
+                "ksathorfrac"
+            ],
+            "description": "Average precipitation upstream of reservoir"
+        },
+        "ETa": {
+            "type": "data",
+            "unit": "mm per day",
+            "attrs": {
+                "units": "mm per day",
+                "description": "Average simulated actual evapotransporation upstream of reservoir"
+            },
+            "dimensions": [
+                "time",
+                "GrandID",
+                "ksathorfrac"
+            ],
+            "description": "Average simulated actual evapotransporation upstream of reservoir"
+        },
+        "PET": {
+            "type": "data",
+            "unit": "mm per day",
+            "attrs": {
+                "units": "mm per day",
+                "description": "Average potential evapotranspiration upstream of reservoir"
+            },
+            "dimensions": [
+                "time",
+                "GrandID",
+                "ksathorfrac"
+            ],
+            "description": "Average potential evapotranspiration upstream of reservoir"
+        },
+        "Melt": {
+            "type": "data",
+            "unit": "mm per day",
+            "attrs": {
+                "units": "mm per day",
+                "description": "Average simulated snow melt upstream of reservoir"
+            },
+            "dimensions": [
+                "time",
+                "GrandID",
+                "ksathorfrac"
+            ],
+            "description": "Average simulated snow melt upstream of reservoir"
+        },
+        "Snow": {
+            "type": "data",
+            "unit": "mm",
+            "attrs": {
+                "units": "mm",
+                "description": "Average simulated snow depth upstream of reservoir"
+            },
+            "dimensions": [
+                "time",
+                "GrandID",
+                "ksathorfrac"
+            ],
+            "description": "Average simulated snow depth upstream of reservoir"
+        },
+        "Temp": {
+            "type": "data",
+            "unit": "degrees C",
+            "attrs": {
+                "units": "degrees C",
+                "description": "Average surface temperature upstream of reservoir"
+            },
+            "dimensions": [
+                "time",
+                "GrandID",
+                "ksathorfrac"
+            ],
+            "description": "Average surface temperature upstream of reservoir"
+        },
+        "P_res": {
+            "type": "data",
+            "unit": "mm per day",
+            "attrs": {
+                "units": "mm per day",
+                "description": "Precipitation reservoir"
+            },
+            "dimensions": [
+                "time",
+                "GrandID",
+                "ksathorfrac"
+            ],
+            "description": "Precipitation reservoir"
+        },
+        "S_res": {
+            "type": "data",
+            "unit": "m3",
+            "attrs": {
+                "units": "m3",
+                "description": "Simulated reservoir volume"
+            },
+            "dimensions": [
+                "time",
+                "GrandID",
+                "ksathorfrac"
+            ],
+            "description": "Simulated reservoir volume"
+        },
+        "Ea_res": {
+            "type": "data",
+            "unit": "mm per day",
+            "attrs": {
+                "units": "mm per day",
+                "description": "Simulated actual evaporation reservoir"
+            },
+            "dimensions": [
+                "time",
+                "GrandID",
+                "ksathorfrac"
+            ],
+            "description": "Simulated actual evaporation reservoir"
+        },
+        "Qin_res": {
+            "type": "data",
+            "unit": "m3 per s",
+            "attrs": {
+                "units": "m3 per s",
+                "description": "Simulated reservoir inflow (surface+subsurface)"
+            },
+            "dimensions": [
+                "time",
+                "GrandID",
+                "ksathorfrac"
+            ],
+            "description": "Simulated reservoir inflow (surface+subsurface)"
+        },
+        "FracFull": {
+            "type": "data",
+            "unit": "m3",
+            "attrs": {
+                "units": "m3",
+                "description": "Simulated reservoir volume"
+            },
+            "dimensions": [
+                "time",
+                "GrandID",
+                "ksathorfrac"
+            ],
+            "description": "Simulated reservoir volume"
+        },
+        "Qout_res": {
+            "type": "data",
+            "unit": "m3 per s",
+            "attrs": {
+                "units": "m3 per s",
+                "description": "Simulated reservoir outflow"
+            },
+            "dimensions": [
+                "time",
+                "GrandID",
+                "ksathorfrac"
+            ],
+            "description": "Simulated reservoir outflow"
+        },
+        "latitude": {
+            "type": "data",
+            "unit": "degrees",
+            "attrs": {
+                "units": "degrees",
+                "description": "Latitude of reservoir"
+            },
+            "dimensions": [
+                "GrandID"
+            ],
+            "description": "Latitude of reservoir"
+        },
+        "longitude": {
+            "type": "data",
+            "unit": "degrees",
+            "attrs": {
+                "units": "degrees",
+                "description": "Longitude of reservoir"
+            },
+            "dimensions": [
+                "GrandID"
+            ],
+            "description": "Longitude of reservoir"
+        }
+    },
+    "msft:container": "reservoirs",
+    "cube:dimensions": {
+        "time": {
+            "step": "P1DT0H0M0S",
+            "type": "temporal",
+            "extent": [
+                null,
+                "2020-12-31T00:00:00Z"
+            ]
+        },
+        "GrandID": {
+            "type": "identifier",
+            "extent": [
+                null,
+                null
+            ],
+            "description": "GrandID number of the reservoir of interest"
+        },
+        "ksathorfrac": {
+            "type": "level",
+            "values": [
+                5,
+                20,
+                50,
+                100,
+                250
+            ],
+            "description": "Five different value lateral anisotropy values used"
+        }
+    },
+    "msft:storage_account": "deltaresreservoirssa",
+    "msft:short_description": "Historical daily reservoir variations.",
+    "msft:region": "westeurope",
+    "title": "Deltares Global Water Availability",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180.0,
+                    90.0,
+                    180.0,
+                    -90.0
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "1970-01-01T00:00:00Z",
+                    "2020-12-31T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "CDLA-Permissive-1.0",
+    "keywords": [
+        "Deltares",
+        "Water availability",
+        "Reservoir",
+        "Water",
+        "Precipitation"
+    ],
+    "providers": [
+        {
+            "name": "Deltares",
+            "roles": [
+                "producer"
+            ],
+            "url": "https://www.deltares.nl/en/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com/"
+        }
+    ],
+    "summaries": {
+        "deltares:reservoir": [
+            "ERA5",
+            "CHIRPS",
+            "EOBS",
+            "NLDAS",
+            "BOM"
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.azureedge.net/assets/pc_thumbnails/additional_datasets/deltares-reservoir.jpg",
+            "type": "image/png",
+            "title": "Thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        }
+    }
+}

@@ -1,6 +1,8 @@
 {
-    "id": "modis-13Q1-061",
     "type": "Collection",
+    "id": "modis-13Q1-061",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
     "links": [
         {
             "rel": "help",
@@ -31,94 +33,21 @@
             "rel": "license",
             "href": "https://lpdaac.usgs.gov/data/data-citation-and-policies/",
             "title": "LP DAAC - Data Citation and Policies"
-        }
-    ],
-    "title": "MODIS Vegetation Indices 16-Day (250m)",
-    "assets": {
-        "thumbnail": {
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/modis-13Q1-061.png",
-            "type": "image/png",
-            "roles": [
-                "thumbnail"
-            ],
-            "title": "MODIS Vegetation Indices 16-Day (250m) thumbnail"
-        },
-        "geoparquet-items": {
-            "href": "abfs://items/modis-13Q1-061.parquet",
-            "type": "application/x-parquet",
-            "roles": [
-                "stac-items"
-            ],
-            "title": "GeoParquet STAC items",
-            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
-            "msft:partition_info": {
-                "is_partitioned": true,
-                "partition_frequency": "MS"
-            },
-            "table:storage_options": {
-                "account_name": "pcstacitems"
-            }
-        }
-    },
-    "extent": {
-        "spatial": {
-            "bbox": [
-                [
-                    -180,
-                    -90,
-                    180,
-                    90
-                ]
-            ]
-        },
-        "temporal": {
-            "interval": [
-                [
-                    "2000-02-18T00:00:00Z",
-                    null
-                ]
-            ]
-        }
-    },
-    "license": "proprietary",
-    "keywords": [
-        "NASA",
-        "MODIS",
-        "Satellite",
-        "Global",
-        "Vegetation",
-        "MOD13Q1",
-        "MYD13Q1"
-    ],
-    "providers": [
-        {
-            "url": "https://lpdaac.usgs.gov/",
-            "name": "NASA LP DAAC at the USGS EROS Center",
-            "roles": [
-                "producer",
-                "licensor",
-                "processor"
-            ]
         },
         {
-            "url": "https://planetarycomputer.microsoft.com",
-            "name": "Microsoft",
-            "roles": [
-                "host",
-                "processor"
-            ]
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/modis-13Q1-061",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
         }
     ],
-    "summaries": {
-        "platform": [
-            "aqua",
-            "terra"
-        ],
-        "instruments": [
-            "modis"
-        ]
-    },
-    "description": "The Moderate Resolution Imaging Spectroradiometer (MODIS) Vegetation Indices Version 6.1 data are generated every 16 days at 250 meter (m) spatial resolution as a Level 3 product. The MOD13Q1 product provides two primary vegetation layers. The first is the Normalized Difference Vegetation Index (NDVI) which is referred to as the continuity index to the existing National Oceanic and Atmospheric Administration-Advanced Very High Resolution Radiometer (NOAA-AVHRR) derived NDVI. The second vegetation layer is the Enhanced Vegetation Index (EVI), which has improved sensitivity over high biomass regions. The algorithm chooses the best available pixel value from all the acquisitions from the 16 day period. The criteria used is low clouds, low view angle, and the highest NDVI/EVI value. Along with the vegetation layers and the two quality layers, the HDF file will have MODIS reflectance bands 1 (red), 2 (near-infrared), 3 (blue), and 7 (mid-infrared), as well as four observation layers.",
+    "stac_extensions": [
+        "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
     "item_assets": {
         "hdf": {
             "type": "application/x-hdf",
@@ -325,16 +254,8 @@
             ]
         }
     },
-    "stac_version": "1.0.0",
     "msft:group_id": "modis",
     "msft:container": "modis-061",
-    "stac_extensions": [
-        "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
-    ],
     "sci:publications": [
         {
             "doi": "10.5067/MODIS/MOD13Q1.061",
@@ -347,5 +268,90 @@
     ],
     "msft:storage_account": "modiseuwest",
     "msft:short_description": "MODIS Vegetation Indices 16-Day (250m)",
-    "msft:region": "westeurope"
+    "msft:region": "westeurope",
+    "title": "MODIS Vegetation Indices 16-Day (250m)",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2000-02-18T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "NASA",
+        "MODIS",
+        "Satellite",
+        "Global",
+        "Vegetation",
+        "MOD13Q1",
+        "MYD13Q1"
+    ],
+    "providers": [
+        {
+            "name": "NASA LP DAAC at the USGS EROS Center",
+            "roles": [
+                "producer",
+                "licensor",
+                "processor"
+            ],
+            "url": "https://lpdaac.usgs.gov/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "platform": [
+            "aqua",
+            "terra"
+        ],
+        "instruments": [
+            "modis"
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/modis-13Q1-061.png",
+            "type": "image/png",
+            "title": "MODIS Vegetation Indices 16-Day (250m) thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/modis-13Q1-061.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "MS"
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
 }

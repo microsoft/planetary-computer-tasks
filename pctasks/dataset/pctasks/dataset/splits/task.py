@@ -50,6 +50,7 @@ class CreateSplitsTask(Task[CreateSplitsInput, CreateSplitsOutput]):
                         max_depth=split_config.depth,
                         min_depth=split_config.depth,
                         name_starts_with=split_prefix,
+                        folder_matches=split_config.folder_matches,
                     ):
                         print(".", end="", flush=True)
                         # Avoid walking through the same prefix twice

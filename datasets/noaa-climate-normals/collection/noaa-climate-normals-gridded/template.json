@@ -1,10 +1,8 @@
 {
-    "stac_version": "1.0.0",
     "type": "Collection",
     "id": "noaa-climate-normals-gridded",
-    "title": "NOAA US Gridded Climate Normals (Cloud-Optimized GeoTIFF)",
+    "stac_version": "1.0.0",
     "description": "{{ collection.description }}",
-    "license": "proprietary",
     "links": [
         {
             "rel": "about",
@@ -29,69 +27,336 @@
             "href": "https://www.ncei.noaa.gov/sites/default/files/2022-04/Documentation_Monthly_Gridded_Normals.pdf",
             "type": "application/pdf",
             "title": "Documentation for Monthly Gridded Normals"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/noaa-climate-normals-gridded",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
         }
     ],
     "stac_extensions": [
         "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
         "https://stac-extensions.github.io/raster/v1.1.0/schema.json"
     ],
-    "keywords": [
-        "NOAA",
-        "Climate Normals",
-        "Weather",
-        "Surface Observations",
-        "Climatology",
-        "CONUS"
-    ],
-    "msft:short_description": "Gridded Climate Normals for the contiguous United States in Cloud Optimized GeoTIFF (COG) format.",
-    "msft:storage_account": "noaanormals",
-    "msft:container": "gridded-normals-cogs",
-    "msft:group_id": "noaa-climate-normals",
-    "msft:region": "eastus",
-    "providers": [
-        {
-            "name": "NOAA National Centers for Environmental Information",
+    "item_assets": {
+        "prcp_max": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
-                "producer",
-                "processor",
-                "licensor"
+                "data"
             ],
-            "url": "https://www.ncei.noaa.gov/"
-        },
-        {
-            "name": "Microsoft",
-            "roles": [
-                "processor",
-                "host"
-            ],
-            "url": "https://planetarycomputer.microsoft.com"
-        }
-    ],
-    "assets": {
-        "thumbnail": {
-            "title": "NOAA U.S. Gridded Climate Normals (Cloud-Optimized GeoTIFF) Thumbnail",
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-climate-normals-gridded-thumb.png",
-            "type": "image/png",
-            "roles": [
-                "thumbnail"
+            "raster:bands": [
+                {
+                    "unit": "millimeter",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
             ]
         },
-        "geoparquet-items": {
-            "href": "abfs://items/noaa-climate-normals-gridded.parquet",
-            "type": "application/x-parquet",
+        "prcp_min": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
-                "stac-items"
+                "data"
             ],
-            "title": "GeoParquet STAC items",
-            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
-            "msft:partition_info": {
-                "is_partitioned": false
-            },
-            "table:storage_options": {
-                "account_name": "pcstacitems"
-            }
-        } 
+            "raster:bands": [
+                {
+                    "unit": "millimeter",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "prcp_std": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "millimeter",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tavg_max": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "degree Celsius",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tavg_min": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "degree Celsius",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tavg_std": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "degree Celsius",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tmax_max": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "degree Celsius",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tmax_min": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "degree Celsius",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tmax_std": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "degree Celsius",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tmin_max": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "degree Celsius",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tmin_min": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "degree Celsius",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tmin_std": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "degree Celsius",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "prcp_flag": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "months",
+                    "nodata": 0,
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "prcp_norm": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "millimeter",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tavg_flag": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "months",
+                    "nodata": 0,
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tavg_norm": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "degree Celsius",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tmax_flag": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "months",
+                    "nodata": 0,
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tmax_norm": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "degree Celsius",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tmin_flag": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "months",
+                    "nodata": 0,
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tmin_norm": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "raster:bands": [
+                {
+                    "unit": "degree Celsius",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "m2dprcp_norm": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "description": "Month-To-Day Precipitation normals",
+            "raster:bands": [
+                {
+                    "unit": "millimeter",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "y2dprcp_norm": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "description": "Year-To-Day Precipitation normals",
+            "raster:bands": [
+                {
+                    "unit": "millimeter",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        }
     },
+    "msft:region": "eastus",
+    "msft:group_id": "noaa-climate-normals",
+    "msft:container": "gridded-normals-cogs",
+    "msft:storage_account": "noaanormals",
+    "msft:short_description": "Gridded Climate Normals for the contiguous United States in Cloud Optimized GeoTIFF (COG) format.",
+    "title": "NOAA US Gridded Climate Normals (Cloud-Optimized GeoTIFF)",
     "extent": {
         "spatial": {
             "bbox": [
@@ -112,329 +377,70 @@
             ]
         }
     },
-    "item_assets": {
-        "prcp_norm": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "millimeter",
-                    "spatial_resolution": 5000
-                }
-            ],
+    "license": "proprietary",
+    "keywords": [
+        "NOAA",
+        "Climate Normals",
+        "Weather",
+        "Surface Observations",
+        "Climatology",
+        "CONUS"
+    ],
+    "providers": [
+        {
+            "name": "NOAA National Centers for Environmental Information",
             "roles": [
-                "data"
-            ]
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://www.ncei.noaa.gov/"
         },
-        "m2dprcp_norm": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "description": "Month-To-Day Precipitation normals",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "millimeter",
-                    "spatial_resolution": 5000
-                }
-            ],
+        {
+            "name": "Microsoft",
             "roles": [
-                "data"
-            ]
-        },
-        "y2dprcp_norm": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "description": "Year-To-Day Precipitation normals",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "millimeter",
-                    "spatial_resolution": 5000
-                }
+                "processor",
+                "host"
             ],
-            "roles": [
-                "data"
-            ]
-        },
-        "prcp_std": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "millimeter",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "prcp_min": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "millimeter",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "prcp_max": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "millimeter",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "prcp_flag": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": 0,
-                    "unit": "months",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "tavg_norm": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "degree Celsius",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "tavg_std": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "degree Celsius",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "tavg_min": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "degree Celsius",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "tavg_max": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "degree Celsius",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "tavg_flag": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": 0,
-                    "unit": "months",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "tmax_norm": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "degree Celsius",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "tmax_std": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "degree Celsius",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "tmax_min": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "degree Celsius",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "tmax_max": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "degree Celsius",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "tmax_flag": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": 0,
-                    "unit": "months",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "tmin_norm": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "degree Celsius",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "tmin_std": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "degree Celsius",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "tmin_min": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "degree Celsius",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "tmin_max": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "degree Celsius",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
-        },
-        "tmin_flag": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": 0,
-                    "unit": "months",
-                    "spatial_resolution": 5000
-                }
-            ],
-            "roles": [
-                "data"
-            ]
+            "url": "https://planetarycomputer.microsoft.com"
         }
-    },
+    ],
     "summaries": {
+        "noaa_climate_normals:period": [
+            "1901-2000",
+            "1991-2020",
+            "2006-2020"
+        ],
         "noaa_climate_normals:frequency": [
             "daily",
             "monthly",
             "seasonal",
             "annual"
-        ],
-        "noaa_climate_normals:period": [
-            "1901-2000",
-            "1991-2020",
-            "2006-2020"
         ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-climate-normals-gridded-thumb.png",
+            "type": "image/png",
+            "title": "NOAA U.S. Gridded Climate Normals (Cloud-Optimized GeoTIFF) Thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/noaa-climate-normals-gridded.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
     }
 }

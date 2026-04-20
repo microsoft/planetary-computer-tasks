@@ -1,0 +1,13 @@
+The NEX-GDDP-CMIP6 dataset is comprised of global downscaled climate scenarios derived from the General Circulation Model (GCM) runs conducted under the Coupled Model Intercomparison Project Phase 6 (CMIP6) and across two of the four “Tier 1” greenhouse gas emissions scenarios known as Shared Socioeconomic Pathways (SSPs). The CMIP6 GCM runs were developed in support of the Sixth Assessment Report of the Intergovernmental Panel on Climate Change (IPCC AR6). This dataset includes downscaled projections from ScenarioMIP model runs for which daily scenarios were produced and distributed through the Earth System Grid Federation. The purpose of this dataset is to provide a set of global, high resolution, bias-corrected climate change projections that can be used to evaluate climate change impacts on processes that are sensitive to finer-scale climate gradients and the effects of local topography on climate conditions.
+
+The [NASA Center for Climate Simulation](https://www.nccs.nasa.gov/) maintains the [next-gddp-cmip6 product page](https://www.nccs.nasa.gov/services/data-collections/land-based-products/nex-gddp-cmip6) where you can find more information about these datasets. Users are encouraged to review the [technote](https://www.nccs.nasa.gov/sites/default/files/NEX-GDDP-CMIP6-Tech_Note.pdf), provided alongside the data set, where more detailed information, references and acknowledgements can be found.
+
+This collection contains many NetCDF files. There is one NetCDF file per `(model, scenario, variable, year)` tuple.
+
+- **model** is the name of a modeling group (e.g. "ACCESS-CM-2"). See the `cmip6:model` summary in the STAC collection for a full list of models.
+- **scenario** is one of "historical", "ssp245" or "ssp585".
+- **variable** is one of "hurs", "huss", "pr", "rlds", "rsds", "sfcWind", "tas", "tasmax", "tasmin".
+- **year** depends on the value of *scenario*. For "historical", the values range from 1950 to 2014 (inclusive). For "ssp245" and "ssp585", the years range from 2015 to 2100 (inclusive).
+
+In addition to the NetCDF files, we provide some *experimental* **reference files** as collection-level dataset assets. These are JSON files implementing the [references specification](https://fsspec.github.io/kerchunk/spec.html).
+These files include the positions of data variables within the binary NetCDF files, which can speed up reading the metadata. See the example notebook for more.

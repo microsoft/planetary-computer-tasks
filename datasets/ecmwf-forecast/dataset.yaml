@@ -1,8 +1,9 @@
 id: ecmwf_forecast
-image: ${{ args.registry }}/pctasks-ecmwf-forecast:2024.6.13.0
+image: ${{ args.registry }}/pctasks-ecmwf-forecast:2026.02.26
 
 args:
-- registry
+  - registry
+  - year-prefix
 
 code:
   src: ${{ local.path(./ecmwf_forecast.py) }}
@@ -17,11 +18,14 @@ collections:
     asset_storage:
       - uri: blob://ai4edataeuwest/ecmwf/
         chunks:
+          splits:
+            - depth: 1
+              folder_matches: ^${{ args.year-prefix }}
           options:
             # currently excluding "aifs", in favor of "ifs"
             # Could put that in a different collection, or modify
             # the stactools package.
-            matches: /ifs/(0p25|0p4-beta)/(enfo|oper|waef|wave)(?!-opendata)
+            matches: /ifs/(0p25|0p4-beta)/(enfo|oper|waef|wave|scda)(?!-opendata)
             match_full_path: true
             extensions: [.grib2]
     chunk_storage:

@@ -1,0 +1,3 @@
+This collection is derived from the [USGS 3DEP COPC collection](https://planetarycomputer.microsoft.com/dataset/3dep-lidar-copc). It is a collection of Cloud Optimized GeoTIFFs representing the pulse return magnitude.
+
+The values are based on the Intensity [PDAL dimension](https://pdal.io/dimensions.html) and uses [`pdal.filters.outlier`](https://pdal.io/stages/filters.outlier.html#filters-outlier) and [`pdal.filters.range`](https://pdal.io/stages/filters.range.html#filters-range) to remove outliers and noise.

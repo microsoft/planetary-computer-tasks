@@ -1,10 +1,8 @@
 {
-    "stac_version": "1.0.0",
     "type": "Collection",
     "id": "noaa-climate-normals-tabular",
-    "title": "NOAA US Tabular Climate Normals",
+    "stac_version": "1.0.0",
     "description": "{{ collection.description }}",
-    "license": "proprietary",
     "links": [
         {
             "rel": "cite-as",
@@ -25,6 +23,12 @@
             "href": "https://www.noaa.gov/information-technology/open-data-dissemination",
             "type": "text/html",
             "title": "NOAA Open Data Dissemination"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/noaa-climate-normals-tabular",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
         }
     ],
     "stac_extensions": [
@@ -32,118 +36,19 @@
         "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
         "https://stac-extensions.github.io/table/v1.2.0/schema.json"
     ],
-    "keywords": [
-        "NOAA",
-        "Climate Normals",
-        "Weather",
-        "Surface Observations",
-        "Climatology",
-        "CONUS"
-    ],
-    "msft:short_description": "Tabular Climate Normal data for over 15,000 United States weather station locations in GeoParquet format.",
-    "msft:storage_account": "noaanormals",
-    "msft:container": "climate-normals-geoparquet",
-    "msft:group_id": "noaa-climate-normals",
-    "msft:region": "eastus",
-    "providers": [
-        {
-            "name": "NOAA National Centers for Environmental Information",
-            "roles": [
-                "producer",
-                "processor",
-                "licensor"
-            ],
-            "url": "https://www.ncei.noaa.gov/"
-        },
-        {
-            "name": "Microsoft",
-            "roles": [
-                "processor",
-                "host"
-            ],
-            "url": "https://planetarycomputer.microsoft.com"
-        }
-    ],
-    "assets": {
-        "thumbnail": {
-            "title": "NOAA U.S. Tabular Climate Normals Thumbnail",
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-climate-normals-tabular-thumb.png",
-            "type": "image/png",
-            "roles": [
-                "thumbnail"
-            ]
-        },
-        "geoparquet-items": {
-            "href": "abfs://items/noaa-climate-normals-tabular.parquet",
-            "type": "application/x-parquet",
-            "roles": [
-                "stac-items"
-            ],
-            "title": "GeoParquet STAC items",
-            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
-            "msft:partition_info": {
-                "is_partitioned": false
-            },
-            "table:storage_options": {
-                "account_name": "pcstacitems"
-            }
-        } 
-    },
-    "extent": {
-        "spatial": {
-            "bbox": [
-                [
-                    -177.38333,
-                    -14.3306,
-                    174.1,
-                    71.3214
-                ]
-            ]
-        },
-        "temporal": {
-            "interval": [
-                [
-                    "1981-01-01T00:00:00Z",
-                    "2020-12-31T23:59:59Z"
-                ]
-            ]
-        }
-    },
     "item_assets": {
         "geoparquet": {
             "type": "application/x-parquet",
+            "roles": [
+                "data"
+            ],
             "title": "Dataset root",
             "table:storage_options": {
                 "account_name": "noaanormals"
-            },
-            "roles": [
-                "data"
-            ]
+            }
         }
     },
-    "summaries": {
-        "noaa_climate_normals:frequency": [
-            "hourly",
-            "daily",
-            "monthly",
-            "annualseasonal"
-        ],
-        "noaa_climate_normals:period": [
-            "1981-2010",
-            "1991-2020",
-            "2006-2020"
-        ]
-    },
-    "sci:publications": [
-        {
-            "doi": "10.1175/BAMS-D-11-00197.1",
-            "citation": "Arguez, A., I. Durre, S. Applequist, R. Vose, M. Squires, X. Yin, R. Heim, and T. Owen, 2012: NOAA's 1981-2010 climate normals: An overview. Bull. Amer. Meteor. Soc., 93, 1687-1697. DOI: 10.1175/BAMS-D-11-00197.1."
-        },
-        {
-            "doi": "10.1175/BAMS-D-11-00173.1",
-            "citation": "Applequist, S., A. Arguez, I. Durre, M. Squires, R. Vose, and X. Yin, 2012: 1981-2010 U.S. Hourly Normals. Bulletin of the American Meteorological Society, 93, 1637-1640. DOI: 10.1175/BAMS-D-11-00173.1."
-        }
-    ],
+    "msft:region": "eastus",
     "table:tables": [
         {
             "name": "1981_2010-hourly",
@@ -193,5 +98,106 @@
             "name": "2006_2020-annualseasonal",
             "description": "Annual/Seasonal Climate Normals for Period 2006-2020"
         }
-    ]
+    ],
+    "msft:group_id": "noaa-climate-normals",
+    "msft:container": "climate-normals-geoparquet",
+    "sci:publications": [
+        {
+            "doi": "10.1175/BAMS-D-11-00197.1",
+            "citation": "Arguez, A., I. Durre, S. Applequist, R. Vose, M. Squires, X. Yin, R. Heim, and T. Owen, 2012: NOAA's 1981-2010 climate normals: An overview. Bull. Amer. Meteor. Soc., 93, 1687-1697. DOI: 10.1175/BAMS-D-11-00197.1."
+        },
+        {
+            "doi": "10.1175/BAMS-D-11-00173.1",
+            "citation": "Applequist, S., A. Arguez, I. Durre, M. Squires, R. Vose, and X. Yin, 2012: 1981-2010 U.S. Hourly Normals. Bulletin of the American Meteorological Society, 93, 1637-1640. DOI: 10.1175/BAMS-D-11-00173.1."
+        }
+    ],
+    "msft:storage_account": "noaanormals",
+    "msft:short_description": "Tabular Climate Normal data for over 15,000 United States weather station locations in GeoParquet format.",
+    "title": "NOAA US Tabular Climate Normals",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -177.38333,
+                    -14.3306,
+                    174.1,
+                    71.3214
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "1981-01-01T00:00:00Z",
+                    "2020-12-31T23:59:59Z"
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "NOAA",
+        "Climate Normals",
+        "Weather",
+        "Surface Observations",
+        "Climatology",
+        "CONUS"
+    ],
+    "providers": [
+        {
+            "name": "NOAA National Centers for Environmental Information",
+            "roles": [
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://www.ncei.noaa.gov/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "processor",
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "noaa_climate_normals:period": [
+            "1981-2010",
+            "1991-2020",
+            "2006-2020"
+        ],
+        "noaa_climate_normals:frequency": [
+            "hourly",
+            "daily",
+            "monthly",
+            "annualseasonal"
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-climate-normals-tabular-thumb.png",
+            "type": "image/png",
+            "title": "NOAA U.S. Tabular Climate Normals Thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/noaa-climate-normals-tabular.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
 }

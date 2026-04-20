@@ -21,7 +21,7 @@ Note the force reinstall of `rasterio` in the Dockerfile is necessary for raster
 The update workflows were registered with
 
 ```shell
-ls -1 datasets/modis/collection/ | xargs -I {} pctasks dataset process-items goes-update --is-update-workflow --dataset datasets/modis/dataset.yaml -u -c {}
+ls -1 datasets/modis/collection/ | xargs -I {} bash -c 'echo y | pctasks dataset process-items goes-update --is-update-workflow --dataset datasets/modis/dataset.yaml -u -c {}'
 ```
 
 
@@ -30,10 +30,12 @@ ls -1 datasets/modis/collection/ | xargs -I {} pctasks dataset process-items goe
 
 ```
 ls -1 datasets/modis/collection/ | \
-    xargs -I {} pctasks dataset process-items update \
+    xargs -I {} bash -c 'echo y | pctasks dataset process-items update \
     -c {} \
     --workflow-id {}-update \
     --is-update-workflow \
     --dataset datasets/modis/dataset.yaml \
-    --upsert
+    --upsert'
 ```
+
+After running the Dynamic Updates command, the ingestion workflow will start using the latest code changes.

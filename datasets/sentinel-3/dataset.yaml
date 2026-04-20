@@ -1,5 +1,5 @@
 id: sentinel-3
-image: ${{ args.registry }}/pctasks-sentinel-3:20230630.1
+image: ${{ args.registry }}/pctasks-sentinel-3:2026.01.12
 
 args:
   - registry
@@ -30,10 +30,10 @@ collections:
       - uri: blob://sentinel3euwest/sentinel-3/OLCI/OL_2_LFR___/${{ args.year-prefix }}/
         chunks:
           splits:
-            - depth: 1  # split by month, about 15 minutes for all xfdumanifest.xml files
+            - depth: 1 # split by month, about 15 minutes for all xfdumanifest.xml files
           options:
             ends_with: xfdumanifest.xml
-            chunk_length: 200  # takes about 15 minutes to create items for ~2 days of data
+            chunk_length: 200 # takes about 15 minutes to create items for ~2 days of data
     chunk_storage:
       uri: blob://sentinel3euwest/sentinel-3-etl-data/pctasks-chunks/sentinel-3-olci-lfr-l2-netcdf
 

@@ -18,7 +18,7 @@ This collection includes multiple global flood datasets derived from three diffe
 
 * `NASADEM` and `MERITDEM` are available at `90m` and `1km` resolutions
 * `LIDAR` is available at `5km` resolution
-*
+
 ## Historic event datasets
 
 This collection also includes historical storm event data files that follow similar DEM and resolution conventions. Not all storms events are available for each DEM and resolution combination, but generally follow the format of:

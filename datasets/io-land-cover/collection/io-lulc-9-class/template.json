@@ -1,184 +1,190 @@
 {
-  "stac_version": "1.0.0",
-  "type": "Collection",
-  "id": "io-lulc-9-class",
-  "title": "10m Annual Land Use Land Cover (9-class) V1",
-  "description": "{{ collection.description }}",
-  "license": "CC-BY-4.0",
-  "links": [
-    {
-      "rel": "related",
-      "href": "https://livingatlas.arcgis.com/landcover/"
-    },
-    {
-      "rel": "license",
-      "href": "https://creativecommons.org/licenses/by/4.0/",
-      "type": "text/html",
-      "title": "CC BY 4.0"
-    }
-  ],
-  "stac_extensions": [
-    "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
-    "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
-    "https://stac-extensions.github.io/label/v1.0.0/schema.json",
-    "https://stac-extensions.github.io/file/v2.1.0/schema.json",
-    "https://stac-extensions.github.io/table/v1.2.0/schema.json"
-  ],
-  "keywords": [
-    "Global",
-    "Land Cover",
-    "Land Use",
-    "Sentinel"
-  ],
-  "msft:short_description": "Global land cover information with 9 classes for 2017-2022 at 10m resolution",
-  "msft:storage_account": "ai4edataeuwest",
-  "msft:container": "io-lulc",
-  "msft:region": "westeurope",
-  "msft:group_id": "io-land-cover",
-  "providers": [
-    {
-      "name": "Esri",
-      "roles": [
-        "licensor"
-      ],
-      "url": "https://www.esri.com/"
-    },
-    {
-      "name": "Impact Observatory",
-      "roles": [
-        "processor",
-        "producer",
-        "licensor"
-      ],
-      "url": "https://www.impactobservatory.com/"
-    },
-    {
-      "name": "Microsoft",
-      "roles": [
-        "host"
-      ],
-      "url": "https://planetarycomputer.microsoft.com"
-    }
-  ],
-  "assets": {
-    "thumbnail": {
-      "title": "10m Annual Land Use Land Cover (9-class)",
-      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/io-lulc-9-class.png",
-      "media_type": "image/png"
-    },
-    "geoparquet-items": {
-      "href": "abfs://items/io-lulc-9-class.parquet",
-      "title": "GeoParquet STAC items",
-      "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
-      "type": "application/x-parquet",
-      "roles": [
-        "stac-items"
-      ],
-      "table:storage_options": {
-        "account_name": "pcstacitems"
-      },
-      "msft:partition_info": {
-        "is_partitioned": false
-      }
-    }
-  },
-  "summaries": {
-    "raster:bands": [
-      {
-        "nodata": 0,
-        "spatial_resolution": 10
-      }
-    ]
-  },
-  "item_assets": {
-    "data": {
-      "title": "Global land cover data",
-      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "roles": [
-        "data"
-      ],
-      "file:values": [
+    "type": "Collection",
+    "id": "io-lulc-9-class",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
         {
-          "values": [
-            0
-          ],
-          "summary": "No Data"
+            "rel": "related",
+            "href": "https://livingatlas.arcgis.com/landcover/"
         },
         {
-          "values": [
-            1
-          ],
-          "summary": "Water"
+            "rel": "license",
+            "href": "https://creativecommons.org/licenses/by/4.0/",
+            "type": "text/html",
+            "title": "CC BY 4.0"
         },
         {
-          "values": [
-            2
-          ],
-          "summary": "Trees"
-        },
-        {
-          "values": [
-            4
-          ],
-          "summary": "Flooded vegetation"
-        },
-        {
-          "values": [
-            5
-          ],
-          "summary": "Crops"
-        },
-        {
-          "values": [
-            7
-          ],
-          "summary": "Built area"
-        },
-        {
-          "values": [
-            8
-          ],
-          "summary": "Bare ground"
-        },
-        {
-          "values": [
-            9
-          ],
-          "summary": "Snow/ice"
-        },
-        {
-          "values": [
-            10
-          ],
-          "summary": "Clouds"
-        },
-        {
-          "values": [
-            11
-          ],
-          "summary": "Rangeland"
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/io-lulc-9-class",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
         }
-      ]
-    }
-  },
-  "extent": {
-    "spatial": {
-      "bbox": [
-        [
-          -180,
-          -90,
-          180,
-          90
-        ]
-      ]
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/label/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/file/v2.1.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "item_assets": {
+        "data": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Global land cover data",
+            "file:values": [
+                {
+                    "values": [
+                        0
+                    ],
+                    "summary": "No Data"
+                },
+                {
+                    "values": [
+                        1
+                    ],
+                    "summary": "Water"
+                },
+                {
+                    "values": [
+                        2
+                    ],
+                    "summary": "Trees"
+                },
+                {
+                    "values": [
+                        4
+                    ],
+                    "summary": "Flooded vegetation"
+                },
+                {
+                    "values": [
+                        5
+                    ],
+                    "summary": "Crops"
+                },
+                {
+                    "values": [
+                        7
+                    ],
+                    "summary": "Built area"
+                },
+                {
+                    "values": [
+                        8
+                    ],
+                    "summary": "Bare ground"
+                },
+                {
+                    "values": [
+                        9
+                    ],
+                    "summary": "Snow/ice"
+                },
+                {
+                    "values": [
+                        10
+                    ],
+                    "summary": "Clouds"
+                },
+                {
+                    "values": [
+                        11
+                    ],
+                    "summary": "Rangeland"
+                }
+            ]
+        }
     },
-    "temporal": {
-      "interval": [
-        [
-          "2017-01-01T00:00:00Z",
-          "2023-01-01T00:00:00Z"
+    "msft:region": "westeurope",
+    "msft:group_id": "io-land-cover",
+    "msft:container": "io-lulc",
+    "msft:storage_account": "ai4edataeuwest",
+    "msft:short_description": "Global land cover information with 9 classes for 2017-2022 at 10m resolution",
+    "title": "10m Annual Land Use Land Cover (9-class) V1",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2017-01-01T00:00:00Z",
+                    "2023-01-01T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "CC-BY-4.0",
+    "keywords": [
+        "Global",
+        "Land Cover",
+        "Land Use",
+        "Sentinel"
+    ],
+    "providers": [
+        {
+            "name": "Esri",
+            "roles": [
+                "licensor"
+            ],
+            "url": "https://www.esri.com/"
+        },
+        {
+            "name": "Impact Observatory",
+            "roles": [
+                "processor",
+                "producer",
+                "licensor"
+            ],
+            "url": "https://www.impactobservatory.com/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "raster:bands": [
+            {
+                "nodata": 0,
+                "spatial_resolution": 10
+            }
         ]
-      ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/io-lulc-9-class.png",
+            "title": "10m Annual Land Use Land Cover (9-class)",
+            "media_type": "image/png"
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/io-lulc-9-class.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
     }
-  }
 }

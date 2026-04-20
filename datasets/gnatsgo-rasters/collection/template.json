@@ -1,0 +1,637 @@
+{
+    "type": "Collection",
+    "id": "gnatsgo-rasters",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "about",
+            "href": "https://www.nrcs.usda.gov/wps/PA_NRCSConsumption/download?cid=nrcs142p2_051847&ext=pdf",
+            "type": "application/pdf",
+            "title": "gSSURGO User Guide",
+            "description": "User guide for gSSURGO"
+        },
+        {
+            "rel": "about",
+            "href": "https://www.nrcs.usda.gov/wps/PA_NRCSConsumption/download?cid=nrcseprd1464658&ext=pdf",
+            "type": "application/pdf",
+            "title": "gNATSGO Overview Slides",
+            "description": "Slides giving a high level overview of the gNATSGO dataset"
+        },
+        {
+            "rel": "license",
+            "href": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "title": "CC0 1.0 Universal Public Domain Dedication"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/gnatsgo-rasters",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "item_assets": {
+        "mukey": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "mukey",
+            "description": "Map unit key is the unique identifier of a record in the Mapunit table. Use this column to join the Component table to the Map Unit table and the Valu1 table to the MapUnitRaster_10m raster map layer to map valu1 themes."
+        },
+        "aws0_5": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "aws0_5",
+            "description": "Available water storage estimate (AWS) in a standard zone 1 (0-5 cm depth), expressed in mm. The volume of plant available water that the soil can store in this layer based on all map unit components (weighted average). NULL values are presented where data are incomplete or not available."
+        },
+        "soc0_5": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "soc0_5",
+            "description": "Soil organic carbon stock estimate (SOC) in standard layer 1 or standard zone 1 (0-5 cm depth). The concentration of organic carbon present in the soil expressed in grams C per square meter to a depth of 5 cm. NULL values are presented where data are incomplete or not available."
+        },
+        "tk0_5a": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk0_5a",
+            "description": "Thickness of soil components used in standard layer 1 or standard zone 1 (0-5 cm) expressed in cm (weighted average) for the available water storage calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "tk0_5s": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk0_5s",
+            "description": "Thickness of soil components used in standard layer 1 or standard zone 1 (0-5 cm) expressed in cm (weighted average) for the Soil Organic Carbon calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "aws0_20": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "aws0_20",
+            "description": "Available water storage estimate (AWS) in standard zone 2 (0-20 cm depth), expressed in mm. The volume of plant available water that the soil can store in this zone based on all map unit components (weighted average). NULL values are presented where data are incomplete or not available."
+        },
+        "aws0_30": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "aws0_30",
+            "description": "Available water storage estimate (AWS) in standard zone 3 (0-30 cm depth), expressed in mm. The volume of plant available water that the soil can store in this zone based on all map unit components (weighted average). NULL values are presented where data are incomplete or not available."
+        },
+        "aws5_20": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "aws5_20",
+            "description": "Available water storage estimate (AWS) in standard layer 2 (5-20 cm depth), expressed in mm. The volume of plant available water that the soil can store in this layer based on all map unit components (weighted average). NULL values are presented where data are incomplete or not available."
+        },
+        "soc0_20": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "soc0_20",
+            "description": "Soil organic carbon stock estimate (SOC) in standard zone 2 (0-20 cm depth). The concentration of organic carbon present in the soil expressed in grams C per square meter to a depth of 20 cm. NULL values are presented where data are incomplete or not available."
+        },
+        "soc0_30": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "soc0_30",
+            "description": "Soil organic carbon stock estimate (SOC) in standard zone 3 (0-30 cm depth). The concentration of organic carbon present in the soil expressed in grams C per square meter to a depth of 30 cm. NULL values are presented where data are incomplete or not available."
+        },
+        "soc5_20": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "soc5_20",
+            "description": "Soil organic carbon stock estimate (SOC) in standard layer 2 (5-20 cm depth). The concentration of organic carbon present in the soil expressed in grams C per square meter for the 5-20 cm layer. NULL values are presented where data are incomplete or not available."
+        },
+        "tk0_20a": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk0_20a",
+            "description": "Thickness of soil components used in standard zone 2 (0-20 cm) expressed in cm (weighted average) for the available water storage calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "tk0_20s": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk0_20s",
+            "description": "Thickness of soil components used in standard zone 2 (0-20 cm) expressed in cm (weighted average) for the Soil Organic Carbon calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "tk0_30a": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk0_30a",
+            "description": "Thickness of soil components used in standard zone 3 (0-30 cm) expressed in cm (weighted average) for the available water storage calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "tk0_30s": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk0_30s",
+            "description": "Thickness of soil components used in standard zone 3 (0-30 cm) expressed in cm (weighted average) for the Soil Organic Carbon calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "tk5_20a": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk5_20a",
+            "description": "Thickness of soil components used in standard layer 2 (5-20 cm) expressed in cm (weighted average) for the available water storage calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "tk5_20s": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk5_20s",
+            "description": "Thickness of soil components used in standard layer 2 (5-20 cm) expressed in cm (weighted average) for the Soil Organic Carbon calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "aws0_100": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "aws0_100",
+            "description": "Available water storage estimate (AWS) in standard zone 4 (0-100 cm depth), expressed in mm. The volume of plant available water that the soil can store in this zone based on all map unit components (weighted average). NULL values are presented where data are incomplete or not available."
+        },
+        "aws0_150": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "aws0_150",
+            "description": "Available water storage estimate (AWS) in standard zone 5 (0-150 cm depth), expressed in mm. The volume of plant available water that the soil can store in this zone based on all map unit components (weighted average). NULL values are presented where data are incomplete or not available."
+        },
+        "aws0_999": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "aws0_999",
+            "description": "Available water storage estimate (AWS) in total soil profile (0 cm to the reported depth of the soil profile), expressed in mm. The volume of plant available water that the soil can store in this layer based on all map unit components (weighted average). NULL values are presented where data are incomplete or not available."
+        },
+        "aws20_50": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "aws20_50",
+            "description": "Available water storage estimate (AWS) in standard layer 3 (20-50 cm depth), expressed in mm. The volume of plant available water that the soil can store in this layer based on all map unit components (weighted average). NULL values are presented where data are incomplete or not available."
+        },
+        "droughty": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "droughty",
+            "description": "zone for commodity crops that is less than or equal to 6 inches (152 mm) expressed as \"1\" for a drought vulnerable soil landscape map unit or \"0\" for a non-droughty soil landscape map unit or NULL for miscellaneous areas (includes water bodies) or where data were not available. It is computed as a weighted average for major earthy components. Earthy components are those soil series or higher level taxa components that can support crop growth (Dobos et al., 2012). Major components are those soil components where the majorcompflag = 'Yes'"
+        },
+        "nccpi3sg": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "nccpi3sg",
+            "description": "National Commodity Crop Productivity Index for Small Grains (weighted average) for major earthy components. Values range from .01 (low productivity) to .99 (high productivity). Earthy components are those soil series or higher level taxa components that can support crop growth (Dobos et al., 2012). Major components are those soil components where the majorcompflag = 'Yes' (SSURGO component table). NULL values are presented where data are incomplete or not available."
+        },
+        "soc0_100": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "soc0_100",
+            "description": "Soil organic carbon stock estimate (SOC) in standard zone 4 (0-100 cm depth). The concentration of organic carbon present in the soil expressed in grams C per square meter to a depth of 100 cm. NULL values are presented where data are incomplete or not available."
+        },
+        "soc0_150": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "soc0_150",
+            "description": "Soil organic carbon stock estimate (SOC) in standard zone 5 (0-150 cm depth). The concentration of organic carbon present in the soil expressed in grams C per square meter to a depth of 150 cm. NULL values are presented where data are incomplete or not available."
+        },
+        "soc0_999": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "soc0_999",
+            "description": "Soil organic carbon stock estimate (SOC) in total soil profile (0 cm to the reported depth of the soil profile). The concentration of organic carbon present in the soil expressed in grams C per square meter for the total reported soil profile depth. NULL values are presented where data are incomplete or not available."
+        },
+        "soc20_50": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "soc20_50",
+            "description": "Soil organic carbon stock estimate (SOC) in standard layer 3 (20-50 cm depth). The concentration of organic carbon present in the soil expressed in grams C per square meter for the 20-50 cm layer. NULL values are presented where data are incomplete or not available."
+        },
+        "tk0_100a": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk0_100a",
+            "description": "Thickness of soil components used in standard zone 4 (0-100 cm) expressed in cm (weighted average) for the available water storage calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "tk0_100s": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk0_100s",
+            "description": "Thickness of soil components used in standard zone 4 (0-100 cm) expressed in cm (weighted average) for the Soil Organic Carbon calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "tk0_150a": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk0_150a",
+            "description": "Thickness of soil components used in standard zone 5 (0-150 cm) expressed in cm (weighted average) for the available water storage calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "tk0_150s": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk0_150s",
+            "description": "Thickness of soil components used in standard zone 5 (0-150 cm) expressed in cm (weighted average) for the Soil Organic Carbon calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "tk0_999a": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk0_999a",
+            "description": "Thickness of soil components used in total soil profile (0 cm to the reported depth of the soil profile) expressed in cm (weighted average) for the available water storage calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "tk0_999s": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk0_999s",
+            "description": "Thickness of soil components used in total soil profile (0 cm to the reported depth of the soil profile) expressed in cm (weighted average) for the Soil Organic Carbon calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "tk20_50a": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk20_50a",
+            "description": "Thickness of soil components used in standard layer 3 (20-50 cm) expressed in cm (weighted average) for the available water storage calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "tk20_50s": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk20_50s",
+            "description": "Thickness of soil components used in standard layer 3 (20-50 cm) expressed in cm (weighted average) for the Soil Organic Carbon calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "aws50_100": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "aws50_100",
+            "description": "Available water storage estimate (AWS) in standard layer 3 (50-100 cm depth), expressed in mm. The volume of plant available water that the soil can store in this layer based on all map unit components (weighted average). NULL values are presented where data are incomplete or not available."
+        },
+        "musumcpct": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "musumcpct",
+            "description": "The sum of the comppct_r (SSURGO component table) values for all listed components in the map unit. Useful metadata information. NULL values are presented where data are incomplete or not available."
+        },
+        "nccpi3all": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "nccpi3all",
+            "description": "National Commodity Crop Productivity Index that has the highest value among Corn and Soybeans, Small Grains, or Cotton (weighted average) for major earthy components. Values range from .01 (low productivity) to .99 (high productivity). Earthy components are those soil series or higher level taxa components that can support crop growth (Dobos et al., 2012). Major components are those soil components where the majorcompflag = 'Yes' (SSURGO component table). NULL values are presented where data are incomplete or not available."
+        },
+        "nccpi3cot": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "nccpi3cot",
+            "description": "National Commodity Crop Productivity Index for Cotton (weighted average) for major earthy components. Values range from .01 (low productivity) to .99 (high productivity). Earthy components are those soil series or higher level taxa components that can support crop growth (Dobos et al., 2012). Major components are those soil components where the majorcompflag = 'Yes' (SSURGO component table). NULL values are presented where data are incomplete or not available."
+        },
+        "nccpi3soy": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "nccpi3soy",
+            "description": "National Commodity Crop Productivity Index for Soybeans (weighted average) for major earthy components. Values range from .01 (low productivity) to .99 (high productivity). Earthy components are those soil series or higher level taxa components that can support crop growth (Dobos et al., 2012). Major components are those soil components where the majorcompflag = 'Yes' (SSURGO component table). NULL values are presented where data are incomplete or not available."
+        },
+        "pwsl1pomu": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "pwsl1pomu",
+            "description": "Potential Wetland Soil Landscapes (PWSL) is expressed as the percentage of the map unit that meets the PWSL criteria. The hydric rating (soil component variable \u201chydricrating\u201d) is an indicator of wet soils. For version 1 (pwsl1), those soil components that meet the following criteria are tagged as PWSL and their comppct_r values are summed for each map unit. Soil components with hydricrating = 'YES' are considered PWSL. Soil components with hydricrating = \u201cNO\u201d are not PWSL. Soil components with hydricrating = 'UNRANKED' are tested using other attributes, and will be considered PWSL if any of the following conditions are met: drainagecl = 'Poorly drained' or 'Very poorly drained' or the localphase or the otherph data fields contain any of the phrases \"drained\" or \"undrained\" or \"channeled\" or \"protected\" or \"ponded\" or \"flooded\". If these criteria do not determine the PWSL for a component and hydricrating = 'UNRANKED', then the map unit will be classified as PWSL if the map unit name contains any of the phrases \"drained\" or \"undrained\" or \"channeled\" or \"protected\" or \"ponded\" or \"flooded\". For version 1 (pwsl1), waterbodies are identified as \"999\" when map unit names match a list of terms that identify water or intermittent water or map units have a sum of the comppct_r for \"Water\" that is 80% or greater. NULL values are presented where data are incomplete or not available."
+        },
+        "rootznaws": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "rootznaws",
+            "description": "Root zone (commodity crop) available water storage estimate (RZAWS) , expressed in mm, is the volume of plant available water that the soil can store within the root zone based on all map unit earthy major components (weighted average). Earthy components are those soil series or higher level taxa components that can support crop growth (Dobos et al., 2012). Major components are those soil components where the majorcompflag = 'Yes' (SSURGO component table). NULL values are presented where data are incomplete or not available."
+        },
+        "rootznemc": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "rootznemc",
+            "description": "Root zone depth is the depth within the soil profile that commodity crop (cc) roots can effectively extract water and nutrients for growth. Root zone depth influences soil productivity significantly. Soil component horizon criteria for root-limiting depth include: presence of hard bedrock, soft bedrock, a fragipan, a duripan, sulfuric material, a dense layer, a layer having a pH of less than 3.5, or a layer having an electrical conductivity of more than 12 within the component soil profile. If no root-restricting zone is identified, a depth of 150 cm is used to approximate the root zone depth (Dobos et al., 2012). Root zone depth is computed for all map unit major earthy components (weighted average). Earthy components are those soil series or higher level taxa components that can support crop growth (Dobos et al., 2012). Major components are those soil components where the majorcompflag = 'Yes' (SSURGO component table). NULL values are presented where data are incomplete or not available."
+        },
+        "soc50_100": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "soc50_100",
+            "description": "Soil organic carbon stock estimate (SOC) in standard layer 4 (50-100 cm depth). The concentration of organic carbon present in the soil expressed in grams C per square meter for the 50-100 cm layer. NULL values are presented where data are incomplete or not available."
+        },
+        "tk50_100a": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk50_100a",
+            "description": "Thickness of soil components used in standard layer 4 (50-100 cm) expressed in cm (weighted average) for the available water storage calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "tk50_100s": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk50_100s",
+            "description": "Thickness of soil components used in standard layer 4 (50-100 cm) expressed in cm (weighted average) for the Soil Organic Carbon calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "aws100_150": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "aws100_150",
+            "description": "Available water storage estimate (AWS) in standard layer 5 (100-150 cm depth), expressed in mm. The volume of plant available water that the soil can store in this layer based on all map unit components (weighted average). NULL values are presented where data are incomplete or not available."
+        },
+        "aws150_999": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "aws150_999",
+            "description": "Available water storage estimate (AWS) in standard layer 6 (150 cm to the reported depth of the soil profile), expressed in mm. The volume of plant available water that the soil can store in this layer based on all map unit components (weighted average). NULL values are presented where data are incomplete or not available."
+        },
+        "musumcpcta": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "musumcpcta",
+            "description": "The sum of the comppct_r (SSURGO component table) values used in the available water storage calculation for the map unit. Useful metadata information. NULL values are presented where data are incomplete or not available."
+        },
+        "musumcpcts": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "musumcpcts",
+            "description": "The sum of the comppct_r (SSURGO component table) values used in the soil organic carbon calculation for the map unit. Useful metadata information. NULL values are presented where data are incomplete or not available."
+        },
+        "nccpi3corn": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "nccpi3corn",
+            "description": "National Commodity Crop Productivity Index for Corn (weighted average) for major earthy components. Values range from .01 (low productivity) to .99 (high productivity). Earthy components are those soil series or higher level taxa components that can support crop growth (Dobos et al., 2012). Major components are those soil components where the majorcompflag = 'Yes' (SSURGO component table). NULL values are presented where data are incomplete or not available."
+        },
+        "pctearthmc": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "pctearthmc",
+            "description": "The National Commodity Crop Productivity Index map unit percent earthy is the map unit summed comppct_r for major earthy components. Earthy components are those soil series or higher level taxa components that can support crop growth (Dobos et al., 2012). Major components are those soil components where the majorcompflag = 'Yes' (SSURGO component table). Useful metadata information. NULL values are presented where data are incomplete or not available."
+        },
+        "soc100_150": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "soc100_150",
+            "description": "Soil organic carbon stock estimate (SOC) in standard layer 5 (100-150 cm depth). The concentration of organic carbon present in the soil expressed in grams C per square meter for the 100-150 cm layer. NULL values are presented where data are incomplete or not available."
+        },
+        "soc150_999": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "soc150_999",
+            "description": "Soil organic carbon stock estimate (SOC) in standard layer 6 (150 cm to the reported depth of the soil profile). The concentration of organic carbon present in the soil expressed in grams C per square meter for the 150 cm and greater depth layer. NULL values are presented where data are incomplete or not available."
+        },
+        "tk100_150a": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk100_150a",
+            "description": "Thickness of soil components used in standard layer 5 (100-150 cm) expressed in cm (weighted average) for the available water storage calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "tk100_150s": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk100_150s",
+            "description": "Thickness of soil components used in standard layer 5 (100-150 cm) expressed in cm (weighted average) for the Soil Organic Carbon calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "tk150_999a": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk150_999a",
+            "description": "Thickness of soil components used in standard layer 6 (150 cm to the reported depth of the soil profile) expressed in cm (weighted average) for the available water storage calculation. NULL values are presented where data are incomplete or not available."
+        },
+        "tk150_999s": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "tk150_999s",
+            "description": "Thickness of soil components used in standard layer 6 (150 cm to the reported depth of the soil profile) expressed in cm (weighted average) for the Soil Organic Carbon calculation. NULL values are presented where data are incomplete or not available."
+        }
+    },
+    "msft:group_id": "gnatsgo",
+    "msft:container": "gnatsgo-stac",
+    "msft:storage_account": "soils",
+    "msft:short_description": "Raster data for the gridded National Soil Survey Geographic Database (gNATSGO), a USDA-NRCS Soil & Plant Science Division (SPSD) composite database that provides complete coverage of the best available soils information for all areas of the United States and Island Territories.",
+    "msft:region": "westeurope",
+    "title": "gNATSGO Soil Database - Rasters",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -170.8513,
+                    -14.3799,
+                    -169.4152,
+                    -14.1432
+                ],
+                [
+                    138.0315,
+                    5.116,
+                    163.1902,
+                    10.2773
+                ],
+                [
+                    144.6126,
+                    13.2327,
+                    144.9658,
+                    13.6572
+                ],
+                [
+                    -159.7909,
+                    18.8994,
+                    -154.7815,
+                    22.2464
+                ],
+                [
+                    170.969,
+                    6.0723,
+                    171.9169,
+                    8.71933
+                ],
+                [
+                    145.0127,
+                    14.1086,
+                    145.9242,
+                    18.8172
+                ],
+                [
+                    130.8048,
+                    2.9268,
+                    134.9834,
+                    8.0947
+                ],
+                [
+                    157.3678,
+                    49.0546,
+                    -117.2864,
+                    71.4567
+                ],
+                [
+                    -67.9506,
+                    17.014,
+                    -64.3973,
+                    19.3206
+                ],
+                [
+                    -127.8881,
+                    22.8782,
+                    -65.2748,
+                    51.6039
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2020-07-01T00:00:00Z",
+                    "2020-07-01T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "CC0-1.0",
+    "keywords": [
+        "Soils",
+        "NATSGO",
+        "SSURGO",
+        "STATSGO2",
+        "RSS",
+        "USDA",
+        "United States"
+    ],
+    "providers": [
+        {
+            "name": "United States Department of Agriculture, Natural Resources Conservation Service",
+            "roles": [
+                "licensor",
+                "producer",
+                "processor",
+                "host"
+            ],
+            "url": "https://www.nrcs.usda.gov/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "processor",
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/gnatsgo-rasters.png",
+            "type": "image/png",
+            "title": "gNATSGO",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/gnatsgo-rasters.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}

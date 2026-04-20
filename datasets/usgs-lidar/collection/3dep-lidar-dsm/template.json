@@ -1,0 +1,142 @@
+{
+    "type": "Collection",
+    "id": "3dep-lidar-dsm",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://www.usgs.gov/3d-elevation-program/about-3dep-products-services",
+            "title": "About 3DEP Products & Services"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/3dep-lidar-dsm",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.1.0/schema.json#",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "item_assets": {
+        "data": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "COG data",
+            "raster:bands": [
+                {
+                    "type": "Z",
+                    "unit": "metre",
+                    "sampling": "point",
+                    "data_type": "float32",
+                    "description": "Z PDAL Dimension"
+                }
+            ]
+        },
+        "thumbnail": {
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "3DEP Lidar COG"
+        }
+    },
+    "msft:group_id": "3dep-lidar",
+    "msft:container": "usgs-3dep-cogs",
+    "msft:storage_account": "usgslidareuwest",
+    "msft:short_description": "3DEP Lidar collection for the Digital Surface Model (DSM) Cloud Optimized Geotiffs (COGs).",
+    "msft:region": "westeurope",
+    "title": "USGS 3DEP Lidar Digital Surface Model",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -166.8546920006028,
+                    17.655357747708283,
+                    -64.56116757979399,
+                    71.39330810146807
+                ],
+                [
+                    144.60180842809473,
+                    13.21774453924126,
+                    146.08202179248926,
+                    18.18369664008955
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2012-01-01T00:00:00Z",
+                    "2022-01-01T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "USGS",
+        "3DEP",
+        "COG",
+        "DSM"
+    ],
+    "providers": [
+        {
+            "name": "Landrush",
+            "roles": [
+                "processor",
+                "producer"
+            ]
+        },
+        {
+            "name": "USGS",
+            "roles": [
+                "processor",
+                "producer",
+                "licensor"
+            ],
+            "url": "https://www.usgs.gov/core-science-systems/ngp/3dep/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "gsd": [
+            2.0
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/dsm-thumbnail.png",
+            "type": "image/png",
+            "title": "3DEP Lidar COG",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/3dep-lidar-dsm.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "AS"
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}

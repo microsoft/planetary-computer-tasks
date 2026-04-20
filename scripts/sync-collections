@@ -1,0 +1,150 @@
+#!/usr/bin/env python
+from __future__ import annotations
+
+import json
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
+
+from pystac import Collection
+from pystac_client import Client
+
+DATASETS = Path(__file__).parents[1] / "datasets"
+COLLECTION_DESCRIPTION = r"{{ collection.description }}"
+
+
+@dataclass
+class LocalCollection:
+    id: str
+    directory: Path
+    template: dict[str, Any]
+    description: str | None
+    has_config: bool
+
+    @classmethod
+    def from_path_and_data(cls, path: Path, data: dict[str, Any]) -> LocalCollection:
+        directory = path.parent
+        description = data.get("description")
+        if description == COLLECTION_DESCRIPTION:
+            description_path = directory / "description.md"
+            if description_path.exists():
+                description = description_path.read_text()
+            else:
+                description = None
+        config_path = path.parent / "config.json"
+        return cls(
+            id=data["id"],
+            directory=directory,
+            template=data,
+            description=description,
+            has_config=config_path.exists(),
+        )
+
+    @classmethod
+    def from_collection(cls, collection: Collection) -> LocalCollection:
+        directory = (
+            next(DATASETS.glob(f"**/{collection.id}"), None)
+            or DATASETS / collection.id / "collection"
+        )
+        directory.mkdir(exist_ok=True, parents=True)
+        description = collection.description
+        collection.description = COLLECTION_DESCRIPTION
+        config_path = directory / "config.json"
+        template = collection.to_dict(include_self_link=False, transform_hrefs=False)
+        template = clean_template(template)
+        return LocalCollection(
+            id=collection.id,
+            directory=directory,
+            template=template,
+            description=description,
+            has_config=config_path.exists(),
+        )
+
+    def update(self, collection: Collection) -> None:
+        if collection.description != COLLECTION_DESCRIPTION:
+            self.description = collection.description
+            collection.description = COLLECTION_DESCRIPTION
+        template = collection.to_dict(include_self_link=False, transform_hrefs=False)
+        self.template = clean_template(template)
+        self.has_config = (self.directory / "config.json").exists()
+
+    def save(self) -> None:
+        (self.directory / "template.json").write_text(
+            json.dumps(
+                self.template,
+                indent=4,
+            )
+        )
+        if self.description:
+            (self.directory / "description.md").write_text(self.description)
+        else:
+            print(f"Collection '{self.id}' is missing a description")
+
+
+def discover_local_collections() -> dict[str, LocalCollection]:
+    local_collections = {}
+    for json_path in DATASETS.glob("**/*.json"):
+        data = json.loads(json_path.read_text())
+        if data.get("type") == "Collection":
+            if "stac_version" not in data:
+                data["stac_version"] = "1.0.0"
+            local_collection = LocalCollection.from_path_and_data(json_path, data)
+            local_collections[local_collection.id] = local_collection
+    return local_collections
+
+
+def clean_template(template: dict[str, Any]) -> dict[str, Any]:
+    template["links"] = list(
+        link
+        for link in template["links"]
+        if link["rel"]
+        not in (
+            "parent",
+            "root",
+            "items",
+            "http://www.opengis.net/def/rel/ogc/1.0/queryables",
+        )
+    )
+    return template
+
+
+def main() -> None:
+    local_collections = discover_local_collections()
+    client = Client.open("https://planetarycomputer.microsoft.com/api/stac/v1")
+    missing_configs = []
+    missing_storage_accounts = []
+    missing_containers = []
+    for collection in client.get_collections():
+        print("Syncing", collection.id)
+        local_collection = local_collections.get(collection.id)
+        if local_collection:
+            local_collection.update(collection)
+        else:
+            local_collection = LocalCollection.from_collection(collection)
+        local_collection.save()
+        if not local_collection.has_config:
+            missing_configs.append(local_collection)
+        if "msft:storage_account" not in local_collection.template:
+            missing_storage_accounts.append(local_collection)
+        if "msft:container" not in local_collection.template:
+            missing_containers.append(local_collection)
+
+    if missing_configs:
+        print(
+            "These collections are missing config.json files:",
+            ", ".join((c.id for c in missing_configs)),
+        )
+    if missing_storage_accounts:
+        print(
+            "These collections are missing msft:storage_account in their template:",
+            ", ".join((c.id for c in missing_storage_accounts)),
+        )
+    if missing_containers:
+        print(
+            "These collections are missing msft:container in their template:",
+            ", ".join((c.id for c in missing_containers)),
+        )
+
+
+if __name__ == "__main__":
+    main()

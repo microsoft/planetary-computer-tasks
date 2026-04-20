@@ -1,5 +1,5 @@
 id: noaa-cdr
-image: ${{ args.registry }}/pctasks-noaa-cdr:2023.4.28.0
+image: ${{ args.registry }}/pctasks-noaa-cdr:2026.01.12
 args:
   - registry
 code:

@@ -1,10 +1,8 @@
 {
-    "stac_version": "1.0.0",
     "type": "Collection",
     "id": "noaa-nclimgrid-monthly",
-    "title": "Monthly NOAA U.S. Climate Gridded Dataset (NClimGrid)",
+    "stac_version": "1.0.0",
     "description": "{{ collection.description }}",
-    "license": "proprietary",
     "links": [
         {
             "rel": "cite-as",
@@ -23,6 +21,12 @@
             "href": "https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332",
             "type": "text/html",
             "title": "Product Landing Page"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/noaa-nclimgrid-monthly",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
         }
     ],
     "stac_extensions": [
@@ -30,62 +34,82 @@
         "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
         "https://stac-extensions.github.io/raster/v1.1.0/schema.json"
     ],
-    "keywords": [
-        "United States",
-        "NOAA",
-        "NClimGrid",
-        "Climate",
-        "Precipitation",
-        "Temperature"
-    ],
-    "msft:short_description": "Gridded surface observations of monthly temperature and precipitation for the continental United States",
-    "msft:storage_account": "nclimgridwesteurope",
-    "msft:container": "nclimgrid-cogs",
-    "msft:region": "westeurope",
-    "msft:group_id": "noaa-nclimgrid",
-    "providers": [
-        {
-            "name": "NOAA National Centers for Environmental Information",
+    "sci:doi": "10.7289/V5SX6B56",
+    "item_assets": {
+        "prcp": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
-                "producer",
-                "licensor"
+                "data"
             ],
-            "url": "https://www.ncei.noaa.gov/"
-        },
-        {
-            "name": "Microsoft",
-            "roles": [
-                "processor",
-                "host"
-            ],
-            "url": "https://planetarycomputer.microsoft.com"
-        }
-    ],
-    "assets": {
-        "thumbnail": {
-            "title": "Monthly NOAA NClimGrid Thumbnail",
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-nclimgrid-monthly-thumb.png",
-            "type": "image/png",
-            "roles": [
-                "thumbnail"
+            "title": "Monthly Precipitation (mm)",
+            "raster:bands": [
+                {
+                    "unit": "mm",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
             ]
         },
-        "geoparquet-items": {
-            "href": "abfs://items/noaa-nclimgrid-monthly.parquet",
-            "type": "application/x-parquet",
+        "tavg": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
-                "stac-items"
+                "data"
             ],
-            "title": "GeoParquet STAC items",
-            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
-            "msft:partition_info": {
-                "is_partitioned": false
-            },
-            "table:storage_options": {
-                "account_name": "pcstacitems"
-            }
-        } 
+            "title": "Monthly Average Temperature (degree Celsius)",
+            "raster:bands": [
+                {
+                    "unit": "degree Celsius",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tmax": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Monthly Maximmum Temperature (degree Celsius)",
+            "raster:bands": [
+                {
+                    "unit": "degree Celsius",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        },
+        "tmin": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Monthly Minimum Temperature (degree Celsius)",
+            "raster:bands": [
+                {
+                    "unit": "degree Celsius",
+                    "nodata": "nan",
+                    "data_type": "float32",
+                    "spatial_resolution": 5000
+                }
+            ]
+        }
     },
+    "sci:citation": "Vose, Russell S., Applequist, Scott, Squires, Mike, Durre, Imke, Menne, Matthew J., Williams, Claude N. Jr., Fenimore, Chris, Gleason, Karin, and Arndt, Derek (2014): NOAA Monthly U.S. Climate Gridded Dataset (NClimGrid), Version 1. NOAA National Centers for Environmental Information. DOI:10.7289/V5SX6B56.",
+    "msft:group_id": "noaa-nclimgrid",
+    "msft:container": "nclimgrid-cogs",
+    "sci:publications": [
+        {
+            "doi": "10.1175/JAMC-D-13-0248.1",
+            "citation": "Vose, R. S., Applequist, S., Squires, M., Durre, I., Menne, M. J., Williams, C. N., Jr., Fenimore, C., Gleason, K., & Arndt, D. (2014). Improved Historical Temperature and Precipitation Time Series for U.S. Climate Divisions, Journal of Applied Meteorology and Climatology, 53(5), 1232-1251."
+        }
+    ],
+    "msft:storage_account": "nclimgridwesteurope",
+    "msft:short_description": "Gridded surface observations of monthly temperature and precipitation for the continental United States",
+    "msft:region": "westeurope",
+    "title": "Monthly NOAA U.S. Climate Gridded Dataset (NClimGrid)",
     "extent": {
         "spatial": {
             "bbox": [
@@ -106,74 +130,56 @@
             ]
         }
     },
-    "item_assets": {
-        "prcp": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "roles": [
-                "data"
-            ],
-            "title": "Monthly Precipitation (mm)",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "mm",
-                    "spatial_resolution": 5000
-                }
-            ]
-        },
-        "tavg": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "roles": [
-                "data"
-            ],
-            "title": "Monthly Average Temperature (degree Celsius)",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "degree Celsius",
-                    "spatial_resolution": 5000
-                }
-            ]
-        },
-        "tmax": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "roles": [
-                "data"
-            ],
-            "title": "Monthly Maximmum Temperature (degree Celsius)",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "degree Celsius",
-                    "spatial_resolution": 5000
-                }
-            ]
-        },
-        "tmin": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "roles": [
-                "data"
-            ],
-            "title": "Monthly Minimum Temperature (degree Celsius)",
-            "raster:bands": [
-                {
-                    "data_type": "float32",
-                    "nodata": "nan",
-                    "unit": "degree Celsius",
-                    "spatial_resolution": 5000
-                }
-            ]
-        }
-    },
-    "sci:doi": "10.7289/V5SX6B56",
-    "sci:citation": "Vose, Russell S., Applequist, Scott, Squires, Mike, Durre, Imke, Menne, Matthew J., Williams, Claude N. Jr., Fenimore, Chris, Gleason, Karin, and Arndt, Derek (2014): NOAA Monthly U.S. Climate Gridded Dataset (NClimGrid), Version 1. NOAA National Centers for Environmental Information. DOI:10.7289/V5SX6B56.",
-    "sci:publications": [
+    "license": "proprietary",
+    "keywords": [
+        "United States",
+        "NOAA",
+        "NClimGrid",
+        "Climate",
+        "Precipitation",
+        "Temperature"
+    ],
+    "providers": [
         {
-            "doi": "10.1175/JAMC-D-13-0248.1",
-            "citation": "Vose, R. S., Applequist, S., Squires, M., Durre, I., Menne, M. J., Williams, C. N., Jr., Fenimore, C., Gleason, K., & Arndt, D. (2014). Improved Historical Temperature and Precipitation Time Series for U.S. Climate Divisions, Journal of Applied Meteorology and Climatology, 53(5), 1232-1251."
+            "name": "NOAA National Centers for Environmental Information",
+            "roles": [
+                "producer",
+                "licensor"
+            ],
+            "url": "https://www.ncei.noaa.gov/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "processor",
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
         }
-    ]
+    ],
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-nclimgrid-monthly-thumb.png",
+            "type": "image/png",
+            "title": "Monthly NOAA NClimGrid Thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/noaa-nclimgrid-monthly.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
 }

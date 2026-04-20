@@ -1,0 +1,321 @@
+{
+    "type": "Collection",
+    "id": "us-census",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://www.census.gov/about/policies/open-gov/open-data.html",
+            "type": "text/html",
+            "title": "U.S. Census Open Data Policy"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/us-census",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "item_assets": {
+        "data": {
+            "type": "application/x-parquet",
+            "roles": [
+                "data"
+            ],
+            "title": "Dataset root",
+            "table:storage_options": {
+                "account_name": "ai4edataeuwest"
+            }
+        }
+    },
+    "table:tables": [
+        {
+            "name": "American Indian/Alaska Native Areas/Hawaiian Home Lands (AIANNH)",
+            "description": "This file contains data for legal and statistical [American Indian/Alaska Native Areas/Hawaiian Home Lands (AIANNH)](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_1) entities published by the US Census Bureau.",
+            "msft:item_name": "cb_2020_us_aiannh_500k"
+        },
+        {
+            "name": "American Indian Tribal Subdivisions (AITSN)",
+            "description": "This file contains data on [American Indian Tribal Subdivisions](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_1). These areas are the legally defined subdivisions of American Indian Reservations (AIR), Oklahoma Tribal Statistical Areas (OTSA), and Off-Reservation Trust Land (ORTL).",
+            "msft:item_name": "cb_2020_us_aitsn_500k"
+        },
+        {
+            "name": "Alaska Native Regional Corporations (ANRC)",
+            "description": "This file contains data on [Alaska Native Regional Corporations](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_1), which are corporations created according to the Alaska Native Claims Settlement Act. ",
+            "msft:item_name": "cb_2020_02_anrc_500k"
+        },
+        {
+            "name": "Tribal Block Groups (TBG)",
+            "description": "This file includes data on [Tribal Block Groups](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_26), which are subdivisions of Tribal Census Tracts. These block groups can extend over multiple AIRs and ORTLs due to areas not meeting Block Group minimum population thresholds.",
+            "msft:item_name": "cb_2020_us_tbg_500k"
+        },
+        {
+            "name": "Tribal Census Tracts (TTRACT)",
+            "description": "This file includes data on [Tribal Census Tracts](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_27) which are relatively small statistical subdivisions of AIRs and ORTLs defined by federally recognized tribal government officials in partnership with the Census Bureau. Due to population thresholds, the Tracts may consist of multiple non-contiguous areas.",
+            "msft:item_name": "cb_2020_us_ttract_500k"
+        },
+        {
+            "name": "Census Block Groups (BG)",
+            "description": "This file contains data on [Census Block Groups](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_4). These groups are the second smallest geographic grouping. They consist of clusters of blocks within the same census tract that share the same first digit of their 4-character census block number. Census Block Groups generally contain between 600 and 3,000 people and generally cover contiguous areas.",
+            "msft:item_name": "cb_2020_us_bg_500k"
+        },
+        {
+            "name": "Census Tracts (TRACT)",
+            "description": "This file contains data on [Census Tracts](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_13) which are small and relatively permanent statistical subdivisions of a county or equivalent entity. Tract population size is generally between 1,200 and 8,000 people with an ideal size of 4,000. Boundaries tend to follow visible and identifiable features and are usually contiguous areas.",
+            "msft:item_name": "cb_2020_us_tract_500k"
+        },
+        {
+            "name": "Congressional Districts: 116th Congress (CD116)",
+            "description": "This file contains data on the [Congressional Districts](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_9) for the 116th Congress. ",
+            "msft:item_name": "cb_2020_us_cd116_500k"
+        },
+        {
+            "name": "Consolidated Cities (CONCITY)",
+            "description": "This file contains data on [Consolidated Cities](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_8). These are areas where one or several other incorporated places in a county or Minor Civil Division are included in a consolidated government but still exist as separate legal entities.",
+            "msft:item_name": "cb_2020_us_concity_500k"
+        },
+        {
+            "name": "Counties (COUNTY)",
+            "description": "This file contains data on [Counties and Equivalent Entities](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_12). These are the primary legal divisions of states. Most states use the term \"counties,\" but other terms such as \"Parishes,\" \"Municipios,\" or \"Independent Cities\" may be used. ",
+            "msft:item_name": "cb_2020_us_county_500k"
+        },
+        {
+            "name": "Counties within Congressional Districts: 116th Congress (COUNTY_within_CD116)",
+            "description": "This file contains data on Counties within Congressional Districts.",
+            "msft:item_name": "cb_2020_us_county_within_cd116_500k"
+        },
+        {
+            "name": "County Subdivisions (COUSUB)",
+            "description": "This file contains [County Subdivisions](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_11), which are the primary divisions of counties and equivalent entities. These divisions vary from state to state and include Barrios, Purchases, Townships, and other types of legal and statistical entities. ",
+            "msft:item_name": "cb_2020_us_cousub_500k"
+        },
+        {
+            "name": "Divisions (DIVISION)",
+            "description": "This file contains data on [Divisions](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_10) of the US. This file is similar to the Regions file but contains more divisions and encompasses several states per division.",
+            "msft:item_name": "cb_2020_us_division_500k"
+        },
+        {
+            "name": "Core Based Statistical Areas (CBSAs)",
+            "description": "This file contains data on [Core Based Statistical Areas (CBSAs)](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_7). This encompasses all metropolitan and micropolitan statistical areas.",
+            "msft:item_name": "cb_2020_us_cbsa_500k"
+        },
+        {
+            "name": "Combined Statistical Areas (CSA)",
+            "description": "This file contains data on [Combined Statistical Areas](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_7), which are areas that consist of two or more adjacent CBSAs that have significant employment interchanges.",
+            "msft:item_name": "cb_2020_us_csa_500k"
+        },
+        {
+            "name": "Metropolitan Divisions (METDIV)",
+            "description": "This file contains data on [Metropolitan Divisions](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_7). These areas are groupings of counties or equivalent entities within a metropolitan statistical area with a core of 2.5 million inhabitants and one or more main counties that represent employment centers, plus adjacent counties with commuting ties.",
+            "msft:item_name": "cb_2020_us_metdiv_500k"
+        },
+        {
+            "name": "New England City and Town Areas (NECTA)",
+            "description": "This file contains [New England City and Town Areas](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_7), which encompass metropolitan and micropolitan statistical areas and urban clusters in New England.",
+            "msft:item_name": "cb_2020_us_necta_500k"
+        },
+        {
+            "name": "New England City and Town Area Division (NECTADIV)",
+            "description": "This file contains [New England City and Town Areas Divisions](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_7), which are smaller groupings of cities and towns in New England that contain a single core of 2.5 million inhabitants. Each division must have a total population of 100,000 or more.",
+            "msft:item_name": "cb_2020_us_nectadiv_500k"
+        },
+        {
+            "name": "Combined New England City and Town Areas (CNECTA)",
+            "description": "This file contains data on [Combined New England City and Town Areas](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_7), consisting of two or more adjacent NECTAs that have significant employment interchanges.",
+            "msft:item_name": "cb_2020_us_cnecta_500k"
+        },
+        {
+            "name": "Places (PLACE)",
+            "description": "This file contains [Places](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_14) which are Incorporated Places (legal entities) and Census Designated Places (CDPs, statistical entities). An incorporated place usually is a city, town, village, or borough but can have other legal descriptions. CDPs are settled concentrations of population that are identifiable by name but are not legally incorporated.",
+            "msft:item_name": "cb_2020_us_place_500k"
+        },
+        {
+            "name": "Regions (REGION)",
+            "description": "This file contains [Regions](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_10) of the US and encompasses several states per division.",
+            "msft:item_name": "cb_2020_us_region_500k"
+        },
+        {
+            "name": "School Districts - Elementary (ELSD)",
+            "description": "This file contains [Elementary School Districts](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_23), referring to districts with elementary schools.",
+            "msft:item_name": "cb_2020_us_elsd_500k"
+        },
+        {
+            "name": "School Districts - Secondary (SCSD)",
+            "description": "This file contains [Secondary School Districts](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_23), referring to districts with secondary schools.",
+            "msft:item_name": "cb_2020_us_scsd_500k"
+        },
+        {
+            "name": "School Districts - Unified (UNSD)",
+            "description": "This file contains [Unified School Districts](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_23), referring to districts that provide education to children of all school ages. Unified school districts can have both secondary and elementary schools.",
+            "msft:item_name": "cb_2020_us_unsd_500k"
+        },
+        {
+            "name": "State Legislative Districts - Lower Chamber (SLDL)",
+            "description": "This file contains [Lower Chamber State Legislative Districts](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_24).",
+            "msft:item_name": "cb_2020_us_sldl_500k"
+        },
+        {
+            "name": "State Legislative Districts - Upper Chamber (SLDU)",
+            "description": "This file contains [Upper Chamber State Legislative Districts](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_24).",
+            "msft:item_name": "cb_2020_us_sldu_500k"
+        },
+        {
+            "name": "States (STATE)",
+            "description": "This file contains the [US States and State Equivalent Entities](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_25). Within Census Bureau datasets, the District of Columbia, Puerto Rico, and the Island Areas (American Samoa, the Commonwealth of the Northern Mariana Islands, Guam, and the US Virgin Islands) are treated as statistical equivalents of states alongside the 50 US states.",
+            "msft:item_name": "cb_2020_us_state_500k"
+        },
+        {
+            "name": "Subbarrios (SUBBARRIO)",
+            "description": "This file contains [Subbarrios](https://www.census.gov/programs-surveys/geography/about/glossary.html#pr), which are legally defined subdivisions of Minor Civil Division in Puerto Rico. They don\"t exist within every Minor Civil Division and don\"t always cover the entire Minor Civil Division where they do exist.",
+            "msft:item_name": "cb_2020_72_subbarrio_500k"
+        },
+        {
+            "name": "United States Outline",
+            "description": "This file contains the [United States Outline](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_30) shapefile. This contains all 50 US states plus the District of Columbia, Puerto Rico, and the Island Areas (American Samoa, the Commonwealth of the Northern Mariana Islands, Guam, and the US Virgin Islands). There is only one feature within this dataset.",
+            "msft:item_name": "cb_2020_us_nation_5m"
+        },
+        {
+            "name": "Voting Districts (VTD)",
+            "description": "This file contains all [US Voting Districts](https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_31), which are geographic features established by state, local and tribal governments to conduct elections.",
+            "msft:item_name": "cb_2020_us_vtd_500k"
+        }
+    ],
+    "msft:container": "us-census",
+    "msft:storage_account": "ai4edataeuwest",
+    "msft:short_description": "United States population counts at various levels of cartographic aggregation",
+    "msft:region": "westeurope",
+    "title": "US Census",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -124.763068,
+                    24.523096,
+                    -66.949895,
+                    49.384358
+                ],
+                [
+                    -179.148909,
+                    51.214183,
+                    -129.974167,
+                    71.365162
+                ],
+                [
+                    172.461667,
+                    51.357688,
+                    179.77847,
+                    53.01075
+                ],
+                [
+                    -178.334698,
+                    18.910361,
+                    -154.806773,
+                    28.402123
+                ],
+                [
+                    144.618068,
+                    13.234189,
+                    144.956712,
+                    13.654383
+                ],
+                [
+                    -67.945404,
+                    17.88328,
+                    -65.220703,
+                    18.515683
+                ],
+                [
+                    144.886331,
+                    14.110472,
+                    146.064818,
+                    20.553802
+                ],
+                [
+                    -65.085452,
+                    17.673976,
+                    -64.564907,
+                    18.412655
+                ],
+                [
+                    -171.089874,
+                    -14.548699,
+                    -168.1433,
+                    -11.046934
+                ],
+                [
+                    -178.334698,
+                    18.910361,
+                    -154.806773,
+                    28.402123
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2021-08-01T00:00:00Z",
+                    "2021-08-01T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "US Census Bureau",
+        "Administrative boundaries",
+        "Population",
+        "Demographics"
+    ],
+    "providers": [
+        {
+            "name": "United States Census Bureau",
+            "roles": [
+                "producer",
+                "licensor",
+                "processor"
+            ],
+            "url": "https://www.census.gov/en.html"
+        },
+        {
+            "name": "makepath",
+            "roles": [
+                "processor"
+            ],
+            "url": "https://makepath.com/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/us-census.png",
+            "type": "image/png",
+            "title": "US Census"
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/us-census.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}

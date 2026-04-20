@@ -18,3 +18,11 @@ def test_ecmwf(href: str) -> None:
         assert item.properties["ecmwf:resolution"] == "0.40"
     if "/0p25/" in href:
         assert item.properties["ecmwf:resolution"] == "0.25"
+
+
+def test_scda() -> None:
+    href = "blob://ai4edataeuwest/ecmwf/20230702/06z/0p4-beta/scda/20230702060000-0h-scda-fc.grib2"
+    storage_factory = StorageFactory()
+    items = EcmwfCollection.create_item(href, storage_factory)
+    assert isinstance(items, list)
+    items[0].validate()

@@ -1,9 +1,9 @@
 id: sentinel-1-rtc
-image: ${{ args.registry }}/pctasks-sentinel-1-rtc:20230613.1
+image: ${{ args.registry }}/pctasks-sentinel-1-rtc:2026.01.12
 
 args:
-- registry
-- year-prefix
+  - registry
+  - year-prefix
 
 code:
   src: ${{ local.path(./s1rtc.py) }}
@@ -29,9 +29,9 @@ collections:
       - uri: blob://sentinel1euwestrtc/sentinel1-grd-rtc-stac/GRD/${{ args.year-prefix }}
         chunks:
           splits:
-            - depth: 2  # daily
+            - depth: 2 # daily
           options:
             ends_with: _rtc.json
-            chunk_length: 2000  # daily number of files is ~600-800
+            chunk_length: 2000 # daily number of files is ~600-800
     chunk_storage:
       uri: blob://sentinel1euwestrtc/sentinel1-grd-rtc-etl-data/pctasks-chunks/

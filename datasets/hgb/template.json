@@ -1,0 +1,139 @@
+{
+    "type": "Collection",
+    "id": "hgb",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://earthdata.nasa.gov/earth-observation-data/data-use-policy",
+            "title": "EOSDIS Data Use Policy"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/hgb",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "item_assets": {
+        "aboveground": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Global above-ground biomass"
+        },
+        "belowground": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Global below-ground biomass"
+        },
+        "aboveground_uncertainty": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Uncertainty associated with global above-ground biomass"
+        },
+        "belowground_uncertainty": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Uncertainty associated with global below-ground biomass"
+        }
+    },
+    "msft:container": "cpdata",
+    "msft:storage_account": "cpdataeuwest",
+    "msft:short_description": "Global maps of aboveground and belowground biomass carbon density for the year 2010 at 300m resolution",
+    "msft:region": "westeurope",
+    "title": "HGB: Harmonized Global Biomass for 2010",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180.0,
+                    -61.002778,
+                    180.0,
+                    84.0
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2010-12-31T00:00:00Z",
+                    "2010-12-31T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "Biomass",
+        "Carbon",
+        "ORNL"
+    ],
+    "providers": [
+        {
+            "name": "Oak Ridge National Laboratory Distributed Active Archive Center",
+            "roles": [
+                "producer",
+                "licensor"
+            ],
+            "url": "https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=1763"
+        },
+        {
+            "name": "CarbonPlan",
+            "roles": [
+                "processor"
+            ],
+            "url": "https://carbonplan.org"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "gsd": [
+            300
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/hgb.png",
+            "type": "image/png",
+            "title": "Harmonized Global Biomass",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/hgb.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}

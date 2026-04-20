@@ -1,0 +1,27 @@
+# https://dev.azure.com/msazure/One/_workitems/edit/36215771
+
+id: ecmwf_forecast_backfill
+image: ${{ args.registry }}/pctasks-ecmwf-forecast:2026.01.12
+
+args:
+  - registry
+
+code:
+  src: ${{ local.path(./ecmwf_forecast.py) }}
+
+environment:
+  APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+
+collections:
+  - id: ecmwf-forecast
+    template: ${{ local.path(./collection/) }}
+    class: ecmwf_forecast:EcmwfCollection
+    asset_storage:
+      - uri: blob://ai4edataeuwest/ecmwf/
+        chunks:
+          options:
+            matches: /(00z|06z|12z|18z)/(0p25|0p4-beta)/scda(?!-opendata)
+            match_full_path: true
+            extensions: [.grib2]
+    chunk_storage:
+      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/

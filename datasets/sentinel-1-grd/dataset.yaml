@@ -1,9 +1,9 @@
 id: sentinel-1-grd
-image: ${{ args.registry }}/pctasks-sentinel-1-grd:20250708.1
+image: ${{ args.registry }}/pctasks-sentinel-1-grd:2026.01.12
 
 args:
-- registry
-- year-prefix
+  - registry
+  - year-prefix
 
 code:
   src: ${{ local.path(./s1grd.py) }}
@@ -32,6 +32,6 @@ collections:
             - depth: 2 # daily
           options:
             ends_with: manifest.safe
-            chunk_length: 100  # daily number of files is ~600-800
+            chunk_length: 100 # daily number of files is ~600-800
     chunk_storage:
       uri: blob://sentinel1euwest/s1-grd-etl-data/pctasks-chunks/

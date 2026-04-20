@@ -1,0 +1,173 @@
+{
+    "type": "Collection",
+    "id": "mtbs",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://catalog.data.gov/sl/dataset/mtbs-wildfire-burn-severity-mosaics-40c75",
+            "title": "CC BY"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/mtbs",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/file/v2.1.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "item_assets": {
+        "metadata": {
+            "type": "text/html",
+            "roles": [
+                "metadata"
+            ],
+            "title": "Metadata"
+        },
+        "burn-severity": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Burn severity",
+            "file:values": [
+                {
+                    "values": [
+                        0
+                    ],
+                    "summary": "No Data"
+                },
+                {
+                    "values": [
+                        1
+                    ],
+                    "summary": "Unburned to low"
+                },
+                {
+                    "values": [
+                        2
+                    ],
+                    "summary": "Low"
+                },
+                {
+                    "values": [
+                        3
+                    ],
+                    "summary": "Moderate"
+                },
+                {
+                    "values": [
+                        4
+                    ],
+                    "summary": "High"
+                },
+                {
+                    "values": [
+                        5
+                    ],
+                    "summary": "Increased Greenness"
+                }
+            ]
+        }
+    },
+    "msft:container": "cpdata",
+    "msft:storage_account": "cpdataeuwest",
+    "msft:short_description": "Annual burn severity mosaics for the continental United States and Alaska",
+    "msft:region": "westeurope",
+    "title": "MTBS: Monitoring Trends in Burn Severity",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -166.705027,
+                    56.331164,
+                    -137.664767,
+                    69.980073
+                ],
+                [
+                    -127.579429,
+                    23.680916,
+                    -65.871833,
+                    50.870718
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "1984-12-31T00:00:00Z",
+                    "2018-12-31T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "MTBS",
+        "USGS",
+        "USFS",
+        "USDA",
+        "Forest",
+        "Fire"
+    ],
+    "providers": [
+        {
+            "name": "MTBS program",
+            "roles": [
+                "producer",
+                "licensor"
+            ],
+            "url": "https://www.mtbs.gov/"
+        },
+        {
+            "name": "CarbonPlan",
+            "roles": [
+                "processor"
+            ],
+            "url": "https://carbonplan.org"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "gsd": [
+            30
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/mtbs.png",
+            "type": "image/png",
+            "title": "MTBS",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/mtbs.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}

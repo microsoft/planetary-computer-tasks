@@ -1,0 +1,5 @@
+U.S.-wide digital elevation data at horizontal resolutions ranging from one to sixty meters.
+
+The [USGS 3D Elevation Program (3DEP) Datasets](https://www.usgs.gov/core-science-systems/ngp/3dep) from the [National Map](https://www.usgs.gov/core-science-systems/national-geospatial-program/national-map) are the primary elevation data product produced and distributed by the USGS. The 3DEP program provides raster elevation data for the conterminous United States, Alaska, Hawaii, and the island territories, at a variety of spatial resolutions.  The seamless DEM layers produced by the 3DEP program are updated frequently to integrate newly available, improved elevation source data.  
+
+DEM layers are available nationally at grid spacings of 1 arc-second (approximately 30 meters) for the conterminous United States, and at approximately 1, 3, and 9 meters for parts of the United States. Most seamless DEM data for Alaska is available at a resolution of approximately 60 meters, where only lower resolution source data exist.

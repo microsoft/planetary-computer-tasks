@@ -1,208 +1,214 @@
 {
-  "type": "Collection",
-  "id": "noaa-cdr-ocean-heat-content",
-  "stac_version": "1.0.0",
-  "description": "{{ collection.description }}",
-  "links": [
-    {
-      "rel": "license",
-      "href": "https://www.ncei.noaa.gov/pub/data/sds/cdr/CDRs/Ocean_Heat_Content/UseAgreement_01B-41.pdf",
-      "type": "application/pdf",
-      "title": "NOAA CDR Ocean Heat Content Use Agreement"
-    },
-    {
-      "rel": "about",
-      "href": "https://www.ncei.noaa.gov/products/climate-data-records/global-ocean-heat-content",
-      "type": "text/html",
-      "title": "Global Ocean Heat Content CDR"
-    },
-    {
-      "rel": "cite-as",
-      "href": "https://doi.org/10.7289/v53f4mvp"
-    }
-  ],
-  "stac_extensions": [
-    "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
-    "https://stac-extensions.github.io/raster/v1.1.0/schema.json",
-    "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
-  ],
-  "sci:doi": "10.7289/v53f4mvp",
-  "sci:citation": "Levitus, Sydney; Antonov, John I.; Boyer, Tim P.; Baranova, Olga K.; García, Hernán E.; Locarnini, Ricardo A.; Mishonov, Alexey V.; Reagan, James R.; [Seidov, Dan; Yarosh, Evgeney; Zweng, Melissa M. (2017). NCEI ocean heat content, temperature anomalies, salinity anomalies, thermosteric sea level anomalies, halosteric sea level anomalies, and total steric sea level anomalies from 1955 to present calculated from in situ oceanographic subsurface profile data (NCEI Accession 0164586). NOAA National Centers for Environmental Information. Dataset. https://doi.org/10.7289/v53f4mvp.",
-  "item_assets": {
-    "heat_content": {
-      "title": "Ocean Heat Content anomalies from WOA09",
-      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "roles": [
-        "data"
-      ],
-      "raster:bands": [
+    "type": "Collection",
+    "id": "noaa-cdr-ocean-heat-content",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
         {
-          "nodata": "nan",
-          "data_type": "float32",
-          "unit": "10^18 joules"
-        }
-      ]
-    },
-    "mean_halosteric_sea_level": {
-      "title": "Mean halosteric sea level anomalies from WOA09",
-      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "roles": [
-        "data"
-      ],
-      "raster:bands": [
+            "rel": "license",
+            "href": "https://www.ncei.noaa.gov/pub/data/sds/cdr/CDRs/Ocean_Heat_Content/UseAgreement_01B-41.pdf",
+            "type": "application/pdf",
+            "title": "NOAA CDR Ocean Heat Content Use Agreement"
+        },
         {
-          "nodata": "nan",
-          "data_type": "float32",
-          "unit": "millimeters"
-        }
-      ]
-    },
-    "mean_salinity": {
-      "title": "Mean salinity anomalies from WOA09",
-      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "roles": [
-        "data"
-      ],
-      "raster:bands": [
+            "rel": "about",
+            "href": "https://www.ncei.noaa.gov/products/climate-data-records/global-ocean-heat-content",
+            "type": "text/html",
+            "title": "Global Ocean Heat Content CDR"
+        },
         {
-          "nodata": "nan",
-          "data_type": "float32"
-        }
-      ]
-    },
-    "mean_temperature": {
-      "title": "Mean temperature anomalies from WOA09",
-      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "roles": [
-        "data"
-      ],
-      "raster:bands": [
+            "rel": "cite-as",
+            "href": "https://doi.org/10.7289/v53f4mvp"
+        },
         {
-          "nodata": "nan",
-          "data_type": "float32",
-          "unit": "degrees Celsius"
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/noaa-cdr-ocean-heat-content",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
         }
-      ]
-    },
-    "mean_thermosteric_sea_level": {
-      "title": "Mean thermosteric sea level anomalies from WOA09",
-      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "roles": [
-        "data"
-      ],
-      "raster:bands": [
-        {
-          "nodata": "nan",
-          "data_type": "float32",
-          "unit": "millimeters"
-        }
-      ]
-    },
-    "mean_total_steric_sea_level": {
-      "title": "Mean total steric sea level anomalies from WOA09",
-      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "roles": [
-        "data"
-      ],
-      "raster:bands": [
-        {
-          "nodata": "nan",
-          "data_type": "float32",
-          "unit": "millimeters"
-        }
-      ]
-    }
-  },
-  "msft:short_description": "The Ocean Heat Content Climate Data Record (CDR) is a set of ocean heat content anomaly (OHCA) time-series for 1955-present on 3-monthly, yearly, and pentadal (five-yearly) scales.",
-  "msft:storage_account": "noaacdr",
-  "msft:container": "ocean-heat-content",
-  "msft:group_id": "noaa-cdr",
-  "msft:region": "eastus",
-  "title": "Global Ocean Heat Content CDR",
-  "extent": {
-    "spatial": {
-      "bbox": [
-        [
-          -180.0,
-          -90.0,
-          180.0,
-          90.0
-        ]
-      ]
-    },
-    "temporal": {
-      "interval": [
-        [
-          "1972-03-01T00:00:00Z",
-          "2022-03-31T23:59:59Z"
-        ]
-      ]
-    }
-  },
-  "license": "proprietary",
-  "keywords": [
-    "Global",
-    "Climate",
-    "NOAA",
-    "Temperature",
-    "Ocean"
-  ],
-  "providers": [
-    {
-      "name": "National Centers for Environmental Information",
-      "description": "NCEI is the Nation's leading authority for environmental data, and manage one of the largest archives of atmospheric, coastal, geophysical, and oceanic research in the world. NCEI contributes to the NESDIS mission by developing new products and services that span the science disciplines and enable better data discovery.",
-      "roles": [
-        "producer",
-        "processor",
-        "licensor"
-      ],
-      "url": "https://www.ncei.noaa.gov/"
-    },
-    {
-      "name": "Microsoft",
-      "roles": [
-        "processor",
-        "host"
-      ],
-      "url": "https://planetarycomputer.microsoft.com"
-    }
-  ],
-  "summaries": {
-    "noaa_cdr:interval": [
-      "monthly",
-      "seasonal",
-      "yearly",
-      "pentadal"
     ],
-    "noaa_cdr:max_depth": [
-      100,
-      700,
-      2000
-    ]
-  },
-  "assets": {
-    "thumbnail": {
-      "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-cdr-ocean-heat-content-thumb.png",
-      "type": "image/png",
-      "title": "Global Ocean Heat Content CDR thumbnail",
-      "roles": [
-        "thumbnail"
-      ]
+    "stac_extensions": [
+        "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.1.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+    ],
+    "sci:doi": "10.7289/v53f4mvp",
+    "item_assets": {
+        "heat_content": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Ocean Heat Content anomalies from WOA09",
+            "raster:bands": [
+                {
+                    "unit": "10^18 joules",
+                    "nodata": "nan",
+                    "data_type": "float32"
+                }
+            ]
+        },
+        "mean_salinity": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Mean salinity anomalies from WOA09",
+            "raster:bands": [
+                {
+                    "nodata": "nan",
+                    "data_type": "float32"
+                }
+            ]
+        },
+        "mean_temperature": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Mean temperature anomalies from WOA09",
+            "raster:bands": [
+                {
+                    "unit": "degrees Celsius",
+                    "nodata": "nan",
+                    "data_type": "float32"
+                }
+            ]
+        },
+        "mean_halosteric_sea_level": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Mean halosteric sea level anomalies from WOA09",
+            "raster:bands": [
+                {
+                    "unit": "millimeters",
+                    "nodata": "nan",
+                    "data_type": "float32"
+                }
+            ]
+        },
+        "mean_thermosteric_sea_level": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Mean thermosteric sea level anomalies from WOA09",
+            "raster:bands": [
+                {
+                    "unit": "millimeters",
+                    "nodata": "nan",
+                    "data_type": "float32"
+                }
+            ]
+        },
+        "mean_total_steric_sea_level": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Mean total steric sea level anomalies from WOA09",
+            "raster:bands": [
+                {
+                    "unit": "millimeters",
+                    "nodata": "nan",
+                    "data_type": "float32"
+                }
+            ]
+        }
     },
-    "geoparquet-items": {
-      "href": "abfs://items/noaa-cdr-ocean-heat-content.parquet",
-      "type": "application/x-parquet",
-      "title": "GeoParquet STAC items",
-      "description": "Snapshot of the collection's STAC items exported to GeoParquet format",
-      "msft:partition_info": {
-        "is_partitioned": false
-      },
-      "table:storage_options": {
-        "account_name": "pcstacitems"
-      },
-      "roles": [
-        "stac-items"
-      ]
+    "msft:region": "eastus",
+    "sci:citation": "Levitus, Sydney; Antonov, John I.; Boyer, Tim P.; Baranova, Olga K.; Garc\u00eda, Hern\u00e1n E.; Locarnini, Ricardo A.; Mishonov, Alexey V.; Reagan, James R.; [Seidov, Dan; Yarosh, Evgeney; Zweng, Melissa M. (2017). NCEI ocean heat content, temperature anomalies, salinity anomalies, thermosteric sea level anomalies, halosteric sea level anomalies, and total steric sea level anomalies from 1955 to present calculated from in situ oceanographic subsurface profile data (NCEI Accession 0164586). NOAA National Centers for Environmental Information. Dataset. https://doi.org/10.7289/v53f4mvp.",
+    "msft:group_id": "noaa-cdr",
+    "msft:container": "ocean-heat-content",
+    "msft:storage_account": "noaacdr",
+    "msft:short_description": "The Ocean Heat Content Climate Data Record (CDR) is a set of ocean heat content anomaly (OHCA) time-series for 1955-present on 3-monthly, yearly, and pentadal (five-yearly) scales.",
+    "title": "Global Ocean Heat Content CDR",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180.0,
+                    -90.0,
+                    180.0,
+                    90.0
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "1972-03-01T00:00:00Z",
+                    "2022-03-31T23:59:59Z"
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "Global",
+        "Climate",
+        "NOAA",
+        "Temperature",
+        "Ocean"
+    ],
+    "providers": [
+        {
+            "name": "National Centers for Environmental Information",
+            "description": "NCEI is the Nation's leading authority for environmental data, and manage one of the largest archives of atmospheric, coastal, geophysical, and oceanic research in the world. NCEI contributes to the NESDIS mission by developing new products and services that span the science disciplines and enable better data discovery.",
+            "roles": [
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://www.ncei.noaa.gov/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "processor",
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "noaa_cdr:interval": [
+            "monthly",
+            "seasonal",
+            "yearly",
+            "pentadal"
+        ],
+        "noaa_cdr:max_depth": [
+            100,
+            700,
+            2000
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/noaa-cdr-ocean-heat-content-thumb.png",
+            "type": "image/png",
+            "title": "Global Ocean Heat Content CDR thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/noaa-cdr-ocean-heat-content.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
     }
-  }
 }

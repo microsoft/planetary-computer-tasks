@@ -1,0 +1,131 @@
+{
+    "type": "Collection",
+    "id": "3dep-seamless",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://www.usgs.gov/faqs/what-are-terms-uselicensing-map-services-and-data-national-map?qt-news_science_products=0#qt-news_science_products",
+            "title": "Public Domain"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/3dep-seamless",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "item_assets": {
+        "data": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ]
+        },
+        "gpkg": {
+            "type": "application/geopackage+sqlite3",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "metadata": {
+            "type": "application/xml",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "thumbnail": {
+            "type": "image/jpeg",
+            "roles": [
+                "thumbnail"
+            ]
+        }
+    },
+    "msft:container": "3dep",
+    "msft:storage_account": "ai4edataeuwest",
+    "msft:short_description": "U.S.-wide digital elevation data at horizontal resolutions ranging from one to sixty meters",
+    "msft:region": "westeurope",
+    "title": "USGS 3DEP Seamless DEMs",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -174.001666666983,
+                    -15.00166666667,
+                    164.0016666666,
+                    84.00166666666
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "1925-01-01T00:00:00Z",
+                    "2020-05-06T00:00:00Z"
+                ]
+            ]
+        }
+    },
+    "license": "PDDL-1.0",
+    "keywords": [
+        "USGS",
+        "3DEP",
+        "NED",
+        "Elevation",
+        "DEM"
+    ],
+    "providers": [
+        {
+            "name": "USGS",
+            "roles": [
+                "processor",
+                "producer",
+                "licensor"
+            ],
+            "url": "https://www.usgs.gov/core-science-systems/ngp/3dep"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "gsd": [
+            10,
+            30
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/threedep.png",
+            "type": "image/png",
+            "title": "USGS 3DEP",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/3dep-seamless.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}

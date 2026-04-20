@@ -1,0 +1,168 @@
+{
+    "type": "Collection",
+    "id": "planet-nicfi-visual",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://assets.planet.com/docs/Planet_ParticipantLicenseAgreement_NICFI.pdf",
+            "type": "application/pdf",
+            "title": "Participant License Agreement."
+        },
+        {
+            "rel": "documentation",
+            "href": "https://assets.planet.com/docs/NICFI_UserGuidesFAQ.pdf",
+            "type": "application/pdf",
+            "title": "Participant License Agreement."
+        },
+        {
+            "rel": "documentation",
+            "href": "https://www.planet.com/nicfi/",
+            "type": "text/html",
+            "title": "NICFI Program - Satellite Imagery and Monitoring | Planet"
+        },
+        {
+            "rel": "documentation",
+            "href": "https://developers.planet.com/nicfi/",
+            "type": "text/html",
+            "title": "NICFI Program Resource Center"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/planet-nicfi-visual",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+    ],
+    "item_assets": {
+        "data": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "Data",
+            "description": "a 'true-colour' representation of spatially accurate data with minimized haze, illumination, and topographic effects"
+        },
+        "thumbnail": {
+            "type": "image/png",
+            "roles": [
+                "thumbnail"
+            ],
+            "title": "Thumbnail"
+        }
+    },
+    "msft:group_id": "planet-nicfi",
+    "msft:container": "nicfi",
+    "msft:storage_account": "planet",
+    "msft:short_description": "Planet's high-resolution, analysis-ready mosaics of the world's tropics",
+    "msft:region": "westeurope",
+    "title": "Planet-NICFI Basemaps (Visual)",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180.0,
+                    -34.161818157002,
+                    180.0,
+                    30.145127179625
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2015-12-01T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "Planet",
+        "NICFI",
+        "Satellite",
+        "Tropics",
+        "Imagery"
+    ],
+    "providers": [
+        {
+            "name": "Planet",
+            "description": "Contact Planet at [planet.com/contact-sales](https://www.planet.com/contact-sales/)",
+            "roles": [
+                "processor",
+                "producer",
+                "licensor"
+            ],
+            "url": "http://planet.com"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com/"
+        }
+    ],
+    "summaries": {
+        "gsd": [
+            4.77
+        ],
+        "eo:bands": [
+            {
+                "name": "Red",
+                "common_name": "red",
+                "description": "visible red"
+            },
+            {
+                "name": "Green",
+                "common_name": "green",
+                "description": "visible green"
+            },
+            {
+                "name": "Blue",
+                "common_name": "blue",
+                "description": "visible blue"
+            }
+        ],
+        "planet-nicfi:cadence": [
+            "biannual",
+            "monthly"
+        ],
+        "planet-nicfi:percent_covered": {
+            "minimum": 0,
+            "maximum": 100
+        }
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/planet-nicfi-visual-thumbnail.png",
+            "type": "image/png",
+            "title": "thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/planet-nicfi-visual.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": true,
+                "partition_frequency": "AS"
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}

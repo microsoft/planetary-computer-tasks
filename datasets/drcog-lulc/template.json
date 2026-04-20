@@ -1,0 +1,190 @@
+{
+    "type": "Collection",
+    "id": "drcog-lulc",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://drcog.org/legal-terms",
+            "type": "text/html",
+            "title": "DRCOG Legal Terms"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://gis.drcog.org/rdc/supplemental/lulc_pilot_report.zip",
+            "type": "application/zip",
+            "title": "Supplemental Information"
+        },
+        {
+            "rel": "original",
+            "href": "https://landcoverarchive.s3.amazonaws.com/2018/lulc_pilot_raster_2018.zip",
+            "type": "application/zip",
+            "title": "Land_Cover_Raster_Data_2018"
+        },
+        {
+            "rel": "original",
+            "href": "https://landcoverarchive.s3.amazonaws.com/2020/DRCOG_2020_Landcover.zip",
+            "type": "application/zip",
+            "title": "Land_Cover_Raster_Data_2020"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/drcog-lulc",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/classification/v1.1.0/schema.json"
+    ],
+    "item_assets": {
+        "data": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data"
+            ],
+            "title": "DRCOG LULC",
+            "description": "Denver Regional Council of Governments (DRCOG) Land Use Land Cover (LULC) Classifications",
+            "raster:bands": [
+                {
+                    "unit": "usft",
+                    "sampling": "area",
+                    "data_type": "uint8",
+                    "description": "Classification values"
+                }
+            ],
+            "classification:classes": [
+                {
+                    "value": 1,
+                    "color_hint": "FF0000",
+                    "description": "Structures"
+                },
+                {
+                    "value": 2,
+                    "color_hint": "B2B2B2",
+                    "description": "Impervious Surfaces"
+                },
+                {
+                    "value": 3,
+                    "color_hint": "00A9E6",
+                    "description": "Water"
+                },
+                {
+                    "value": 4,
+                    "color_hint": "C7D79E",
+                    "description": "Prairie/Grassland/Natural Ground Cover"
+                },
+                {
+                    "value": 5,
+                    "color_hint": "267300",
+                    "description": "Tree Canopy"
+                },
+                {
+                    "value": 6,
+                    "color_hint": "70A800",
+                    "description": "Turf/Irrigated Land"
+                },
+                {
+                    "value": 7,
+                    "color_hint": "FFEBAF",
+                    "description": "Barren Land"
+                },
+                {
+                    "value": 8,
+                    "color_hint": "FFAE42",
+                    "description": "Cropland"
+                }
+            ]
+        }
+    },
+    "msft:container": "drcog-lulc",
+    "msft:storage_account": "landcoverdata",
+    "msft:short_description": "2018 and 2020 Land Use/Land Cover classification of the Denver, Colorado region.",
+    "msft:region": "westeurope",
+    "title": "Denver Regional Council of Governments Land Use Land Cover",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -105.93962510864995,
+                    39.10438697007073,
+                    -103.66801443832743,
+                    40.320593119647256
+                ],
+                [
+                    -105.54671456161505,
+                    39.54013841830152,
+                    -104.46335720577567,
+                    39.94430501943824
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2018-01-01T00:00:00Z",
+                    "2020-12-31T23:59:59Z"
+                ]
+            ]
+        }
+    },
+    "license": "proprietary",
+    "keywords": [
+        "Land Cover",
+        "Land Use",
+        "NAIP",
+        "USDA"
+    ],
+    "providers": [
+        {
+            "name": "Denver Regional Council of Governments",
+            "roles": [
+                "producer",
+                "licensor"
+            ],
+            "url": "https://drcog.org/services-and-resources/data-maps-and-modeling/regional-land-use-land-cover-project"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "processor",
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "summaries": {
+        "mission": [
+            "2018 DRCOG LULC pilot study covering 1,000 square miles",
+            "2020 DRCOG LULC study covering 6,000 square miles"
+        ]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/drcog-lulc.png",
+            "type": "image/png",
+            "title": "DRCOG LULC",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "geoparquet-items": {
+            "href": "abfs://items/drcog-lulc.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        }
+    }
+}

@@ -1,9 +1,9 @@
 id: goes_cmi
-image: ${{ args.registry }}/pctasks-goes-cmi:2025.04.15.1
+image: ${{ args.registry }}/pctasks-goes-cmi:2026.01.12
 
 args:
-- registry
-- year-prefix
+  - registry
+  - year-prefix
 
 code:
   src: ${{ local.path(./goes_cmi) }}
@@ -19,7 +19,7 @@ collections:
     asset_storage:
       # The blob storage pattern is
       # | noaa-goes16
-      # |  ABI-L2-MCMIPC 
+      # |  ABI-L2-MCMIPC
       # |    2023
       # |      170    # day of year
       # |        23   # hour
@@ -27,12 +27,12 @@ collections:
       - uri: blob://goeseuwest/noaa-goes16/
         chunks:
           splits:
-            - prefix: ABI-L2-MCMIPC/${{ args.year-prefix }}  # CONUS
-              depth: 3  # daily
-            - prefix: ABI-L2-MCMIPM/${{ args.year-prefix }}  # Mesoscale
-              depth: 3  # daily
-            - prefix: ABI-L2-MCMIPF/${{ args.year-prefix }}  # Full Disk
-              depth: 3  # daily
+            - prefix: ABI-L2-MCMIPC/${{ args.year-prefix }} # CONUS
+              depth: 3 # daily
+            - prefix: ABI-L2-MCMIPM/${{ args.year-prefix }} # Mesoscale
+              depth: 3 # daily
+            - prefix: ABI-L2-MCMIPF/${{ args.year-prefix }} # Full Disk
+              depth: 3 # daily
           options:
             ends_with: .nc
       # # GOES-17 is parked
@@ -50,24 +50,24 @@ collections:
       - uri: blob://goeseuwest/noaa-goes18/
         chunks:
           splits:
-            - prefix: ABI-L2-MCMIPC/${{ args.year-prefix }}  # CONUS
-              depth: 3  # daily
-            - prefix: ABI-L2-MCMIPM/${{ args.year-prefix }}  # Mesoscale
-              depth: 3  # daily
-            - prefix: ABI-L2-MCMIPF/${{ args.year-prefix }}  # Full Disk
-              depth: 3  # daily
+            - prefix: ABI-L2-MCMIPC/${{ args.year-prefix }} # CONUS
+              depth: 3 # daily
+            - prefix: ABI-L2-MCMIPM/${{ args.year-prefix }} # Mesoscale
+              depth: 3 # daily
+            - prefix: ABI-L2-MCMIPF/${{ args.year-prefix }} # Full Disk
+              depth: 3 # daily
           options:
             ends_with: .nc
 
       - uri: blob://goeseuwest/noaa-goes19/
         chunks:
           splits:
-            - prefix: ABI-L2-MCMIPC/${{ args.year-prefix }}  # CONUS
-              depth: 3  # daily
-            - prefix: ABI-L2-MCMIPM/${{ args.year-prefix }}  # Mesoscale
-              depth: 3  # daily
-            - prefix: ABI-L2-MCMIPF/${{ args.year-prefix }}  # Full Disk
-              depth: 3  # daily
+            - prefix: ABI-L2-MCMIPC/${{ args.year-prefix }} # CONUS
+              depth: 3 # daily
+            - prefix: ABI-L2-MCMIPM/${{ args.year-prefix }} # Mesoscale
+              depth: 3 # daily
+            - prefix: ABI-L2-MCMIPF/${{ args.year-prefix }} # Full Disk
+              depth: 3 # daily
           options:
             ends_with: .nc
     chunk_storage:

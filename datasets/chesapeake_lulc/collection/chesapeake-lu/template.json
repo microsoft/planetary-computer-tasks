@@ -1,10 +1,8 @@
 {
-    "stac_version": "1.0.0",
     "type": "Collection",
     "id": "chesapeake-lu",
-    "title": "Chesapeake Land Use",
+    "stac_version": "1.0.0",
     "description": "{{ collection.description }}",
-    "license": "proprietary",
     "links": [
         {
             "rel": "describedby",
@@ -17,6 +15,12 @@
             "href": "https://www.chesapeakeconservancy.org/conservation-innovation-center/precision-conservation/chesapeake-bay-program/",
             "type": "text/html",
             "title": "Data Availability Description"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/chesapeake-lu",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
         }
     ],
     "stac_extensions": [
@@ -24,59 +28,116 @@
         "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
         "https://stac-extensions.github.io/classification/v1.0.0/schema.json"
     ],
-    "keywords": [
-        "Land Use",
-        "Chesapeake Bay Watershed",
-        "Chesapeake Conservancy"
-    ],
-    "msft:short_description": "Chesapeake Bay Watershed land use product with 17 classes at 1m resolution.",
-    "msft:storage_account": "landcoverdata",
-    "msft:container": "chesapeake",
-    "msft:region": "westeurope",
-    "msft:group_id": "chesapeake-lulc",
-    "providers": [
-        {
-            "name": "Chesapeake Conservancy Conservation Innovation Center",
+    "item_assets": {
+        "data": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
-                "producer",
-                "processor",
-                "licensor"
+                "data"
             ],
-            "url": "https://www.chesapeakeconservancy.org/conservation-innovation-center/high-resolution-data/land-use-data-project/"
-        },
-        {
-            "name": "Microsoft",
-            "roles": [
-                "host"
+            "title": "Land Use Classes",
+            "raster:bands": [
+                {
+                    "nodata": 0,
+                    "sampling": "area",
+                    "data_type": "uint8",
+                    "spatial_resolution": 1
+                }
             ],
-            "url": "https://planetarycomputer.microsoft.com"
-        }
-    ],
-    "assets": {
-        "thumbnail": {
-            "title": "Chesapeake Land Use Thumbnail",
-            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/chesapeake-lu-thumb.png",
-            "type": "image/png",
-            "roles": [
-                    "thumbnail"
+            "classification:classes": [
+                {
+                    "value": 1,
+                    "color-hint": "000000",
+                    "description": "Impervious Roads"
+                },
+                {
+                    "value": 2,
+                    "color-hint": "730000",
+                    "description": "Impervious Non-Roads"
+                },
+                {
+                    "value": 3,
+                    "color-hint": "55FF00",
+                    "description": "Tree Canopy over Impervious Surfaces"
+                },
+                {
+                    "value": 4,
+                    "color-hint": "0070FF",
+                    "description": "Water"
+                },
+                {
+                    "value": 5,
+                    "color-hint": "00FFC5",
+                    "description": "Tidal Wetlands"
+                },
+                {
+                    "value": 6,
+                    "color-hint": "00E6A9",
+                    "description": "Floodplain Wetlands"
+                },
+                {
+                    "value": 7,
+                    "color-hint": "00E6A9",
+                    "description": "Other Wetlands"
+                },
+                {
+                    "value": 8,
+                    "color-hint": "267300",
+                    "description": "Forest"
+                },
+                {
+                    "value": 9,
+                    "color-hint": "AAFF00",
+                    "description": "Tree Canopy over Turf Grass"
+                },
+                {
+                    "value": 10,
+                    "color-hint": "A87000",
+                    "description": "Mixed Open"
+                },
+                {
+                    "value": 11,
+                    "color-hint": "FFBEE8",
+                    "description": "Fractional Turf (small)"
+                },
+                {
+                    "value": 12,
+                    "color-hint": "FFBEE8",
+                    "description": "Fractional Turf (medium)"
+                },
+                {
+                    "value": 13,
+                    "color-hint": "FFBEE8",
+                    "description": "Fractional Turf (large)"
+                },
+                {
+                    "value": 14,
+                    "color-hint": "C500FF",
+                    "description": "Fractional Impervious"
+                },
+                {
+                    "value": 15,
+                    "color-hint": "FFFF73",
+                    "description": "Turf Grass"
+                },
+                {
+                    "value": 16,
+                    "color-hint": "E69800",
+                    "description": "Cropland"
+                },
+                {
+                    "value": 17,
+                    "color-hint": "E69800",
+                    "description": "Pasture/Hay"
+                }
             ]
-        },
-        "geoparquet-items": {
-            "href": "abfs://items/chesapeake-lu.parquet",
-            "type": "application/x-parquet",
-            "roles": [
-                "stac-items"
-            ],
-            "title": "GeoParquet STAC items",
-            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
-            "msft:partition_info": {
-                "is_partitioned": false
-            },
-            "table:storage_options": {
-                "account_name": "pcstacitems"
-            }
-        } 
+        }
     },
+    "msft:group_id": "chesapeake-lulc",
+    "msft:container": "chesapeake",
+    "msft:storage_account": "landcoverdata",
+    "msft:short_description": "Chesapeake Bay Watershed land use product with 17 classes at 1m resolution.",
+    "msft:region": "westeurope",
+    "title": "Chesapeake Land Use",
     "extent": {
         "spatial": {
             "bbox": [
@@ -97,107 +158,37 @@
             ]
         }
     },
-    "item_assets": {
-        "data": {
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Land Use Classes",
-            "raster:bands": [
-                {
-                    "nodata": 0,
-                    "sampling": "area",
-                    "data_type": "uint8",
-                    "spatial_resolution": 1
-                }
-            ],
-            "classification:classes": [
-                {
-                    "value": 1,
-                    "description": "Impervious Roads",
-                    "color-hint": "000000"
-                },
-                {
-                    "value": 2,
-                    "description": "Impervious Non-Roads",
-                    "color-hint": "730000"
-                },
-                {
-                    "value": 3,
-                    "description": "Tree Canopy over Impervious Surfaces",
-                    "color-hint": "55FF00"
-                },
-                {
-                    "value": 4,
-                    "description": "Water",
-                    "color-hint": "0070FF"
-                },
-                {
-                    "value": 5,
-                    "description": "Tidal Wetlands",
-                    "color-hint": "00FFC5"
-                },
-                {
-                    "value": 6,
-                    "description": "Floodplain Wetlands",
-                    "color-hint": "00E6A9"
-                },
-                {
-                    "value": 7,
-                    "description": "Other Wetlands",
-                    "color-hint": "00E6A9"
-                },
-                {
-                    "value": 8,
-                    "description": "Forest",
-                    "color-hint": "267300"
-                },
-                {
-                    "value": 9,
-                    "description": "Tree Canopy over Turf Grass",
-                    "color-hint": "AAFF00"
-                },
-                {
-                    "value": 10,
-                    "description": "Mixed Open",
-                    "color-hint": "A87000"
-                },
-                {
-                    "value": 11,
-                    "description": "Fractional Turf (small)",
-                    "color-hint": "FFBEE8"
-                },
-                {
-                    "value": 12,
-                    "description": "Fractional Turf (medium)",
-                    "color-hint": "FFBEE8"
-                },
-                {
-                    "value": 13,
-                    "description": "Fractional Turf (large)",
-                    "color-hint": "FFBEE8"
-                },
-                {
-                    "value": 14,
-                    "description": "Fractional Impervious",
-                    "color-hint": "C500FF"
-                },
-                {
-                    "value": 15,
-                    "description": "Turf Grass",
-                    "color-hint": "FFFF73"
-                },
-                {
-                    "value": 16,
-                    "description": "Cropland",
-                    "color-hint": "E69800"
-                },
-                {
-                    "value": 17,
-                    "description": "Pasture/Hay",
-                    "color-hint": "E69800"
-                }
-            ],
+    "license": "proprietary",
+    "keywords": [
+        "Land Use",
+        "Chesapeake Bay Watershed",
+        "Chesapeake Conservancy"
+    ],
+    "providers": [
+        {
+            "name": "Chesapeake Conservancy Conservation Innovation Center",
             "roles": [
-                "data"
+                "producer",
+                "processor",
+                "licensor"
+            ],
+            "url": "https://www.chesapeakeconservancy.org/conservation-innovation-center/high-resolution-data/land-use-data-project/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/chesapeake-lu-thumb.png",
+            "type": "image/png",
+            "title": "Chesapeake Land Use Thumbnail",
+            "roles": [
+                "thumbnail"
             ]
         }
     }
