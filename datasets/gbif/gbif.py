@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional, Union
 
 import pystac
-from stactools.gbif import stac
+from gbif_tools import create_item
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
@@ -32,7 +32,7 @@ class GBIFCollection(Collection):  # type: ignore
 
         href = href.rstrip("/")
 
-        item = stac.create_item(
+        item = create_item(
             href, storage_options=storage_options, asset_extra_fields=asset_extra_fields
         )
 
