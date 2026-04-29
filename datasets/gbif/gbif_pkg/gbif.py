@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional, Union
 
 import pystac
-from .gbif_tools import create_item
+from gbif_pkg.gbif_tools import create_item
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory

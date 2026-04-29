@@ -16,7 +16,7 @@ import dask_geopandas
 import shapely.geometry
 import datetime
 
-from ._column_descriptions import COLUMN_DESCRIPTIONS
+from gbif_pkg._column_descriptions import COLUMN_DESCRIPTIONS
 
 logger = logging.getLogger(__name__)
 
