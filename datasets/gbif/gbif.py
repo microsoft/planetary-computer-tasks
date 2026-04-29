@@ -22,7 +22,12 @@ class GBIFCollection(Collection):  # type: ignore
         if isinstance(storage, BlobStorage):
             href = f"https://{storage.storage_account_name}.blob.core.windows.net/{storage.container_name}/{path}"
             storage_options = dict(account_name=storage.storage_account_name)
-            asset_extra_fields = {"table:storage_options": storage_options}
+            asset_extra_fields = {
+                "table:storage_options": storage_options,
+                "msft:partition_info": {
+                    "is_partitioned": True
+                }
+            }
         else:
             href = storage.get_url(path)
             storage_options = dict()
