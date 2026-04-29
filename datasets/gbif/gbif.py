@@ -19,10 +19,8 @@ class GBIFCollection(Collection):  # type: ignore
         asset_extra_fields: Optional[Dict[str, Optional[Dict[str, str]]]]
 
         storage, path = storage_factory.get_storage_for_file(asset_uri)
-
         if isinstance(storage, BlobStorage):
-            # we want the az url.
-            href = f"az://{storage.container_name}/{path}"
+            href = f"https://{storage.storage_account_name}.blob.core.windows.net/{storage.container_name}/{path}"
             storage_options = dict(account_name=storage.storage_account_name)
             asset_extra_fields = {"table:storage_options": storage_options}
         else:
