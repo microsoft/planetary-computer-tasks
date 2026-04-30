@@ -1,6 +1,7 @@
 from typing import List, Union
 
 import pystac
+from azure.identity import DefaultAzureCredential
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
@@ -19,19 +20,21 @@ class GBIFCollection(Collection):  # type: ignore
         if isinstance(storage, BlobStorage):
             az_uri = f"az://{storage.container_name}/{path}".rstrip("/")
             https_href = f"https://{storage.storage_account_name}.blob.core.windows.net/{storage.container_name}/{path}".rstrip("/")
-            storage_options = {
+            read_storage_options = {
                 "account_name": storage.storage_account_name,
-                "credential": storage._blob_creds,
+                "credential": DefaultAzureCredential(),
             }
             asset_extra_fields = {
-                "table:storage_options": storage_options,
+                "table:storage_options": {
+                    "account_name": storage.storage_account_name,
+                },
                 "msft:partition_info": {
                     "is_partitioned": True
-                }
+                },
             }
             item = create_item(
                 az_uri,
-                storage_options=storage_options,
+                storage_options=read_storage_options,
                 asset_extra_fields=asset_extra_fields,
                 asset_href_override=https_href,
             )
