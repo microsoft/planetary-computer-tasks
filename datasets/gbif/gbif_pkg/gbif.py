@@ -19,7 +19,10 @@ class GBIFCollection(Collection):  # type: ignore
         if isinstance(storage, BlobStorage):
             az_uri = f"az://{storage.container_name}/{path}".rstrip("/")
             https_href = f"https://{storage.storage_account_name}.blob.core.windows.net/{storage.container_name}/{path}".rstrip("/")
-            storage_options = dict(account_name=storage.storage_account_name)
+            storage_options = {
+                "account_name": storage.storage_account_name,
+                "credential": storage._blob_creds,
+            }
             asset_extra_fields = {
                 "table:storage_options": storage_options,
                 "msft:partition_info": {
