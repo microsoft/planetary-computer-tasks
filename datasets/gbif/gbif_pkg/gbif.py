@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Union
+from typing import List, Union
 
 import pystac
 
@@ -15,12 +15,10 @@ class GBIFCollection(Collection):  # type: ignore
     ) -> Union[List[pystac.Item], WaitTaskResult]:
         from gbif_pkg.gbif_tools import create_item
 
-        storage_options: Optional[Dict[str, str]]
-        asset_extra_fields: Optional[Dict[str, Optional[Dict[str, str]]]]
-
         storage, path = storage_factory.get_storage_for_file(asset_uri)
         if isinstance(storage, BlobStorage):
-            href = f"https://{storage.storage_account_name}.blob.core.windows.net/{storage.container_name}/{path}"
+            az_uri = f"az://{storage.container_name}/{path}".rstrip("/")
+            https_href = f"https://{storage.storage_account_name}.blob.core.windows.net/{storage.container_name}/{path}".rstrip("/")
             storage_options = dict(account_name=storage.storage_account_name)
             asset_extra_fields = {
                 "table:storage_options": storage_options,
@@ -28,15 +26,16 @@ class GBIFCollection(Collection):  # type: ignore
                     "is_partitioned": True
                 }
             }
+            item = create_item(
+                az_uri,
+                storage_options=storage_options,
+                asset_extra_fields=asset_extra_fields,
+                asset_href_override=https_href,
+            )
         else:
-            href = storage.get_url(path)
-            storage_options = dict()
-            asset_extra_fields = None
-
-        href = href.rstrip("/")
-
-        item = create_item(
-            href, storage_options=storage_options, asset_extra_fields=asset_extra_fields
-        )
+            href = storage.get_url(path).rstrip("/")
+            item = create_item(
+                href, storage_options=dict(), asset_extra_fields=None
+            )
 
         return [item]

@@ -78,7 +78,7 @@ SCHEMA_URI = "https://stac-extensions.github.io/table/v1.2.0/schema.json"
 PARQUET_MEDIA_TYPE = "application/x-parquet"
 
 
-def create_item(asset_href: str, storage_options=None, asset_extra_fields=None) -> pystac.Item:
+def create_item(asset_href: str, storage_options=None, asset_extra_fields=None, asset_href_override=None) -> pystac.Item:
     """
     Create a STAC item for a GBIF Parquet Dataset.
 
@@ -127,6 +127,7 @@ def create_item(asset_href: str, storage_options=None, asset_extra_fields=None) 
         proj=False,
         asset_extra_fields=asset_extra_fields,
         count_rows=False,
+        asset_href_override=asset_href_override,
     )
 
     for column in result.properties["table:columns"]:
@@ -223,6 +224,7 @@ def generate(
     proj=True,
     storage_options=None,
     validate=True,
+    asset_href_override=None,
 ) -> T:
     """
     Generate a STAC Item from a Parquet Dataset.
@@ -406,7 +408,7 @@ def generate(
 
     if asset_key:
         asset = pystac.asset.Asset(
-            uri,
+            asset_href_override if asset_href_override is not None else uri,
             title="Dataset root",
             media_type=PARQUET_MEDIA_TYPE,
             roles=["data"],
