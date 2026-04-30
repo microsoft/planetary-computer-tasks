@@ -1,7 +1,6 @@
 from typing import Dict, List, Optional, Union
 
 import pystac
-from gbif_pkg.gbif_tools import create_item
 
 from pctasks.core.models.task import WaitTaskResult
 from pctasks.core.storage import StorageFactory
@@ -14,6 +13,7 @@ class GBIFCollection(Collection):  # type: ignore
     def create_item(
         cls, asset_uri: str, storage_factory: StorageFactory
     ) -> Union[List[pystac.Item], WaitTaskResult]:
+        from gbif_pkg.gbif_tools import create_item
 
         storage_options: Optional[Dict[str, str]]
         asset_extra_fields: Optional[Dict[str, Optional[Dict[str, str]]]]
