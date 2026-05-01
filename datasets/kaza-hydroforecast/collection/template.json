@@ -18,7 +18,8 @@
         }
     ],
     "stac_extensions": [
-        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/storage/v2.0.0/schema.json"
     ],
     "version": "1.0.0",
     "item_assets": {
@@ -217,6 +218,15 @@
             "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/kaza-hydroforecast-thumbnail.png",
             "type": "image/png",
             "title": "Thumbnail"
+        }
+    },
+    "storage:schemes": {
+        "azure": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "ai4edataeuwest",
+            "container": "hydroforecast",
+            "region": "westeurope"
         }
     }
 }
