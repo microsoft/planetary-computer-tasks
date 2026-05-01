@@ -1,4 +1,3 @@
-import os
 import pathlib
 
 import pytest
@@ -27,9 +26,7 @@ def test_client_submit():
                 tasks=[
                     TaskDefinition(
                         id="submit_unit_test",
-                        image=os.environ.get(
-                            "PCTASKS_INGEST_IMAGE", "pctasks-ingest:latest"
-                        ),
+                        image="pctasks-ingest:latest",
                         code=CodeConfig(src=str(code)),
                         task="mycode:MyMockTask",
                         args={"result_path": "/dev/null"},

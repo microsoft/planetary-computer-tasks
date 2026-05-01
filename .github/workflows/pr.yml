@@ -6,7 +6,6 @@ on:
 env:
   PCTASKS_COSMOSDB__URL: ${{ secrets.COSMOSDB_URL }}
   PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX: ${{ github.run_id }}
-  PCTASKS_INGEST_IMAGE: localhost:5001/pctasks-ingest:latest
 
 permissions:
   id-token: write
