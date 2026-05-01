@@ -34,6 +34,10 @@ jobs:
       - name: Setup
         run: ./scripts/setup --no-aux-servers
 
+      - name: Build task images needed by unit tests
+        run: |
+          docker build -t pctasks-ingest:latest -f pctasks/ingest/Dockerfile pctasks
+
       - name: Test
         run: ./scripts/test
 
