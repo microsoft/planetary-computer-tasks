@@ -5,7 +5,7 @@ args:
   - registry
 
 code:
-  src: ${{ local.path(./gbif.py) }}
+  src: ${{ local.path(./gbif_pkg) }}
   requirements: ${{ local.path(./requirements.txt) }}
 
 environment:
@@ -15,7 +15,7 @@ collections:
   - id: gbif
     template: ${{ local.path(./collection/gbif) }}
     token: ${{ pc.get_token(ai4edataeuwest, gbif) }}
-    class: gbif:GBIFCollection
+    class: gbif_pkg.gbif:GBIFCollection
     asset_storage:
       - uri: blob://ai4edataeuwest/gbif/
         chunks:
