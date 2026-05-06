@@ -33,7 +33,7 @@
     ],
     "render_options": [
       {
-        "name": "Available water storage, 0-100 cm (mm)",
+        "name": "Available water storage estimate, 0-100 cm (mm)",
         "description": "Available water storage estimate (aws) in standard zone 4 (0-100 cm depth), expressed in mm. the volume of plant available water that the soil can store in this zone based on all map unit components (weighted average). null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=aws0_100&rescale=0.0,600.0&colormap_name=cividis",
@@ -43,7 +43,7 @@
         "conditions": null
       },
       {
-        "name": "Available water storage, 0-150 cm (mm)",
+        "name": "Available water storage estimate, 0-150 cm (mm)",
         "description": "Available water storage estimate (aws) in standard zone 5 (0-150 cm depth), expressed in mm. the volume of plant available water that the soil can store in this zone based on all map unit components (weighted average). null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=aws0_150&rescale=0.0,879.1&colormap_name=cividis",
@@ -53,7 +53,7 @@
         "conditions": null
       },
       {
-        "name": "Available water storage, 0-20 cm (mm)",
+        "name": "Available water storage estimate, 0-20 cm (mm)",
         "description": "Available water storage estimate (aws) in standard zone 2 (0-20 cm depth), expressed in mm. the volume of plant available water that the soil can store in this zone based on all map unit components (weighted average). null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=aws0_20&rescale=0.0,120.0&colormap_name=cividis",
@@ -63,7 +63,7 @@
         "conditions": null
       },
       {
-        "name": "Available water storage, 0-30 cm (mm)",
+        "name": "Available water storage estimate, 0-30 cm (mm)",
         "description": "Available water storage estimate (aws) in standard zone 3 (0-30 cm depth), expressed in mm. the volume of plant available water that the soil can store in this zone based on all map unit components (weighted average). null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=aws0_30&rescale=0.0,180.0&colormap_name=cividis",
@@ -73,7 +73,7 @@
         "conditions": null
       },
       {
-        "name": "Available water storage, 0-5 cm (mm)",
+        "name": "Available water storage estimate, 0-5 cm (mm)",
         "description": "Available water storage estimate (aws) in a standard zone 1 (0-5 cm depth), expressed in mm. the volume of plant available water that the soil can store in this layer based on all map unit components (weighted average). null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=aws0_5&rescale=0.0,30.0&colormap_name=cividis",
@@ -83,7 +83,7 @@
         "conditions": null
       },
       {
-        "name": "Available water storage, total soil profile (mm)",
+        "name": "Available water storage estimate, total soil profile (mm)",
         "description": "Available water storage estimate (aws) in total soil profile (0 cm to the reported depth of the soil profile), expressed in mm. the volume of plant available water that the soil can store in this layer based on all map unit components (weighted average). null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=aws0_999&rescale=0.0,1350.39&colormap_name=cividis",
@@ -93,7 +93,7 @@
         "conditions": null
       },
       {
-        "name": "Available water storage, 100-150 cm (mm)",
+        "name": "Available water storage estimate, 100-150 cm (mm)",
         "description": "Available water storage estimate (aws) in standard layer 5 (100-150 cm depth), expressed in mm. the volume of plant available water that the soil can store in this layer based on all map unit components (weighted average). null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=aws100_150&rescale=0.0,287.42&colormap_name=cividis",
@@ -103,7 +103,7 @@
         "conditions": null
       },
       {
-        "name": "Available water storage, 150+ cm (mm)",
+        "name": "Available water storage estimate, 150+ cm (mm)",
         "description": "Available water storage estimate (aws) in standard layer 6 (150 cm to the reported depth of the soil profile), expressed in mm. the volume of plant available water that the soil can store in this layer based on all map unit components (weighted average). null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=aws150_999&rescale=0.0,600.1&colormap_name=cividis",
@@ -113,7 +113,7 @@
         "conditions": null
       },
       {
-        "name": "Available water storage, 20-50 cm (mm)",
+        "name": "Available water storage estimate, 20-50 cm (mm)",
         "description": "Available water storage estimate (aws) in standard layer 3 (20-50 cm depth), expressed in mm. the volume of plant available water that the soil can store in this layer based on all map unit components (weighted average). null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=aws20_50&rescale=0.0,180.0&colormap_name=cividis",
@@ -123,7 +123,7 @@
         "conditions": null
       },
       {
-        "name": "Available water storage, 50-100 cm (mm)",
+        "name": "Available water storage estimate, 50-100 cm (mm)",
         "description": "Available water storage estimate (aws) in standard layer 3 (50-100 cm depth), expressed in mm. the volume of plant available water that the soil can store in this layer based on all map unit components (weighted average). null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=aws50_100&rescale=0.0,300.55&colormap_name=cividis",
@@ -133,7 +133,7 @@
         "conditions": null
       },
       {
-        "name": "Available water storage, 5-20 cm (mm)",
+        "name": "Available water storage estimate, 5-20 cm (mm)",
         "description": "Available water storage estimate (aws) in standard layer 2 (5-20 cm depth), expressed in mm. the volume of plant available water that the soil can store in this layer based on all map unit components (weighted average). null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=aws5_20&rescale=0.0,90.0&colormap_name=cividis",
@@ -213,7 +213,7 @@
         "conditions": null
       },
       {
-        "name": "Root zone available water storage (mm)",
+        "name": "Root zone available water storage estimate (mm)",
         "description": "Root zone (commodity crop) available water storage estimate (rzaws) , expressed in mm, is the volume of plant available water that the soil can store within the root zone based on all map unit earthy major components (weighted average). earthy components are those soil series or higher level taxa components that can support crop growth (dobos et al., 2012). major components are those soil components where the majorcompflag = 'yes' (ssurgo component table). null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=rootznaws&rescale=0,900&colormap_name=cividis",
@@ -223,7 +223,7 @@
         "conditions": null
       },
       {
-        "name": "Soil organic carbon, 0-100 cm (g/m2)",
+        "name": "Soil organic carbon stock estimate, 0-100 cm (g/m2)",
         "description": "Soil organic carbon stock estimate (soc) in standard zone 4 (0-100 cm depth). the concentration of organic carbon present in the soil expressed in grams c per square meter to a depth of 100 cm. null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=soc0_100&rescale=0.0,802441.0&colormap_name=cividis",
@@ -233,7 +233,7 @@
         "conditions": null
       },
       {
-        "name": "Soil organic carbon, 0-150 cm (g/m2)",
+        "name": "Soil organic carbon stock estimate, 0-150 cm (g/m2)",
         "description": "Soil organic carbon stock estimate (soc) in standard zone 5 (0-150 cm depth). the concentration of organic carbon present in the soil expressed in grams c per square meter to a depth of 150 cm. null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=soc0_150&rescale=0.0,1178783.0&colormap_name=cividis",
@@ -243,7 +243,7 @@
         "conditions": null
       },
       {
-        "name": "Soil organic carbon, 0-20 cm (g/m2)",
+        "name": "Soil organic carbon stock estimate, 0-20 cm (g/m2)",
         "description": "Soil organic carbon stock estimate (soc) in standard zone 2 (0-20 cm depth). the concentration of organic carbon present in the soil expressed in grams c per square meter to a depth of 20 cm. null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=soc0_20&rescale=0.0,160518.0&colormap_name=cividis",
@@ -253,7 +253,7 @@
         "conditions": null
       },
       {
-        "name": "Soil organic carbon, 0-30 cm (g/m2)",
+        "name": "Soil organic carbon stock estimate, 0-30 cm (g/m2)",
         "description": "Soil organic carbon stock estimate (soc) in standard zone 3 (0-30 cm depth). the concentration of organic carbon present in the soil expressed in grams c per square meter to a depth of 30 cm. null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=soc0_30&rescale=0.0,240770.0&colormap_name=cividis",
@@ -263,7 +263,7 @@
         "conditions": null
       },
       {
-        "name": "Soil organic carbon, 0-5 cm (g/m2)",
+        "name": "Soil organic carbon stock estimate, 0-5 cm (g/m2)",
         "description": "Soil organic carbon stock estimate (soc) in standard layer 1 or standard zone 1 (0-5 cm depth). the concentration of organic carbon present in the soil expressed in grams c per square meter to a depth of 5 cm. null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=soc0_5&rescale=0.0,40130.0&colormap_name=cividis",
@@ -273,7 +273,7 @@
         "conditions": null
       },
       {
-        "name": "Soil organic carbon, total soil profile (g/m2)",
+        "name": "Soil organic carbon stock estimate, total soil profile (g/m2)",
         "description": "Soil organic carbon stock estimate (soc) in total soil profile (0 cm to the reported depth of the soil profile). the concentration of organic carbon present in the soil expressed in grams c per square meter for the total reported soil profile depth. null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=soc0_999&rescale=0.0,1182344.0&colormap_name=cividis",
@@ -283,7 +283,7 @@
         "conditions": null
       },
       {
-        "name": "Soil organic carbon, 100-150 cm (g/m2)",
+        "name": "Soil organic carbon stock estimate, 100-150 cm (g/m2)",
         "description": "Soil organic carbon stock estimate (soc) in standard layer 5 (100-150 cm depth). the concentration of organic carbon present in the soil expressed in grams c per square meter for the 100-150 cm layer. null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=soc100_150&rescale=0.0,376342.0&colormap_name=cividis",
@@ -293,7 +293,7 @@
         "conditions": null
       },
       {
-        "name": "Soil organic carbon, 150+ cm (g/m2)",
+        "name": "Soil organic carbon stock estimate, 150+ cm (g/m2)",
         "description": "Soil organic carbon stock estimate (soc) in standard layer 6 (150 cm to the reported depth of the soil profile). the concentration of organic carbon present in the soil expressed in grams c per square meter for the 150 cm and greater depth layer. null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=soc150_999&rescale=0.0,126247.0&colormap_name=cividis",
@@ -303,7 +303,7 @@
         "conditions": null
       },
       {
-        "name": "Soil organic carbon, 20-50 cm (g/m2)",
+        "name": "Soil organic carbon stock estimate, 20-50 cm (g/m2)",
         "description": "Soil organic carbon stock estimate (soc) in standard layer 3 (20-50 cm depth). the concentration of organic carbon present in the soil expressed in grams c per square meter for the 20-50 cm layer. null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=soc20_50&rescale=0.0,240743.0&colormap_name=cividis",
@@ -313,7 +313,7 @@
         "conditions": null
       },
       {
-        "name": "Soil organic carbon, 50-100 cm (g/m2)",
+        "name": "Soil organic carbon stock estimate, 50-100 cm (g/m2)",
         "description": "Soil organic carbon stock estimate (soc) in standard layer 4 (50-100 cm depth). the concentration of organic carbon present in the soil expressed in grams c per square meter for the 50-100 cm layer. null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=soc50_100&rescale=0.0,401179.0&colormap_name=cividis",
@@ -323,7 +323,7 @@
         "conditions": null
       },
       {
-        "name": "Soil organic carbon, 5-20 cm (g/m2)",
+        "name": "Soil organic carbon stock estimate, 5-20 cm (g/m2)",
         "description": "Soil organic carbon stock estimate (soc) in standard layer 2 (5-20 cm depth). the concentration of organic carbon present in the soil expressed in grams c per square meter for the 5-20 cm layer. null values are presented where data are incomplete or not available.",
         "type": "raster-tile",
         "options": "assets=soc5_20&rescale=0.0,120389.0&colormap_name=cividis",
@@ -593,7 +593,7 @@
         "conditions": null
       },
       {
-        "name": "Droughty soil landscape (commodity crops)",
+        "name": "Droughty soil landscape (commodity crops <= 6 in)",
         "description": "Zone for commodity crops that is less than or equal to 6 inches (152 mm) expressed as \"1\" for a drought vulnerable soil landscape map unit or \"0\" for a non-droughty soil landscape map unit or null for miscellaneous areas (includes water bodies) or where data were not available. it is computed as a weighted average for major earthy components. earthy components are those soil series or higher level taxa components that can support crop growth (dobos et al., 2012). major components are those soil components where the majorcompflag = 'yes'",
         "type": "raster-tile",
         "options": "assets=droughty&rescale=0,1&colormap_name=cividis",
