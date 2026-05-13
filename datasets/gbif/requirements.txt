@@ -1,6 +1,12 @@
-git+https://github.com/TomAugspurger/gbif
-git+https://github.com/stac-utils/stac-table@99a30be419baa2445ab6d0756629eea079c80972
 dask
 dask-geopandas
 pytest
 adlfs
+fsspec
+pandas
+pyarrow
+pystac[validation]>=1.1.0
+shapely
+stactools
+adlfs
+lxml

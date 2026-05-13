@@ -45,17 +45,16 @@ pctasks:
   run:
     task_runner_type: "batch"
     streaming_task_namespace: "pc"
-    streaming_task_node_group: {{ tf.aks_streaming_task_node_group_name }}
     task_poll_seconds: 30
 
     notifications:
       queue_name: "notifications"
-      connection_string: {{ tf.sa_connection_string }}
+      connection_string: "NOT_USED"
 
     tables:
       account_url: {{ tf.sa_tables_account_url }}
       account_name: {{ tf.sa_account_name }}
-      connection_string: {{ tf.sa_connection_string }}
+      connection_string: "NOT_USED"
       image_key_table_name: "imagekeys"
 
     blob:
@@ -82,7 +81,7 @@ pctasks:
     batch:
       enabled: true
       url: "{{ tf.batch_url }}"
-      key: "{{ tf.batch_key }}"
+      key: "NOT_USED"
       default_pool_id: "{{ tf.batch_default_pool_id }}"
       submit_threads: 0
 

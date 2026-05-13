@@ -22,7 +22,8 @@
     ],
     "stac_extensions": [
         "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
+        "https://stac-extensions.github.io/datacube/v2.0.0/schema.json",
+        "https://stac-extensions.github.io/storage/v2.0.0/schema.json"
     ],
     "sci:doi": "10.3334/ORNLDAAC/1855",
     "sci:citation": "Thornton, M.M., R. Shrestha, Y. Wei, P.E. Thornton, S. Kao, and B.E. Wilson. 2020. Daymet: Monthly Climate Summaries on a 1-km Grid for North America, Version 4. ORNL DAAC, Oak Ridge, Tennessee, USA. https://doi.org/10.3334/ORNLDAAC/1855",
@@ -603,6 +604,15 @@
                 "zarr",
                 "https"
             ]
+        }
+    },
+    "storage:schemes": {
+        "azure": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "daymeteuwest",
+            "container": "daymet-zarr",
+            "region": "westeurope"
         }
     }
 }

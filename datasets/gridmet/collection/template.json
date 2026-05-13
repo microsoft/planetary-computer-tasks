@@ -19,7 +19,8 @@
     ],
     "stac_extensions": [
         "https://stac-extensions.github.io/xarray-assets/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
+        "https://stac-extensions.github.io/datacube/v2.0.0/schema.json",
+        "https://stac-extensions.github.io/storage/v2.0.0/schema.json"
     ],
     "cube:variables": {
         "wind_speed": {
@@ -504,6 +505,15 @@
                 "zarr",
                 "https"
             ]
+        }
+    },
+    "storage:schemes": {
+        "azure": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "ai4edataeuwest",
+            "container": "gridmet",
+            "region": "westeurope"
         }
     }
 }

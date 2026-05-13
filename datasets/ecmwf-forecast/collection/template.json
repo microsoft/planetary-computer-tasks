@@ -24,7 +24,8 @@
         }
     ],
     "stac_extensions": [
-        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/storage/v2.0.0/schema.json"
     ],
     "item_assets": {
         "data": {
@@ -126,6 +127,15 @@
             "roles": [
                 "thumbnail"
             ]
+        }
+    },
+    "storage:schemes": {
+        "azure": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "ai4edataeuwest",
+            "container": "ecmwf",
+            "region": "westeurope"
         }
     }
 }

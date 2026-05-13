@@ -57,7 +57,8 @@
         "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
         "https://stac-extensions.github.io/raster/v1.0.0/schema.json",
         "https://stac-extensions.github.io/classification/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+        "https://stac-extensions.github.io/storage/v2.0.0/schema.json"
     ],
     "item_assets": {
         "map": {
@@ -270,6 +271,15 @@
             "roles": [
                 "stac-items"
             ]
+        }
+    },
+    "storage:schemes": {
+        "azure": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "ai4edataeuwest",
+            "container": "esa-worldcover",
+            "region": "westeurope"
         }
     }
 }

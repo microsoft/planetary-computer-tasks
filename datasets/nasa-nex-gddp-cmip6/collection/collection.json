@@ -47,9 +47,7 @@
   ],
   "msft:storage_account": "nasagddp",
   "msft:container": "nex-gddp-cmip6",
-  "msft:short_description": [
-    "Global downscaled climate scenarios derived from the General Circulation Model conducted under CMIP6."
-  ],
+  "msft:short_description": "Global downscaled climate scenarios derived from the General Circulation Model conducted under CMIP6.",
   "cube:dimensions": {
     "time": {
       "extent": [

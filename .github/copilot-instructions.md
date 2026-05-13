@@ -69,6 +69,21 @@ Click-based with plugin discovery via `pctasks.commands` entry point group. Each
 - Integration tests: `tests/`
 - Use `StorageFactory()` in tests for blob access; `SimpleWorkflowExecutor` for local workflow execution.
 
+### Dataset image publish + workflow republish
+- For dataset-specific Docker image changes, update the dataset image tag everywhere the workflow reads it. Dynamic update workflows often use a separate `datasets/<name>/update.yaml`, not just `dataset.yaml`.
+- Use a fresh date tag (for example `YYYY.MM.DD`) rather than reusing an existing ACR tag, so Batch nodes do not pull a stale cached image.
+- If using `scripts/publish-ingestion-images`, first check the current script contents. It may be temporarily narrowed to one dataset image. Set `TAG` to the same tag used in the dataset YAML and ensure the desired image entry is enabled.
+- Authenticate before pushing: `az acr login -n pccomponents`.
+- Publish to ACR with `scripts/publish-ingestion-images` (or an equivalent `docker build`/`docker push` command) from the repo root. Make sure only the image you want pushed is in the `images` array in the script so that no other images are inadvertently built and pushed.
+- Ensure `pctasks` is on `PATH` before workflow operations. If absent, create/use `.venv` with `uv venv` and install the editable packages from `scripts/install` logic, then use `PATH="$PWD/.venv/bin:$PATH"`.
+- Republish dynamic update workflows with the command in the dataset README, commonly:
+	`pctasks dataset process-items '${{ args.since }}' -d datasets/<name>/update.yaml -c <collection-id> --workflow-id=<workflow-id> --is-update-workflow --upsert`
+- Verify before/after upsert by generating the workflow without `--upsert` and grepping for the expected image tag.
+- Submit an update/backfill by adding `--submit --confirm -a registry pccomponents.azurecr.io -a since <ISO datetime>` to the same `process-items` command. Example since value: `2026-04-01T00:00:00`.
+- Production workflow pods run in Kubernetes namespace `pc`; recent workflows can be found with `kubectl -n pc get workflows.argoproj.io --sort-by=.metadata.creationTimestamp`.
+- Workflow/task logs are uploaded to Azure Storage account `pctaskscommon`, container `tasklogs`, under `logs/<run-id>/`. The main workflow log is `logs/<run-id>/workflow-run-log.txt`; task logs are nested by job/partition/task, e.g. `logs/<run-id>/process-chunk/0/create-items/task-log.txt`.
+- Argo may show `Succeeded` when the wrapper pod completed even if PCTasks logged `Workflow failed!`; always inspect the `pctaskscommon/tasklogs` workflow log and failed task logs for the true PCTasks status.
+
 ## Integration Points
 
 - **Azure Blob Storage**: All asset URIs use `blob://<account>/<container>/<path>` scheme.

@@ -27,7 +27,8 @@
     ],
     "stac_extensions": [
         "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
-        "https://stac-extensions.github.io/raster/v1.1.0/schema.json"
+        "https://stac-extensions.github.io/raster/v1.1.0/schema.json",
+        "https://stac-extensions.github.io/storage/v2.0.0/schema.json"
     ],
     "keywords": [
         "United States",
@@ -83,7 +84,7 @@
             "table:storage_options": {
                 "account_name": "pcstacitems"
             }
-        } 
+        }
     },
     "extent": {
         "spatial": {
@@ -165,6 +166,15 @@
                     "spatial_resolution": 5000
                 }
             ]
+        }
+    },
+    "storage:schemes": {
+        "azure": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "nclimgridwesteurope",
+            "container": "nclimgrid-cogs",
+            "region": "westeurope"
         }
     }
 }

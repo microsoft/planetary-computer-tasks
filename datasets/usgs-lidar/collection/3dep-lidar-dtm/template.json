@@ -19,7 +19,8 @@
     "stac_extensions": [
         "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
         "https://stac-extensions.github.io/raster/v1.1.0/schema.json#",
-        "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+        "https://stac-extensions.github.io/storage/v2.0.0/schema.json"
     ],
     "item_assets": {
         "data": {
@@ -140,6 +141,15 @@
             "roles": [
                 "stac-items"
             ]
+        }
+    },
+    "storage:schemes": {
+        "azure": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "usgslidareuwest",
+            "container": "usgs-3dep-cogs",
+            "region": "westeurope"
         }
     }
 }

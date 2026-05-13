@@ -86,10 +86,6 @@ output "batch_url" {
   value = "https://${azurerm_batch_account.pctasks.account_endpoint}"
 }
 
-output "batch_key" {
-  value = azurerm_batch_account.pctasks.primary_access_key
-}
-
 output "batch_default_pool_id" {
   value = var.batch_default_pool_id
 }
@@ -132,10 +128,6 @@ output "sa_blob_account_url" {
 
 output "sa_account_name" {
   value = azurerm_storage_account.pctasks.name
-}
-
-output "sa_connection_string" {
-  value = azurerm_storage_account.pctasks.primary_connection_string
 }
 
 ## Keyvault
