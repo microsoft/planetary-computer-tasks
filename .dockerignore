@@ -6,3 +6,5 @@
 **/.terraform
 **/node_modules
 **/.terraform
+**/docs/_build
+**/htmlcov

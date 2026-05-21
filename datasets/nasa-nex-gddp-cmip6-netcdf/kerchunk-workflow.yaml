@@ -1,0 +1,40 @@
+name: "NASA NEX GDDP CMIP6 Kerchunk"
+dataset: "nasa-nex-gddp-cmip6"
+id: "nasa-nex-gddp-cmip6-kerchunk"
+args:
+  - prefix
+  - registry
+  - references_prefix
+
+jobs:
+  list:
+    tasks:
+      - id: list
+        image: ${{ args.registry }}/pctasks-nasa-nex-gddp-cmip6-netcdf:2024.4.16.1
+        code:
+          src: ${{ local.path(nasa_nex_gddp_cmip6.py) }}
+        environment:
+          APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+        task: nasa_nex_gddp_cmip6:ListInputsTask
+        args:
+          prefix: ${{ args.prefix }}
+  kerchunk:
+    foreach:
+      items: ${{ jobs.list.tasks.list.output.asset_uris }}
+    tasks:
+      - id: kerchunk
+        image: ${{ args.registry }}/pctasks-nasa-nex-gddp-cmip6-netcdf:2024.4.16.1
+        code:
+          src: ${{ local.path(nasa_nex_gddp_cmip6.py) }}
+        environment:
+          APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+          AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+          AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+          AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+        task: nasa_nex_gddp_cmip6:KerchunkTask
+        args:
+          asset_uri: ${{ item }}
+          references_prefix: ${{ args.references_prefix }}
