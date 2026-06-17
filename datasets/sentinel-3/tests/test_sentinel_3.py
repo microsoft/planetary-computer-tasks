@@ -1,7 +1,14 @@
 # sentinel_3 might not be on your path. Run with
 #     PYTHONPATH=datasets/sentinel-3 python -m pytest datasets/sentinel-3/tests/
-from sentinel_3 import sentinel_3_olci_lfr_l2_netcdf, sentinel_3_olci_wfr_l2_netcdf
+from pathlib import Path
+
 from pctasks.core.storage import StorageFactory
+from sentinel_3 import (
+    patch_missing_olci_wfr_assets,
+    sentinel_3_olci_lfr_l2_netcdf,
+    sentinel_3_olci_wfr_l2_netcdf,
+)
+from stactools.sentinel3 import constants
 
 
 S3_KEYS = {
@@ -99,3 +106,33 @@ def test_olci_wfr():
     }
 
     assert S3_KEYS <= set(item.properties.keys())
+
+
+def test_patch_missing_olci_wfr_assets(tmp_path: Path):
+    sen3_path = tmp_path / (
+        "S3A_OL_2_WFR____20260401T061404_20260401T061704_"
+        "20260402T110831_0179_137_376_3960_MAR_O_NT_004.SEN3"
+    )
+    sen3_path.mkdir()
+
+    original_asset_keys = constants.OLCI_L2_WATER_ASSET_KEYS
+    present_asset_keys = [
+        asset_key
+        for asset_key in original_asset_keys
+        if asset_key != "chlOc4meData"
+    ]
+    data_objects = "".join(
+        f'<dataObject ID="{asset_key}"><byteStream>'
+        f'<fileLocation href="./{asset_key}.nc" />'
+        f"</byteStream></dataObject>"
+        for asset_key in present_asset_keys
+    )
+    Path(sen3_path, "xfdumanifest.xml").write_text(
+        f"<xfdu><dataObjectSection>{data_objects}</dataObjectSection></xfdu>",
+        encoding="utf-8",
+    )
+
+    with patch_missing_olci_wfr_assets(sen3_path):
+        assert constants.OLCI_L2_WATER_ASSET_KEYS == present_asset_keys
+
+    assert constants.OLCI_L2_WATER_ASSET_KEYS is original_asset_keys

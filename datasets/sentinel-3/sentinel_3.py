@@ -1,13 +1,16 @@
 import logging
 import os
+import xml.etree.ElementTree as ET
+from contextlib import contextmanager
 from hashlib import md5
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List, Union
+from typing import Iterator, List, Set, Union
 
 import pystac
 import requests
 import urllib3
+from stactools.sentinel3 import constants
 from stactools.sentinel3.stac import create_item
 
 import pctasks.dataset.collection
@@ -227,6 +230,44 @@ FIXUP_FUNCS = {
 }
 
 
+def manifest_data_object_ids(manifest_path: Path) -> Set[str]:
+    manifest = ET.parse(manifest_path)
+    return {
+        data_object.attrib["ID"]
+        for data_object in manifest.findall(".//{*}dataObject")
+        if "ID" in data_object.attrib
+    }
+
+
+@contextmanager
+def patch_missing_olci_wfr_assets(sen3_path: Path) -> Iterator[None]:
+    if "_OL_2_WFR___" not in sen3_path.name:
+        yield
+        return
+
+    manifest_path = Path(sen3_path, "xfdumanifest.xml")
+    data_object_ids = manifest_data_object_ids(manifest_path)
+    original_asset_keys = constants.OLCI_L2_WATER_ASSET_KEYS
+    asset_keys = [key for key in original_asset_keys if key in data_object_ids]
+    missing_asset_keys = sorted(set(original_asset_keys) - data_object_ids)
+
+    if len(asset_keys) == len(original_asset_keys):
+        yield
+        return
+
+    logger.warning(
+        "Skipping missing OLCI WFR data object(s) in %s: %s",
+        sen3_path.name,
+        ", ".join(missing_asset_keys),
+    )
+
+    constants.OLCI_L2_WATER_ASSET_KEYS = asset_keys
+    try:
+        yield
+    finally:
+        constants.OLCI_L2_WATER_ASSET_KEYS = original_asset_keys
+
+
 def backoff_throttle_check(e: Exception) -> bool:
     return (
         is_common_throttle_exception(e)
@@ -263,7 +304,8 @@ class Sentinel3Collections(pctasks.dataset.collection.Collection):
                 )
 
             try:
-                item: pystac.Item = create_item(str(temp_sen3_dir))
+                with patch_missing_olci_wfr_assets(temp_sen3_dir):
+                    item: pystac.Item = create_item(str(temp_sen3_dir))
             except FileNotFoundError:
                 # occasionally there is an empty file, e.g., a 0-byte netcdf
                 logger.exception(
