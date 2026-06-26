@@ -1,0 +1,134 @@
+{
+    "type": "Collection",
+    "id": "predicted-damage-venezuela-2026",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "cite-as",
+            "href": "https://www.microsoft.com/en-us/research/group/ai-for-good-research-lab/",
+            "type": "text/html",
+            "title": "AI For Good Lab Harnessing AI to help solve some of the world’s greatest challenges"
+        },
+        {
+            "rel": "license",
+            "href": "https://creativecommons.org/licenses/by/4.0/",
+            "type": "text/html",
+            "title": "Creative Commons Attribution 4.0 International"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/predicted-damage-venezuela-2026",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+        "https://stac-extensions.github.io/storage/v2.0.0/schema.json"
+    ],
+    "item_assets": {
+        "data": {
+            "type": "application/geopackage+sqlite3",
+            "roles": [
+                "data"
+            ],
+            "title": "Predicted building damage footprints",
+            "description": "GeoPackage of building footprints with predicted earthquake damage for Catia La Mar, Venezuela.",
+            "table:storage_options": {
+                "account_name": "ai4edataeuwest"
+            }
+        }
+    },
+    "msft:region": "westeurope",
+    "table:columns": [
+        {
+            "name": "geometry",
+            "type": "byte_array",
+            "description": "Building footprint polygons"
+        }
+    ],
+    "msft:container": "ai4good",
+    "msft:storage_account": "ai4edataeuwest",
+    "msft:short_description": "AI-predicted building damage footprints for Catia La Mar, Venezuela, following the June 2026 earthquakes.",
+    "title": "Predicted Building Damage: Venezuela Earthquakes (Catia La Mar) 2026",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -73.354,
+                    0.647,
+                    -59.7589,
+                    12.2019
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2026-06-25T00:00:00Z",
+                    "2026-06-25T23:59:59Z"
+                ]
+            ]
+        }
+    },
+    "license": "CC-BY-4.0",
+    "keywords": [
+        "Venezuela",
+        "Catia La Mar",
+        "Earthquake",
+        "Building damage",
+        "Damage assessment",
+        "Buildings",
+        "Microsoft AI for Good Lab"
+    ],
+    "providers": [
+        {
+            "name": "Microsoft AI for Good Lab",
+            "roles": [
+                "producer",
+                "licensor"
+            ],
+            "url": "https://www.microsoft.com/en-us/research/group/ai-for-good-research-lab/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/venezuela2026.png",
+            "type": "image/png",
+            "title": "Predicted Building Damage Thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "data": {
+            "href": "https://ai4edataeuwest.blob.core.windows.net/ai4good/venezuela2026/predicted_damage_catia_la_mar_footprints.gpkg",
+            "type": "application/geopackage+sqlite3",
+            "title": "Predicted building damage footprints",
+            "description": "GeoPackage of building footprints with predicted earthquake damage for Catia La Mar, Venezuela.",
+            "table:storage_options": {
+                "account_name": "ai4edataeuwest"
+            },
+            "roles": [
+                "data"
+            ]
+        }
+    },
+    "storage:schemes": {
+        "azure": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "ai4edataeuwest",
+            "container": "ai4good",
+            "region": "westeurope"
+        }
+    }
+}
