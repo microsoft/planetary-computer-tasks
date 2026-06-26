@@ -6,7 +6,7 @@ args:
 
 collections:
   - id: predicted-damage-venezuela-2026
-    template: ${{ local.path(./collection) }}
+    template: ${{ local.path(./template.json) }}
     class: pctasks.dataset.collection:PremadeItemCollection
     asset_storage: []
     chunk_storage:
