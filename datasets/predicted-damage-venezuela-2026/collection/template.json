@@ -34,7 +34,7 @@
                 "data"
             ],
             "title": "Predicted building damage footprints",
-            "description": "GeoPackage of building footprints with predicted earthquake damage for Catia La Mar, Venezuela.",
+            "description": "GeoPackage of building footprints with predicted earthquake damage.",
             "table:storage_options": {
                 "account_name": "ai4edataeuwest"
             }
@@ -50,8 +50,8 @@
     ],
     "msft:container": "ai4good",
     "msft:storage_account": "ai4edataeuwest",
-    "msft:short_description": "AI-predicted building damage footprints for Catia La Mar, Venezuela, following the June 2026 earthquakes.",
-    "title": "Predicted Building Damage: Venezuela Earthquakes (Catia La Mar) 2026",
+    "msft:short_description": "AI-predicted building damage footprints for Catia La Mar, La Guaira, and Caraballeda, Venezuela, following the June 2026 earthquakes.",
+    "title": "Predicted Building Damage: Venezuela Earthquakes (Catia La Mar, La Guaira, and Caraballeda) 2026",
     "extent": {
         "spatial": {
             "bbox": [
@@ -76,6 +76,8 @@
     "keywords": [
         "Venezuela",
         "Catia La Mar",
+        "La Guaira",
+        "Caraballeda",
         "Earthquake",
         "Building damage",
         "Damage assessment",
@@ -109,11 +111,89 @@
                 "thumbnail"
             ]
         },
-        "data": {
+        "catia-la-mar-area-map": {
+            "href": "https://ai4edataeuwest.blob.core.windows.net/ai4good/venezuela2026/venezuela-2026-page-2-updated-large.jpg",
+            "type": "image/jpeg",
+            "title": "Catia La Mar area map",
+            "description": "Reference map of the Catia La Mar area assessed for earthquake damage.",
+            "roles": [
+                "overview"
+            ]
+        },
+        "catia-la-mar-valid-area-mask": {
+            "href": "https://ai4edataeuwest.blob.core.windows.net/ai4good/venezuela2026/catia_la_mar_valid_area_mask.geojson",
+            "type": "application/geo+json",
+            "title": "Catia La Mar valid area mask",
+            "description": "GeoJSON mask delineating the valid analysis area for the Catia La Mar damage assessment.",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "catia-la-mar-damage-footprints": {
             "href": "https://ai4edataeuwest.blob.core.windows.net/ai4good/venezuela2026/predicted_damage_catia_la_mar_footprints.gpkg",
             "type": "application/geopackage+sqlite3",
-            "title": "Predicted building damage footprints",
+            "title": "Catia La Mar predicted building damage footprints",
             "description": "GeoPackage of building footprints with predicted earthquake damage for Catia La Mar, Venezuela.",
+            "table:storage_options": {
+                "account_name": "ai4edataeuwest"
+            },
+            "roles": [
+                "data"
+            ]
+        },
+        "la-guaira-area-map": {
+            "href": "https://ai4edataeuwest.blob.core.windows.net/ai4good/venezuela2026/la-guiara-page-2-large.jpg",
+            "type": "image/jpeg",
+            "title": "La Guaira area map",
+            "description": "Reference map of the La Guaira area assessed for earthquake damage.",
+            "roles": [
+                "overview"
+            ]
+        },
+        "la-guaira-valid-area-mask": {
+            "href": "https://ai4edataeuwest.blob.core.windows.net/ai4good/venezuela2026/la_guaira_valid_area_mask.geojson",
+            "type": "application/geo+json",
+            "title": "La Guaira valid area mask",
+            "description": "GeoJSON mask delineating the valid analysis area for the La Guaira damage assessment.",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "la-guaira-damage-footprints": {
+            "href": "https://ai4edataeuwest.blob.core.windows.net/ai4good/venezuela2026/predicted_damage_la-guaira-east-blacksky-06-25-model-337_filtered.gpkg",
+            "type": "application/geopackage+sqlite3",
+            "title": "La Guaira predicted building damage footprints",
+            "description": "GeoPackage of building footprints with predicted earthquake damage for La Guaira, Venezuela.",
+            "table:storage_options": {
+                "account_name": "ai4edataeuwest"
+            },
+            "roles": [
+                "data"
+            ]
+        },
+        "caraballeda-area-map": {
+            "href": "https://ai4edataeuwest.blob.core.windows.net/ai4good/venezuela2026/caraballeda-page-2-large.jpg",
+            "type": "image/jpeg",
+            "title": "Caraballeda area map",
+            "description": "Reference map of the Caraballeda area assessed for earthquake damage.",
+            "roles": [
+                "overview"
+            ]
+        },
+        "caraballeda-valid-area-mask": {
+            "href": "https://ai4edataeuwest.blob.core.windows.net/ai4good/venezuela2026/caraballeda_east_vantor_6-26_valid_area_mask.geojson",
+            "type": "application/geo+json",
+            "title": "Caraballeda valid area mask",
+            "description": "GeoJSON mask delineating the valid analysis area for the Caraballeda damage assessment.",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "caraballeda-damage-footprints": {
+            "href": "https://ai4edataeuwest.blob.core.windows.net/ai4good/venezuela2026/caraballeda_east_vantor_6-26_building_predictions_merged.gpkg",
+            "type": "application/geopackage+sqlite3",
+            "title": "Caraballeda predicted building damage footprints",
+            "description": "GeoPackage of building footprints with predicted earthquake damage for Caraballeda, Venezuela.",
             "table:storage_options": {
                 "account_name": "ai4edataeuwest"
             },
