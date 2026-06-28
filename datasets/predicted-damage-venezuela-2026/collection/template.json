@@ -200,6 +200,57 @@
             "roles": [
                 "data"
             ]
+        },
+        "catia-la-mar-east-area-map": {
+            "href": "https://ai4edataeuwest.blob.core.windows.net/ai4good/venezuela2026/catia-la-mar-east-page-2.jpg",
+            "type": "image/jpeg",
+            "title": "Catia La Mar East area map",
+            "description": "Reference map of the East Catia La Mar area assessed for earthquake damage.",
+            "roles": [
+                "overview"
+            ]
+        },
+        "catia-la-mar-east-valid-area-mask": {
+            "href": "https://ai4edataeuwest.blob.core.windows.net/ai4good/venezuela2026/valid_area_mask_catia_la_mar_east.geojson",
+            "type": "application/geo+json",
+            "title": "Catia La Mar East valid area mask",
+            "description": "GeoJSON mask delineating the valid analysis area for the East Catia La Mar damage assessment.",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "catia-la-mar-east-damage-footprints": {
+            "href": "https://ai4edataeuwest.blob.core.windows.net/ai4good/venezuela2026/predicted_damage_east-catia-la-mar-skysat-final.gpkg",
+            "type": "application/geopackage+sqlite3",
+            "title": "Catia La Mar East predicted building damage footprints",
+            "description": "GeoPackage of building footprints with predicted earthquake damage for East Catia La Mar, Venezuela, covering 24,732 buildings.",
+            "table:storage_options": {
+                "account_name": "ai4edataeuwest"
+            },
+            "roles": [
+                "data"
+            ]
+        },
+        "la-guaira-surrounding-valid-area-mask": {
+            "href": "https://ai4edataeuwest.blob.core.windows.net/ai4good/venezuela2026/la_guaira_and_surrounding_vantor_6-26_valid_area_mask.geojson",
+            "type": "application/geo+json",
+            "title": "La Guaira and surrounding area valid area mask",
+            "description": "GeoJSON mask delineating the valid analysis area for the La Guaira coastline and surrounding area damage assessment.",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "la-guaira-surrounding-damage-footprints": {
+            "href": "https://ai4edataeuwest.blob.core.windows.net/ai4good/venezuela2026/la_guaira_and_surrounding_vantor_6-26_building_predictions_merged_1.gpkg",
+            "type": "application/geopackage+sqlite3",
+            "title": "La Guaira and surrounding area predicted building damage footprints",
+            "description": "GeoPackage of building footprints with predicted earthquake damage for the La Guaira coastline and surrounding area, Venezuela, covering 26,142 buildings.",
+            "table:storage_options": {
+                "account_name": "ai4edataeuwest"
+            },
+            "roles": [
+                "data"
+            ]
         }
     },
     "storage:schemes": {
