@@ -19,7 +19,10 @@ logger.setLevel(logging.INFO)
 
 
 # regex for the STAC metadata blob path
-hls2_regex = re.compile(r"([SL]30)/(\d{2})/([A-Z])/([A-Z]{2})/(\d{4})/(\d{2})/(\d{2})/HLS.[SL]30.T(\d{2})([A-Z]{3}).(\d{7})T(\d{6}).v2.0/.*_stac\.json")
+hls2_regex = re.compile(
+    r"([SL]30)/(\d{2})/([A-Z])/([A-Z]{2})/(\d{4})/(\d{2})/(\d{2})/"
+    r"HLS.[SL]30.T(\d{2})([A-Z]{3}).(\d{7})T(\d{6}).v2.0/.*_stac\.json"
+)
 
 STAC_JSON_SUFFIX = "_stac.json"
 

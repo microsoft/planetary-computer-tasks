@@ -47,7 +47,7 @@ def test_hls2_sentinel(asset_uri: str) -> None:
 @pytest.mark.parametrize(
     "asset_uri",
     [
-        f"blob://{test_storage_account}/{test_container}/S30/06/W/XC/2026/08/01/HLS.S30.T06WXC.2026213T212519.v2.0/HLS.S30.T06WXC.2026213T212519.v2.0_stac.json"
+        f"blob://{test_storage_account}/{test_container}/S30/06/W/XC/2026/08/01/HLS.S30.T06WXC.2026213T212519.v2.0/HLS.S30.T06WXC.2026213T212519.v2.0_stac.json"  # noqa: E501
     ],
 )
 def test_hls2_sentinel_without_browse_image(asset_uri: str) -> None:
@@ -57,6 +57,6 @@ def test_hls2_sentinel_without_browse_image(asset_uri: str) -> None:
     item, = result
     assert isinstance(item, Item)
     assert item.properties["platform"].startswith("sentinel-2")
-    assert len(item.assets) == 18 # 18 bands, no thumbnail
+    assert len(item.assets) == 18  # 18 bands, no thumbnail
     assert "thumbnail" not in item.assets
     item.validate()
