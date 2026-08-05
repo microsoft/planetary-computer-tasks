@@ -20,7 +20,10 @@ collections:
           splits:
             - depth: 1
           options:
-            ends_with: .jpg
+            # Key on _stac.json, not .jpg: LP DAAC stopped publishing the browse
+            # image for HLSS30 around 2026-06-17, which made every later granule
+            # invisible to enumeration. _stac.json is present on S30 and L30.
+            ends_with: _stac.json
             min_depth: 6
             max_depth: 6
             chunk_length: 20000
@@ -36,7 +39,8 @@ collections:
           splits:
             - depth: 1
           options:
-            ends_with: .jpg
+            # Kept in sync with hls2-s30 above; see the note there.
+            ends_with: _stac.json
             min_depth: 6
             max_depth: 6
             chunk_length: 20000
