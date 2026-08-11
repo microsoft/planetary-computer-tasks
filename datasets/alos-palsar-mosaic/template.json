@@ -119,7 +119,7 @@
         }
     },
     "msft:container": "palsar",
-    "msft:storage_account": "https://pceo.blob.core.windows.net/",
+    "msft:storage_account": "pceo",
     "msft:short_description": "Global 25m resolution SAR image mosaic.",
     "msft:region": "westeurope",
     "title": "ALOS PALSAR Annual Mosaic",
@@ -244,7 +244,7 @@
         "azure": {
             "type": "ms-azure",
             "platform": "https://{account}.blob.core.windows.net",
-            "account": "https://pceo.blob.core.windows.net/",
+            "account": "pceo",
             "container": "palsar",
             "region": "westeurope"
         }

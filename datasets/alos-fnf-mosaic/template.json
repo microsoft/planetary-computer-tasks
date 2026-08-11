@@ -77,7 +77,7 @@
         }
     },
     "msft:container": "palsar",
-    "msft:storage_account": "https://pceo.blob.core.windows.net/",
+    "msft:storage_account": "pceo",
     "msft:short_description": "Global 25m resolution map classifying \"forest\" and \"non-forest\" landcover.",
     "msft:region": "westeurope",
     "title": "ALOS Forest/Non-Forest Annual Mosaic",
@@ -175,7 +175,7 @@
         "azure": {
             "type": "ms-azure",
             "platform": "https://{account}.blob.core.windows.net",
-            "account": "https://pceo.blob.core.windows.net/",
+            "account": "pceo",
             "container": "palsar",
             "region": "westeurope"
         }
