@@ -1,0 +1,184 @@
+{
+    "type": "Collection",
+    "id": "predicted-damage-colombia-2026",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "cite-as",
+            "href": "https://www.microsoft.com/en-us/research/group/ai-for-good-research-lab/",
+            "type": "text/html",
+            "title": "AI For Good Lab Harnessing AI to help solve some of the world’s greatest challenges"
+        },
+        {
+            "rel": "license",
+            "href": "https://creativecommons.org/licenses/by/4.0/",
+            "type": "text/html",
+            "title": "Creative Commons Attribution 4.0 International"
+        },
+        {
+            "rel": "describedby",
+            "href": "https://planetarycomputer.microsoft.com/dataset/predicted-damage-colombia-2026",
+            "type": "text/html",
+            "title": "Human readable dataset overview and reference"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+        "https://stac-extensions.github.io/storage/v2.0.0/schema.json"
+    ],
+    "item_assets": {
+        "visual": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+                "data",
+                "visual"
+            ],
+            "title": "Model prediction imagery",
+            "description": "Cloud-optimized GeoTIFF of the post-event imagery that the damage model was run on."
+        },
+        "overture-buildings": {
+            "type": "application/geopackage+sqlite3",
+            "roles": [
+                "data"
+            ],
+            "title": "Overture Maps building damage footprints",
+            "description": "GeoPackage of Overture Maps building footprints with predicted earthquake damage.",
+            "table:storage_options": {
+                "account_name": "ai4edataeuwest"
+            }
+        },
+        "google-buildings": {
+            "type": "application/geopackage+sqlite3",
+            "roles": [
+                "data"
+            ],
+            "title": "Google building damage footprints",
+            "description": "GeoPackage of Google building footprints with predicted earthquake damage.",
+            "table:storage_options": {
+                "account_name": "ai4edataeuwest"
+            }
+        },
+        "valid-area-mask": {
+            "type": "application/geo+json",
+            "roles": [
+                "metadata"
+            ],
+            "title": "Valid area mask",
+            "description": "GeoJSON mask delineating the area covered by the damage assessment."
+        }
+    },
+    "msft:region": "westeurope",
+    "table:columns": [
+        {
+            "name": "geometry",
+            "type": "byte_array",
+            "description": "Building footprint polygons"
+        },
+        {
+            "name": "id",
+            "type": "string",
+            "description": "Overture Maps unique ID for each footprint"
+        },
+        {
+            "name": "damaged",
+            "type": "int64",
+            "description": "1 if the building is damaged, else 0"
+        },
+        {
+            "name": "unknown",
+            "type": "int64",
+            "description": "1 if the building was covered by clouds/haze/smoke or otherwise unable to be classified, else 0"
+        },
+        {
+            "name": "area",
+            "type": "double",
+            "description": "Area of the building in square meters",
+            "unit": "m2"
+        }
+    ],
+    "msft:container": "ai4good",
+    "msft:storage_account": "ai4edataeuwest",
+    "msft:short_description": "AI-predicted building damage footprints for areas of Colombia affected by the August 2026 earthquake.",
+    "title": "Predicted Building Damage: Colombia Earthquake 2026",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -76.6146,
+                    3.4127,
+                    -75.6922,
+                    4.8433
+                ],
+                [
+                    -76.6146,
+                    3.4127,
+                    -76.4588,
+                    3.5479
+                ],
+                [
+                    -75.7856,
+                    4.7758,
+                    -75.6922,
+                    4.8433
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2026-08-08T00:00:00Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "license": "CC-BY-4.0",
+    "keywords": [
+        "Colombia",
+        "Cali",
+        "Pereira",
+        "Earthquake",
+        "Building damage",
+        "Damage assessment",
+        "Buildings",
+        "Microsoft AI for Good Lab"
+    ],
+    "providers": [
+        {
+            "name": "Microsoft AI for Good Lab",
+            "roles": [
+                "producer",
+                "licensor"
+            ],
+            "url": "https://www.microsoft.com/en-us/research/group/ai-for-good-research-lab/"
+        },
+        {
+            "name": "Microsoft",
+            "roles": [
+                "host",
+                "processor"
+            ],
+            "url": "https://planetarycomputer.microsoft.com"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/colombia2026.png",
+            "type": "image/png",
+            "title": "Predicted Building Damage Thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        }
+    },
+    "storage:schemes": {
+        "azure": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "ai4edataeuwest",
+            "container": "ai4good",
+            "region": "westeurope"
+        }
+    }
+}

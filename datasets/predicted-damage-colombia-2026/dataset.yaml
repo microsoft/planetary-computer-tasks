@@ -1,0 +1,22 @@
+# Keep this id short: it is truncated into Azure Batch job ids, and above ~23
+# characters the job names collide (create-splits vs create-chunks).
+id: colombia-damage-2026
+image: ${{ args.registry }}/pctasks-task-base:2026.01.12
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./predicted_damage_colombia_2026.py) }}
+
+collections:
+  - id: predicted-damage-colombia-2026
+    template: ${{ local.path(./collection) }}
+    class: predicted_damage_colombia_2026:PredictedDamageColombia2026
+    asset_storage:
+      - uri: blob://ai4edataeuwest/ai4good/colombia2026
+        chunks:
+          options:
+            ends_with: "model-predictions.tif"
+    chunk_storage:
+      uri: "blob://ai4edataeuwest/ai4good-etl-data/chunks"

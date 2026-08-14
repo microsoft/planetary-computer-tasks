@@ -1,0 +1,65 @@
+{
+    "render_config": {
+        "render_params": {
+            "tile_format": "png",
+            "colormap": "{\"2\":[0,255,0,255],\"3\":[255,0,0,255],\"4\":[128,128,128,255]}",
+            "nodata": 0
+        },
+        "minzoom": 11,
+        "assets": [
+            "visual"
+        ],
+        "maxzoom": 18,
+        "create_links": true,
+        "has_mosaic": false,
+        "mosaic_preview_zoom": 13,
+        "mosaic_preview_coords": [
+            3.4803,
+            -76.5367
+        ],
+        "requires_token": true,
+        "max_items_per_tile": null,
+        "vector_tilesets": null,
+        "hidden": false
+    },
+    "mosaic_info": {
+        "mosaics": [
+            {
+                "name": "Most recent available",
+                "description": null,
+                "cql": []
+            }
+        ],
+        "render_options": [
+            {
+                "name": "Predicted building damage",
+                "description": "Per-building damage predictions from the Microsoft AI for Good Lab damage assessment model.",
+                "type": "raster-tile",
+                "options": "assets=visual&colormap=%7B%222%22%3A%5B0%2C255%2C0%2C255%5D%2C%223%22%3A%5B255%2C0%2C0%2C255%5D%2C%224%22%3A%5B128%2C128%2C128%2C255%5D%7D&nodata=0",
+                "vector_options": null,
+                "min_zoom": 11,
+                "legend": {
+                    "type": "classmap",
+                    "labels": [
+                        "Building (no damage)",
+                        "Damaged",
+                        "Unknown"
+                    ],
+                    "trim_start": null,
+                    "trim_end": null,
+                    "scale_factor": null
+                },
+                "conditions": null
+            }
+        ],
+        "default_location": {
+            "zoom": 13,
+            "coordinates": [
+                3.4803,
+                -76.5367
+            ]
+        },
+        "default_custom_query": null,
+        "animation_hint": null
+    }
+}
