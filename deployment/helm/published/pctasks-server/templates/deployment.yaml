@@ -85,6 +85,8 @@ spec:
               value: "{{ .Values.pctasks.run.dev.enabled }}"
             - name: PCTASKS_RUN__LOCAL_DEV_ENDPOINTS_URL
               value: "{{ .Values.pctasks.run.dev.local_dev_endpoints_url }}"
+            - name: PCTASKS_RUN__LOCAL_DEV_ENDPOINTS_TOKEN
+              value: "{{ .Values.pctasks.run.dev.local_dev_endpoints_token }}"
 
             # Argo
             - name: PCTASKS_RUN__ARGO_HOST

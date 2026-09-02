@@ -113,6 +113,7 @@ pctasks:
 
     dev:
       local_dev_endpoints_url: ""
+      local_dev_endpoints_token: ""
 
       azurite:
         enabled: false
