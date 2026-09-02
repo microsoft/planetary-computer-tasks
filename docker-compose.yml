@@ -72,6 +72,7 @@ services:
       # Dev executor settings
       - PCTASKS_RUN__TASK_RUNNER_TYPE=${PCTASKS_RUN__TASK_RUNNER_TYPE:-local}
       - PCTASKS_RUN__LOCAL_DEV_ENDPOINTS_URL=http://local-dev-endpoints:8512
+      - PCTASKS_RUN__LOCAL_DEV_ENDPOINTS_TOKEN=local-dev-endpoints-token
       - PCTASKS_RUN__LOCAL_SECRETS=${PCTASKS_RUN__LOCAL_SECRETS:-true}
       - PCTASKS_RUN__WORKFLOW_RUNNER_TYPE=local
 
@@ -142,6 +143,7 @@ services:
       - AZURITE_STORAGE_ACCOUNT=devstoreaccount1
       # Local dev secrets file
       - DEV_SECRETS_FILE=/opt/src/dev-secrets.yaml
+      - PCTASKS_RUN__LOCAL_DEV_ENDPOINTS_TOKEN=local-dev-endpoints-token
       # Cosmos DB
       - PCTASKS_COSMOSDB__TEST_CONTAINER_SUFFIX
 

@@ -12,7 +12,10 @@ def get_task_runner(settings: Optional[RunSettings] = None) -> TaskRunner:
 
     if settings.task_runner_type == TaskRunnerType.LOCAL:
         assert settings.local_dev_endpoints_url  # Checked during settings validation
-        return LocalTaskRunner(settings.local_dev_endpoints_url)
+        assert settings.local_dev_endpoints_token  # Checked during settings validation
+        return LocalTaskRunner(
+            settings.local_dev_endpoints_url, settings.local_dev_endpoints_token
+        )
     elif settings.task_runner_type == TaskRunnerType.BATCH:
         return BatchTaskRunner(settings)
     elif settings.task_runner_type == TaskRunnerType.ARGO:

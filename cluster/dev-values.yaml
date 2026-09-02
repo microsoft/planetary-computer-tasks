@@ -45,6 +45,7 @@ pctasks:
 
     dev:
       local_dev_endpoints_url: "http://local-dev-endpoints:8512"
+      local_dev_endpoints_token: "local-dev-endpoints-token"
 
       azurite:
         enabled: true

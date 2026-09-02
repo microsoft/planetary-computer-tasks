@@ -1,4 +1,5 @@
 import logging
+import secrets
 from typing import Dict, Optional, Union
 from urllib.parse import urlparse
 
@@ -62,12 +63,16 @@ class ParsedRequest:
         if self.dev:
             return self.has_subscription or self.has_authorization
 
-        if self.access_key:
-            if not self.request_access_key == self.access_key:
-                logger.warning("Request made with mismatched access key")
-                return False
-        else:
+        if not self.access_key:
             logger.warning("Access key is unset in non-dev environment!")
+            return False
+
+        request_access_key = self.request_access_key
+        if not request_access_key or not secrets.compare_digest(
+            request_access_key, self.access_key
+        ):
+            logger.warning("Request made with mismatched access key")
+            return False
 
         has_subscription_key = (
             self.has_subscription

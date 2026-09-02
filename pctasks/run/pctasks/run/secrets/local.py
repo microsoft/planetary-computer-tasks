@@ -18,7 +18,12 @@ class LocalSecretsProvider(SecretsProvider):
             local_dev_endpoints_url = self.settings.local_dev_endpoints_url
             if local_dev_endpoints_url:
                 resp = requests.get(
-                    os.path.join(local_dev_endpoints_url, f"secrets/{name}")
+                    os.path.join(local_dev_endpoints_url, f"secrets/{name}"),
+                    headers={
+                        "Authorization": (
+                            f"Bearer {self.settings.local_dev_endpoints_token}"
+                        )
+                    },
                 )
                 if resp.status_code == 200:
                     result = resp.text

@@ -26,8 +26,9 @@ class LocalTaskRunner(TaskRunner):
     See the local-dev-endpoints service in the development environment.
     """
 
-    def __init__(self, local_dev_endpoints_url: str) -> None:
+    def __init__(self, local_dev_endpoints_url: str, token: str) -> None:
         self.local_dev_endpoints_url = local_dev_endpoints_url
+        self.headers = {"Authorization": f"Bearer {token}"}
 
     def __enter__(self) -> "LocalTaskRunner":
         return self
@@ -65,7 +66,11 @@ class LocalTaskRunner(TaskRunner):
                 args.extend(["--account-url", task_input_blob_config.account_url])
 
             data = json.dumps({"args": args, "tags": task_tags or {}}).encode("utf-8")
-            resp = requests.post(self.local_dev_endpoints_url + "/execute", data=data)
+            resp = requests.post(
+                self.local_dev_endpoints_url + "/execute",
+                data=data,
+                headers=self.headers,
+            )
             if resp.status_code == 200:
                 results.append(SuccessfulTaskSubmitResult(task_runner_id=resp.json()))
             else:
@@ -82,7 +87,8 @@ class LocalTaskRunner(TaskRunner):
     ) -> TaskPollResult:
         try:
             resp = requests.get(
-                self.local_dev_endpoints_url + f"/poll/{runner_id['id']}"
+                self.local_dev_endpoints_url + f"/poll/{runner_id['id']}",
+                headers=self.headers,
             )
             if resp.status_code == 200:
                 return TaskPollResult.model_validate(resp.json())

@@ -63,6 +63,7 @@ class RunSettings(PCTasksSettings):
 
     # Dev
     local_dev_endpoints_url: Optional[str] = None
+    local_dev_endpoints_token: Optional[str] = None
     local_secrets: bool = False
 
     notification_queue: NotificationQueueConnStrConfig = Field()
@@ -145,6 +146,12 @@ class RunSettings(PCTasksSettings):
 
     @model_validator(mode="after")
     def _task_runner_type_validator(self) -> Self:
+        if self.local_dev_endpoints_url and not self.local_dev_endpoints_token:
+            raise ValueError(
+                "Must specify local_dev_endpoints_token when "
+                "local_dev_endpoints_url is configured."
+            )
+
         if self.task_runner_type == TaskRunnerType.LOCAL:
             if self.local_dev_endpoints_url is None:
                 raise ValueError(

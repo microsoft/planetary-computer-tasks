@@ -7,24 +7,30 @@ executing a task in Azure Batch locally.
 
 import logging
 import os
+import secrets
 import time
 from pathlib import Path
 from threading import Lock
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List, Optional
 from uuid import uuid1
 
 import yaml
 from cachetools import LRUCache
-from fastapi import BackgroundTasks, FastAPI, Request, Response
+from fastapi import (
+    BackgroundTasks,
+    Depends,
+    FastAPI,
+    Header,
+    HTTPException,
+    Request,
+    Response,
+)
 from fastapi.responses import JSONResponse, PlainTextResponse
 from yaml import Loader
 
 from pctasks.cli.cli import pctasks_cmd
 from pctasks.core.models.run import TaskRunStatus
 from pctasks.run.models import TaskPollResult
-
-app = FastAPI()
-
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +41,25 @@ FAIL_SUBMIT_TAG = "fail_submit"
 WAIT_AND_FAIL_TAG = "wait_and_fail"
 
 DEV_SECRETS_FILE_ENV_VAR = "DEV_SECRETS_FILE"
+LOCAL_DEV_ENDPOINTS_TOKEN_ENV_VAR = "PCTASKS_RUN__LOCAL_DEV_ENDPOINTS_TOKEN"
+
+
+def authenticate_local_request(
+    authorization: Optional[str] = Header(default=None),
+) -> None:
+    token = os.getenv(LOCAL_DEV_ENDPOINTS_TOKEN_ENV_VAR)
+    if not token:
+        logger.error("Local dev endpoints token is not configured")
+        raise HTTPException(status_code=503, detail="Authentication is not configured")
+
+    expected = f"Bearer {token}"
+    if not authorization or not secrets.compare_digest(authorization, expected):
+        raise HTTPException(
+            status_code=401, detail="Invalid authentication credentials"
+        )
+
+
+app = FastAPI(dependencies=[Depends(authenticate_local_request)])
 
 # Execute tasks
 

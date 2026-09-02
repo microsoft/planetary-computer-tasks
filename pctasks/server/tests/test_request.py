@@ -1,4 +1,5 @@
 import pytest
+from fastapi import Request
 from fastapi.testclient import TestClient
 
 from pctasks.core.utils import ignore_ssl_warnings
@@ -9,6 +10,7 @@ from pctasks.server.request import (
     HAS_SUBSCRIPTION_HEADER,
     SUBSCRIPTION_KEY_HEADER,
     USER_EMAIL_HEADER,
+    ParsedRequest,
 )
 from pctasks.server.settings import ServerSettings
 
@@ -87,3 +89,20 @@ def test_unauthorized_requests():
             with ignore_ssl_warnings():
                 response = client.get("/workflows", headers=headers)
                 assert response.status_code == 401
+
+
+def test_unset_access_key_fails_closed() -> None:
+    request = Request(
+        {
+            "type": "http",
+            "headers": [
+                (HAS_AUTHORIZATION_HEADER.lower().encode(), b"true"),
+                (USER_EMAIL_HEADER.lower().encode(), b"attacker@example.com"),
+            ],
+        }
+    )
+    parsed_request = ParsedRequest(request)
+    parsed_request.dev = False
+    parsed_request.access_key = None
+
+    assert not parsed_request.is_authenticated
