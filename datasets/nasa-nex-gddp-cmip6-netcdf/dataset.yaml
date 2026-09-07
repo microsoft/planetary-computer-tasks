@@ -1,0 +1,41 @@
+id: nasa_nex_gddp_cmip6
+image: ${{ args.registry }}/pctasks-nasa-nex-gddp-cmip6-netcdf:2024.4.11.0
+
+args:
+- registry
+
+code:
+  src: ${{ local.path(./nasa_nex_gddp_cmip6.py) }}
+
+environment:
+  AZURE_TENANT_ID: ${{ secrets.task-tenant-id }}
+  AZURE_CLIENT_ID: ${{ secrets.task-client-id }}
+  AZURE_CLIENT_SECRET: ${{ secrets.task-client-secret }}
+  APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
+
+collections:
+  - id: nasa-nex-gddp-cmip6
+    template: ${{ local.path(./collection/) }}
+    class: nasa_nex_gddp_cmip6:NASANEXGDDPCMIP6Collection
+    asset_storage:
+      # The blob storage pattern is NEX/GDDP-CMIP6/ACCESS-CM2/historical/r1i1p1f1/hurs/hurs_day_ACCESS-CM2_historical_r1i1p1f1_gn_2014.nc
+      #
+      # | NEX/GDDP-CMIP6/
+      # |   ACCESS-CM2/      # Model: ~35 directories
+      # |     historical/    # Scenario: 3 directories
+      # |       r1.../       # Something: 1 directory
+      # |         hurs/      # Variable: ~9 directories
+      #
+      # We want to list up to the <model>/<scenario>/ section.
+
+      - uri: blob://nasagddp/nex-gddp-cmip6/NEX/GDDP-CMIP6/
+        chunks:
+          options:
+            chunk_length: 1
+            min_depth: 2
+            max_depth: 2
+            list_folders: true
+
+    chunk_storage:
+      uri: blob://nasagddp/nex-gddp-cmip6-etl-data/pctasks/
+
