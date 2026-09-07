@@ -16,13 +16,13 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
         with:
           fetch-depth: 0
 
       - name: "Get tag"
         id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        uses: "WyriHaximus/github-action-get-previous-tag@04e8485ecb6487243907e330d522ff60f02283ce" # v1.4.0
         with:
           fallback: 2022.2.0
 

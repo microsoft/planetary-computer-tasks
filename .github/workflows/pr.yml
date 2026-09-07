@@ -15,14 +15,14 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26 # v3.7.0
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@7f4fc3e22c37d6ff65e88745f38bd3157c663f7c # v4.9.1
         with:
           python-version: "3.12"
 
       - name: Log in with Azure
-        uses: azure/login@v1
+        uses: azure/login@cb79c773a3cfa27f31f25eb3f677781210c9ce3d # v1.6.1
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -43,13 +43,13 @@ jobs:
       # Integration Tests
 
       - name: Install Kind
-        uses: helm/kind-action@v1.4.0
+        uses: helm/kind-action@9e8295d178de23cbfbd8fa16cf844eec1d773a07 # v1.4.0
         with:
           install_only: true
         if: ${{ github.base_ref  == 'main' }}
 
       - name: Install Helm
-        uses: azure/setup-helm@v3
+        uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78 # v3.5
         with:
           version: v3.8.2
         if: ${{ github.base_ref  == 'main' }}
