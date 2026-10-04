@@ -41,7 +41,7 @@ workflows_router = APIRouter()
 
 
 @workflows_router.get(
-    "/",
+    "",
     summary="List workflows.",
     response_class=ORJSONResponse,
     response_model=WorkflowRecordListResponse,
