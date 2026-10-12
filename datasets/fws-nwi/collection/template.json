@@ -229,6 +229,18 @@
         ]
     },
     "assets": {
+        "geoparquet-items": {
+            "href": "abfs://items/fws-nwi.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        },
         "thumbnail": {
             "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/fws-nwi-thumb.png",
             "type": "image/png",

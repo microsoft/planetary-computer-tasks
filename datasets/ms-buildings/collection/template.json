@@ -93,6 +93,18 @@
         ]
     },
     "assets": {
+        "geoparquet-items": {
+            "href": "abfs://items/ms-buildings.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        },
         "delta": {
             "href": "az://footprints/delta/2023-04-25/ml-buildings.parquet/",
             "title": "Delta table",

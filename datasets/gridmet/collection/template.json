@@ -469,6 +469,18 @@
         }
     ],
     "assets": {
+        "geoparquet-items": {
+            "href": "abfs://items/gridmet.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        },
         "thumbnail": {
             "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/gridmet.png",
             "type": "image/png",
