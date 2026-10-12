@@ -117,6 +117,18 @@
         ]
     },
     "assets": {
+        "geoparquet-items": {
+            "href": "abfs://items/3dep-lidar-dtm-native.parquet",
+            "type": "application/x-parquet",
+            "title": "GeoParquet STAC items",
+            "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
+            "table:storage_options": {
+                "account_name": "pcstacitems"
+            },
+            "roles": [
+                "stac-items"
+            ]
+        },
         "thumbnail": {
             "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/3dep-lidar-dtm-native-thumbnail.png",
             "type": "image/png",
