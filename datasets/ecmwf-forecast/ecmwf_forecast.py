@@ -16,6 +16,8 @@ class EcmwfCollection(Collection):
         asset_storage, asset_path = storage_factory.get_storage_for_file(asset_uri)
         # Starting March 2024, the ECMWF forecasts data will be available at 0.25 resolution
         resolution = None
+        if "0p1" in asset_path.split("/"):
+            resolution = "0.10"
         if "0p25" in asset_path.split("/"):
             resolution = "0.25"
         if "0p4-beta" in asset_path.split("/"):

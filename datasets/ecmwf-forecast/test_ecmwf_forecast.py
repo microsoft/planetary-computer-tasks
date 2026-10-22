@@ -18,6 +18,8 @@ def test_ecmwf(href: str) -> None:
         assert item.properties["ecmwf:resolution"] == "0.40"
     if "/0p25/" in href:
         assert item.properties["ecmwf:resolution"] == "0.25"
+    if "/0p1/" in href:
+        assert item.properties["ecmwf:resolution"] == "0.10"
 
 
 def test_scda() -> None:
