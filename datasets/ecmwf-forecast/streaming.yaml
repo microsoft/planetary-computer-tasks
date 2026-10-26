@@ -2,6 +2,7 @@ name: "Streaming workflow example"
 
 args:
   - registry
+  - collection_id # ecmwf-forecast or ecmwf-forecast-0p1; also the queue name
   - queue_account_url # "https://pctaskstestdev.queue.core.windows.net"
   - cosmosdb_url #  "https://cdb-pctaskstest-dev.documents.azure.com:443/"
 
@@ -10,13 +11,13 @@ jobs:
     id: create-items
     tasks:
       - id: create-items
-        image: "${{ args.registry }}/pctasks-ecmwf-forecast:2023.7.31.0"
+        image: "${{ args.registry }}/pctasks-ecmwf-forecast:2026.02.26"
         task: pctasks.dataset.streaming:StreamingCreateItemsTask
         code:
           src: ${{ local.path(./ecmwf_forecast.py) }}
         args:
           streaming_options:
-            queue_url: "${{args.queue_account_url}}/ecmwf-forecast"
+            queue_url: "${{args.queue_account_url}}/${{ args.collection_id }}"
             visibility_timeout: 30
             min_replica_count: 0
             max_replica_count: 10
@@ -34,7 +35,7 @@ jobs:
           options:
             skip_validation: false
           create_items_function: ecmwf_forecast:EcmwfCollection.create_item
-          collection_id: "ecmwf-forecast"
+          collection_id: "${{ args.collection_id }}"
 
         environment:
           APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
@@ -42,5 +43,5 @@ jobs:
         schema_version: 1.0.0
 is_streaming: True
 schema_version: 1.0.0
-id: ecmwf-forecast-streaming-test
+id: ${{ args.collection_id }}-streaming-test
 dataset: ecmwf-forecast

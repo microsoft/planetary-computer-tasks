@@ -1,1 +1,1 @@
-git+https://github.com/liamlego/ecmwf-forecast@e78947c42f96bb0c26627c72e15e801834d6c8d0
+git+https://github.com/stactools-packages/ecmwf-forecast@e78947c42f96bb0c26627c72e15e801834d6c8d0
