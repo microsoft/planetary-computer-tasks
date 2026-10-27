@@ -90,3 +90,12 @@ def test_streaming_configuration(dataset: Dict[str, Any]) -> None:
     assert task["args"]["streaming_options"]["queue_url"] == (
         "${{args.queue_account_url}}/${{ args.collection_id }}"
     )
+
+
+@pytest.mark.parametrize("filename", ["dataset.yaml", "dataset-scda-backfill.yaml"])
+def test_collection_chunk_storage_prefixes(filename: str) -> None:
+    config = yaml.safe_load((DATASET_DIR / filename).read_text())
+    for collection in config["collections"]:
+        assert collection["chunk_storage"]["uri"] == (
+            "blob://ai4edataeuwest/ecmwf-etl-data/pctasks/" f"{collection['id']}/"
+        )

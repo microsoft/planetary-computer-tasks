@@ -7,8 +7,8 @@ path. Collection selection is configured in [dataset.yaml](./dataset.yaml):
 
 | Collection | Source resolution | Chunk-storage prefix |
 | --- | --- | --- |
-| `ecmwf-forecast` | `ifs/0p25/` and legacy `ifs/0p4-beta/` | `ecmwf-etl-data/pctasks/` |
-| `ecmwf-forecast-0p1` | `ifs/0p1/` | `ecmwf-etl-data/pctasks-0p1/` |
+| `ecmwf-forecast` | `ifs/0p25/` and legacy `ifs/0p4-beta/` | `ecmwf-etl-data/pctasks/ecmwf-forecast/` |
+| `ecmwf-forecast-0p1` | `ifs/0p1/` | `ecmwf-etl-data/pctasks/ecmwf-forecast-0p1/` |
 
 The filters are disjoint and continue to exclude AIFS and `-opendata` streams.
 Specify `-c` / `--collection` when running dataset commands now that there are
@@ -19,6 +19,33 @@ multiple collections.
 - Asset chunk creation takes 5-10 minutes when passing a `--since {date}` argument.
 - There are about 950 `grib2` files generated each day.
 - Item creation is fast (the data is not touched), so a single chunk file for daily data is fine — no need to limit `chunk_length`.
+
+### Intermediate-storage isolation and rollout
+
+Each collection must use its own intermediate-storage prefix. Chunk filenames
+are derived from source paths, not collection IDs, so scanning the same source
+directories with different resolution filters can otherwise overwrite the same
+asset lists. Separate queues do not prevent this when their messages reference
+the same blobs. The prefixes isolate both asset lists and generated STAC item
+files; they do not move or duplicate the original GRIB assets.
+
+Before regenerating or processing chunks:
+
+1. Pause affected producers and consumers and reconcile in-flight work.
+2. Identify queued messages referencing the old shared `ecmwf-etl-data/pctasks/`
+   outputs. Quarantine or discard that affected work under the operational
+   recovery procedure, retaining the inputs needed to regenerate it. Changing
+   configuration does not rewrite existing messages or repair overwritten blobs.
+3. Republish the workflows with the collection-specific prefixes. Do not supply
+   a shared `chunk_storage_uri` DAG-run override, which would replace both
+   prefixes. Verify the effective configuration used by each branch.
+4. Regenerate affected chunks without `--use-existing-chunks`. Verify that the
+   two branches emit disjoint asset-chunk and item-chunk URIs before resuming
+   consumers and normal scheduling.
+
+The [SCDA backfill](./dataset-scda-backfill.yaml) uses the `ecmwf-forecast`
+prefix too. Use distinct chunkset IDs for concurrent backfills and update runs
+within that collection.
 
 ## Dockerfile
 Build and publish a new container image with:

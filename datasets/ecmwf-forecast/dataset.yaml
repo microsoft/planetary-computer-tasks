@@ -29,7 +29,7 @@ collections:
             match_full_path: true
             extensions: [.grib2]
     chunk_storage:
-      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/
+      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/ecmwf-forecast/
 
   - id: ecmwf-forecast-0p1
     template: ${{ local.path(./collection-0p1/) }}
@@ -45,4 +45,4 @@ collections:
             match_full_path: true
             extensions: [.grib2]
     chunk_storage:
-      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/
+      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/ecmwf-forecast-0p1/
