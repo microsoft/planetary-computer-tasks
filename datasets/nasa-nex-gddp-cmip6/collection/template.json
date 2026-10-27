@@ -348,9 +348,7 @@
         }
     },
     "msft:storage_account": "nasagddp",
-    "msft:short_description": [
-        "Global downscaled climate scenarios derived from the General Circulation Model conducted under CMIP6."
-    ],
+    "msft:short_description": "Global downscaled climate scenarios derived from the General Circulation Model conducted under CMIP6.",
     "msft:region": "westeurope",
     "title": "Earth Exchange Global Daily Downscaled Projections (NEX-GDDP-CMIP6)",
     "extent": {

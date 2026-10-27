@@ -670,16 +670,14 @@
         },
         "geoparquet-items": {
             "href": "abfs://items/era5-pds.parquet",
+            "type": "application/x-parquet",
             "title": "GeoParquet STAC items",
             "description": "Snapshot of the collection's STAC items exported to GeoParquet format.",
-            "media_type": "application/x-parquet",
-            "extra_fields": {
-                "msft:partition_info": {
-                    "is_partitioned": false
-                },
-                "table:storage_options": {
-                    "account_name": "pcstacitems"
-                }
+            "msft:partition_info": {
+                "is_partitioned": false
+            },
+            "table:storage_options": {
+                "account_name": "pcstacitems"
             },
             "roles": [
                 "stac-items"

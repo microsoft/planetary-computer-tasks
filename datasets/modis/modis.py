@@ -4,8 +4,13 @@ from tempfile import TemporaryDirectory
 from typing import List, Union
 
 import pystac
+import rasterio
+import shapely.geometry
 import stactools.modis.cog
 import stactools.modis.stac
+import stactools.modis.utils
+from pystac.extensions.projection import ProjectionExtension
+from rasterio.enums import WktVersion
 from stactools.modis.file import File
 
 from pctasks.core.models.task import WaitTaskResult
@@ -58,6 +63,32 @@ def add_platform_field(item, href, logger):
     return item
 
 
+def add_projection(item: pystac.Item, hdf_path: str) -> pystac.Item:
+    """Add the projection extension, read from the item's local HDF file.
+
+    stactools-modis only sets projection when its builder reads the COGs, and
+    this collection attaches COGs with ``add_cogs`` / ``add_cog_assets``, which
+    don't. Every asset of a MODIS item shares one sinusoidal tile grid, so the
+    HDF's first subdataset gives the projection for the whole item.
+    """
+    subdatasets = stactools.modis.utils.subdatasets(hdf_path)
+    if not subdatasets:
+        raise ValueError(f"No subdatasets found in HDF file: {hdf_path}")
+    with rasterio.open(subdatasets[0]) as dataset:
+        crs = dataset.crs
+        bounds = dataset.bounds
+        transform = list(dataset.transform)[0:6]
+        shape = list(dataset.shape)
+
+    projection = ProjectionExtension.ext(item, add_if_missing=True)
+    projection.epsg = crs.to_epsg()
+    projection.wkt2 = crs.to_wkt(version=WktVersion.WKT2_2019)
+    projection.geometry = shapely.geometry.mapping(shapely.geometry.box(*bounds))
+    projection.transform = transform
+    projection.shape = shape
+    return item
+
+
 class MODISCollection(Collection):
     @classmethod
     def create_item(
@@ -86,6 +117,7 @@ class MODISCollection(Collection):
 
             logger.debug("Creating item")
             item = stactools.modis.stac.create_item(file.hdf_href)
+            add_projection(item, file.hdf_href)
 
             if create_cogs:
                 logger.debug(f"Adding COGS to item {item}")
