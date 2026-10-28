@@ -29,4 +29,20 @@ collections:
             match_full_path: true
             extensions: [.grib2]
     chunk_storage:
-      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/
+      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/ecmwf-forecast/
+
+  - id: ecmwf-forecast-0p1
+    template: ${{ local.path(./collection-0p1/) }}
+    class: ecmwf_forecast:EcmwfCollection
+    asset_storage:
+      - uri: blob://ai4edataeuwest/ecmwf/
+        chunks:
+          splits:
+            - depth: 1
+              folder_matches: ^${{ args.year-prefix }}
+          options:
+            matches: /ifs/0p1/(enfo|oper|waef|wave|scda)(?!-opendata)
+            match_full_path: true
+            extensions: [.grib2]
+    chunk_storage:
+      uri: blob://ai4edataeuwest/ecmwf-etl-data/pctasks/ecmwf-forecast-0p1/

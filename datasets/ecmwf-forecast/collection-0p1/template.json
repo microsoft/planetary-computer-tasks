@@ -1,0 +1,84 @@
+{
+    "type": "Collection",
+    "id": "ecmwf-forecast-0p1",
+    "stac_version": "1.0.0",
+    "description": "{{ collection.description }}",
+    "links": [
+        {
+            "rel": "license",
+            "href": "https://creativecommons.org/licenses/by/4.0/",
+            "type": "text/html",
+            "title": "CC-BY-4.0 license"
+        },
+        {
+            "rel": "documentation",
+            "href": "https://confluence.ecmwf.int/display/UDOC/ECMWF+Open+Data+-+Real+Time",
+            "type": "text/html",
+            "title": "ECMWF Open Data (Real Time) documentation"
+        }
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/storage/v2.0.0/schema.json"
+    ],
+    "item_assets": {
+        "data": {
+            "type": "application/wmo-GRIB2",
+            "roles": ["data"],
+            "title": "GRIB2 data file",
+            "description": "The forecast data, as a grib2 file. Subsets of the data can be loaded using information from the associated index file."
+        },
+        "index": {
+            "type": "application/x-ndjson",
+            "roles": ["index"],
+            "title": "Index file",
+            "description": "The index file contains information on each message within the GRIB2 file."
+        }
+    },
+    "msft:region": "westeurope",
+    "msft:container": "ecmwf",
+    "msft:storage_account": "ai4edataeuwest",
+    "msft:short_description": "ECMWF Open Data (Real Time) forecasts at 0.1-degree resolution",
+    "title": "ECMWF Open Data (real-time, 0.1 degree)",
+    "extent": {
+        "spatial": {
+            "bbox": [[-180, -90, 180, 90]]
+        },
+        "temporal": {
+            "interval": [[null, null]]
+        }
+    },
+    "license": "CC-BY-4.0",
+    "keywords": ["ECMWF", "forecast", "weather"],
+    "providers": [
+        {
+            "name": "ECMWF",
+            "roles": ["producer"],
+            "url": "https://www.ecmwf.int/"
+        }
+    ],
+    "summaries": {
+        "ecmwf:resolution": ["0.10"],
+        "ecmwf:types": ["ef", "ep", "fc", "tf"],
+        "ecmwf:streams": ["enfo", "oper", "scda", "waef", "wave"],
+        "ecmwf:pressure_levels": [1000, 925, 850, 700, 500, 300, 250, 200, 50],
+        "ecmwf:reference_times": ["00", "06", "12", "18"]
+    },
+    "assets": {
+        "thumbnail": {
+            "href": "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/ecmwf-forecast-thumbnail-proj.png",
+            "type": "image/png",
+            "title": "thumbnail",
+            "roles": ["thumbnail"]
+        }
+    },
+    "storage:schemes": {
+        "azure": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "ai4edataeuwest",
+            "container": "ecmwf",
+            "region": "westeurope"
+        }
+    }
+}

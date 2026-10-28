@@ -1,1 +1,1 @@
-git+https://github.com/stactools-packages/ecmwf-forecast@0.2.0
+git+https://github.com/stactools-packages/ecmwf-forecast@7749d1ec85ef0e093fd698e18e07550c8bbf8b2d
