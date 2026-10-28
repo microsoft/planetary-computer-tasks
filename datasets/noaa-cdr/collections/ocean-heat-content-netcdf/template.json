@@ -39,6 +39,9 @@
             "type": "application/netcdf",
             "roles": [
                 "data"
+            ],
+            "storage:refs": [
+                "azure"
             ]
         }
     },

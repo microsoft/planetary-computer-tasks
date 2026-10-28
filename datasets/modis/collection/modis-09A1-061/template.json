@@ -55,7 +55,10 @@
             "roles": [
                 "data"
             ],
-            "title": "Source data containing all bands"
+            "title": "Source data containing all bands",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "metadata": {
             "type": "application/xml",
@@ -85,6 +88,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "sur_refl_b02": {
@@ -108,6 +114,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "sur_refl_b03": {
@@ -131,6 +140,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "sur_refl_b04": {
@@ -154,6 +166,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "sur_refl_b05": {
@@ -177,6 +192,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "sur_refl_b06": {
@@ -200,6 +218,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "sur_refl_b07": {
@@ -223,6 +244,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "sur_refl_raz": {
@@ -238,6 +262,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "sur_refl_szen": {
@@ -253,6 +280,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "sur_refl_vzen": {
@@ -268,6 +298,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "sur_refl_qc_500m": {
@@ -281,6 +314,9 @@
                     "data_type": "uint32",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "sur_refl_state_500m": {
@@ -294,6 +330,9 @@
                     "data_type": "uint16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "sur_refl_day_of_year": {
@@ -308,6 +347,9 @@
                     "data_type": "uint16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         }
     },
@@ -418,6 +460,13 @@
             "platform": "https://{account}.blob.core.windows.net",
             "account": "modiseuwest",
             "container": "modis-061",
+            "region": "westeurope"
+        },
+        "azure-modiseuwest-modis-061-cogs": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "modiseuwest",
+            "container": "modis-061-cogs",
             "region": "westeurope"
         }
     }

@@ -32,6 +32,9 @@
             "type": "application/x-netcdf",
             "roles": [
                 "data"
+            ],
+            "storage:refs": [
+                "azure-noaacdr-sea-ice-concentration"
             ]
         },
         "cdr_seaice_conc": {
@@ -68,6 +71,9 @@
             ],
             "roles": [
                 "data"
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "nsidc_bt_seaice_conc": {
@@ -104,6 +110,9 @@
             ],
             "roles": [
                 "data"
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "nsidc_nt_seaice_conc": {
@@ -118,6 +127,9 @@
             ],
             "roles": [
                 "data"
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "qa_of_cdr_seaice_conc": {
@@ -238,6 +250,9 @@
             ],
             "roles": [
                 "data"
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "spatial_interpolation_flag": {
@@ -343,6 +358,9 @@
             ],
             "roles": [
                 "data"
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "stdev_of_cdr_seaice_conc": {
@@ -378,6 +396,9 @@
             ],
             "roles": [
                 "data"
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "temporal_interpolation_flag": {
@@ -453,6 +474,9 @@
             ],
             "roles": [
                 "data"
+            ],
+            "storage:refs": [
+                "azure"
             ]
         }
     },
@@ -460,7 +484,7 @@
     "sci:citation": "Meier, W. N., F. Fetterer, A. K. Windnagel, and S. Stewart. 2021. NOAA/NSIDC Climate Data Record of Passive Microwave Sea Ice Concentration, Version 4. [Indicate subset used]. Boulder, Colorado USA. NSIDC: National Snow and Ice Data Center https://doi.org/10.7265/efmz-2t65. ",
     "msft:short_description": "The Sea Ice Concentration Climate Data Record (CDR) provides a consistent daily and monthly time series of sea ice concentrations for both the north and south Polar Regions on a 25 km x 25 km grid.",
     "msft:storage_account": "noaacdr",
-    "msft:container": "sea-ice-concentration",
+    "msft:container": "cogs",
     "msft:group_id": "noaa-cdr",
     "msft:region": "eastus",
     "title": "Sea Ice Concentration CDR",
@@ -550,6 +574,13 @@
     },
     "storage:schemes": {
         "azure": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "noaacdr",
+            "container": "cogs",
+            "region": "eastus"
+        },
+        "azure-noaacdr-sea-ice-concentration": {
             "type": "ms-azure",
             "platform": "https://{account}.blob.core.windows.net",
             "account": "noaacdr",

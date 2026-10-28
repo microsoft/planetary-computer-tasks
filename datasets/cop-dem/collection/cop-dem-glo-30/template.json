@@ -26,11 +26,14 @@
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
                 "data"
+            ],
+            "storage:refs": [
+                "azure"
             ]
         }
     },
     "msft:group_id": "copernicus-dem",
-    "msft:container": "copernicus-dem-stac",
+    "msft:container": "copernicus-dem",
     "msft:storage_account": "elevationeuwest",
     "msft:short_description": "Copernicus DEM 30 is a near-global digital surface model (DSM) with a horizontal resolution of approximately 30 meters, derived from radar satellite data acquired during the TanDEM-X mission.",
     "msft:region": "westeurope",
@@ -131,7 +134,7 @@
             "type": "ms-azure",
             "platform": "https://{account}.blob.core.windows.net",
             "account": "elevationeuwest",
-            "container": "copernicus-dem-stac",
+            "container": "copernicus-dem",
             "region": "westeurope"
         }
     }

@@ -54,7 +54,10 @@
             "roles": [
                 "data"
             ],
-            "title": "Source data containing all bands"
+            "title": "Source data containing all bands",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "QC_Day": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
@@ -67,6 +70,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 1000
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "Emis_31": {
@@ -81,6 +87,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 1000
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "Emis_32": {
@@ -95,6 +104,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 1000
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "QC_Night": {
@@ -108,6 +120,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 1000
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "metadata": {
@@ -115,7 +130,10 @@
             "roles": [
                 "metadata"
             ],
-            "title": "Federal Geographic Data Committee (FGDC) Metadata"
+            "title": "Federal Geographic Data Committee (FGDC) Metadata",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "LST_Day_1km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
@@ -131,6 +149,9 @@
                     "data_type": "uint16",
                     "spatial_resolution": 1000
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "Day_view_angl": {
@@ -145,6 +166,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 1000
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "Day_view_time": {
@@ -160,6 +184,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 1000
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "LST_Night_1km": {
@@ -176,6 +203,9 @@
                     "data_type": "uint16",
                     "spatial_resolution": 1000
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "Clear_sky_days": {
@@ -189,6 +219,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 1000
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "Night_view_angl": {
@@ -203,6 +236,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 1000
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "Night_view_time": {
@@ -218,6 +254,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 1000
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "Clear_sky_nights": {
@@ -231,6 +270,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 1000
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         }
     },
@@ -340,6 +382,13 @@
             "platform": "https://{account}.blob.core.windows.net",
             "account": "modiseuwest",
             "container": "modis-061",
+            "region": "westeurope"
+        },
+        "azure-modiseuwest-modis-061-cogs": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "modiseuwest",
+            "container": "modis-061-cogs",
             "region": "westeurope"
         }
     }

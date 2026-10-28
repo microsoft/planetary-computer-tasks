@@ -46,11 +46,14 @@
                 "data",
                 "archive",
                 "source"
+            ],
+            "storage:refs": [
+                "azure-landcoverdata-fws-nwi-onboarding"
             ]
         }
     },
     "msft:container": "fws-nwi",
-    "msft:storage_account": "ai4edataeuwest",
+    "msft:storage_account": "landcoverdata",
     "msft:short_description": "Vector dataset containing wetlands boundaries and identification across the United States.",
     "msft:region": "westeurope",
     "title": "FWS National Wetlands Inventory",
@@ -254,8 +257,15 @@
         "azure": {
             "type": "ms-azure",
             "platform": "https://{account}.blob.core.windows.net",
-            "account": "ai4edataeuwest",
+            "account": "landcoverdata",
             "container": "fws-nwi",
+            "region": "westeurope"
+        },
+        "azure-landcoverdata-fws-nwi-onboarding": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "landcoverdata",
+            "container": "fws-nwi-onboarding",
             "region": "westeurope"
         }
     }

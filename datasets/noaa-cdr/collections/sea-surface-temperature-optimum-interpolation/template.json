@@ -47,6 +47,9 @@
                     "nodata": -999,
                     "data_type": "int16"
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "ice": {
@@ -61,6 +64,9 @@
                     "nodata": -999,
                     "data_type": "int16"
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "sst": {
@@ -75,6 +81,9 @@
                     "nodata": -999,
                     "data_type": "int16"
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "anom": {
@@ -89,19 +98,25 @@
                     "nodata": -999,
                     "data_type": "int16"
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "netcdf": {
             "type": "application/x-netcdf",
             "roles": [
                 "data"
+            ],
+            "storage:refs": [
+                "azure-noaacdr-sea-surface-temp-optimum-interpolation"
             ]
         }
     },
     "msft:region": "eastus",
     "sci:citation": "Huang, Boyin; Liu, Chunying; Banzon, Viva F.; Freeman, Eric; Graham, Garrett; Hankins, Bill; Smith, Thomas M.; Zhang, Huai-Min. (2020): NOAA 0.25-degree Daily Optimum Interpolation Sea Surface Temperature (OISST), Version 2.1. NOAA National Centers for Environmental Information. https://doi.org/10.25921/RE9P-PT57.",
     "msft:group_id": "noaa-cdr",
-    "msft:container": "sea-surface-temperature-optimum-interpolation",
+    "msft:container": "cogs",
     "msft:storage_account": "noaacdr",
     "msft:short_description": "The NOAA 1/4\u00b0 daily Optimum Interpolation Sea Surface Temperature (or daily OISST) Climate Data Record (CDR) provides complete ocean temperature fields constructed by combining bias-adjusted observations from different platforms (satellites, ships, buoys) on a regular global grid, with gaps filled in by interpolation.",
     "title": "Sea Surface Temperature - Optimum Interpolation CDR",
@@ -183,7 +198,14 @@
             "type": "ms-azure",
             "platform": "https://{account}.blob.core.windows.net",
             "account": "noaacdr",
-            "container": "sea-surface-temperature-optimum-interpolation",
+            "container": "cogs",
+            "region": "eastus"
+        },
+        "azure-noaacdr-sea-surface-temp-optimum-interpolation": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "noaacdr",
+            "container": "sea-surface-temp-optimum-interpolation",
             "region": "eastus"
         }
     }
