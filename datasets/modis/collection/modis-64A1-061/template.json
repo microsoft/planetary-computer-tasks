@@ -50,6 +50,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "hdf": {
@@ -57,7 +60,10 @@
             "roles": [
                 "data"
             ],
-            "title": "Source data containing all bands"
+            "title": "Source data containing all bands",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "Last_Day": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
@@ -71,6 +77,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "metadata": {
@@ -78,7 +87,10 @@
             "roles": [
                 "metadata"
             ],
-            "title": "Federal Geographic Data Committee (FGDC) Metadata"
+            "title": "Federal Geographic Data Committee (FGDC) Metadata",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "Burn_Date": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
@@ -92,6 +104,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "First_Day": {
@@ -106,6 +121,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "Burn_Date_Uncertainty": {
@@ -120,6 +138,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         }
     },
@@ -225,6 +246,13 @@
             "platform": "https://{account}.blob.core.windows.net",
             "account": "modiseuwest",
             "container": "modis-061",
+            "region": "westeurope"
+        },
+        "azure-modiseuwest-modis-061-cogs": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "modiseuwest",
+            "container": "modis-061-cogs",
             "region": "westeurope"
         }
     }

@@ -40,7 +40,10 @@
             "roles": [
                 "data"
             ],
-            "title": "Source data containing all bands"
+            "title": "Source data containing all bands",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "NDSI": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
@@ -54,6 +57,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "metadata": {
@@ -74,6 +80,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "granule_pnt": {
@@ -87,6 +96,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "NDSI_Snow_Cover": {
@@ -100,6 +112,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "Snow_Albedo_Daily_Tile": {
@@ -113,6 +128,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "NDSI_Snow_Cover_Basic_QA": {
@@ -148,6 +166,9 @@
                     "value": 4,
                     "description": "other (not used)"
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "NDSI_Snow_Cover_Algorithm_Flags_QA": {
@@ -161,6 +182,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         }
     },
@@ -270,6 +294,13 @@
             "platform": "https://{account}.blob.core.windows.net",
             "account": "modiseuwest",
             "container": "modis-061",
+            "region": "westeurope"
+        },
+        "azure-modiseuwest-modis-061-cogs": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "modiseuwest",
+            "container": "modis-061-cogs",
             "region": "westeurope"
         }
     }

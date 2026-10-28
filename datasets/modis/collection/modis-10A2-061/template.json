@@ -40,14 +40,20 @@
             "roles": [
                 "data"
             ],
-            "title": "Source data containing all bands"
+            "title": "Source data containing all bands",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "metadata": {
             "type": "application/xml",
             "roles": [
                 "metadata"
             ],
-            "title": "Federal Geographic Data Committee (FGDC) Metadata"
+            "title": "Federal Geographic Data Committee (FGDC) Metadata",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "Maximum_Snow_Extent": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
@@ -102,6 +108,9 @@
                     "value": 254,
                     "description": "detector saturated"
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "Eight_Day_Snow_Cover": {
@@ -115,6 +124,9 @@
                     "data_type": "uint8",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         }
     },
@@ -224,6 +236,13 @@
             "platform": "https://{account}.blob.core.windows.net",
             "account": "modiseuwest",
             "container": "modis-061",
+            "region": "westeurope"
+        },
+        "azure-modiseuwest-modis-061-cogs": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "modiseuwest",
+            "container": "modis-061-cogs",
             "region": "westeurope"
         }
     }

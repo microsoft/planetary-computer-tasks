@@ -48,6 +48,9 @@
                     "data_type": "float64",
                     "spatial_resolution": 1000
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "grib2": {
@@ -62,6 +65,9 @@
                     "data_type": "float64",
                     "spatial_resolution": 1000
                 }
+            ],
+            "storage:refs": [
+                "azure-mrms-mrms"
             ]
         }
     },
@@ -197,6 +203,13 @@
             "platform": "https://{account}.blob.core.windows.net",
             "account": "mrms",
             "container": "mrms-cogs",
+            "region": "westeurope"
+        },
+        "azure-mrms-mrms": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "mrms",
+            "container": "mrms",
             "region": "westeurope"
         }
     }

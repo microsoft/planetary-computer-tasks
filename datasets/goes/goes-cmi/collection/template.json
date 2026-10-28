@@ -42,6 +42,9 @@
                     "description": "Daytime aerosol over land, coastal water mapping",
                     "center_wavelength": 0.47
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C01_2km": {
@@ -54,6 +57,9 @@
                     "description": "Daytime aerosol over land, coastal water mapping",
                     "center_wavelength": 0.47
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C02_2km": {
@@ -66,6 +72,9 @@
                     "description": "Daytime clouds, fog, insolation, winds",
                     "center_wavelength": 0.64
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C03_1km": {
@@ -81,6 +90,9 @@
                     "description": "Daytime vegetation, burn scar, aerosol over water, winds",
                     "center_wavelength": 0.87
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C03_2km": {
@@ -93,6 +105,9 @@
                     "description": "Daytime vegetation, burn scar, aerosol over water, winds",
                     "center_wavelength": 0.87
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C04_2km": {
@@ -105,6 +120,9 @@
                     "description": "Daytime cirrus cloud",
                     "center_wavelength": 1.38
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C05_1km": {
@@ -120,6 +138,9 @@
                     "description": "Daytime cloud-top phase and particle size, snow",
                     "center_wavelength": 1.61
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C05_2km": {
@@ -132,6 +153,9 @@
                     "description": "Daytime cloud-top phase and particle size, snow",
                     "center_wavelength": 1.61
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C06_2km": {
@@ -144,6 +168,9 @@
                     "description": "Daytime land, cloud properties, particle size, vegetation, snow",
                     "center_wavelength": 2.25
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C07_2km": {
@@ -155,6 +182,9 @@
                     "description": "Surface and cloud, fog at night, fire, winds",
                     "center_wavelength": 3.89
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C08_2km": {
@@ -166,6 +196,9 @@
                     "description": "High-level atmospheric water vapor, winds, rainfall",
                     "center_wavelength": 6.17
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C09_2km": {
@@ -177,6 +210,9 @@
                     "description": "Midlevel atmospheric water vapor, winds, rainfall",
                     "center_wavelength": 6.93
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C10_2km": {
@@ -188,6 +224,9 @@
                     "description": "Lower-level water vapor, winds, and silicon dioxide",
                     "center_wavelength": 7.34
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C11_2km": {
@@ -199,6 +238,9 @@
                     "description": "Total water for stability, cloud phase, dust, silicon dioxide, rainfall",
                     "center_wavelength": 8.44
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C12_2km": {
@@ -210,6 +252,9 @@
                     "description": "Total ozone, turbulence, winds",
                     "center_wavelength": 9.61
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C13_2km": {
@@ -221,6 +266,9 @@
                     "description": "Surface and clouds",
                     "center_wavelength": 10.33
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C14_2km": {
@@ -232,6 +280,9 @@
                     "description": "Imagery, sea surface temperature, clouds, rainfall",
                     "center_wavelength": 11.19
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C15_2km": {
@@ -243,6 +294,9 @@
                     "description": "Total water, volcanic ash, sea surface temperature",
                     "center_wavelength": 12.27
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C16_2km": {
@@ -254,6 +308,9 @@
                     "description": "Air temperature, cloud heights",
                     "center_wavelength": 13.27
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "MCMIP-nc": {
@@ -350,7 +407,13 @@
                     "center_wavelength": 13.27
                 }
             ],
-            "description": "The Cloud and Moisture Imagery product contains one or more Earth-view images with pixel values identifying 'brightness values' that are scaled to support visual analysis."
+            "description": "The Cloud and Moisture Imagery product contains one or more Earth-view images with pixel values identifying 'brightness values' that are scaled to support visual analysis.",
+            "storage:refs": [
+                "azure-goeseuwest-noaa-goes16",
+                "azure-goeseuwest-noaa-goes17",
+                "azure-goeseuwest-noaa-goes18",
+                "azure-goeseuwest-noaa-goes19"
+            ]
         },
         "C02_0.5km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
@@ -365,6 +428,9 @@
                     "description": "Daytime clouds, fog, insolation, winds",
                     "center_wavelength": 0.64
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C01_2km_wm": {
@@ -377,6 +443,9 @@
                     "description": "Daytime aerosol over land, coastal water mapping",
                     "center_wavelength": 0.47
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C02_2km_wm": {
@@ -389,6 +458,9 @@
                     "description": "Daytime clouds, fog, insolation, winds",
                     "center_wavelength": 0.64
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C03_2km_wm": {
@@ -401,6 +473,9 @@
                     "description": "Daytime vegetation, burn scar, aerosol over water, winds",
                     "center_wavelength": 0.87
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "C01_DQF_1km": {
@@ -408,85 +483,142 @@
             "roles": [
                 "quality-mask"
             ],
-            "title": "Cloud and Moisture Imagery data quality flags - Band 01 (full resolution)"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 01 (full resolution)",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C01_DQF_2km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Cloud and Moisture Imagery data quality flags - Band 01"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 01",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C02_DQF_2km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Cloud and Moisture Imagery data quality flags - Band 02"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 02",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C03_DQF_1km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
                 "quality-mask"
             ],
-            "title": "Cloud and Moisture Imagery data quality flags - Band 03 (full resolution)"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 03 (full resolution)",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C03_DQF_2km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Cloud and Moisture Imagery data quality flags - Band 03"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 03",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C04_DQF_2km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Cloud and Moisture Imagery data quality flags - Band 04"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 04",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C05_DQF_1km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
                 "quality-mask"
             ],
-            "title": "Cloud and Moisture Imagery data quality flags - Band 05 (full resolution)"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 05 (full resolution)",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C05_DQF_2km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Cloud and Moisture Imagery data quality flags - Band 05"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 05",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C06_DQF_2km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Cloud and Moisture Imagery data quality flags - Band 06"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 06",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C07_DQF_2km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Cloud and Moisture Imagery data quality flags - Band 07"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 07",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C08_DQF_2km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Cloud and Moisture Imagery data quality flags - Band 08"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 08",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C09_DQF_2km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Cloud and Moisture Imagery data quality flags - Band 09"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 09",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C10_DQF_2km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Cloud and Moisture Imagery data quality flags - Band 10"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 10",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C11_DQF_2km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Cloud and Moisture Imagery data quality flags - Band 11"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 11",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C12_DQF_2km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Cloud and Moisture Imagery data quality flags - Band 12"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 12",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C13_DQF_2km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Cloud and Moisture Imagery data quality flags - Band 13"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 13",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C14_DQF_2km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Cloud and Moisture Imagery data quality flags - Band 14"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 14",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C15_DQF_2km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Cloud and Moisture Imagery data quality flags - Band 15"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 15",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "C16_DQF_2km": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "title": "Cloud and Moisture Imagery data quality flags - Band 16"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 16",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "CMIP_C01-nc": {
             "type": "application/netcdf",
@@ -501,6 +633,12 @@
                     "description": "Daytime aerosol over land, coastal water mapping",
                     "center_wavelength": 0.47
                 }
+            ],
+            "storage:refs": [
+                "azure-goeseuwest-noaa-goes16",
+                "azure-goeseuwest-noaa-goes17",
+                "azure-goeseuwest-noaa-goes18",
+                "azure-goeseuwest-noaa-goes19"
             ]
         },
         "CMIP_C02-nc": {
@@ -516,6 +654,12 @@
                     "description": "Daytime clouds, fog, insolation, winds",
                     "center_wavelength": 0.64
                 }
+            ],
+            "storage:refs": [
+                "azure-goeseuwest-noaa-goes16",
+                "azure-goeseuwest-noaa-goes17",
+                "azure-goeseuwest-noaa-goes18",
+                "azure-goeseuwest-noaa-goes19"
             ]
         },
         "CMIP_C03-nc": {
@@ -531,6 +675,12 @@
                     "description": "Daytime vegetation, burn scar, aerosol over water, winds",
                     "center_wavelength": 0.87
                 }
+            ],
+            "storage:refs": [
+                "azure-goeseuwest-noaa-goes16",
+                "azure-goeseuwest-noaa-goes17",
+                "azure-goeseuwest-noaa-goes18",
+                "azure-goeseuwest-noaa-goes19"
             ]
         },
         "CMIP_C04-nc": {
@@ -546,6 +696,12 @@
                     "description": "Daytime cirrus cloud",
                     "center_wavelength": 1.38
                 }
+            ],
+            "storage:refs": [
+                "azure-goeseuwest-noaa-goes16",
+                "azure-goeseuwest-noaa-goes17",
+                "azure-goeseuwest-noaa-goes18",
+                "azure-goeseuwest-noaa-goes19"
             ]
         },
         "CMIP_C05-nc": {
@@ -561,6 +717,12 @@
                     "description": "Daytime cloud-top phase and particle size, snow",
                     "center_wavelength": 1.61
                 }
+            ],
+            "storage:refs": [
+                "azure-goeseuwest-noaa-goes16",
+                "azure-goeseuwest-noaa-goes17",
+                "azure-goeseuwest-noaa-goes18",
+                "azure-goeseuwest-noaa-goes19"
             ]
         },
         "CMIP_C06-nc": {
@@ -576,6 +738,12 @@
                     "description": "Daytime land, cloud properties, particle size, vegetation, snow",
                     "center_wavelength": 2.25
                 }
+            ],
+            "storage:refs": [
+                "azure-goeseuwest-noaa-goes16",
+                "azure-goeseuwest-noaa-goes17",
+                "azure-goeseuwest-noaa-goes18",
+                "azure-goeseuwest-noaa-goes19"
             ]
         },
         "CMIP_C07-nc": {
@@ -590,6 +758,12 @@
                     "description": "Surface and cloud, fog at night, fire, winds",
                     "center_wavelength": 3.89
                 }
+            ],
+            "storage:refs": [
+                "azure-goeseuwest-noaa-goes16",
+                "azure-goeseuwest-noaa-goes17",
+                "azure-goeseuwest-noaa-goes18",
+                "azure-goeseuwest-noaa-goes19"
             ]
         },
         "CMIP_C08-nc": {
@@ -604,6 +778,12 @@
                     "description": "High-level atmospheric water vapor, winds, rainfall",
                     "center_wavelength": 6.17
                 }
+            ],
+            "storage:refs": [
+                "azure-goeseuwest-noaa-goes16",
+                "azure-goeseuwest-noaa-goes17",
+                "azure-goeseuwest-noaa-goes18",
+                "azure-goeseuwest-noaa-goes19"
             ]
         },
         "CMIP_C09-nc": {
@@ -618,6 +798,12 @@
                     "description": "Midlevel atmospheric water vapor, winds, rainfall",
                     "center_wavelength": 6.93
                 }
+            ],
+            "storage:refs": [
+                "azure-goeseuwest-noaa-goes16",
+                "azure-goeseuwest-noaa-goes17",
+                "azure-goeseuwest-noaa-goes18",
+                "azure-goeseuwest-noaa-goes19"
             ]
         },
         "CMIP_C10-nc": {
@@ -632,6 +818,12 @@
                     "description": "Lower-level water vapor, winds, and silicon dioxide",
                     "center_wavelength": 7.34
                 }
+            ],
+            "storage:refs": [
+                "azure-goeseuwest-noaa-goes16",
+                "azure-goeseuwest-noaa-goes17",
+                "azure-goeseuwest-noaa-goes18",
+                "azure-goeseuwest-noaa-goes19"
             ]
         },
         "CMIP_C11-nc": {
@@ -646,6 +838,12 @@
                     "description": "Total water for stability, cloud phase, dust, silicon dioxide, rainfall",
                     "center_wavelength": 8.44
                 }
+            ],
+            "storage:refs": [
+                "azure-goeseuwest-noaa-goes16",
+                "azure-goeseuwest-noaa-goes17",
+                "azure-goeseuwest-noaa-goes18",
+                "azure-goeseuwest-noaa-goes19"
             ]
         },
         "CMIP_C12-nc": {
@@ -660,6 +858,12 @@
                     "description": "Total ozone, turbulence, winds",
                     "center_wavelength": 9.61
                 }
+            ],
+            "storage:refs": [
+                "azure-goeseuwest-noaa-goes16",
+                "azure-goeseuwest-noaa-goes17",
+                "azure-goeseuwest-noaa-goes18",
+                "azure-goeseuwest-noaa-goes19"
             ]
         },
         "CMIP_C13-nc": {
@@ -674,6 +878,12 @@
                     "description": "Surface and clouds",
                     "center_wavelength": 10.33
                 }
+            ],
+            "storage:refs": [
+                "azure-goeseuwest-noaa-goes16",
+                "azure-goeseuwest-noaa-goes17",
+                "azure-goeseuwest-noaa-goes18",
+                "azure-goeseuwest-noaa-goes19"
             ]
         },
         "CMIP_C14-nc": {
@@ -688,6 +898,12 @@
                     "description": "Imagery, sea surface temperature, clouds, rainfall",
                     "center_wavelength": 11.19
                 }
+            ],
+            "storage:refs": [
+                "azure-goeseuwest-noaa-goes16",
+                "azure-goeseuwest-noaa-goes17",
+                "azure-goeseuwest-noaa-goes18",
+                "azure-goeseuwest-noaa-goes19"
             ]
         },
         "CMIP_C15-nc": {
@@ -702,6 +918,12 @@
                     "description": "Total water, volcanic ash, sea surface temperature",
                     "center_wavelength": 12.27
                 }
+            ],
+            "storage:refs": [
+                "azure-goeseuwest-noaa-goes16",
+                "azure-goeseuwest-noaa-goes17",
+                "azure-goeseuwest-noaa-goes18",
+                "azure-goeseuwest-noaa-goes19"
             ]
         },
         "CMIP_C16-nc": {
@@ -716,6 +938,12 @@
                     "description": "Air temperature, cloud heights",
                     "center_wavelength": 13.27
                 }
+            ],
+            "storage:refs": [
+                "azure-goeseuwest-noaa-goes16",
+                "azure-goeseuwest-noaa-goes17",
+                "azure-goeseuwest-noaa-goes18",
+                "azure-goeseuwest-noaa-goes19"
             ]
         },
         "C02_DQF_0.5km": {
@@ -723,7 +951,10 @@
             "roles": [
                 "quality-mask"
             ],
-            "title": "Cloud and Moisture Imagery data quality flags - Band 02 (full resolution)"
+            "title": "Cloud and Moisture Imagery data quality flags - Band 02 (full resolution)",
+            "storage:refs": [
+                "azure"
+            ]
         }
     },
     "msft:region": "westeurope",
@@ -854,6 +1085,34 @@
             "platform": "https://{account}.blob.core.windows.net",
             "account": "goeseuwest",
             "container": "noaa-goes-cogs",
+            "region": "westeurope"
+        },
+        "azure-goeseuwest-noaa-goes16": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "goeseuwest",
+            "container": "noaa-goes16",
+            "region": "westeurope"
+        },
+        "azure-goeseuwest-noaa-goes17": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "goeseuwest",
+            "container": "noaa-goes17",
+            "region": "westeurope"
+        },
+        "azure-goeseuwest-noaa-goes18": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "goeseuwest",
+            "container": "noaa-goes18",
+            "region": "westeurope"
+        },
+        "azure-goeseuwest-noaa-goes19": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "goeseuwest",
+            "container": "noaa-goes19",
             "region": "westeurope"
         }
     }

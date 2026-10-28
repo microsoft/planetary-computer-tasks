@@ -46,14 +46,20 @@
             "roles": [
                 "data"
             ],
-            "title": "Source data containing all bands"
+            "title": "Source data containing all bands",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "metadata": {
             "type": "application/xml",
             "roles": [
                 "metadata"
             ],
-            "title": "Federal Geographic Data Committee (FGDC) Metadata"
+            "title": "Federal Geographic Data Committee (FGDC) Metadata",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "Nadir_Reflectance_Band1": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
@@ -76,6 +82,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "Nadir_Reflectance_Band2": {
@@ -99,6 +108,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "Nadir_Reflectance_Band3": {
@@ -122,6 +134,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "Nadir_Reflectance_Band4": {
@@ -145,6 +160,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "Nadir_Reflectance_Band5": {
@@ -168,6 +186,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "Nadir_Reflectance_Band6": {
@@ -191,6 +212,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "Nadir_Reflectance_Band7": {
@@ -214,6 +238,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 500
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "BRDF_Albedo_Band_Mandatory_Quality_Band1": {
@@ -242,6 +269,9 @@
                     "value": 1,
                     "description": "Processed, see other QA (magnitude BRDF inversions)"
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "BRDF_Albedo_Band_Mandatory_Quality_Band2": {
@@ -270,6 +300,9 @@
                     "value": 1,
                     "description": "Processed, see other QA (magnitude BRDF inversions)"
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "BRDF_Albedo_Band_Mandatory_Quality_Band3": {
@@ -298,6 +331,9 @@
                     "value": 1,
                     "description": "Processed, see other QA (magnitude BRDF inversions)"
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "BRDF_Albedo_Band_Mandatory_Quality_Band4": {
@@ -326,6 +362,9 @@
                     "value": 1,
                     "description": "Processed, see other QA (magnitude BRDF inversions)"
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "BRDF_Albedo_Band_Mandatory_Quality_Band5": {
@@ -354,6 +393,9 @@
                     "value": 1,
                     "description": "Processed, see other QA (magnitude BRDF inversions)"
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "BRDF_Albedo_Band_Mandatory_Quality_Band6": {
@@ -382,6 +424,9 @@
                     "value": 1,
                     "description": "Processed, see other QA (magnitude BRDF inversions)"
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "BRDF_Albedo_Band_Mandatory_Quality_Band7": {
@@ -410,6 +455,9 @@
                     "value": 1,
                     "description": "Processed, see other QA (magnitude BRDF inversions)"
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         }
     },
@@ -515,6 +563,13 @@
             "platform": "https://{account}.blob.core.windows.net",
             "account": "modiseuwest",
             "container": "modis-061",
+            "region": "westeurope"
+        },
+        "azure-modiseuwest-modis-061-cogs": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "modiseuwest",
+            "container": "modis-061-cogs",
             "region": "westeurope"
         }
     }

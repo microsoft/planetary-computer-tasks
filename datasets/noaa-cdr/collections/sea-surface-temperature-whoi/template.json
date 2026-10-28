@@ -45,6 +45,9 @@
                     "nodata": "nan",
                     "data_type": "float32"
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "sea_surface_temperature": {
@@ -58,13 +61,16 @@
                     "nodata": "nan",
                     "data_type": "float32"
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         }
     },
     "msft:region": "eastus",
     "sci:citation": "Clayson, Carol Anne; Brown, Jeremiah; and NOAA CDR Program (2016). NOAA Climate Data Record (CDR) of Sea Surface Temperature - WHOI, Version 2. NOAA National Climatic Data Center. doi:10.7289/V5FB510W",
     "msft:group_id": "noaa-cdr",
-    "msft:container": "sea-surface-temperature-whoi",
+    "msft:container": "cogs",
     "msft:storage_account": "noaacdr",
     "msft:short_description": "The Sea Surface Temperature-Woods Hole Oceanographic Institution (WHOI) Climate Data Record (CDR) is one of three CDRs which combine to form the NOAA Ocean Surface Bundle (OSB) CDR. The resultant sea surface temperature (SST) data are produced through modeling the diurnal variability in combination with AVHRR SST observations.",
     "title": "Sea Surface Temperature - WHOI CDR",
@@ -146,7 +152,14 @@
             "type": "ms-azure",
             "platform": "https://{account}.blob.core.windows.net",
             "account": "noaacdr",
-            "container": "sea-surface-temperature-whoi",
+            "container": "cogs",
+            "region": "eastus"
+        },
+        "azure-noaacdr-sea-surface-temp-whoi": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "noaacdr",
+            "container": "sea-surface-temp-whoi",
             "region": "eastus"
         }
     }

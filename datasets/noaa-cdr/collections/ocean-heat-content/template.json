@@ -47,6 +47,9 @@
                     "nodata": "nan",
                     "data_type": "float32"
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "mean_salinity": {
@@ -60,6 +63,9 @@
                     "nodata": "nan",
                     "data_type": "float32"
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "mean_temperature": {
@@ -74,6 +80,9 @@
                     "nodata": "nan",
                     "data_type": "float32"
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "mean_halosteric_sea_level": {
@@ -88,6 +97,9 @@
                     "nodata": "nan",
                     "data_type": "float32"
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "mean_thermosteric_sea_level": {
@@ -102,6 +114,9 @@
                     "nodata": "nan",
                     "data_type": "float32"
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         },
         "mean_total_steric_sea_level": {
@@ -116,13 +131,16 @@
                     "nodata": "nan",
                     "data_type": "float32"
                 }
+            ],
+            "storage:refs": [
+                "azure"
             ]
         }
     },
     "msft:region": "eastus",
     "sci:citation": "Levitus, Sydney; Antonov, John I.; Boyer, Tim P.; Baranova, Olga K.; Garc\u00eda, Hern\u00e1n E.; Locarnini, Ricardo A.; Mishonov, Alexey V.; Reagan, James R.; [Seidov, Dan; Yarosh, Evgeney; Zweng, Melissa M. (2017). NCEI ocean heat content, temperature anomalies, salinity anomalies, thermosteric sea level anomalies, halosteric sea level anomalies, and total steric sea level anomalies from 1955 to present calculated from in situ oceanographic subsurface profile data (NCEI Accession 0164586). NOAA National Centers for Environmental Information. Dataset. https://doi.org/10.7289/v53f4mvp.",
     "msft:group_id": "noaa-cdr",
-    "msft:container": "ocean-heat-content",
+    "msft:container": "cogs",
     "msft:storage_account": "noaacdr",
     "msft:short_description": "The Ocean Heat Content Climate Data Record (CDR) is a set of ocean heat content anomaly (OHCA) time-series for 1955-present on 3-monthly, yearly, and pentadal (five-yearly) scales.",
     "title": "Global Ocean Heat Content CDR",
@@ -214,6 +232,13 @@
     },
     "storage:schemes": {
         "azure": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "noaacdr",
+            "container": "cogs",
+            "region": "eastus"
+        },
+        "azure-noaacdr-ocean-heat-content": {
             "type": "ms-azure",
             "platform": "https://{account}.blob.core.windows.net",
             "account": "noaacdr",

@@ -35,7 +35,10 @@
                 "data"
             ],
             "title": "Flood Map",
-            "description": "Inundation maps of flood depth using a model that takes into account water level attenuation and is forced by sea level."
+            "description": "Inundation maps of flood depth using a model that takes into account water level attenuation and is forced by sea level.",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "index": {
             "type": "application/json",
@@ -43,7 +46,10 @@
                 "index"
             ],
             "title": "Index file",
-            "description": "Kerchunk index file."
+            "description": "Kerchunk index file.",
+            "storage:refs": [
+                "azure-deltaresreservoirssa-references"
+            ]
         }
     },
     "cube:variables": {
@@ -355,6 +361,13 @@
             "platform": "https://{account}.blob.core.windows.net",
             "account": "deltaresreservoirssa",
             "container": "reservoirs",
+            "region": "westeurope"
+        },
+        "azure-deltaresreservoirssa-references": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "deltaresreservoirssa",
+            "container": "references",
             "region": "westeurope"
         }
     }

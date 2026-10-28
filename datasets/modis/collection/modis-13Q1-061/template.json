@@ -55,14 +55,20 @@
             "roles": [
                 "data"
             ],
-            "title": "Source data containing all bands"
+            "title": "Source data containing all bands",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "metadata": {
             "type": "application/xml",
             "roles": [
                 "metadata"
             ],
-            "title": "Federal Geographic Data Committee (FGDC) Metadata"
+            "title": "Federal Geographic Data Committee (FGDC) Metadata",
+            "storage:refs": [
+                "azure"
+            ]
         },
         "250m_16_days_EVI": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
@@ -77,6 +83,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 250
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "250m_16_days_NDVI": {
@@ -92,6 +101,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 250
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "250m_16_days_VI_Quality": {
@@ -105,6 +117,9 @@
                     "data_type": "uint16",
                     "spatial_resolution": 250
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "250m_16_days_MIR_reflectance": {
@@ -119,6 +134,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 250
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "250m_16_days_NIR_reflectance": {
@@ -133,6 +151,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 250
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "250m_16_days_red_reflectance": {
@@ -147,6 +168,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 250
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "250m_16_days_blue_reflectance": {
@@ -161,6 +185,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 250
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "250m_16_days_sun_zenith_angle": {
@@ -176,6 +203,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 250
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "250m_16_days_pixel_reliability": {
@@ -208,6 +238,9 @@
                     "value": 3,
                     "description": "Cloudy data"
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "250m_16_days_view_zenith_angle": {
@@ -223,6 +256,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 250
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "250m_16_days_relative_azimuth_angle": {
@@ -238,6 +274,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 250
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         },
         "250m_16_days_composite_day_of_the_year": {
@@ -252,6 +291,9 @@
                     "data_type": "int16",
                     "spatial_resolution": 250
                 }
+            ],
+            "storage:refs": [
+                "azure-modiseuwest-modis-061-cogs"
             ]
         }
     },
@@ -361,6 +403,13 @@
             "platform": "https://{account}.blob.core.windows.net",
             "account": "modiseuwest",
             "container": "modis-061",
+            "region": "westeurope"
+        },
+        "azure-modiseuwest-modis-061-cogs": {
+            "type": "ms-azure",
+            "platform": "https://{account}.blob.core.windows.net",
+            "account": "modiseuwest",
+            "container": "modis-061-cogs",
             "region": "westeurope"
         }
     }
