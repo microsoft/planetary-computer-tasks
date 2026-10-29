@@ -25,7 +25,13 @@ function postAllWorkflowRuns() {
         var runId = jobPartitionRun.run_id
         var jobId = jobPartitionRun.job_id
         var recordType = "WorkflowRun"
-        var filterQuery = `SELECT * FROM r WHERE r.run_id = "${runId}" AND r.type = "${recordType}"`;
+        var filterQuery = {
+            query: "SELECT * FROM r WHERE r.run_id = @runId AND r.type = @recordType",
+            parameters: [
+                { name: "@runId", value: runId },
+                { name: "@recordType", value: recordType }
+            ]
+        };
         var accept = __.queryDocuments(__.getSelfLink(), filterQuery,
             updateJobRun);
 

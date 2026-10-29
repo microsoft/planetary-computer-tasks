@@ -36,7 +36,7 @@ async def upload_code(request: Request, file: UploadFile) -> UploadCodeResult:
     if isinstance(contents, str):
         contents = contents.encode("utf-8")
 
-    token = hashlib.md5(contents).hexdigest()
+    token = hashlib.sha256(contents).hexdigest()
     path = f"{token}/{file.filename}"
 
     code_storage.upload_bytes(contents, path)
