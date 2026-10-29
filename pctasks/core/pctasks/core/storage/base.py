@@ -151,7 +151,7 @@ class Storage(ABC):
         name, buf = write_code(path)
         data = buf.read()
 
-        token = hashlib.md5(data).hexdigest()
+        token = hashlib.sha256(data).hexdigest()
         dst_path = f"{token}/{name}"
         self.upload_bytes(data, dst_path)
         return self.get_uri(dst_path)
