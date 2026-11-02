@@ -1,3 +1,4 @@
+import hashlib
 import importlib.metadata
 import subprocess
 import sys
@@ -19,7 +20,7 @@ def _import_module(target_dir: Optional[str] = None):
     with temp_azurite_blob_storage() as storage:
         assert isinstance(storage, BlobStorage)
         uri = storage.upload_code(path)
-        token = "b618be31818766973c94818a9e29a8f6"
+        token = hashlib.sha256(Path(path).read_bytes()).hexdigest()
         assert uri == f"blob://devstoreaccount1/test-data/{storage.prefix}/{token}/a.py"
         p = ensure_code(f"{token}/a.py", storage, target_dir=target_dir)
         if target_dir:
