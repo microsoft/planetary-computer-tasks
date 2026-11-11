@@ -28,3 +28,4 @@ jobs:
         environment:
           APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.task-application-insights-connection-string }}
           STAC_GEOPARQUET_CONNECTION_INFO: ${{secrets.pgstac-connection-string}}
+          TMPDIR: /mnt/resource
