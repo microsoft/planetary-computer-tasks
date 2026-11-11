@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/azurelinux/base/python:3.12
 
 RUN \
     tdnf update -y && \
-    tdnf ca-certificates curl -y
+    tdnf install ca-certificates curl -y
 
 ENV PATH=$PATH:/install/bin
 
