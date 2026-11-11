@@ -1,6 +1,7 @@
 import logging
 import os
 import re
+import urllib.error
 from typing import List, Optional, Union
 
 import lxml.etree
@@ -47,7 +48,7 @@ DOWNSAMPLE_ASSETS = {
 def is_throttle_exc(e: Exception) -> bool:
     """Checks if there's an XML parse error, which has been seen in throttle
     situations."""
-    return isinstance(e, lxml.etree.XMLSyntaxError)
+    return isinstance(e, (lxml.etree.XMLSyntaxError, urllib.error.HTTPError))
 
 
 class Sentinel2Collection(Collection):
