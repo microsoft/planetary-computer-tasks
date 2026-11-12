@@ -23,6 +23,7 @@
     "hidden": false
   },
   "mosaic_info": {
+    "temporal_mosaic_frequency": "monthly",
     "mosaics": [
       {
         "name": "Most recent (low cloud)",
@@ -45,7 +46,587 @@
         "cql": []
       },
       {
-        "name": "Mar – Apr, 2025 (low cloud)",
+        "name": "Nov - Dec, 2026 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2026-11-01",
+                  "2026-11-30T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Oct - Nov, 2026 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2026-10-01",
+                  "2026-10-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Sep - Oct, 2026 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2026-09-01",
+                  "2026-09-30T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Aug - Sep, 2026 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2026-08-01",
+                  "2026-08-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Jul - Aug, 2026 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2026-07-01",
+                  "2026-07-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Jun - Jul, 2026 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2026-06-01",
+                  "2026-06-30T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "May - Jun, 2026 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2026-05-01",
+                  "2026-05-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Apr - May, 2026 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2026-04-01",
+                  "2026-04-30T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Mar - Apr, 2026 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2026-03-01",
+                  "2026-03-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Feb - Mar, 2026 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2026-02-01",
+                  "2026-02-28T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Jan - Feb, 2026 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2026-01-01",
+                  "2026-01-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Dec - Jan, 2025 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2025-12-01",
+                  "2025-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Nov - Dec, 2025 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2025-11-01",
+                  "2025-11-30T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Oct - Nov, 2025 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2025-10-01",
+                  "2025-10-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Sep - Oct, 2025 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2025-09-01",
+                  "2025-09-30T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Aug - Sep, 2025 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2025-08-01",
+                  "2025-08-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Jul - Aug, 2025 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2025-07-01",
+                  "2025-07-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Jun - Jul, 2025 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2025-06-01",
+                  "2025-06-30T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "May - Jun, 2025 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2025-05-01",
+                  "2025-05-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Apr - May, 2025 (low cloud)",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2025-04-01",
+                  "2025-04-30T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Mar - Apr, 2025 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -74,7 +655,7 @@
         ]
       },
       {
-        "name": "Feb – Mar, 2025 (low cloud)",
+        "name": "Feb - Mar, 2025 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -103,7 +684,7 @@
         ]
       },
       {
-        "name": "Jan – Feb, 2025 (low cloud)",
+        "name": "Jan - Feb, 2025 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -132,7 +713,7 @@
         ]
       },
       {
-        "name": "Dec – Jan, 2024 (low cloud)",
+        "name": "Dec - Jan, 2024 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -161,7 +742,7 @@
         ]
       },
       {
-        "name": "Nov – Dec, 2024 (low cloud)",
+        "name": "Nov - Dec, 2024 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -190,7 +771,7 @@
         ]
       },
       {
-        "name": "Oct – Nov, 2024 (low cloud)",
+        "name": "Oct - Nov, 2024 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -219,7 +800,7 @@
         ]
       },
       {
-        "name": "Sep – Oct, 2024 (low cloud)",
+        "name": "Sep - Oct, 2024 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -248,7 +829,7 @@
         ]
       },
       {
-        "name": "Aug – Sep, 2024 (low cloud)",
+        "name": "Aug - Sep, 2024 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -277,7 +858,7 @@
         ]
       },
       {
-        "name": "Jul – Aug, 2024 (low cloud)",
+        "name": "Jul - Aug, 2024 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -306,7 +887,7 @@
         ]
       },
       {
-        "name": "Jun – Jul, 2024 (low cloud)",
+        "name": "Jun - Jul, 2024 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -335,7 +916,7 @@
         ]
       },
       {
-        "name": "May – Jun, 2024 (low cloud)",
+        "name": "May - Jun, 2024 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -364,7 +945,7 @@
         ]
       },
       {
-        "name": "Apr – May, 2024 (low cloud)",
+        "name": "Apr - May, 2024 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -393,7 +974,7 @@
         ]
       },
       {
-        "name": "Mar – Apr, 2024 (low cloud)",
+        "name": "Mar - Apr, 2024 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -422,7 +1003,7 @@
         ]
       },
       {
-        "name": "Feb – Mar, 2024 (low cloud)",
+        "name": "Feb - Mar, 2024 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -451,7 +1032,7 @@
         ]
       },
       {
-        "name": "Jan – Feb, 2024 (low cloud)",
+        "name": "Jan - Feb, 2024 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -480,7 +1061,7 @@
         ]
       },
       {
-        "name": "Dec – Jan, 2023 (low cloud)",
+        "name": "Dec - Jan, 2023 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -509,7 +1090,7 @@
         ]
       },
       {
-        "name": "Nov – Dec, 2023 (low cloud)",
+        "name": "Nov - Dec, 2023 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -538,7 +1119,7 @@
         ]
       },
       {
-        "name": "Oct – Nov, 2023 (low cloud)",
+        "name": "Oct - Nov, 2023 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -567,7 +1148,7 @@
         ]
       },
       {
-        "name": "Sep – Oct, 2023 (low cloud)",
+        "name": "Sep - Oct, 2023 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -596,7 +1177,7 @@
         ]
       },
       {
-        "name": "Aug – Sep, 2023 (low cloud)",
+        "name": "Aug - Sep, 2023 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -625,7 +1206,7 @@
         ]
       },
       {
-        "name": "Jul – Aug, 2023 (low cloud)",
+        "name": "Jul - Aug, 2023 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -654,7 +1235,7 @@
         ]
       },
       {
-        "name": "Jun – Jul, 2023 (low cloud)",
+        "name": "Jun - Jul, 2023 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -683,7 +1264,7 @@
         ]
       },
       {
-        "name": "May – Jun, 2023 (low cloud)",
+        "name": "May - Jun, 2023 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -712,7 +1293,7 @@
         ]
       },
       {
-        "name": "Apr – May, 2023 (low cloud)",
+        "name": "Apr - May, 2023 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -741,7 +1322,7 @@
         ]
       },
       {
-        "name": "Mar – Apr, 2023 (low cloud)",
+        "name": "Mar - Apr, 2023 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -770,7 +1351,7 @@
         ]
       },
       {
-        "name": "Feb – Mar, 2023 (low cloud)",
+        "name": "Feb - Mar, 2023 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -799,7 +1380,7 @@
         ]
       },
       {
-        "name": "Jan – Feb, 2023 (low cloud)",
+        "name": "Jan - Feb, 2023 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -828,7 +1409,7 @@
         ]
       },
       {
-        "name": "Dec – Jan, 2022 (low cloud)",
+        "name": "Dec - Jan, 2022 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -857,7 +1438,7 @@
         ]
       },
       {
-        "name": "Nov – Dec, 2022 (low cloud)",
+        "name": "Nov - Dec, 2022 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -886,7 +1467,7 @@
         ]
       },
       {
-        "name": "Oct – Nov, 2022 (low cloud)",
+        "name": "Oct - Nov, 2022 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -915,7 +1496,7 @@
         ]
       },
       {
-        "name": "Sep – Oct, 2022 (low cloud)",
+        "name": "Sep - Oct, 2022 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -944,7 +1525,7 @@
         ]
       },
       {
-        "name": "Aug – Sep, 2022 (low cloud)",
+        "name": "Aug - Sep, 2022 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -973,7 +1554,7 @@
         ]
       },
       {
-        "name": "Jul – Aug, 2022 (low cloud)",
+        "name": "Jul - Aug, 2022 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1002,7 +1583,7 @@
         ]
       },
       {
-        "name": "Jun – Jul, 2022 (low cloud)",
+        "name": "Jun - Jul, 2022 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1031,7 +1612,7 @@
         ]
       },
       {
-        "name": "May – Jun, 2022 (low cloud)",
+        "name": "May - Jun, 2022 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1060,7 +1641,7 @@
         ]
       },
       {
-        "name": "Apr – May, 2022 (low cloud)",
+        "name": "Apr - May, 2022 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1089,7 +1670,7 @@
         ]
       },
       {
-        "name": "Mar – Apr, 2022 (low cloud)",
+        "name": "Mar - Apr, 2022 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1118,7 +1699,7 @@
         ]
       },
       {
-        "name": "Feb – Mar, 2022 (low cloud)",
+        "name": "Feb - Mar, 2022 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1147,7 +1728,7 @@
         ]
       },
       {
-        "name": "Jan – Feb, 2022 (low cloud)",
+        "name": "Jan - Feb, 2022 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1176,7 +1757,7 @@
         ]
       },
       {
-        "name": "Dec – Jan, 2021 (low cloud)",
+        "name": "Dec - Jan, 2021 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1205,7 +1786,7 @@
         ]
       },
       {
-        "name": "Nov – Dec, 2021 (low cloud)",
+        "name": "Nov - Dec, 2021 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1234,7 +1815,7 @@
         ]
       },
       {
-        "name": "Oct – Nov, 2021 (low cloud)",
+        "name": "Oct - Nov, 2021 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1263,7 +1844,7 @@
         ]
       },
       {
-        "name": "Sep – Oct, 2021 (low cloud)",
+        "name": "Sep - Oct, 2021 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1292,7 +1873,7 @@
         ]
       },
       {
-        "name": "Aug – Sep, 2021 (low cloud)",
+        "name": "Aug - Sep, 2021 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1321,7 +1902,7 @@
         ]
       },
       {
-        "name": "Jul – Aug, 2021 (low cloud)",
+        "name": "Jul - Aug, 2021 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1350,7 +1931,7 @@
         ]
       },
       {
-        "name": "Jun – Jul, 2021 (low cloud)",
+        "name": "Jun - Jul, 2021 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1379,7 +1960,7 @@
         ]
       },
       {
-        "name": "May – Jun, 2021 (low cloud)",
+        "name": "May - Jun, 2021 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1408,7 +1989,7 @@
         ]
       },
       {
-        "name": "Apr – May, 2021 (low cloud)",
+        "name": "Apr - May, 2021 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1437,7 +2018,7 @@
         ]
       },
       {
-        "name": "Mar – Apr, 2021 (low cloud)",
+        "name": "Mar - Apr, 2021 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1466,7 +2047,7 @@
         ]
       },
       {
-        "name": "Feb – Mar, 2021 (low cloud)",
+        "name": "Feb - Mar, 2021 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1495,7 +2076,7 @@
         ]
       },
       {
-        "name": "Jan – Feb, 2021 (low cloud)",
+        "name": "Jan - Feb, 2021 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1524,7 +2105,7 @@
         ]
       },
       {
-        "name": "Dec – Jan, 2020 (low cloud)",
+        "name": "Dec - Jan, 2020 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1553,7 +2134,7 @@
         ]
       },
       {
-        "name": "Nov – Dec, 2020 (low cloud)",
+        "name": "Nov - Dec, 2020 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1582,7 +2163,7 @@
         ]
       },
       {
-        "name": "Oct – Nov, 2020 (low cloud)",
+        "name": "Oct - Nov, 2020 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1611,7 +2192,7 @@
         ]
       },
       {
-        "name": "Sep – Oct, 2020 (low cloud)",
+        "name": "Sep - Oct, 2020 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1640,7 +2221,7 @@
         ]
       },
       {
-        "name": "Aug – Sep, 2020 (low cloud)",
+        "name": "Aug - Sep, 2020 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1669,7 +2250,7 @@
         ]
       },
       {
-        "name": "Jul – Aug, 2020 (low cloud)",
+        "name": "Jul - Aug, 2020 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1698,7 +2279,7 @@
         ]
       },
       {
-        "name": "Jun – Jul, 2020 (low cloud)",
+        "name": "Jun - Jul, 2020 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1727,7 +2308,7 @@
         ]
       },
       {
-        "name": "May – Jun, 2020 (low cloud)",
+        "name": "May - Jun, 2020 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1756,7 +2337,7 @@
         ]
       },
       {
-        "name": "Apr – May, 2020 (low cloud)",
+        "name": "Apr - May, 2020 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1785,7 +2366,7 @@
         ]
       },
       {
-        "name": "Mar – Apr, 2020 (low cloud)",
+        "name": "Mar - Apr, 2020 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1814,7 +2395,7 @@
         ]
       },
       {
-        "name": "Feb – Mar, 2020 (low cloud)",
+        "name": "Feb - Mar, 2020 (low cloud)",
         "description": null,
         "cql": [
           {
@@ -1843,7 +2424,7 @@
         ]
       },
       {
-        "name": "Jan – Feb, 2020 (low cloud)",
+        "name": "Jan - Feb, 2020 (low cloud)",
         "description": null,
         "cql": [
           {
