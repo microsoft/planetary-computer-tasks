@@ -29,26 +29,6 @@
         "cql": []
       },
       {
-        "name": "2026",
-        "description": null,
-        "cql": [
-          {
-            "op": "anyinteracts",
-            "args": [
-              {
-                "property": "datetime"
-              },
-              {
-                "interval": [
-                  "2026-01-01",
-                  "2026-12-31T23:59:59Z"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
         "name": "2025",
         "description": null,
         "cql": [
