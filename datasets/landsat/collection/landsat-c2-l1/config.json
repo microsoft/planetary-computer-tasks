@@ -25,7 +25,7 @@
   "mosaic_info": {
     "mosaics": [
       {
-        "name": "1972 - 1976 (low cloud)",
+        "name": "2007 - 2012 (low cloud)",
         "description": "",
         "cql": [
           {
@@ -36,153 +36,8 @@
               },
               {
                 "interval": [
-                  "1972-01-01",
-                  "1976-12-31T23:59:59Z"
-                ]
-              }
-            ]
-          },
-          {
-            "op": "<=",
-            "args": [
-              {
-                "property": "eo:cloud_cover"
-              },
-              10
-            ]
-          }
-        ]
-      },
-      {
-        "name": "1977 - 1981 (low cloud)",
-        "description": "",
-        "cql": [
-          {
-            "op": "anyinteracts",
-            "args": [
-              {
-                "property": "datetime"
-              },
-              {
-                "interval": [
-                  "1977-01-01",
-                  "1981-12-31T23:59:59Z"
-                ]
-              }
-            ]
-          },
-          {
-            "op": "<=",
-            "args": [
-              {
-                "property": "eo:cloud_cover"
-              },
-              10
-            ]
-          }
-        ]
-      },
-      {
-        "name": "1982 - 1986 (low cloud)",
-        "description": "",
-        "cql": [
-          {
-            "op": "anyinteracts",
-            "args": [
-              {
-                "property": "datetime"
-              },
-              {
-                "interval": [
-                  "1982-01-01",
-                  "1986-12-31T23:59:59Z"
-                ]
-              }
-            ]
-          },
-          {
-            "op": "<=",
-            "args": [
-              {
-                "property": "eo:cloud_cover"
-              },
-              10
-            ]
-          }
-        ]
-      },
-      {
-        "name": "1987 - 1991 (low cloud)",
-        "description": "",
-        "cql": [
-          {
-            "op": "anyinteracts",
-            "args": [
-              {
-                "property": "datetime"
-              },
-              {
-                "interval": [
-                  "1987-01-01",
-                  "1991-12-31T23:59:59Z"
-                ]
-              }
-            ]
-          },
-          {
-            "op": "<=",
-            "args": [
-              {
-                "property": "eo:cloud_cover"
-              },
-              10
-            ]
-          }
-        ]
-      },
-      {
-        "name": "1992 - 1996 (low cloud)",
-        "description": "",
-        "cql": [
-          {
-            "op": "anyinteracts",
-            "args": [
-              {
-                "property": "datetime"
-              },
-              {
-                "interval": [
-                  "1992-01-01",
-                  "1996-12-31T23:59:59Z"
-                ]
-              }
-            ]
-          },
-          {
-            "op": "<=",
-            "args": [
-              {
-                "property": "eo:cloud_cover"
-              },
-              10
-            ]
-          }
-        ]
-      },
-      {
-        "name": "1997 - 2001 (low cloud)",
-        "description": "",
-        "cql": [
-          {
-            "op": "anyinteracts",
-            "args": [
-              {
-                "property": "datetime"
-              },
-              {
-                "interval": [
-                  "1997-01-01",
-                  "2001-12-31T23:59:59Z"
+                  "2007-01-01",
+                  "2013-01-07T23:59:59Z"
                 ]
               }
             ]
@@ -228,7 +83,7 @@
         ]
       },
       {
-        "name": "2007 - 2012 (low cloud)",
+        "name": "1997 - 2001 (low cloud)",
         "description": "",
         "cql": [
           {
@@ -239,8 +94,153 @@
               },
               {
                 "interval": [
-                  "2007-01-01",
-                  "2013-01-07T23:59:59Z"
+                  "1997-01-01",
+                  "2001-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "1992 - 1996 (low cloud)",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "1992-01-01",
+                  "1996-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "1987 - 1991 (low cloud)",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "1987-01-01",
+                  "1991-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "1982 - 1986 (low cloud)",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "1982-01-01",
+                  "1986-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "1977 - 1981 (low cloud)",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "1977-01-01",
+                  "1981-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          },
+          {
+            "op": "<=",
+            "args": [
+              {
+                "property": "eo:cloud_cover"
+              },
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "name": "1972 - 1976 (low cloud)",
+        "description": "",
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "1972-01-01",
+                  "1976-12-31T23:59:59Z"
                 ]
               }
             ]

@@ -7,7 +7,7 @@
     "assets": [
       "image"
     ],
-    "maxzoom": 20,
+    "maxzoom": 19,
     "create_links": true,
     "has_mosaic": false,
     "mosaic_preview_zoom": 13,
@@ -27,6 +27,66 @@
         "name": "Most recent available",
         "description": "",
         "cql": []
+      },
+      {
+        "name": "2026",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2026-01-01",
+                  "2026-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2025",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2025-01-01",
+                  "2025-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2024",
+        "description": null,
+        "cql": [
+          {
+            "op": "anyinteracts",
+            "args": [
+              {
+                "property": "datetime"
+              },
+              {
+                "interval": [
+                  "2024-01-01",
+                  "2024-12-31T23:59:59Z"
+                ]
+              }
+            ]
+          }
+        ]
       },
       {
         "name": "2023",
@@ -302,66 +362,6 @@
                 "interval": [
                   "2010-01-01",
                   "2010-12-31T23:59:59Z"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "2026",
-        "description": null,
-        "cql": [
-          {
-            "op": "anyinteracts",
-            "args": [
-              {
-                "property": "datetime"
-              },
-              {
-                "interval": [
-                  "2026-01-01",
-                  "2026-12-31T23:59:59Z"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "2025",
-        "description": null,
-        "cql": [
-          {
-            "op": "anyinteracts",
-            "args": [
-              {
-                "property": "datetime"
-              },
-              {
-                "interval": [
-                  "2025-01-01",
-                  "2025-12-31T23:59:59Z"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "2024",
-        "description": null,
-        "cql": [
-          {
-            "op": "anyinteracts",
-            "args": [
-              {
-                "property": "datetime"
-              },
-              {
-                "interval": [
-                  "2024-01-01",
-                  "2024-12-31T23:59:59Z"
                 ]
               }
             ]

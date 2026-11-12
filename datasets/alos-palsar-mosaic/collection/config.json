@@ -177,7 +177,7 @@
       },
       {
         "name": "HH polarization backscattering coefficient",
-        "description": "HH polarization backscattering coefficient, 16-bit DN. Rescaled 0–10000.",
+        "description": "HH polarization backscattering coefficient, 16-bit DN. Rescaled 0\u201310000.",
         "type": "raster-tile",
         "options": "assets=HH&colormap_name=gray&rescale=0,10000",
         "vector_options": null,
@@ -187,7 +187,7 @@
       },
       {
         "name": "HV polarization backscattering coefficient",
-        "description": "HV polarization backscattering coefficient, 16-bit DN. Rescaled 0–10000.",
+        "description": "HV polarization backscattering coefficient, 16-bit DN. Rescaled 0\u201310000.",
         "type": "raster-tile",
         "options": "assets=HV&colormap_name=gray&rescale=1,10000",
         "vector_options": null,
